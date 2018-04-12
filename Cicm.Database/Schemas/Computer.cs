@@ -27,36 +27,65 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Computer</summary>
     public class Computer
     {
-        public int id;
-        public int company;
-        public int year;
-        public string model;
-        public int cpu1;
-        public float mhz1;
-        public int cpu2;
-        public float mhz2;
+        /// <summary>Bits of GPRs of primary CPU</summary>
         public int bits;
-        public int ram;
-        public int rom;
-        public int gpu;
-        public int vram;
-        public int colors;
-        public string res;
-        public int spu;
-        public int mpu;
-        public int sound_channels;
-        public int music_channels;
-        public int hdd1;
-        public int hdd2;
-        public int hdd3;
-        public int disk1;
+        /// <summary>Capacity of first removable disk format</summary>
         public string cap1;
-        public int disk2;
+        /// <summary>Capacity of second removable disk format</summary>
         public string cap2;
+        /// <summary>Maximum colors on screen</summary>
+        public int colors;
+        /// <summary>Free-form comments</summary>
         public string comment;
+        /// <summary>Manufacturer's company ID</summary>
+        public int company;
+        /// <summary>Primary CPU</summary>
+        public int cpu1;
+        /// <summary>Secondary CPU</summary>
+        public int cpu2;
+        /// <summary>ID of first removable disk format</summary>
+        public int disk1;
+        /// <summary>ID of second removable disk format</summary>
+        public int disk2;
+        /// <summary>ID of GPU</summary>
+        public int gpu;
+        /// <summary>ID of first hard disk format</summary>
+        public int hdd1;
+        /// <summary>ID of second hard disk format</summary>
+        public int hdd2;
+        /// <summary>ID of third hard disk format</summary>
+        public int hdd3;
+        /// <summary>ID</summary>
+        public int id;
+        /// <summary>Frequency in MHz of primary CPU</summary>
+        public float mhz1;
+        /// <summary>Frequency in MHz of secondary CPU</summary>
+        public float mhz2;
+        /// <summary>Model name</summary>
+        public string model;
+        /// <summary>ID of MPU</summary>
+        public int mpu;
+        /// <summary>Audio channels supported by the MPU</summary>
+        public int music_channels;
+        /// <summary>Size in kibibytes of program RAM</summary>
+        public int ram;
+        /// <summary>Resolution in WxH pixels</summary>
+        public string res;
+        /// <summary>Size in kibibytes of firmware</summary>
+        public int rom;
+        /// <summary>Audio channels supported by the DSP</summary>
+        public int sound_channels;
+        /// <summary>ID of DSP</summary>
+        public int spu;
+        /// <summary>Size in kibibytes for video RAM</summary>
+        public int vram;
+        /// <summary>Introduction date, 0 if unknown</summary>
+        public int year;
     }
 }

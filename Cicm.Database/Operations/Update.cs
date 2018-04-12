@@ -27,10 +27,15 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Updates opened database to last known version
+        /// </summary>
+        /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateDatabase()
         {
             // Do nothing

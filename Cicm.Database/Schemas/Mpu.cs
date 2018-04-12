@@ -27,11 +27,15 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Music Processing Unit</summary>
     public class Mpu
     {
+        /// <summary>ID</summary>
         public int id;
+        /// <summary>Name</summary>
         public string mpu;
     }
 }

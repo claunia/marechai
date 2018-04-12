@@ -27,16 +27,25 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Owned videogame console</summary>
     public class OwnConsole
     {
-        public int id;
-        public int db_id;
-        public string date;
-        public int status;
-        public bool trade;
+        /// <summary>Box present in collection</summary>
         public bool boxed;
+        /// <summary>Adquired date</summary>
+        public string date;
+        /// <summary>Videogame console's ID</summary>
+        public int db_id;
+        /// <summary>ID</summary>
+        public int id;
+        /// <summary>Original manuals present in collection</summary>
         public bool manuals;
+        /// <summary>Status</summary>
+        public int status;
+        /// <summary>Available for trade</summary>
+        public bool trade;
     }
 }

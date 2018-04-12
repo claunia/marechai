@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +38,11 @@ namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Gets all owned consoles
+        /// </summary>
+        /// <param name="entries">All owned consoles</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetOwnOwnConsoles(out List<OwnConsole> entries)
         {
             #if DEBUG
@@ -67,6 +73,13 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets the specified number of owned consoles since the specified start
+        /// </summary>
+        /// <param name="entries">List of owned consoles</param>
+        /// <param name="start">Start of query</param>
+        /// <param name="count">How many entries to retrieve</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetOwnOwnConsoles(out List<OwnConsole> entries, ulong start, ulong count)
         {
             #if DEBUG
@@ -97,6 +110,11 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets owned console by specified id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Owned console with specified id, <c>null</c> if not found or error</returns>
         public OwnConsole GetOwnConsole(int id)
         {
             #if DEBUG
@@ -126,6 +144,10 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Counts the number of owned consoles in the database
+        /// </summary>
+        /// <returns>Entries in database</returns>
         public long CountOwnOwnConsoles()
         {
             #if DEBUG
@@ -140,6 +162,12 @@ namespace Cicm.Database
             catch { return 0; }
         }
 
+        /// <summary>
+        ///     Adds a new owned console to the database
+        /// </summary>
+        /// <param name="entry">Entry to add</param>
+        /// <param name="id">ID of added entry</param>
+        /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
         public bool AddOwnConsole(OwnConsole entry, out long id)
         {
             #if DEBUG
@@ -168,6 +196,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Updated an owned console in the database
+        /// </summary>
+        /// <param name="entry">Updated entry</param>
+        /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateOwnConsole(OwnConsole entry)
         {
             #if DEBUG
@@ -191,6 +224,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Removes an owned console from the database
+        /// </summary>
+        /// <param name="id">ID of entry to remove</param>
+        /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
         public bool RemoveOwnConsole(long id)
         {
             #if DEBUG

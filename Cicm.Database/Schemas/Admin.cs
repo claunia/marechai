@@ -27,12 +27,17 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Site administrator</summary>
     public class Admin
     {
-        public int    id;
+        /// <summary>ID</summary>
+        public int id;
+        /// <summary>Hashed password</summary>
         public string password;
+        /// <summary>Username</summary>
         public string user;
     }
 }

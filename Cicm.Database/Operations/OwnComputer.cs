@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +38,11 @@ namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Gets all owned computers
+        /// </summary>
+        /// <param name="entries">All owned computers</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetOwnOwnComputers(out List<OwnComputer> entries)
         {
             #if DEBUG
@@ -67,6 +73,13 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets the specified number of owned computers since the specified start
+        /// </summary>
+        /// <param name="entries">List of owned computers</param>
+        /// <param name="start">Start of query</param>
+        /// <param name="count">How many entries to retrieve</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetOwnOwnComputers(out List<OwnComputer> entries, ulong start, ulong count)
         {
             #if DEBUG
@@ -97,6 +110,11 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets owned computer by specified id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Owned computer with specified id, <c>null</c> if not found or error</returns>
         public OwnComputer GetOwnComputer(int id)
         {
             #if DEBUG
@@ -126,6 +144,10 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Counts the number of owned computers in the database
+        /// </summary>
+        /// <returns>Entries in database</returns>
         public long CountOwnOwnComputers()
         {
             #if DEBUG
@@ -140,6 +162,12 @@ namespace Cicm.Database
             catch { return 0; }
         }
 
+        /// <summary>
+        ///     Adds a new owned computer to the database
+        /// </summary>
+        /// <param name="entry">Entry to add</param>
+        /// <param name="id">ID of added entry</param>
+        /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
         public bool AddOwnComputer(OwnComputer entry, out long id)
         {
             #if DEBUG
@@ -169,6 +197,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Updated an owned computer in the database
+        /// </summary>
+        /// <param name="entry">Updated entry</param>
+        /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateOwnComputer(OwnComputer entry)
         {
             #if DEBUG
@@ -193,6 +226,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Removes an owned computer from the database
+        /// </summary>
+        /// <param name="id">ID of entry to remove</param>
+        /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
         public bool RemoveOwnComputer(long id)
         {
             #if DEBUG

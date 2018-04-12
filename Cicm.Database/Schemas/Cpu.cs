@@ -27,11 +27,15 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Central Processing Unit</summary>
     public class Cpu
     {
-        public int id;
+        /// <summary>Name</summary>
         public string cpu;
+        /// <summary>ID</summary>
+        public int id;
     }
 }

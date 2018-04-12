@@ -27,11 +27,15 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Company</summary>
     public class Company
     {
-        public int id;
+        /// <summary>Name</summary>
         public string Compania;
+        /// <summary>ID</summary>
+        public int id;
     }
 }

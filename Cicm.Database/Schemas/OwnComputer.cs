@@ -27,27 +27,47 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Owned computer</summary>
     public class OwnComputer
     {
-        public int id;
-        public int db_id;
-        public string date;
-        public int status;
-        public bool trade;
+        /// <summary>Box present in collection</summary>
         public bool boxed;
-        public bool manuals;
-        public int cpu1;
-        public float mhz1;
-        public int cpu2;
-        public float mhz2;
-        public int ram;
-        public int vram;
-        public string rigid;
-        public int disk1;
+        /// <summary>Capacity of first removable disk format</summary>
         public int cap1;
-        public int disk2;
+        /// <summary>Capacity of second removable disk format</summary>
         public int cap2;
+        /// <summary>Primary CPU</summary>
+        public int cpu1;
+        /// <summary>Secondary CPU</summary>
+        public int cpu2;
+        /// <summary>Adquired date</summary>
+        public string date;
+        /// <summary>Computer's ID</summary>
+        public int db_id;
+        /// <summary>ID of first removable disk format</summary>
+        public int disk1;
+        /// <summary>ID of second removable disk format</summary>
+        public int disk2;
+        /// <summary>ID</summary>
+        public int id;
+        /// <summary>Original manuals present in collection</summary>
+        public bool manuals;
+        /// <summary>Frequency in MHz of primary CPU</summary>
+        public float mhz1;
+        /// <summary>Frequency in MHz of secondary CPU</summary>
+        public float mhz2;
+        /// <summary>Size in kibibytes of program RAM</summary>
+        public int ram;
+        /// <summary>Rigid disk</summary>
+        public string rigid;
+        /// <summary>Status</summary>
+        public int status;
+        /// <summary>Available for trade</summary>
+        public bool trade;
+        /// <summary>Size in kibibytes for video RAM</summary>
+        public int vram;
     }
 }

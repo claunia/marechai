@@ -27,12 +27,14 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System.Data;
 
 namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>Last known database version</summary>
         const int DB_VERSION = 2;
 
         readonly IDbConnection dbCon;

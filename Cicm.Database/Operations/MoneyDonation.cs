@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +38,11 @@ namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Gets all money donations
+        /// </summary>
+        /// <param name="entries">All money donations</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetMoneyDonations(out List<MoneyDonation> entries)
         {
             #if DEBUG
@@ -67,6 +73,13 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets the specified number of money donations since the specified start
+        /// </summary>
+        /// <param name="entries">List of money donations</param>
+        /// <param name="start">Start of query</param>
+        /// <param name="count">How many entries to retrieve</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetMoneyDonations(out List<MoneyDonation> entries, ulong start, ulong count)
         {
             #if DEBUG
@@ -97,6 +110,11 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets money donation by specified id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Money donation with specified id, <c>null</c> if not found or error</returns>
         public MoneyDonation GetMoneyDonation(int id)
         {
             #if DEBUG
@@ -126,6 +144,10 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Counts the number of money donations in the database
+        /// </summary>
+        /// <returns>Entries in database</returns>
         public long CountMoneyDonations()
         {
             #if DEBUG
@@ -140,6 +162,12 @@ namespace Cicm.Database
             catch { return 0; }
         }
 
+        /// <summary>
+        ///     Adds a new money donation to the database
+        /// </summary>
+        /// <param name="entry">Entry to add</param>
+        /// <param name="id">ID of added entry</param>
+        /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
         public bool AddMoneyDonation(MoneyDonation entry, out long id)
         {
             #if DEBUG
@@ -167,6 +195,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Updated a money donation in the database
+        /// </summary>
+        /// <param name="entry">Updated entry</param>
+        /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateMoneyDonation(MoneyDonation entry)
         {
             #if DEBUG
@@ -189,6 +222,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Removes a money donation from the database
+        /// </summary>
+        /// <param name="id">ID of entry to remove</param>
+        /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
         public bool RemoveMoneyDonation(long id)
         {
             #if DEBUG

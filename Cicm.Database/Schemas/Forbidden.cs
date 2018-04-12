@@ -27,14 +27,21 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Accesses forbidden with HTTP STATUS 403</summary>
     public class Forbidden
     {
-        public int id;
+        /// <summary>User agent</summary>
         public string browser;
+        /// <summary>Date of access</summary>
         public string date;
+        /// <summary>ID</summary>
+        public int id;
+        /// <summary>Access IP</summary>
         public string ip;
+        /// <summary>Referer</summary>
         public string referer;
     }
 }

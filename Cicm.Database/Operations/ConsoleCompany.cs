@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +38,11 @@ namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Gets all console companies
+        /// </summary>
+        /// <param name="entries">All console companies</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetConsoleCompanies(out List<ConsoleCompany> entries)
         {
             #if DEBUG
@@ -67,6 +73,13 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets the specified number of console companies since the specified start
+        /// </summary>
+        /// <param name="entries">List of console companies</param>
+        /// <param name="start">Start of query</param>
+        /// <param name="count">How many entries to retrieve</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetConsoleCompanies(out List<ConsoleCompany> entries, ulong start, ulong count)
         {
             #if DEBUG
@@ -97,6 +110,11 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets console company by specified id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Console company with specified id, <c>null</c> if not found or error</returns>
         public ConsoleCompany GetConsoleCompany(int id)
         {
             #if DEBUG
@@ -126,6 +144,10 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Counts the number of console companies in the database
+        /// </summary>
+        /// <returns>Entries in database</returns>
         public long CountConsoleCompanies()
         {
             #if DEBUG
@@ -140,6 +162,12 @@ namespace Cicm.Database
             catch { return 0; }
         }
 
+        /// <summary>
+        ///     Adds a new console company to the database
+        /// </summary>
+        /// <param name="entry">Entry to add</param>
+        /// <param name="id">ID of added entry</param>
+        /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
         public bool AddConsoleCompany(ConsoleCompany entry, out long id)
         {
             #if DEBUG
@@ -167,6 +195,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Updated a console company in the database
+        /// </summary>
+        /// <param name="entry">Updated entry</param>
+        /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateConsoleCompany(ConsoleCompany entry)
         {
             #if DEBUG
@@ -188,6 +221,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Removes a console company from the database
+        /// </summary>
+        /// <param name="id">ID of entry to remove</param>
+        /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
         public bool RemoveConsoleCompany(long id)
         {
             #if DEBUG

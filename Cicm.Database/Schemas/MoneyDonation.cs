@@ -27,12 +27,17 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Money donations</summary>
     public class MoneyDonation
     {
-        public int id;
+        /// <summary>Donator</summary>
         public string donator;
+        /// <summary>ID</summary>
+        public int id;
+        /// <summary>Donation quantity in euros</summary>
         public float quantity;
     }
 }

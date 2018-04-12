@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +38,11 @@ namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Gets all log entries
+        /// </summary>
+        /// <param name="entries">All log entries</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetLogs(out List<Log> entries)
         {
             #if DEBUG
@@ -67,6 +73,13 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets the specified number of log entries since the specified start
+        /// </summary>
+        /// <param name="entries">List of log entries</param>
+        /// <param name="start">Start of query</param>
+        /// <param name="count">How many entries to retrieve</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetLogs(out List<Log> entries, ulong start, ulong count)
         {
             #if DEBUG
@@ -97,6 +110,11 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets log entry by specified id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Log entry with specified id, <c>null</c> if not found or error</returns>
         public Log GetLog(int id)
         {
             #if DEBUG
@@ -126,6 +144,10 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Counts the number of log entries in the database
+        /// </summary>
+        /// <returns>Entries in database</returns>
         public long CountLogs()
         {
             #if DEBUG
@@ -140,6 +162,12 @@ namespace Cicm.Database
             catch { return 0; }
         }
 
+        /// <summary>
+        ///     Adds a new access log entry to the database
+        /// </summary>
+        /// <param name="entry">Entry to add</param>
+        /// <param name="id">ID of added entry</param>
+        /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
         public bool AddLog(Log entry, out long id)
         {
             #if DEBUG
@@ -168,6 +196,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Updated an access log in the database
+        /// </summary>
+        /// <param name="entry">Updated entry</param>
+        /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateLog(Log entry)
         {
             #if DEBUG
@@ -190,6 +223,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Removes an access log entry from the database
+        /// </summary>
+        /// <param name="id">ID of entry to remove</param>
+        /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
         public bool RemoveLog(long id)
         {
             #if DEBUG

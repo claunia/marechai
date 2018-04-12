@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Data;
 using MySql.Data.MySqlClient;
@@ -45,7 +46,10 @@ namespace Cicm.Database
             connection = new MySqlConnection(connectionString);
         }
 
+        /// <summary>Database operations</summary>
         public Operations Operations { get; private set; }
+
+        /// <summary>Last inserted row's ID</summary>
         public long LastInsertRowId
         {
             get
@@ -62,6 +66,15 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Opens an existing database
+        /// </summary>
+        /// <param name="server">Server</param>
+        /// <param name="user">User</param>
+        /// <param name="database">Database name</param>
+        /// <param name="password">Password</param>
+        /// <param name="port">Port</param>
+        /// <returns><c>true</c> if database opened correctly, <c>false</c> otherwise</returns>
         public bool OpenDb(string server, string user, string database, string password, ushort port = 3306)
         {
             try
@@ -89,12 +102,24 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Closes the database
+        /// </summary>
         public void CloseDb()
         {
             connection?.Close();
             connection = null;
         }
 
+        /// <summary>
+        ///     Creates a new database
+        /// </summary>
+        /// <param name="server">Server</param>
+        /// <param name="user">User</param>
+        /// <param name="database">Database name</param>
+        /// <param name="password">Password</param>
+        /// <param name="port">Port</param>
+        /// <returns><c>true</c> if database is created correctly, <c>false</c> otherwise</returns>
         public bool CreateDb(string database, string server, string user, string password, ushort port = 3306)
         {
             try
@@ -128,6 +153,10 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets a data adapter for the opened database
+        /// </summary>
+        /// <returns>Data adapter</returns>
         public IDbDataAdapter GetNewDataAdapter()
         {
             return new MySqlDataAdapter();

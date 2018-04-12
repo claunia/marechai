@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +38,11 @@ namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Gets all browser tests
+        /// </summary>
+        /// <param name="entries">All browser tests</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetBrowserTests(out List<BrowserTest> entries)
         {
             #if DEBUG
@@ -67,6 +73,13 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets the specified number of browser tests since the specified start
+        /// </summary>
+        /// <param name="entries">List of browser tests</param>
+        /// <param name="start">Start of query</param>
+        /// <param name="count">How many entries to retrieve</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetBrowserTests(out List<BrowserTest> entries, ulong start, ulong count)
         {
             #if DEBUG
@@ -97,6 +110,11 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets browser test by specified id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>Browser test with specified id, <c>null</c> if not found or error</returns>
         public BrowserTest GetBrowserTest(int id)
         {
             #if DEBUG
@@ -126,6 +144,10 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Counts the number of browser tests in the database
+        /// </summary>
+        /// <returns>Entries in database</returns>
         public long CountBrowserTests()
         {
             #if DEBUG
@@ -140,6 +162,12 @@ namespace Cicm.Database
             catch { return 0; }
         }
 
+        /// <summary>
+        ///     Adds a new browser test to the database
+        /// </summary>
+        /// <param name="entry">Entry to add</param>
+        /// <param name="id">ID of added entry</param>
+        /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
         public bool AddBrowserTest(BrowserTest entry, out long id)
         {
             #if DEBUG
@@ -169,6 +197,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Updated a browser test in the database
+        /// </summary>
+        /// <param name="entry">Updated entry</param>
+        /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateBrowserTest(BrowserTest entry)
         {
             #if DEBUG
@@ -193,6 +226,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Removes a browser test from the database
+        /// </summary>
+        /// <param name="id">ID of entry to remove</param>
+        /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
         public bool RemoveBrowserTest(long id)
         {
             #if DEBUG

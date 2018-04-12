@@ -27,11 +27,15 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Storage format</summary>
     public class DiskFormat
     {
-        public int id;
+        /// <summary>Description</summary>
         public string Format;
+        /// <summary>ID</summary>
+        public int id;
     }
 }

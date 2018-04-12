@@ -27,14 +27,23 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>
+    ///     Access log
+    /// </summary>
     public class Log
     {
-        public int id;
+        /// <summary>User agent string</summary>
         public string browser;
-        public string ip;
+        /// <summary>Access date</summary>
         public string date;
+        /// <summary>ID</summary>
+        public int id;
+        /// <summary>Access IP</summary>
+        public string ip;
+        /// <summary>Referer</summary>
         public string referer;
     }
 }

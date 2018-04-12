@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +38,11 @@ namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Gets all CPUs
+        /// </summary>
+        /// <param name="entries">All CPUs</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetCpus(out List<Cpu> entries)
         {
             #if DEBUG
@@ -67,6 +73,13 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets the specified number of CPUs since the specified start
+        /// </summary>
+        /// <param name="entries">List of CPUs</param>
+        /// <param name="start">Start of query</param>
+        /// <param name="count">How many entries to retrieve</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
         public bool GetCpus(out List<Cpu> entries, ulong start, ulong count)
         {
             #if DEBUG
@@ -97,6 +110,11 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Gets CPU by specified id
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>CPU with specified id, <c>null</c> if not found or error</returns>
         public Cpu GetCpu(int id)
         {
             #if DEBUG
@@ -126,6 +144,10 @@ namespace Cicm.Database
             }
         }
 
+        /// <summary>
+        ///     Counts the number of CPUs in the database
+        /// </summary>
+        /// <returns>Entries in database</returns>
         public long CountCpus()
         {
             #if DEBUG
@@ -140,6 +162,12 @@ namespace Cicm.Database
             catch { return 0; }
         }
 
+        /// <summary>
+        ///     Adds a new CPU to the database
+        /// </summary>
+        /// <param name="entry">Entry to add</param>
+        /// <param name="id">ID of added entry</param>
+        /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
         public bool AddCpu(Cpu entry, out long id)
         {
             #if DEBUG
@@ -167,6 +195,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Updated a CPU in the database
+        /// </summary>
+        /// <param name="entry">Updated entry</param>
+        /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateCpu(Cpu entry)
         {
             #if DEBUG
@@ -188,6 +221,11 @@ namespace Cicm.Database
             return true;
         }
 
+        /// <summary>
+        ///     Removes a CPU from the database
+        /// </summary>
+        /// <param name="id">ID of entry to remove</param>
+        /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
         public bool RemoveCpu(long id)
         {
             #if DEBUG

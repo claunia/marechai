@@ -27,32 +27,56 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
     public class Console
     {
-        public int id;
-        public int company;
-        public string name;
-        public int year;
-        public int cpu1;
-        public float mhz1;
-        public int cpu2;
-        public float mhz2;
+        /// <summary>Bits of GPRs of primary CPU</summary>
         public int bits;
-        public int ram;
-        public int rom;
-        public int gpu;
-        public int vram;
-        public string res;
-        public int colors;
-        public int palette;
-        public int spu;
-        public int schannels;
-        public int mpu;
-        public int mchannels;
-        public int format;
+        /// <summary>Capacity in kibibytes of storage format</summary>
         public int cap;
+        /// <summary>Maximum colors on screen</summary>
+        public int colors;
+        /// <summary>Free-form comments</summary>
         public string comments;
+        /// <summary>Manufacturer's company ID</summary>
+        public int company;
+        /// <summary>Primary CPU</summary>
+        public int cpu1;
+        /// <summary>Secondary CPU</summary>
+        public int cpu2;
+        /// <summary>ID of storage format</summary>
+        public int format;
+        /// <summary>ID of GPU</summary>
+        public int gpu;
+        /// <summary>ID</summary>
+        public int id;
+        /// <summary>Audio channels supported by the MPU</summary>
+        public int mchannels;
+        /// <summary>Frequency in MHz of primary CPU</summary>
+        public float mhz1;
+        /// <summary>Frequency in MHz of secondary CPU</summary>
+        public float mhz2;
+        /// <summary>ID of MPU</summary>
+        public int mpu;
+        /// <summary>Model name</summary>
+        public string name;
+        /// <summary>Colors on palette</summary>
+        public int palette;
+        /// <summary>Size in kibibytes of program RAM</summary>
+        public int ram;
+        /// <summary>Resolution in WxH pixels</summary>
+        public string res;
+        /// <summary>Size in kibibytes of firmware</summary>
+        public int rom;
+        /// <summary>Audio channels supported by the DSP</summary>
+        public int schannels;
+        /// <summary>ID of DSP</summary>
+        public int spu;
+        /// <summary>Size in kibibytes for video RAM</summary>
+        public int vram;
+        /// <summary>Introduction date, 0 if unknown</summary>
+        public int year;
     }
 }

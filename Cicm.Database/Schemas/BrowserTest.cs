@@ -27,26 +27,45 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Browser test</summary>
     public class BrowserTest
     {
-        public ushort id;
-        public string idstring;
-        public string browser;
-        public string version;
-        public string os;
-        public string platform;
-        public bool gif87;
-        public bool gif89;
-        public bool jpeg;
-        public bool png;
-        public bool pngt;
+        /// <summary>Supports animated GIF</summary>
         public bool agif;
-        public bool table;
+        /// <summary>Browser name</summary>
+        public string browser;
+        /// <summary>Supports colors</summary>
         public bool colors;
-        public bool js;
-        public bool frames;
+        /// <summary>Supports Adobe Flash</summary>
         public bool flash;
+        /// <summary>Supports IFRAMEs</summary>
+        public bool frames;
+        /// <summary>Supports GIF87</summary>
+        public bool gif87;
+        /// <summary>Supports GIF with transparency (GIF89)</summary>
+        public bool gif89;
+        /// <summary>ID</summary>
+        public ushort id;
+        /// <summary>User agent string</summary>
+        public string idstring;
+        /// <summary>Supports JPEG</summary>
+        public bool jpeg;
+        /// <summary>Supports JavaScript</summary>
+        public bool js;
+        /// <summary>Browser operating system</summary>
+        public string os;
+        /// <summary>Browser architecture</summary>
+        public string platform;
+        /// <summary>Supports PNG</summary>
+        public bool png;
+        /// <summary>Supports PNG with alpha channel</summary>
+        public bool pngt;
+        /// <summary>Supports HTML tables</summary>
+        public bool table;
+        /// <summary>Browser version</summary>
+        public string version;
     }
 }

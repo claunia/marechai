@@ -7,7 +7,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of a DSP (Digital Signal Processor).
+//     High level representation of a DSP (Digital Sound Processor).
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,11 +27,15 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 namespace Cicm.Database.Schemas
 {
+    /// <summary>Digital Sound Processor</summary>
     public class Dsp
     {
-        public int id;
+        /// <summary>Name</summary>
         public string DSP;
+        /// <summary>ID</summary>
+        public int id;
     }
 }

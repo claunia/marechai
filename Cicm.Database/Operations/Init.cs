@@ -27,6 +27,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
+
 using System;
 using System.Data;
 using Cicm.Database.Schemas.Sql;
@@ -35,6 +36,10 @@ namespace Cicm.Database
 {
     public partial class Operations
     {
+        /// <summary>
+        ///     Initializes tables in the database
+        /// </summary>
+        /// <returns><c>true</c> if initialized correctly, <c>false</c> otherwise</returns>
         public bool InitializeNewDatabase()
         {
             Console.WriteLine("Creating new database version {0}", DB_VERSION);
