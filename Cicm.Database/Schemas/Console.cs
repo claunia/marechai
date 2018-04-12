@@ -33,50 +33,50 @@ namespace Cicm.Database.Schemas
     public class Console
     {
         /// <summary>Bits of GPRs of primary CPU</summary>
-        public int bits;
+        public int Bits;
         /// <summary>Capacity in kibibytes of storage format</summary>
-        public int cap;
+        public int Cap;
         /// <summary>Maximum colors on screen</summary>
-        public int colors;
+        public int Colors;
         /// <summary>Free-form comments</summary>
-        public string comments;
+        public string Comments;
         /// <summary>Manufacturer's company ID</summary>
-        public int company;
+        public int Company;
         /// <summary>Primary CPU</summary>
-        public int cpu1;
+        public int Cpu1;
         /// <summary>Secondary CPU</summary>
-        public int cpu2;
+        public int Cpu2;
         /// <summary>ID of storage format</summary>
-        public int format;
+        public int Format;
         /// <summary>ID of GPU</summary>
-        public int gpu;
+        public int Gpu;
         /// <summary>ID</summary>
-        public int id;
-        /// <summary>Audio channels supported by the MPU</summary>
-        public int mchannels;
+        public int Id;
         /// <summary>Frequency in MHz of primary CPU</summary>
-        public float mhz1;
+        public float Mhz1;
         /// <summary>Frequency in MHz of secondary CPU</summary>
-        public float mhz2;
+        public float Mhz2;
         /// <summary>ID of MPU</summary>
-        public int mpu;
+        public int Mpu;
+        /// <summary>Audio channels supported by the MPU</summary>
+        public int MusicChannels;
         /// <summary>Model name</summary>
-        public string name;
+        public string Name;
         /// <summary>Colors on palette</summary>
-        public int palette;
+        public int Palette;
         /// <summary>Size in kibibytes of program RAM</summary>
-        public int ram;
+        public int Ram;
         /// <summary>Resolution in WxH pixels</summary>
-        public string res;
+        public string Resolution;
         /// <summary>Size in kibibytes of firmware</summary>
-        public int rom;
+        public int Rom;
         /// <summary>Audio channels supported by the DSP</summary>
-        public int schannels;
+        public int SoundChannels;
         /// <summary>ID of DSP</summary>
-        public int spu;
+        public int Spu;
         /// <summary>Size in kibibytes for video RAM</summary>
-        public int vram;
+        public int Vram;
         /// <summary>Introduction date, 0 if unknown</summary>
-        public int year;
+        public int Year;
     }
 }

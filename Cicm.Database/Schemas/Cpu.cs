@@ -33,9 +33,9 @@ namespace Cicm.Database.Schemas
     /// <summary>Central Processing Unit</summary>
     public class Cpu
     {
-        /// <summary>Name</summary>
-        public string cpu;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
+        /// <summary>Name</summary>
+        public string Name;
     }
 }

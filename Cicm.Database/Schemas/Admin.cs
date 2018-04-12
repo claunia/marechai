@@ -34,10 +34,10 @@ namespace Cicm.Database.Schemas
     public class Admin
     {
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>Hashed password</summary>
-        public string password;
+        public string Password;
         /// <summary>Username</summary>
-        public string user;
+        public string Username;
     }
 }

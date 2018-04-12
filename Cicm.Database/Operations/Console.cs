@@ -170,7 +170,7 @@ namespace Cicm.Database
         public bool AddConsole(Console entry, out long id)
         {
             #if DEBUG
-            System.Console.Write("Adding console `{0}`...", entry.name);
+            System.Console.Write("Adding console `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandConsole(entry);
@@ -204,7 +204,7 @@ namespace Cicm.Database
         public bool UpdateConsole(Console entry)
         {
             #if DEBUG
-            System.Console.WriteLine("Updating console `{0}`...", entry.name);
+            System.Console.WriteLine("Updating console `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandConsole(entry);
@@ -215,7 +215,7 @@ namespace Cicm.Database
                 "UPDATE consoles SET company = @company, year = @year, name = @name, cpu1 = @cpu1, mhz1 = @mhz1, cpu2 = @cpu2, "                      +
                 "mhz2 = @mhz2, bits = @bits, ram = @ram, rom = @rom, gpu = @gpu, vram = @vram, colors = @colors, res = @res, spu = @spu, mpu = @mpu " +
                 "schannels = @schannels, mchannels = @mchannels, palette = @palette, format = @format, cap = @cap, comments = @comments "             +
-                $"WHERE id = {entry.id}";
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -325,28 +325,28 @@ namespace Cicm.Database
             param21.DbType = DbType.Int32;
             param22.DbType = DbType.String;
 
-            param1.Value  = entry.company;
-            param2.Value  = entry.year;
-            param3.Value  = entry.name;
-            param4.Value  = entry.cpu1;
-            param5.Value  = entry.mhz1;
-            param6.Value  = entry.cpu2;
-            param7.Value  = entry.mhz2;
-            param8.Value  = entry.bits;
-            param9.Value  = entry.ram;
-            param10.Value = entry.rom;
-            param11.Value = entry.gpu;
-            param12.Value = entry.vram;
-            param13.Value = entry.colors;
-            param14.Value = entry.res;
-            param15.Value = entry.spu;
-            param16.Value = entry.mpu;
-            param17.Value = entry.schannels;
-            param18.Value = entry.mchannels;
-            param19.Value = entry.palette;
-            param20.Value = entry.format;
-            param21.Value = entry.cap;
-            param22.Value = entry.comments;
+            param1.Value  = entry.Company;
+            param2.Value  = entry.Year;
+            param3.Value  = entry.Name;
+            param4.Value  = entry.Cpu1;
+            param5.Value  = entry.Mhz1;
+            param6.Value  = entry.Cpu2;
+            param7.Value  = entry.Mhz2;
+            param8.Value  = entry.Bits;
+            param9.Value  = entry.Ram;
+            param10.Value = entry.Rom;
+            param11.Value = entry.Gpu;
+            param12.Value = entry.Vram;
+            param13.Value = entry.Colors;
+            param14.Value = entry.Resolution;
+            param15.Value = entry.Spu;
+            param16.Value = entry.Mpu;
+            param17.Value = entry.SoundChannels;
+            param18.Value = entry.MusicChannels;
+            param19.Value = entry.Palette;
+            param20.Value = entry.Format;
+            param21.Value = entry.Cap;
+            param22.Value = entry.Comments;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -382,29 +382,29 @@ namespace Cicm.Database
             {
                 Console entry = new Console
                 {
-                    id        = int.Parse(dataRow["id"].ToString()),
-                    company   = int.Parse(dataRow["company"].ToString()),
-                    year      = int.Parse(dataRow["year"].ToString()),
-                    name      = dataRow["name"].ToString(),
-                    cpu1      = int.Parse(dataRow["cpu1"].ToString()),
-                    mhz1      = float.Parse(dataRow["mhz1"].ToString()),
-                    cpu2      = int.Parse(dataRow["cpu2"].ToString()),
-                    mhz2      = float.Parse(dataRow["mhz2"].ToString()),
-                    bits      = int.Parse(dataRow["bits"].ToString()),
-                    ram       = int.Parse(dataRow["ram"].ToString()),
-                    rom       = int.Parse(dataRow["rom"].ToString()),
-                    gpu       = int.Parse(dataRow["gpu"].ToString()),
-                    vram      = int.Parse(dataRow["vram"].ToString()),
-                    colors    = int.Parse(dataRow["colors"].ToString()),
-                    res       = dataRow["res"].ToString(),
-                    spu       = int.Parse(dataRow["spu"].ToString()),
-                    mpu       = int.Parse(dataRow["mpu"].ToString()),
-                    schannels = int.Parse(dataRow["schannels"].ToString()),
-                    mchannels = int.Parse(dataRow["mchannels"].ToString()),
-                    palette   = int.Parse(dataRow["palette"].ToString()),
-                    format    = int.Parse(dataRow["format"].ToString()),
-                    cap       = int.Parse(dataRow["cap"].ToString()),
-                    comments  = dataRow["comments"].ToString()
+                    Id            = int.Parse(dataRow["id"].ToString()),
+                    Company       = int.Parse(dataRow["company"].ToString()),
+                    Year          = int.Parse(dataRow["year"].ToString()),
+                    Name          = dataRow["name"].ToString(),
+                    Cpu1          = int.Parse(dataRow["cpu1"].ToString()),
+                    Mhz1          = float.Parse(dataRow["mhz1"].ToString()),
+                    Cpu2          = int.Parse(dataRow["cpu2"].ToString()),
+                    Mhz2          = float.Parse(dataRow["mhz2"].ToString()),
+                    Bits          = int.Parse(dataRow["bits"].ToString()),
+                    Ram           = int.Parse(dataRow["ram"].ToString()),
+                    Rom           = int.Parse(dataRow["rom"].ToString()),
+                    Gpu           = int.Parse(dataRow["gpu"].ToString()),
+                    Vram          = int.Parse(dataRow["vram"].ToString()),
+                    Colors        = int.Parse(dataRow["colors"].ToString()),
+                    Resolution    = dataRow["res"].ToString(),
+                    Spu           = int.Parse(dataRow["spu"].ToString()),
+                    Mpu           = int.Parse(dataRow["mpu"].ToString()),
+                    SoundChannels = int.Parse(dataRow["schannels"].ToString()),
+                    MusicChannels = int.Parse(dataRow["mchannels"].ToString()),
+                    Palette       = int.Parse(dataRow["palette"].ToString()),
+                    Format        = int.Parse(dataRow["format"].ToString()),
+                    Cap           = int.Parse(dataRow["cap"].ToString()),
+                    Comments      = dataRow["comments"].ToString()
                 };
 
                 entries.Add(entry);

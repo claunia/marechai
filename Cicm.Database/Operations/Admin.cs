@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddAdmin(Admin entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding admin `{0}`...", entry.user);
+            Console.Write("Adding admin `{0}`...", entry.Username);
             #endif
 
             IDbCommand     dbcmd = GetCommandAdmin(entry);
@@ -203,14 +203,14 @@ namespace Cicm.Database
         public bool UpdateAdmin(Admin entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating admin `{0}`...", entry.user);
+            Console.WriteLine("Updating admin `{0}`...", entry.Username);
             #endif
 
             IDbCommand     dbcmd = GetCommandAdmin(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE admin SET user = @user, password = @password " + $"WHERE id = {entry.id}";
+            string sql = "UPDATE admin SET user = @user, password = @password " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -260,8 +260,8 @@ namespace Cicm.Database
             param1.DbType = DbType.String;
             param2.DbType = DbType.String;
 
-            param1.Value = entry.user;
-            param2.Value = entry.password;
+            param1.Value = entry.Username;
+            param2.Value = entry.Password;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -277,9 +277,9 @@ namespace Cicm.Database
             {
                 Admin entry = new Admin
                 {
-                    id       = int.Parse(dataRow["id"].ToString()),
-                    user     = dataRow["user"].ToString(),
-                    password = dataRow["password"].ToString()
+                    Id       = int.Parse(dataRow["id"].ToString()),
+                    Username = dataRow["user"].ToString(),
+                    Password = dataRow["password"].ToString()
                 };
 
                 entries.Add(entry);

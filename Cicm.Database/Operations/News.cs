@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddNews(News entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding news `{0}`...", entry.date);
+            Console.Write("Adding news `{0}`...", entry.Date);
             #endif
 
             IDbCommand     dbcmd = GetCommandNews(entry);
@@ -203,14 +203,14 @@ namespace Cicm.Database
         public bool UpdateNews(News entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating news `{0}`...", entry.date);
+            Console.WriteLine("Updating news `{0}`...", entry.Date);
             #endif
 
             IDbCommand     dbcmd = GetCommandNews(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE news SET date = @date, type = @type, added_id = @added_id " + $"WHERE id = {entry.id}";
+            string sql = "UPDATE news SET date = @date, type = @type, added_id = @added_id " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -263,9 +263,9 @@ namespace Cicm.Database
             param2.DbType = DbType.Int32;
             param3.DbType = DbType.Int32;
 
-            param1.Value = entry.date;
-            param2.Value = entry.type;
-            param3.Value = entry.added_id;
+            param1.Value = entry.Date;
+            param2.Value = entry.Type;
+            param3.Value = entry.AffectedId;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -282,10 +282,10 @@ namespace Cicm.Database
             {
                 News entry = new News
                 {
-                    id       = int.Parse(dataRow["id"].ToString()),
-                    date     = dataRow["date"].ToString(),
-                    type     = int.Parse(dataRow["type"].ToString()),
-                    added_id = int.Parse(dataRow["added_id"].ToString())
+                    Id         = int.Parse(dataRow["id"].ToString()),
+                    Date       = dataRow["date"].ToString(),
+                    Type       = int.Parse(dataRow["type"].ToString()),
+                    AffectedId = int.Parse(dataRow["added_id"].ToString())
                 };
 
                 entries.Add(entry);

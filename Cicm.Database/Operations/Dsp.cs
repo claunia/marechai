@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddDsp(Dsp entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding DSP `{0}`...", entry.DSP);
+            Console.Write("Adding DSP `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandDsp(entry);
@@ -203,14 +203,14 @@ namespace Cicm.Database
         public bool UpdateDsp(Dsp entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating DSP `{0}`...", entry.DSP);
+            Console.WriteLine("Updating DSP `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandDsp(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE DSPs SET DSP = @DSP " + $"WHERE id = {entry.id}";
+            string sql = "UPDATE DSPs SET DSP = @DSP " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -257,7 +257,7 @@ namespace Cicm.Database
 
             param1.DbType = DbType.String;
 
-            param1.Value = entry.DSP;
+            param1.Value = entry.Name;
 
             dbcmd.Parameters.Add(param1);
 
@@ -270,7 +270,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Dsp entry = new Dsp {id = int.Parse(dataRow["id"].ToString()), DSP = dataRow["DSP"].ToString()};
+                Dsp entry = new Dsp {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["DSP"].ToString()};
 
                 entries.Add(entry);
             }

@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddDiskFormat(DiskFormat entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding disk format `{0}`...", entry.Format);
+            Console.Write("Adding disk format `{0}`...", entry.Description);
             #endif
 
             IDbCommand     dbcmd = GetCommandDiskFormat(entry);
@@ -203,14 +203,14 @@ namespace Cicm.Database
         public bool UpdateDiskFormat(DiskFormat entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating disk format `{0}`...", entry.Format);
+            Console.WriteLine("Updating disk format `{0}`...", entry.Description);
             #endif
 
             IDbCommand     dbcmd = GetCommandDiskFormat(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE Formatos_de_disco SET Format = @Format " + $"WHERE id = {entry.id}";
+            string sql = "UPDATE Formatos_de_disco SET Format = @Format " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -257,7 +257,7 @@ namespace Cicm.Database
 
             param1.DbType = DbType.String;
 
-            param1.Value = entry.Format;
+            param1.Value = entry.Description;
 
             dbcmd.Parameters.Add(param1);
 
@@ -272,8 +272,8 @@ namespace Cicm.Database
             {
                 DiskFormat entry = new DiskFormat
                 {
-                    id     = int.Parse(dataRow["id"].ToString()),
-                    Format = dataRow["Format"].ToString()
+                    Id          = int.Parse(dataRow["id"].ToString()),
+                    Description = dataRow["Format"].ToString()
                 };
 
                 entries.Add(entry);

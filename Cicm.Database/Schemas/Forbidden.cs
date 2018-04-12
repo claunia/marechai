@@ -33,15 +33,15 @@ namespace Cicm.Database.Schemas
     /// <summary>Accesses forbidden with HTTP STATUS 403</summary>
     public class Forbidden
     {
-        /// <summary>User agent</summary>
-        public string browser;
         /// <summary>Date of access</summary>
-        public string date;
+        public string Date;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>Access IP</summary>
-        public string ip;
+        public string Ip;
         /// <summary>Referer</summary>
-        public string referer;
+        public string Referer;
+        /// <summary>User agent</summary>
+        public string UserAgent;
     }
 }

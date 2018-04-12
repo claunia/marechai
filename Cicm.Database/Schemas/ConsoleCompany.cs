@@ -35,9 +35,9 @@ namespace Cicm.Database.Schemas
     /// </summary>
     public class ConsoleCompany
     {
-        /// <summary>Name</summary>
-        public string company;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
+        /// <summary>Name</summary>
+        public string Name;
     }
 }

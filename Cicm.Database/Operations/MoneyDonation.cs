@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddMoneyDonation(MoneyDonation entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding money_donation `{0}` for `{1}`...", entry.donator, entry.quantity);
+            Console.Write("Adding money_donation `{0}` for `{1}`...", entry.Donator, entry.Quantity);
             #endif
 
             IDbCommand     dbcmd = GetCommandMoneyDonation(entry);
@@ -203,7 +203,7 @@ namespace Cicm.Database
         public bool UpdateMoneyDonation(MoneyDonation entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating money_donation `{0}`...", entry.donator);
+            Console.WriteLine("Updating money_donation `{0}`...", entry.Donator);
             #endif
 
             IDbCommand     dbcmd = GetCommandMoneyDonation(entry);
@@ -211,7 +211,7 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             string sql = "UPDATE money_donation SET donator = @donator, quantity = @quantity " +
-                         $"WHERE id = {entry.id}";
+                         $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -261,8 +261,8 @@ namespace Cicm.Database
             param1.DbType = DbType.String;
             param2.DbType = DbType.Double;
 
-            param1.Value = entry.donator;
-            param2.Value = entry.quantity;
+            param1.Value = entry.Donator;
+            param2.Value = entry.Quantity;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -278,9 +278,9 @@ namespace Cicm.Database
             {
                 MoneyDonation entry = new MoneyDonation
                 {
-                    id       = int.Parse(dataRow["id"].ToString()),
-                    donator  = dataRow["browser"].ToString(),
-                    quantity = float.Parse(dataRow["date"].ToString())
+                    Id       = int.Parse(dataRow["id"].ToString()),
+                    Donator  = dataRow["browser"].ToString(),
+                    Quantity = float.Parse(dataRow["date"].ToString())
                 };
 
                 entries.Add(entry);

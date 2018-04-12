@@ -34,10 +34,10 @@ namespace Cicm.Database.Schemas
     public class MoneyDonation
     {
         /// <summary>Donator</summary>
-        public string donator;
+        public string Donator;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>Donation quantity in euros</summary>
-        public float quantity;
+        public float Quantity;
     }
 }

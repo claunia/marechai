@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddCompany(Company entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding company `{0}`...", entry.Compania);
+            Console.Write("Adding company `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandCompany(entry);
@@ -203,14 +203,14 @@ namespace Cicm.Database
         public bool UpdateCompany(Company entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating company `{0}`...", entry.Compania);
+            Console.WriteLine("Updating company `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandCompany(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE Companias SET Compania = @Compania " + $"WHERE id = {entry.id}";
+            string sql = "UPDATE Companias SET Compania = @Compania " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -257,7 +257,7 @@ namespace Cicm.Database
 
             param1.DbType = DbType.String;
 
-            param1.Value = entry.Compania;
+            param1.Value = entry.Name;
 
             dbcmd.Parameters.Add(param1);
 
@@ -272,8 +272,8 @@ namespace Cicm.Database
             {
                 Company entry = new Company
                 {
-                    id       = int.Parse(dataRow["id"].ToString()),
-                    Compania = dataRow["Compania"].ToString()
+                    Id   = int.Parse(dataRow["id"].ToString()),
+                    Name = dataRow["Compania"].ToString()
                 };
 
                 entries.Add(entry);

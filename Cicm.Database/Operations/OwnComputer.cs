@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddOwnComputer(OwnComputer entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding owned computer `{0}`...", entry.db_id);
+            Console.Write("Adding owned computer `{0}`...", entry.ComputerId);
             #endif
 
             IDbCommand     dbcmd = GetCommandOwnComputer(entry);
@@ -205,7 +205,7 @@ namespace Cicm.Database
         public bool UpdateOwnComputer(OwnComputer entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating computer `{0}`...", entry.db_id);
+            Console.WriteLine("Updating computer `{0}`...", entry.ComputerId);
             #endif
 
             IDbCommand     dbcmd = GetCommandOwnComputer(entry);
@@ -215,7 +215,7 @@ namespace Cicm.Database
             string sql =
                 "UPDATE own_computer SET db_id = @db_id, date = @date, status = @status, trade = @trade, boxed = @boxed, manuals = @manuals, cpu1 = @cpu1"        +
                 "mhz1 = @mhz1, cpu2 = @cpu2, mhz2 = @mhz2, ram = @ram, vram = @vram, rigid = @rigid, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2 " +
-                $"WHERE id = {entry.id}";
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -310,23 +310,23 @@ namespace Cicm.Database
             param16.DbType = DbType.Int32;
             param17.DbType = DbType.Int32;
 
-            param1.Value  = entry.db_id;
-            param2.Value  = entry.date;
-            param3.Value  = entry.status;
-            param4.Value  = entry.trade;
-            param5.Value  = entry.boxed;
-            param6.Value  = entry.manuals;
-            param7.Value  = entry.cpu1;
-            param8.Value  = entry.mhz1;
-            param9.Value  = entry.cpu2;
-            param10.Value = entry.mhz2;
-            param11.Value = entry.ram;
-            param12.Value = entry.vram;
-            param13.Value = entry.rigid;
-            param14.Value = entry.disk1;
-            param15.Value = entry.cap1;
-            param16.Value = entry.disk2;
-            param17.Value = entry.cap2;
+            param1.Value  = entry.ComputerId;
+            param2.Value  = entry.Acquired;
+            param3.Value  = entry.Status;
+            param4.Value  = entry.Trade;
+            param5.Value  = entry.Boxed;
+            param6.Value  = entry.Manuals;
+            param7.Value  = entry.Cpu1;
+            param8.Value  = entry.Mhz1;
+            param9.Value  = entry.Cpu2;
+            param10.Value = entry.Mhz2;
+            param11.Value = entry.Ram;
+            param12.Value = entry.Vram;
+            param13.Value = entry.Rigid;
+            param14.Value = entry.Disk1;
+            param15.Value = entry.Cap1;
+            param16.Value = entry.Disk2;
+            param17.Value = entry.Cap2;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -357,24 +357,24 @@ namespace Cicm.Database
             {
                 OwnComputer entry = new OwnComputer
                 {
-                    id      = int.Parse(dataRow["id"].ToString()),
-                    db_id   = int.Parse(dataRow["db_id"].ToString()),
-                    date    = dataRow["date"].ToString(),
-                    status  = int.Parse(dataRow["status"].ToString()),
-                    trade   = bool.Parse(dataRow["trade"].ToString()),
-                    boxed   = bool.Parse(dataRow["boxed"].ToString()),
-                    manuals = bool.Parse(dataRow["manuals"].ToString()),
-                    cpu1    = int.Parse(dataRow["cpu1"].ToString()),
-                    mhz1    = float.Parse(dataRow["mhz1"].ToString()),
-                    cpu2    = int.Parse(dataRow["cpu1"].ToString()),
-                    mhz2    = float.Parse(dataRow["mhz2"].ToString()),
-                    ram     = int.Parse(dataRow["ram"].ToString()),
-                    vram    = int.Parse(dataRow["vram"].ToString()),
-                    rigid   = dataRow["rigid"].ToString(),
-                    disk1   = int.Parse(dataRow["disk1"].ToString()),
-                    cap1    = int.Parse(dataRow["cap1"].ToString()),
-                    disk2   = int.Parse(dataRow["disk2"].ToString()),
-                    cap2    = int.Parse(dataRow["cap2"].ToString())
+                    Id         = int.Parse(dataRow["id"].ToString()),
+                    ComputerId = int.Parse(dataRow["db_id"].ToString()),
+                    Acquired   = dataRow["date"].ToString(),
+                    Status     = int.Parse(dataRow["status"].ToString()),
+                    Trade      = bool.Parse(dataRow["trade"].ToString()),
+                    Boxed      = bool.Parse(dataRow["boxed"].ToString()),
+                    Manuals    = bool.Parse(dataRow["manuals"].ToString()),
+                    Cpu1       = int.Parse(dataRow["cpu1"].ToString()),
+                    Mhz1       = float.Parse(dataRow["mhz1"].ToString()),
+                    Cpu2       = int.Parse(dataRow["cpu1"].ToString()),
+                    Mhz2       = float.Parse(dataRow["mhz2"].ToString()),
+                    Ram        = int.Parse(dataRow["ram"].ToString()),
+                    Vram       = int.Parse(dataRow["vram"].ToString()),
+                    Rigid      = dataRow["rigid"].ToString(),
+                    Disk1      = int.Parse(dataRow["disk1"].ToString()),
+                    Cap1       = int.Parse(dataRow["cap1"].ToString()),
+                    Disk2      = int.Parse(dataRow["disk2"].ToString()),
+                    Cap2       = int.Parse(dataRow["cap2"].ToString())
                 };
 
                 entries.Add(entry);

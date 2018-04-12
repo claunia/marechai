@@ -34,58 +34,58 @@ namespace Cicm.Database.Schemas
     public class Computer
     {
         /// <summary>Bits of GPRs of primary CPU</summary>
-        public int bits;
+        public int Bits;
         /// <summary>Capacity of first removable disk format</summary>
-        public string cap1;
+        public string Cap1;
         /// <summary>Capacity of second removable disk format</summary>
-        public string cap2;
+        public string Cap2;
         /// <summary>Maximum colors on screen</summary>
-        public int colors;
+        public int Colors;
         /// <summary>Free-form comments</summary>
-        public string comment;
+        public string Comment;
         /// <summary>Manufacturer's company ID</summary>
-        public int company;
+        public int Company;
         /// <summary>Primary CPU</summary>
-        public int cpu1;
+        public int Cpu1;
         /// <summary>Secondary CPU</summary>
-        public int cpu2;
+        public int Cpu2;
         /// <summary>ID of first removable disk format</summary>
-        public int disk1;
+        public int Disk1;
         /// <summary>ID of second removable disk format</summary>
-        public int disk2;
+        public int Disk2;
         /// <summary>ID of GPU</summary>
-        public int gpu;
+        public int Gpu;
         /// <summary>ID of first hard disk format</summary>
-        public int hdd1;
+        public int Hdd1;
         /// <summary>ID of second hard disk format</summary>
-        public int hdd2;
+        public int Hdd2;
         /// <summary>ID of third hard disk format</summary>
-        public int hdd3;
+        public int Hdd3;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>Frequency in MHz of primary CPU</summary>
-        public float mhz1;
+        public float Mhz1;
         /// <summary>Frequency in MHz of secondary CPU</summary>
-        public float mhz2;
+        public float Mhz2;
         /// <summary>Model name</summary>
-        public string model;
+        public string Model;
         /// <summary>ID of MPU</summary>
-        public int mpu;
+        public int Mpu;
         /// <summary>Audio channels supported by the MPU</summary>
-        public int music_channels;
+        public int MusicChannels;
         /// <summary>Size in kibibytes of program RAM</summary>
-        public int ram;
+        public int Ram;
         /// <summary>Resolution in WxH pixels</summary>
-        public string res;
+        public string Resolution;
         /// <summary>Size in kibibytes of firmware</summary>
-        public int rom;
+        public int Rom;
         /// <summary>Audio channels supported by the DSP</summary>
-        public int sound_channels;
+        public int SoundChannels;
         /// <summary>ID of DSP</summary>
-        public int spu;
+        public int Spu;
         /// <summary>Size in kibibytes for video RAM</summary>
-        public int vram;
+        public int Vram;
         /// <summary>Introduction date, 0 if unknown</summary>
-        public int year;
+        public int Year;
     }
 }

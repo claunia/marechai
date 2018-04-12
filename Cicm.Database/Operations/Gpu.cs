@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddGpu(Gpu entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding GPU `{0}`...", entry.gpu);
+            Console.Write("Adding GPU `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandGpu(entry);
@@ -203,14 +203,14 @@ namespace Cicm.Database
         public bool UpdateGpu(Gpu entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating GPU `{0}`...", entry.gpu);
+            Console.WriteLine("Updating GPU `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandGpu(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE gpus SET GPU = @GPU " + $"WHERE id = {entry.id}";
+            string sql = "UPDATE gpus SET GPU = @GPU " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -257,7 +257,7 @@ namespace Cicm.Database
 
             param1.DbType = DbType.String;
 
-            param1.Value = entry.gpu;
+            param1.Value = entry.Name;
 
             dbcmd.Parameters.Add(param1);
 
@@ -270,7 +270,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Gpu entry = new Gpu {id = int.Parse(dataRow["id"].ToString()), gpu = dataRow["GPU"].ToString()};
+                Gpu entry = new Gpu {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["GPU"].ToString()};
 
                 entries.Add(entry);
             }

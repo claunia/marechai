@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddBrowserTest(BrowserTest entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding browser test `{0}`...", entry.idstring);
+            Console.Write("Adding browser test `{0}`...", entry.UserAgent);
             #endif
 
             IDbCommand     dbcmd = GetCommandBrowserTest(entry);
@@ -205,7 +205,7 @@ namespace Cicm.Database
         public bool UpdateBrowserTest(BrowserTest entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating browser test `{0}`...", entry.idstring);
+            Console.WriteLine("Updating browser test `{0}`...", entry.UserAgent);
             #endif
 
             IDbCommand     dbcmd = GetCommandBrowserTest(entry);
@@ -215,7 +215,7 @@ namespace Cicm.Database
             string sql =
                 "UPDATE browser_test SET idstring = @idstring, browser = @browser, version = @version, os = @os, platform = @platform, gif87 = @gif87, "              +
                 "gif89 = @gif89, jpeg = @jpeg, png = @png, pngt = @pngt, agif = @agif, table = @table, colors = @colors, js = @js, frames = @frames, flash = @flash " +
-                $"WHERE id = {entry.id}";
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -307,22 +307,22 @@ namespace Cicm.Database
             param15.DbType = DbType.Boolean;
             param16.DbType = DbType.Boolean;
 
-            param1.Value  = entry.idstring;
-            param2.Value  = entry.browser;
-            param3.Value  = entry.version;
-            param4.Value  = entry.os;
-            param5.Value  = entry.platform;
-            param6.Value  = entry.gif87;
-            param7.Value  = entry.gif89;
-            param8.Value  = entry.jpeg;
-            param9.Value  = entry.png;
-            param10.Value = entry.pngt;
-            param11.Value = entry.agif;
-            param12.Value = entry.table;
-            param13.Value = entry.colors;
-            param14.Value = entry.js;
-            param15.Value = entry.frames;
-            param16.Value = entry.flash;
+            param1.Value  = entry.UserAgent;
+            param2.Value  = entry.Name;
+            param3.Value  = entry.Version;
+            param4.Value  = entry.OperatingSystem;
+            param5.Value  = entry.Architecture;
+            param6.Value  = entry.Gif87;
+            param7.Value  = entry.Gif89;
+            param8.Value  = entry.Jpeg;
+            param9.Value  = entry.Png;
+            param10.Value = entry.AlphaPng;
+            param11.Value = entry.AnimatedGif;
+            param12.Value = entry.Tables;
+            param13.Value = entry.Color;
+            param14.Value = entry.Js;
+            param15.Value = entry.Frames;
+            param16.Value = entry.Flash;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -352,23 +352,23 @@ namespace Cicm.Database
             {
                 BrowserTest entry = new BrowserTest
                 {
-                    id       = ushort.Parse(dataRow["id"].ToString()),
-                    idstring = dataRow["idstring"].ToString(),
-                    browser  = dataRow["browser"].ToString(),
-                    version  = dataRow["version"].ToString(),
-                    os       = dataRow["os"].ToString(),
-                    platform = dataRow["platform"].ToString(),
-                    gif87    = bool.Parse(dataRow["gif87"].ToString()),
-                    gif89    = bool.Parse(dataRow["gif89"].ToString()),
-                    jpeg     = bool.Parse(dataRow["jpeg"].ToString()),
-                    png      = bool.Parse(dataRow["png"].ToString()),
-                    pngt     = bool.Parse(dataRow["pngt"].ToString()),
-                    agif     = bool.Parse(dataRow["agif"].ToString()),
-                    table    = bool.Parse(dataRow["table"].ToString()),
-                    colors   = bool.Parse(dataRow["colors"].ToString()),
-                    js       = bool.Parse(dataRow["js"].ToString()),
-                    frames   = bool.Parse(dataRow["frames"].ToString()),
-                    flash    = bool.Parse(dataRow["flash"].ToString())
+                    Id              = ushort.Parse(dataRow["id"].ToString()),
+                    UserAgent       = dataRow["idstring"].ToString(),
+                    Name            = dataRow["browser"].ToString(),
+                    Version         = dataRow["version"].ToString(),
+                    OperatingSystem = dataRow["os"].ToString(),
+                    Architecture    = dataRow["platform"].ToString(),
+                    Gif87           = bool.Parse(dataRow["gif87"].ToString()),
+                    Gif89           = bool.Parse(dataRow["gif89"].ToString()),
+                    Jpeg            = bool.Parse(dataRow["jpeg"].ToString()),
+                    Png             = bool.Parse(dataRow["png"].ToString()),
+                    AlphaPng        = bool.Parse(dataRow["pngt"].ToString()),
+                    AnimatedGif     = bool.Parse(dataRow["agif"].ToString()),
+                    Tables          = bool.Parse(dataRow["table"].ToString()),
+                    Color           = bool.Parse(dataRow["colors"].ToString()),
+                    Js              = bool.Parse(dataRow["js"].ToString()),
+                    Frames          = bool.Parse(dataRow["frames"].ToString()),
+                    Flash           = bool.Parse(dataRow["flash"].ToString())
                 };
 
                 entries.Add(entry);

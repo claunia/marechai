@@ -33,41 +33,41 @@ namespace Cicm.Database.Schemas
     /// <summary>Owned computer</summary>
     public class OwnComputer
     {
+        /// <summary>Acquired date</summary>
+        public string Acquired;
         /// <summary>Box present in collection</summary>
-        public bool boxed;
+        public bool Boxed;
         /// <summary>Capacity of first removable disk format</summary>
-        public int cap1;
+        public int Cap1;
         /// <summary>Capacity of second removable disk format</summary>
-        public int cap2;
-        /// <summary>Primary CPU</summary>
-        public int cpu1;
-        /// <summary>Secondary CPU</summary>
-        public int cpu2;
-        /// <summary>Adquired date</summary>
-        public string date;
+        public int Cap2;
         /// <summary>Computer's ID</summary>
-        public int db_id;
+        public int ComputerId;
+        /// <summary>Primary CPU</summary>
+        public int Cpu1;
+        /// <summary>Secondary CPU</summary>
+        public int Cpu2;
         /// <summary>ID of first removable disk format</summary>
-        public int disk1;
+        public int Disk1;
         /// <summary>ID of second removable disk format</summary>
-        public int disk2;
+        public int Disk2;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>Original manuals present in collection</summary>
-        public bool manuals;
+        public bool Manuals;
         /// <summary>Frequency in MHz of primary CPU</summary>
-        public float mhz1;
+        public float Mhz1;
         /// <summary>Frequency in MHz of secondary CPU</summary>
-        public float mhz2;
+        public float Mhz2;
         /// <summary>Size in kibibytes of program RAM</summary>
-        public int ram;
+        public int Ram;
         /// <summary>Rigid disk</summary>
-        public string rigid;
+        public string Rigid;
         /// <summary>Status</summary>
-        public int status;
+        public int Status;
         /// <summary>Available for trade</summary>
-        public bool trade;
+        public bool Trade;
         /// <summary>Size in kibibytes for video RAM</summary>
-        public int vram;
+        public int Vram;
     }
 }

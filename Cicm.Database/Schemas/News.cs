@@ -34,12 +34,12 @@ namespace Cicm.Database.Schemas
     public class News
     {
         /// <summary>Affected ID</summary>
-        public int added_id;
+        public int AffectedId;
         /// <summary>Date</summary>
-        public string date;
+        public string Date;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>News type</summary>
-        public int type;
+        public int Type;
     }
 }

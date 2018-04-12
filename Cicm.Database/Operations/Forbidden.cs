@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddForbidden(Forbidden entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding forbidden `{0}`...", entry.browser);
+            Console.Write("Adding forbidden `{0}`...", entry.UserAgent);
             #endif
 
             IDbCommand     dbcmd = GetCommandForbidden(entry);
@@ -204,7 +204,7 @@ namespace Cicm.Database
         public bool UpdateForbidden(Forbidden entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating forbidden `{0}`...", entry.browser);
+            Console.WriteLine("Updating forbidden `{0}`...", entry.UserAgent);
             #endif
 
             IDbCommand     dbcmd = GetCommandForbidden(entry);
@@ -212,7 +212,7 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             string sql = "UPDATE forbidden SET browser = @browser, date = @date, ip = @ip, referer = @referer " +
-                         $"WHERE id = {entry.id}";
+                         $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -268,10 +268,10 @@ namespace Cicm.Database
             param3.DbType = DbType.String;
             param4.DbType = DbType.String;
 
-            param1.Value = entry.browser;
-            param2.Value = entry.date;
-            param3.Value = entry.ip;
-            param4.Value = entry.referer;
+            param1.Value = entry.UserAgent;
+            param2.Value = entry.Date;
+            param3.Value = entry.Ip;
+            param4.Value = entry.Referer;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -289,11 +289,11 @@ namespace Cicm.Database
             {
                 Forbidden entry = new Forbidden
                 {
-                    id      = int.Parse(dataRow["id"].ToString()),
-                    browser = dataRow["browser"].ToString(),
-                    date    = dataRow["date"].ToString(),
-                    ip      = dataRow["ip"].ToString(),
-                    referer = dataRow["referer"].ToString()
+                    Id        = int.Parse(dataRow["id"].ToString()),
+                    UserAgent = dataRow["browser"].ToString(),
+                    Date      = dataRow["date"].ToString(),
+                    Ip        = dataRow["ip"].ToString(),
+                    Referer   = dataRow["referer"].ToString()
                 };
 
                 entries.Add(entry);

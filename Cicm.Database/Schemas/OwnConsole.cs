@@ -33,19 +33,19 @@ namespace Cicm.Database.Schemas
     /// <summary>Owned videogame console</summary>
     public class OwnConsole
     {
+        /// <summary>Acquired date</summary>
+        public string Acquired;
         /// <summary>Box present in collection</summary>
-        public bool boxed;
-        /// <summary>Adquired date</summary>
-        public string date;
+        public bool Boxed;
         /// <summary>Videogame console's ID</summary>
-        public int db_id;
+        public int ConsoleId;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>Original manuals present in collection</summary>
-        public bool manuals;
+        public bool Manuals;
         /// <summary>Status</summary>
-        public int status;
+        public int Status;
         /// <summary>Available for trade</summary>
-        public bool trade;
+        public bool Trade;
     }
 }

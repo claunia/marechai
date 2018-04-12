@@ -33,9 +33,9 @@ namespace Cicm.Database.Schemas
     /// <summary>Digital Sound Processor</summary>
     public class Dsp
     {
-        /// <summary>Name</summary>
-        public string DSP;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
+        /// <summary>Name</summary>
+        public string Name;
     }
 }

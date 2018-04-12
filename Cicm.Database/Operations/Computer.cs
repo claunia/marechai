@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddComputer(Computer entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding computer `{0}`...", entry.model);
+            Console.Write("Adding computer `{0}`...", entry.Model);
             #endif
 
             IDbCommand     dbcmd = GetCommandComputer(entry);
@@ -205,7 +205,7 @@ namespace Cicm.Database
         public bool UpdateComputer(Computer entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating computer `{0}`...", entry.model);
+            Console.WriteLine("Updating computer `{0}`...", entry.Model);
             #endif
 
             IDbCommand     dbcmd = GetCommandComputer(entry);
@@ -216,7 +216,7 @@ namespace Cicm.Database
                 "UPDATE computers SET company = @company, year = @year, model = @model, cpu1 = @cpu1, mhz1 = @mhz1, cpu2 = @cpu2, "                                                                             +
                 "mhz2 = @mhz2, bits = @bits, ram = @ram, rom = @rom, gpu = @gpu, vram = @vram, colors = @colors, res = @res, spu = @spu, mpu = @mpu "                                                           +
                 "sound_channels = @sound_channels, music_channels = @music_channels, hdd1 = @hdd1, hdd2 = @hdd2, hdd3 = @hdd3, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2, comment = @comment " +
-                $"WHERE id = {entry.id}";
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -338,32 +338,32 @@ namespace Cicm.Database
             param25.DbType = DbType.String;
             param26.DbType = DbType.String;
 
-            param1.Value  = entry.company;
-            param2.Value  = entry.year;
-            param3.Value  = entry.model;
-            param4.Value  = entry.cpu1;
-            param5.Value  = entry.mhz1;
-            param6.Value  = entry.cpu2;
-            param7.Value  = entry.mhz2;
-            param8.Value  = entry.bits;
-            param9.Value  = entry.ram;
-            param10.Value = entry.rom;
-            param11.Value = entry.gpu;
-            param12.Value = entry.vram;
-            param13.Value = entry.colors;
-            param14.Value = entry.res;
-            param15.Value = entry.spu;
-            param16.Value = entry.mpu;
-            param17.Value = entry.sound_channels;
-            param18.Value = entry.music_channels;
-            param19.Value = entry.hdd1;
-            param20.Value = entry.hdd2;
-            param21.Value = entry.hdd3;
-            param22.Value = entry.disk1;
-            param23.Value = entry.cap1;
-            param24.Value = entry.disk2;
-            param25.Value = entry.cap2;
-            param26.Value = entry.comment;
+            param1.Value  = entry.Company;
+            param2.Value  = entry.Year;
+            param3.Value  = entry.Model;
+            param4.Value  = entry.Cpu1;
+            param5.Value  = entry.Mhz1;
+            param6.Value  = entry.Cpu2;
+            param7.Value  = entry.Mhz2;
+            param8.Value  = entry.Bits;
+            param9.Value  = entry.Ram;
+            param10.Value = entry.Rom;
+            param11.Value = entry.Gpu;
+            param12.Value = entry.Vram;
+            param13.Value = entry.Colors;
+            param14.Value = entry.Resolution;
+            param15.Value = entry.Spu;
+            param16.Value = entry.Mpu;
+            param17.Value = entry.SoundChannels;
+            param18.Value = entry.MusicChannels;
+            param19.Value = entry.Hdd1;
+            param20.Value = entry.Hdd2;
+            param21.Value = entry.Hdd3;
+            param22.Value = entry.Disk1;
+            param23.Value = entry.Cap1;
+            param24.Value = entry.Disk2;
+            param25.Value = entry.Cap2;
+            param26.Value = entry.Comment;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -403,33 +403,33 @@ namespace Cicm.Database
             {
                 Computer entry = new Computer
                 {
-                    id             = int.Parse(dataRow["id"].ToString()),
-                    company        = int.Parse(dataRow["company"].ToString()),
-                    year           = int.Parse(dataRow["year"].ToString()),
-                    model          = dataRow["model"].ToString(),
-                    cpu1           = int.Parse(dataRow["cpu1"].ToString()),
-                    mhz1           = float.Parse(dataRow["mhz1"].ToString()),
-                    cpu2           = int.Parse(dataRow["cpu2"].ToString()),
-                    mhz2           = float.Parse(dataRow["mhz2"].ToString()),
-                    bits           = int.Parse(dataRow["bits"].ToString()),
-                    ram            = int.Parse(dataRow["ram"].ToString()),
-                    rom            = int.Parse(dataRow["rom"].ToString()),
-                    gpu            = int.Parse(dataRow["gpu"].ToString()),
-                    vram           = int.Parse(dataRow["vram"].ToString()),
-                    colors         = int.Parse(dataRow["colors"].ToString()),
-                    res            = dataRow["res"].ToString(),
-                    spu            = int.Parse(dataRow["spu"].ToString()),
-                    mpu            = int.Parse(dataRow["mpu"].ToString()),
-                    sound_channels = int.Parse(dataRow["sound_channels"].ToString()),
-                    music_channels = int.Parse(dataRow["music_channels"].ToString()),
-                    hdd1           = int.Parse(dataRow["hdd1"].ToString()),
-                    hdd2           = int.Parse(dataRow["hdd2"].ToString()),
-                    hdd3           = int.Parse(dataRow["hdd3"].ToString()),
-                    disk1          = int.Parse(dataRow["disk1"].ToString()),
-                    cap1           = dataRow["cap1"].ToString(),
-                    disk2          = int.Parse(dataRow["disk2"].ToString()),
-                    cap2           = dataRow["cap2"].ToString(),
-                    comment        = dataRow["comment"].ToString()
+                    Id            = int.Parse(dataRow["id"].ToString()),
+                    Company       = int.Parse(dataRow["company"].ToString()),
+                    Year          = int.Parse(dataRow["year"].ToString()),
+                    Model         = dataRow["model"].ToString(),
+                    Cpu1          = int.Parse(dataRow["cpu1"].ToString()),
+                    Mhz1          = float.Parse(dataRow["mhz1"].ToString()),
+                    Cpu2          = int.Parse(dataRow["cpu2"].ToString()),
+                    Mhz2          = float.Parse(dataRow["mhz2"].ToString()),
+                    Bits          = int.Parse(dataRow["bits"].ToString()),
+                    Ram           = int.Parse(dataRow["ram"].ToString()),
+                    Rom           = int.Parse(dataRow["rom"].ToString()),
+                    Gpu           = int.Parse(dataRow["gpu"].ToString()),
+                    Vram          = int.Parse(dataRow["vram"].ToString()),
+                    Colors        = int.Parse(dataRow["colors"].ToString()),
+                    Resolution    = dataRow["res"].ToString(),
+                    Spu           = int.Parse(dataRow["spu"].ToString()),
+                    Mpu           = int.Parse(dataRow["mpu"].ToString()),
+                    SoundChannels = int.Parse(dataRow["sound_channels"].ToString()),
+                    MusicChannels = int.Parse(dataRow["music_channels"].ToString()),
+                    Hdd1          = int.Parse(dataRow["hdd1"].ToString()),
+                    Hdd2          = int.Parse(dataRow["hdd2"].ToString()),
+                    Hdd3          = int.Parse(dataRow["hdd3"].ToString()),
+                    Disk1         = int.Parse(dataRow["disk1"].ToString()),
+                    Cap1          = dataRow["cap1"].ToString(),
+                    Disk2         = int.Parse(dataRow["disk2"].ToString()),
+                    Cap2          = dataRow["cap2"].ToString(),
+                    Comment       = dataRow["comment"].ToString()
                 };
 
                 entries.Add(entry);

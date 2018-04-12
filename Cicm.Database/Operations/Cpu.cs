@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddCpu(Cpu entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding CPU `{0}`...", entry.cpu);
+            Console.Write("Adding CPU `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandCpu(entry);
@@ -203,14 +203,14 @@ namespace Cicm.Database
         public bool UpdateCpu(Cpu entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating CPU `{0}`...", entry.cpu);
+            Console.WriteLine("Updating CPU `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandCpu(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE cpu SET cpu = @cpu " + $"WHERE id = {entry.id}";
+            string sql = "UPDATE cpu SET cpu = @cpu " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -257,7 +257,7 @@ namespace Cicm.Database
 
             param1.DbType = DbType.String;
 
-            param1.Value = entry.cpu;
+            param1.Value = entry.Name;
 
             dbcmd.Parameters.Add(param1);
 
@@ -270,7 +270,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Cpu entry = new Cpu {id = int.Parse(dataRow["id"].ToString()), cpu = dataRow["cpu"].ToString()};
+                Cpu entry = new Cpu {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["cpu"].ToString()};
 
                 entries.Add(entry);
             }

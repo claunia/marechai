@@ -34,8 +34,8 @@ namespace Cicm.Database.Schemas
     public class Mpu
     {
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>Name</summary>
-        public string mpu;
+        public string Name;
     }
 }

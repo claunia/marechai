@@ -35,15 +35,15 @@ namespace Cicm.Database.Schemas
     /// </summary>
     public class Log
     {
-        /// <summary>User agent string</summary>
-        public string browser;
         /// <summary>Access date</summary>
-        public string date;
+        public string Date;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
         /// <summary>Access IP</summary>
-        public string ip;
+        public string Ip;
         /// <summary>Referer</summary>
-        public string referer;
+        public string Referer;
+        /// <summary>User agent string</summary>
+        public string UserAgent;
     }
 }

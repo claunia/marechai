@@ -33,9 +33,9 @@ namespace Cicm.Database.Schemas
     /// <summary>Graphics Processing Unit</summary>
     public class Gpu
     {
-        /// <summary>Name</summary>
-        public string gpu;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
+        /// <summary>Name</summary>
+        public string Name;
     }
 }

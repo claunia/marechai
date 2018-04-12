@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddOwnConsole(OwnConsole entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding owned console `{0}`...", entry.db_id);
+            Console.Write("Adding owned console `{0}`...", entry.ConsoleId);
             #endif
 
             IDbCommand     dbcmd = GetCommandOwnConsole(entry);
@@ -204,7 +204,7 @@ namespace Cicm.Database
         public bool UpdateOwnConsole(OwnConsole entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating console `{0}`...", entry.db_id);
+            Console.WriteLine("Updating console `{0}`...", entry.ConsoleId);
             #endif
 
             IDbCommand     dbcmd = GetCommandOwnConsole(entry);
@@ -213,7 +213,7 @@ namespace Cicm.Database
 
             string sql =
                 "UPDATE own_consoles SET db_id = @db_id, date = @date, status = @status, trade = @trade, boxed = @boxed, manuals = @manuals " +
-                $"WHERE id = {entry.id}";
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -275,12 +275,12 @@ namespace Cicm.Database
             param5.DbType = DbType.Boolean;
             param6.DbType = DbType.Boolean;
 
-            param1.Value = entry.db_id;
-            param2.Value = entry.date;
-            param3.Value = entry.status;
-            param4.Value = entry.trade;
-            param5.Value = entry.boxed;
-            param6.Value = entry.manuals;
+            param1.Value = entry.ConsoleId;
+            param2.Value = entry.Acquired;
+            param3.Value = entry.Status;
+            param4.Value = entry.Trade;
+            param5.Value = entry.Boxed;
+            param6.Value = entry.Manuals;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -300,13 +300,13 @@ namespace Cicm.Database
             {
                 OwnConsole entry = new OwnConsole
                 {
-                    id      = int.Parse(dataRow["id"].ToString()),
-                    db_id   = int.Parse(dataRow["db_id"].ToString()),
-                    date    = dataRow["date"].ToString(),
-                    status  = int.Parse(dataRow["status"].ToString()),
-                    trade   = bool.Parse(dataRow["trade"].ToString()),
-                    boxed   = bool.Parse(dataRow["boxed"].ToString()),
-                    manuals = bool.Parse(dataRow["manuals"].ToString())
+                    Id        = int.Parse(dataRow["id"].ToString()),
+                    ConsoleId = int.Parse(dataRow["db_id"].ToString()),
+                    Acquired  = dataRow["date"].ToString(),
+                    Status    = int.Parse(dataRow["status"].ToString()),
+                    Trade     = bool.Parse(dataRow["trade"].ToString()),
+                    Boxed     = bool.Parse(dataRow["boxed"].ToString()),
+                    Manuals   = bool.Parse(dataRow["manuals"].ToString())
                 };
 
                 entries.Add(entry);

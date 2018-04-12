@@ -171,7 +171,7 @@ namespace Cicm.Database
         public bool AddMpu(Mpu entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding MPU `{0}`...", entry.mpu);
+            Console.Write("Adding MPU `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandMpu(entry);
@@ -203,14 +203,14 @@ namespace Cicm.Database
         public bool UpdateMpu(Mpu entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating MPU `{0}`...", entry.mpu);
+            Console.WriteLine("Updating MPU `{0}`...", entry.Name);
             #endif
 
             IDbCommand     dbcmd = GetCommandMpu(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE mpus SET MPU = @MPU " + $"WHERE id = {entry.id}";
+            string sql = "UPDATE mpus SET MPU = @MPU " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -252,7 +252,7 @@ namespace Cicm.Database
 
             param1.DbType = DbType.String;
 
-            param1.Value = entry.mpu;
+            param1.Value = entry.Name;
 
             dbcmd.Parameters.Add(param1);
 
@@ -265,7 +265,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Mpu entry = new Mpu {id = int.Parse(dataRow["id"].ToString()), mpu = dataRow["MPU"].ToString()};
+                Mpu entry = new Mpu {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["MPU"].ToString()};
 
                 entries.Add(entry);
             }

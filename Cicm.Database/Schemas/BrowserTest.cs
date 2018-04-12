@@ -33,39 +33,39 @@ namespace Cicm.Database.Schemas
     /// <summary>Browser test</summary>
     public class BrowserTest
     {
-        /// <summary>Supports animated GIF</summary>
-        public bool agif;
-        /// <summary>Browser name</summary>
-        public string browser;
-        /// <summary>Supports colors</summary>
-        public bool colors;
-        /// <summary>Supports Adobe Flash</summary>
-        public bool flash;
-        /// <summary>Supports IFRAMEs</summary>
-        public bool frames;
-        /// <summary>Supports GIF87</summary>
-        public bool gif87;
-        /// <summary>Supports GIF with transparency (GIF89)</summary>
-        public bool gif89;
-        /// <summary>ID</summary>
-        public ushort id;
-        /// <summary>User agent string</summary>
-        public string idstring;
-        /// <summary>Supports JPEG</summary>
-        public bool jpeg;
-        /// <summary>Supports JavaScript</summary>
-        public bool js;
-        /// <summary>Browser operating system</summary>
-        public string os;
-        /// <summary>Browser architecture</summary>
-        public string platform;
-        /// <summary>Supports PNG</summary>
-        public bool png;
         /// <summary>Supports PNG with alpha channel</summary>
-        public bool pngt;
+        public bool AlphaPng;
+        /// <summary>Supports animated GIF</summary>
+        public bool AnimatedGif;
+        /// <summary>Browser architecture</summary>
+        public string Architecture;
+        /// <summary>Supports colors</summary>
+        public bool Color;
+        /// <summary>Supports Adobe Flash</summary>
+        public bool Flash;
+        /// <summary>Supports IFRAMEs</summary>
+        public bool Frames;
+        /// <summary>Supports GIF87</summary>
+        public bool Gif87;
+        /// <summary>Supports GIF with transparency (GIF89)</summary>
+        public bool Gif89;
+        /// <summary>ID</summary>
+        public ushort Id;
+        /// <summary>Supports JPEG</summary>
+        public bool Jpeg;
+        /// <summary>Supports JavaScript</summary>
+        public bool Js;
+        /// <summary>Browser name</summary>
+        public string Name;
+        /// <summary>Browser operating system</summary>
+        public string OperatingSystem;
+        /// <summary>Supports PNG</summary>
+        public bool Png;
         /// <summary>Supports HTML tables</summary>
-        public bool table;
+        public bool Tables;
+        /// <summary>User agent string</summary>
+        public string UserAgent;
         /// <summary>Browser version</summary>
-        public string version;
+        public string Version;
     }
 }

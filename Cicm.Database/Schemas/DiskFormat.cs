@@ -34,8 +34,8 @@ namespace Cicm.Database.Schemas
     public class DiskFormat
     {
         /// <summary>Description</summary>
-        public string Format;
+        public string Description;
         /// <summary>ID</summary>
-        public int id;
+        public int Id;
     }
 }
