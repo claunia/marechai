@@ -38,7 +38,7 @@ namespace cicm_web
 {
     public static class Program
     {
-        static Cicm.Database.IDbCore database;
+        internal static Cicm.Database.IDbCore Database;
         
         public static void Main(string[] args)
         {
@@ -106,7 +106,18 @@ namespace cicm_web
                           DetectOS.IsMono ? Version.GetMonoVersion() : Version.GetNetCoreVersion());
 
             Console.WriteLine("\u001b[31;1mConnecting to MySQL database...\u001b[0m");
-            database = new Cicm.Database.Mysql("localhost", "cicm", "cicm", 3306, "cicmpass");
+            Database = new Cicm.Database.Mysql();
+            bool res = Database.OpenDb("localhost", "cicm", "cicm", "cicmpass", 3306);
+            if(!res)
+            {
+                Console.WriteLine("\u001b[31;1mCould not open database, trying to create a new one...\u001b[0m");
+                res = Database.CreateDb("localhost", "cicm", "cicm", "cicmpass", 3306);
+                if(!res)
+                {
+                    Console.WriteLine("\u001b[31;1mCould create database, exiting...\u001b[0m");
+                    return;
+                }
+            }
             Console.WriteLine("\u001b[31;1mStarting web server...\u001b[0m");
 
             BuildWebHost(args).Run();

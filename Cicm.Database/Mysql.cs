@@ -38,14 +38,6 @@ namespace Cicm.Database
     {
         MySqlConnection connection;
 
-        public Mysql(string server, string user, string database, ushort port, string password)
-        {
-            string connectionString =
-                $"server={server};user={user};database={database};port={port};password={password}";
-
-            connection = new MySqlConnection(connectionString);
-        }
-
         /// <summary>Database operations</summary>
         public Operations Operations { get; private set; }
 
