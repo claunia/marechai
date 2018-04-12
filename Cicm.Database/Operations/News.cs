@@ -284,7 +284,7 @@ namespace Cicm.Database
                 {
                     Id         = int.Parse(dataRow["id"].ToString()),
                     Date       = dataRow["date"].ToString(),
-                    Type       = int.Parse(dataRow["type"].ToString()),
+                    Type       = (NewsType)int.Parse(dataRow["type"].ToString()),
                     AffectedId = int.Parse(dataRow["added_id"].ToString())
                 };
 

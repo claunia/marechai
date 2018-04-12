@@ -40,6 +40,19 @@ namespace Cicm.Database.Schemas
         /// <summary>ID</summary>
         public int Id;
         /// <summary>News type</summary>
-        public int Type;
+        public NewsType Type;
+    }
+
+    public enum NewsType : int
+    {
+        NewComputerInDb = 1,
+        NewConsoleInDb = 2,
+        NewComputerInCollection = 3,
+        NewConsoleInCollection = 4,
+        UpdatedComputerInDb = 5,
+        UpdatedConsoleInDb = 6,
+        UpdatedComputerInCollection = 7,
+        UpdatedConsoleInCollection = 8,
+        NewMoneyDonation = 9
     }
 }
