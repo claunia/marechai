@@ -38,7 +38,7 @@ namespace cicm_web
 {
     public static class Program
     {
-        static Cicm.Database.Mysql database;
+        static Cicm.Database.IDbCore database;
         
         public static void Main(string[] args)
         {
