@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 using System;
+using cicm_web.Database;
 using DiscImageChef.Interop;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,8 @@ namespace cicm_web
 {
     public static class Program
     {
+        static cicm_web.Database.Mysql database;
+        
         public static void Main(string[] args)
         {
             Console.Clear();
@@ -103,6 +106,8 @@ namespace cicm_web
                           DetectOS.IsMono ? "Mono" : ".NET Core",
                           DetectOS.IsMono ? Version.GetMonoVersion() : Version.GetNetCoreVersion());
 
+            Console.WriteLine("\u001b[31;1mConnecting to MySQL database...\u001b[0m");
+            database = new Mysql("localhost", "cicm", "cicm", 3306, "cicmpass");
             Console.WriteLine("\u001b[31;1mStarting web server...\u001b[0m");
 
             BuildWebHost(args).Run();
