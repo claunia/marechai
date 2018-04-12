@@ -1,6 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 
-namespace cicm_web.Database
+namespace Cicm.Database
 {
     public class Mysql
     {
