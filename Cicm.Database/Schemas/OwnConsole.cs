@@ -44,7 +44,7 @@ namespace Cicm.Database.Schemas
         /// <summary>Original manuals present in collection</summary>
         public bool Manuals;
         /// <summary>Status</summary>
-        public int Status;
+        public StatusType Status;
         /// <summary>Available for trade</summary>
         public bool Trade;
     }

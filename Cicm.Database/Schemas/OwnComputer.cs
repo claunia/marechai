@@ -64,7 +64,7 @@ namespace Cicm.Database.Schemas
         /// <summary>Rigid disk</summary>
         public string Rigid;
         /// <summary>Status</summary>
-        public int Status;
+        public StatusType Status;
         /// <summary>Available for trade</summary>
         public bool Trade;
         /// <summary>Size in kibibytes for video RAM</summary>

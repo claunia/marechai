@@ -42,4 +42,11 @@ namespace Cicm.Database.Schemas
         UpdatedConsoleInCollection  = 8,
         NewMoneyDonation            = 9
     }
+
+    public enum StatusType
+    {
+        TestedGood = 1,
+        NotTested  = 2,
+        TestedBad  = 3
+    }
 }
