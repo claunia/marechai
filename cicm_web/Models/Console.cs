@@ -35,29 +35,29 @@ namespace cicm_web.Models
 {
     public class Console
     {
-        public int        Bits;
-        public int        Cap;
-        public int        Colors;
-        public string     Comments;
-        public Company    Company;
-        public Cpu        Cpu1;
-        public Cpu        Cpu2;
-        public DiskFormat Format;
-        public Gpu        Gpu;
-        public int        Id;
-        public float      Mhz1;
-        public float      Mhz2;
-        public Mpu        Mpu;
-        public int        MusicChannels;
-        public string     Name;
-        public int        Palette;
-        public int        Ram;
-        public string     Resolution;
-        public int        Rom;
-        public int        SoundChannels;
-        public Dsp        Spu;
-        public int        Vram;
-        public int        Year;
+        public int            Bits;
+        public int            Cap;
+        public int            Colors;
+        public string         Comments;
+        public ConsoleCompany Company;
+        public Cpu            Cpu1;
+        public Cpu            Cpu2;
+        public DiskFormat     Format;
+        public Gpu            Gpu;
+        public int            Id;
+        public float          Mhz1;
+        public float          Mhz2;
+        public Mpu            Mpu;
+        public int            MusicChannels;
+        public string         Name;
+        public int            Palette;
+        public int            Ram;
+        public string         Resolution;
+        public int            Rom;
+        public int            SoundChannels;
+        public Dsp            Spu;
+        public int            Vram;
+        public int            Year;
 
         public static Console[] GetAllItems()
         {
@@ -90,7 +90,7 @@ namespace cicm_web.Models
                 Bits       = dbItem.Bits,
                 Colors     = dbItem.Colors,
                 Comments   = dbItem.Comments,
-                Company    = Company.GetItem(dbItem.Company),
+                Company    = ConsoleCompany.GetItem(dbItem.Company),
                 Gpu        = Gpu.GetItem(dbItem.Gpu),
                 Id         = dbItem.Id,
                 Name       = dbItem.Name,
