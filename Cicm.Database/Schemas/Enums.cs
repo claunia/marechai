@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : News.cs
+// Filename       : Enums.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of site news.
+//     Enumerations.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,16 +30,16 @@
 
 namespace Cicm.Database.Schemas
 {
-    /// <summary>Site news</summary>
-    public class News
+    public enum NewsType
     {
-        /// <summary>Affected ID</summary>
-        public int AffectedId;
-        /// <summary>Date</summary>
-        public string Date;
-        /// <summary>ID</summary>
-        public int Id;
-        /// <summary>News type</summary>
-        public NewsType Type;
+        NewComputerInDb             = 1,
+        NewConsoleInDb              = 2,
+        NewComputerInCollection     = 3,
+        NewConsoleInCollection      = 4,
+        UpdatedComputerInDb         = 5,
+        UpdatedConsoleInDb          = 6,
+        UpdatedComputerInCollection = 7,
+        UpdatedConsoleInCollection  = 8,
+        NewMoneyDonation            = 9
     }
 }
