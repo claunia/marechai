@@ -74,6 +74,42 @@ namespace Cicm.Database
         }
 
         /// <summary>
+        ///     Gets all computers from specified company
+        /// </summary>
+        /// <param name="entries">All computers</param>
+        /// <param name="company">Company id</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
+        public bool GetComputers(out List<Computer> entries, int company)
+        {
+            #if DEBUG
+            System.Console.WriteLine("Getting all computers from company id {0}...", company);
+            #endif
+
+            try
+            {
+                const string SQL = "SELECT * from computers WHERE company = '{id}'";
+
+                IDbCommand     dbCmd       = dbCon.CreateCommand();
+                IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+                dbCmd.CommandText = SQL;
+                DataSet dataSet = new DataSet();
+                dataAdapter.SelectCommand = dbCmd;
+                dataAdapter.Fill(dataSet);
+
+                entries = ComputersFromDataTable(dataSet.Tables[0]);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                System.Console.WriteLine("Error getting computers.");
+                System.Console.WriteLine(ex);
+                entries = null;
+                return false;
+            }
+        }
+
+        /// <summary>
         ///     Gets the specified number of computers since the specified start
         /// </summary>
         /// <param name="entries">List of computers</param>

@@ -73,6 +73,42 @@ namespace Cicm.Database
         }
 
         /// <summary>
+        ///     Gets all consoles from specified company
+        /// </summary>
+        /// <param name="entries">All consoles</param>
+        /// <param name="company">Company id</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
+        public bool GetConsoles(out List<Console> entries, int company)
+        {
+            #if DEBUG
+            System.Console.WriteLine("Getting all consoles from company id {0}...", company);
+            #endif
+
+            try
+            {
+                const string SQL = "SELECT * from consoles WHERE company = '{id}'";
+
+                IDbCommand     dbCmd       = dbCon.CreateCommand();
+                IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+                dbCmd.CommandText = SQL;
+                DataSet dataSet = new DataSet();
+                dataAdapter.SelectCommand = dbCmd;
+                dataAdapter.Fill(dataSet);
+
+                entries = ConsolesFromDataTable(dataSet.Tables[0]);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                System.Console.WriteLine("Error getting consoles.");
+                System.Console.WriteLine(ex);
+                entries = null;
+                return false;
+            }
+        }
+
+        /// <summary>
         ///     Gets the specified number of videogame consoles since the specified start
         /// </summary>
         /// <param name="entries">List of videogame consoles</param>
