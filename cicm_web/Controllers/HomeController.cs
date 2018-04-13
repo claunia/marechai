@@ -30,15 +30,24 @@
 
 using System.Diagnostics;
 using cicm_web.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cicm_web.Controllers
 {
     public class HomeController : Controller
     {
+        readonly IHostingEnvironment hostingEnvironment;
+
+        public HomeController(IHostingEnvironment env)
+        {
+            hostingEnvironment = env;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+            return View(News.GetLastItems());
         }
 
         public IActionResult About()
