@@ -358,17 +358,17 @@ namespace Cicm.Database
                     Version         = dataRow["version"].ToString(),
                     OperatingSystem = dataRow["os"].ToString(),
                     Architecture    = dataRow["platform"].ToString(),
-                    Gif87           = bool.Parse(dataRow["gif87"].ToString()),
-                    Gif89           = bool.Parse(dataRow["gif89"].ToString()),
-                    Jpeg            = bool.Parse(dataRow["jpeg"].ToString()),
-                    Png             = bool.Parse(dataRow["png"].ToString()),
-                    AlphaPng        = bool.Parse(dataRow["pngt"].ToString()),
-                    AnimatedGif     = bool.Parse(dataRow["agif"].ToString()),
-                    Tables          = bool.Parse(dataRow["table"].ToString()),
-                    Color           = bool.Parse(dataRow["colors"].ToString()),
-                    Js              = bool.Parse(dataRow["js"].ToString()),
-                    Frames          = bool.Parse(dataRow["frames"].ToString()),
-                    Flash           = bool.Parse(dataRow["flash"].ToString())
+                    Gif87           = int.Parse(dataRow["gif87"].ToString()) > 0,
+                    Gif89           = int.Parse(dataRow["gif89"].ToString()) > 0,
+                    Jpeg            = int.Parse(dataRow["jpeg"].ToString()) > 0,
+                    Png             = int.Parse(dataRow["png"].ToString()) > 0,
+                    AlphaPng        = int.Parse(dataRow["pngt"].ToString()) > 0,
+                    AnimatedGif     = int.Parse(dataRow["agif"].ToString()) > 0,
+                    Tables          = int.Parse(dataRow["table"].ToString()) > 0,
+                    Color           = int.Parse(dataRow["colors"].ToString()) > 0,
+                    Js              = int.Parse(dataRow["js"].ToString()) > 0,
+                    Frames          = int.Parse(dataRow["frames"].ToString()) > 0,
+                    Flash           = int.Parse(dataRow["flash"].ToString()) > 0
                 };
 
                 entries.Add(entry);

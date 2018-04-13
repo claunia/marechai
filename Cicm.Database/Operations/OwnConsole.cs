@@ -304,9 +304,9 @@ namespace Cicm.Database
                     ConsoleId = int.Parse(dataRow["db_id"].ToString()),
                     Acquired  = dataRow["date"].ToString(),
                     Status    = (StatusType)int.Parse(dataRow["status"].ToString()),
-                    Trade     = bool.Parse(dataRow["trade"].ToString()),
-                    Boxed     = bool.Parse(dataRow["boxed"].ToString()),
-                    Manuals   = bool.Parse(dataRow["manuals"].ToString())
+                    Trade     = int.Parse(dataRow["trade"].ToString()) > 0,
+                    Boxed     = int.Parse(dataRow["boxed"].ToString()) > 0,
+                    Manuals   = int.Parse(dataRow["manuals"].ToString()) > 0
                 };
 
                 entries.Add(entry);
