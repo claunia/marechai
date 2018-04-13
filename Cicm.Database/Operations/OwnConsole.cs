@@ -43,7 +43,7 @@ namespace Cicm.Database
         /// </summary>
         /// <param name="entries">All owned consoles</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetOwnOwnConsoles(out List<OwnConsole> entries)
+        public bool GetOwnConsoles(out List<OwnConsole> entries)
         {
             #if DEBUG
             Console.WriteLine("Getting all owned consoles...");
@@ -60,7 +60,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = OwnOwnConsolesFromDataTable(dataSet.Tables[0]);
+                entries = OwnConsolesFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
@@ -80,7 +80,7 @@ namespace Cicm.Database
         /// <param name="start">Start of query</param>
         /// <param name="count">How many entries to retrieve</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetOwnOwnConsoles(out List<OwnConsole> entries, ulong start, ulong count)
+        public bool GetOwnConsoles(out List<OwnConsole> entries, ulong start, ulong count)
         {
             #if DEBUG
             Console.WriteLine("Getting {0} owned consoles from {1}...", count, start);
@@ -97,7 +97,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = OwnOwnConsolesFromDataTable(dataSet.Tables[0]);
+                entries = OwnConsolesFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
@@ -132,7 +132,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                List<OwnConsole> entries = OwnOwnConsolesFromDataTable(dataSet.Tables[0]);
+                List<OwnConsole> entries = OwnConsolesFromDataTable(dataSet.Tables[0]);
 
                 return entries == null || entries.Count == 0 ? null : entries[0];
             }
@@ -148,7 +148,7 @@ namespace Cicm.Database
         ///     Counts the number of owned consoles in the database
         /// </summary>
         /// <returns>Entries in database</returns>
-        public long CountOwnOwnConsoles()
+        public long CountOwnConsoles()
         {
             #if DEBUG
             Console.WriteLine("Counting owned consoles...");
@@ -292,7 +292,7 @@ namespace Cicm.Database
             return dbcmd;
         }
 
-        static List<OwnConsole> OwnOwnConsolesFromDataTable(DataTable dataTable)
+        static List<OwnConsole> OwnConsolesFromDataTable(DataTable dataTable)
         {
             List<OwnConsole> entries = new List<OwnConsole>();
 
@@ -303,7 +303,7 @@ namespace Cicm.Database
                     Id        = int.Parse(dataRow["id"].ToString()),
                     ConsoleId = int.Parse(dataRow["db_id"].ToString()),
                     Acquired  = dataRow["date"].ToString(),
-                    Status    = int.Parse(dataRow["status"].ToString()),
+                    Status    = (StatusType)int.Parse(dataRow["status"].ToString()),
                     Trade     = bool.Parse(dataRow["trade"].ToString()),
                     Boxed     = bool.Parse(dataRow["boxed"].ToString()),
                     Manuals   = bool.Parse(dataRow["manuals"].ToString())

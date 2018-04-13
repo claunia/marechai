@@ -43,7 +43,7 @@ namespace Cicm.Database
         /// </summary>
         /// <param name="entries">All owned computers</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetOwnOwnComputers(out List<OwnComputer> entries)
+        public bool GetOwnComputers(out List<OwnComputer> entries)
         {
             #if DEBUG
             Console.WriteLine("Getting all owned computers...");
@@ -60,7 +60,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = OwnOwnComputersFromDataTable(dataSet.Tables[0]);
+                entries = OwnComputersFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
@@ -80,7 +80,7 @@ namespace Cicm.Database
         /// <param name="start">Start of query</param>
         /// <param name="count">How many entries to retrieve</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetOwnOwnComputers(out List<OwnComputer> entries, ulong start, ulong count)
+        public bool GetOwnComputers(out List<OwnComputer> entries, ulong start, ulong count)
         {
             #if DEBUG
             Console.WriteLine("Getting {0} owned computers from {1}...", count, start);
@@ -97,7 +97,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = OwnOwnComputersFromDataTable(dataSet.Tables[0]);
+                entries = OwnComputersFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
@@ -132,7 +132,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                List<OwnComputer> entries = OwnOwnComputersFromDataTable(dataSet.Tables[0]);
+                List<OwnComputer> entries = OwnComputersFromDataTable(dataSet.Tables[0]);
 
                 return entries == null || entries.Count == 0 ? null : entries[0];
             }
@@ -148,7 +148,7 @@ namespace Cicm.Database
         ///     Counts the number of owned computers in the database
         /// </summary>
         /// <returns>Entries in database</returns>
-        public long CountOwnOwnComputers()
+        public long CountOwnComputers()
         {
             #if DEBUG
             Console.WriteLine("Counting owned computers...");
@@ -349,7 +349,7 @@ namespace Cicm.Database
             return dbcmd;
         }
 
-        static List<OwnComputer> OwnOwnComputersFromDataTable(DataTable dataTable)
+        static List<OwnComputer> OwnComputersFromDataTable(DataTable dataTable)
         {
             List<OwnComputer> entries = new List<OwnComputer>();
 
@@ -360,7 +360,7 @@ namespace Cicm.Database
                     Id         = int.Parse(dataRow["id"].ToString()),
                     ComputerId = int.Parse(dataRow["db_id"].ToString()),
                     Acquired   = dataRow["date"].ToString(),
-                    Status     = int.Parse(dataRow["status"].ToString()),
+                    Status     = (StatusType)int.Parse(dataRow["status"].ToString()),
                     Trade      = bool.Parse(dataRow["trade"].ToString()),
                     Boxed      = bool.Parse(dataRow["boxed"].ToString()),
                     Manuals    = bool.Parse(dataRow["manuals"].ToString()),
