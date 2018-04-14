@@ -44,6 +44,8 @@ namespace cicm_web.Models
         public DateTime Date;
         /// <summary>URL of image</summary>
         public string Image;
+        /// <summary>Subtext</summary>
+        public string SubText;
         /// <summary>URL of target view, if applicable</summary>
         public string TargetView;
         /// <summary>Text</summary>
@@ -69,9 +71,14 @@ namespace cicm_web.Models
 
         static News TransformItem(Cicm.Database.Schemas.News dbItem)
         {
-            string imageUrl;
-            string text;
-            string targetView;
+            string      imageUrl;
+            string      text;
+            string      targetView;
+            string      subtext;
+            Computer    computer;
+            OwnComputer owncomputer;
+            Console     console;
+            OwnConsole  ownconsole;
 
             switch(dbItem.Type)
             {
@@ -79,46 +86,63 @@ namespace cicm_web.Models
                     text       = "New computer added to the database.";
                     imageUrl   = "assets/photos/computers/";
                     targetView = "computer";
+                    computer   = Computer.GetItem(dbItem.AffectedId);
+                    subtext    = $"{computer.Company.Name} - {computer.Model}";
                     break;
                 case NewsType.NewConsoleInDb:
                     text       = "New videoconsole added to the database.";
                     imageUrl   = "assets/photos/consoles/";
                     targetView = "console";
+                    console    = Console.GetItem(dbItem.AffectedId);
+                    subtext    = $"{console.Company.Name} - {console.Name}";
                     break;
                 case NewsType.NewComputerInCollection:
-                    text       = "New computer added to the museum's collection.";
-                    imageUrl   = "assets/photos/computers/";
-                    targetView = "collection_computer";
+                    text        = "New computer added to the museum's collection.";
+                    imageUrl    = "assets/photos/computers/";
+                    targetView  = "collection_computer";
+                    owncomputer = OwnComputer.GetItem(dbItem.AffectedId);
+                    subtext     = $"{owncomputer.Computer.Company.Name} - {owncomputer.Computer.Model}";
                     break;
                 case NewsType.NewConsoleInCollection:
                     text       = "New videoconsole added to the museum's collection.";
                     imageUrl   = "assets/photos/consoles/";
                     targetView = "collection_console";
+                    ownconsole = OwnConsole.GetItem(dbItem.AffectedId);
+                    subtext    = $"{ownconsole.Console.Company.Name} - {ownconsole.Console.Name}";
                     break;
                 case NewsType.UpdatedComputerInDb:
                     text       = "Updated computer from the database.";
                     imageUrl   = "assets/photos/computers/";
                     targetView = "computer";
+                    computer   = Computer.GetItem(dbItem.AffectedId);
+                    subtext    = $"{computer.Company.Name} - {computer.Model}";
                     break;
                 case NewsType.UpdatedConsoleInDb:
                     text       = "Updated videoconsole from the database.";
                     imageUrl   = "assets/photos/consoles/";
                     targetView = "console";
+                    console    = Console.GetItem(dbItem.AffectedId);
+                    subtext    = $"{console.Company.Name} - {console.Name}";
                     break;
                 case NewsType.UpdatedComputerInCollection:
-                    text       = "Updated computer from museum's collection.";
-                    imageUrl   = "assets/photos/computers/";
-                    targetView = "collection_computer";
+                    text        = "Updated computer from museum's collection.";
+                    imageUrl    = "assets/photos/computers/";
+                    targetView  = "collection_computer";
+                    owncomputer = OwnComputer.GetItem(dbItem.AffectedId);
+                    subtext     = $"{owncomputer.Computer.Company.Name} - {owncomputer.Computer.Model}";
                     break;
                 case NewsType.UpdatedConsoleInCollection:
                     text       = "Updated videoconsole from museum's collection.";
                     imageUrl   = "assets/photos/consoles/";
                     targetView = "collection_console";
+                    ownconsole = OwnConsole.GetItem(dbItem.AffectedId);
+                    subtext    = $"{ownconsole.Console.Company.Name} - {ownconsole.Console.Name}";
                     break;
                 case NewsType.NewMoneyDonation:
                     text       = "New money donation.";
                     imageUrl   = null;
                     targetView = null;
+                    subtext    = null;
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }
@@ -129,7 +153,8 @@ namespace cicm_web.Models
                 Date       = DateTime.ParseExact(dbItem.Date, "yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture),
                 Image      = imageUrl == null ? null : imageUrl + $"{dbItem.AffectedId}",
                 Text       = text,
-                TargetView = targetView
+                TargetView = targetView,
+                SubText    = subtext
             };
         }
     }
