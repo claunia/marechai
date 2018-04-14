@@ -76,7 +76,7 @@ namespace Cicm.Database.Schemas
         public int Spu;
         /// <summary>Size in kibibytes for video RAM</summary>
         public int Vram;
-        /// <summary>Introduction date, 0 if unknown</summary>
+        /// <summary>Introduction date, 0 if unknown, 1000 if prototype</summary>
         public int Year;
     }
 }
