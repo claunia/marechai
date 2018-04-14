@@ -1,4 +1,4 @@
-﻿@using System.Reflection
+﻿@using Microsoft.Extensions.PlatformAbstractions
 @{
     /******************************************************************************
 // Canary Islands Computer Museum Website
@@ -96,8 +96,9 @@
                 </a>
                 <div aria-labelledby=navbarDropdown
                      class=dropdown-menu>
-                    <a class=dropdown-item
-                       href=#>
+                    <a asp-action=Index
+                       asp-controller=Computer
+                       class=dropdown-item>
                         Computers
                     </a>
                     <div class=dropdown-divider>
@@ -131,7 +132,7 @@
     @RenderBody()
     <hr />
     <footer>
-        <p>&copy; 2018 Natalia Portillo, @(Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion)</p>
+        <p>&copy; 2018 Natalia Portillo, @(PlatformServices.Default.Application.ApplicationVersion)</p>
     </footer>
 </div>
 

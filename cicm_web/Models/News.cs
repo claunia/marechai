@@ -85,7 +85,7 @@ namespace cicm_web.Models
                 case NewsType.NewComputerInDb:
                     text       = "New computer added to the database.";
                     imageUrl   = "assets/photos/computers/";
-                    targetView = "computer";
+                    targetView = "Computer";
                     computer   = Computer.GetItem(dbItem.AffectedId);
                     subtext    = $"{computer.Company.Name} - {computer.Model}";
                     break;
