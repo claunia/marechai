@@ -418,14 +418,17 @@ namespace Cicm.Database
             {
                 Console entry = new Console
                 {
-                    Id            = int.Parse(dataRow["id"].ToString()),
-                    Company       = int.Parse(dataRow["company"].ToString()),
-                    Year          = int.Parse(dataRow["year"].ToString()),
-                    Name          = dataRow["name"].ToString(),
-                    Cpu1          = int.Parse(dataRow["cpu1"].ToString()),
-                    Mhz1          = float.Parse(dataRow["mhz1"].ToString()),
-                    Cpu2          = int.Parse(dataRow["cpu2"].ToString()),
-                    Mhz2          = float.Parse(dataRow["mhz2"].ToString()),
+                    Id      = int.Parse(dataRow["id"].ToString()),
+                    Company = int.Parse(dataRow["company"].ToString()),
+                    Year    = int.Parse(dataRow["year"].ToString()),
+                    Name    = dataRow["name"].ToString(),
+                    Cpu1    = int.Parse(dataRow["cpu1"].ToString()),
+                    Mhz1    = float.Parse(dataRow["mhz1"].ToString()),
+                    Cpu2 = string.IsNullOrEmpty(dataRow["cpu2"].ToString())
+                                  ? 0
+                                  : int.Parse(dataRow["cpu2"].ToString()),
+                    Mhz2 =
+                        string.IsNullOrEmpty(dataRow["mhz2"].ToString()) ? 0 : float.Parse(dataRow["mhz2"].ToString()),
                     Bits          = int.Parse(dataRow["bits"].ToString()),
                     Ram           = int.Parse(dataRow["ram"].ToString()),
                     Rom           = int.Parse(dataRow["rom"].ToString()),

@@ -82,7 +82,7 @@ namespace Cicm.Database
         public bool GetComputers(out List<Computer> entries, int company)
         {
             #if DEBUG
-            System.Console.WriteLine("Getting all computers from company id {0}...", company);
+            Console.WriteLine("Getting all computers from company id {0}...", company);
             #endif
 
             try
@@ -102,8 +102,8 @@ namespace Cicm.Database
             }
             catch(Exception ex)
             {
-                System.Console.WriteLine("Error getting computers.");
-                System.Console.WriteLine(ex);
+                Console.WriteLine("Error getting computers.");
+                Console.WriteLine(ex);
                 entries = null;
                 return false;
             }
@@ -439,14 +439,17 @@ namespace Cicm.Database
             {
                 Computer entry = new Computer
                 {
-                    Id            = int.Parse(dataRow["id"].ToString()),
-                    Company       = int.Parse(dataRow["company"].ToString()),
-                    Year          = int.Parse(dataRow["year"].ToString()),
-                    Model         = dataRow["model"].ToString(),
-                    Cpu1          = int.Parse(dataRow["cpu1"].ToString()),
-                    Mhz1          = float.Parse(dataRow["mhz1"].ToString()),
-                    Cpu2          = int.Parse(dataRow["cpu2"].ToString()),
-                    Mhz2          = float.Parse(dataRow["mhz2"].ToString()),
+                    Id      = int.Parse(dataRow["id"].ToString()),
+                    Company = int.Parse(dataRow["company"].ToString()),
+                    Year    = int.Parse(dataRow["year"].ToString()),
+                    Model   = dataRow["model"].ToString(),
+                    Cpu1    = int.Parse(dataRow["cpu1"].ToString()),
+                    Mhz1    = float.Parse(dataRow["mhz1"].ToString()),
+                    Cpu2 = string.IsNullOrEmpty(dataRow["cpu2"].ToString())
+                                  ? 0
+                                  : int.Parse(dataRow["cpu2"].ToString()),
+                    Mhz2 =
+                        string.IsNullOrEmpty(dataRow["mhz2"].ToString()) ? 0 : float.Parse(dataRow["mhz2"].ToString()),
                     Bits          = int.Parse(dataRow["bits"].ToString()),
                     Ram           = int.Parse(dataRow["ram"].ToString()),
                     Rom           = int.Parse(dataRow["rom"].ToString()),
@@ -459,13 +462,19 @@ namespace Cicm.Database
                     SoundChannels = int.Parse(dataRow["sound_channels"].ToString()),
                     MusicChannels = int.Parse(dataRow["music_channels"].ToString()),
                     Hdd1          = int.Parse(dataRow["hdd1"].ToString()),
-                    Hdd2          = int.Parse(dataRow["hdd2"].ToString()),
-                    Hdd3          = int.Parse(dataRow["hdd3"].ToString()),
-                    Disk1         = int.Parse(dataRow["disk1"].ToString()),
-                    Cap1          = dataRow["cap1"].ToString(),
-                    Disk2         = int.Parse(dataRow["disk2"].ToString()),
-                    Cap2          = dataRow["cap2"].ToString(),
-                    Comment       = dataRow["comment"].ToString()
+                    Hdd2 = string.IsNullOrEmpty(dataRow["hdd2"].ToString())
+                                        ? 0
+                                        : int.Parse(dataRow["hdd2"].ToString()),
+                    Hdd3 = string.IsNullOrEmpty(dataRow["hdd3"].ToString())
+                                        ? 0
+                                        : int.Parse(dataRow["hdd3"].ToString()),
+                    Disk1 = int.Parse(dataRow["disk1"].ToString()),
+                    Cap1  = dataRow["cap1"].ToString(),
+                    Disk2 = string.IsNullOrEmpty(dataRow["disk2"].ToString())
+                                ? 0
+                                : int.Parse(dataRow["disk2"].ToString()),
+                    Cap2    = dataRow["cap2"].ToString(),
+                    Comment = dataRow["comment"].ToString()
                 };
 
                 entries.Add(entry);
