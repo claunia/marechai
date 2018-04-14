@@ -182,9 +182,22 @@ namespace cicm_web.Models
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
+        public static ComputerMini[] GetItemsFromYear(int year)
+        {
+            List<Cicm.Database.Schemas.Computer> dbItems = null;
+            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<ComputerMini> items = new List<ComputerMini>();
+            foreach(Cicm.Database.Schemas.Computer dbItem in dbItems)
+                if(dbItem.Year == year)
+                    items.Add(TransformItem(dbItem));
+
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
+        }
+
         static ComputerMini TransformItem(Cicm.Database.Schemas.Computer dbItem)
         {
-            System.Console.WriteLine("Transforming item");
             return new ComputerMini {Company = Company.GetItem(dbItem.Company), Id = dbItem.Id, Model = dbItem.Model};
         }
     }

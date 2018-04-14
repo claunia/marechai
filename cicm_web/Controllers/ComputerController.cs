@@ -34,5 +34,12 @@ namespace cicm_web.Controllers
 
             return View(computers);
         }
+
+        public IActionResult ByYear(int id)
+        {
+            ViewBag.Year = id;
+
+            return View(ComputerMini.GetItemsFromYear(id));
+        }
     }
 }
