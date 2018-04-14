@@ -28,6 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -69,7 +70,7 @@ namespace cicm_web.Models
             bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.OrderByDescending(i => i.Id).Select(TransformItem) as Computer[];
+            return dbItems.Select(TransformItem) as Computer[];
         }
 
         public static Computer[] GetItemsFromCompany(int id)
@@ -78,7 +79,7 @@ namespace cicm_web.Models
             bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems, id);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.OrderByDescending(i => i.Id).Select(TransformItem) as Computer[];
+            return dbItems.Select(TransformItem) as Computer[];
         }
 
         public static Computer GetItem(int id)
@@ -145,6 +146,46 @@ namespace cicm_web.Models
             }
 
             return item;
+        }
+    }
+
+    public class ComputerMini
+    {
+        public Company Company;
+        public int     Id;
+        public string  Model;
+
+        public static ComputerMini[] GetAllItems()
+        {
+            List<Cicm.Database.Schemas.Computer> dbItems = null;
+            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<ComputerMini> items = new List<ComputerMini>();
+            foreach(Cicm.Database.Schemas.Computer dbItem in dbItems) items.Add(TransformItem(dbItem));
+
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
+        }
+
+        public static ComputerMini[] GetItemsStartingWithLetter(char letter)
+        {
+            List<Cicm.Database.Schemas.Computer> dbItems = null;
+            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<ComputerMini> items = new List<ComputerMini>();
+            foreach(Cicm.Database.Schemas.Computer dbItem in dbItems)
+                if(dbItem.Model.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
+                    items.Add(TransformItem(dbItem));
+
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
+        }
+
+        static ComputerMini TransformItem(Cicm.Database.Schemas.Computer dbItem)
+        {
+            System.Console.WriteLine("Transforming item");
+            return new ComputerMini {Company = Company.GetItem(dbItem.Company), Id = dbItem.Id, Model = dbItem.Model};
         }
     }
 }
