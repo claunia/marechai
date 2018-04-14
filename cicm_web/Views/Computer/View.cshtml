@@ -1,0 +1,558 @@
+﻿@{
+    /******************************************************************************
+// Canary Islands Computer Museum Website
+// ----------------------------------------------------------------------------
+//
+// Filename       : Index.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Index page (and news)
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2018 Natalia Portillo
+*******************************************************************************/
+
+    ViewData["Title"] = "Computer";
+}
+@using System.IO
+@model Computer
+
+@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", Model.Company.Id + ".gif")))
+{
+    <img src="@(System.IO.Path.Combine("/assets/logos/computers", Model.Company.Id + ".gif"))"
+         alt="">
+}
+
+@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", Model.Company.Id + ".jpg")))
+{
+    <img src="@(System.IO.Path.Combine("/assets/logos/computers", Model.Company.Id + ".jpg"))"
+         alt="">
+}
+
+@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", Model.Company.Id + ".png")))
+{
+    <img src="@(System.IO.Path.Combine("/assets/logos/computers", Model.Company.Id + ".png"))"
+         alt="">
+}
+
+@if(Model.Year == 1000)
+{
+    <b>
+        <center>PROTOTYPE</center>
+    </b>
+}
+
+<table border=0
+       width=100%>
+
+@if(Model.Year != 1000)
+{
+    <tr>
+        <th scope=row
+            width="37%">
+            <div align=right>
+                Year
+            </div>
+        </th>
+        <td width="63%">
+            @Model.Year
+        </td>
+    </tr>
+}
+<tr>
+    <th scope=row>
+        <div align=right>
+            Primary processor
+        </div>
+    </th>
+    @if(Model.Cpu1.Id != 4)
+    {
+        if(Model.Cpu1.Id != 5)
+        {
+            if(Model.Mhz1 > 0)
+            {
+                if(Model.Bits > 0)
+                {
+                    <td>@Model.Cpu1.Name @("@") @($"{Model.Mhz1}Mhz") (@Model.Bits bits)</td>
+                }
+                else
+                {
+                    <td>@Model.Cpu1.Name @("@") @($"{Model.Mhz1}Mhz")</td>
+                }
+            }
+            else
+            {
+                <td>@Model.Cpu1.Name</td>
+            }
+        }
+        else
+        {
+            <td>Unknown data</td>
+        }
+    }
+    else
+    { <td>None</td> }
+</tr>
+
+@if(Model.Cpu2 != null)
+{
+    <tr>
+        <th scope=row>
+            <div align=right>
+                Secondary processor
+            </div>
+        </th>
+        @if(Model.Cpu2.Id != 4)
+        {
+            if(Model.Cpu2.Id != 5)
+            {
+                if(Model.Mhz2 > 0)
+                {
+                    if(Model.Bits > 0)
+                    {
+                        <td>@Model.Cpu2.Name @("@") @($"{Model.Mhz2}Mhz") (@Model.Bits bits)</td>
+                    }
+                    else
+                    {
+                        <td>@Model.Cpu2.Name @("@") @($"{Model.Mhz2}Mhz")</td>
+                    }
+                }
+                else
+                {
+                    <td>@Model.Cpu2.Name</td>
+                }
+            }
+            else
+            {
+                <td>Unknown data</td>
+            }
+        }
+        else
+        { <td>None</td> }
+    </tr>
+}
+<tr>
+    <th scope=row>
+        <div align=right>
+            Base RAM memory
+        </div>
+    </th>
+    @if(Model.Ram > 1024)
+    {
+        if(Model.Ram > 1048576)
+        {
+            <td>@($"{Model.Ram / 1048576}") Gbytes</td>
+        }
+        else
+        {
+            <td>@($"{Model.Ram / 1024}") Mbytes</td>
+        }
+    }
+    else
+    {
+        if(Model.Ram == 0)
+        {
+            <td>Unknown data</td>
+        }
+        else
+        {
+            <td>@Model.Ram Kbytes</td>
+        }
+    }
+</tr>
+<tr>
+    <th scope=row>
+        <div align=right>
+            ROM
+        </div>
+    </th>
+    @if(Model.Rom > 1024)
+    {
+        if(Model.Rom > 1048576)
+        {
+            <td>@($"{Model.Rom / 1048576}") Gbytes</td>
+        }
+        else
+        {
+            <td>@($"{Model.Rom / 1024}") Mbytes</td>
+        }
+    }
+    else
+    {
+        if(Model.Rom == 0)
+        {
+            <td>Unknown data</td>
+        }
+        else
+        {
+            <td>@Model.Rom Kbytes</td>
+        }
+    }
+</tr>
+<tr>
+    <th scope=row>
+        <div align=right>
+            Graphics processor
+        </div>
+    </th>
+
+    @if(Model.Gpu.Id > 1)
+    {
+        if(Model.Gpu.Id > 2)
+        {
+            <td>@Model.Gpu.Name</td>
+        }
+        else
+        {
+            <td>Unknown data</td>
+        }
+    }
+    else
+    { <td>None</td> }
+</tr>
+<tr>
+    <th scope=row>
+        <div align=right>
+            Video memory
+        </div>
+    </th>
+    @if(Model.Vram > 1024)
+    {
+        if(Model.Vram > 1048576)
+        {
+            <td>@($"{Model.Vram / 1048576}") Gbytes</td>
+        }
+        else
+        {
+            <td>@($"{Model.Vram / 1024}") Mbytes</td>
+        }
+    }
+    else
+    {
+        if(Model.Vram == 0)
+        {
+            <td>Unknown data</td>
+        }
+        else
+        {
+            <td>@Model.Vram Kbytes</td>
+        }
+    }
+</tr>
+<tr>
+    <th scope=row>
+        <div align=right>
+            Video resolution
+        </div>
+    </th>
+    @if(Model.Resolution != "???")
+    {
+        <td>@Model.Resolution</td>
+    }
+    else
+    {
+        <td>Unknown data</td>
+    }
+</tr>
+<tr>
+    <th scope=row>
+        <div align=right>
+            Colors
+        </div>
+    </th>
+
+    @if(Model.Colors > 0)
+    {
+        <td>@Model.Colors</td>
+    }
+    else
+    {
+        <td>Unknown data</td>
+    }
+</tr>
+<tr>
+    <th scope=row>
+        <div align=right>
+            Sound processor
+        </div>
+    </th>
+    @if(Model.Spu.Id > 1)
+    {
+        if(Model.Spu.Id > 2)
+        {
+            if(Model.SoundChannels > 0)
+            {
+                <td>@Model.Spu.Name (@Model.SoundChannels channels)</td>
+            }
+            else
+            {
+                <td>@Model.Spu.Name</td>
+            }
+        }
+        else
+        {
+            <td>Unknown data</td>
+        }
+    }
+    else
+    { <td>None</td> }
+</tr>
+<tr>
+    <th scope=row>
+        <div align=right>
+            Music synthetizer
+        </div>
+    </th>
+    @if(Model.Mpu.Id > 1)
+    {
+        if(Model.Mpu.Id > 2)
+        {
+            if(Model.MusicChannels > 0)
+            {
+                <td>@Model.Mpu.Name (@Model.MusicChannels channels)</td>
+            }
+            else
+            {
+                <td>@Model.Mpu.Name</td>
+            }
+        }
+        else
+        {
+            <td>Unknown data</td>
+        }
+    }
+    else
+    { <td>None</td> }
+</tr>
+@if(Model.Hdd1 != null && Model.Hdd1.Id > 0 && Model.Hdd1.Id != 30)
+{
+    <tr>
+        <th scope=row>
+            <div align=right>
+                Disk interfaces
+            </div>
+        </th>
+        <td>
+            @Model.Hdd1.Description
+            @if(Model.Hdd2 != null && Model.Hdd2.Id > 0 && Model.Hdd2.Id != 30)
+            {
+                <br>
+                @Model.Hdd2.Description
+            }
+            @if(Model.Hdd3 != null && Model.Hdd3.Id > 0 && Model.Hdd3.Id != 30)
+            {
+                <br>
+                @Model.Hdd3.Description
+            }
+        </td>
+    </tr>
+}
+
+@if(Model.Disk1 != null)
+{
+    <tr>
+        <th scope=row>
+            <div align=right>
+                Primary disk
+            </div>
+        </th>
+        @if(Model.Disk1.Id != 30)
+        {
+            int cap1 = int.Parse(Model.Cap1);
+
+            if(Model.Disk1.Id != 8)
+            {
+                if(Model.Disk1.Id != 6)
+                {
+                    string cap1Bytes = cap1 > 1024 ? (cap1 > 1048576 ? $"{cap1 / 1048576} GBytes" : $"{cap1 / 1024} MBytes") : (cap1 > 0 ? $"{cap1} Kbytes" : "Unknown capacity");
+
+                    if(Model.Disk1.Id != 10)
+                    {
+                        if(Model.Disk1.Id != 15)
+                        {
+                            if(Model.Disk1.Id != 16)
+                            {
+                                if(Model.Disk1.Id != 36)
+                                {
+                                    if(Model.Disk1.Id != 22)
+                                    {
+                                        if(Model.Disk1.Id != 23)
+                                        {
+                                            if(Model.Disk1.Id != 39)
+                                            {
+                                                if(Model.Disk1.Id != 31)
+                                                {
+                                                    <td>@Model.Disk1.Description (@cap1Bytes)</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Propietary (@cap1Bytes)</td>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td>Digital tape (@cap1Bytes)</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>Punched card (@cap1Bytes)</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td>Chip card (@cap1Bytes)</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td>Magnetic card (@cap1Bytes)</td>
+                                }
+                            }
+                            else
+                            {
+                                <td>Memory (@cap1Bytes)</td>
+                            }
+                        }
+                        else
+                        {
+                            <td>Magneto-optical (@cap1Bytes)</td>
+                        }
+                    }
+                    else
+                    {
+                        <td>Optical disk (@cap1Bytes)</td>
+                    }
+                }
+                else
+                {
+                    string cap1Bits = cap1 > 1000 ? (cap1 > 1000000 ? $"{cap1 / 1000000} GBits" : $"{cap1 / 1000} MBits") : (cap1 > 0 ? $"{cap1} KBits" : "Unknown capacity");
+
+                    <td>Cartridge (@cap1Bits)</td>
+                }
+            }
+            else
+            {
+                <td>Standard audio cassette (@cap1 bps)</td>
+            }
+        }
+        else
+        { <td>None</td> }
+    </tr>
+}
+@if(Model.Disk2 != null)
+{
+    <tr>
+        <th scope=row>
+            <div align=right>
+                Secondary disk
+            </div>
+        </th>
+        @if(Model.Disk2.Id != 30)
+        {
+            int cap2 = int.Parse(Model.Cap2);
+
+            if(Model.Disk2.Id != 8)
+            {
+                if(Model.Disk2.Id != 6)
+                {
+                    string cap2Bytes = cap2 > 1024 ? (cap2 > 1048576 ? $"{cap2 / 1048576} GBytes" : $"{cap2 / 1024} MBytes") : (cap2 > 0 ? $"{cap2} Kbytes" : "Unknown capacity");
+
+                    if(Model.Disk2.Id != 10)
+                    {
+                        if(Model.Disk2.Id != 15)
+                        {
+                            if(Model.Disk2.Id != 16)
+                            {
+                                if(Model.Disk2.Id != 36)
+                                {
+                                    if(Model.Disk2.Id != 22)
+                                    {
+                                        if(Model.Disk2.Id != 23)
+                                        {
+                                            if(Model.Disk2.Id != 39)
+                                            {
+                                                if(Model.Disk2.Id != 31)
+                                                {
+                                                    <td>@Model.Disk2.Description (@cap2Bytes)</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Propietary (@cap2Bytes)</td>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td>Digital tape (@cap2Bytes)</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>Punched card (@cap2Bytes)</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td>Chip card (@cap2Bytes)</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td>Magnetic card (@cap2Bytes)</td>
+                                }
+                            }
+                            else
+                            {
+                                <td>Memory (@cap2Bytes)</td>
+                            }
+                        }
+                        else
+                        {
+                            <td>Magneto-optical (@cap2Bytes)</td>
+                        }
+                    }
+                    else
+                    {
+                        <td>Optical disk (@cap2Bytes)</td>
+                    }
+                }
+                else
+                {
+                    string cap2Bits = cap2 > 1000 ? (cap2 > 1000000 ? $"{cap2 / 1000000} GBits" : $"{cap2 / 1000} MBits") : (cap2 > 0 ? $"{cap2} KBits" : "Unknown capacity");
+
+                    <td>Cartridge (@cap2Bits)</td>
+                }
+            }
+            else
+            {
+                <td>Standard audio cassette (@cap2 bps)</td>
+            }
+        }
+        else
+        { <td>None</td> }
+    </tr>
+}
+</table>
+
+@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/photos/computers", Model.Id + ".jpg")))
+{
+    <img src="@System.IO.Path.Combine("/assets/photos/computers", Model.Id + ".jpg")"
+         alt="">
+}

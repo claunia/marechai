@@ -1,9 +1,9 @@
 ﻿@{
-/******************************************************************************
+    /******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : ByLetter.cshtml
+// Filename       : ByYear.cshtml
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -35,16 +35,21 @@
 @model IEnumerable<ComputerMini>
 
 <p>Search results:</p>
-<p align="center">
-    <b>@ViewBag.Year</b><br/>
+<p align=center>
+    <b>@ViewBag.Year</b><br />
 
     @if(Model.Any())
     {
-        <p>@Model.Count() computers found in the database.<br />
-        @foreach(ComputerMini computer in @Model)
-        {
-            <a asp-controller="Computer" asp-action="View" asp-route-id="@computer.Id">@computer.Company.Name @computer.Model</a><br/>
-        }
+        <p>
+            @Model.Count() computers found in the database.<br />
+            @foreach(ComputerMini computer in Model)
+            {
+                <a asp-controller="Computer"
+                   asp-action="View"
+                   asp-route-id="@computer.Id">
+                    @computer.Company.Name @computer.Model</a>
+                <br />
+            }
         </p>
     }
     else

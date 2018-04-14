@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using cicm_web.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Computer = Cicm.Database.Schemas.Computer;
 
@@ -8,6 +9,13 @@ namespace cicm_web.Controllers
 {
     public class ComputerController : Controller
     {
+        readonly IHostingEnvironment hostingEnvironment;
+
+        public ComputerController(IHostingEnvironment env)
+        {
+            hostingEnvironment = env;
+        }
+
         public IActionResult Index()
         {
             Program.Database.Operations.GetComputers(out List<Computer> computers);
@@ -40,6 +48,13 @@ namespace cicm_web.Controllers
             ViewBag.Year = id;
 
             return View(ComputerMini.GetItemsFromYear(id));
+        }
+
+        public IActionResult View(int id)
+        {
+            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+
+            return View(Models.Computer.GetItem(id));
         }
     }
 }
