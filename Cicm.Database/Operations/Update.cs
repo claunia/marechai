@@ -82,6 +82,11 @@ namespace Cicm.Database
                         UpdateDatabaseV2ToV3();
                         break;
                     }
+                    case 3:
+                    {
+                        UpdateDatabaseV3ToV4();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -353,12 +358,279 @@ namespace Cicm.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
-            dbCmd.CommandText = $"INSERT INTO cicm_db (version) VALUES ('3')";
+            dbCmd.CommandText = @"INSERT INTO cicm_db (version) VALUES ('3')";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
 
             Console.WriteLine("Finished update version to 3...");
+        }
+
+        void UpdateDatabaseV3ToV4()
+        {
+            Console.WriteLine("Updating database to version 4");
+            IDbCommand     dbCmd;
+            IDbTransaction trans;
+
+            if(dbCore is Mysql)
+            {
+                Console.WriteLine("Changing table formats...");
+                dbCmd             = dbCon.CreateCommand();
+                trans             = dbCon.BeginTransaction();
+                dbCmd.Transaction = trans;
+                dbCmd.CommandText = "ALTER TABLE `admins` ROW_FORMAT = DYNAMIC;\n"          +
+                                    "ALTER TABLE `browser_tests` ROW_FORMAT = DYNAMIC;\n"   +
+                                    "ALTER TABLE `cicm_db` ROW_FORMAT = DYNAMIC;\n"         +
+                                    "ALTER TABLE `companies` ROW_FORMAT = DYNAMIC;\n"       +
+                                    "ALTER TABLE `computers` ROW_FORMAT = DYNAMIC;\n"       +
+                                    "ALTER TABLE `consoles` ROW_FORMAT = DYNAMIC;\n"        +
+                                    "ALTER TABLE `disk_formats` ROW_FORMAT = DYNAMIC;\n"    +
+                                    "ALTER TABLE `forbidden` ROW_FORMAT = DYNAMIC;\n"       +
+                                    "ALTER TABLE `gpus` ROW_FORMAT = DYNAMIC;\n"            +
+                                    "ALTER TABLE `log` ROW_FORMAT = DYNAMIC;\n"             +
+                                    "ALTER TABLE `money_donations` ROW_FORMAT = DYNAMIC;\n" +
+                                    "ALTER TABLE `music_synths` ROW_FORMAT = DYNAMIC;\n"    +
+                                    "ALTER TABLE `news` ROW_FORMAT = DYNAMIC;\n"            +
+                                    "ALTER TABLE `owned_computers` ROW_FORMAT = DYNAMIC;\n" +
+                                    "ALTER TABLE `owned_consoles` ROW_FORMAT = DYNAMIC;\n"  +
+                                    "ALTER TABLE `processors` ROW_FORMAT = DYNAMIC;\n"      +
+                                    "ALTER TABLE `sound_synths` ROW_FORMAT = DYNAMIC;\n";
+                dbCmd.ExecuteNonQuery();
+                trans.Commit();
+                dbCmd.Dispose();
+            }
+
+            Console.WriteLine("Correcting primary key on table `processors`");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "ALTER TABLE `processors` ADD PRIMARY KEY (id);\n" + "DROP INDEX id ON processors";
+            dbCmd.ExecuteNonQuery();
+
+            Console.WriteLine("Creating indexes on `admins`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_admins_user ON admins (user);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `browser_tests`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_browser_tests_user_agent ON browser_tests (user_agent);\n" +
+                                "CREATE INDEX idx_browser_tests_browser ON browser_tests (browser);\n"       +
+                                "CREATE INDEX idx_browser_tests_version ON browser_tests (version);\n"       +
+                                "CREATE INDEX idx_browser_tests_os ON browser_tests (os);\n"                 +
+                                "CREATE INDEX idx_browser_tests_platform ON browser_tests (platform);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `companies`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_companies_name ON companies (name);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `computers`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_computers_company ON computers (company);\n"         +
+                                "CREATE INDEX idx_computers_year ON computers (year);\n"               +
+                                "CREATE INDEX idx_computers_model ON computers (model);\n"             +
+                                "CREATE INDEX idx_computers_cpu1 ON computers (cpu1);\n"               +
+                                "CREATE INDEX idx_computers_cpu2 ON computers (cpu2);\n"               +
+                                "CREATE INDEX idx_computers_mhz1 ON computers (mhz1);\n"               +
+                                "CREATE INDEX idx_computers_mhz2 ON computers (mhz2);\n"               +
+                                "CREATE INDEX idx_computers_bits ON computers (bits);\n"               +
+                                "CREATE INDEX idx_computers_ram ON computers (ram);\n"                 +
+                                "CREATE INDEX idx_computers_rom ON computers (rom);\n"                 +
+                                "CREATE INDEX idx_computers_gpu ON computers (gpu);\n"                 +
+                                "CREATE INDEX idx_computers_vram ON computers (vram);\n"               +
+                                "CREATE INDEX idx_computers_colors ON computers (colors);\n"           +
+                                "CREATE INDEX idx_computers_res ON computers (res);\n"                 +
+                                "CREATE INDEX idx_computers_sound_synth ON computers (sound_synth);\n" +
+                                "CREATE INDEX idx_computers_music_synth ON computers (music_synth);\n" +
+                                "CREATE INDEX idx_computers_hdd1 ON computers (hdd1);\n"               +
+                                "CREATE INDEX idx_computers_hdd2 ON computers (hdd2);\n"               +
+                                "CREATE INDEX idx_computers_hdd3 ON computers (hdd3);\n"               +
+                                "CREATE INDEX idx_computers_disk1 ON computers (disk1);\n"             +
+                                "CREATE INDEX idx_computers_disk2 ON computers (disk2);\n"             +
+                                "CREATE INDEX idx_computers_cap1 ON computers (cap1);\n"               +
+                                "CREATE INDEX idx_computers_cap2 ON computers (cap2);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `consoles`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_consoles_company ON consoles (company);\n"         +
+                                "CREATE INDEX idx_consoles_year ON consoles (year);\n"               +
+                                "CREATE INDEX idx_consoles_model ON consoles (model);\n"             +
+                                "CREATE INDEX idx_consoles_cpu1 ON consoles (cpu1);\n"               +
+                                "CREATE INDEX idx_consoles_cpu2 ON consoles (cpu2);\n"               +
+                                "CREATE INDEX idx_consoles_mhz1 ON consoles (mhz1);\n"               +
+                                "CREATE INDEX idx_consoles_mhz2 ON consoles (mhz2);\n"               +
+                                "CREATE INDEX idx_consoles_bits ON consoles (bits);\n"               +
+                                "CREATE INDEX idx_consoles_ram ON consoles (ram);\n"                 +
+                                "CREATE INDEX idx_consoles_rom ON consoles (rom);\n"                 +
+                                "CREATE INDEX idx_consoles_gpu ON consoles (gpu);\n"                 +
+                                "CREATE INDEX idx_consoles_vram ON consoles (vram);\n"               +
+                                "CREATE INDEX idx_consoles_colors ON consoles (colors);\n"           +
+                                "CREATE INDEX idx_consoles_res ON consoles (res);\n"                 +
+                                "CREATE INDEX idx_consoles_sound_synth ON consoles (sound_synth);\n" +
+                                "CREATE INDEX idx_consoles_music_synth ON consoles (music_synth);\n" +
+                                "CREATE INDEX idx_consoles_palette ON consoles (palette);\n"         +
+                                "CREATE INDEX idx_consoles_format ON consoles (format);\n"           +
+                                "CREATE INDEX idx_consoles_cap ON consoles (cap);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `disk_formats`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_disk_formats_description ON disk_formats (description);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `forbidden`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_forbidden_browser ON forbidden (browser);\n" +
+                                "CREATE INDEX idx_forbidden_date ON forbidden (date);\n"       +
+                                "CREATE INDEX idx_forbidden_ip ON forbidden (ip);\n"           +
+                                "CREATE INDEX idx_forbidden_referer ON forbidden (referer);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `gpus`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_gpus_name ON gpus (name);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `log`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_log_browser ON log (browser);\n" +
+                                "CREATE INDEX idx_log_date ON log (date);\n"       +
+                                "CREATE INDEX idx_log_ip ON log (ip);\n"           +
+                                "CREATE INDEX idx_log_referer ON log (referer);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `money_donations`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_money_donations_donator ON money_donations (donator);\n" +
+                                "CREATE INDEX idx_money_donations_quantity ON money_donations (quantity);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `music_synths`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_music_synts_name ON music_synths (name);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `news`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_news_date ON news (date);\n" +
+                                "CREATE INDEX idx_news_type ON news (type);\n" +
+                                "CREATE INDEX idx_news_ip ON news (added_id);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `owned_computers`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_owned_computers_db_id ON owned_computers (db_id);\n"     +
+                                "CREATE INDEX idx_owned_computers_date ON owned_computers (date);\n"       +
+                                "CREATE INDEX idx_owned_computers_status ON owned_computers (status);\n"   +
+                                "CREATE INDEX idx_owned_computers_trade ON owned_computers (trade);\n"     +
+                                "CREATE INDEX idx_owned_computers_boxed ON owned_computers (boxed);\n"     +
+                                "CREATE INDEX idx_owned_computers_manuals ON owned_computers (manuals);\n" +
+                                "CREATE INDEX idx_owned_computers_cpu1 ON owned_computers (cpu1);\n"       +
+                                "CREATE INDEX idx_owned_computers_cpu2 ON owned_computers (cpu2);\n"       +
+                                "CREATE INDEX idx_owned_computers_mhz1 ON owned_computers (mhz1);\n"       +
+                                "CREATE INDEX idx_owned_computers_mhz2 ON owned_computers (mhz2);\n"       +
+                                "CREATE INDEX idx_owned_computers_ram ON owned_computers (ram);\n"         +
+                                "CREATE INDEX idx_owned_computers_vram ON owned_computers (vram);\n"       +
+                                "CREATE INDEX idx_owned_computers_rigid ON owned_computers (rigid);\n"     +
+                                "CREATE INDEX idx_owned_computers_disk1 ON owned_computers (disk1);\n"     +
+                                "CREATE INDEX idx_owned_computers_disk2 ON owned_computers (disk2);\n"     +
+                                "CREATE INDEX idx_owned_computers_cap1 ON owned_computers (cap1);\n"       +
+                                "CREATE INDEX idx_owned_computers_cap2 ON owned_computers (cap2);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `owned_consoles`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_owned_consoles_db_id ON owned_consoles (db_id);\n"    +
+                                "CREATE INDEX idx_owned_consoles_date    ON owned_consoles (date);\n"   +
+                                "CREATE INDEX idx_owned_consoles_status  ON owned_consoles (status);\n" +
+                                "CREATE INDEX idx_owned_consoles_trade   ON owned_consoles (trade);\n"  +
+                                "CREATE INDEX idx_owned_consoles_boxed   ON owned_consoles (boxed);\n"  +
+                                "CREATE INDEX idx_owned_consoles_manuals ON owned_consoles (manuals);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `processors`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_processors_name ON processors (name);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating indexes on `sound_synths`...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX idx_sound_synths_name ON sound_synths (name);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 4...");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('4')";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
         }
 
         void OptimizeDatabase()

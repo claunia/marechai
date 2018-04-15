@@ -49,71 +49,71 @@ namespace Cicm.Database
                 IDbCommand dbCmd = dbCon.CreateCommand();
 
                 Console.WriteLine("Creating table `admins`");
-                dbCmd.CommandText = V3.Admins;
+                dbCmd.CommandText = V4.Admins;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `browser_tests`");
-                dbCmd.CommandText = V3.BrowserTests;
+                dbCmd.CommandText = V4.BrowserTests;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `cicm_db`");
-                dbCmd.CommandText = V3.CicmDb;
+                dbCmd.CommandText = V4.CicmDb;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `companies`");
-                dbCmd.CommandText = V3.Companies;
+                dbCmd.CommandText = V4.Companies;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `computers`");
-                dbCmd.CommandText = V3.Computers;
+                dbCmd.CommandText = V4.Computers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `consoles`");
-                dbCmd.CommandText = V3.Consoles;
+                dbCmd.CommandText = V4.Consoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `disk_formats`");
-                dbCmd.CommandText = V3.DiskFormats;
+                dbCmd.CommandText = V4.DiskFormats;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `forbidden`");
-                dbCmd.CommandText = V3.Forbidden;
+                dbCmd.CommandText = V4.Forbidden;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `gpus`");
-                dbCmd.CommandText = V3.Gpus;
+                dbCmd.CommandText = V4.Gpus;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `log`");
-                dbCmd.CommandText = V3.Logs;
+                dbCmd.CommandText = V4.Logs;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `money_donations`");
-                dbCmd.CommandText = V3.MoneyDonations;
+                dbCmd.CommandText = V4.MoneyDonations;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `music_synths`");
-                dbCmd.CommandText = V3.MusicSynths;
+                dbCmd.CommandText = V4.MusicSynths;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `news`");
-                dbCmd.CommandText = V3.News;
+                dbCmd.CommandText = V4.News;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_computers`");
-                dbCmd.CommandText = V3.OwnedComputers;
+                dbCmd.CommandText = V4.OwnedComputers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_consoles`");
-                dbCmd.CommandText = V3.OwnedConsoles;
+                dbCmd.CommandText = V4.OwnedConsoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `processors`");
-                dbCmd.CommandText = V3.Processors;
+                dbCmd.CommandText = V4.Processors;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `sound_synths`");
-                dbCmd.CommandText = V3.SoundSynths;
+                dbCmd.CommandText = V4.SoundSynths;
                 dbCmd.ExecuteNonQuery();
 
                 return true;
