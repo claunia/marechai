@@ -8,7 +8,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Lists companies by letter (or all)
+//     Lists computers by company
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -32,50 +32,49 @@
     ViewData["Title"] = "Companies";
 }
 @using System.IO
-@model IEnumerable<Company>
+@model IEnumerable<cicm_web.Models.Console>
 
 <p>Search results:</p>
 <p align=center>
-    @if(ViewBag.Letter != '\0')
+    @if(ViewBag.Company != null)
     {
-        <b>@ViewBag.Letter</b>
+        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", ViewBag.Company.Id + ".gif")))
+        {
+            <img src="@(System.IO.Path.Combine("/assets/logos/consoles", ViewBag.Company.Id + ".gif"))"
+                 alt="">
+        }
+
+        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", ViewBag.Company.Id + ".jpg")))
+        {
+            <img src="@(System.IO.Path.Combine("/assets/logos/consoles", ViewBag.Company.Id + ".jpg"))"
+                 alt="">
+        }
+
+        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", ViewBag.Company.Id + ".png")))
+        {
+            <img src="@(System.IO.Path.Combine("/assets/logos/consoles", ViewBag.Company.Id + ".png"))"
+                 alt="">
+        }
+        <b>@ViewBag.Company.Name</b>
         <br />
     }
 
     @if(Model.Any())
     {
         <p>
-            @Model.Count() companies found in the database.<br />
-            @foreach(Company company in Model)
+            @Model.Count() computers found in the database.<br />
+            @foreach(cicm_web.Models.Console console in Model)
             {
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".gif")))
-                {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".gif"))"
-                         alt="">
-                }
-
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".jpg")))
-                {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".jpg"))"
-                         alt="">
-                }
-
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".png")))
-                {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".png"))"
-                         alt="">
-                }
-
-                <a asp-controller="Company"
+                <a asp-controller="Console"
                    asp-action="View"
-                   asp-route-id="@company.Id">
-                    @company.Name</a>
+                   asp-route-id="@console.Id">
+                    @console.Name</a>
                 <br />
             }
         </p>
     }
     else
     {
-        <p>There are no companies found in the database that start with this letter.</p>
+        <p>There are no videoconsoles found in the database that belong to that company.</p>
     }
 </p>

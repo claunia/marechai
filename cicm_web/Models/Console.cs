@@ -28,6 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -71,10 +72,11 @@ namespace cicm_web.Models
         public static Console[] GetItemsFromCompany(int id)
         {
             List<Cicm.Database.Schemas.Console> dbItems = null;
-            bool?                               result  = Program.Database?.Operations.GetConsoles(out dbItems, id);
+            bool?                                result  = Program.Database?.Operations.GetConsoles(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.OrderByDescending(i => i.Id).Select(TransformItem) as Console[];
+            // TODO: Company chosen by DB
+            return dbItems.Where(t => t.Company == id).Select(TransformItem).OrderBy(t => t.Name).ToArray();
         }
 
         public static Console GetItem(int id)
@@ -133,6 +135,59 @@ namespace cicm_web.Models
             }
 
             return item;
+        }
+    }
+
+    public class ConsoleMini
+    {
+        public ConsoleCompany Company;
+        public int     Id;
+        public string  Name;
+
+        public static ConsoleMini[] GetAllItems()
+        {
+            List<Cicm.Database.Schemas.Console> dbItems = null;
+            bool?                                result  = Program.Database?.Operations.GetConsoles(out dbItems);
+
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<ConsoleMini> items = new List<ConsoleMini>();
+            foreach(Cicm.Database.Schemas.Console dbItem in dbItems) items.Add(TransformItem(dbItem));
+
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Name).ToArray();
+        }
+
+        public static ConsoleMini[] GetItemsStartingWithLetter(char letter)
+        {
+            List<Cicm.Database.Schemas.Console> dbItems = null;
+            bool?                                result  = Program.Database?.Operations.GetConsoles(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<ConsoleMini> items = new List<ConsoleMini>();
+            foreach(Cicm.Database.Schemas.Console dbItem in dbItems)
+                if(dbItem.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
+                    items.Add(TransformItem(dbItem));
+
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Name).ToArray();
+        }
+
+        public static ConsoleMini[] GetItemsFromYear(int year)
+        {
+            List<Cicm.Database.Schemas.Console> dbItems = null;
+            bool?                                result  = Program.Database?.Operations.GetConsoles(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<ConsoleMini> items = new List<ConsoleMini>();
+            foreach(Cicm.Database.Schemas.Console dbItem in dbItems)
+                if(dbItem.Year == year)
+                    items.Add(TransformItem(dbItem));
+
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Name).ToArray();
+        }
+
+        static ConsoleMini TransformItem(Cicm.Database.Schemas.Console dbItem)
+        {
+            return new ConsoleMini {Company = ConsoleCompany.GetItem(dbItem.Company), Id = dbItem.Id, Name = dbItem.Name};
         }
     }
 }

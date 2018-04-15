@@ -28,7 +28,9 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace cicm_web.Models
 {
@@ -50,12 +52,18 @@ namespace cicm_web.Models
                 Program.Database?.Operations.GetConsoleCompanies(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<ConsoleCompany> items = new List<ConsoleCompany>();
+            return dbItems.Select(t => new ConsoleCompany {Id = t.Id, Name = t.Name}).OrderBy(t => t.Name).ToArray();
+        }
 
-            foreach(Cicm.Database.Schemas.ConsoleCompany dbItem in dbItems)
-                items.Add(new ConsoleCompany {Id = dbItem.Id, Name = dbItem.Name});
+        public static ConsoleCompany[] GetItemsStartingWithLetter(char letter)
+        {
+            List<Cicm.Database.Schemas.ConsoleCompany> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetConsoleCompanies(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
 
-            return items.ToArray();
+            return dbItems
+                  .Where(t => t.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
+                  .Select(t => new ConsoleCompany {Id = t.Id, Name = t.Name}).OrderBy(t => t.Name).ToArray();
         }
     }
 }

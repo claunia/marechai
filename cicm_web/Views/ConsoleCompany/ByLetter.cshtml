@@ -29,10 +29,10 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-    ViewData["Title"] = "Companies";
+    ViewData["Title"] = "Console companies";
 }
 @using System.IO
-@model IEnumerable<Company>
+@model IEnumerable<ConsoleCompany>
 
 <p>Search results:</p>
 <p align=center>
@@ -46,27 +46,27 @@
     {
         <p>
             @Model.Count() companies found in the database.<br />
-            @foreach(Company company in Model)
+            @foreach(ConsoleCompany company in Model)
             {
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".gif")))
+                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", company.Id + ".gif")))
                 {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".gif"))"
+                    <img src="@(System.IO.Path.Combine("/assets/logos/consoles", company.Id + ".gif"))"
                          alt="">
                 }
 
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".jpg")))
+                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", company.Id + ".jpg")))
                 {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".jpg"))"
+                    <img src="@(System.IO.Path.Combine("/assets/logos/consoles", company.Id + ".jpg"))"
                          alt="">
                 }
 
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".png")))
+                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", company.Id + ".png")))
                 {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".png"))"
+                    <img src="@(System.IO.Path.Combine("/assets/logos/consoles", company.Id + ".png"))"
                          alt="">
                 }
 
-                <a asp-controller="Company"
+                <a asp-controller="ConsoleCompany"
                    asp-action="View"
                    asp-route-id="@company.Id">
                     @company.Name</a>
@@ -76,6 +76,6 @@
     }
     else
     {
-        <p>There are no companies found in the database that start with this letter.</p>
+        <p>There are no console companies found in the database that start with this letter.</p>
     }
 </p>

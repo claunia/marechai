@@ -3,12 +3,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : ByLetter.cshtml
+// Filename       : ByYear.cshtml
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Lists companies by letter (or all)
+//     Lists computers by letter (or all)
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,53 +29,31 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-    ViewData["Title"] = "Companies";
+    ViewData["Title"] = "Computers";
 }
-@using System.IO
-@model IEnumerable<Company>
+
+@model IEnumerable<ConsoleMini>
 
 <p>Search results:</p>
 <p align=center>
-    @if(ViewBag.Letter != '\0')
-    {
-        <b>@ViewBag.Letter</b>
-        <br />
-    }
+    <b>@ViewBag.Year</b><br />
 
     @if(Model.Any())
     {
         <p>
-            @Model.Count() companies found in the database.<br />
-            @foreach(Company company in Model)
+            @Model.Count() videoconsoles found in the database.<br />
+            @foreach(ConsoleMini console in Model)
             {
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".gif")))
-                {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".gif"))"
-                         alt="">
-                }
-
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".jpg")))
-                {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".jpg"))"
-                         alt="">
-                }
-
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".png")))
-                {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".png"))"
-                         alt="">
-                }
-
-                <a asp-controller="Company"
+                <a asp-controller="Console"
                    asp-action="View"
-                   asp-route-id="@company.Id">
-                    @company.Name</a>
+                   asp-route-id="@console.Id">
+                    @console.Company.Name @console.Name</a>
                 <br />
             }
         </p>
     }
     else
     {
-        <p>There are no companies found in the database that start with this letter.</p>
+        <p>There are no videoconsoles found in the database released this year.</p>
     }
 </p>
