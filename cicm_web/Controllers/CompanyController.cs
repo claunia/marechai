@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : ComputerController.cs
+// Filename       : CompanyController.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Computer controller
+//     Company controller
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,36 +28,21 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
-using System.Linq;
 using cicm_web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Computer = Cicm.Database.Schemas.Computer;
 
 namespace cicm_web.Controllers
 {
-    public class ComputerController : Controller
+    public class CompanyController : Controller
     {
         readonly IHostingEnvironment hostingEnvironment;
 
-        public ComputerController(IHostingEnvironment env)
+        public CompanyController(IHostingEnvironment env)
         {
             hostingEnvironment = env;
         }
-
-        public IActionResult Index()
-        {
-            Program.Database.Operations.GetComputers(out List<Computer> computers);
-
-            ViewBag.ItemCount = computers.Count;
-
-            ViewBag.MinYear = computers.Where(t => t.Year > 1000).Min(t => t.Year);
-            ViewBag.MaxYear = computers.Where(t => t.Year > 1000).Max(t => t.Year);
-
-            return View();
-        }
-
+        
         public IActionResult ByLetter(char id)
         {
             // ToUpper()
@@ -67,24 +52,21 @@ namespace cicm_web.Controllers
 
             ViewBag.Letter = id;
 
-            ComputerMini[] computers =
-                id == '\0' ? ComputerMini.GetAllItems() : ComputerMini.GetItemsStartingWithLetter(id);
+            Company[] companies =
+                id == '\0' ? Company.GetAllItems() : Company.GetItemsStartingWithLetter(id);
 
-            return View(computers);
+            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+            return View(companies);
         }
-
-        public IActionResult ByYear(int id)
-        {
-            ViewBag.Year = id;
-
-            return View(ComputerMini.GetItemsFromYear(id));
-        }
-
+        
         public IActionResult View(int id)
         {
-            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+            Company company = Company.GetItem(id);
+            ViewBag.Company = company;
+            Computer[] computers = Computer.GetItemsFromCompany(id);
 
-            return View(Models.Computer.GetItem(id));
+            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+            return View(computers);
         }
     }
 }

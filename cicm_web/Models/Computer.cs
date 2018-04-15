@@ -70,16 +70,19 @@ namespace cicm_web.Models
             bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.Select(TransformItem) as Computer[];
+            List<Computer> items = new List<Computer>();
+
+            return dbItems.Select(TransformItem).OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
         public static Computer[] GetItemsFromCompany(int id)
         {
             List<Cicm.Database.Schemas.Computer> dbItems = null;
-            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems, id);
+            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.Select(TransformItem) as Computer[];
+            // TODO: Company chosen by DB
+            return dbItems.Where(t => t.Company == id).Select(TransformItem).OrderBy(t => t.Model).ToArray();
         }
 
         public static Computer GetItem(int id)
