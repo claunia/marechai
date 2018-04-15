@@ -51,7 +51,7 @@ namespace Cicm.Database
 
             try
             {
-                const string SQL = "SELECT * from admin";
+                const string SQL = "SELECT * from admins";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -88,7 +88,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * FROM admin LIMIT {start}, {count}";
+                string sql = $"SELECT * FROM admins LIMIT {start}, {count}";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -123,7 +123,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * from admin WHERE id = '{id}'";
+                string sql = $"SELECT * from admins WHERE id = '{id}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -155,7 +155,7 @@ namespace Cicm.Database
             #endif
 
             IDbCommand dbcmd = dbCon.CreateCommand();
-            dbcmd.CommandText = "SELECT COUNT(*) FROM admin";
+            dbcmd.CommandText = "SELECT COUNT(*) FROM admins";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToInt64(count); }
@@ -178,7 +178,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO admin (user, password)" + " VALUES (@user, @password)";
+            const string SQL = "INSERT INTO admins (user, password)" + " VALUES (@user, @password)";
 
             dbcmd.CommandText = SQL;
 
@@ -210,7 +210,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE admin SET user = @user, password = @password " + $"WHERE id = {entry.Id}";
+            string sql = "UPDATE admins SET user = @user, password = @password " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -236,7 +236,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DELETE FROM admin WHERE id = '{id}';";
+            string sql = $"DELETE FROM admins WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 

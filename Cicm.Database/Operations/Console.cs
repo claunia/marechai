@@ -206,7 +206,7 @@ namespace Cicm.Database
         public bool AddConsole(Console entry, out long id)
         {
             #if DEBUG
-            System.Console.Write("Adding console `{0}`...", entry.Name);
+            System.Console.Write("Adding console `{0}`...", entry.Model);
             #endif
 
             IDbCommand     dbcmd = GetCommandConsole(entry);
@@ -214,8 +214,8 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO consoles (company, year, name, cpu1, mhz1, cpu2, mhz2, bits, ram, rom, gpu, vram, colors, res, spu, mpu, schannels, mchannels, palette, format, cap, comments)" +
-                " VALUES (@company, @year, @name, @cpu1, @mhz1, @cpu2, @mhz2, @bits, @ram, @rom, @gpu, @vram, @colors, @res, @spu, @mpu, @schannels, @mchannels, @palette, @format, @cap, @comments)";
+                "INSERT INTO consoles (company, year, model, cpu1, mhz1, cpu2, mhz2, bits, ram, rom, gpu, vram, colors, res, sound_synth, music_synth, schannels, mchannels, palette, format, cap)" +
+                " VALUES (@company, @year, @model, @cpu1, @mhz1, @cpu2, @mhz2, @bits, @ram, @rom, @gpu, @vram, @colors, @res, @sound_synth, @music_synth, @schannels, @mchannels, @palette, @format, @cap)";
 
             dbcmd.CommandText = SQL;
 
@@ -240,7 +240,7 @@ namespace Cicm.Database
         public bool UpdateConsole(Console entry)
         {
             #if DEBUG
-            System.Console.WriteLine("Updating console `{0}`...", entry.Name);
+            System.Console.WriteLine("Updating console `{0}`...", entry.Model);
             #endif
 
             IDbCommand     dbcmd = GetCommandConsole(entry);
@@ -248,9 +248,9 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             string sql =
-                "UPDATE consoles SET company = @company, year = @year, name = @name, cpu1 = @cpu1, mhz1 = @mhz1, cpu2 = @cpu2, "                      +
-                "mhz2 = @mhz2, bits = @bits, ram = @ram, rom = @rom, gpu = @gpu, vram = @vram, colors = @colors, res = @res, spu = @spu, mpu = @mpu " +
-                "schannels = @schannels, mchannels = @mchannels, palette = @palette, format = @format, cap = @cap, comments = @comments "             +
+                "UPDATE consoles SET company = @company, year = @year, model = @model, cpu1 = @cpu1, mhz1 = @mhz1, cpu2 = @cpu2, "                                                    +
+                "mhz2 = @mhz2, bits = @bits, ram = @ram, rom = @rom, gpu = @gpu, vram = @vram, colors = @colors, res = @res, sound_synth = @sound_synth, music_synth = @music_synth " +
+                "schannels = @schannels, mchannels = @mchannels, palette = @palette, format = @format, cap = @cap "                                                                   +
                 $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
@@ -313,11 +313,10 @@ namespace Cicm.Database
             IDbDataParameter param19 = dbcmd.CreateParameter();
             IDbDataParameter param20 = dbcmd.CreateParameter();
             IDbDataParameter param21 = dbcmd.CreateParameter();
-            IDbDataParameter param22 = dbcmd.CreateParameter();
 
             param1.ParameterName  = "@company";
             param2.ParameterName  = "@year";
-            param3.ParameterName  = "@name";
+            param3.ParameterName  = "@model";
             param4.ParameterName  = "@cpu1";
             param5.ParameterName  = "@mhz1";
             param6.ParameterName  = "@cpu2";
@@ -329,14 +328,13 @@ namespace Cicm.Database
             param12.ParameterName = "@vram";
             param13.ParameterName = "@colors";
             param14.ParameterName = "@res";
-            param15.ParameterName = "@spu";
-            param16.ParameterName = "@mpu";
+            param15.ParameterName = "@sound_synth";
+            param16.ParameterName = "@music_synth";
             param17.ParameterName = "@schannels";
             param18.ParameterName = "@mchannels";
             param19.ParameterName = "@palette";
             param20.ParameterName = "@format";
             param21.ParameterName = "@cap";
-            param22.ParameterName = "@comments";
 
             param1.DbType  = DbType.Int32;
             param2.DbType  = DbType.Int32;
@@ -359,11 +357,10 @@ namespace Cicm.Database
             param19.DbType = DbType.Int32;
             param20.DbType = DbType.Int32;
             param21.DbType = DbType.Int32;
-            param22.DbType = DbType.String;
 
             param1.Value  = entry.Company;
             param2.Value  = entry.Year;
-            param3.Value  = entry.Name;
+            param3.Value  = entry.Model;
             param4.Value  = entry.Cpu1;
             param5.Value  = entry.Mhz1;
             param6.Value  = entry.Cpu2;
@@ -375,14 +372,13 @@ namespace Cicm.Database
             param12.Value = entry.Vram;
             param13.Value = entry.Colors;
             param14.Value = entry.Resolution;
-            param15.Value = entry.Spu;
-            param16.Value = entry.Mpu;
+            param15.Value = entry.SoundSynth;
+            param16.Value = entry.MusicSynth;
             param17.Value = entry.SoundChannels;
             param18.Value = entry.MusicChannels;
             param19.Value = entry.Palette;
             param20.Value = entry.Format;
             param21.Value = entry.Cap;
-            param22.Value = entry.Comments;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -405,7 +401,6 @@ namespace Cicm.Database
             dbcmd.Parameters.Add(param19);
             dbcmd.Parameters.Add(param20);
             dbcmd.Parameters.Add(param21);
-            dbcmd.Parameters.Add(param22);
 
             return dbcmd;
         }
@@ -421,7 +416,7 @@ namespace Cicm.Database
                     Id      = int.Parse(dataRow["id"].ToString()),
                     Company = int.Parse(dataRow["company"].ToString()),
                     Year    = int.Parse(dataRow["year"].ToString()),
-                    Name    = dataRow["name"].ToString(),
+                    Model   = dataRow["model"].ToString(),
                     Cpu1    = int.Parse(dataRow["cpu1"].ToString()),
                     Mhz1    = float.Parse(dataRow["mhz1"].ToString()),
                     Cpu2 = string.IsNullOrEmpty(dataRow["cpu2"].ToString())
@@ -436,14 +431,13 @@ namespace Cicm.Database
                     Vram          = int.Parse(dataRow["vram"].ToString()),
                     Colors        = int.Parse(dataRow["colors"].ToString()),
                     Resolution    = dataRow["res"].ToString(),
-                    Spu           = int.Parse(dataRow["spu"].ToString()),
-                    Mpu           = int.Parse(dataRow["mpu"].ToString()),
+                    SoundSynth    = int.Parse(dataRow["sound_synth"].ToString()),
+                    MusicSynth    = int.Parse(dataRow["music_synth"].ToString()),
                     SoundChannels = int.Parse(dataRow["schannels"].ToString()),
                     MusicChannels = int.Parse(dataRow["mchannels"].ToString()),
                     Palette       = int.Parse(dataRow["palette"].ToString()),
                     Format        = int.Parse(dataRow["format"].ToString()),
-                    Cap           = int.Parse(dataRow["cap"].ToString()),
-                    Comments      = dataRow["comments"].ToString()
+                    Cap           = int.Parse(dataRow["cap"].ToString())
                 };
 
                 entries.Add(entry);

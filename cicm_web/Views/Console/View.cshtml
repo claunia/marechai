@@ -34,21 +34,21 @@
 @using System.IO
 @model cicm_web.Models.Console
 
-@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", Model.Company.Id + ".gif")))
+@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.Id + ".gif")))
 {
-    <img src="@(System.IO.Path.Combine("/assets/logos/consoles", Model.Company.Id + ".gif"))"
+    <img src="@(System.IO.Path.Combine("/assets/logos", Model.Company.Id + ".gif"))"
          alt="">
 }
 
-@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", Model.Company.Id + ".jpg")))
+@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.Id + ".jpg")))
 {
-    <img src="@(System.IO.Path.Combine("/assets/logos/consoles", Model.Company.Id + ".jpg"))"
+    <img src="@(System.IO.Path.Combine("/assets/logos", Model.Company.Id + ".jpg"))"
          alt="">
 }
 
-@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/consoles", Model.Company.Id + ".png")))
+@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.Id + ".png")))
 {
-    <img src="@(System.IO.Path.Combine("/assets/logos/consoles", Model.Company.Id + ".png"))"
+    <img src="@(System.IO.Path.Combine("/assets/logos", Model.Company.Id + ".png"))"
          alt="">
 }
 
@@ -59,7 +59,7 @@
     </b>
 }
 
-<b>@Model.Company.Name @Model.Name</b>
+<b>@Model.Company.Name @Model.Model</b>
 <table border=0
        width=100%>
 @if(Model.Year != 1000)
@@ -300,17 +300,17 @@
             Sound processor
         </div>
     </th>
-    @if(Model.Spu.Id > 1)
+    @if(Model.SoundSynth.Id > 1)
     {
-        if(Model.Spu.Id > 2)
+        if(Model.SoundSynth.Id > 2)
         {
             if(Model.SoundChannels > 0)
             {
-                <td>@Model.Spu.Name (@Model.SoundChannels channels)</td>
+                <td>@Model.SoundSynth.Name (@Model.SoundChannels channels)</td>
             }
             else
             {
-                <td>@Model.Spu.Name</td>
+                <td>@Model.SoundSynth.Name</td>
             }
         }
         else
@@ -327,17 +327,17 @@
             Music synthetizer
         </div>
     </th>
-    @if(Model.Mpu.Id > 1)
+    @if(Model.MusicSynth.Id > 1)
     {
-        if(Model.Mpu.Id > 2)
+        if(Model.MusicSynth.Id > 2)
         {
             if(Model.MusicChannels > 0)
             {
-                <td>@Model.Mpu.Name (@Model.MusicChannels channels)</td>
+                <td>@Model.MusicSynth.Name (@Model.MusicChannels channels)</td>
             }
             else
             {
-                <td>@Model.Mpu.Name</td>
+                <td>@Model.MusicSynth.Name</td>
             }
         }
         else

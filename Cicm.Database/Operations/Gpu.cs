@@ -178,7 +178,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO gpus (GPU)" + " VALUES (@GPU)";
+            const string SQL = "INSERT INTO gpus (name)" + " VALUES (@name)";
 
             dbcmd.CommandText = SQL;
 
@@ -210,7 +210,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE gpus SET GPU = @GPU " + $"WHERE id = {entry.Id}";
+            string sql = "UPDATE gpus SET name = @name " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -253,7 +253,7 @@ namespace Cicm.Database
 
             IDbDataParameter param1 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@GPU";
+            param1.ParameterName = "@name";
 
             param1.DbType = DbType.String;
 
@@ -270,7 +270,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Gpu entry = new Gpu {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["GPU"].ToString()};
+                Gpu entry = new Gpu {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["name"].ToString()};
 
                 entries.Add(entry);
             }

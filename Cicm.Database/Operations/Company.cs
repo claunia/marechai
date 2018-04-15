@@ -51,7 +51,7 @@ namespace Cicm.Database
 
             try
             {
-                const string SQL = "SELECT * from Companias";
+                const string SQL = "SELECT * from companies";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -88,7 +88,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * FROM Companias LIMIT {start}, {count}";
+                string sql = $"SELECT * FROM companies LIMIT {start}, {count}";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -123,7 +123,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * from Companias WHERE id = '{id}'";
+                string sql = $"SELECT * from companies WHERE id = '{id}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -155,7 +155,7 @@ namespace Cicm.Database
             #endif
 
             IDbCommand dbcmd = dbCon.CreateCommand();
-            dbcmd.CommandText = "SELECT COUNT(*) FROM Companias";
+            dbcmd.CommandText = "SELECT COUNT(*) FROM companies";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToInt64(count); }
@@ -178,7 +178,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO Companias (Compania)" + " VALUES (@Compania)";
+            const string SQL = "INSERT INTO companies (name)" + " VALUES (@name)";
 
             dbcmd.CommandText = SQL;
 
@@ -210,7 +210,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE Companias SET Compania = @Compania " + $"WHERE id = {entry.Id}";
+            string sql = "UPDATE companies SET name = @name " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -236,7 +236,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DELETE FROM Companias WHERE id = '{id}';";
+            string sql = $"DELETE FROM companies WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 
@@ -253,7 +253,7 @@ namespace Cicm.Database
 
             IDbDataParameter param1 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@Compania";
+            param1.ParameterName = "@name";
 
             param1.DbType = DbType.String;
 
@@ -273,7 +273,7 @@ namespace Cicm.Database
                 Company entry = new Company
                 {
                     Id   = int.Parse(dataRow["id"].ToString()),
-                    Name = dataRow["Compania"].ToString()
+                    Name = dataRow["name"].ToString()
                 };
 
                 entries.Add(entry);

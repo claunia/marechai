@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Cpu.cs
+// Filename       : MusicSynth.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of a CPU (Central Processing Unit).
+//     Music Synthetizer model
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,14 +28,33 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-namespace Cicm.Database.Schemas
+using System.Collections.Generic;
+
+namespace cicm_web.Models
 {
-    /// <summary>Central Processing Unit</summary>
-    public class Cpu
+    public class MusicSynth
     {
-        /// <summary>ID</summary>
-        public int Id;
-        /// <summary>Name</summary>
+        public int    Id;
         public string Name;
+
+        public static MusicSynth GetItem(int id)
+        {
+            Cicm.Database.Schemas.MusicSynth dbItem = Program.Database?.Operations.GetMusicSynth(id);
+            return dbItem == null ? null : new MusicSynth {Name = dbItem.Name, Id = dbItem.Id};
+        }
+
+        public static MusicSynth[] GetAllItems()
+        {
+            List<Cicm.Database.Schemas.MusicSynth> dbItems = null;
+            bool?                                  result  = Program.Database?.Operations.GetMusicSynths(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<MusicSynth> items = new List<MusicSynth>();
+
+            foreach(Cicm.Database.Schemas.MusicSynth dbItem in dbItems)
+                items.Add(new MusicSynth {Id = dbItem.Id, Name = dbItem.Name});
+
+            return items.ToArray();
+        }
     }
 }

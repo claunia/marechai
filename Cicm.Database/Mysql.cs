@@ -75,6 +75,7 @@ namespace Cicm.Database
                     $"server={server};user={user};database={database};port={port};password={password}";
 
                 connection = new MySqlConnection(connectionString);
+                connection.Open();
 
                 Operations = new Operations(connection, this);
 
@@ -120,6 +121,7 @@ namespace Cicm.Database
                     $"server={server};user={user};database={database};port={port};password={password}";
 
                 connection = new MySqlConnection(connectionString);
+                connection.Open();
 
                 IDbCommand command = connection.CreateCommand();
                 command.CommandText = $"CREATE DATABASE `{database}`;";
@@ -152,6 +154,21 @@ namespace Cicm.Database
         public IDbDataAdapter GetNewDataAdapter()
         {
             return new MySqlDataAdapter();
+        }
+
+        public bool TableExists(string tableName)
+        {
+            MySqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText =
+                $"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{connection.Database}' AND table_name = '{tableName}'";
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            reader.Read();
+
+            int count = reader.GetInt32(0);
+            reader.Close();
+            return count > 0;
         }
 
         ~Mysql()

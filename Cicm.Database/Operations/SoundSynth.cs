@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : OwnConsole.cs
+// Filename       : SoundSynth.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains operations to manage owned consoles.
+//     Contains operations to manage sound synthetizers.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -39,19 +39,19 @@ namespace Cicm.Database
     public partial class Operations
     {
         /// <summary>
-        ///     Gets all owned consoles
+        ///     Gets all sound synthetizers
         /// </summary>
-        /// <param name="entries">All owned consoles</param>
+        /// <param name="entries">All sound synthetizers</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetOwnConsoles(out List<OwnConsole> entries)
+        public bool GetSoundSynths(out List<SoundSynth> entries)
         {
             #if DEBUG
-            Console.WriteLine("Getting all owned consoles...");
+            Console.WriteLine("Getting all sound synthetizers...");
             #endif
 
             try
             {
-                const string SQL = "SELECT * from own_consoles";
+                const string SQL = "SELECT * from sound_synths";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -60,13 +60,13 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = OwnConsolesFromDataTable(dataSet.Tables[0]);
+                entries = SoundSynthFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting owned consoles.");
+                Console.WriteLine("Error getting sound synthetizers.");
                 Console.WriteLine(ex);
                 entries = null;
                 return false;
@@ -74,21 +74,21 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Gets the specified number of owned consoles since the specified start
+        ///     Gets the specified number of sound synthetizers since the specified start
         /// </summary>
-        /// <param name="entries">List of owned consoles</param>
+        /// <param name="entries">List of sound synthetizers</param>
         /// <param name="start">Start of query</param>
         /// <param name="count">How many entries to retrieve</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetOwnConsoles(out List<OwnConsole> entries, ulong start, ulong count)
+        public bool GetSoundSynths(out List<SoundSynth> entries, ulong start, ulong count)
         {
             #if DEBUG
-            Console.WriteLine("Getting {0} owned consoles from {1}...", count, start);
+            Console.WriteLine("Getting {0} sound synthetizers from {1}...", count, start);
             #endif
 
             try
             {
-                string sql = $"SELECT * FROM own_consoles LIMIT {start}, {count}";
+                string sql = $"SELECT * FROM sound_synths LIMIT {start}, {count}";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -97,13 +97,13 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = OwnConsolesFromDataTable(dataSet.Tables[0]);
+                entries = SoundSynthFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting owned consoles.");
+                Console.WriteLine("Error getting sound synthetizers.");
                 Console.WriteLine(ex);
                 entries = null;
                 return false;
@@ -111,19 +111,19 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Gets owned console by specified id
+        ///     Gets sound synthetizer by specified id
         /// </summary>
         /// <param name="id">Id</param>
-        /// <returns>Owned console with specified id, <c>null</c> if not found or error</returns>
-        public OwnConsole GetOwnConsole(int id)
+        /// <returns>Sound synthetizer with specified id, <c>null</c> if not found or error</returns>
+        public SoundSynth GetSoundSynth(int id)
         {
             #if DEBUG
-            Console.WriteLine("Getting owned console with id {0}...", id);
+            Console.WriteLine("Getting sound synthetizer with id {0}...", id);
             #endif
 
             try
             {
-                string sql = $"SELECT * from own_consoles WHERE id = '{id}'";
+                string sql = $"SELECT * from sound_synths WHERE id = '{id}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -132,30 +132,30 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                List<OwnConsole> entries = OwnConsolesFromDataTable(dataSet.Tables[0]);
+                List<SoundSynth> entries = SoundSynthFromDataTable(dataSet.Tables[0]);
 
                 return entries == null || entries.Count == 0 ? null : entries[0];
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting owned console.");
+                Console.WriteLine("Error getting sound synthetizer.");
                 Console.WriteLine(ex);
                 return null;
             }
         }
 
         /// <summary>
-        ///     Counts the number of owned consoles in the database
+        ///     Counts the number of sound synthetizers in the database
         /// </summary>
         /// <returns>Entries in database</returns>
-        public long CountOwnConsoles()
+        public long CountSoundSynths()
         {
             #if DEBUG
-            Console.WriteLine("Counting owned consoles...");
+            Console.WriteLine("Counting sound synthetizers...");
             #endif
 
             IDbCommand dbcmd = dbCon.CreateCommand();
-            dbcmd.CommandText = "SELECT COUNT(*) FROM own_consoles";
+            dbcmd.CommandText = "SELECT COUNT(*) FROM sound_synths";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToInt64(count); }
@@ -163,23 +163,22 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Adds a new owned console to the database
+        ///     Adds a new sound synthetizer to the database
         /// </summary>
         /// <param name="entry">Entry to add</param>
         /// <param name="id">ID of added entry</param>
         /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
-        public bool AddOwnConsole(OwnConsole entry, out long id)
+        public bool AddSoundSynth(SoundSynth entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding owned console `{0}`...", entry.ConsoleId);
+            Console.Write("Adding sound synthetizer `{0}`...", entry.Name);
             #endif
 
-            IDbCommand     dbcmd = GetCommandOwnConsole(entry);
+            IDbCommand     dbcmd = GetCommandSoundSynth(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO own_consoles (db_id, date, status, trade, boxed, manuals)" +
-                               " VALUES (@db_id, @date, @status, @trade, @boxed, @manuals)";
+            const string SQL = "INSERT INTO sound_synths (name)" + " VALUES (@name)";
 
             dbcmd.CommandText = SQL;
 
@@ -197,23 +196,21 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Updated an owned console in the database
+        ///     Updated a sound synthetizer in the database
         /// </summary>
         /// <param name="entry">Updated entry</param>
         /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
-        public bool UpdateOwnConsole(OwnConsole entry)
+        public bool UpdateSoundSynth(SoundSynth entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating console `{0}`...", entry.ConsoleId);
+            Console.WriteLine("Updating sound synthetizer `{0}`...", entry.Name);
             #endif
 
-            IDbCommand     dbcmd = GetCommandOwnConsole(entry);
+            IDbCommand     dbcmd = GetCommandSoundSynth(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql =
-                "UPDATE own_consoles SET db_id = @db_id, date = @date, status = @status, trade = @trade, boxed = @boxed, manuals = @manuals " +
-                $"WHERE id = {entry.Id}";
+            string sql = "UPDATE sound_synths SET name = @name " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -225,21 +222,21 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Removes an owned console from the database
+        ///     Removes a sound synthetizer from the database
         /// </summary>
         /// <param name="id">ID of entry to remove</param>
         /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
-        public bool RemoveOwnConsole(long id)
+        public bool RemoveSoundSynth(long id)
         {
             #if DEBUG
-            Console.WriteLine("Removing owned console widh id `{0}`...", id);
+            Console.WriteLine("Removing sound synthetizer widh id `{0}`...", id);
             #endif
 
             IDbCommand     dbcmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DELETE FROM own_consoles WHERE id = '{id}';";
+            string sql = $"DELETE FROM sound_synths WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 
@@ -250,63 +247,33 @@ namespace Cicm.Database
             return true;
         }
 
-        IDbCommand GetCommandOwnConsole(OwnConsole entry)
+        IDbCommand GetCommandSoundSynth(SoundSynth entry)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
             IDbDataParameter param1 = dbcmd.CreateParameter();
-            IDbDataParameter param2 = dbcmd.CreateParameter();
-            IDbDataParameter param3 = dbcmd.CreateParameter();
-            IDbDataParameter param4 = dbcmd.CreateParameter();
-            IDbDataParameter param5 = dbcmd.CreateParameter();
-            IDbDataParameter param6 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@db_id";
-            param2.ParameterName = "@date";
-            param3.ParameterName = "@status";
-            param4.ParameterName = "@trade";
-            param5.ParameterName = "@boxed";
-            param6.ParameterName = "@manuals";
+            param1.ParameterName = "@name";
 
-            param1.DbType = DbType.Int32;
-            param2.DbType = DbType.String;
-            param3.DbType = DbType.Int32;
-            param4.DbType = DbType.Boolean;
-            param5.DbType = DbType.Boolean;
-            param6.DbType = DbType.Boolean;
+            param1.DbType = DbType.String;
 
-            param1.Value = entry.ConsoleId;
-            param2.Value = entry.Acquired;
-            param3.Value = entry.Status;
-            param4.Value = entry.Trade;
-            param5.Value = entry.Boxed;
-            param6.Value = entry.Manuals;
+            param1.Value = entry.Name;
 
             dbcmd.Parameters.Add(param1);
-            dbcmd.Parameters.Add(param2);
-            dbcmd.Parameters.Add(param3);
-            dbcmd.Parameters.Add(param4);
-            dbcmd.Parameters.Add(param5);
-            dbcmd.Parameters.Add(param6);
 
             return dbcmd;
         }
 
-        static List<OwnConsole> OwnConsolesFromDataTable(DataTable dataTable)
+        static List<SoundSynth> SoundSynthFromDataTable(DataTable dataTable)
         {
-            List<OwnConsole> entries = new List<OwnConsole>();
+            List<SoundSynth> entries = new List<SoundSynth>();
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                OwnConsole entry = new OwnConsole
+                SoundSynth entry = new SoundSynth
                 {
-                    Id        = int.Parse(dataRow["id"].ToString()),
-                    ConsoleId = int.Parse(dataRow["db_id"].ToString()),
-                    Acquired  = dataRow["date"].ToString(),
-                    Status    = (StatusType)int.Parse(dataRow["status"].ToString()),
-                    Trade     = int.Parse(dataRow["trade"].ToString()) > 0,
-                    Boxed     = int.Parse(dataRow["boxed"].ToString()) > 0,
-                    Manuals   = int.Parse(dataRow["manuals"].ToString()) > 0
+                    Id   = int.Parse(dataRow["id"].ToString()),
+                    Name = dataRow["name"].ToString()
                 };
 
                 entries.Add(entry);

@@ -2,7 +2,7 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : OwnConsole.cs
+// Filename       : OwnedConsole.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -36,7 +36,7 @@ using Cicm.Database.Schemas;
 
 namespace cicm_web.Models
 {
-    public class OwnConsole
+    public class OwnedConsole
     {
         public DateTime   Acquired;
         public bool       Boxed;
@@ -46,28 +46,29 @@ namespace cicm_web.Models
         public StatusType Status;
         public bool       Trade;
 
-        public static OwnConsole[] GetAllItems()
+        public static OwnedConsole[] GetAllItems()
         {
-            List<Cicm.Database.Schemas.OwnConsole> dbItems = null;
-            bool?                                  result  = Program.Database?.Operations.GetOwnConsoles(out dbItems);
+            List<Cicm.Database.Schemas.OwnedConsole> dbItems = null;
+            bool? result =
+                Program.Database?.Operations.GetOwnedConsoles(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.OrderByDescending(i => i.Id).Select(TransformItem) as OwnConsole[];
+            return dbItems.OrderByDescending(i => i.Id).Select(TransformItem) as OwnedConsole[];
         }
 
-        public static OwnConsole GetItem(int id)
+        public static OwnedConsole GetItem(int id)
         {
-            Cicm.Database.Schemas.OwnConsole dbItem = Program.Database?.Operations.GetOwnConsole(id);
+            Cicm.Database.Schemas.OwnedConsole dbItem = Program.Database?.Operations.GetOwnedConsole(id);
             return dbItem == null ? null : TransformItem(dbItem);
         }
 
-        static OwnConsole TransformItem(Cicm.Database.Schemas.OwnConsole dbItem)
+        static OwnedConsole TransformItem(Cicm.Database.Schemas.OwnedConsole dbItem)
         {
             Console console = Console.GetItem(dbItem.ConsoleId);
 
             return console == null
                        ? null
-                       : new OwnConsole
+                       : new OwnedConsole
                        {
                            Acquired =
                                DateTime.ParseExact(dbItem.Acquired, "yyyy/MM/dd HH:mm:ss",

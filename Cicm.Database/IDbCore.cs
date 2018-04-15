@@ -73,5 +73,7 @@ namespace Cicm.Database
         /// </summary>
         /// <returns>Data adapter</returns>
         IDbDataAdapter GetNewDataAdapter();
+
+        bool TableExists(string tableName);
     }
 }

@@ -48,21 +48,21 @@
             @Model.Count() companies found in the database.<br />
             @foreach(Company company in Model)
             {
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".gif")))
+                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.Id + ".gif")))
                 {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".gif"))"
+                    <img src="@(System.IO.Path.Combine("/assets/logos", company.Id + ".gif"))"
                          alt="">
                 }
 
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".jpg")))
+                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.Id + ".jpg")))
                 {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".jpg"))"
+                    <img src="@(System.IO.Path.Combine("/assets/logos", company.Id + ".jpg"))"
                          alt="">
                 }
 
-                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", company.Id + ".png")))
+                if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.Id + ".png")))
                 {
-                    <img src="@(System.IO.Path.Combine("/assets/logos/computers", company.Id + ".png"))"
+                    <img src="@(System.IO.Path.Combine("/assets/logos", company.Id + ".png"))"
                          alt="">
                 }
 

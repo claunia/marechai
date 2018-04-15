@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Mpu.cs
+// Filename       : Processor.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains operations to manage MPUs.
+//     Contains operations to manage processors.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -39,19 +39,19 @@ namespace Cicm.Database
     public partial class Operations
     {
         /// <summary>
-        ///     Gets all MPUs
+        ///     Gets all processors
         /// </summary>
-        /// <param name="entries">All MPUs</param>
+        /// <param name="entries">All CPUs</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetMpus(out List<Mpu> entries)
+        public bool GetProcessors(out List<Processor> entries)
         {
             #if DEBUG
-            Console.WriteLine("Getting all MPUs...");
+            Console.WriteLine("Getting all processors...");
             #endif
 
             try
             {
-                const string SQL = "SELECT * from mpus";
+                const string SQL = "SELECT * from processors";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -60,13 +60,13 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = MpusFromDataTable(dataSet.Tables[0]);
+                entries = ProcessorsFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting MPUs.");
+                Console.WriteLine("Error getting processors.");
                 Console.WriteLine(ex);
                 entries = null;
                 return false;
@@ -74,21 +74,21 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Gets the specified number of MPUs since the specified start
+        ///     Gets the specified number of processors since the specified start
         /// </summary>
-        /// <param name="entries">List of MPUs</param>
+        /// <param name="entries">List of processors</param>
         /// <param name="start">Start of query</param>
         /// <param name="count">How many entries to retrieve</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetMpus(out List<Mpu> entries, ulong start, ulong count)
+        public bool GetProcessors(out List<Processor> entries, ulong start, ulong count)
         {
             #if DEBUG
-            Console.WriteLine("Getting {0} MPUs from {1}...", count, start);
+            Console.WriteLine("Getting {0} processors from {1}...", count, start);
             #endif
 
             try
             {
-                string sql = $"SELECT * FROM mpus LIMIT {start}, {count}";
+                string sql = $"SELECT * FROM processors LIMIT {start}, {count}";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -97,13 +97,13 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = MpusFromDataTable(dataSet.Tables[0]);
+                entries = ProcessorsFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting MPUs.");
+                Console.WriteLine("Error getting processors.");
                 Console.WriteLine(ex);
                 entries = null;
                 return false;
@@ -111,19 +111,19 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Gets MPU by specified id
+        ///     Gets processor by specified id
         /// </summary>
         /// <param name="id">Id</param>
-        /// <returns>MPU with specified id, <c>null</c> if not found or error</returns>
-        public Mpu GetMpu(int id)
+        /// <returns>Processor with specified id, <c>null</c> if not found or error</returns>
+        public Processor GetProcessor(int id)
         {
             #if DEBUG
-            Console.WriteLine("Getting MPU with id {0}...", id);
+            Console.WriteLine("Getting processor with id {0}...", id);
             #endif
 
             try
             {
-                string sql = $"SELECT * from mpus WHERE id = '{id}'";
+                string sql = $"SELECT * from processors WHERE id = '{id}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -132,30 +132,30 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                List<Mpu> entries = MpusFromDataTable(dataSet.Tables[0]);
+                List<Processor> entries = ProcessorsFromDataTable(dataSet.Tables[0]);
 
                 return entries == null || entries.Count == 0 ? null : entries[0];
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting MPU.");
+                Console.WriteLine("Error getting processor.");
                 Console.WriteLine(ex);
                 return null;
             }
         }
 
         /// <summary>
-        ///     Counts the number of MPUs in the database
+        ///     Counts the number of processors in the database
         /// </summary>
         /// <returns>Entries in database</returns>
-        public long CountMpus()
+        public long CountProcessors()
         {
             #if DEBUG
-            Console.WriteLine("Counting mpus...");
+            Console.WriteLine("Counting processors...");
             #endif
 
             IDbCommand dbcmd = dbCon.CreateCommand();
-            dbcmd.CommandText = "SELECT COUNT(*) FROM mpus";
+            dbcmd.CommandText = "SELECT COUNT(*) FROM processors";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToInt64(count); }
@@ -163,22 +163,22 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Adds a new MPU to the database
+        ///     Adds a new processor to the database
         /// </summary>
         /// <param name="entry">Entry to add</param>
         /// <param name="id">ID of added entry</param>
         /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
-        public bool AddMpu(Mpu entry, out long id)
+        public bool AddProcessor(Processor entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding MPU `{0}`...", entry.Name);
+            Console.Write("Adding processor `{0}`...", entry.Name);
             #endif
 
-            IDbCommand     dbcmd = GetCommandMpu(entry);
+            IDbCommand     dbcmd = GetCommandProcessor(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO mpus (MPU)" + " VALUES (@MPU)";
+            const string SQL = "INSERT INTO processors (name)" + " VALUES (@name)";
 
             dbcmd.CommandText = SQL;
 
@@ -196,21 +196,21 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Updated an MPU in the database
+        ///     Updated a processor in the database
         /// </summary>
         /// <param name="entry">Updated entry</param>
         /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
-        public bool UpdateMpu(Mpu entry)
+        public bool UpdateProcessor(Processor entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating MPU `{0}`...", entry.Name);
+            Console.WriteLine("Updating processor `{0}`...", entry.Name);
             #endif
 
-            IDbCommand     dbcmd = GetCommandMpu(entry);
+            IDbCommand     dbcmd = GetCommandProcessor(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE mpus SET MPU = @MPU " + $"WHERE id = {entry.Id}";
+            string sql = "UPDATE processors SET name = @name " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -221,17 +221,22 @@ namespace Cicm.Database
             return true;
         }
 
-        public bool RemoveMpu(long id)
+        /// <summary>
+        ///     Removes a processor from the database
+        /// </summary>
+        /// <param name="id">ID of entry to remove</param>
+        /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
+        public bool RemoveProcessor(long id)
         {
             #if DEBUG
-            Console.WriteLine("Removing MPU widh id `{0}`...", id);
+            Console.WriteLine("Removing processor widh id `{0}`...", id);
             #endif
 
             IDbCommand     dbcmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DELETE FROM mpus WHERE id = '{id}';";
+            string sql = $"DELETE FROM processors WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 
@@ -242,13 +247,13 @@ namespace Cicm.Database
             return true;
         }
 
-        IDbCommand GetCommandMpu(Mpu entry)
+        IDbCommand GetCommandProcessor(Processor entry)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
             IDbDataParameter param1 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@MPU";
+            param1.ParameterName = "@name";
 
             param1.DbType = DbType.String;
 
@@ -259,13 +264,17 @@ namespace Cicm.Database
             return dbcmd;
         }
 
-        static List<Mpu> MpusFromDataTable(DataTable dataTable)
+        static List<Processor> ProcessorsFromDataTable(DataTable dataTable)
         {
-            List<Mpu> entries = new List<Mpu>();
+            List<Processor> entries = new List<Processor>();
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Mpu entry = new Mpu {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["MPU"].ToString()};
+                Processor entry = new Processor
+                {
+                    Id   = int.Parse(dataRow["id"].ToString()),
+                    Name = dataRow["name"].ToString()
+                };
 
                 entries.Add(entry);
             }

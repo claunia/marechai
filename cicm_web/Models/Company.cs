@@ -34,6 +34,49 @@ using System.Linq;
 
 namespace cicm_web.Models
 {
+    public class CompanyWithItems
+    {
+        public ComputerMini[] Computers;
+        public ConsoleMini[]  Consoles;
+        public int            Id;
+        public string         Name;
+
+        public static CompanyWithItems GetItem(int id)
+        {
+            Cicm.Database.Schemas.Company dbItem = Program.Database?.Operations.GetCompany(id);
+
+            return dbItem == null
+                       ? null
+                       : new CompanyWithItems
+                       {
+                           Name      = dbItem.Name,
+                           Id        = dbItem.Id,
+                           Computers = ComputerMini.GetItemsWithCompany(id, dbItem.Name),
+                           Consoles  = ConsoleMini.GetItemsWithCompany(id, dbItem.Name)
+                       };
+        }
+
+        public static CompanyWithItems[] GetAllItems()
+        {
+            List<Cicm.Database.Schemas.Company> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            return dbItems.Select(t => new CompanyWithItems {Id = t.Id, Name = t.Name}).OrderBy(t => t.Name).ToArray();
+        }
+
+        public static CompanyWithItems[] GetItemsStartingWithLetter(char letter)
+        {
+            List<Cicm.Database.Schemas.Company> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            return dbItems
+                  .Where(t => t.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
+                  .Select(t => new CompanyWithItems {Id = t.Id, Name = t.Name}).OrderBy(t => t.Name).ToArray();
+        }
+    }
+
     public class Company
     {
         public int    Id;
@@ -42,6 +85,7 @@ namespace cicm_web.Models
         public static Company GetItem(int id)
         {
             Cicm.Database.Schemas.Company dbItem = Program.Database?.Operations.GetCompany(id);
+
             return dbItem == null ? null : new Company {Name = dbItem.Name, Id = dbItem.Id};
         }
 

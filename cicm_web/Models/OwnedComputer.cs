@@ -2,7 +2,7 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : OwnComputer.cs
+// Filename       : OwnedComputer.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -36,15 +36,15 @@ using Cicm.Database.Schemas;
 
 namespace cicm_web.Models
 {
-    public class OwnComputer
+    public class OwnedComputer
     {
         public DateTime   Acquired;
         public bool       Boxed;
         public int        Cap1;
         public int        Cap2;
         public Computer   Computer;
-        public Cpu        Cpu1;
-        public Cpu        Cpu2;
+        public Processor  Cpu1;
+        public Processor  Cpu2;
         public DiskFormat Disk1;
         public DiskFormat Disk2;
         public int        Id;
@@ -57,26 +57,27 @@ namespace cicm_web.Models
         public bool       Trade;
         public int        Vram;
 
-        public static OwnComputer[] GetAllItems()
+        public static OwnedComputer[] GetAllItems()
         {
-            List<Cicm.Database.Schemas.OwnComputer> dbItems = null;
-            bool?                                   result  = Program.Database?.Operations.GetOwnComputers(out dbItems);
+            List<Cicm.Database.Schemas.OwnedComputer> dbItems = null;
+            bool? result =
+                Program.Database?.Operations.GetOwnedComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.OrderByDescending(i => i.Id).Select(TransformItem) as OwnComputer[];
+            return dbItems.OrderByDescending(i => i.Id).Select(TransformItem) as OwnedComputer[];
         }
 
-        public static OwnComputer GetItem(int id)
+        public static OwnedComputer GetItem(int id)
         {
-            Cicm.Database.Schemas.OwnComputer dbItem = Program.Database?.Operations.GetOwnComputer(id);
+            Cicm.Database.Schemas.OwnedComputer dbItem = Program.Database?.Operations.GetOwnedComputer(id);
             return dbItem == null ? null : TransformItem(dbItem);
         }
 
-        static OwnComputer TransformItem(Cicm.Database.Schemas.OwnComputer dbItem)
+        static OwnedComputer TransformItem(Cicm.Database.Schemas.OwnedComputer dbItem)
         {
             Computer computer = Computer.GetItem(dbItem.ComputerId);
 
-            OwnComputer item = new OwnComputer
+            OwnedComputer item = new OwnedComputer
             {
                 Acquired = DateTime.ParseExact(dbItem.Acquired, "yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture),
                 Boxed    = dbItem.Boxed,
@@ -104,13 +105,13 @@ namespace cicm_web.Models
 
             if(dbItem.Cpu1 > 0)
             {
-                item.Cpu1 = Cpu.GetItem(dbItem.Cpu1);
+                item.Cpu1 = Processor.GetItem(dbItem.Cpu1);
                 item.Mhz1 = dbItem.Mhz1;
             }
 
             if(dbItem.Cpu2 > 0)
             {
-                item.Cpu2 = Cpu.GetItem(dbItem.Cpu2);
+                item.Cpu2 = Processor.GetItem(dbItem.Cpu2);
                 item.Mhz2 = dbItem.Mhz2;
             }
 

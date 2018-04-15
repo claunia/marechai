@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Cpu.cs
+// Filename       : OwnConsole.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains operations to manage CPUs.
+//     Contains operations to manage owned consoles.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -39,19 +39,19 @@ namespace Cicm.Database
     public partial class Operations
     {
         /// <summary>
-        ///     Gets all CPUs
+        ///     Gets all owned consoles
         /// </summary>
-        /// <param name="entries">All CPUs</param>
+        /// <param name="entries">All owned consoles</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetCpus(out List<Cpu> entries)
+        public bool GetOwnedConsoles(out List<OwnedConsole> entries)
         {
             #if DEBUG
-            Console.WriteLine("Getting all CPUs...");
+            Console.WriteLine("Getting all owned consoles...");
             #endif
 
             try
             {
-                const string SQL = "SELECT * from cpu";
+                const string SQL = "SELECT * from owned_consoles";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -60,13 +60,13 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = CpusFromDataTable(dataSet.Tables[0]);
+                entries = OwnedConsolesFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting CPUs.");
+                Console.WriteLine("Error getting owned consoles.");
                 Console.WriteLine(ex);
                 entries = null;
                 return false;
@@ -74,21 +74,21 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Gets the specified number of CPUs since the specified start
+        ///     Gets the specified number of owned consoles since the specified start
         /// </summary>
-        /// <param name="entries">List of CPUs</param>
+        /// <param name="entries">List of owned consoles</param>
         /// <param name="start">Start of query</param>
         /// <param name="count">How many entries to retrieve</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetCpus(out List<Cpu> entries, ulong start, ulong count)
+        public bool GetOwnedConsoles(out List<OwnedConsole> entries, ulong start, ulong count)
         {
             #if DEBUG
-            Console.WriteLine("Getting {0} CPUs from {1}...", count, start);
+            Console.WriteLine("Getting {0} owned consoles from {1}...", count, start);
             #endif
 
             try
             {
-                string sql = $"SELECT * FROM cpu LIMIT {start}, {count}";
+                string sql = $"SELECT * FROM owned_consoles LIMIT {start}, {count}";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -97,13 +97,13 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = CpusFromDataTable(dataSet.Tables[0]);
+                entries = OwnedConsolesFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting CPUs.");
+                Console.WriteLine("Error getting owned consoles.");
                 Console.WriteLine(ex);
                 entries = null;
                 return false;
@@ -111,19 +111,19 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Gets CPU by specified id
+        ///     Gets owned console by specified id
         /// </summary>
         /// <param name="id">Id</param>
-        /// <returns>CPU with specified id, <c>null</c> if not found or error</returns>
-        public Cpu GetCpu(int id)
+        /// <returns>Owned console with specified id, <c>null</c> if not found or error</returns>
+        public OwnedConsole GetOwnedConsole(int id)
         {
             #if DEBUG
-            Console.WriteLine("Getting CPU with id {0}...", id);
+            Console.WriteLine("Getting owned console with id {0}...", id);
             #endif
 
             try
             {
-                string sql = $"SELECT * from cpu WHERE id = '{id}'";
+                string sql = $"SELECT * from owned_consoles WHERE id = '{id}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -132,30 +132,30 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                List<Cpu> entries = CpusFromDataTable(dataSet.Tables[0]);
+                List<OwnedConsole> entries = OwnedConsolesFromDataTable(dataSet.Tables[0]);
 
                 return entries == null || entries.Count == 0 ? null : entries[0];
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Error getting CPU.");
+                Console.WriteLine("Error getting owned console.");
                 Console.WriteLine(ex);
                 return null;
             }
         }
 
         /// <summary>
-        ///     Counts the number of CPUs in the database
+        ///     Counts the number of owned consoles in the database
         /// </summary>
         /// <returns>Entries in database</returns>
-        public long CountCpus()
+        public long CountOwnedConsoles()
         {
             #if DEBUG
-            Console.WriteLine("Counting CPUs...");
+            Console.WriteLine("Counting owned consoles...");
             #endif
 
             IDbCommand dbcmd = dbCon.CreateCommand();
-            dbcmd.CommandText = "SELECT COUNT(*) FROM cpu";
+            dbcmd.CommandText = "SELECT COUNT(*) FROM owned_consoles";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToInt64(count); }
@@ -163,22 +163,23 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Adds a new CPU to the database
+        ///     Adds a new owned console to the database
         /// </summary>
         /// <param name="entry">Entry to add</param>
         /// <param name="id">ID of added entry</param>
         /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
-        public bool AddCpu(Cpu entry, out long id)
+        public bool AddOwnedConsole(OwnedConsole entry, out long id)
         {
             #if DEBUG
-            Console.Write("Adding CPU `{0}`...", entry.Name);
+            Console.Write("Adding owned console `{0}`...", entry.ConsoleId);
             #endif
 
-            IDbCommand     dbcmd = GetCommandCpu(entry);
+            IDbCommand     dbcmd = GetCommandOwnedConsole(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO cpu (cpu)" + " VALUES (@cpu)";
+            const string SQL = "INSERT INTO owned_consoles (db_id, date, status, trade, boxed, manuals)" +
+                               " VALUES (@db_id, @date, @status, @trade, @boxed, @manuals)";
 
             dbcmd.CommandText = SQL;
 
@@ -196,21 +197,23 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Updated a CPU in the database
+        ///     Updated an owned console in the database
         /// </summary>
         /// <param name="entry">Updated entry</param>
         /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
-        public bool UpdateCpu(Cpu entry)
+        public bool UpdateOwnedConsole(OwnedConsole entry)
         {
             #if DEBUG
-            Console.WriteLine("Updating CPU `{0}`...", entry.Name);
+            Console.WriteLine("Updating owned console `{0}`...", entry.ConsoleId);
             #endif
 
-            IDbCommand     dbcmd = GetCommandCpu(entry);
+            IDbCommand     dbcmd = GetCommandOwnedConsole(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE cpu SET cpu = @cpu " + $"WHERE id = {entry.Id}";
+            string sql =
+                "UPDATE owned_consoles SET db_id = @db_id, date = @date, status = @status, trade = @trade, boxed = @boxed, manuals = @manuals " +
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -222,21 +225,21 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Removes a CPU from the database
+        ///     Removes an owned console from the database
         /// </summary>
         /// <param name="id">ID of entry to remove</param>
         /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
-        public bool RemoveCpu(long id)
+        public bool RemoveOwnedConsole(long id)
         {
             #if DEBUG
-            Console.WriteLine("Removing CPU widh id `{0}`...", id);
+            Console.WriteLine("Removing owned console widh id `{0}`...", id);
             #endif
 
             IDbCommand     dbcmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DELETE FROM cpu WHERE id = '{id}';";
+            string sql = $"DELETE FROM owned_consoles WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 
@@ -247,30 +250,64 @@ namespace Cicm.Database
             return true;
         }
 
-        IDbCommand GetCommandCpu(Cpu entry)
+        IDbCommand GetCommandOwnedConsole(OwnedConsole entry)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
             IDbDataParameter param1 = dbcmd.CreateParameter();
+            IDbDataParameter param2 = dbcmd.CreateParameter();
+            IDbDataParameter param3 = dbcmd.CreateParameter();
+            IDbDataParameter param4 = dbcmd.CreateParameter();
+            IDbDataParameter param5 = dbcmd.CreateParameter();
+            IDbDataParameter param6 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@cpu";
+            param1.ParameterName = "@db_id";
+            param2.ParameterName = "@date";
+            param3.ParameterName = "@status";
+            param4.ParameterName = "@trade";
+            param5.ParameterName = "@boxed";
+            param6.ParameterName = "@manuals";
 
-            param1.DbType = DbType.String;
+            param1.DbType = DbType.Int32;
+            param2.DbType = DbType.String;
+            param3.DbType = DbType.Int32;
+            param4.DbType = DbType.Boolean;
+            param5.DbType = DbType.Boolean;
+            param6.DbType = DbType.Boolean;
 
-            param1.Value = entry.Name;
+            param1.Value = entry.ConsoleId;
+            param2.Value = entry.Acquired;
+            param3.Value = entry.Status;
+            param4.Value = entry.Trade;
+            param5.Value = entry.Boxed;
+            param6.Value = entry.Manuals;
 
             dbcmd.Parameters.Add(param1);
+            dbcmd.Parameters.Add(param2);
+            dbcmd.Parameters.Add(param3);
+            dbcmd.Parameters.Add(param4);
+            dbcmd.Parameters.Add(param5);
+            dbcmd.Parameters.Add(param6);
 
             return dbcmd;
         }
 
-        static List<Cpu> CpusFromDataTable(DataTable dataTable)
+        static List<OwnedConsole> OwnedConsolesFromDataTable(DataTable dataTable)
         {
-            List<Cpu> entries = new List<Cpu>();
+            List<OwnedConsole> entries = new List<OwnedConsole>();
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Cpu entry = new Cpu {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["cpu"].ToString()};
+                OwnedConsole entry = new OwnedConsole
+                {
+                    Id        = int.Parse(dataRow["id"].ToString()),
+                    ConsoleId = int.Parse(dataRow["db_id"].ToString()),
+                    Acquired  = dataRow["date"].ToString(),
+                    Status    = (StatusType)int.Parse(dataRow["status"].ToString()),
+                    Trade     = int.Parse(dataRow["trade"].ToString())   > 0,
+                    Boxed     = int.Parse(dataRow["boxed"].ToString())   > 0,
+                    Manuals   = int.Parse(dataRow["manuals"].ToString()) > 0
+                };
 
                 entries.Add(entry);
             }

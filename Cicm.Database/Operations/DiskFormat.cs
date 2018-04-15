@@ -51,7 +51,7 @@ namespace Cicm.Database
 
             try
             {
-                const string SQL = "SELECT * from Formatos_de_disco";
+                const string SQL = "SELECT * from disk_formats";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -88,7 +88,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * FROM Formatos_de_disco LIMIT {start}, {count}";
+                string sql = $"SELECT * FROM disk_formats LIMIT {start}, {count}";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -123,7 +123,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * from Formatos_de_disco WHERE id = '{id}'";
+                string sql = $"SELECT * from disk_formats WHERE id = '{id}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -155,7 +155,7 @@ namespace Cicm.Database
             #endif
 
             IDbCommand dbcmd = dbCon.CreateCommand();
-            dbcmd.CommandText = "SELECT COUNT(*) FROM Formatos_de_disco";
+            dbcmd.CommandText = "SELECT COUNT(*) FROM disk_formats";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToInt64(count); }
@@ -178,7 +178,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO Formatos_de_disco (Format)" + " VALUES (@Format)";
+            const string SQL = "INSERT INTO disk_formats (description)" + " VALUES (@description)";
 
             dbcmd.CommandText = SQL;
 
@@ -210,7 +210,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE Formatos_de_disco SET Format = @Format " + $"WHERE id = {entry.Id}";
+            string sql = "UPDATE disk_formats SET description = @description " + $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -236,7 +236,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DELETE FROM Formatos_de_disco WHERE id = '{id}';";
+            string sql = $"DELETE FROM disk_formats WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 
@@ -253,7 +253,7 @@ namespace Cicm.Database
 
             IDbDataParameter param1 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@Format";
+            param1.ParameterName = "@description";
 
             param1.DbType = DbType.String;
 
@@ -273,7 +273,7 @@ namespace Cicm.Database
                 DiskFormat entry = new DiskFormat
                 {
                     Id          = int.Parse(dataRow["id"].ToString()),
-                    Description = dataRow["Format"].ToString()
+                    Description = dataRow["description"].ToString()
                 };
 
                 entries.Add(entry);

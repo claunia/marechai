@@ -41,8 +41,6 @@ namespace Cicm.Database.Schemas
         public string Cap2;
         /// <summary>Maximum colors on screen</summary>
         public int Colors;
-        /// <summary>Free-form comments</summary>
-        public string Comment;
         /// <summary>Manufacturer's company ID</summary>
         public int Company;
         /// <summary>Primary CPU</summary>
@@ -69,10 +67,10 @@ namespace Cicm.Database.Schemas
         public float Mhz2;
         /// <summary>Model name</summary>
         public string Model;
-        /// <summary>ID of MPU</summary>
-        public int Mpu;
         /// <summary>Audio channels supported by the MPU</summary>
         public int MusicChannels;
+        /// <summary>ID of MPU</summary>
+        public int MusicSynth;
         /// <summary>Size in kibibytes of program RAM</summary>
         public int Ram;
         /// <summary>Resolution in WxH pixels</summary>
@@ -82,7 +80,7 @@ namespace Cicm.Database.Schemas
         /// <summary>Audio channels supported by the DSP</summary>
         public int SoundChannels;
         /// <summary>ID of DSP</summary>
-        public int Spu;
+        public int SoundSynth;
         /// <summary>Size in kibibytes for video RAM</summary>
         public int Vram;
         /// <summary>Introduction date, 0 if unknown, 1000 if prototype</summary>

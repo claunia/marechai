@@ -40,10 +40,9 @@ namespace cicm_web.Models
         public string     Cap1;
         public string     Cap2;
         public int        Colors;
-        public string     Comment;
         public Company    Company;
-        public Cpu        Cpu1;
-        public Cpu        Cpu2;
+        public Processor  Cpu1;
+        public Processor  Cpu2;
         public DiskFormat Disk1;
         public DiskFormat Disk2;
         public Gpu        Gpu;
@@ -54,13 +53,13 @@ namespace cicm_web.Models
         public float      Mhz1;
         public float      Mhz2;
         public string     Model;
-        public Mpu        Mpu;
         public int        MusicChannels;
+        public MusicSynth MusicSynth;
         public int        Ram;
         public string     Resolution;
         public int        Rom;
         public int        SoundChannels;
-        public Dsp        Spu;
+        public SoundSynth SoundSynth;
         public int        Vram;
         public int        Year;
 
@@ -97,7 +96,6 @@ namespace cicm_web.Models
             {
                 Bits       = dbItem.Bits,
                 Colors     = dbItem.Colors,
-                Comment    = dbItem.Comment,
                 Company    = Company.GetItem(dbItem.Company),
                 Gpu        = Gpu.GetItem(dbItem.Gpu),
                 Hdd1       = DiskFormat.GetItem(dbItem.Hdd1),
@@ -126,25 +124,25 @@ namespace cicm_web.Models
 
             if(dbItem.Cpu1 > 0)
             {
-                item.Cpu1 = Cpu.GetItem(dbItem.Cpu1);
+                item.Cpu1 = Processor.GetItem(dbItem.Cpu1);
                 item.Mhz1 = dbItem.Mhz1;
             }
 
             if(dbItem.Cpu2 > 0)
             {
-                item.Cpu2 = Cpu.GetItem(dbItem.Cpu2);
+                item.Cpu2 = Processor.GetItem(dbItem.Cpu2);
                 item.Mhz2 = dbItem.Mhz2;
             }
 
-            if(dbItem.Mpu > 0)
+            if(dbItem.MusicSynth > 0)
             {
-                item.Mpu           = Mpu.GetItem(dbItem.Mpu);
+                item.MusicSynth    = MusicSynth.GetItem(dbItem.MusicSynth);
                 item.MusicChannels = dbItem.MusicChannels;
             }
 
-            if(dbItem.Spu > 0)
+            if(dbItem.SoundSynth > 0)
             {
-                item.Spu           = Dsp.GetItem(dbItem.Spu);
+                item.SoundSynth    = SoundSynth.GetItem(dbItem.SoundSynth);
                 item.SoundChannels = dbItem.SoundChannels;
             }
 
@@ -197,6 +195,32 @@ namespace cicm_web.Models
                     items.Add(TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
+        }
+
+        public static ComputerMini[] GetItemsWithCompany(int id, string companyName)
+        {
+            List<Cicm.Database.Schemas.Computer> dbItems = null;
+            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            // TODO: Company chosen by DB
+            return dbItems.Where(t => t.Company == id)
+                          .Select(t => new ComputerMini
+                           {
+                               Company = new Company {Id = id, Name = companyName},
+                               Id      = t.Id,
+                               Model   = t.Model
+                           }).OrderBy(t => t.Model).ToArray();
+        }
+
+        public static ComputerMini[] GetItemsFromCompany(int id)
+        {
+            List<Cicm.Database.Schemas.Computer> dbItems = null;
+            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            // TODO: Company chosen by DB
+            return dbItems.Where(t => t.Company == id).Select(TransformItem).OrderBy(t => t.Model).ToArray();
         }
 
         static ComputerMini TransformItem(Cicm.Database.Schemas.Computer dbItem)

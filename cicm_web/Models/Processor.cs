@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Dsp.cs
+// Filename       : Processor.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of a DSP (Digital Sound Processor).
+//     Processor model
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,14 +28,33 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-namespace Cicm.Database.Schemas
+using System.Collections.Generic;
+
+namespace cicm_web.Models
 {
-    /// <summary>Digital Sound Processor</summary>
-    public class Dsp
+    public class Processor
     {
-        /// <summary>ID</summary>
-        public int Id;
-        /// <summary>Name</summary>
+        public int    Id;
         public string Name;
+
+        public static Processor GetItem(int id)
+        {
+            Cicm.Database.Schemas.Processor dbItem = Program.Database?.Operations.GetProcessor(id);
+            return dbItem == null ? null : new Processor {Name = dbItem.Name, Id = dbItem.Id};
+        }
+
+        public static Processor[] GetAllItems()
+        {
+            List<Cicm.Database.Schemas.Processor> dbItems = null;
+            bool?                                 result  = Program.Database?.Operations.GetProcessors(out dbItems);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<Processor> items = new List<Processor>();
+
+            foreach(Cicm.Database.Schemas.Processor dbItem in dbItems)
+                items.Add(new Processor {Id = dbItem.Id, Name = dbItem.Name});
+
+            return items.ToArray();
+        }
     }
 }

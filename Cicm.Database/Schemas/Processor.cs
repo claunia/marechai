@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : ConsoleCompanyController.cs
+// Filename       : Processor.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Console company controller
+//     High level representation of a processor .
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,45 +28,14 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using cicm_web.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-
-namespace cicm_web.Controllers
+namespace Cicm.Database.Schemas
 {
-    public class ConsoleCompanyController : Controller
+    /// <summary>Processor</summary>
+    public class Processor
     {
-        readonly IHostingEnvironment hostingEnvironment;
-
-        public ConsoleCompanyController(IHostingEnvironment env)
-        {
-            hostingEnvironment = env;
-        }
-        
-        public IActionResult ByLetter(char id)
-        {
-            // ToUpper()
-            if(id >= 'a' && id <= 'z') id -= (char)32;
-            // Check if not letter
-            if(id < 'A' || id > 'Z') id = '\0';
-
-            ViewBag.Letter = id;
-
-            ConsoleCompany[] companies =
-                id == '\0' ? ConsoleCompany.GetAllItems() : ConsoleCompany.GetItemsStartingWithLetter(id);
-
-            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(companies);
-        }
-        
-        public IActionResult View(int id)
-        {
-            ConsoleCompany company = ConsoleCompany.GetItem(id);
-            ViewBag.Company = company;
-            Console[] consoles = Console.GetItemsFromCompany(id);
-
-            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(consoles);
-        }
+        /// <summary>ID</summary>
+        public int Id;
+        /// <summary>Name</summary>
+        public string Name;
     }
 }

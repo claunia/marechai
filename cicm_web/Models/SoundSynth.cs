@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Cpu.cs
+// Filename       : SoundSynth.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Central Processing Unit model
+//     Digital Sound Synthetizer model
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -32,27 +32,27 @@ using System.Collections.Generic;
 
 namespace cicm_web.Models
 {
-    public class Cpu
+    public class SoundSynth
     {
         public int    Id;
         public string Name;
 
-        public static Cpu GetItem(int id)
+        public static SoundSynth GetItem(int id)
         {
-            Cicm.Database.Schemas.Cpu dbItem = Program.Database?.Operations.GetCpu(id);
-            return dbItem == null ? null : new Cpu {Name = dbItem.Name, Id = dbItem.Id};
+            Cicm.Database.Schemas.SoundSynth dbItem = Program.Database?.Operations.GetSoundSynth(id);
+            return dbItem == null ? null : new SoundSynth {Name = dbItem.Name, Id = dbItem.Id};
         }
 
-        public static Cpu[] GetAllItems()
+        public static SoundSynth[] GetAllItems()
         {
-            List<Cicm.Database.Schemas.Cpu> dbItems = null;
-            bool?                           result  = Program.Database?.Operations.GetCpus(out dbItems);
+            List<Cicm.Database.Schemas.SoundSynth> dbItems = null;
+            bool?                                  result  = Program.Database?.Operations.GetSoundSynths(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<Cpu> items = new List<Cpu>();
+            List<SoundSynth> items = new List<SoundSynth>();
 
-            foreach(Cicm.Database.Schemas.Cpu dbItem in dbItems)
-                items.Add(new Cpu {Id = dbItem.Id, Name = dbItem.Name});
+            foreach(Cicm.Database.Schemas.SoundSynth dbItem in dbItems)
+                items.Add(new SoundSynth {Id = dbItem.Id, Name = dbItem.Name});
 
             return items.ToArray();
         }

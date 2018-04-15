@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : OwnComputer.cs
+// Filename       : OwnConsole.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of an owned computer.
+//     High level representation of an owned console.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,44 +30,22 @@
 
 namespace Cicm.Database.Schemas
 {
-    /// <summary>Owned computer</summary>
-    public class OwnComputer
+    /// <summary>Owned videogame console</summary>
+    public class OwnedConsole
     {
         /// <summary>Acquired date</summary>
         public string Acquired;
         /// <summary>Box present in collection</summary>
         public bool Boxed;
-        /// <summary>Capacity of first removable disk format</summary>
-        public int Cap1;
-        /// <summary>Capacity of second removable disk format</summary>
-        public int Cap2;
-        /// <summary>Computer's ID</summary>
-        public int ComputerId;
-        /// <summary>Primary CPU</summary>
-        public int Cpu1;
-        /// <summary>Secondary CPU</summary>
-        public int Cpu2;
-        /// <summary>ID of first removable disk format</summary>
-        public int Disk1;
-        /// <summary>ID of second removable disk format</summary>
-        public int Disk2;
+        /// <summary>Videogame console's ID</summary>
+        public int ConsoleId;
         /// <summary>ID</summary>
         public int Id;
         /// <summary>Original manuals present in collection</summary>
         public bool Manuals;
-        /// <summary>Frequency in MHz of primary CPU</summary>
-        public float Mhz1;
-        /// <summary>Frequency in MHz of secondary CPU</summary>
-        public float Mhz2;
-        /// <summary>Size in kibibytes of program RAM</summary>
-        public int Ram;
-        /// <summary>Rigid disk</summary>
-        public string Rigid;
         /// <summary>Status</summary>
         public StatusType Status;
         /// <summary>Available for trade</summary>
         public bool Trade;
-        /// <summary>Size in kibibytes for video RAM</summary>
-        public int Vram;
     }
 }

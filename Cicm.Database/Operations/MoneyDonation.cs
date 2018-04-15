@@ -51,7 +51,7 @@ namespace Cicm.Database
 
             try
             {
-                const string SQL = "SELECT * from money_donation";
+                const string SQL = "SELECT * from money_donations";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -88,7 +88,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * FROM money_donation LIMIT {start}, {count}";
+                string sql = $"SELECT * FROM money_donations LIMIT {start}, {count}";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -123,7 +123,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * from money_donation WHERE id = '{id}'";
+                string sql = $"SELECT * from money_donations WHERE id = '{id}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -155,7 +155,7 @@ namespace Cicm.Database
             #endif
 
             IDbCommand dbcmd = dbCon.CreateCommand();
-            dbcmd.CommandText = "SELECT COUNT(*) FROM money_donation";
+            dbcmd.CommandText = "SELECT COUNT(*) FROM money_donations";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToInt64(count); }
@@ -178,7 +178,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO money_donation (donator, quantity)" + " VALUES (@donator, @quantity)";
+            const string SQL = "INSERT INTO money_donations (donator, quantity)" + " VALUES (@donator, @quantity)";
 
             dbcmd.CommandText = SQL;
 
@@ -210,7 +210,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE money_donation SET donator = @donator, quantity = @quantity " +
+            string sql = "UPDATE money_donations SET donator = @donator, quantity = @quantity " +
                          $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
@@ -230,14 +230,14 @@ namespace Cicm.Database
         public bool RemoveMoneyDonation(long id)
         {
             #if DEBUG
-            Console.WriteLine("Removing money_donation widh id `{0}`...", id);
+            Console.WriteLine("Removing money donation widh id `{0}`...", id);
             #endif
 
             IDbCommand     dbcmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DELETE FROM money_donation WHERE id = '{id}';";
+            string sql = $"DELETE FROM money_donations WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 

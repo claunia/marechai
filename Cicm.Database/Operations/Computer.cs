@@ -215,8 +215,8 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO computers (company, year, model, cpu1, mhz1, cpu2, mhz2, bits, ram, rom, gpu, vram, colors, res, spu, mpu, sound_channels, music_channels, hdd1, hdd2, hdd3, disk1, cap1, disk2, cap2, comment)" +
-                " VALUES (@company, @year, @model, @cpu1, @mhz1, @cpu2, @mhz2, @bits, @ram, @rom, @gpu, @vram, @colors, @res, @spu, @mpu, @sound_channels, @music_channels, @hdd1, @hdd2, @hdd3, @disk1, @cap1, @disk2, @cap2, @comment)";
+                "INSERT INTO computers (company, year, model, cpu1, mhz1, cpu2, mhz2, bits, ram, rom, gpu, vram, colors, res, sound_synth, music_synth, sound_channels, music_channels, hdd1, hdd2, hdd3, disk1, cap1, disk2, cap2)" +
+                " VALUES (@company, @year, @model, @cpu1, @mhz1, @cpu2, @mhz2, @bits, @ram, @rom, @gpu, @vram, @colors, @res, @sound_synth, @music_synth, @sound_channels, @music_channels, @hdd1, @hdd2, @hdd3, @disk1, @cap1, @disk2, @cap2)";
 
             dbcmd.CommandText = SQL;
 
@@ -249,9 +249,9 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             string sql =
-                "UPDATE computers SET company = @company, year = @year, model = @model, cpu1 = @cpu1, mhz1 = @mhz1, cpu2 = @cpu2, "                                                                             +
-                "mhz2 = @mhz2, bits = @bits, ram = @ram, rom = @rom, gpu = @gpu, vram = @vram, colors = @colors, res = @res, spu = @spu, mpu = @mpu "                                                           +
-                "sound_channels = @sound_channels, music_channels = @music_channels, hdd1 = @hdd1, hdd2 = @hdd2, hdd3 = @hdd3, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2, comment = @comment " +
+                "UPDATE computers SET company = @company, year = @year, model = @model, cpu1 = @cpu1, mhz1 = @mhz1, cpu2 = @cpu2, "                                                         +
+                "mhz2 = @mhz2, bits = @bits, ram = @ram, rom = @rom, gpu = @gpu, vram = @vram, colors = @colors, res = @res, sound_synth = @sound_synth, music_synth = @music_synth "       +
+                "sound_channels = @sound_channels, music_channels = @music_channels, hdd1 = @hdd1, hdd2 = @hdd2, hdd3 = @hdd3, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2 " +
                 $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
@@ -318,7 +318,6 @@ namespace Cicm.Database
             IDbDataParameter param23 = dbcmd.CreateParameter();
             IDbDataParameter param24 = dbcmd.CreateParameter();
             IDbDataParameter param25 = dbcmd.CreateParameter();
-            IDbDataParameter param26 = dbcmd.CreateParameter();
 
             param1.ParameterName  = "@company";
             param2.ParameterName  = "@year";
@@ -334,8 +333,8 @@ namespace Cicm.Database
             param12.ParameterName = "@vram";
             param13.ParameterName = "@colors";
             param14.ParameterName = "@res";
-            param15.ParameterName = "@spu";
-            param16.ParameterName = "@mpu";
+            param15.ParameterName = "@sound_synth";
+            param16.ParameterName = "@music_synth";
             param17.ParameterName = "@sound_channels";
             param18.ParameterName = "@music_channels";
             param19.ParameterName = "@hdd1";
@@ -345,7 +344,6 @@ namespace Cicm.Database
             param23.ParameterName = "@cap1";
             param24.ParameterName = "@disk2";
             param25.ParameterName = "@cap2";
-            param26.ParameterName = "@comment";
 
             param1.DbType  = DbType.Int32;
             param2.DbType  = DbType.Int32;
@@ -372,7 +370,6 @@ namespace Cicm.Database
             param23.DbType = DbType.String;
             param24.DbType = DbType.Int32;
             param25.DbType = DbType.String;
-            param26.DbType = DbType.String;
 
             param1.Value  = entry.Company;
             param2.Value  = entry.Year;
@@ -388,8 +385,8 @@ namespace Cicm.Database
             param12.Value = entry.Vram;
             param13.Value = entry.Colors;
             param14.Value = entry.Resolution;
-            param15.Value = entry.Spu;
-            param16.Value = entry.Mpu;
+            param15.Value = entry.SoundSynth;
+            param16.Value = entry.MusicSynth;
             param17.Value = entry.SoundChannels;
             param18.Value = entry.MusicChannels;
             param19.Value = entry.Hdd1;
@@ -399,7 +396,6 @@ namespace Cicm.Database
             param23.Value = entry.Cap1;
             param24.Value = entry.Disk2;
             param25.Value = entry.Cap2;
-            param26.Value = entry.Comment;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -426,7 +422,6 @@ namespace Cicm.Database
             dbcmd.Parameters.Add(param23);
             dbcmd.Parameters.Add(param24);
             dbcmd.Parameters.Add(param25);
-            dbcmd.Parameters.Add(param26);
 
             return dbcmd;
         }
@@ -457,8 +452,8 @@ namespace Cicm.Database
                     Vram          = int.Parse(dataRow["vram"].ToString()),
                     Colors        = int.Parse(dataRow["colors"].ToString()),
                     Resolution    = dataRow["res"].ToString(),
-                    Spu           = int.Parse(dataRow["spu"].ToString()),
-                    Mpu           = int.Parse(dataRow["mpu"].ToString()),
+                    SoundSynth    = int.Parse(dataRow["sound_synth"].ToString()),
+                    MusicSynth    = int.Parse(dataRow["music_synth"].ToString()),
                     SoundChannels = int.Parse(dataRow["sound_channels"].ToString()),
                     MusicChannels = int.Parse(dataRow["music_channels"].ToString()),
                     Hdd1          = int.Parse(dataRow["hdd1"].ToString()),
@@ -473,8 +468,7 @@ namespace Cicm.Database
                     Disk2 = string.IsNullOrEmpty(dataRow["disk2"].ToString())
                                 ? 0
                                 : int.Parse(dataRow["disk2"].ToString()),
-                    Cap2    = dataRow["cap2"].ToString(),
-                    Comment = dataRow["comment"].ToString()
+                    Cap2 = dataRow["cap2"].ToString()
                 };
 
                 entries.Add(entry);

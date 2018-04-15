@@ -35,7 +35,7 @@ namespace Cicm.Database
     public partial class Operations
     {
         /// <summary>Last known database version</summary>
-        const int DB_VERSION = 2;
+        const int DB_VERSION = 3;
 
         readonly IDbConnection dbCon;
         readonly IDbCore       dbCore;

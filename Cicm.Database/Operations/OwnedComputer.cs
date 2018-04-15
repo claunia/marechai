@@ -2,7 +2,7 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : OwnConsole.cs
+// Filename       : OwnedConsole.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -43,7 +43,7 @@ namespace Cicm.Database
         /// </summary>
         /// <param name="entries">All owned computers</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetOwnComputers(out List<OwnComputer> entries)
+        public bool GetOwnedComputers(out List<OwnedComputer> entries)
         {
             #if DEBUG
             Console.WriteLine("Getting all owned computers...");
@@ -51,7 +51,7 @@ namespace Cicm.Database
 
             try
             {
-                const string SQL = "SELECT * from own_computer";
+                const string SQL = "SELECT * from owned_computers";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -60,7 +60,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = OwnComputersFromDataTable(dataSet.Tables[0]);
+                entries = OwnedComputersFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
@@ -80,7 +80,7 @@ namespace Cicm.Database
         /// <param name="start">Start of query</param>
         /// <param name="count">How many entries to retrieve</param>
         /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
-        public bool GetOwnComputers(out List<OwnComputer> entries, ulong start, ulong count)
+        public bool GetOwnedComputers(out List<OwnedComputer> entries, ulong start, ulong count)
         {
             #if DEBUG
             Console.WriteLine("Getting {0} owned computers from {1}...", count, start);
@@ -88,7 +88,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * FROM own_computer LIMIT {start}, {count}";
+                string sql = $"SELECT * FROM owned_computers LIMIT {start}, {count}";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -97,7 +97,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                entries = OwnComputersFromDataTable(dataSet.Tables[0]);
+                entries = OwnedComputersFromDataTable(dataSet.Tables[0]);
 
                 return true;
             }
@@ -115,7 +115,7 @@ namespace Cicm.Database
         /// </summary>
         /// <param name="id">Id</param>
         /// <returns>Owned computer with specified id, <c>null</c> if not found or error</returns>
-        public OwnComputer GetOwnComputer(int id)
+        public OwnedComputer GetOwnedComputer(int id)
         {
             #if DEBUG
             Console.WriteLine("Getting owned computer with id {0}...", id);
@@ -123,7 +123,7 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * from own_computer WHERE id = '{id}'";
+                string sql = $"SELECT * from owned_computers WHERE id = '{id}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -132,7 +132,7 @@ namespace Cicm.Database
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
-                List<OwnComputer> entries = OwnComputersFromDataTable(dataSet.Tables[0]);
+                List<OwnedComputer> entries = OwnedComputersFromDataTable(dataSet.Tables[0]);
 
                 return entries == null || entries.Count == 0 ? null : entries[0];
             }
@@ -148,14 +148,14 @@ namespace Cicm.Database
         ///     Counts the number of owned computers in the database
         /// </summary>
         /// <returns>Entries in database</returns>
-        public long CountOwnComputers()
+        public long CountOwnedComputers()
         {
             #if DEBUG
             Console.WriteLine("Counting owned computers...");
             #endif
 
             IDbCommand dbcmd = dbCon.CreateCommand();
-            dbcmd.CommandText = "SELECT COUNT(*) FROM own_computer";
+            dbcmd.CommandText = "SELECT COUNT(*) FROM owned_computers";
             object count = dbcmd.ExecuteScalar();
             dbcmd.Dispose();
             try { return Convert.ToInt64(count); }
@@ -168,18 +168,18 @@ namespace Cicm.Database
         /// <param name="entry">Entry to add</param>
         /// <param name="id">ID of added entry</param>
         /// <returns><c>true</c> if added correctly, <c>false</c> otherwise</returns>
-        public bool AddOwnComputer(OwnComputer entry, out long id)
+        public bool AddOwnedComputer(OwnedComputer entry, out long id)
         {
             #if DEBUG
             Console.Write("Adding owned computer `{0}`...", entry.ComputerId);
             #endif
 
-            IDbCommand     dbcmd = GetCommandOwnComputer(entry);
+            IDbCommand     dbcmd = GetCommandOwnedComputer(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO own_computer (db_id, date, status, trade, boxed, manuals, cpu1, mhz1, cpu2, mhz2, ram, vram, rigid, disk1, cap1, disk2, cap2)" +
+                "INSERT INTO owned_computers (db_id, date, status, trade, boxed, manuals, cpu1, mhz1, cpu2, mhz2, ram, vram, rigid, disk1, cap1, disk2, cap2)" +
                 " VALUES (@db_id, @date, @status, @trade, @boxed, @manuals, @cpu1, @mhz1, @cpu2, @mhz2, @ram, @vram, @rigid, @disk1, @cap1, @disk2, @cap2)";
 
             dbcmd.CommandText = SQL;
@@ -202,18 +202,18 @@ namespace Cicm.Database
         /// </summary>
         /// <param name="entry">Updated entry</param>
         /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
-        public bool UpdateOwnComputer(OwnComputer entry)
+        public bool UpdateOwnedComputer(OwnedComputer entry)
         {
             #if DEBUG
             Console.WriteLine("Updating computer `{0}`...", entry.ComputerId);
             #endif
 
-            IDbCommand     dbcmd = GetCommandOwnComputer(entry);
+            IDbCommand     dbcmd = GetCommandOwnedComputer(entry);
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
             string sql =
-                "UPDATE own_computer SET db_id = @db_id, date = @date, status = @status, trade = @trade, boxed = @boxed, manuals = @manuals, cpu1 = @cpu1"        +
+                "UPDATE owned_computers SET db_id = @db_id, date = @date, status = @status, trade = @trade, boxed = @boxed, manuals = @manuals, cpu1 = @cpu1"     +
                 "mhz1 = @mhz1, cpu2 = @cpu2, mhz2 = @mhz2, ram = @ram, vram = @vram, rigid = @rigid, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2 " +
                 $"WHERE id = {entry.Id}";
 
@@ -231,7 +231,7 @@ namespace Cicm.Database
         /// </summary>
         /// <param name="id">ID of entry to remove</param>
         /// <returns><c>true</c> if removed correctly, <c>false</c> otherwise</returns>
-        public bool RemoveOwnComputer(long id)
+        public bool RemoveOwnedComputer(long id)
         {
             #if DEBUG
             Console.WriteLine("Removing owned computer widh id `{0}`...", id);
@@ -241,7 +241,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = $"DELETE FROM own_computer WHERE id = '{id}';";
+            string sql = $"DELETE FROM owned_computers WHERE id = '{id}';";
 
             dbcmd.CommandText = sql;
 
@@ -252,7 +252,7 @@ namespace Cicm.Database
             return true;
         }
 
-        IDbCommand GetCommandOwnComputer(OwnComputer entry)
+        IDbCommand GetCommandOwnedComputer(OwnedComputer entry)
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
@@ -349,20 +349,20 @@ namespace Cicm.Database
             return dbcmd;
         }
 
-        static List<OwnComputer> OwnComputersFromDataTable(DataTable dataTable)
+        static List<OwnedComputer> OwnedComputersFromDataTable(DataTable dataTable)
         {
-            List<OwnComputer> entries = new List<OwnComputer>();
+            List<OwnedComputer> entries = new List<OwnedComputer>();
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                OwnComputer entry = new OwnComputer
+                OwnedComputer entry = new OwnedComputer
                 {
                     Id         = int.Parse(dataRow["id"].ToString()),
                     ComputerId = int.Parse(dataRow["db_id"].ToString()),
                     Acquired   = dataRow["date"].ToString(),
                     Status     = (StatusType)int.Parse(dataRow["status"].ToString()),
-                    Trade      = int.Parse(dataRow["trade"].ToString()) > 0,
-                    Boxed      = int.Parse(dataRow["boxed"].ToString()) > 0,
+                    Trade      = int.Parse(dataRow["trade"].ToString())   > 0,
+                    Boxed      = int.Parse(dataRow["boxed"].ToString())   > 0,
                     Manuals    = int.Parse(dataRow["manuals"].ToString()) > 0,
                     Cpu1       = int.Parse(dataRow["cpu1"].ToString()),
                     Mhz1       = float.Parse(dataRow["mhz1"].ToString()),

@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Dsp.cs
+// Filename       : MusicSynth.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Digital Sound Processor model
+//     High level representation of a music synthetizer.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,33 +28,14 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
-
-namespace cicm_web.Models
+namespace Cicm.Database.Schemas
 {
-    public class Dsp
+    /// <summary>Music synthetizer</summary>
+    public class MusicSynth
     {
-        public int    Id;
+        /// <summary>ID</summary>
+        public int Id;
+        /// <summary>Name</summary>
         public string Name;
-
-        public static Dsp GetItem(int id)
-        {
-            Cicm.Database.Schemas.Dsp dbItem = Program.Database?.Operations.GetDsp(id);
-            return dbItem == null ? null : new Dsp {Name = dbItem.Name, Id = dbItem.Id};
-        }
-
-        public static Dsp[] GetAllItems()
-        {
-            List<Cicm.Database.Schemas.Dsp> dbItems = null;
-            bool?                           result  = Program.Database?.Operations.GetDsps(out dbItems);
-            if(result == null || result.Value == false || dbItems == null) return null;
-
-            List<Dsp> items = new List<Dsp>();
-
-            foreach(Cicm.Database.Schemas.Dsp dbItem in dbItems)
-                items.Add(new Dsp {Id = dbItem.Id, Name = dbItem.Name});
-
-            return items.ToArray();
-        }
     }
 }

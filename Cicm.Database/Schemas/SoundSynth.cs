@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Mpu.cs
+// Filename       : SoundSynth.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of a MPU (Music Processing Unit).
+//     High level representation of a sound synthetizer.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,8 +30,8 @@
 
 namespace Cicm.Database.Schemas
 {
-    /// <summary>Music Processing Unit</summary>
-    public class Mpu
+    /// <summary>Sound synthetizer</summary>
+    public class SoundSynth
     {
         /// <summary>ID</summary>
         public int Id;

@@ -32,49 +32,72 @@
     ViewData["Title"] = "Companies";
 }
 @using System.IO
-@model IEnumerable<Computer>
+@model CompanyWithItems
 
 <p>Search results:</p>
 <p align=center>
-    @if(ViewBag.Company != null)
+    @if(Model != null)
     {
-        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", ViewBag.Company.Id + ".gif")))
+        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Id + ".gif")))
         {
-            <img src="@(System.IO.Path.Combine("/assets/logos/computers", ViewBag.Company.Id + ".gif"))"
+            <img src="@(System.IO.Path.Combine("/assets/logos", Model.Id + ".gif"))"
                  alt="">
         }
 
-        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", ViewBag.Company.Id + ".jpg")))
+        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Id + ".jpg")))
         {
-            <img src="@(System.IO.Path.Combine("/assets/logos/computers", ViewBag.Company.Id + ".jpg"))"
+            <img src="@(System.IO.Path.Combine("/assets/logos", Model.Id + ".jpg"))"
                  alt="">
         }
 
-        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos/computers", ViewBag.Company.Id + ".png")))
+        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Id + ".png")))
         {
-            <img src="@(System.IO.Path.Combine("/assets/logos/computers", ViewBag.Company.Id + ".png"))"
+            <img src="@(System.IO.Path.Combine("/assets/logos", Model.Id + ".png"))"
                  alt="">
         }
-        <b>@ViewBag.Company.Name</b>
+        <b>@Model.Name</b>
         <br />
-    }
 
-    @if(Model.Any())
-    {
-        <p>
-            @Model.Count() computers found in the database.<br />
-            @foreach(Computer computer in Model)
-            {
-                <a asp-controller="Computer"
-                   asp-action="View"
-                   asp-route-id="@computer.Id">
-                    @computer.Model</a>
-                <br />
-            }
-        </p>
+        if(Model.Computers.Any())
+        {
+            <p>
+                @Model.Computers.Count() computers found in the database.<br />
+                @foreach(ComputerMini computer in Model.Computers)
+                {
+                    <a asp-controller="Computer"
+                       asp-action="View"
+                       asp-route-id="@computer.Id">
+                        @computer.Model</a>
+                    <br />
+                }
+            </p>
+        }
+        else
+        {
+            <p>There are no computers found in the database that belong to that company.</p>
+        }
+
+        if(Model.Consoles.Any())
+        {
+            <p>
+                @Model.Consoles.Count() videoconsoles found in the database.<br />
+                @foreach(ConsoleMini console in Model.Consoles)
+                {
+                    <a asp-controller="Console"
+                       asp-action="View"
+                       asp-route-id="@console.Id">
+                        @console.Model</a>
+                    <br />
+                }
+            </p>
+        }
+        else
+        {
+            <p>There are no videoconsoles found in the database that belong to that company.</p>
+        }
     }
     else
     {
-        <p>There are no computers found in the database that belong to that company.</p>
+        <p>Company not found!</p>
     }
 </p>

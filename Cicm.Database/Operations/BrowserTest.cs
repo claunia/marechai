@@ -179,8 +179,8 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO browser_test (idstring, browser, version, os, platform, gif87, gif89, jpeg, png, pngt, agif, table, colors, js, frames, flash)" +
-                " VALUES (@idstring, @browser, @version, @os, @platform, @gif87, @gif89, @jpeg, @png, @pngt, @agif, @table, @colors, @js, @frames, @flash)";
+                "INSERT INTO browser_test (user_agent, browser, version, os, platform, gif87, gif89, jpeg, png, pngt, agif, table, colors, js, frames, flash)" +
+                " VALUES (@user_agent, @browser, @version, @os, @platform, @gif87, @gif89, @jpeg, @png, @pngt, @agif, @table, @colors, @js, @frames, @flash)";
 
             dbcmd.CommandText = SQL;
 
@@ -213,7 +213,7 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             string sql =
-                "UPDATE browser_test SET idstring = @idstring, browser = @browser, version = @version, os = @os, platform = @platform, gif87 = @gif87, "              +
+                "UPDATE browser_test SET user_agent = @user_agent, browser = @browser, version = @version, os = @os, platform = @platform, gif87 = @gif87, "          +
                 "gif89 = @gif89, jpeg = @jpeg, png = @png, pngt = @pngt, agif = @agif, table = @table, colors = @colors, js = @js, frames = @frames, flash = @flash " +
                 $"WHERE id = {entry.Id}";
 
@@ -273,7 +273,7 @@ namespace Cicm.Database
             IDbDataParameter param15 = dbcmd.CreateParameter();
             IDbDataParameter param16 = dbcmd.CreateParameter();
 
-            param1.ParameterName  = "@idstring";
+            param1.ParameterName  = "@user_agent";
             param2.ParameterName  = "@browser";
             param3.ParameterName  = "@version";
             param4.ParameterName  = "@os";
@@ -353,22 +353,22 @@ namespace Cicm.Database
                 BrowserTest entry = new BrowserTest
                 {
                     Id              = ushort.Parse(dataRow["id"].ToString()),
-                    UserAgent       = dataRow["idstring"].ToString(),
+                    UserAgent       = dataRow["user_agent"].ToString(),
                     Name            = dataRow["browser"].ToString(),
                     Version         = dataRow["version"].ToString(),
                     OperatingSystem = dataRow["os"].ToString(),
                     Architecture    = dataRow["platform"].ToString(),
-                    Gif87           = int.Parse(dataRow["gif87"].ToString()) > 0,
-                    Gif89           = int.Parse(dataRow["gif89"].ToString()) > 0,
-                    Jpeg            = int.Parse(dataRow["jpeg"].ToString()) > 0,
-                    Png             = int.Parse(dataRow["png"].ToString()) > 0,
-                    AlphaPng        = int.Parse(dataRow["pngt"].ToString()) > 0,
-                    AnimatedGif     = int.Parse(dataRow["agif"].ToString()) > 0,
-                    Tables          = int.Parse(dataRow["table"].ToString()) > 0,
+                    Gif87           = int.Parse(dataRow["gif87"].ToString())  > 0,
+                    Gif89           = int.Parse(dataRow["gif89"].ToString())  > 0,
+                    Jpeg            = int.Parse(dataRow["jpeg"].ToString())   > 0,
+                    Png             = int.Parse(dataRow["png"].ToString())    > 0,
+                    AlphaPng        = int.Parse(dataRow["pngt"].ToString())   > 0,
+                    AnimatedGif     = int.Parse(dataRow["agif"].ToString())   > 0,
+                    Tables          = int.Parse(dataRow["table"].ToString())  > 0,
                     Color           = int.Parse(dataRow["colors"].ToString()) > 0,
-                    Js              = int.Parse(dataRow["js"].ToString()) > 0,
+                    Js              = int.Parse(dataRow["js"].ToString())     > 0,
                     Frames          = int.Parse(dataRow["frames"].ToString()) > 0,
-                    Flash           = int.Parse(dataRow["flash"].ToString()) > 0
+                    Flash           = int.Parse(dataRow["flash"].ToString())  > 0
                 };
 
                 entries.Add(entry);

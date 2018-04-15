@@ -42,7 +42,7 @@ namespace cicm_web.Controllers
         {
             hostingEnvironment = env;
         }
-        
+
         public IActionResult ByLetter(char id)
         {
             // ToUpper()
@@ -52,21 +52,18 @@ namespace cicm_web.Controllers
 
             ViewBag.Letter = id;
 
-            Company[] companies =
-                id == '\0' ? Company.GetAllItems() : Company.GetItemsStartingWithLetter(id);
+            Company[] companies = id == '\0' ? Company.GetAllItems() : Company.GetItemsStartingWithLetter(id);
 
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
             return View(companies);
         }
-        
+
         public IActionResult View(int id)
         {
-            Company company = Company.GetItem(id);
-            ViewBag.Company = company;
-            Computer[] computers = Computer.GetItemsFromCompany(id);
+            CompanyWithItems company = CompanyWithItems.GetItem(id);
 
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(computers);
+            return View(company);
         }
     }
 }
