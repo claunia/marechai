@@ -28,14 +28,38 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
+
 namespace Cicm.Database.Schemas
 {
     /// <summary>Company</summary>
     public class Company
     {
+        /// <summary>Address</summary>
+        public string Address;
+        /// <summary>City</summary>
+        public string City;
+        /// <summary>Country</summary>
+        public Iso3166 Country;
+        /// <summary>Facebook account</summary>
+        public string Facebook;
+        /// <summary>Founding date</summary>
+        public DateTime Founded;
         /// <summary>ID</summary>
         public int Id;
         /// <summary>Name</summary>
         public string Name;
+        /// <summary>Postal code</summary>
+        public string PostalCode;
+        /// <summary>Province</summary>
+        public string Province;
+        /// <summary>Sold date</summary>
+        public DateTime Sold;
+        /// <summary>Company it was sold to</summary>
+        public Company SoldTo;
+        /// <summary>Twitter account</summary>
+        public string Twitter;
+        /// <summary>Website</summary>
+        public string Website;
     }
 }

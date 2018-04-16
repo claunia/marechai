@@ -178,7 +178,10 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO companies (name)" + " VALUES (@name)";
+            const string SQL = "INSERT INTO companies (name, founded, website, twitter, facebook, sold, sold_to, "  +
+                               "address, city, province, postal_code, country) VALUES (@name, @founded, @website, " +
+                               "@twitter, @facebook, @sold, @sold_to, @address, @city, @province, @postal_code, "   +
+                               "@country)";
 
             dbcmd.CommandText = SQL;
 
@@ -210,7 +213,11 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE companies SET name = @name " + $"WHERE id = {entry.Id}";
+            string sql =
+                "UPDATE companies SET name = @name, founded = @founded, website = @website, twitter = @twitter, " +
+                "facebook = @facebook, sold = @sold, sold_to = @sold_to, address = @address, city = @city, "      +
+                "province = @province, postal_code = @postal_code, country = @country, "                          +
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -251,20 +258,85 @@ namespace Cicm.Database
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
-            IDbDataParameter param1 = dbcmd.CreateParameter();
+            IDbDataParameter param1  = dbcmd.CreateParameter();
+            IDbDataParameter param2  = dbcmd.CreateParameter();
+            IDbDataParameter param3  = dbcmd.CreateParameter();
+            IDbDataParameter param4  = dbcmd.CreateParameter();
+            IDbDataParameter param5  = dbcmd.CreateParameter();
+            IDbDataParameter param6  = dbcmd.CreateParameter();
+            IDbDataParameter param7  = dbcmd.CreateParameter();
+            IDbDataParameter param8  = dbcmd.CreateParameter();
+            IDbDataParameter param9  = dbcmd.CreateParameter();
+            IDbDataParameter param10 = dbcmd.CreateParameter();
+            IDbDataParameter param11 = dbcmd.CreateParameter();
+            IDbDataParameter param12 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@name";
+            param1.ParameterName  = "@name";
+            param2.ParameterName  = "@founded";
+            param3.ParameterName  = "@website";
+            param4.ParameterName  = "@twitter";
+            param5.ParameterName  = "@facebook";
+            param6.ParameterName  = "@sold";
+            param7.ParameterName  = "@sold_to";
+            param8.ParameterName  = "@address";
+            param9.ParameterName  = "@city";
+            param10.ParameterName = "@province";
+            param11.ParameterName = "@postal_code";
+            param12.ParameterName = "@country";
 
-            param1.DbType = DbType.String;
+            param1.DbType  = DbType.String;
+            param2.DbType  = DbType.DateTime;
+            param3.DbType  = DbType.String;
+            param4.DbType  = DbType.String;
+            param5.DbType  = DbType.String;
+            param6.DbType  = DbType.DateTime;
+            param7.DbType  = DbType.UInt32;
+            param8.DbType  = DbType.String;
+            param9.DbType  = DbType.String;
+            param10.DbType = DbType.String;
+            param11.DbType = DbType.String;
+            param12.DbType = DbType.UInt16;
 
             param1.Value = entry.Name;
+            param2.Value = entry.Founded;
+            param3.Value = entry.Website;
+            param4.Value = entry.Twitter;
+            param5.Value = entry.Facebook;
+            if(entry.SoldTo != null)
+            {
+                param6.Value = entry.Sold;
+                param7.Value = entry.SoldTo.Id;
+            }
+            else
+            {
+                param6.Value = null;
+                param7.Value = null;
+            }
+
+            param8.Value  = entry.Address;
+            param9.Value  = entry.City;
+            param10.Value = entry.Province;
+            param11.Value = entry.PostalCode;
+            if(entry.Country != null) param12.Value = entry.Country.Id;
+            else param12.Value                      = null;
 
             dbcmd.Parameters.Add(param1);
+            dbcmd.Parameters.Add(param2);
+            dbcmd.Parameters.Add(param3);
+            dbcmd.Parameters.Add(param4);
+            dbcmd.Parameters.Add(param5);
+            dbcmd.Parameters.Add(param6);
+            dbcmd.Parameters.Add(param7);
+            dbcmd.Parameters.Add(param8);
+            dbcmd.Parameters.Add(param9);
+            dbcmd.Parameters.Add(param10);
+            dbcmd.Parameters.Add(param11);
+            dbcmd.Parameters.Add(param12);
 
             return dbcmd;
         }
 
-        static List<Company> CompaniesFromDataTable(DataTable dataTable)
+        List<Company> CompaniesFromDataTable(DataTable dataTable)
         {
             List<Company> entries = new List<Company>();
 
@@ -272,9 +344,29 @@ namespace Cicm.Database
             {
                 Company entry = new Company
                 {
-                    Id   = int.Parse(dataRow["id"].ToString()),
-                    Name = dataRow["name"].ToString()
+                    Id         = int.Parse(dataRow["id"].ToString()),
+                    Name       = dataRow["name"].ToString(),
+                    Website    = dataRow["website"].ToString(),
+                    Twitter    = dataRow["twitter"].ToString(),
+                    Facebook   = dataRow["facebook"].ToString(),
+                    Address    = dataRow["address"].ToString(),
+                    City       = dataRow["city"].ToString(),
+                    Province   = dataRow["province"].ToString(),
+                    PostalCode = dataRow["postal_code"].ToString()
                 };
+
+                if(!string.IsNullOrWhiteSpace(dataRow["founded"].ToString()))
+                    entry.Founded = Convert.ToDateTime(dataRow["founded"].ToString());
+
+                if(!string.IsNullOrWhiteSpace(dataRow["sold"].ToString()) &&
+                   !string.IsNullOrWhiteSpace(dataRow["sold_to"].ToString()))
+                {
+                    entry.Sold   = Convert.ToDateTime(dataRow["sold"].ToString());
+                    entry.SoldTo = GetCompany(int.Parse(dataRow["sold_to"].ToString()));
+                }
+
+                if(!string.IsNullOrWhiteSpace(dataRow["country"].ToString()))
+                    entry.Country = GetIso3166(int.Parse(dataRow["country"].ToString()));
 
                 entries.Add(entry);
             }

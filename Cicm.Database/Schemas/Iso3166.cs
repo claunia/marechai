@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Operations.cs
+// Filename       : Iso3166.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains constructor and shared variables for database operations.
+//     High level representation of a ISO 3166-1 Numeric.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,22 +28,14 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Data;
-
-namespace Cicm.Database
+namespace Cicm.Database.Schemas
 {
-    public partial class Operations
+    /// <summary>Country code from ISO 3166-1 Numeric</summary>
+    public class Iso3166
     {
-        /// <summary>Last known database version</summary>
-        const int DB_VERSION = 6;
-
-        readonly IDbConnection dbCon;
-        readonly IDbCore       dbCore;
-
-        public Operations(IDbConnection connection, IDbCore core)
-        {
-            dbCon  = connection;
-            dbCore = core;
-        }
+        /// <summary>ISO assigned ID</summary>
+        public ushort Id;
+        /// <summary>English name</summary>
+        public string Name;
     }
 }

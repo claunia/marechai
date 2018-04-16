@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using Cicm.Database.Schemas.Sql;
-using MySql.Data.MySqlClient;
 
 namespace Cicm.Database
 {
@@ -81,17 +80,22 @@ namespace Cicm.Database
                 {
                     case 2:
                     {
-                        UpdateDatabaseV2ToV3();
+                        UpdateDatabaseToV3();
                         break;
                     }
                     case 3:
                     {
-                        UpdateDatabaseV3ToV4();
+                        UpdateDatabaseToV4();
                         break;
                     }
                     case 4:
                     {
-                        UpdateDatabaseV4ToV5();
+                        UpdateDatabaseToV5();
+                        break;
+                    }
+                    case 5:
+                    {
+                        UpdateDatabaseToV6();
                         break;
                     }
                 }
@@ -100,7 +104,7 @@ namespace Cicm.Database
             return true;
         }
 
-        void UpdateDatabaseV2ToV3()
+        void UpdateDatabaseToV3()
         {
             Console.WriteLine("Updating database to version 3");
 
@@ -373,7 +377,7 @@ namespace Cicm.Database
             Console.WriteLine("Finished update version to 3...");
         }
 
-        void UpdateDatabaseV3ToV4()
+        void UpdateDatabaseToV4()
         {
             Console.WriteLine("Updating database to version 4");
             IDbCommand     dbCmd;
@@ -640,7 +644,7 @@ namespace Cicm.Database
             dbCmd.Dispose();
         }
 
-        void UpdateDatabaseV4ToV5()
+        void UpdateDatabaseToV5()
         {
             Console.WriteLine("Updating database to version 5");
 
@@ -659,6 +663,84 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 5...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('5')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV6()
+        {
+            Console.WriteLine("Updating database to version 6");
+
+            Console.WriteLine("Creating table `iso3166_1_numeric`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V6.Iso3166Numeric;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Filling table `iso3166_1_numeric`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V6.Iso3166NumericValues;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new columns to table `companies`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `companies` ADD COLUMN `founded` DATETIME NULL;\n"        +
+                                "ALTER TABLE `companies` ADD COLUMN `website` VARCHAR(255) NULL;\n"    +
+                                "ALTER TABLE `companies` ADD COLUMN `twitter` VARCHAR(45) NULL;\n"     +
+                                "ALTER TABLE `companies` ADD COLUMN `facebook` VARCHAR(45) NULL;\n"    +
+                                "ALTER TABLE `companies` ADD COLUMN `sold` DATETIME NULL;\n"           +
+                                "ALTER TABLE `companies` ADD COLUMN `sold_to` INT(11) NULL;\n"         +
+                                "ALTER TABLE `companies` ADD COLUMN `address` VARCHAR(80) NULL;\n"     +
+                                "ALTER TABLE `companies` ADD COLUMN `city` VARCHAR(80) NULL;\n"        +
+                                "ALTER TABLE `companies` ADD COLUMN `province` VARCHAR(80) NULL;\n"    +
+                                "ALTER TABLE `companies` ADD COLUMN `postal_code` VARCHAR(25) NULL;\n" +
+                                "ALTER TABLE `companies` ADD COLUMN `country` SMALLINT(3) UNSIGNED ZEROFILL NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new indexes to table `companies`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX `idx_companies_founded` ON `companies` (`founded`);\n"         +
+                                "CREATE INDEX `idx_companies_website` ON `companies` (`website`);\n"         +
+                                "CREATE INDEX `idx_companies_twitter` ON `companies` (`twitter`);\n"         +
+                                "CREATE INDEX `idx_companies_facebook` ON `companies` (`facebook`);\n"       +
+                                "CREATE INDEX `idx_companies_sold` ON `companies` (`sold`);\n"               +
+                                "CREATE INDEX `idx_companies_sold_to` ON `companies` (`sold_to`);\n"         +
+                                "CREATE INDEX `idx_companies_address` ON `companies` (`address`);\n"         +
+                                "CREATE INDEX `idx_companies_city` ON `companies` (`city`);\n"               +
+                                "CREATE INDEX `idx_companies_province` ON `companies` (`province`);\n"       +
+                                "CREATE INDEX `idx_companies_postal_code` ON `companies` (`postal_code`);\n" +
+                                "CREATE INDEX `idx_companies_country` ON `companies` (`country`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new foreign keys to table `companies`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `companies` ADD FOREIGN KEY `fk_companies_sold_to` (sold_to) REFERENCES `companies` (`id`);\n" +
+                "ALTER TABLE `companies` ADD FOREIGN KEY `fk_companies_country` (country) REFERENCES `iso3166_1_numeric` (`id`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 6...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('6')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
