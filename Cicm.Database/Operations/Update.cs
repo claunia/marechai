@@ -32,6 +32,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using Cicm.Database.Schemas.Sql;
+using MySql.Data.MySqlClient;
 
 namespace Cicm.Database
 {
@@ -85,6 +87,11 @@ namespace Cicm.Database
                     case 3:
                     {
                         UpdateDatabaseV3ToV4();
+                        break;
+                    }
+                    case 4:
+                    {
+                        UpdateDatabaseV4ToV5();
                         break;
                     }
                 }
@@ -630,6 +637,29 @@ namespace Cicm.Database
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('4')";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseV4ToV5()
+        {
+            Console.WriteLine("Updating database to version 5");
+
+            Console.WriteLine("Creating foreign keys for table `computers`");
+            IDbCommand dbCmd = dbCon.CreateCommand();
+            dbCmd.CommandText = V5.ComputersForeignKeys;
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating foreign keys for table `consoles`");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = V5.ConsolesForeignKeys;
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 5...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('5')";
+            dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
 

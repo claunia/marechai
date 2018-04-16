@@ -49,71 +49,79 @@ namespace Cicm.Database
                 IDbCommand dbCmd = dbCon.CreateCommand();
 
                 Console.WriteLine("Creating table `admins`");
-                dbCmd.CommandText = V4.Admins;
+                dbCmd.CommandText = V5.Admins;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `browser_tests`");
-                dbCmd.CommandText = V4.BrowserTests;
+                dbCmd.CommandText = V5.BrowserTests;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `cicm_db`");
-                dbCmd.CommandText = V4.CicmDb;
+                dbCmd.CommandText = V5.CicmDb;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `companies`");
-                dbCmd.CommandText = V4.Companies;
+                dbCmd.CommandText = V5.Companies;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `computers`");
-                dbCmd.CommandText = V4.Computers;
+                dbCmd.CommandText = V5.Computers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `consoles`");
-                dbCmd.CommandText = V4.Consoles;
+                dbCmd.CommandText = V5.Consoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `disk_formats`");
-                dbCmd.CommandText = V4.DiskFormats;
+                dbCmd.CommandText = V5.DiskFormats;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `forbidden`");
-                dbCmd.CommandText = V4.Forbidden;
+                dbCmd.CommandText = V5.Forbidden;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `gpus`");
-                dbCmd.CommandText = V4.Gpus;
+                dbCmd.CommandText = V5.Gpus;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `log`");
-                dbCmd.CommandText = V4.Logs;
+                dbCmd.CommandText = V5.Logs;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `money_donations`");
-                dbCmd.CommandText = V4.MoneyDonations;
+                dbCmd.CommandText = V5.MoneyDonations;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `music_synths`");
-                dbCmd.CommandText = V4.MusicSynths;
+                dbCmd.CommandText = V5.MusicSynths;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `news`");
-                dbCmd.CommandText = V4.News;
+                dbCmd.CommandText = V5.News;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_computers`");
-                dbCmd.CommandText = V4.OwnedComputers;
+                dbCmd.CommandText = V5.OwnedComputers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_consoles`");
-                dbCmd.CommandText = V4.OwnedConsoles;
+                dbCmd.CommandText = V5.OwnedConsoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `processors`");
-                dbCmd.CommandText = V4.Processors;
+                dbCmd.CommandText = V5.Processors;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `sound_synths`");
-                dbCmd.CommandText = V4.SoundSynths;
+                dbCmd.CommandText = V5.SoundSynths;
+                dbCmd.ExecuteNonQuery();
+
+                Console.WriteLine("Creating foreign keys for table `computers`");
+                dbCmd.CommandText = V5.ComputersForeignKeys;
+                dbCmd.ExecuteNonQuery();
+
+                Console.WriteLine("Creating foreign keys for table `consoles`");
+                dbCmd.CommandText = V5.ConsolesForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 return true;

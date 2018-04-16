@@ -35,7 +35,7 @@ namespace Cicm.Database.Schemas.Sql
         public static readonly string Admins = V3.Admins + "\n" + "CREATE INDEX idx_admins_user ON admins (user);";
 
         public static readonly string BrowserTests =
-            V3.CicmDb                                                                    + "\n" +
+            V3.BrowserTests                                                              + "\n" +
             "CREATE INDEX idx_browser_tests_user_agent ON browser_tests (user_agent);\n" +
             "CREATE INDEX idx_browser_tests_browser ON browser_tests (browser);\n"       +
             "CREATE INDEX idx_browser_tests_version ON browser_tests (version);\n"       +
