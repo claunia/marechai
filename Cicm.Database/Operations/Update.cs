@@ -98,6 +98,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV6();
                         break;
                     }
+                    case 6:
+                    {
+                        UpdateDatabaseToV7();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -741,6 +746,35 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 6...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('6')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV7()
+        {
+            Console.WriteLine("Updating database to version 7");
+
+            Console.WriteLine("Adding new columns to table `companies`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `companies` ADD COLUMN `status` INT NOT NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new indexes to table `companies`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX `idx_companies_status` ON `companies` (`status`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 7...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('7')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

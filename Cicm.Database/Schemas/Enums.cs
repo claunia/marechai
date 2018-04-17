@@ -49,4 +49,20 @@ namespace Cicm.Database.Schemas
         NotTested  = 2,
         TestedBad  = 3
     }
+
+    public enum CompanyStatus
+    {
+        /// <summary>Status is unknown or not set</summary>
+        Unknown = 0,
+        /// <summary>Company is still existing</summary>
+        Active = 1,
+        /// <summary>Company was sold, totally or partially</summary>
+        Sold = 2,
+        /// <summary>Company merged with another company to make yet another company</summary>
+        Merged = 3,
+        /// <summary>Company filled for bankruptcy</summary>
+        Bankrupt = 4,
+        /// <summary>Company ceased operations for reasons different to bankruptcy</summary>
+        Defunct = 5
+    }
 }

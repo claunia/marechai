@@ -57,6 +57,8 @@ namespace Cicm.Database.Schemas
         public DateTime Sold;
         /// <summary>Company it was sold to</summary>
         public Company SoldTo;
+        /// <summary>Company status</summary>
+        public CompanyStatus Status;
         /// <summary>Twitter account</summary>
         public string Twitter;
         /// <summary>Website</summary>

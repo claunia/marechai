@@ -178,10 +178,11 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO companies (name, founded, website, twitter, facebook, sold, sold_to, "  +
-                               "address, city, province, postal_code, country) VALUES (@name, @founded, @website, " +
-                               "@twitter, @facebook, @sold, @sold_to, @address, @city, @province, @postal_code, "   +
-                               "@country)";
+            const string SQL =
+                "INSERT INTO companies (name, founded, website, twitter, facebook, sold, sold_to, "          +
+                "address, city, province, postal_code, country, status) VALUES (@name, @founded, @website, " +
+                "@twitter, @facebook, @sold, @sold_to, @address, @city, @province, @postal_code, "           +
+                "@country, status)";
 
             dbcmd.CommandText = SQL;
 
@@ -216,7 +217,7 @@ namespace Cicm.Database
             string sql =
                 "UPDATE companies SET name = @name, founded = @founded, website = @website, twitter = @twitter, " +
                 "facebook = @facebook, sold = @sold, sold_to = @sold_to, address = @address, city = @city, "      +
-                "province = @province, postal_code = @postal_code, country = @country, "                          +
+                "province = @province, postal_code = @postal_code, country = @country, status = @status "         +
                 $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
@@ -270,6 +271,7 @@ namespace Cicm.Database
             IDbDataParameter param10 = dbcmd.CreateParameter();
             IDbDataParameter param11 = dbcmd.CreateParameter();
             IDbDataParameter param12 = dbcmd.CreateParameter();
+            IDbDataParameter param13 = dbcmd.CreateParameter();
 
             param1.ParameterName  = "@name";
             param2.ParameterName  = "@founded";
@@ -283,6 +285,7 @@ namespace Cicm.Database
             param10.ParameterName = "@province";
             param11.ParameterName = "@postal_code";
             param12.ParameterName = "@country";
+            param13.ParameterName = "@status";
 
             param1.DbType  = DbType.String;
             param2.DbType  = DbType.DateTime;
@@ -296,6 +299,7 @@ namespace Cicm.Database
             param10.DbType = DbType.String;
             param11.DbType = DbType.String;
             param12.DbType = DbType.UInt16;
+            param13.DbType = DbType.UInt32;
 
             param1.Value = entry.Name;
             param2.Value = entry.Founded;
@@ -319,6 +323,7 @@ namespace Cicm.Database
             param11.Value = entry.PostalCode;
             if(entry.Country != null) param12.Value = entry.Country.Id;
             else param12.Value                      = null;
+            param13.Value = entry.Status;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -332,6 +337,7 @@ namespace Cicm.Database
             dbcmd.Parameters.Add(param10);
             dbcmd.Parameters.Add(param11);
             dbcmd.Parameters.Add(param12);
+            dbcmd.Parameters.Add(param13);
 
             return dbcmd;
         }
@@ -352,7 +358,8 @@ namespace Cicm.Database
                     Address    = dataRow["address"].ToString(),
                     City       = dataRow["city"].ToString(),
                     Province   = dataRow["province"].ToString(),
-                    PostalCode = dataRow["postal_code"].ToString()
+                    PostalCode = dataRow["postal_code"].ToString(),
+                    Status     = (CompanyStatus)int.Parse(dataRow["status"].ToString())
                 };
 
                 if(!string.IsNullOrWhiteSpace(dataRow["founded"].ToString()))
