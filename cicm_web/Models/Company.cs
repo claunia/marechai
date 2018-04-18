@@ -31,15 +31,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cicm.Database.Schemas;
 
 namespace cicm_web.Models
 {
     public class CompanyWithItems
     {
-        public ComputerMini[] Computers;
-        public ConsoleMini[]  Consoles;
-        public int            Id;
-        public string         Name;
+        public string                        Address;
+        public string                        City;
+        public ComputerMini[]                Computers;
+        public ConsoleMini[]                 Consoles;
+        public Iso3166                       Country;
+        public string                        Facebook;
+        public DateTime                      Founded;
+        public int                           Id;
+        public string                        Name;
+        public string                        PostalCode;
+        public string                        Province;
+        public DateTime                      Sold;
+        public Cicm.Database.Schemas.Company SoldTo;
+        public CompanyStatus                 Status;
+        public string                        Twitter;
+        public string                        Website;
 
         public static CompanyWithItems GetItem(int id)
         {
@@ -49,10 +62,22 @@ namespace cicm_web.Models
                        ? null
                        : new CompanyWithItems
                        {
-                           Name      = dbItem.Name,
-                           Id        = dbItem.Id,
-                           Computers = ComputerMini.GetItemsWithCompany(id, dbItem.Name),
-                           Consoles  = ConsoleMini.GetItemsWithCompany(id, dbItem.Name)
+                           Name       = dbItem.Name,
+                           Id         = dbItem.Id,
+                           Computers  = ComputerMini.GetItemsWithCompany(id, dbItem.Name),
+                           Consoles   = ConsoleMini.GetItemsWithCompany(id, dbItem.Name),
+                           Address    = dbItem.Address,
+                           City       = dbItem.City,
+                           Country    = dbItem.Country,
+                           Facebook   = dbItem.Facebook,
+                           Founded    = dbItem.Founded,
+                           PostalCode = dbItem.PostalCode,
+                           Province   = dbItem.Province,
+                           Sold       = dbItem.Sold,
+                           SoldTo     = dbItem.SoldTo,
+                           Status     = dbItem.Status,
+                           Twitter    = dbItem.Twitter,
+                           Website    = dbItem.Website
                        };
         }
 
@@ -62,7 +87,25 @@ namespace cicm_web.Models
             bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.Select(t => new CompanyWithItems {Id = t.Id, Name = t.Name}).OrderBy(t => t.Name).ToArray();
+            return dbItems.Select(t => new CompanyWithItems
+            {
+                Id         = t.Id,
+                Name       = t.Name,
+                Computers  = ComputerMini.GetItemsWithCompany(t.Id, t.Name),
+                Consoles   = ConsoleMini.GetItemsWithCompany(t.Id, t.Name),
+                Address    = t.Address,
+                City       = t.City,
+                Country    = t.Country,
+                Facebook   = t.Facebook,
+                Founded    = t.Founded,
+                PostalCode = t.PostalCode,
+                Province   = t.Province,
+                Sold       = t.Sold,
+                SoldTo     = t.SoldTo,
+                Status     = t.Status,
+                Twitter    = t.Twitter,
+                Website    = t.Website
+            }).OrderBy(t => t.Name).ToArray();
         }
 
         public static CompanyWithItems[] GetItemsStartingWithLetter(char letter)
@@ -73,7 +116,25 @@ namespace cicm_web.Models
 
             return dbItems
                   .Where(t => t.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
-                  .Select(t => new CompanyWithItems {Id = t.Id, Name = t.Name}).OrderBy(t => t.Name).ToArray();
+                  .Select(t => new CompanyWithItems
+                   {
+                       Id         = t.Id,
+                       Name       = t.Name,
+                       Computers  = ComputerMini.GetItemsWithCompany(t.Id, t.Name),
+                       Consoles   = ConsoleMini.GetItemsWithCompany(t.Id, t.Name),
+                       Address    = t.Address,
+                       City       = t.City,
+                       Country    = t.Country,
+                       Facebook   = t.Facebook,
+                       Founded    = t.Founded,
+                       PostalCode = t.PostalCode,
+                       Province   = t.Province,
+                       Sold       = t.Sold,
+                       SoldTo     = t.SoldTo,
+                       Status     = t.Status,
+                       Twitter    = t.Twitter,
+                       Website    = t.Website
+                   }).OrderBy(t => t.Name).ToArray();
         }
     }
 
