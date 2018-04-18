@@ -63,6 +63,8 @@ namespace Cicm.Database.Schemas
         /// <summary>Company filled for bankruptcy</summary>
         Bankrupt = 4,
         /// <summary>Company ceased operations for reasons different to bankruptcy</summary>
-        Defunct = 5
+        Defunct = 5,
+        /// <summary>Company renamed possibly with a change of intentions</summary>
+        Renamed = 6
     }
 }
