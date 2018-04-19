@@ -18,7 +18,7 @@ namespace cicm_web
 
                 string flagname = Path.GetFileNameWithoutExtension(file);
 
-                foreach(string format in new[] {"png", "jpeg", "webp"})
+                foreach(string format in new[] {"png", "webp"})
                 {
                     if(!Directory.Exists(Path.Combine("wwwroot/assets/flags/countries", format))) ;
                     Directory.CreateDirectory(Path.Combine("wwwroot/assets/flags/countries", format));
@@ -26,9 +26,6 @@ namespace cicm_web
                     SKEncodedImageFormat skFormat;
                     switch(format)
                     {
-                        case "jpeg":
-                            skFormat = SKEncodedImageFormat.Jpeg;
-                            break;
                         case "webp":
                             skFormat = SKEncodedImageFormat.Webp;
                             break;
