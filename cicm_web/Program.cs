@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 using System;
+using Cicm.Database;
 using DiscImageChef.Interop;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -38,8 +39,8 @@ namespace cicm_web
 {
     public static class Program
     {
-        internal static Cicm.Database.IDbCore Database;
-        
+        internal static IDbCore Database;
+
         public static void Main(string[] args)
         {
             Console.Clear();
@@ -99,14 +100,14 @@ namespace cicm_web
                           "DEBUG"
                           #else
                           "RELEASE"
-                                                                              #endif
+                                                                                                        #endif
                         , DetectOS.GetPlatformName(DetectOS.GetRealPlatformID()),
                           Environment.Is64BitOperatingSystem ? 64 : 32, Environment.Is64BitProcess ? 64 : 32,
                           DetectOS.IsMono ? "Mono" : ".NET Core",
                           DetectOS.IsMono ? Version.GetMonoVersion() : Version.GetNetCoreVersion());
 
             Console.WriteLine("\u001b[31;1mConnecting to MySQL database...\u001b[0m");
-            Database = new Cicm.Database.Mysql();
+            Database = new Mysql();
             bool res = Database.OpenDb("localhost", "cicm", "cicm", "cicmpass", 3306);
             if(!res)
             {
@@ -118,6 +119,13 @@ namespace cicm_web
                     return;
                 }
             }
+
+            DateTime start = DateTime.Now;
+            Console.WriteLine("\u001b[31;1mRendering new country flags...\u001b[0m");
+            SvgRender.RenderCountries();
+            DateTime end = DateTime.Now;
+            Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                              (end - start).TotalSeconds);
             Console.WriteLine("\u001b[31;1mStarting web server...\u001b[0m");
 
             BuildWebHost(args).Run();
