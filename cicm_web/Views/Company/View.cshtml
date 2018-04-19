@@ -57,199 +57,218 @@
         }
     </p>
     <div>
-        <table>
-            <tr>
-                <th colspan="2">
-                    <b>@Model.Name</b>
-                </th>
-            </tr>
-            @if(Model.Founded > DateTime.MinValue)
+    <table>
+    <tr>
+        <th colspan="2">
+            <b>@Model.Name</b>
+        </th>
+    </tr>
+    @if(Model.Founded > DateTime.MinValue)
+    {
+        <tr>
+            <th>Founded</th>
+            <td>@Model.Founded.ToLongDateString().</td>
+        </tr>
+    }
+    <tr>
+        <th>Country</th>
+        <td>
+            @if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/flags/countries", Model.Country.Id + ".svg")))
             {
-                <tr>
-                    <th>Founded</th>
-                    <td>@Model.Founded.ToLongDateString().</td>
-                </tr>
+                <picture>
+                    <source type="image/svg+xml"
+                            srcset="/assets/flags/countries/@(Model.Country.Id).svg">
+                    <source type="image/webp"
+                            srcset="/assets/flags/countries/webp/1x/@(Model.Country.Id).webp,
+/assets/flags/countries/webp/1x/@(Model.Country.Id).webp 2x,
+/assets/flags/countries/webp/1x/@(Model.Country.Id).webp 3x">
+                    <img srcset="/assets/flags/countries/png/1x/@(Model.Country.Id).png,
+                         /assets/flags/countries/png/1x/@(Model.Country.Id).png 2x,
+                         /assets/flags/countries/png/1x/@(Model.Country.Id).webp 3x"
+                         src="/assets/flags/countries/png/1x@(Model.Country.Id).png")
+                         alt=""
+                         height="32" />
+                </picture>
             }
-            <tr>
-                <th>Country</th>
-                <td>@Model.Country.Name</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                @switch(Model.Status)
+            @Model.Country.Name
+        </td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        @switch(Model.Status)
+        {
+            case CompanyStatus.Unknown:
+                <td>Current company status is unknown.</td>
+                break;
+            case CompanyStatus.Active:
+                <td>Company is active.</td>
+                break;
+            case CompanyStatus.Sold:
+                if(Model.Sold != DateTime.MinValue)
                 {
-                    case CompanyStatus.Unknown:
-                        <td>Current company status is unknown.</td>
-                        break;
-                    case CompanyStatus.Active:
-                        <td>Company is active.</td>
-                        break;
-                    case CompanyStatus.Sold:
-                        if(Model.Sold != DateTime.MinValue)
-                        {
-                            if(Model.SoldTo != null)
-                            {
-                                <td>
-                                    Company was sold to
-                                    <a asp-controller="Company"
-                                       asp-action="View"
-                                       asp-route-id="@Model.SoldTo.Id">
-                                        @Model.SoldTo.Name</a> on @Model.Sold.ToLongDateString().
-                                </td>
-                            }
-                            else
-                            {
-                                <td>Company was sold on @Model.Sold.ToLongDateString() to an unknown company.</td>
-                            }
-                        }
-                        else
-                        {
-                            if(Model.SoldTo != null)
-                            {
-                                <td>
-                                    Company was sold to
-                                    <a asp-controller="Company"
-                                       asp-action="View"
-                                       asp-route-id="@Model.SoldTo.Id">
-                                        @Model.SoldTo.Name</a> on an unknown date.
-                                </td>
-                            }
-                            else
-                            {
-                                <td>Company was sold to an unknown company on an unknown date.</td>
-                            }
-                        }
-                        break;
-                    case CompanyStatus.Merged:
-                        if(Model.Sold != DateTime.MinValue)
-                        {
-                            if(Model.SoldTo != null)
-                            {
-                                <td>
-                                    Company was merged on @Model.Sold.ToLongDateString() to form
-                                    <a asp-controller="Company"
-                                       asp-action="View"
-                                       asp-route-id="@Model.SoldTo.Id">
-                                        @Model.SoldTo.Name</a>.
-                                </td>
-                            }
-                            else
-                            {
-                                <td>Company was merge on @Model.Sold.ToLongDateString() to form an unknown company.</td>
-                            }
-                        }
-                        else
-                        {
-                            if(Model.SoldTo != null)
-                            {
-                                <td>
-                                    Company was merged on an unknown date to form
-                                    <a asp-controller="Company"
-                                       asp-action="View"
-                                       asp-route-id="@Model.SoldTo.Id">
-                                        @Model.SoldTo.Name</a>.
-                                </td>
-                            }
-                            else
-                            {
-                                <td>Company was merged to form an unknown company on an unknown date.</td>
-                            }
-                        }
-                        break;
-                    case CompanyStatus.Bankrupt:
-                        if(Model.Sold != DateTime.MinValue)
-                        {
-                            <td>Company declared bankruptcy on @Model.Sold.ToLongDateString().</td>
-                        }
-                        else
-                        {
-                            <td>Company declared bankruptcy on an unknown date.</td>
-                        }
-                        break;
-                    case CompanyStatus.Defunct:
-                        if(Model.Sold != DateTime.MinValue)
-                        {
-                            <td>Company ceased operations on @Model.Sold.ToLongDateString().</td>
-                        }
-                        else
-                        {
-                            <td>Company ceased operations on an unknown date.</td>
-                        }
-                        break;
-                    case CompanyStatus.Renamed:
-                        if(Model.Sold != DateTime.MinValue)
-                        {
-                            if(Model.SoldTo != null)
-                            {
-                                <td>
-                                    Company was renamed to
-                                    <a asp-controller="Company"
-                                       asp-action="View"
-                                       asp-route-id="@Model.SoldTo.Id">
-                                        @Model.SoldTo.Name</a> on @Model.Sold.ToLongDateString().
-                                </td>
-                            }
-                            else
-                            {
-                                <td>Company was renamed on @Model.Sold.ToLongDateString() to an unknown name.</td>
-                            }
-                        }
-                        else
-                        {
-                            if(Model.SoldTo != null)
-                            {
-                                <td>
-                                    Company was renamed to
-                                    <a asp-controller="Company"
-                                       asp-action="View"
-                                       asp-route-id="@Model.SoldTo.Id">
-                                        @Model.SoldTo.Name</a> on an unknown date.
-                                </td>
-                            }
-                            else
-                            {
-                                <td>Company was renamed to an unknown name on an unknown date.</td>
-                            }
-                        }
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            </tr>
-            <tr>
-                <th>Address</th>
-                <td>
-                    @Model.Address<br>
-                    @if(Model.City != Model.Province)
+                    if(Model.SoldTo != null)
                     {
-                        @Model.City<br>
+                        <td>
+                            Company was sold to
+                            <a asp-controller="Company"
+                               asp-action="View"
+                               asp-route-id="@Model.SoldTo.Id">
+                                @Model.SoldTo.Name</a> on @Model.Sold.ToLongDateString().
+                        </td>
                     }
-                    @Model.PostalCode @Model.Province</td>
-            </tr>
-            @if(!string.IsNullOrEmpty(Model.Website) || !string.IsNullOrEmpty(Model.Twitter) || !string.IsNullOrEmpty(Model.Facebook))
+                    else
+                    {
+                        <td>Company was sold on @Model.Sold.ToLongDateString() to an unknown company.</td>
+                    }
+                }
+                else
+                {
+                    if(Model.SoldTo != null)
+                    {
+                        <td>
+                            Company was sold to
+                            <a asp-controller="Company"
+                               asp-action="View"
+                               asp-route-id="@Model.SoldTo.Id">
+                                @Model.SoldTo.Name</a> on an unknown date.
+                        </td>
+                    }
+                    else
+                    {
+                        <td>Company was sold to an unknown company on an unknown date.</td>
+                    }
+                }
+                break;
+            case CompanyStatus.Merged:
+                if(Model.Sold != DateTime.MinValue)
+                {
+                    if(Model.SoldTo != null)
+                    {
+                        <td>
+                            Company was merged on @Model.Sold.ToLongDateString() to form
+                            <a asp-controller="Company"
+                               asp-action="View"
+                               asp-route-id="@Model.SoldTo.Id">
+                                @Model.SoldTo.Name</a>.
+                        </td>
+                    }
+                    else
+                    {
+                        <td>Company was merge on @Model.Sold.ToLongDateString() to form an unknown company.</td>
+                    }
+                }
+                else
+                {
+                    if(Model.SoldTo != null)
+                    {
+                        <td>
+                            Company was merged on an unknown date to form
+                            <a asp-controller="Company"
+                               asp-action="View"
+                               asp-route-id="@Model.SoldTo.Id">
+                                @Model.SoldTo.Name</a>.
+                        </td>
+                    }
+                    else
+                    {
+                        <td>Company was merged to form an unknown company on an unknown date.</td>
+                    }
+                }
+                break;
+            case CompanyStatus.Bankrupt:
+                if(Model.Sold != DateTime.MinValue)
+                {
+                    <td>Company declared bankruptcy on @Model.Sold.ToLongDateString().</td>
+                }
+                else
+                {
+                    <td>Company declared bankruptcy on an unknown date.</td>
+                }
+                break;
+            case CompanyStatus.Defunct:
+                if(Model.Sold != DateTime.MinValue)
+                {
+                    <td>Company ceased operations on @Model.Sold.ToLongDateString().</td>
+                }
+                else
+                {
+                    <td>Company ceased operations on an unknown date.</td>
+                }
+                break;
+            case CompanyStatus.Renamed:
+                if(Model.Sold != DateTime.MinValue)
+                {
+                    if(Model.SoldTo != null)
+                    {
+                        <td>
+                            Company was renamed to
+                            <a asp-controller="Company"
+                               asp-action="View"
+                               asp-route-id="@Model.SoldTo.Id">
+                                @Model.SoldTo.Name</a> on @Model.Sold.ToLongDateString().
+                        </td>
+                    }
+                    else
+                    {
+                        <td>Company was renamed on @Model.Sold.ToLongDateString() to an unknown name.</td>
+                    }
+                }
+                else
+                {
+                    if(Model.SoldTo != null)
+                    {
+                        <td>
+                            Company was renamed to
+                            <a asp-controller="Company"
+                               asp-action="View"
+                               asp-route-id="@Model.SoldTo.Id">
+                                @Model.SoldTo.Name</a> on an unknown date.
+                        </td>
+                    }
+                    else
+                    {
+                        <td>Company was renamed to an unknown name on an unknown date.</td>
+                    }
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    </tr>
+    <tr>
+        <th>Address</th>
+        <td>
+            @Model.Address<br>
+            @if(Model.City != Model.Province)
             {
-                <tr>
-                    <th>Links</th>
-                    <td>
-                        @if(!string.IsNullOrEmpty(Model.Website))
-                        {
-                            <a href="@Model.Website">Website</a>
-                            <br />
-                        }
-                        @if(!string.IsNullOrEmpty(Model.Twitter))
-                        {
-                            <a href="https://www.twitter.com/@Model.Twitter">Twitter</a>
-                            <br />
-                        }
-                        @if(!string.IsNullOrEmpty(Model.Facebook))
-                        {
-                            <a href="https://www.facebook.com/@Model.Facebook">Facebook</a>
-                            <br />
-                        }
-                    </td>
-                </tr>
+                @Model.City<br>
             }
-        </table>
+            @Model.PostalCode @Model.Province</td>
+    </tr>
+    @if(!string.IsNullOrEmpty(Model.Website) || !string.IsNullOrEmpty(Model.Twitter) || !string.IsNullOrEmpty(Model.Facebook))
+    {
+        <tr>
+            <th>Links</th>
+            <td>
+                @if(!string.IsNullOrEmpty(Model.Website))
+                {
+                    <a href="@Model.Website">Website</a>
+                    <br />
+                }
+                @if(!string.IsNullOrEmpty(Model.Twitter))
+                {
+                    <a href="https://www.twitter.com/@Model.Twitter">Twitter</a>
+                    <br />
+                }
+                @if(!string.IsNullOrEmpty(Model.Facebook))
+                {
+                    <a href="https://www.facebook.com/@Model.Facebook">Facebook</a>
+                    <br />
+                }
+            </td>
+        </tr>
+    }
+    </table>
     </div>
 
     <div>
@@ -298,4 +317,3 @@ else
 {
     <p>Company not found!</p>
 }
-    
