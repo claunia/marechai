@@ -69,7 +69,26 @@
                 <a asp-controller="Company"
                    asp-action="View"
                    asp-route-id="@company.Id">
-                    @company.Name</a>
+                    @if(company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.LastLogo.Guid + ".svg")))
+                    {
+                        <picture>
+                            <source type="image/svg+xml"
+                                    srcset="/assets/logos/@(company.LastLogo.Guid).svg">
+                            <source type="image/webp"
+                                    srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp,
+/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp 2x,
+/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp 3x">
+                            <img srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).png,
+                         /assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).png 2x,
+                         /assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).webp 3x"
+                                 src="/assets/logos/thumbs/png/1x@(company.LastLogo.Guid).png")
+                                 alt=""
+                                 height="auto" width="auto" style="max-height: 32px; max-width: 128px "/>
+                        </picture>
+
+                    }
+                    @company.Name
+                </a>
                 <br />
             }
         </p>

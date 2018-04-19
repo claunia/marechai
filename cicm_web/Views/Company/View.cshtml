@@ -37,26 +37,91 @@
 
 @if(Model != null)
 {
+    <div class="container">
     <p align=center>
-        @if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Id + ".gif")))
+        @if(Model.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.LastLogo.Guid + ".svg")))
         {
-            <img src="@(System.IO.Path.Combine("/assets/logos", Model.Id + ".gif"))"
-                 alt="">
-        }
-
-        @if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Id + ".jpg")))
-        {
-            <img src="@(System.IO.Path.Combine("/assets/logos", Model.Id + ".jpg"))"
-                 alt="">
-        }
-
-        @if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Id + ".png")))
-        {
-            <img src="@(System.IO.Path.Combine("/assets/logos", Model.Id + ".png"))"
-                 alt="">
+            <picture>
+                <source type="image/svg+xml"
+                        srcset="/assets/logos/@(Model.LastLogo.Guid).svg">
+                <source type="image/webp"
+                        srcset="/assets/logos/webp/1x/@(Model.LastLogo.Guid).webp,
+/assets/logos/webp/1x/@(Model.LastLogo.Guid).webp 2x,
+/assets/logos/webp/1x/@(Model.LastLogo.Guid).webp 3x">
+                <img srcset="/assets/logos/png/1x/@(Model.LastLogo.Guid).png,
+                         /assets/logos/png/1x/@(Model.LastLogo.Guid).png 2x,
+                         /assets/logos/png/1x/@(Model.LastLogo.Guid).webp 3x"
+                     src="/assets/logos/png/1x@(Model.LastLogo.Guid).png")
+                     alt=""
+                     height="auto"
+                     width="auto"
+                     style="max-height: 256px; max-width: 256px" />
+            </picture>
         }
     </p>
-    <div>
+    <div class="row">
+    @{
+        string carrouselActive = "active";
+    }
+    @if(Model.Logos != null && Model.Logos.Length > 1)
+    {
+        <div class="col-3">
+            <div class="carousel slide"
+                 data-ride="carousel"
+                 id="logosCarousel">
+                <div class="carousel-inner">
+
+
+                    @foreach(CompanyLogo logo in Model.Logos)
+                    {
+                        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", logo.Guid + ".svg")))
+                        {
+                            <div class="carousel-item @carrouselActive">
+                                <picture>
+                                    <source type="image/svg+xml"
+                                            srcset="/assets/logos/@(logo.Guid).svg">
+                                    <source type="image/webp"
+                                            srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
+/assets/logos/webp/1x/@(logo.Guid).webp 2x,
+/assets/logos/webp/1x/@(logo.Guid).webp 3x">
+                                    <img class="d-block w-100"
+                                         srcset="/assets/logos/png/1x/@(logo.Guid).png,
+                         /assets/logos/png/1x/@(logo.Guid).png 2x,
+                         /assets/logos/png/1x/@(logo.Guid).webp 3x"
+                                         src="/assets/logos/png/1x@(logo.Guid).png")
+                                         alt=""
+                                         height="auto"
+                                         width="auto"
+                                         style="max-height: 256px; max-width: 256px" />
+                                </picture>
+                            </div>
+
+                            carrouselActive = null;
+                        }
+                    }
+                </div>
+                <a class="carousel-control-prev"
+                   data-slide="prev"
+                   href="#logosCarousel"
+                   role="button">
+                    <span aria-hidden="true"
+                          class="carousel-control-prev-icon">
+                    </span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next"
+                   data-slide="next"
+                   href="#logosCarousel"
+                   role="button">
+                    <span aria-hidden="true"
+                          class="carousel-control-next-icon">
+                    </span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+    }
+    <div class="col-md">
     <table>
     <tr>
         <th colspan="2">
@@ -270,8 +335,9 @@
     }
     </table>
     </div>
+    </div>
 
-    <div>
+    <div class="row">
         @if(Model.Computers.Any())
         {
             <p>
@@ -292,7 +358,7 @@
         }
     </div>
 
-    <div>
+    <div class="row">
         @if(Model.Consoles.Any())
         {
             <p>
@@ -311,6 +377,7 @@
         {
             <p>There are no videogame consoles made by this company found in the database.</p>
         }
+    </div>
     </div>
 }
 else
