@@ -375,6 +375,25 @@ namespace Cicm.Database
                 if(!string.IsNullOrWhiteSpace(dataRow["country"].ToString()))
                     entry.Country = GetIso3166(int.Parse(dataRow["country"].ToString()));
 
+                if(GetCompanyLogosByCompany(out List<CompanyLogo> logos, entry.Id))
+                {
+                    entry.Logos = logos.ToArray();
+                    if(entry.Logos != null && entry.Logos.Length > 0)
+                        if(entry.Logos.Length > 1)
+                        {
+                            int currentYear = 0;
+                            foreach(CompanyLogo logo in entry.Logos)
+                            {
+                                if(logo.Year <= currentYear) continue;
+
+                                entry.LastLogo = logo;
+                                currentYear    = logo.Year;
+                            }
+                        }
+                        else
+                            entry.LastLogo = entry.Logos[0];
+                }
+
                 entries.Add(entry);
             }
 

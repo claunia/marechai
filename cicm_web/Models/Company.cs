@@ -45,6 +45,8 @@ namespace cicm_web.Models
         public string                        Facebook;
         public DateTime                      Founded;
         public int                           Id;
+        public CompanyLogo                   LastLogo;
+        public CompanyLogo[]                 Logos;
         public string                        Name;
         public string                        PostalCode;
         public string                        Province;
@@ -77,7 +79,9 @@ namespace cicm_web.Models
                            SoldTo     = dbItem.SoldTo,
                            Status     = dbItem.Status,
                            Twitter    = dbItem.Twitter,
-                           Website    = dbItem.Website
+                           Website    = dbItem.Website,
+                           Logos      = dbItem.Logos,
+                           LastLogo   = dbItem.LastLogo
                        };
         }
 
@@ -104,7 +108,9 @@ namespace cicm_web.Models
                 SoldTo     = t.SoldTo,
                 Status     = t.Status,
                 Twitter    = t.Twitter,
-                Website    = t.Website
+                Website    = t.Website,
+                Logos      = t.Logos,
+                LastLogo   = t.LastLogo
             }).OrderBy(t => t.Name).ToArray();
         }
 
@@ -133,21 +139,24 @@ namespace cicm_web.Models
                        SoldTo     = t.SoldTo,
                        Status     = t.Status,
                        Twitter    = t.Twitter,
-                       Website    = t.Website
+                       Website    = t.Website,
+                       Logos      = t.Logos,
+                       LastLogo   = t.LastLogo
                    }).OrderBy(t => t.Name).ToArray();
         }
     }
 
     public class Company
     {
-        public int    Id;
-        public string Name;
+        public int         Id;
+        public CompanyLogo LastLogo;
+        public string      Name;
 
         public static Company GetItem(int id)
         {
             Cicm.Database.Schemas.Company dbItem = Program.Database?.Operations.GetCompany(id);
 
-            return dbItem == null ? null : new Company {Name = dbItem.Name, Id = dbItem.Id};
+            return dbItem == null ? null : new Company {Name = dbItem.Name, Id = dbItem.Id, LastLogo = dbItem.LastLogo};
         }
 
         public static Company[] GetAllItems()
@@ -156,7 +165,8 @@ namespace cicm_web.Models
             bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.Select(t => new Company {Id = t.Id, Name = t.Name}).OrderBy(t => t.Name).ToArray();
+            return dbItems.Select(t => new Company {Id = t.Id, Name = t.Name, LastLogo = t.LastLogo})
+                          .OrderBy(t => t.Name).ToArray();
         }
 
         public static Company[] GetItemsStartingWithLetter(char letter)
@@ -167,7 +177,8 @@ namespace cicm_web.Models
 
             return dbItems
                   .Where(t => t.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
-                  .Select(t => new Company {Id = t.Id, Name = t.Name}).OrderBy(t => t.Name).ToArray();
+                  .Select(t => new Company {Id = t.Id, Name = t.Name, LastLogo = t.LastLogo}).OrderBy(t => t.Name)
+                  .ToArray();
         }
     }
 }

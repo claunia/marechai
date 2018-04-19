@@ -47,6 +47,10 @@ namespace Cicm.Database.Schemas
         public DateTime Founded;
         /// <summary>ID</summary>
         public int Id;
+        /// <summary>Last logo</summary>
+        public CompanyLogo LastLogo;
+        /// <summary>Logos</summary>
+        public CompanyLogo[] Logos;
         /// <summary>Name</summary>
         public string Name;
         /// <summary>Postal code</summary>

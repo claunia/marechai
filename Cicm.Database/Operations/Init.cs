@@ -49,91 +49,95 @@ namespace Cicm.Database
                 IDbCommand dbCmd = dbCon.CreateCommand();
 
                 Console.WriteLine("Creating table `admins`");
-                dbCmd.CommandText = V7.Admins;
+                dbCmd.CommandText = V8.Admins;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `browser_tests`");
-                dbCmd.CommandText = V7.BrowserTests;
+                dbCmd.CommandText = V8.BrowserTests;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `cicm_db`");
-                dbCmd.CommandText = V7.CicmDb;
+                dbCmd.CommandText = V8.CicmDb;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `companies`");
-                dbCmd.CommandText = V7.Companies;
+                dbCmd.CommandText = V8.Companies;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `computers`");
-                dbCmd.CommandText = V7.Computers;
+                dbCmd.CommandText = V8.Computers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `consoles`");
-                dbCmd.CommandText = V7.Consoles;
+                dbCmd.CommandText = V8.Consoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `disk_formats`");
-                dbCmd.CommandText = V7.DiskFormats;
+                dbCmd.CommandText = V8.DiskFormats;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `forbidden`");
-                dbCmd.CommandText = V7.Forbidden;
+                dbCmd.CommandText = V8.Forbidden;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `gpus`");
-                dbCmd.CommandText = V7.Gpus;
+                dbCmd.CommandText = V8.Gpus;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `log`");
-                dbCmd.CommandText = V7.Logs;
+                dbCmd.CommandText = V8.Logs;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `money_donations`");
-                dbCmd.CommandText = V7.MoneyDonations;
+                dbCmd.CommandText = V8.MoneyDonations;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `music_synths`");
-                dbCmd.CommandText = V7.MusicSynths;
+                dbCmd.CommandText = V8.MusicSynths;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `news`");
-                dbCmd.CommandText = V7.News;
+                dbCmd.CommandText = V8.News;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_computers`");
-                dbCmd.CommandText = V7.OwnedComputers;
+                dbCmd.CommandText = V8.OwnedComputers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_consoles`");
-                dbCmd.CommandText = V7.OwnedConsoles;
+                dbCmd.CommandText = V8.OwnedConsoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `processors`");
-                dbCmd.CommandText = V7.Processors;
+                dbCmd.CommandText = V8.Processors;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `sound_synths`");
-                dbCmd.CommandText = V7.SoundSynths;
+                dbCmd.CommandText = V8.SoundSynths;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `iso3166_1_numeric`");
-                dbCmd.CommandText = V7.Iso3166Numeric;
+                dbCmd.CommandText = V8.Iso3166Numeric;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Filling table `iso3166_1_numeric`");
-                dbCmd.CommandText = V7.Iso3166NumericValues;
+                dbCmd.CommandText = V8.Iso3166NumericValues;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `companies`");
-                dbCmd.CommandText = V7.CompaniesForeignKeys;
+                dbCmd.CommandText = V8.CompaniesForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `computers`");
-                dbCmd.CommandText = V7.ComputersForeignKeys;
+                dbCmd.CommandText = V8.ComputersForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `consoles`");
-                dbCmd.CommandText = V7.ConsolesForeignKeys;
+                dbCmd.CommandText = V8.ConsolesForeignKeys;
+                dbCmd.ExecuteNonQuery();
+
+                Console.WriteLine("Creating table `company_logos`");
+                dbCmd.CommandText = V8.CompanyLogos;
                 dbCmd.ExecuteNonQuery();
 
                 return true;

@@ -32,9 +32,9 @@ namespace Cicm.Database.Schemas.Sql
 {
     public static class V7
     {
-        public static readonly string Admins = V5.Admins;
+        public static readonly string Admins = V6.Admins;
 
-        public static readonly string BrowserTests = V5.BrowserTests;
+        public static readonly string BrowserTests = V6.BrowserTests;
 
         public static readonly string CicmDb = "CREATE TABLE `cicm_db` (\n"                      +
                                                "`id` int(11) NOT NULL AUTO_INCREMENT,\n"         +

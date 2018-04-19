@@ -103,6 +103,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV7();
                         break;
                     }
+                    case 7:
+                    {
+                        UpdateDatabaseToV8();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -775,6 +780,26 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 7...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('7')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV8()
+        {
+            Console.WriteLine("Updating database to version 8");
+
+            Console.WriteLine("Creating table `company_logos`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V8.CompanyLogos;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 8...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('8')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

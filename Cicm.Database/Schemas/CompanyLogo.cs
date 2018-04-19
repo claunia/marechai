@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Operations.cs
+// Filename       : Company.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains constructor and shared variables for database operations.
+//     High level representation of a company.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,22 +28,20 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Data;
+using System;
 
-namespace Cicm.Database
+namespace Cicm.Database.Schemas
 {
-    public partial class Operations
+    /// <summary>Company logo</summary>
+    public class CompanyLogo
     {
-        /// <summary>Last known database version</summary>
-        const int DB_VERSION = 8;
-
-        readonly IDbConnection dbCon;
-        readonly IDbCore       dbCore;
-
-        public Operations(IDbConnection connection, IDbCore core)
-        {
-            dbCon  = connection;
-            dbCore = core;
-        }
+        /// <summary>Company ID</summary>
+        public int CompanyId;
+        /// <summary>Logo GUID</summary>
+        public Guid Guid;
+        /// <summary>Logo ID</summary>
+        public int Id;
+        /// <summary>Year when the company started using this logo, null for unknown</summary>
+        public int Year;
     }
 }
