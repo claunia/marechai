@@ -126,6 +126,12 @@ namespace cicm_web
             DateTime end = DateTime.Now;
             Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                               (end - start).TotalSeconds);
+            start = DateTime.Now;
+            Console.WriteLine("\u001b[31;1mImporting company logos...\u001b[0m");
+            SvgRender.ImportCompanyLogos();
+            end = DateTime.Now;
+            Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                              (end - start).TotalSeconds);
             Console.WriteLine("\u001b[31;1mStarting web server...\u001b[0m");
 
             BuildWebHost(args).Run();
