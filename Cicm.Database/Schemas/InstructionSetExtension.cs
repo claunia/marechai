@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Operations.cs
+// Filename       : InstructionSet.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains constructor and shared variables for database operations.
+//     High level representation of an instruction set.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,22 +28,13 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Data;
-
-namespace Cicm.Database
+namespace Cicm.Database.Schemas
 {
-    public partial class Operations
+    public class InstructionSetExtension
     {
-        /// <summary>Last known database version</summary>
-        const int DB_VERSION = 10;
-
-        readonly IDbConnection dbCon;
-        readonly IDbCore       dbCore;
-
-        public Operations(IDbConnection connection, IDbCore core)
-        {
-            dbCon  = connection;
-            dbCore = core;
-        }
+        /// <summary>Instruction set extension ID</summary>
+        public int Id;
+        /// <summary>Instruction set extension name</summary>
+        public string Name;
     }
 }

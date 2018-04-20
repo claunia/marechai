@@ -113,6 +113,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV9();
                         break;
                     }
+                    case 9:
+                    {
+                        UpdateDatabaseToV10();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -825,6 +830,120 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 9...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('9')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV10()
+        {
+            Console.WriteLine("Updating database to version 10");
+
+            Console.WriteLine("Creating table `instruction_sets`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V10.InstructionSets;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating table `instruction_set_extensions`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V10.InstructionSetExtensions;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating table `instruction_set_extensions_by_processor`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V10.InstructionSetExtensionsByProcessor;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new columns to table `processors`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `processors` ADD COLUMN `company` INT NULL;\n"            +
+                                "ALTER TABLE `processors` ADD COLUMN `model_code` VARCHAR(45) NULL;\n" +
+                                "ALTER TABLE `processors` ADD COLUMN `introduced` DATETIME NULL;\n"    +
+                                "ALTER TABLE `processors` ADD COLUMN `instruction_set` INT NULL;\n"    +
+                                "ALTER TABLE `processors` ADD COLUMN `speed` DOUBLE NULL;\n"           +
+                                "ALTER TABLE `processors` ADD COLUMN `package` VARCHAR(45) NULL;\n"    +
+                                "ALTER TABLE `processors` ADD COLUMN `GPRs` INT NULL;\n"               +
+                                "ALTER TABLE `processors` ADD COLUMN `GPR_size` INT NULL;\n"           +
+                                "ALTER TABLE `processors` ADD COLUMN `FPRs` INT NULL;\n"               +
+                                "ALTER TABLE `processors` ADD COLUMN `FPR_size` INT NULL;\n"           +
+                                "ALTER TABLE `processors` ADD COLUMN `cores` INT NULL;\n"              +
+                                "ALTER TABLE `processors` ADD COLUMN `threads_per_core` INT NULL;\n"   +
+                                "ALTER TABLE `processors` ADD COLUMN `process` VARCHAR(45) NULL;\n"    +
+                                "ALTER TABLE `processors` ADD COLUMN `process_nm` FLOAT NULL;\n"       +
+                                "ALTER TABLE `processors` ADD COLUMN `die_size` FLOAT NULL;\n"         +
+                                "ALTER TABLE `processors` ADD COLUMN `transistors` BIGINT NULL;\n"     +
+                                "ALTER TABLE `processors` ADD COLUMN `data_bus` INT NULL;\n"           +
+                                "ALTER TABLE `processors` ADD COLUMN `addr_bus` INT NULL;\n"           +
+                                "ALTER TABLE `processors` ADD COLUMN `SIMD_registers` INT NULL;\n"     +
+                                "ALTER TABLE `processors` ADD COLUMN `SIMD_size` INT NULL;\n"          +
+                                "ALTER TABLE `processors` ADD COLUMN `L1_instruction` FLOAT NULL;\n"   +
+                                "ALTER TABLE `processors` ADD COLUMN `L1_data` FLOAT NULL;\n"          +
+                                "ALTER TABLE `processors` ADD COLUMN `L2` FLOAT NULL;\n"               +
+                                "ALTER TABLE `processors` ADD COLUMN `L3` FLOAT NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new indexes to table `processors`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "CREATE INDEX `idx_processors_company` ON `processors` (`company`);\n"                   +
+                "CREATE INDEX `idx_processors_model_code` ON `processors` (`model_code`);\n"             +
+                "CREATE INDEX `idx_processors_introduced` ON `processors` (`introduced`);\n"             +
+                "CREATE INDEX `idx_processors_instruction_set` ON `processors` (`instruction_set`);\n"   +
+                "CREATE INDEX `idx_processors_speed` ON `processors` (`speed`);\n"                       +
+                "CREATE INDEX `idx_processors_package` ON `processors` (`package`);\n"                   +
+                "CREATE INDEX `idx_processors_GPRs` ON `processors` (`GPRs`);\n"                         +
+                "CREATE INDEX `idx_processors_GPR_size` ON `processors` (`GPR_size`);\n"                 +
+                "CREATE INDEX `idx_processors_FPRs` ON `processors` (`FPRs`);\n"                         +
+                "CREATE INDEX `idx_processors_FPR_size` ON `processors` (`FPR_size`);\n"                 +
+                "CREATE INDEX `idx_processors_cores` ON `processors` (`cores`);\n"                       +
+                "CREATE INDEX `idx_processors_threads_per_core` ON `processors` (`threads_per_core`);\n" +
+                "CREATE INDEX `idx_processors_process` ON `processors` (`process`);\n"                   +
+                "CREATE INDEX `idx_processors_process_nm` ON `processors` (`process_nm`);\n"             +
+                "CREATE INDEX `idx_processors_die_size` ON `processors` (`die_size`);\n"                 +
+                "CREATE INDEX `idx_processors_transistors` ON `processors` (`transistors`);\n"           +
+                "CREATE INDEX `idx_processors_data_bus` ON `processors` (`data_bus`);\n"                 +
+                "CREATE INDEX `idx_processors_addr_bus` ON `processors` (`addr_bus`);\n"                 +
+                "CREATE INDEX `idx_processors_SIMD_registers` ON `processors` (`SIMD_registers`);\n"     +
+                "CREATE INDEX `idx_processors_SIMD_size` ON `processors` (`SIMD_size`);\n"               +
+                "CREATE INDEX `idx_processors_L1_instruction` ON `processors` (`L1_instruction`);\n"     +
+                "CREATE INDEX `idx_processors_L1_data` ON `processors` (`L1_data`);\n"                   +
+                "CREATE INDEX `idx_processors_L2` ON `processors` (`L2`);\n"                             +
+                "CREATE INDEX `idx_processors_L3` ON `processors` (`L3`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new foreign keys to table `processors`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `processors` ADD FOREIGN KEY `fk_processors_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `processors` ADD FOREIGN KEY `fk_processors_instruction_set` (instruction_set) REFERENCES `instruction_sets` (`id`) ON UPDATE CASCADE;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 10...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('10')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

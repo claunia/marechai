@@ -210,7 +210,15 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE processors SET name = @name " + $"WHERE id = {entry.Id}";
+            string sql = "UPDATE processors SET name = @name, company = @company, model_code = @model_code,"           +
+                         "introduced = @introduced, instruction_set = @instruction_set, speed = @speed, "              +
+                         "package = @package, GPRs = @GPRs, GPR_size = @GPR_size, FPRs = @FPRs, FPR_size = @FPR_size," +
+                         "cores = @cores, threads_per_core = @threads_per_core, process = @process,"                   +
+                         "process_nm = @process_nm, die_size = @die_size, transistors = @transistors,"                 +
+                         "data_bus = @data_bus, addr_bus = @addr_bus, SIMD_registers = @SIMD_registers,"               +
+                         "SIMD_size = @SIMD_size, L1_instruction = @L1_instruction, L1_data = @L1_data, L2 = @L2,"     +
+                         "L3 = @L3 "                                                                                   +
+                         $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -251,20 +259,116 @@ namespace Cicm.Database
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
-            IDbDataParameter param1 = dbcmd.CreateParameter();
+            IDbDataParameter param1  = dbcmd.CreateParameter();
+            IDbDataParameter param2  = dbcmd.CreateParameter();
+            IDbDataParameter param3  = dbcmd.CreateParameter();
+            IDbDataParameter param4  = dbcmd.CreateParameter();
+            IDbDataParameter param5  = dbcmd.CreateParameter();
+            IDbDataParameter param6  = dbcmd.CreateParameter();
+            IDbDataParameter param7  = dbcmd.CreateParameter();
+            IDbDataParameter param8  = dbcmd.CreateParameter();
+            IDbDataParameter param9  = dbcmd.CreateParameter();
+            IDbDataParameter param10 = dbcmd.CreateParameter();
+            IDbDataParameter param11 = dbcmd.CreateParameter();
+            IDbDataParameter param12 = dbcmd.CreateParameter();
+            IDbDataParameter param13 = dbcmd.CreateParameter();
+            IDbDataParameter param14 = dbcmd.CreateParameter();
+            IDbDataParameter param15 = dbcmd.CreateParameter();
+            IDbDataParameter param16 = dbcmd.CreateParameter();
+            IDbDataParameter param17 = dbcmd.CreateParameter();
+            IDbDataParameter param18 = dbcmd.CreateParameter();
+            IDbDataParameter param19 = dbcmd.CreateParameter();
+            IDbDataParameter param20 = dbcmd.CreateParameter();
+            IDbDataParameter param21 = dbcmd.CreateParameter();
+            IDbDataParameter param22 = dbcmd.CreateParameter();
+            IDbDataParameter param23 = dbcmd.CreateParameter();
+            IDbDataParameter param24 = dbcmd.CreateParameter();
+            IDbDataParameter param25 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@name";
+            param1.ParameterName  = "@name";
+            param2.ParameterName  = "@company";
+            param3.ParameterName  = "@model_code";
+            param4.ParameterName  = "@introduced";
+            param5.ParameterName  = "@instruction_set";
+            param6.ParameterName  = "@speed";
+            param7.ParameterName  = "@package";
+            param8.ParameterName  = "@GPRs";
+            param9.ParameterName  = "@GPR_size";
+            param10.ParameterName = "@FPRs";
+            param11.ParameterName = "@FPR_size";
+            param12.ParameterName = "@cores";
+            param13.ParameterName = "@threads_per_core";
+            param14.ParameterName = "@process";
+            param15.ParameterName = "@process_nm";
+            param16.ParameterName = "@die_size";
+            param17.ParameterName = "@transistors";
+            param18.ParameterName = "@addr_bus";
+            param19.ParameterName = "@data_bus";
+            param20.ParameterName = "@SIMD_registers";
+            param21.ParameterName = "@SIMD_size";
+            param22.ParameterName = "@L1_instruction";
+            param23.ParameterName = "@L1_data";
+            param24.ParameterName = "@L2";
+            param25.ParameterName = "@L3";
 
-            param1.DbType = DbType.String;
+            param1.DbType  = DbType.String;
+            param2.DbType  = DbType.Int32;
+            param3.DbType  = DbType.String;
+            param4.DbType  = DbType.DateTime;
+            param5.DbType  = DbType.Int32;
+            param6.DbType  = DbType.Double;
+            param7.DbType  = DbType.String;
+            param8.DbType  = DbType.Int32;
+            param9.DbType  = DbType.Int32;
+            param10.DbType = DbType.Int32;
+            param11.DbType = DbType.Int32;
+            param12.DbType = DbType.Int32;
+            param13.DbType = DbType.Int32;
+            param14.DbType = DbType.String;
+            param15.DbType = DbType.Double;
+            param16.DbType = DbType.Double;
+            param17.DbType = DbType.UInt64;
+            param18.DbType = DbType.Int32;
+            param19.DbType = DbType.Int32;
+            param20.DbType = DbType.Int32;
+            param21.DbType = DbType.Int32;
+            param22.DbType = DbType.Double;
+            param23.DbType = DbType.Double;
+            param24.DbType = DbType.Double;
+            param25.DbType = DbType.Double;
 
-            param1.Value = entry.Name;
+            param1.Value  = entry.Name;
+            param2.Value  = entry.Company == null ? null : (object)entry.Company.Id;
+            param3.Value  = entry.ModelCode;
+            param4.Value  = entry.Introduced == DateTime.MinValue ? null : (object)entry.Introduced;
+            param5.Value  = entry.InstructionSet?.Name;
+            param6.Value  = entry.Speed;
+            param7.Value  = entry.Package;
+            param8.Value  = entry.Gpr;
+            param9.Value  = entry.GprSize;
+            param10.Value = entry.Fpr;
+            param11.Value = entry.FprSize;
+            param12.Value = entry.Cores;
+            param13.Value = entry.ThreadsPerCore;
+            param14.Value = entry.Process;
+            param15.Value = entry.ProcessNm;
+            param16.Value = entry.DieSize;
+            param17.Value = entry.Transistors;
+            param18.Value = entry.AddressBus;
+            param19.Value = entry.DataBus;
+            param20.Value = entry.Simd;
+            param21.Value = entry.SimdSize;
+            param22.Value = entry.L1Instruction;
+            param23.Value = entry.L1Data;
+            param24.Value = entry.L2;
+            param25.Value = entry.L3;
 
             dbcmd.Parameters.Add(param1);
 
             return dbcmd;
         }
 
-        static List<Processor> ProcessorsFromDataTable(DataTable dataTable)
+        List<Processor> ProcessorsFromDataTable(DataTable dataTable)
         {
             List<Processor> entries = new List<Processor>();
 
@@ -272,9 +376,39 @@ namespace Cicm.Database
             {
                 Processor entry = new Processor
                 {
-                    Id   = int.Parse(dataRow["id"].ToString()),
-                    Name = dataRow["name"].ToString()
+                    Id             = int.Parse(dataRow["id"].ToString()),
+                    Name           = dataRow["name"].ToString(),
+                    ModelCode      = dataRow["model_code"].ToString(),
+                    Speed          = Convert.ToDouble(dataRow["speed"].ToString()),
+                    Package        = dataRow["package"].ToString(),
+                    Gpr            = Convert.ToInt32(dataRow["GPRs"].ToString()),
+                    GprSize        = Convert.ToInt32(dataRow["GPR_size"].ToString()),
+                    Fpr            = Convert.ToInt32(dataRow["FPRs"].ToString()),
+                    FprSize        = Convert.ToInt32(dataRow["FPR_size"].ToString()),
+                    Cores          = Convert.ToInt32(dataRow["cores"].ToString()),
+                    ThreadsPerCore = Convert.ToInt32(dataRow["threads_per_core"].ToString()),
+                    Process        = dataRow["process"].ToString(),
+                    ProcessNm      = Convert.ToSingle(dataRow["process_nm"].ToString()),
+                    DieSize        = Convert.ToSingle(dataRow["die_size"].ToString()),
+                    Transistors    = Convert.ToUInt64(dataRow["transistors"].ToString()),
+                    AddressBus     = Convert.ToInt32(dataRow["addr_bus"].ToString()),
+                    DataBus        = Convert.ToInt32(dataRow["data_bus"].ToString()),
+                    Simd           = Convert.ToInt32(dataRow["SIMD_registers"].ToString()),
+                    SimdSize       = Convert.ToInt32(dataRow["SIMD_size"].ToString()),
+                    L1Instruction  = Convert.ToSingle(dataRow["L1_instruction"].ToString()),
+                    L1Data         = Convert.ToSingle(dataRow["L1_data"].ToString()),
+                    L2             = Convert.ToSingle(dataRow["L2"].ToString()),
+                    L3             = Convert.ToSingle(dataRow["L3"].ToString())
                 };
+
+                if(!string.IsNullOrEmpty(dataRow["company"].ToString()))
+                    entry.Company = GetCompany(Convert.ToInt32(dataRow["company"].ToString()));
+
+                if(!string.IsNullOrEmpty(dataRow["introduced"].ToString()))
+                    entry.Introduced = Convert.ToDateTime(dataRow["introduced"].ToString());
+
+                if(!string.IsNullOrEmpty(dataRow["instruction_set"].ToString()))
+                    entry.InstructionSet = GetInstructionSet(Convert.ToInt32(dataRow["instruction_set"].ToString()));
 
                 entries.Add(entry);
             }
