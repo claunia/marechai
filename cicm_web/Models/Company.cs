@@ -43,6 +43,7 @@ namespace cicm_web.Models
         public ComputerMini[]                Computers;
         public ConsoleMini[]                 Consoles;
         public Iso3166                       Country;
+        public string                        Description;
         public string                        Facebook;
         public DateTime                      Founded;
         public int                           Id;
@@ -56,12 +57,11 @@ namespace cicm_web.Models
         public CompanyStatus                 Status;
         public string                        Twitter;
         public string                        Website;
-        public string Description;
 
         public static CompanyWithItems GetItem(int id)
         {
-            Cicm.Database.Schemas.Company dbItem = Program.Database?.Operations.GetCompany(id);
-            MarkdownPipeline pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            Cicm.Database.Schemas.Company dbItem   = Program.Database?.Operations.GetCompany(id);
+            MarkdownPipeline              pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
             return dbItem == null
                        ? null
@@ -85,7 +85,8 @@ namespace cicm_web.Models
                            Website    = dbItem.Website,
                            Logos      = dbItem.Logos,
                            LastLogo   = dbItem.LastLogo,
-                           Description = dbItem.Description == null ? null : Markdig.Markdown.ToHtml(dbItem.Description, pipeline)
+                           Description =
+                               dbItem.Description == null ? null : Markdown.ToHtml(dbItem.Description, pipeline)
                        };
         }
 
@@ -94,29 +95,30 @@ namespace cicm_web.Models
             List<Cicm.Database.Schemas.Company> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
-            MarkdownPipeline pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+            MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
             return dbItems.Select(t => new CompanyWithItems
             {
-                Id         = t.Id,
-                Name       = t.Name,
-                Computers  = ComputerMini.GetItemsWithCompany(t.Id, t.Name),
-                Consoles   = ConsoleMini.GetItemsWithCompany(t.Id, t.Name),
-                Address    = t.Address,
-                City       = t.City,
-                Country    = t.Country,
-                Facebook   = t.Facebook,
-                Founded    = t.Founded,
-                PostalCode = t.PostalCode,
-                Province   = t.Province,
-                Sold       = t.Sold,
-                SoldTo     = t.SoldTo,
-                Status     = t.Status,
-                Twitter    = t.Twitter,
-                Website    = t.Website,
-                Logos      = t.Logos,
-                LastLogo   = t.LastLogo,
-                Description = t.Description == null ? null : Markdig.Markdown.ToHtml(t.Description, pipeline)
+                Id          = t.Id,
+                Name        = t.Name,
+                Computers   = ComputerMini.GetItemsWithCompany(t.Id, t.Name),
+                Consoles    = ConsoleMini.GetItemsWithCompany(t.Id, t.Name),
+                Address     = t.Address,
+                City        = t.City,
+                Country     = t.Country,
+                Facebook    = t.Facebook,
+                Founded     = t.Founded,
+                PostalCode  = t.PostalCode,
+                Province    = t.Province,
+                Sold        = t.Sold,
+                SoldTo      = t.SoldTo,
+                Status      = t.Status,
+                Twitter     = t.Twitter,
+                Website     = t.Website,
+                Logos       = t.Logos,
+                LastLogo    = t.LastLogo,
+                Description = t.Description == null ? null : Markdown.ToHtml(t.Description, pipeline)
             }).OrderBy(t => t.Name).ToArray();
         }
 
@@ -125,31 +127,32 @@ namespace cicm_web.Models
             List<Cicm.Database.Schemas.Company> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
-            MarkdownPipeline pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+            MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
             return dbItems
                   .Where(t => t.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
                   .Select(t => new CompanyWithItems
                    {
-                       Id         = t.Id,
-                       Name       = t.Name,
-                       Computers  = ComputerMini.GetItemsWithCompany(t.Id, t.Name),
-                       Consoles   = ConsoleMini.GetItemsWithCompany(t.Id, t.Name),
-                       Address    = t.Address,
-                       City       = t.City,
-                       Country    = t.Country,
-                       Facebook   = t.Facebook,
-                       Founded    = t.Founded,
-                       PostalCode = t.PostalCode,
-                       Province   = t.Province,
-                       Sold       = t.Sold,
-                       SoldTo     = t.SoldTo,
-                       Status     = t.Status,
-                       Twitter    = t.Twitter,
-                       Website    = t.Website,
-                       Logos      = t.Logos,
-                       LastLogo   = t.LastLogo,
-                       Description = t.Description == null ? null : Markdig.Markdown.ToHtml(t.Description, pipeline)
+                       Id          = t.Id,
+                       Name        = t.Name,
+                       Computers   = ComputerMini.GetItemsWithCompany(t.Id, t.Name),
+                       Consoles    = ConsoleMini.GetItemsWithCompany(t.Id, t.Name),
+                       Address     = t.Address,
+                       City        = t.City,
+                       Country     = t.Country,
+                       Facebook    = t.Facebook,
+                       Founded     = t.Founded,
+                       PostalCode  = t.PostalCode,
+                       Province    = t.Province,
+                       Sold        = t.Sold,
+                       SoldTo      = t.SoldTo,
+                       Status      = t.Status,
+                       Twitter     = t.Twitter,
+                       Website     = t.Website,
+                       Logos       = t.Logos,
+                       LastLogo    = t.LastLogo,
+                       Description = t.Description == null ? null : Markdown.ToHtml(t.Description, pipeline)
                    }).OrderBy(t => t.Name).ToArray();
         }
     }
@@ -180,13 +183,23 @@ namespace cicm_web.Models
         public static Company[] GetItemsStartingWithLetter(char letter)
         {
             List<Cicm.Database.Schemas.Company> dbItems = null;
-            bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
+            bool? result =
+                Program.Database?.Operations.GetCompanies(out dbItems, letter);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems
-                  .Where(t => t.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
-                  .Select(t => new Company {Id = t.Id, Name = t.Name, LastLogo = t.LastLogo}).OrderBy(t => t.Name)
-                  .ToArray();
+            return dbItems.Select(t => new Company {Id = t.Id, Name = t.Name, LastLogo = t.LastLogo})
+                          .OrderBy(t => t.Name).ToArray();
+        }
+
+        public static Company[] GetItemsByCountry(int countryCode)
+        {
+            List<Cicm.Database.Schemas.Company> dbItems = null;
+            bool? result =
+                Program.Database?.Operations.GetCompanies(out dbItems, countryCode);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            return dbItems.Select(t => new Company {Id = t.Id, Name = t.Name, LastLogo = t.LastLogo})
+                          .OrderBy(t => t.Name).ToArray();
         }
     }
 }
