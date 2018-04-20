@@ -140,6 +140,7 @@
                 <tr>
                     <th>Country</th>
                     <td>
+                        <a asp-action="ByCountry" asp-controller="Company" asp-route-id="@Model.Country.Id">
                         @if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/flags/countries", Model.Country.Id + ".svg")))
                         {
                             <picture>
@@ -158,6 +159,7 @@
                             </picture>
                         }
                         @Model.Country.Name
+                        </a>
                     </td>
                 </tr>
                 <tr>
