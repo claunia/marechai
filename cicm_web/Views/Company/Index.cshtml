@@ -1,0 +1,75 @@
+﻿@{
+    /******************************************************************************
+// Canary Islands Computer Museum Website
+// ----------------------------------------------------------------------------
+//
+// Filename       : Index.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Lists all companies
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2018 Natalia Portillo
+*******************************************************************************/
+
+    ViewData["Title"] = "Companies";
+}
+@using System.IO
+@model IEnumerable<Company>
+
+<p align=center>
+    @if(Model.Any())
+    {
+        <p>
+            @Model.Count() companies found in the database.<br />
+            @foreach(Company company in Model)
+            {
+                <a asp-controller="Company"
+                   asp-action="View"
+                   asp-route-id="@company.Id">
+                    @if(company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.LastLogo.Guid + ".svg")))
+                    {
+                        <picture>
+                            <source type="image/svg+xml"
+                                    srcset="/assets/logos/@(company.LastLogo.Guid).svg">
+                            <source type="image/webp"
+                                    srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp,
+/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp 2x,
+/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp 3x">
+                            <img srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).png,
+                         /assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).png 2x,
+                         /assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).webp 3x"
+                                 src="/assets/logos/thumbs/png/1x@(company.LastLogo.Guid).png")
+                                 alt=""
+                                 height="auto" width="auto" style="max-height: 32px; max-width: 128px "/>
+                        </picture>
+
+                    }
+                    @company.Name
+                </a>
+                <br />
+            }
+        </p>
+    }
+    else
+    {
+        <p>There are no companies in the database.</p>
+    }
+</p>

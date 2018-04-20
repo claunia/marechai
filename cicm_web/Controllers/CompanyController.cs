@@ -29,8 +29,10 @@
 *******************************************************************************/
 
 using cicm_web.Models;
+using Cicm.Database.Schemas;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Company = cicm_web.Models.Company;
 
 namespace cicm_web.Controllers
 {
@@ -64,6 +66,24 @@ namespace cicm_web.Controllers
 
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
             return View(company);
+        }
+
+        public IActionResult ByCountry(int id)
+        {
+            Iso3166 iso3166 = Program.Database.Operations.GetIso3166(id);
+
+            ViewBag.Iso3166 = iso3166;
+
+            Company[] companies = iso3166 == null ? Company.GetAllItems() : Company.GetItemsByCountry(id);
+
+            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+            return View(companies);
+        }
+
+        public IActionResult Index()
+        {
+            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+            return View(Company.GetAllItems());
         }
     }
 }
