@@ -111,6 +111,75 @@ namespace Cicm.Database
         }
 
         /// <summary>
+        ///     Gets all companies that start with the specified letter
+        /// </summary>
+        /// <param name="entries">All companies</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
+        public bool GetCompanies(out List<Company> entries, char startingLetter)
+        {
+            if((startingLetter < 'a' || startingLetter > 'z') && (startingLetter < 'A' || startingLetter > 'Z'))
+                return GetCompanies(out entries);
+
+            #if DEBUG
+            Console.WriteLine("Getting all companies that start with {0}...");
+            #endif
+
+            try
+            {
+                IDbCommand     dbCmd       = dbCon.CreateCommand();
+                IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+                dbCmd.CommandText = $"SELECT * from companies WHERE name LIKE {startingLetter}%";
+                DataSet dataSet = new DataSet();
+                dataAdapter.SelectCommand = dbCmd;
+                dataAdapter.Fill(dataSet);
+
+                entries = CompaniesFromDataTable(dataSet.Tables[0]);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error getting companies.");
+                Console.WriteLine(ex);
+                entries = null;
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///     Gets all companies from the specified country
+        /// </summary>
+        /// <param name="entries">All companies</param>
+        /// <returns><c>true</c> if <see cref="entries" /> is correct, <c>false</c> otherwise</returns>
+        public bool GetCompanies(out List<Company> entries, int countryCode)
+        {
+            #if DEBUG
+            Console.WriteLine("Getting all companies that start with {0}...");
+            #endif
+
+            try
+            {
+                IDbCommand     dbCmd       = dbCon.CreateCommand();
+                IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+                dbCmd.CommandText = $"SELECT * from companies WHERE country = '{countryCode}'";
+                DataSet dataSet = new DataSet();
+                dataAdapter.SelectCommand = dbCmd;
+                dataAdapter.Fill(dataSet);
+
+                entries = CompaniesFromDataTable(dataSet.Tables[0]);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error getting companies.");
+                Console.WriteLine(ex);
+                entries = null;
+                return false;
+            }
+        }
+
+        /// <summary>
         ///     Gets company by specified id
         /// </summary>
         /// <param name="id">Id</param>
