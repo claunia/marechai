@@ -32,42 +32,14 @@ using System;
 
 namespace Cicm.Database.Schemas
 {
-    /// <summary>Company</summary>
-    public class Company
+    /// <summary>Company description</summary>
+    public class CompanyDescription
     {
-        /// <summary>Address</summary>
-        public string Address;
-        /// <summary>City</summary>
-        public string City;
-        /// <summary>Country</summary>
-        public Iso3166 Country;
-        /// <summary>Facebook account</summary>
-        public string Facebook;
-        /// <summary>Founding date</summary>
-        public DateTime Founded;
         /// <summary>ID</summary>
         public int Id;
-        /// <summary>Last logo</summary>
-        public CompanyLogo LastLogo;
-        /// <summary>Logos</summary>
-        public CompanyLogo[] Logos;
-        /// <summary>Name</summary>
-        public string Name;
-        /// <summary>Postal code</summary>
-        public string PostalCode;
-        /// <summary>Province</summary>
-        public string Province;
-        /// <summary>Sold date</summary>
-        public DateTime Sold;
-        /// <summary>Company it was sold to</summary>
-        public Company SoldTo;
-        /// <summary>Company status</summary>
-        public CompanyStatus Status;
-        /// <summary>Twitter account</summary>
-        public string Twitter;
-        /// <summary>Website</summary>
-        public string Website;
+        /// <summary>Company ID</summary>
+        public int CompanyId;
         /// <summary>Description</summary>
-        public string Description;
+        public string Text;
     }
 }

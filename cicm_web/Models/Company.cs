@@ -55,6 +55,7 @@ namespace cicm_web.Models
         public CompanyStatus                 Status;
         public string                        Twitter;
         public string                        Website;
+        public string Description;
 
         public static CompanyWithItems GetItem(int id)
         {
@@ -81,7 +82,8 @@ namespace cicm_web.Models
                            Twitter    = dbItem.Twitter,
                            Website    = dbItem.Website,
                            Logos      = dbItem.Logos,
-                           LastLogo   = dbItem.LastLogo
+                           LastLogo   = dbItem.LastLogo,
+                           Description = dbItem.Description
                        };
         }
 
@@ -110,7 +112,8 @@ namespace cicm_web.Models
                 Twitter    = t.Twitter,
                 Website    = t.Website,
                 Logos      = t.Logos,
-                LastLogo   = t.LastLogo
+                LastLogo   = t.LastLogo,
+                Description = t.Description
             }).OrderBy(t => t.Name).ToArray();
         }
 
@@ -141,7 +144,8 @@ namespace cicm_web.Models
                        Twitter    = t.Twitter,
                        Website    = t.Website,
                        Logos      = t.Logos,
-                       LastLogo   = t.LastLogo
+                       LastLogo   = t.LastLogo,
+                       Description = t.Description
                    }).OrderBy(t => t.Name).ToArray();
         }
     }

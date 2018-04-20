@@ -394,6 +394,10 @@ namespace Cicm.Database
                             entry.LastLogo = entry.Logos[0];
                 }
 
+                if(GetCompanyDescriptionsByCompany(out List<CompanyDescription> descriptions, entry.Id))
+                    if(descriptions != null && descriptions.Count > 0)
+                        entry.Description = descriptions[0].Text;
+
                 entries.Add(entry);
             }
 
