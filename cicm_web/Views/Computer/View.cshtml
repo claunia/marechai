@@ -73,7 +73,7 @@
             </div>
         </th>
         <td width="63%">
-            @Model.Year
+            <a asp-controller="Computer" asp-action="ByYear" asp-route-id="@Model.Year">@Model.Year</a>
         </td>
     </tr>
 }
