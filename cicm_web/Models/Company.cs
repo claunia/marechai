@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cicm.Database.Schemas;
+using Markdig;
 
 namespace cicm_web.Models
 {
@@ -60,6 +61,7 @@ namespace cicm_web.Models
         public static CompanyWithItems GetItem(int id)
         {
             Cicm.Database.Schemas.Company dbItem = Program.Database?.Operations.GetCompany(id);
+            MarkdownPipeline pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
             return dbItem == null
                        ? null
@@ -83,7 +85,7 @@ namespace cicm_web.Models
                            Website    = dbItem.Website,
                            Logos      = dbItem.Logos,
                            LastLogo   = dbItem.LastLogo,
-                           Description = dbItem.Description
+                           Description = dbItem.Description == null ? null : Markdig.Markdown.ToHtml(dbItem.Description, pipeline)
                        };
         }
 
@@ -92,6 +94,7 @@ namespace cicm_web.Models
             List<Cicm.Database.Schemas.Company> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
+            MarkdownPipeline pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
             return dbItems.Select(t => new CompanyWithItems
             {
@@ -113,7 +116,7 @@ namespace cicm_web.Models
                 Website    = t.Website,
                 Logos      = t.Logos,
                 LastLogo   = t.LastLogo,
-                Description = t.Description
+                Description = t.Description == null ? null : Markdig.Markdown.ToHtml(t.Description, pipeline)
             }).OrderBy(t => t.Name).ToArray();
         }
 
@@ -122,6 +125,7 @@ namespace cicm_web.Models
             List<Cicm.Database.Schemas.Company> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetCompanies(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
+            MarkdownPipeline pipeline = new Markdig.MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
             return dbItems
                   .Where(t => t.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
@@ -145,7 +149,7 @@ namespace cicm_web.Models
                        Website    = t.Website,
                        Logos      = t.Logos,
                        LastLogo   = t.LastLogo,
-                       Description = t.Description
+                       Description = t.Description == null ? null : Markdig.Markdown.ToHtml(t.Description, pipeline)
                    }).OrderBy(t => t.Name).ToArray();
         }
     }

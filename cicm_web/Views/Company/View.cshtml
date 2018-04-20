@@ -33,6 +33,7 @@
 }
 @using System.IO
 @using Cicm.Database.Schemas
+@using Markdig
 @model CompanyWithItems
 
 @if(Model != null)
@@ -431,7 +432,7 @@
     @if(Model.Description != null)
     {
         <div class="row container-fluid">
-            @Model.Description             
+            @Html.Raw(Model.Description)
         </div>
     }
     </div>
