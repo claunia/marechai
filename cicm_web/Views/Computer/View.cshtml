@@ -59,7 +59,7 @@
     </b>
 }
 
-<b>@Model.Company.Name @Model.Model</b>
+<b><a asp-controller=Company asp-action=View asp-route-id=@Model.Company.Id>@Model.Company.Name</a> @Model.Model</b>
 <table border=0
        width=100%>
 
