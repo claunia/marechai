@@ -34,23 +34,27 @@
 @using System.IO
 @model Computer
 
-@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.Id + ".gif")))
-{
-    <img src="@(System.IO.Path.Combine("/assets/logos", Model.Company.Id + ".gif"))"
-         alt="">
-}
-
-@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.Id + ".jpg")))
-{
-    <img src="@(System.IO.Path.Combine("/assets/logos", Model.Company.Id + ".jpg"))"
-         alt="">
-}
-
-@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.Id + ".png")))
-{
-    <img src="@(System.IO.Path.Combine("/assets/logos", Model.Company.Id + ".png"))"
-         alt="">
-}
+<p align=center>
+    @if(Model.Company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.LastLogo.Guid + ".svg")))
+    {
+        <picture>
+            <source type="image/svg+xml"
+                    srcset="/assets/logos/@(Model.Company.LastLogo.Guid).svg">
+            <source type="image/webp"
+                    srcset="/assets/logos/webp/1x/@(Model.Company.LastLogo.Guid).webp,
+    /assets/logos/webp/1x/@(Model.Company.LastLogo.Guid).webp 2x,
+    /assets/logos/webp/1x/@(Model.Company.LastLogo.Guid).webp 3x">
+            <img srcset="/assets/logos/png/1x/@(Model.Company.LastLogo.Guid).png,
+                             /assets/logos/png/1x/@(Model.Company.LastLogo.Guid).png 2x,
+                             /assets/logos/png/1x/@(Model.Company.LastLogo.Guid).webp 3x"
+                 src="/assets/logos/png/1x@(Model.Company.LastLogo.Guid).png")
+                 alt=""
+                 height="auto"
+                 width="auto"
+                 style="max-height: 256px; max-width: 256px" />
+        </picture>
+    }
+</p>
 
 @if(Model.Year == 1000)
 {
