@@ -352,23 +352,23 @@ namespace Cicm.Database
             {
                 BrowserTest entry = new BrowserTest
                 {
-                    Id              = ushort.Parse(dataRow["id"].ToString()),
-                    UserAgent       = dataRow["user_agent"].ToString(),
-                    Name            = dataRow["browser"].ToString(),
-                    Version         = dataRow["version"].ToString(),
-                    OperatingSystem = dataRow["os"].ToString(),
-                    Architecture    = dataRow["platform"].ToString(),
-                    Gif87           = int.Parse(dataRow["gif87"].ToString())  > 0,
-                    Gif89           = int.Parse(dataRow["gif89"].ToString())  > 0,
-                    Jpeg            = int.Parse(dataRow["jpeg"].ToString())   > 0,
-                    Png             = int.Parse(dataRow["png"].ToString())    > 0,
-                    AlphaPng        = int.Parse(dataRow["pngt"].ToString())   > 0,
-                    AnimatedGif     = int.Parse(dataRow["agif"].ToString())   > 0,
-                    Tables          = int.Parse(dataRow["table"].ToString())  > 0,
-                    Color           = int.Parse(dataRow["colors"].ToString()) > 0,
-                    Js              = int.Parse(dataRow["js"].ToString())     > 0,
-                    Frames          = int.Parse(dataRow["frames"].ToString()) > 0,
-                    Flash           = int.Parse(dataRow["flash"].ToString())  > 0
+                    Id              = (ushort)dataRow["id"],
+                    UserAgent       = (string)dataRow["user_agent"],
+                    Name            = (string)dataRow["browser"],
+                    Version         = (string)dataRow["version"],
+                    OperatingSystem = (string)dataRow["os"],
+                    Architecture    = (string)dataRow["platform"],
+                    Gif87           = (int)dataRow["gif87"]  > 0,
+                    Gif89           = (int)dataRow["gif89"]  > 0,
+                    Jpeg            = (int)dataRow["jpeg"]   > 0,
+                    Png             = (int)dataRow["png"]    > 0,
+                    AlphaPng        = (int)dataRow["pngt"]   > 0,
+                    AnimatedGif     = (int)dataRow["agif"]   > 0,
+                    Tables          = (int)dataRow["table"]  > 0,
+                    Color           = (int)dataRow["colors"] > 0,
+                    Js              = (int)dataRow["js"]     > 0,
+                    Frames          = (int)dataRow["frames"] > 0,
+                    Flash           = (int)dataRow["flash"]  > 0
                 };
 
                 entries.Add(entry);

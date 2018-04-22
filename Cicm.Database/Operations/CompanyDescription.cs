@@ -214,8 +214,7 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL =
-                "INSERT INTO company_descriptions (company_id, text) VALUES (@company_id, @text)";
+            const string SQL = "INSERT INTO company_descriptions (company_id, text) VALUES (@company_id, @text)";
 
             dbcmd.CommandText = SQL;
 
@@ -315,9 +314,9 @@ namespace Cicm.Database
             {
                 CompanyDescription entry = new CompanyDescription
                 {
-                    Id        = int.Parse(dataRow["id"].ToString()),
-                    CompanyId = int.Parse(dataRow["company_id"].ToString()),
-                    Text      = dataRow["text"].ToString()
+                    Id        = (int)dataRow["id"],
+                    CompanyId = (int)dataRow["company_id"],
+                    Text      = dataRow["text"] == DBNull.Value ? null : (string)dataRow["text"]
                 };
 
                 entries.Add(entry);

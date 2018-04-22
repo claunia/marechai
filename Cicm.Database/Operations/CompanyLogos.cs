@@ -320,10 +320,10 @@ namespace Cicm.Database
             {
                 CompanyLogo entry = new CompanyLogo
                 {
-                    Id        = int.Parse(dataRow["id"].ToString()),
-                    CompanyId = int.Parse(dataRow["company_id"].ToString()),
-                    Year      = int.Parse(dataRow["year"].ToString()),
-                    Guid      = Guid.Parse(dataRow["logo_guid"].ToString())
+                    Id        = (int)dataRow["id"],
+                    CompanyId = (int)dataRow["company_id"],
+                    Year      = dataRow["year"] == DBNull.Value ? 0 : (int)dataRow["year"],
+                    Guid      = (Guid)dataRow["logo_guid"]
                 };
 
                 entries.Add(entry);

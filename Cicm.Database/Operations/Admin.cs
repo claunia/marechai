@@ -277,9 +277,9 @@ namespace Cicm.Database
             {
                 Admin entry = new Admin
                 {
-                    Id       = int.Parse(dataRow["id"].ToString()),
-                    Username = dataRow["user"].ToString(),
-                    Password = dataRow["password"].ToString()
+                    Id       = (int)dataRow["id"],
+                    Username = (string)dataRow["user"],
+                    Password = (string)dataRow["password"]
                 };
 
                 entries.Add(entry);

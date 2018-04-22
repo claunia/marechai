@@ -278,9 +278,9 @@ namespace Cicm.Database
             {
                 MoneyDonation entry = new MoneyDonation
                 {
-                    Id       = int.Parse(dataRow["id"].ToString()),
-                    Donator  = dataRow["browser"].ToString(),
-                    Quantity = float.Parse(dataRow["date"].ToString())
+                    Id       = (int)dataRow["id"],
+                    Donator  = (string)dataRow["browser"],
+                    Quantity = (float)dataRow["date"]
                 };
 
                 entries.Add(entry);

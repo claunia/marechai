@@ -357,24 +357,24 @@ namespace Cicm.Database
             {
                 OwnedComputer entry = new OwnedComputer
                 {
-                    Id         = int.Parse(dataRow["id"].ToString()),
-                    ComputerId = int.Parse(dataRow["db_id"].ToString()),
+                    Id         = (int)dataRow["id"],
+                    ComputerId = (int)dataRow["db_id"],
                     Acquired   = dataRow["date"].ToString(),
-                    Status     = (StatusType)int.Parse(dataRow["status"].ToString()),
-                    Trade      = int.Parse(dataRow["trade"].ToString())   > 0,
-                    Boxed      = int.Parse(dataRow["boxed"].ToString())   > 0,
-                    Manuals    = int.Parse(dataRow["manuals"].ToString()) > 0,
-                    Cpu1       = int.Parse(dataRow["cpu1"].ToString()),
-                    Mhz1       = float.Parse(dataRow["mhz1"].ToString()),
-                    Cpu2       = int.Parse(dataRow["cpu1"].ToString()),
-                    Mhz2       = float.Parse(dataRow["mhz2"].ToString()),
-                    Ram        = int.Parse(dataRow["ram"].ToString()),
-                    Vram       = int.Parse(dataRow["vram"].ToString()),
-                    Rigid      = dataRow["rigid"].ToString(),
-                    Disk1      = int.Parse(dataRow["disk1"].ToString()),
-                    Cap1       = int.Parse(dataRow["cap1"].ToString()),
-                    Disk2      = int.Parse(dataRow["disk2"].ToString()),
-                    Cap2       = int.Parse(dataRow["cap2"].ToString())
+                    Status     = (StatusType)dataRow["status"],
+                    Trade      = (int)dataRow["trade"]   > 0,
+                    Boxed      = (int)dataRow["boxed"]   > 0,
+                    Manuals    = (int)dataRow["manuals"] > 0,
+                    Cpu1       = (int)dataRow["cpu1"],
+                    Mhz1       = (float)dataRow["mhz1"],
+                    Cpu2       = (int)dataRow["cpu1"],
+                    Mhz2       = (float)dataRow["mhz2"],
+                    Ram        = (int)dataRow["ram"],
+                    Vram       = (int)dataRow["vram"],
+                    Rigid      = (string)dataRow["rigid"],
+                    Disk1      = (int)dataRow["disk1"],
+                    Cap1       = (int)dataRow["cap1"],
+                    Disk2      = (int)dataRow["disk2"],
+                    Cap2       = (int)dataRow["cap2"]
                 };
 
                 entries.Add(entry);

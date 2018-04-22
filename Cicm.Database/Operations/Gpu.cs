@@ -270,7 +270,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Gpu entry = new Gpu {Id = int.Parse(dataRow["id"].ToString()), Name = dataRow["name"].ToString()};
+                Gpu entry = new Gpu {Id = (int)dataRow["id"], Name = (string)dataRow["name"]};
 
                 entries.Add(entry);
             }

@@ -289,11 +289,11 @@ namespace Cicm.Database
             {
                 Forbidden entry = new Forbidden
                 {
-                    Id        = int.Parse(dataRow["id"].ToString()),
-                    UserAgent = dataRow["browser"].ToString(),
-                    Date      = dataRow["date"].ToString(),
-                    Ip        = dataRow["ip"].ToString(),
-                    Referer   = dataRow["referer"].ToString()
+                    Id        = (int)dataRow["id"],
+                    UserAgent = (string)dataRow["browser"],
+                    Date      = (string)dataRow["date"],
+                    Ip        = (string)dataRow["ip"],
+                    Referer   = (string)dataRow["referer"]
                 };
 
                 entries.Add(entry);

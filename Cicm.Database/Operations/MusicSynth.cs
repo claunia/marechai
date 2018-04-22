@@ -265,11 +265,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                MusicSynth entry = new MusicSynth
-                {
-                    Id   = int.Parse(dataRow["id"].ToString()),
-                    Name = dataRow["name"].ToString()
-                };
+                MusicSynth entry = new MusicSynth {Id = (int)dataRow["id"], Name = (string)dataRow["name"]};
 
                 entries.Add(entry);
             }

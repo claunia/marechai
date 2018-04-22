@@ -419,30 +419,27 @@ namespace Cicm.Database
             {
                 Company entry = new Company
                 {
-                    Id         = int.Parse(dataRow["id"].ToString()),
-                    Name       = dataRow["name"].ToString(),
-                    Website    = dataRow["website"].ToString(),
-                    Twitter    = dataRow["twitter"].ToString(),
-                    Facebook   = dataRow["facebook"].ToString(),
-                    Address    = dataRow["address"].ToString(),
-                    City       = dataRow["city"].ToString(),
-                    Province   = dataRow["province"].ToString(),
-                    PostalCode = dataRow["postal_code"].ToString(),
-                    Status     = (CompanyStatus)int.Parse(dataRow["status"].ToString())
+                    Id         = (int)dataRow["id"],
+                    Name       = (string)dataRow["name"],
+                    Website    = dataRow["website"]     == DBNull.Value ? null : (string)dataRow["website"],
+                    Twitter    = dataRow["twitter"]     == DBNull.Value ? null : (string)dataRow["twitter"],
+                    Facebook   = dataRow["facebook"]    == DBNull.Value ? null : (string)dataRow["facebook"],
+                    Address    = dataRow["address"]     == DBNull.Value ? null : (string)dataRow["address"],
+                    City       = dataRow["city"]        == DBNull.Value ? null : (string)dataRow["city"],
+                    Province   = dataRow["province"]    == DBNull.Value ? null : (string)dataRow["province"],
+                    PostalCode = dataRow["postal_code"] == DBNull.Value ? null : (string)dataRow["postal_code"],
+                    Status     = (CompanyStatus)dataRow["status"],
+                    Founded =
+                        dataRow["founded"] == DBNull.Value
+                            ? DateTime.MinValue
+                            : Convert.ToDateTime(dataRow["founded"].ToString()),
+                    Sold =
+                        dataRow["sold"] == DBNull.Value
+                            ? DateTime.MinValue
+                            : Convert.ToDateTime(dataRow["sold"].ToString()),
+                    SoldTo  = dataRow["sold_to"] == DBNull.Value ? null : GetCompany((int)dataRow["sold_to"]),
+                    Country = dataRow["country"] == DBNull.Value ? null : GetIso3166((ushort)dataRow["country"])
                 };
-
-                if(!string.IsNullOrWhiteSpace(dataRow["founded"].ToString()))
-                    entry.Founded = Convert.ToDateTime(dataRow["founded"].ToString());
-
-                if(!string.IsNullOrWhiteSpace(dataRow["sold"].ToString()) &&
-                   !string.IsNullOrWhiteSpace(dataRow["sold_to"].ToString()))
-                {
-                    entry.Sold   = Convert.ToDateTime(dataRow["sold"].ToString());
-                    entry.SoldTo = GetCompany(int.Parse(dataRow["sold_to"].ToString()));
-                }
-
-                if(!string.IsNullOrWhiteSpace(dataRow["country"].ToString()))
-                    entry.Country = GetIso3166(int.Parse(dataRow["country"].ToString()));
 
                 if(GetCompanyLogosByCompany(out List<CompanyLogo> logos, entry.Id))
                 {

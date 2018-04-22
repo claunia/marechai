@@ -300,13 +300,13 @@ namespace Cicm.Database
             {
                 OwnedConsole entry = new OwnedConsole
                 {
-                    Id        = int.Parse(dataRow["id"].ToString()),
-                    ConsoleId = int.Parse(dataRow["db_id"].ToString()),
+                    Id        = (int)dataRow["id"],
+                    ConsoleId = (int)dataRow["db_id"],
                     Acquired  = dataRow["date"].ToString(),
-                    Status    = (StatusType)int.Parse(dataRow["status"].ToString()),
-                    Trade     = int.Parse(dataRow["trade"].ToString())   > 0,
-                    Boxed     = int.Parse(dataRow["boxed"].ToString())   > 0,
-                    Manuals   = int.Parse(dataRow["manuals"].ToString()) > 0
+                    Status    = (StatusType)dataRow["status"],
+                    Trade     = (int)dataRow["trade"]   > 0,
+                    Boxed     = (int)dataRow["boxed"]   > 0,
+                    Manuals   = (int)dataRow["manuals"] > 0
                 };
 
                 entries.Add(entry);

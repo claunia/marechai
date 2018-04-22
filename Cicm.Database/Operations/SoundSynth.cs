@@ -270,11 +270,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                SoundSynth entry = new SoundSynth
-                {
-                    Id   = int.Parse(dataRow["id"].ToString()),
-                    Name = dataRow["name"].ToString()
-                };
+                SoundSynth entry = new SoundSynth {Id = (int)dataRow["id"], Name = (string)dataRow["name"]};
 
                 entries.Add(entry);
             }

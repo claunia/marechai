@@ -376,39 +376,40 @@ namespace Cicm.Database
             {
                 Processor entry = new Processor
                 {
-                    Id             = int.Parse(dataRow["id"].ToString()),
-                    Name           = dataRow["name"].ToString(),
-                    ModelCode      = dataRow["model_code"].ToString(),
-                    Speed          = Convert.ToDouble(dataRow["speed"].ToString()),
-                    Package        = dataRow["package"].ToString(),
-                    Gpr            = Convert.ToInt32(dataRow["GPRs"].ToString()),
-                    GprSize        = Convert.ToInt32(dataRow["GPR_size"].ToString()),
-                    Fpr            = Convert.ToInt32(dataRow["FPRs"].ToString()),
-                    FprSize        = Convert.ToInt32(dataRow["FPR_size"].ToString()),
-                    Cores          = Convert.ToInt32(dataRow["cores"].ToString()),
-                    ThreadsPerCore = Convert.ToInt32(dataRow["threads_per_core"].ToString()),
-                    Process        = dataRow["process"].ToString(),
-                    ProcessNm      = Convert.ToSingle(dataRow["process_nm"].ToString()),
-                    DieSize        = Convert.ToSingle(dataRow["die_size"].ToString()),
-                    Transistors    = Convert.ToUInt64(dataRow["transistors"].ToString()),
-                    AddressBus     = Convert.ToInt32(dataRow["addr_bus"].ToString()),
-                    DataBus        = Convert.ToInt32(dataRow["data_bus"].ToString()),
-                    Simd           = Convert.ToInt32(dataRow["SIMD_registers"].ToString()),
-                    SimdSize       = Convert.ToInt32(dataRow["SIMD_size"].ToString()),
-                    L1Instruction  = Convert.ToSingle(dataRow["L1_instruction"].ToString()),
-                    L1Data         = Convert.ToSingle(dataRow["L1_data"].ToString()),
-                    L2             = Convert.ToSingle(dataRow["L2"].ToString()),
-                    L3             = Convert.ToSingle(dataRow["L3"].ToString())
+                    Id             = (int)dataRow["id"],
+                    Name           = (string)dataRow["name"],
+                    ModelCode      = dataRow["model_code"]       == DBNull.Value ? null : (string)dataRow["model_code"],
+                    Speed          = dataRow["speed"]            == DBNull.Value ? 0 : (double)dataRow["speed"],
+                    Package        = dataRow["package"]          == DBNull.Value ? null : (string)dataRow["package"],
+                    Gpr            = dataRow["GPRs"]             == DBNull.Value ? 0 : (int)dataRow["GPRs"],
+                    GprSize        = dataRow["GPR_size"]         == DBNull.Value ? 0 : (int)dataRow["GPR_size"],
+                    Fpr            = dataRow["FPRs"]             == DBNull.Value ? 0 : (int)dataRow["FPRs"],
+                    FprSize        = dataRow["FPR_size"]         == DBNull.Value ? 0 : (int)dataRow["FPR_size"],
+                    Cores          = dataRow["cores"]            == DBNull.Value ? 0 : (int)dataRow["cores"],
+                    ThreadsPerCore = dataRow["threads_per_core"] == DBNull.Value ? 0 : (int)dataRow["threads_per_core"],
+                    Process        = dataRow["process"]          == DBNull.Value ? null : (string)dataRow["process"],
+                    ProcessNm      = dataRow["process_nm"]       == DBNull.Value ? 0 : (float)dataRow["process_nm"],
+                    DieSize        = dataRow["die_size"]         == DBNull.Value ? 0 : (float)dataRow["die_size"],
+                    Transistors    = dataRow["transistors"]      == DBNull.Value ? 0 : (ulong)dataRow["transistors"],
+                    AddressBus     = dataRow["addr_bus"]         == DBNull.Value ? 0 : (int)dataRow["addr_bus"],
+                    DataBus        = dataRow["data_bus"]         == DBNull.Value ? 0 : (int)dataRow["data_bus"],
+                    Simd           = dataRow["SIMD_registers"]   == DBNull.Value ? 0 : (int)dataRow["SIMD_registers"],
+                    SimdSize       = dataRow["SIMD_size"]        == DBNull.Value ? 0 : (int)dataRow["SIMD_size"],
+                    L1Instruction  = dataRow["L1_instruction"]   == DBNull.Value ? 0 : (float)dataRow["L1_instruction"],
+                    L1Data         = dataRow["L1_data"]          == DBNull.Value ? 0 : (float)dataRow["L1_data"],
+                    L2             = dataRow["L2"]               == DBNull.Value ? 0 : (float)dataRow["L2"],
+                    L3             = dataRow["L3"]               == DBNull.Value ? 0 : (float)dataRow["L3"],
+                    Company = dataRow["company"] == DBNull.Value
+                                         ? null
+                                         : GetCompany((int)dataRow["company"]),
+                    Introduced =
+                        dataRow["introduced"] == DBNull.Value
+                            ? DateTime.MinValue
+                            : Convert.ToDateTime(dataRow["introduced"]),
+                    InstructionSet = dataRow["instruction_set"] == DBNull.Value
+                                         ? null
+                                         : GetInstructionSet((int)dataRow["instruction_set"])
                 };
-
-                if(!string.IsNullOrEmpty(dataRow["company"].ToString()))
-                    entry.Company = GetCompany(Convert.ToInt32(dataRow["company"].ToString()));
-
-                if(!string.IsNullOrEmpty(dataRow["introduced"].ToString()))
-                    entry.Introduced = Convert.ToDateTime(dataRow["introduced"].ToString());
-
-                if(!string.IsNullOrEmpty(dataRow["instruction_set"].ToString()))
-                    entry.InstructionSet = GetInstructionSet(Convert.ToInt32(dataRow["instruction_set"].ToString()));
 
                 entries.Add(entry);
             }

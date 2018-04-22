@@ -309,11 +309,8 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                InstructionSetExtension entry = new InstructionSetExtension
-                {
-                    Id   = int.Parse(dataRow["id"].ToString()),
-                    Name = dataRow["extension"].ToString()
-                };
+                InstructionSetExtension entry =
+                    new InstructionSetExtension {Id = (int)dataRow["id"], Name = (string)dataRow["extension"]};
 
                 entries.Add(entry);
             }

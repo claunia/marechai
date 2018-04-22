@@ -270,11 +270,8 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                DiskFormat entry = new DiskFormat
-                {
-                    Id          = int.Parse(dataRow["id"].ToString()),
-                    Description = dataRow["description"].ToString()
-                };
+                DiskFormat entry =
+                    new DiskFormat {Id = (int)dataRow["id"], Description = (string)dataRow["description"]};
 
                 entries.Add(entry);
             }

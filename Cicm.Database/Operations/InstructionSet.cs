@@ -270,11 +270,8 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                InstructionSet entry = new InstructionSet
-                {
-                    Id   = int.Parse(dataRow["id"].ToString()),
-                    Name = dataRow["instruction_set"].ToString()
-                };
+                InstructionSet entry =
+                    new InstructionSet {Id = (int)dataRow["id"], Name = (string)dataRow["instruction_set"]};
 
                 entries.Add(entry);
             }

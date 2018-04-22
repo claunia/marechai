@@ -61,9 +61,9 @@ namespace Cicm.Database.Schemas
         public InstructionSetExtension[] InstructionSetExtensions;
         /// <summary>Datetime of introduction</summary>
         public DateTime Introduced;
-        /// <summary>Size in kibibytes of L1 data cache. If 0, <see cref="L1Instruction" /> is size of L1 unified cache</summary>
+        /// <summary>Size in kibibytes of L1 data cache. If -1, <see cref="L1Instruction" /> is size of L1 unified cache</summary>
         public float L1Data;
-        /// <summary>Size in kibibytes of L1 instruction cache. If <see cref="L1Data" /> is 0, this is size of L1 unified cache</summary>
+        /// <summary>Size in kibibytes of L1 instruction cache. If <see cref="L1Data" /> is -1, this is size of L1 unified cache</summary>
         public float L1Instruction;
         /// <summary>
         ///     Size in kibibytes of L2 cache. It includes cache that's in same physical package but not in same chip die

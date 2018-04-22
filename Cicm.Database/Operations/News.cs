@@ -282,10 +282,10 @@ namespace Cicm.Database
             {
                 News entry = new News
                 {
-                    Id         = int.Parse(dataRow["id"].ToString()),
-                    Date       = dataRow["date"].ToString(),
-                    Type       = (NewsType)int.Parse(dataRow["type"].ToString()),
-                    AffectedId = int.Parse(dataRow["added_id"].ToString())
+                    Id         = (int)dataRow["id"],
+                    Date       = (string)dataRow["date"],
+                    Type       = (NewsType)dataRow["type"],
+                    AffectedId = (int)dataRow["added_id"]
                 };
 
                 entries.Add(entry);

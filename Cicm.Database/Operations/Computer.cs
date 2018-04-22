@@ -434,41 +434,32 @@ namespace Cicm.Database
             {
                 Computer entry = new Computer
                 {
-                    Id      = int.Parse(dataRow["id"].ToString()),
-                    Company = int.Parse(dataRow["company"].ToString()),
-                    Year    = int.Parse(dataRow["year"].ToString()),
-                    Model   = dataRow["model"].ToString(),
-                    Cpu1    = int.Parse(dataRow["cpu1"].ToString()),
-                    Mhz1    = float.Parse(dataRow["mhz1"].ToString()),
-                    Cpu2 = string.IsNullOrEmpty(dataRow["cpu2"].ToString())
-                                  ? 0
-                                  : int.Parse(dataRow["cpu2"].ToString()),
-                    Mhz2 =
-                        string.IsNullOrEmpty(dataRow["mhz2"].ToString()) ? 0 : float.Parse(dataRow["mhz2"].ToString()),
-                    Bits          = int.Parse(dataRow["bits"].ToString()),
-                    Ram           = int.Parse(dataRow["ram"].ToString()),
-                    Rom           = int.Parse(dataRow["rom"].ToString()),
-                    Gpu           = int.Parse(dataRow["gpu"].ToString()),
-                    Vram          = int.Parse(dataRow["vram"].ToString()),
-                    Colors        = int.Parse(dataRow["colors"].ToString()),
-                    Resolution    = dataRow["res"].ToString(),
-                    SoundSynth    = int.Parse(dataRow["sound_synth"].ToString()),
-                    MusicSynth    = int.Parse(dataRow["music_synth"].ToString()),
-                    SoundChannels = int.Parse(dataRow["sound_channels"].ToString()),
-                    MusicChannels = int.Parse(dataRow["music_channels"].ToString()),
-                    Hdd1          = int.Parse(dataRow["hdd1"].ToString()),
-                    Hdd2 = string.IsNullOrEmpty(dataRow["hdd2"].ToString())
-                                        ? 0
-                                        : int.Parse(dataRow["hdd2"].ToString()),
-                    Hdd3 = string.IsNullOrEmpty(dataRow["hdd3"].ToString())
-                                        ? 0
-                                        : int.Parse(dataRow["hdd3"].ToString()),
-                    Disk1 = int.Parse(dataRow["disk1"].ToString()),
-                    Cap1  = dataRow["cap1"].ToString(),
-                    Disk2 = string.IsNullOrEmpty(dataRow["disk2"].ToString())
-                                ? 0
-                                : int.Parse(dataRow["disk2"].ToString()),
-                    Cap2 = dataRow["cap2"].ToString()
+                    Id            = (int)dataRow["id"],
+                    Company       = (int)dataRow["company"],
+                    Year          = (int)dataRow["year"],
+                    Model         = (string)dataRow["model"],
+                    Cpu1          = (int)dataRow["cpu1"],
+                    Mhz1          = float.Parse(dataRow["mhz1"].ToString()),
+                    Cpu2          = dataRow["cpu2"] == DBNull.Value ? 0 : (int)dataRow["cpu2"],
+                    Mhz2          = dataRow["mhz2"] == DBNull.Value ? 0 : float.Parse(dataRow["mhz2"].ToString()),
+                    Bits          = (int)dataRow["bits"],
+                    Ram           = (int)dataRow["ram"],
+                    Rom           = (int)dataRow["rom"],
+                    Gpu           = (int)dataRow["gpu"],
+                    Vram          = (int)dataRow["vram"],
+                    Colors        = (int)dataRow["colors"],
+                    Resolution    = (string)dataRow["res"],
+                    SoundSynth    = (int)dataRow["sound_synth"],
+                    MusicSynth    = (int)dataRow["music_synth"],
+                    SoundChannels = (int)dataRow["sound_channels"],
+                    MusicChannels = (int)dataRow["music_channels"],
+                    Hdd1          = (int)dataRow["hdd1"],
+                    Hdd2          = dataRow["hdd2"] == DBNull.Value ? 0 : (int)dataRow["hdd2"],
+                    Hdd3          = dataRow["hdd3"] == DBNull.Value ? 0 : (int)dataRow["hdd3"],
+                    Disk1         = (int)dataRow["disk1"],
+                    Cap1          = (string)dataRow["cap1"],
+                    Disk2         = dataRow["disk2"] == DBNull.Value ? 0 : (int)dataRow["disk2"],
+                    Cap2          = dataRow["cap2"]  == DBNull.Value ? null : (string)dataRow["cap2"]
                 };
 
                 entries.Add(entry);
