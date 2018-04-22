@@ -390,7 +390,7 @@ namespace Cicm.Database
                     Process        = dataRow["process"]          == DBNull.Value ? null : (string)dataRow["process"],
                     ProcessNm      = dataRow["process_nm"]       == DBNull.Value ? 0 : (float)dataRow["process_nm"],
                     DieSize        = dataRow["die_size"]         == DBNull.Value ? 0 : (float)dataRow["die_size"],
-                    Transistors    = dataRow["transistors"]      == DBNull.Value ? 0 : (ulong)dataRow["transistors"],
+                    Transistors    = dataRow["transistors"]      == DBNull.Value ? 0 : (long)dataRow["transistors"],
                     AddressBus     = dataRow["addr_bus"]         == DBNull.Value ? 0 : (int)dataRow["addr_bus"],
                     DataBus        = dataRow["data_bus"]         == DBNull.Value ? 0 : (int)dataRow["data_bus"],
                     Simd           = dataRow["SIMD_registers"]   == DBNull.Value ? 0 : (int)dataRow["SIMD_registers"],

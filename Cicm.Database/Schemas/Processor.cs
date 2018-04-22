@@ -91,6 +91,6 @@ namespace Cicm.Database.Schemas
         /// <summary>How many simultaneos threads can run on each processor core</summary>
         public int ThreadsPerCore;
         /// <summary>How many transistors in package</summary>
-        public ulong Transistors;
+        public long Transistors;
     }
 }
