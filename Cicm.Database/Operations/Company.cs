@@ -128,7 +128,7 @@ namespace Cicm.Database
             {
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-                dbCmd.CommandText = $"SELECT * from companies WHERE name LIKE {startingLetter}%";
+                dbCmd.CommandText = $"SELECT * FROM companies WHERE name LIKE '{startingLetter}%'";
                 DataSet dataSet = new DataSet();
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
