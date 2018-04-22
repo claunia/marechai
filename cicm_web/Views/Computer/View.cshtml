@@ -59,13 +59,16 @@
 @if(Model.Year == 1000)
 {
     <b>
-        <center>PROTOTYPE</center>
+        <div style="text-align: center;">PROTOTYPE</div>
     </b>
 }
 
-<b><a asp-controller=Company asp-action=View asp-route-id=@Model.Company.Id>@Model.Company.Name</a> @Model.Model</b>
-<table border=0
-       width=100%>
+<b>
+    <a asp-controller=Company
+       asp-action=View
+       asp-route-id=@Model.Company.Id>
+        @Model.Company.Name</a> @Model.Model</b>
+<table width=100%>
 
 @if(Model.Year != 1000)
 {
@@ -77,80 +80,474 @@
             </div>
         </th>
         <td width="63%">
-            <a asp-controller="Computer" asp-action="ByYear" asp-route-id="@Model.Year">@Model.Year</a>
+            <a asp-controller="Computer"
+               asp-action="ByYear"
+               asp-route-id="@Model.Year">
+                @Model.Year</a>
         </td>
     </tr>
 }
 <tr>
-    <th scope=row>
-        <div align=right>
-            Primary processor
-        </div>
-    </th>
-    @if(Model.Cpu1.Id != 4)
-    {
-        if(Model.Cpu1.Id != 5)
-        {
-            if(Model.Mhz1 > 0)
-            {
-                if(Model.Bits > 0)
-                {
-                    <td>@Model.Cpu1.Name @("@") @($"{Model.Mhz1}Mhz") (@Model.Bits bits)</td>
-                }
-                else
-                {
-                    <td>@Model.Cpu1.Name @("@") @($"{Model.Mhz1}Mhz")</td>
-                }
-            }
-            else
-            {
-                <td>@Model.Cpu1.Name</td>
-            }
-        }
-        else
-        {
-            <td>Unknown data</td>
-        }
-    }
+<th scope=row>
+    <div align=right>
+        Primary processor
+    </div>
+</th>
+@if(Model.Cpu1 != null)
+{
+    <td>
+    @if(Model.Mhz1 > 0) { @(Model.Cpu1.GprSize > 0 ? $"{Model.Cpu1.Name} @ {Model.Mhz1}Mhz ({Model.Cpu1.GprSize} bits)" : $"{Model.Cpu1.Name} @ {Model.Mhz1}Mhz") }
     else
-    { <td>None</td> }
+    { @($"{Model.Cpu1.Name}") }
+    <a aria-controls="cpuInfo"
+       aria-expanded="false"
+       class="btn btn-link"
+       data-toggle="collapse"
+       href="#cpuInfo">
+        +info
+    </a>
+    <div class="collapse"
+         id="cpuInfo">
+    <div class="card card-body">
+    <table>
+    @if(Model.Cpu1.ModelCode != null && Model.Cpu1.ModelCode != Model.Cpu1.Name)
+    {
+        <tr>
+            <td>Model</td>
+            <td>@Model.Cpu1.ModelCode</td>
+        </tr>
+    }
+    <tr>
+        <td>Manufacturer</td>
+        <td>
+            <a asp-controller=Company
+               asp-action=View
+               asp-route-id=@Model.Cpu1.Company.Id>
+                @Model.Cpu1.Company.Name</a>
+        </td>
+    </tr>
+    @if(Model.Cpu1.Introduced != DateTime.MinValue)
+    {
+        <tr>
+            <td>Introduction date</td>
+            <td>@($"{Model.Cpu1.Introduced:yyyy}")</td>
+        </tr>
+    }
+    @if(Model.Cpu1.InstructionSet != null)
+    {
+        <tr>
+            <td>Instruction set</td>
+            <td>@Model.Cpu1.InstructionSet.Name</td>
+        </tr>
+    }
+    @if(Model.Cpu1.Speed > 0)
+    {
+        <tr>
+            <td>Nominal speed</td>
+            <td>@Model.Cpu1.Speed MHz</td>
+        </tr>
+    }
+    @if(Model.Cpu1.Gpr > 0 || Model.Cpu1.Fpr > 0 || Model.Cpu1.Simd > 0)
+    {
+        <tr>
+            <td>Registers</td>
+            <td>
+                <table>
+                    @if(Model.Cpu1.Gpr > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu1.Gpr general purpose registers of @Model.Cpu1.GprSize bits
+                                @if(Model.Cpu1.FprSize > 0 && Model.Cpu1.Fpr == 0) { @($", that can be used as floating point registers of {Model.Cpu1.FprSize}") }
+                                @if(Model.Cpu1.SimdSize > 0 && Model.Cpu1.Simd == 0) { @($", that can be used as SIMD registers of {Model.Cpu1.FprSize}") }
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu1.Fpr > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu1.Fpr floating-point registers of @Model.Cpu1.FprSize bits
+                                @if(Model.Cpu1.SimdSize > 0 && Model.Cpu1.Simd == 0) { @($", that can be used as SIMD registers of {Model.Cpu1.FprSize}") }
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu1.Simd > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu1.Simd <abbr title="Single instruction, multiple data">SIMD</abbr>registers of @Model.Cpu1.SimdSize bits
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    @if(Model.Cpu1.Cores > 1)
+    {
+        <tr>
+            <td>Multi-core</td>
+            <td>@Model.Cpu1.Cores cores</td>
+        </tr>
+    }
+    @if(Model.Cpu1.Cores > 1)
+    {
+        <tr>
+            <td>
+                <abbr title="Simultanoeus multithreading">SMT</abbr>
+            </td>
+            <td>
+                @Model.Cpu1.ThreadsPerCore threads
+                @if(Model.Cpu1.Cores > 1) { @(" per core") }
+            </td>
+        </tr>
+    }
+    @if(Model.Cpu1.DataBus > 0 || Model.Cpu1.AddressBus > 0)
+    {
+        <tr>
+            <td>Bus</td>
+            <td>
+                <table>
+                    @if(Model.Cpu1.DataBus > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu1.DataBus-bit data
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu1.AddressBus > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu1.AddressBus-bit address
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+
+    @if(Model.Cpu1.L1Instruction > 0 || Model.Cpu1.L1Data > 0 || Model.Cpu1.L2 > 0 || Model.Cpu1.L2 > 0)
+    {
+        <tr>
+            <td>Cache</td>
+            <td>
+                <table>
+                    @if(Model.Cpu1.L1Instruction > 0)
+                    {
+                        <tr>
+                            <td>
+                                @(Model.Cpu1.L1Data < 0 ? $"{Model.Cpu1.L1Instruction}KiB combined instruction-data L1" : $"{Model.Cpu1.L1Instruction}KiB instruction L1")
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu1.L1Data > 0)
+                    {
+                        <tr>
+                            <td>
+                                @($"{Model.Cpu1.L1Data}KiB data L1")
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu1.L2 > 0)
+                    {
+                        <tr>
+                            <td>
+                                @($"{Model.Cpu1.L2}KiB L2")
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu1.L3 > 0)
+                    {
+                        <tr>
+                            <td>
+                                @($"{Model.Cpu1.L3}KiB L3")
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    @if(Model.Cpu1.Package != null)
+    {
+        <tr>
+            <td>Package</td>
+            <td>@Model.Cpu1.Package</td>
+        </tr>
+    }
+    @if(Model.Cpu1.Process != null || Model.Cpu1.ProcessNm > 0)
+    {
+        <tr>
+            <td>Manufacturing process</td>
+            <td>
+                @if(Model.Cpu1.Process != null && Model.Cpu1.ProcessNm > 0)
+                {
+                    @Model.Cpu1.Process
+                    @("@")
+                    @(Model.Cpu1.ProcessNm > 100 ? $"{Model.Cpu1.ProcessNm / 100}µm" : $"{Model.Cpu1.ProcessNm}nm")
+                }
+                else if(Model.Cpu1.ProcessNm > 0) { @(Model.Cpu1.ProcessNm > 100 ? $"{Model.Cpu1.ProcessNm / 100}µm" : $"{Model.Cpu1.ProcessNm}nm") }
+                else
+                { @Model.Cpu1.Process }
+            </td>
+        </tr>
+    }
+    @if(Model.Cpu1.DieSize > 0)
+    {
+        <tr>
+            <td>Die size</td>
+            <td>@Model.Cpu1.DieSize mm&sup2;</td>
+        </tr>
+    }
+    @if(Model.Cpu1.Transistors > 0)
+    {
+        <tr>
+            <td>Transistors</td>
+            <td>@Model.Cpu1.Transistors</td>
+        </tr>
+    }
+    </table>
+    </div>
+    </div>
+    </td>
+}
+else
+{
+    <td>Unknown data</td>
+}
 </tr>
 
 @if(Model.Cpu2 != null)
 {
     <tr>
-        <th scope=row>
-            <div align=right>
-                Secondary processor
-            </div>
-        </th>
-        @if(Model.Cpu2.Id != 4)
-        {
-            if(Model.Cpu2.Id != 5)
-            {
-                if(Model.Mhz2 > 0)
+    <th scope=row>
+        <div align=right>
+            Secondary processor
+        </div>
+    </th>
+    <td>
+    @if(Model.Mhz1 > 0) { @(Model.Cpu2.GprSize > 0 ? $"{Model.Cpu2.Name} @ {Model.Mhz1}Mhz ({Model.Cpu2.GprSize} bits)" : $"{Model.Cpu2.Name} @ {Model.Mhz1}Mhz") }
+    else
+    { @($"{Model.Cpu2.Name}") }
+    <a aria-controls="cpuInfo"
+       aria-expanded="false"
+       class="btn btn-link"
+       data-toggle="collapse"
+       href="#cpu2Info">
+        +info
+    </a>
+    <div class="collapse"
+         id="cpu2Info">
+    <div class="card card-body">
+    <table>
+    @if(Model.Cpu2.ModelCode != null && Model.Cpu2.ModelCode != Model.Cpu2.Name)
+    {
+        <tr>
+            <td>Model</td>
+            <td>@Model.Cpu2.ModelCode</td>
+        </tr>
+    }
+    <tr>
+        <td>Manufacturer</td>
+        <td>
+            <a asp-controller=Company
+               asp-action=View
+               asp-route-id=@Model.Cpu2.Company.Id>
+                @Model.Cpu2.Company.Name</a>
+        </td>
+    </tr>
+    @if(Model.Cpu2.Introduced != DateTime.MinValue)
+    {
+        <tr>
+            <td>Introduction date</td>
+            <td>@($"{Model.Cpu2.Introduced:yyyy}")</td>
+        </tr>
+    }
+    @if(Model.Cpu2.InstructionSet != null)
+    {
+        <tr>
+            <td>Instruction set</td>
+            <td>@Model.Cpu2.InstructionSet.Name</td>
+        </tr>
+    }
+    @if(Model.Cpu2.Speed > 0)
+    {
+        <tr>
+            <td>Nominal speed</td>
+            <td>@Model.Cpu2.Speed MHz</td>
+        </tr>
+    }
+    @if(Model.Cpu2.Gpr > 0 || Model.Cpu2.Fpr > 0 || Model.Cpu2.Simd > 0)
+    {
+        <tr>
+            <td>Registers</td>
+            <td>
+                <table>
+                    @if(Model.Cpu2.Gpr > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu2.Gpr general purpose registers of @Model.Cpu2.GprSize bits
+                                @if(Model.Cpu2.FprSize > 0 && Model.Cpu2.Fpr == 0) { @($", that can be used as floating point registers of {Model.Cpu2.FprSize}") }
+                                @if(Model.Cpu2.SimdSize > 0 && Model.Cpu2.Simd == 0) { @($", that can be used as SIMD registers of {Model.Cpu2.FprSize}") }
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu2.Fpr > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu2.Fpr floating-point registers of @Model.Cpu2.FprSize bits
+                                @if(Model.Cpu2.SimdSize > 0 && Model.Cpu2.Simd == 0) { @($", that can be used as SIMD registers of {Model.Cpu2.FprSize}") }
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu2.Simd > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu2.Simd <abbr title="Single instruction, multiple data">SIMD</abbr>registers of @Model.Cpu2.SimdSize bits
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    @if(Model.Cpu2.Cores > 1)
+    {
+        <tr>
+            <td>Multi-core</td>
+            <td>@Model.Cpu2.Cores cores</td>
+        </tr>
+    }
+    @if(Model.Cpu2.Cores > 1)
+    {
+        <tr>
+            <td>
+                <abbr title="Simultanoeus multithreading">SMT</abbr>
+            </td>
+            <td>
+                @Model.Cpu2.ThreadsPerCore threads
+                @if(Model.Cpu2.Cores > 1) { @(" per core") }
+            </td>
+        </tr>
+    }
+    @if(Model.Cpu2.DataBus > 0 || Model.Cpu2.AddressBus > 0)
+    {
+        <tr>
+            <td>Bus</td>
+            <td>
+                <table>
+                    @if(Model.Cpu2.DataBus > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu2.DataBus-bit data
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu2.AddressBus > 0)
+                    {
+                        <tr>
+                            <td>
+                                @Model.Cpu2.AddressBus-bit address
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+
+    @if(Model.Cpu2.L1Instruction > 0 || Model.Cpu2.L1Data > 0 || Model.Cpu2.L2 > 0 || Model.Cpu2.L2 > 0)
+    {
+        <tr>
+            <td>Cache</td>
+            <td>
+                <table>
+                    @if(Model.Cpu2.L1Instruction > 0)
+                    {
+                        <tr>
+                            <td>
+                                @(Model.Cpu2.L1Data < 0 ? $"{Model.Cpu2.L1Instruction}KiB combined instruction-data L1" : $"{Model.Cpu2.L1Instruction}KiB instruction L1")
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu2.L1Data > 0)
+                    {
+                        <tr>
+                            <td>
+                                @($"{Model.Cpu2.L1Data}KiB data L1")
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu2.L2 > 0)
+                    {
+                        <tr>
+                            <td>
+                                @($"{Model.Cpu2.L2}KiB L2")
+                            </td>
+                        </tr>
+                    }
+                    @if(Model.Cpu2.L3 > 0)
+                    {
+                        <tr>
+                            <td>
+                                @($"{Model.Cpu2.L3}KiB L3")
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    @if(Model.Cpu2.Package != null)
+    {
+        <tr>
+            <td>Package</td>
+            <td>@Model.Cpu2.Package</td>
+        </tr>
+    }
+    @if(Model.Cpu2.Process != null || Model.Cpu2.ProcessNm > 0)
+    {
+        <tr>
+            <td>Manufacturing process</td>
+            <td>
+                @if(Model.Cpu2.Process != null && Model.Cpu2.ProcessNm > 0)
                 {
-                    if(Model.Bits > 0)
-                    {
-                        <td>@Model.Cpu2.Name @("@") @($"{Model.Mhz2}Mhz") (@Model.Bits bits)</td>
-                    }
-                    else
-                    {
-                        <td>@Model.Cpu2.Name @("@") @($"{Model.Mhz2}Mhz")</td>
-                    }
+                    @Model.Cpu2.Process
+                    @("@")
+                    @(Model.Cpu2.ProcessNm > 100 ? $"{Model.Cpu2.ProcessNm / 100}µm" : $"{Model.Cpu2.ProcessNm}nm")
                 }
+                else if(Model.Cpu2.ProcessNm > 0) { @(Model.Cpu2.ProcessNm > 100 ? $"{Model.Cpu2.ProcessNm / 100}µm" : $"{Model.Cpu2.ProcessNm}nm") }
                 else
-                {
-                    <td>@Model.Cpu2.Name</td>
-                }
-            }
-            else
-            {
-                <td>Unknown data</td>
-            }
-        }
-        else
-        { <td>None</td> }
+                { @Model.Cpu2.Process }
+            </td>
+        </tr>
+    }
+    @if(Model.Cpu2.DieSize > 0)
+    {
+        <tr>
+            <td>Die size</td>
+            <td>@Model.Cpu2.DieSize mm&sup2;</td>
+        </tr>
+    }
+    @if(Model.Cpu2.Transistors > 0)
+    {
+        <tr>
+            <td>Transistors</td>
+            <td>@Model.Cpu2.Transistors</td>
+        </tr>
+    }
+    </table>
+    </div>
+    </div>
+    </td>
     </tr>
 }
 <tr>
