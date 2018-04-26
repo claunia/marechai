@@ -28,14 +28,32 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
+
 namespace Cicm.Database.Schemas
 {
     /// <summary>Graphics Processing Unit</summary>
     public class Gpu
     {
+        /// <summary>Company</summary>
+        public Company Company;
+        /// <summary>Size of die in square milimeters</summary>
+        public float DieSize;
         /// <summary>ID</summary>
         public int Id;
+        /// <summary>Datetime of introduction</summary>
+        public DateTime Introduced;
+        /// <summary>Model/SKU code</summary>
+        public string ModelCode;
         /// <summary>Name</summary>
         public string Name;
+        /// <summary>Package</summary>
+        public string Package;
+        /// <summary>Name of litography process</summary>
+        public string Process;
+        /// <summary>Nanometers of litography process</summary>
+        public float ProcessNm;
+        /// <summary>How many transistors in package</summary>
+        public long Transistors;
     }
 }

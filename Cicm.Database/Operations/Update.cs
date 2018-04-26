@@ -118,6 +118,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV10();
                         break;
                     }
+                    case 10:
+                    {
+                        UpdateDatabaseToV11();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -944,6 +949,59 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 10...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('10')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV11()
+        {
+            Console.WriteLine("Updating database to version 11");
+
+            Console.WriteLine("Adding new columns to table `gpus`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `gpus` ADD COLUMN `company` INT NULL;\n"            +
+                                "ALTER TABLE `gpus` ADD COLUMN `model_code` VARCHAR(45) NULL;\n" +
+                                "ALTER TABLE `gpus` ADD COLUMN `introduced` DATETIME NULL;\n"    +
+                                "ALTER TABLE `gpus` ADD COLUMN `package` VARCHAR(45) NULL;\n"    +
+                                "ALTER TABLE `gpus` ADD COLUMN `process` VARCHAR(45) NULL;\n"    +
+                                "ALTER TABLE `gpus` ADD COLUMN `process_nm` FLOAT NULL;\n"       +
+                                "ALTER TABLE `gpus` ADD COLUMN `die_size` FLOAT NULL;\n"         +
+                                "ALTER TABLE `gpus` ADD COLUMN `transistors` BIGINT NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new indexes to table `gpus`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX `idx_gpus_company` ON `gpus` (`company`);\n"       +
+                                "CREATE INDEX `idx_gpus_model_code` ON `gpus` (`model_code`);\n" +
+                                "CREATE INDEX `idx_gpus_introduced` ON `gpus` (`introduced`);\n" +
+                                "CREATE INDEX `idx_gpus_package` ON `gpus` (`package`);\n"       +
+                                "CREATE INDEX `idx_gpus_process` ON `gpus` (`process`);\n"       +
+                                "CREATE INDEX `idx_gpus_process_nm` ON `gpus` (`process_nm`);\n" +
+                                "CREATE INDEX `idx_gpus_die_size` ON `gpus` (`die_size`);\n"     +
+                                "CREATE INDEX `idx_gpus_transistors` ON `gpus` (`transistors`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new foreign keys to table `gpus`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `gpus` ADD FOREIGN KEY `fk_gpus_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 11...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('11')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

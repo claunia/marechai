@@ -178,7 +178,11 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO gpus (name)" + " VALUES (@name)";
+            const string SQL =
+                "INSERT INTO gpus (name, company, model_code, introduced, package, process, process_nm, " +
+                "die_size, transistors)"                                                                  +
+                " VALUES (@name, @company, @model_code, @introduced, @package, "                          +
+                "@process, @process_nm, @die_size, @transistors)";
 
             dbcmd.CommandText = SQL;
 
@@ -210,7 +214,11 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE gpus SET name = @name " + $"WHERE id = {entry.Id}";
+            string sql =
+                "UPDATE gpus SET name = @name, company = @company, model_code = @model_code, "                 +
+                "introduced = @introduced, package = @package, process = @process, process_nm = @process_nm, " +
+                "die_size = @die_size, transistors = @transistors "                                            +
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -252,25 +260,71 @@ namespace Cicm.Database
             IDbCommand dbcmd = dbCon.CreateCommand();
 
             IDbDataParameter param1 = dbcmd.CreateParameter();
+            IDbDataParameter param2 = dbcmd.CreateParameter();
+            IDbDataParameter param3 = dbcmd.CreateParameter();
+            IDbDataParameter param4 = dbcmd.CreateParameter();
+            IDbDataParameter param5 = dbcmd.CreateParameter();
+            IDbDataParameter param6 = dbcmd.CreateParameter();
+            IDbDataParameter param7 = dbcmd.CreateParameter();
+            IDbDataParameter param8 = dbcmd.CreateParameter();
+            IDbDataParameter param9 = dbcmd.CreateParameter();
 
             param1.ParameterName = "@name";
+            param2.ParameterName = "@company";
+            param3.ParameterName = "@model_code";
+            param4.ParameterName = "@introduced";
+            param5.ParameterName = "@package";
+            param6.ParameterName = "@process";
+            param7.ParameterName = "@process_nm";
+            param8.ParameterName = "@die_size";
+            param9.ParameterName = "@transistors";
 
             param1.DbType = DbType.String;
+            param2.DbType = DbType.Int32;
+            param3.DbType = DbType.String;
+            param4.DbType = DbType.DateTime;
+            param5.DbType = DbType.String;
+            param6.DbType = DbType.String;
+            param7.DbType = DbType.Double;
+            param8.DbType = DbType.Double;
+            param9.DbType = DbType.UInt64;
 
             param1.Value = entry.Name;
+            param2.Value = entry.Company == null ? null : (object)entry.Company.Id;
+            param3.Value = entry.ModelCode;
+            param4.Value = entry.Introduced == DateTime.MinValue ? null : (object)entry.Introduced;
+            param5.Value = entry.Package;
+            param6.Value = entry.Process;
+            param7.Value = entry.ProcessNm;
+            param8.Value = entry.DieSize;
+            param9.Value = entry.Transistors;
 
             dbcmd.Parameters.Add(param1);
 
             return dbcmd;
         }
 
-        static List<Gpu> GpusFromDataTable(DataTable dataTable)
+        List<Gpu> GpusFromDataTable(DataTable dataTable)
         {
             List<Gpu> entries = new List<Gpu>();
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Gpu entry = new Gpu {Id = (int)dataRow["id"], Name = (string)dataRow["name"]};
+                Gpu entry = new Gpu
+                {
+                    Id          = (int)dataRow["id"],
+                    Name        = (string)dataRow["name"],
+                    ModelCode   = dataRow["model_code"]  == DBNull.Value ? null : (string)dataRow["model_code"],
+                    Package     = dataRow["package"]     == DBNull.Value ? null : (string)dataRow["package"],
+                    Process     = dataRow["process"]     == DBNull.Value ? null : (string)dataRow["process"],
+                    ProcessNm   = dataRow["process_nm"]  == DBNull.Value ? 0 : (float)dataRow["process_nm"],
+                    DieSize     = dataRow["die_size"]    == DBNull.Value ? 0 : (float)dataRow["die_size"],
+                    Transistors = dataRow["transistors"] == DBNull.Value ? 0 : (long)dataRow["transistors"],
+                    Company     = dataRow["company"]     == DBNull.Value ? null : GetCompany((int)dataRow["company"]),
+                    Introduced = dataRow["introduced"] == DBNull.Value
+                                     ? DateTime.MinValue
+                                     : Convert.ToDateTime(dataRow["introduced"])
+                };
 
                 entries.Add(entry);
             }
