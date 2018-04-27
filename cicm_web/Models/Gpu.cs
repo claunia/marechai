@@ -54,7 +54,7 @@ namespace cicm_web.Models
                        : new Gpu
                        {
                            Name        = dbItem.Name,
-                           Company     = Company.GetItem(dbItem.Company.Id),
+                           Company     = dbItem.Company == null ? null : Company.GetItem(dbItem.Company.Id),
                            DieSize     = dbItem.DieSize,
                            Introduced  = dbItem.Introduced,
                            ModelCode   = dbItem.ModelCode,
@@ -78,7 +78,7 @@ namespace cicm_web.Models
                 items.Add(new Gpu
                 {
                     Name        = dbItem.Name,
-                    Company     = Company.GetItem(dbItem.Company.Id),
+                    Company     = dbItem.Company == null ? null : Company.GetItem(dbItem.Company.Id),
                     DieSize     = dbItem.DieSize,
                     Introduced  = dbItem.Introduced,
                     ModelCode   = dbItem.ModelCode,
