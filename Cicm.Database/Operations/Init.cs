@@ -49,111 +49,107 @@ namespace Cicm.Database
                 IDbCommand dbCmd = dbCon.CreateCommand();
 
                 Console.WriteLine("Creating table `admins`");
-                dbCmd.CommandText = V12.Admins;
+                dbCmd.CommandText = V13.Admins;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `browser_tests`");
-                dbCmd.CommandText = V12.BrowserTests;
+                dbCmd.CommandText = V13.BrowserTests;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `cicm_db`");
-                dbCmd.CommandText = V12.CicmDb;
+                dbCmd.CommandText = V13.CicmDb;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `companies`");
-                dbCmd.CommandText = V12.Companies;
+                dbCmd.CommandText = V13.Companies;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `computers`");
-                dbCmd.CommandText = V12.Computers;
+                dbCmd.CommandText = V13.Computers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `consoles`");
-                dbCmd.CommandText = V12.Consoles;
+                dbCmd.CommandText = V13.Consoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `disk_formats`");
-                dbCmd.CommandText = V12.DiskFormats;
+                dbCmd.CommandText = V13.DiskFormats;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `forbidden`");
-                dbCmd.CommandText = V12.Forbidden;
+                dbCmd.CommandText = V13.Forbidden;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `gpus`");
-                dbCmd.CommandText = V12.Gpus;
+                dbCmd.CommandText = V13.Gpus;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `log`");
-                dbCmd.CommandText = V12.Logs;
+                dbCmd.CommandText = V13.Logs;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `money_donations`");
-                dbCmd.CommandText = V12.MoneyDonations;
-                dbCmd.ExecuteNonQuery();
-
-                Console.WriteLine("Creating table `music_synths`");
-                dbCmd.CommandText = V12.MusicSynths;
+                dbCmd.CommandText = V13.MoneyDonations;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `news`");
-                dbCmd.CommandText = V12.News;
+                dbCmd.CommandText = V13.News;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_computers`");
-                dbCmd.CommandText = V12.OwnedComputers;
+                dbCmd.CommandText = V13.OwnedComputers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_consoles`");
-                dbCmd.CommandText = V12.OwnedConsoles;
+                dbCmd.CommandText = V13.OwnedConsoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_sets`");
-                dbCmd.CommandText = V12.InstructionSets;
+                dbCmd.CommandText = V13.InstructionSets;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_set_extensions`");
-                dbCmd.CommandText = V12.InstructionSetExtensions;
+                dbCmd.CommandText = V13.InstructionSetExtensions;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `processors`");
-                dbCmd.CommandText = V12.Processors;
+                dbCmd.CommandText = V13.Processors;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_set_extensions_by_processor`");
-                dbCmd.CommandText = V12.InstructionSetExtensionsByProcessor;
+                dbCmd.CommandText = V13.InstructionSetExtensionsByProcessor;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `sound_synths`");
-                dbCmd.CommandText = V12.SoundSynths;
+                dbCmd.CommandText = V13.SoundSynths;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `iso3166_1_numeric`");
-                dbCmd.CommandText = V12.Iso3166Numeric;
+                dbCmd.CommandText = V13.Iso3166Numeric;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Filling table `iso3166_1_numeric`");
-                dbCmd.CommandText = V12.Iso3166NumericValues;
+                dbCmd.CommandText = V13.Iso3166NumericValues;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `companies`");
-                dbCmd.CommandText = V12.CompaniesForeignKeys;
+                dbCmd.CommandText = V13.CompaniesForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `computers`");
-                dbCmd.CommandText = V12.ComputersForeignKeys;
+                dbCmd.CommandText = V13.ComputersForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `consoles`");
-                dbCmd.CommandText = V12.ConsolesForeignKeys;
+                dbCmd.CommandText = V13.ConsolesForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `company_logos`");
-                dbCmd.CommandText = V12.CompanyLogos;
+                dbCmd.CommandText = V13.CompanyLogos;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `company_descriptions`");
-                dbCmd.CommandText = V12.CompanyDescriptions;
+                dbCmd.CommandText = V13.CompanyDescriptions;
                 dbCmd.ExecuteNonQuery();
 
                 return true;
