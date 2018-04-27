@@ -35,7 +35,11 @@ namespace Cicm.Database
     public partial class Operations
     {
         /// <summary>Last known database version</summary>
-        const int DB_VERSION = 11;
+        const int DB_VERSION = 12;
+        /// <summary>The column with this value indicates there is no item of this type.</summary>
+        public const int DB_NONE = -1;
+        /// <summary>This value indicates there's no GPU, but a direct memory->display connection (a framebuffer).</summary>
+        public const int DB_FRAMEBUFFER = -2;
 
         readonly IDbConnection dbCon;
         readonly IDbCore       dbCore;

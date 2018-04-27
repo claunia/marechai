@@ -123,6 +123,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV11();
                         break;
                     }
+                    case 11:
+                    {
+                        UpdateDatabaseToV12();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -1002,6 +1007,81 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 11...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('11')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV12()
+        {
+            Console.WriteLine("Updating database to version 12");
+
+            Console.WriteLine("Altering colums from table `computers`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `computers` CHANGE COLUMN `gpu` `gpu` INT DEFAULT NULL;\n"   +
+                                "ALTER TABLE `computers` CHANGE COLUMN `cpu1` `cpu1` INT DEFAULT NULL;\n" +
+                                "ALTER TABLE `computers` CHANGE COLUMN `mhz1` `mhz1` INT DEFAULT NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Altering colums from table `consoles`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `consoles` CHANGE COLUMN `gpu` `gpu` INT DEFAULT NULL;\n"   +
+                                "ALTER TABLE `consoles` CHANGE COLUMN `cpu1` `cpu1` INT DEFAULT NULL;\n" +
+                                "ALTER TABLE `consoles` CHANGE COLUMN `mhz1` `mhz1` INT DEFAULT NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new special items to table `gpus`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = $"INSERT INTO `gpus` (`id`, `name`) VALUES ({DB_NONE}, 'DB_NONE');\n" +
+                                $"INSERT INTO `gpus` (`id`, `name`) VALUES ({DB_FRAMEBUFFER}, 'DB_FRAMEBUFFER');";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Updating items from table `computers`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = $"UPDATE `computers` SET `gpu` = {DB_NONE} WHERE `gpu` = 1;\n" +
+                                "UPDATE `computers` SET `gpu` = NULL WHERE `gpu` = 2;\n"       +
+                                $"UPDATE `computers` SET `gpu` = {DB_FRAMEBUFFER} WHERE `gpu` = 3;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Updating items from table `consoles`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = $"UPDATE `consoles` SET `gpu` = {DB_NONE} WHERE `gpu` = 1;\n" +
+                                "UPDATE `consoles` SET `gpu` = NULL WHERE `gpu` = 2;\n"       +
+                                $"UPDATE `consoles` SET `gpu` = {DB_FRAMEBUFFER} WHERE `gpu` = 3;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Remocing old special items from table `gpus`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "DELETE FROM `gpus` WHERE `id` = 1;\n" + "DELETE FROM `gpus` WHERE `id` = 2;\n" +
+                                "DELETE FROM `gpus` WHERE `id` = 3;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 12...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('12')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
