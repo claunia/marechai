@@ -54,7 +54,7 @@ namespace cicm_web.Models
         public float      Mhz2;
         public string     Model;
         public int        MusicChannels;
-        public MusicSynth MusicSynth;
+        public SoundSynth MusicSynth;
         public int        Ram;
         public string     Resolution;
         public int        Rom;
@@ -136,7 +136,7 @@ namespace cicm_web.Models
 
             if(dbItem.MusicSynth > 0)
             {
-                item.MusicSynth    = MusicSynth.GetItem(dbItem.MusicSynth);
+                item.MusicSynth    = SoundSynth.GetItem(dbItem.MusicSynth);
                 item.MusicChannels = dbItem.MusicChannels;
             }
 

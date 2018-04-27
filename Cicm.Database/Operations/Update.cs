@@ -128,6 +128,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV12();
                         break;
                     }
+                    case 12:
+                    {
+                        UpdateDatabaseToV13();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -999,7 +1004,7 @@ namespace Cicm.Database
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
             dbCmd.CommandText =
-                "ALTER TABLE `gpus` ADD FOREIGN KEY `fk_gpus_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;;";
+                "ALTER TABLE `gpus` ADD FOREIGN KEY `fk_gpus_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1082,6 +1087,205 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 12...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('12')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV13()
+        {
+            Console.WriteLine("Updating database to version 13");
+
+            Console.WriteLine("Adding new columns to table `sound_synths`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `sound_synths` ADD COLUMN `company` INT NULL;\n"            +
+                                "ALTER TABLE `sound_synths` ADD COLUMN `model_code` VARCHAR(45) NULL;\n" +
+                                "ALTER TABLE `sound_synths` ADD COLUMN `introduced` DATETIME NULL;\n"    +
+                                "ALTER TABLE `sound_synths` ADD COLUMN `voices` INT  NULL;\n"            +
+                                "ALTER TABLE `sound_synths` ADD COLUMN `frequency` DOUBLE NULL;\n"       +
+                                "ALTER TABLE `sound_synths` ADD COLUMN `depth` INT NULL;\n"              +
+                                "ALTER TABLE `sound_synths` ADD COLUMN `square_wave` INT NULL;\n"        +
+                                "ALTER TABLE `sound_synths` ADD COLUMN `white_noise` INT NULL;\n"        +
+                                "ALTER TABLE `sound_synths` ADD COLUMN `type` INT NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating new indexes in table `sound_synths`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX `idx_sound_synths_company` ON `sound_synths` (`company`);\n"         +
+                                "CREATE INDEX `idx_sound_synths_model_code` ON `sound_synths` (`model_code`);\n"   +
+                                "CREATE INDEX `idx_sound_synths_introduced` ON `sound_synths` (`introduced`);\n"   +
+                                "CREATE INDEX `idx_sound_synths_voices` ON `sound_synths` (`voices`);\n"           +
+                                "CREATE INDEX `idx_sound_synths_frequency` ON `sound_synths` (`frequency`);\n"     +
+                                "CREATE INDEX `idx_sound_synths_depth` ON `sound_synths` (`depth`);\n"             +
+                                "CREATE INDEX `idx_sound_synths_square_wave` ON `sound_synths` (`square_wave`);\n" +
+                                "CREATE INDEX `idx_sound_synths_white_noise` ON `sound_synths` (`white_noise`);\n" +
+                                "CREATE INDEX `idx_sound_synths_type` ON `sound_synths` (`type`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating foreign keys in table `sound_synths`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `sound_synths` ADD FOREIGN KEY `fk_sound_synths_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Dropping foreign keys from tables `computers` and `consoles`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `computers` DROP FOREIGN KEY `fk_computers_music_synth`;\n" +
+                                "ALTER TABLE `consoles` DROP FOREIGN KEY `fk_consoles_music_synth`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `music_synths`");
+
+            Dictionary<int, string> musicSynths = new Dictionary<int, string>();
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from music_synths";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+                musicSynths.Add(int.Parse(dataRow["id"].ToString()), dataRow["name"].ToString());
+
+            Dictionary<int, int> conversionEquivalents = new Dictionary<int, int>();
+
+            Console.WriteLine("Converting all items from `music_synths` to `sound_synths`");
+            foreach(KeyValuePair<int, string> musicSynth in musicSynths)
+            {
+                dbCmd                     = dbCon.CreateCommand();
+                dataAdapter               = dbCore.GetNewDataAdapter();
+                dbCmd.CommandText         = $"SELECT * from sound_synths WHERE name LIKE '{musicSynth.Value}'";
+                dataSet                   = new DataSet();
+                dataAdapter.SelectCommand = dbCmd;
+                dataAdapter.Fill(dataSet);
+
+                if(dataSet.Tables[0].Rows.Count == 1)
+                {
+                    Console.WriteLine("Converting music synth `{0}` to sound synth `{1}`", musicSynth.Value,
+                                      dataSet.Tables[0].Rows[0]["name"]);
+                    conversionEquivalents.Add(musicSynth.Key, int.Parse(dataSet.Tables[0].Rows[0]["id"].ToString()));
+                }
+                else
+                {
+                    Console.Write("Adding new sound synth `{0}`... ", musicSynth.Value);
+                    dbCmd             = dbCon.CreateCommand();
+                    trans             = dbCon.BeginTransaction();
+                    dbCmd.Transaction = trans;
+                    dbCmd.CommandText = $"INSERT INTO sound_synths (name) VALUES ('{musicSynth.Value}')";
+
+                    dbCmd.ExecuteNonQuery();
+                    trans.Commit();
+                    dbCmd.Dispose();
+
+                    long id = dbCore.LastInsertRowId;
+                    Console.WriteLine("got id {0}", id);
+                    conversionEquivalents.Add(musicSynth.Key, (int)id);
+                }
+            }
+
+            Console.WriteLine("Getting all items from `consoles`");
+            Dictionary<int, int> consoleIdAndMusicSynthId = new Dictionary<int, int>();
+            dbCmd                     = dbCon.CreateCommand();
+            dataAdapter               = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText         = "SELECT id,music_synth from consoles";
+            dataSet                   = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+                consoleIdAndMusicSynthId.Add(int.Parse(dataRow["id"].ToString()),
+                                             int.Parse(dataRow["music_synth"].ToString()));
+
+            trans = dbCon.BeginTransaction();
+            foreach(KeyValuePair<int, int> keyValuePair in consoleIdAndMusicSynthId)
+            {
+                conversionEquivalents.TryGetValue(keyValuePair.Value, out int newId);
+                Console.WriteLine("Converting music synth {0} to sound synth {1} for console {2}... ",
+                                  keyValuePair.Value, newId, keyValuePair.Key);
+                dbCmd             = dbCon.CreateCommand();
+                dbCmd.Transaction = trans;
+                dbCmd.CommandText = $"UPDATE consoles SET music_synth = {newId} WHERE id = {keyValuePair.Key}";
+                dbCmd.ExecuteNonQuery();
+                dbCmd.Dispose();
+            }
+
+            Console.WriteLine("Comitting changes...");
+            trans.Commit();
+
+            Console.WriteLine("Getting all items from `computers`");
+            Dictionary<int, int> computerIdAndMusicSynthId = new Dictionary<int, int>();
+            dbCmd                     = dbCon.CreateCommand();
+            dataAdapter               = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText         = "SELECT id,music_synth from computers";
+            dataSet                   = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+                computerIdAndMusicSynthId.Add(int.Parse(dataRow["id"].ToString()),
+                                              int.Parse(dataRow["music_synth"].ToString()));
+
+            trans = dbCon.BeginTransaction();
+            foreach(KeyValuePair<int, int> keyValuePair in computerIdAndMusicSynthId)
+            {
+                conversionEquivalents.TryGetValue(keyValuePair.Value, out int newId);
+                Console.WriteLine("Converting music synth {0} to sound synth {1} for computer {2}... ",
+                                  keyValuePair.Value, newId, keyValuePair.Key);
+                dbCmd             = dbCon.CreateCommand();
+                dbCmd.Transaction = trans;
+                dbCmd.CommandText = $"UPDATE computers SET music_synth = {newId} WHERE id = {keyValuePair.Key}";
+                dbCmd.ExecuteNonQuery();
+                dbCmd.Dispose();
+            }
+
+            Console.WriteLine("Comitting changes...");
+            trans.Commit();
+
+            Console.WriteLine("Adding new foreign keys to table `computers`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `computers` ADD FOREIGN KEY `fk_computers_music_synth` (music_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new foreign keys to table `consoles`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `consoles` ADD FOREIGN KEY `fk_consoles_music_synth` (music_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Dropping table `music_synths`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "DROP TABLE `music_synths`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 13...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('13')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
