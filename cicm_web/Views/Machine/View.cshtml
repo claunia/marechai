@@ -32,7 +32,10 @@
     ViewData["Title"] = "Computer";
 }
 @using System.IO
-@model Machine
+@using Cicm.Database.Schemas
+@using MemoryByMachine = cicm_web.Models.MemoryByMachine
+@using StorageByMachine = cicm_web.Models.StorageByMachine
+@model cicm_web.Models.Machine
 
 <p align=center>
     @if(Model.Company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.LastLogo.Guid + ".svg")))
@@ -643,212 +646,68 @@
         </td>
     </tr>
 }
-@if(Model.Hdd1 != null && Model.Hdd1.Id > 0 && Model.Hdd1.Id != 30)
+@if(Model.Storage != null && Model.Storage.Length > 0)
 {
     <tr>
         <th scope=row>
             <div align=right>
-                Disk interfaces
+                Storage
             </div>
         </th>
         <td>
-            @Model.Hdd1.Description
-            @if(Model.Hdd2 != null && Model.Hdd2.Id > 0 && Model.Hdd2.Id != 30)
-            {
-                <br>
-                @Model.Hdd2.Description
-            }
-            @if(Model.Hdd3 != null && Model.Hdd3.Id > 0 && Model.Hdd3.Id != 30)
-            {
-                <br>
-                @Model.Hdd3.Description
-            }
+            <table>
+                @foreach(StorageByMachine storage in Model.Storage)
+                {
+                    string capString = null;
+
+                    if(storage.Capacity != 0)
+                    {
+                        if(storage.Type == StorageType.CompactCassette) { capString = $"{storage.Capacity} bps"; }
+                        else
+                        {
+                            if(storage.Capacity > 1073741824) { capString = $"{storage.Capacity / 1073741824} GiB"; }
+                            else if(storage.Capacity > 1048576) { capString = $"{storage.Capacity / 1048576} MiB"; }
+                            else if(storage.Capacity > 1024) { capString = $"{storage.Capacity / 1024} KiB"; }
+                            else if(storage.Capacity > 0) { capString = $"{storage.Capacity} bytes"; }
+                            else
+                            { capString = null; }
+                        }
+                    }
+
+                    <tr>
+                        @if(storage.Interface != StorageInterface.Unknown)
+                        {
+                            if(storage.Type == StorageType.Empty)
+                            {
+                                <td>Available @storage.Interface interface.</td>
+                            }
+                            else
+                            {
+                                if(capString != null)
+                                {
+                                    <td>@storage.Type connected thru a @storage.Interface interface with a nominal capacity of @capString</td>
+                                }
+                                else
+                                {
+                                    <td>@storage.Type connected thru a @storage.Interface interface</td>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if(capString != null)
+                            {
+                                <td>@storage.Type with a nominal capacity of @capString</td>
+                            }
+                            else
+                            {
+                                <td>@storage.Type</td>
+                            }
+                        }
+                    </tr>
+                }
+            </table>
         </td>
-    </tr>
-}
-
-@if(Model.Disk1 != null)
-{
-    <tr>
-        <th scope=row>
-            <div align=right>
-                Primary disk
-            </div>
-        </th>
-        @if(Model.Disk1.Id != 30)
-        {
-            int cap1 = int.Parse(Model.Cap1);
-
-            if(Model.Disk1.Id != 8)
-            {
-                if(Model.Disk1.Id != 6)
-                {
-                    string cap1Bytes = cap1 > 1024 ? (cap1 > 1048576 ? $"{cap1 / 1048576} GBytes" : $"{cap1 / 1024} MBytes") : (cap1 > 0 ? $"{cap1} Kbytes" : "Unknown capacity");
-
-                    if(Model.Disk1.Id != 10)
-                    {
-                        if(Model.Disk1.Id != 15)
-                        {
-                            if(Model.Disk1.Id != 16)
-                            {
-                                if(Model.Disk1.Id != 36)
-                                {
-                                    if(Model.Disk1.Id != 22)
-                                    {
-                                        if(Model.Disk1.Id != 23)
-                                        {
-                                            if(Model.Disk1.Id != 39)
-                                            {
-                                                if(Model.Disk1.Id != 31)
-                                                {
-                                                    <td>@Model.Disk1.Description (@cap1Bytes)</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>Propietary (@cap1Bytes)</td>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <td>Digital tape (@cap1Bytes)</td>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <td>Punched card (@cap1Bytes)</td>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <td>Chip card (@cap1Bytes)</td>
-                                    }
-                                }
-                                else
-                                {
-                                    <td>Magnetic card (@cap1Bytes)</td>
-                                }
-                            }
-                            else
-                            {
-                                <td>Memory (@cap1Bytes)</td>
-                            }
-                        }
-                        else
-                        {
-                            <td>Magneto-optical (@cap1Bytes)</td>
-                        }
-                    }
-                    else
-                    {
-                        <td>Optical disk (@cap1Bytes)</td>
-                    }
-                }
-                else
-                {
-                    string cap1Bits = cap1 > 1000 ? (cap1 > 1000000 ? $"{cap1 / 1000000} GBits" : $"{cap1 / 1000} MBits") : (cap1 > 0 ? $"{cap1} KBits" : "Unknown capacity");
-
-                    <td>Cartridge (@cap1Bits)</td>
-                }
-            }
-            else
-            {
-                <td>Standard audio cassette (@cap1 bps)</td>
-            }
-        }
-        else
-        { <td>None</td> }
-    </tr>
-}
-@if(Model.Disk2 != null)
-{
-    <tr>
-        <th scope=row>
-            <div align=right>
-                Secondary disk
-            </div>
-        </th>
-        @if(Model.Disk2.Id != 30)
-        {
-            int cap2 = int.Parse(Model.Cap2);
-
-            if(Model.Disk2.Id != 8)
-            {
-                if(Model.Disk2.Id != 6)
-                {
-                    string cap2Bytes = cap2 > 1024 ? (cap2 > 1048576 ? $"{cap2 / 1048576} GBytes" : $"{cap2 / 1024} MBytes") : (cap2 > 0 ? $"{cap2} Kbytes" : "Unknown capacity");
-
-                    if(Model.Disk2.Id != 10)
-                    {
-                        if(Model.Disk2.Id != 15)
-                        {
-                            if(Model.Disk2.Id != 16)
-                            {
-                                if(Model.Disk2.Id != 36)
-                                {
-                                    if(Model.Disk2.Id != 22)
-                                    {
-                                        if(Model.Disk2.Id != 23)
-                                        {
-                                            if(Model.Disk2.Id != 39)
-                                            {
-                                                if(Model.Disk2.Id != 31)
-                                                {
-                                                    <td>@Model.Disk2.Description (@cap2Bytes)</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>Propietary (@cap2Bytes)</td>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <td>Digital tape (@cap2Bytes)</td>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <td>Punched card (@cap2Bytes)</td>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <td>Chip card (@cap2Bytes)</td>
-                                    }
-                                }
-                                else
-                                {
-                                    <td>Magnetic card (@cap2Bytes)</td>
-                                }
-                            }
-                            else
-                            {
-                                <td>Memory (@cap2Bytes)</td>
-                            }
-                        }
-                        else
-                        {
-                            <td>Magneto-optical (@cap2Bytes)</td>
-                        }
-                    }
-                    else
-                    {
-                        <td>Optical disk (@cap2Bytes)</td>
-                    }
-                }
-                else
-                {
-                    string cap2Bits = cap2 > 1000 ? (cap2 > 1000000 ? $"{cap2 / 1000000} GBits" : $"{cap2 / 1000} MBits") : (cap2 > 0 ? $"{cap2} KBits" : "Unknown capacity");
-
-                    <td>Cartridge (@cap2Bits)</td>
-                }
-            }
-            else
-            {
-                <td>Standard audio cassette (@cap2 bps)</td>
-            }
-        }
-        else
-        { <td>None</td> }
     </tr>
 }
 </table>

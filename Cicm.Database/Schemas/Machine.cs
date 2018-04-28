@@ -33,22 +33,8 @@ namespace Cicm.Database.Schemas
     /// <summary>Computer</summary>
     public class Machine
     {
-        /// <summary>Capacity of first removable disk format</summary>
-        public string Cap1;
-        /// <summary>Capacity of second removable disk format</summary>
-        public string Cap2;
         /// <summary>Manufacturer's company ID</summary>
         public int Company;
-        /// <summary>ID of first removable disk format</summary>
-        public int Disk1;
-        /// <summary>ID of second removable disk format</summary>
-        public int Disk2;
-        /// <summary>ID of first hard disk format</summary>
-        public int Hdd1;
-        /// <summary>ID of second hard disk format</summary>
-        public int Hdd2;
-        /// <summary>ID of third hard disk format</summary>
-        public int Hdd3;
         /// <summary>ID</summary>
         public int Id;
         /// <summary>Model name</summary>

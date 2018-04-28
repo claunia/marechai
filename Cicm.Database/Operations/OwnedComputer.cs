@@ -32,7 +32,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Cicm.Database.Schemas;
-using Console = System.Console;
 
 namespace Cicm.Database
 {
@@ -269,10 +268,6 @@ namespace Cicm.Database
             IDbDataParameter param11 = dbcmd.CreateParameter();
             IDbDataParameter param12 = dbcmd.CreateParameter();
             IDbDataParameter param13 = dbcmd.CreateParameter();
-            IDbDataParameter param14 = dbcmd.CreateParameter();
-            IDbDataParameter param15 = dbcmd.CreateParameter();
-            IDbDataParameter param16 = dbcmd.CreateParameter();
-            IDbDataParameter param17 = dbcmd.CreateParameter();
 
             param1.ParameterName  = "@db_id";
             param2.ParameterName  = "@date";
@@ -287,10 +282,6 @@ namespace Cicm.Database
             param11.ParameterName = "@ram";
             param12.ParameterName = "@vram";
             param13.ParameterName = "@rigid";
-            param14.ParameterName = "@disk1";
-            param15.ParameterName = "@cap1";
-            param16.ParameterName = "@disk2";
-            param17.ParameterName = "@cap2";
 
             param1.DbType  = DbType.Int32;
             param2.DbType  = DbType.String;
@@ -305,10 +296,6 @@ namespace Cicm.Database
             param11.DbType = DbType.Int32;
             param12.DbType = DbType.Int32;
             param13.DbType = DbType.String;
-            param14.DbType = DbType.Int32;
-            param15.DbType = DbType.Int32;
-            param16.DbType = DbType.Int32;
-            param17.DbType = DbType.Int32;
 
             param1.Value  = entry.ComputerId;
             param2.Value  = entry.Acquired;
@@ -323,10 +310,6 @@ namespace Cicm.Database
             param11.Value = entry.Ram;
             param12.Value = entry.Vram;
             param13.Value = entry.Rigid;
-            param14.Value = entry.Disk1;
-            param15.Value = entry.Cap1;
-            param16.Value = entry.Disk2;
-            param17.Value = entry.Cap2;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -341,10 +324,6 @@ namespace Cicm.Database
             dbcmd.Parameters.Add(param11);
             dbcmd.Parameters.Add(param12);
             dbcmd.Parameters.Add(param13);
-            dbcmd.Parameters.Add(param14);
-            dbcmd.Parameters.Add(param15);
-            dbcmd.Parameters.Add(param16);
-            dbcmd.Parameters.Add(param17);
 
             return dbcmd;
         }
@@ -370,11 +349,7 @@ namespace Cicm.Database
                     Mhz2       = (float)dataRow["mhz2"],
                     Ram        = (int)dataRow["ram"],
                     Vram       = (int)dataRow["vram"],
-                    Rigid      = (string)dataRow["rigid"],
-                    Disk1      = (int)dataRow["disk1"],
-                    Cap1       = (int)dataRow["cap1"],
-                    Disk2      = (int)dataRow["disk2"],
-                    Cap2       = (int)dataRow["cap2"]
+                    Rigid      = (string)dataRow["rigid"]
                 };
 
                 entries.Add(entry);

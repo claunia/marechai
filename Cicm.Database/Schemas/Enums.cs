@@ -184,4 +184,237 @@ namespace Cicm.Database.Schemas
         /// </summary>
         Unified = 10
     }
+
+    public enum StorageType
+    {
+        /// <summary>Contains an empty interface for user connection</summary>
+        Empty = -1,
+        /// <summary>Unknown</summary>
+        Unknown = 0,
+        /// <summary>Unknown magneto-optical</summary>
+        MagnetoOptical = 1,
+        /// <summary>Generic hard disk</summary>
+        HardDisk = 2,
+        /// <summary>Microdrive type hard disk</summary>
+        Microdrive = 3,
+        /// <summary>Zoned hard disk</summary>
+        ZonedHardDisk = 4,
+        /// <summary>USB flash drives</summary>
+        FlashDrive = 5,
+        /// <summary>CompactDisc</summary>
+        CompactDisc = 6,
+        /// <summary>Double-Density CompactDisc (Purple Book)</summary>
+        DDCD = 7,
+        /// <summary>120mm, Phase-Change, 1298496 sectors, 512 bytes/sector, PD650, ECMA-240, ISO 15485</summary>
+        PD650 = 8,
+        /// <summary>DVD</summary>
+        Dvd = 9,
+        /// <summary>DVD-RAM (cartridge only)</summary>
+        DVDRAM = 10,
+        /// <summary>HD DVD</summary>
+        HDDVDROM = 11,
+        /// <summary>Blu-ray Disc</summary>
+        Bluray = 12,
+        /// <summary>Enhanced Versatile Disc</summary>
+        EVD = 13,
+        /// <summary>Forward Versatile Disc</summary>
+        FVD = 14,
+        /// <summary>Holographic Versatile Disc</summary>
+        HVD = 15,
+        /// <summary>China Blue High Definition</summary>
+        CBHD = 16,
+        /// <summary>High Definition Versatile Multilayer Disc</summary>
+        HDVMD = 17,
+        /// <summary>Versatile Compact Disc High Density</summary>
+        VCDHD = 18,
+        /// <summary>Stacked Volumetric Optical Disc</summary>
+        SVOD = 19,
+        /// <summary>Five Dimensional disc</summary>
+        FDDVD = 20,
+        /// <summary>Pioneer LaserDisc</summary>
+        LD = 21,
+        /// <summary>Pioneer LaserDisc data</summary>
+        LDROM = 22,
+        LDROM2 = 23,
+        LVROM  = 24,
+        MegaLD = 254,
+        /// <summary>Sony Hi-MD</summary>
+        HiMD = 26,
+        /// <summary>Sony MiniDisc</summary>
+        MD = 27,
+        MDData  = 28,
+        MDData2 = 29,
+        /// <summary>5.25", Phase-Change, 1834348 sectors, 8192 bytes/sector, Ultra Density Optical, ECMA-350, ISO 17345</summary>
+        UDO = 30,
+        /// <summary>5.25", Phase-Change, 3669724 sectors, 8192 bytes/sector, Ultra Density Optical 2, ECMA-380, ISO 11976</summary>
+        UDO2 = 31,
+        PlayStationMemoryCard  = 32,
+        PlayStationMemoryCard2 = 33,
+        /// <summary>Sony PlayStation game CD</summary>
+        PS1CD = 34,
+        /// <summary>Sony PlayStation 2 game CD</summary>
+        PS2CD = 35,
+        /// <summary>Sony PlayStation 2 game DVD</summary>
+        PS2DVD = 36,
+        /// <summary>Sony PlayStation 3 game DVD</summary>
+        PS3DVD = 37,
+        /// <summary>Sony PlayStation 3 game Blu-ray</summary>
+        PS3BD = 38,
+        /// <summary>Sony PlayStation 4 game Blu-ray</summary>
+        PS4BD = 39,
+        /// <summary>Sony PlayStation Portable Universal Media Disc (ECMA-365)</summary>
+        UMD = 40,
+        /// <summary>Microsoft X-box Game Disc</summary>
+        XGD = 41,
+        /// <summary>Microsoft X-box 360 Game Disc</summary>
+        XGD2 = 42,
+        /// <summary>Microsoft X-box 360 Game Disc</summary>
+        XGD3 = 43,
+        /// <summary>Microsoft X-box One Game Disc</summary>
+        XGD4 = 44,
+        /// <summary>Sega MegaCD</summary>
+        MEGACD = 45,
+        /// <summary>Sega Saturn disc</summary>
+        SATURNCD = 46,
+        /// <summary>Sega/Yamaha Gigabyte Disc</summary>
+        GDROM = 47,
+        SegaCard = 48,
+        /// <summary>PC-Engine / TurboGrafx cartridge</summary>
+        HuCard = 49,
+        /// <summary>PC-Engine / TurboGrafx CD</summary>
+        SuperCDROM2 = 50,
+        /// <summary>Atari Jaguar CD</summary>
+        JaguarCD = 51,
+        /// <summary>3DO CD</summary>
+        ThreeDO = 52,
+        /// <summary>NEC PC-FX</summary>
+        PCFX = 53,
+        /// <summary>NEO-GEO CD</summary>
+        NeoGeoCD = 54,
+        /// <summary>8" floppy</summary>
+        Floppy = 55,
+        /// <summary>5.25" floppy</summary>
+        Minifloppy = 56,
+        /// <summary>3.5" floppy</summary>
+        Microfloppy = 57,
+        /// <summary>5.25", DS, ?D, ?? tracks, ?? spt, 512 bytes/sector, GCR, opposite side heads, aka Twiggy</summary>
+        AppleFileWare = 58,
+        Bernoulli             = 59,
+        Bernoulli2            = 60,
+        Ditto                 = 61,
+        DittoMax              = 62,
+        Jaz                   = 63,
+        Jaz2                  = 64,
+        PocketZip             = 65,
+        REV120                = 66,
+        REV35                 = 67,
+        REV70                 = 68,
+        ZIP100                = 69,
+        ZIP250                = 70,
+        ZIP750                = 71,
+        CompactCassette       = 72,
+        Data8                 = 73,
+        MiniDV                = 74,
+        CFast                 = 75,
+        CompactFlash          = 76,
+        CompactFlashType2     = 77,
+        EZ135                 = 78,
+        EZ230                 = 79,
+        Quest                 = 80,
+        SparQ                 = 81,
+        SQ100                 = 82,
+        SQ200                 = 83,
+        SQ300                 = 84,
+        SQ310                 = 85,
+        SQ327                 = 86,
+        SQ400                 = 87,
+        SQ800                 = 88,
+        SQ1500                = 89,
+        SQ2000                = 90,
+        SyJet                 = 91,
+        FamicomGamePak        = 92,
+        GameBoyAdvanceGamePak = 93,
+        GameBoyGamePak        = 94,
+        GOD                   = 95,
+        N64DD                 = 96,
+        N64GamePak            = 97,
+        NESGamePak            = 98,
+        Nintendo3DSGameCard   = 99,
+        NintendoDiskCard      = 100,
+        NintendoDSGameCard    = 101,
+        NintendoDSiGameCard   = 102,
+        SNESGamePak           = 103,
+        SNESGamePakUS         = 104,
+        WOD                   = 105,
+        WUOD                  = 106,
+        SwitchGameCard        = 107,
+        MemoryStick           = 108,
+        MemoryStickDuo        = 109,
+        MemoryStickMicro      = 110,
+        MemoryStickPro        = 111,
+        MemoryStickProDuo     = 112,
+        microSD               = 113,
+        miniSD                = 114,
+        SecureDigital         = 115,
+        MMC                   = 116,
+        MMCmicro              = 117,
+        RSMMC                 = 118,
+        MMCplus               = 118,
+        MMCmobile             = 119,
+        eMMC                  = 120,
+        MO120                 = 121,
+        MO90                  = 122,
+        MO300                 = 123,
+        MO356                 = 124,
+        CompactFloppy         = 125,
+        DemiDiskette          = 126,
+        /// <summary>3.5", 652 tracks, 2 sides, 512 bytes/sector, Floptical, ECMA-207, ISO 14169</summary>
+        Floptical = 127,
+        HiFD         = 128,
+        QuickDisk    = 129,
+        UHD144       = 130,
+        VideoFloppy  = 131,
+        Wafer        = 132,
+        ZXMicrodrive = 133,
+        BeeCard      = 134,
+        Borsu        = 135,
+        DataStore    = 136,
+        MiniCard     = 137,
+        Orb          = 138,
+        Orb5         = 139,
+        SmartMedia   = 140,
+        xD           = 141,
+        XQD          = 142,
+        DataPlay     = 143,
+        LS120        = 144,
+        LS240        = 145,
+        FD32MB       = 146,
+        RDX          = 147,
+        PunchedCard  = 148
+    }
+
+    public enum StorageInterface
+    {
+        Unknown     = 0,
+        ACSI        = 1,
+        ATA         = 2,
+        XTA         = 3,
+        ESDI        = 4,
+        SCSI        = 5,
+        USB         = 6,
+        FireWire    = 7,
+        SASI        = 8,
+        ST506       = 9,
+        IPI         = 10,
+        SMD         = 11,
+        SATA        = 12,
+        SSA         = 13,
+        DSSI        = 14,
+        HIPPI       = 15,
+        SAS         = 16,
+        FC          = 17,
+        PCIe        = 18,
+        M2          = 19,
+        SataExpress = 20
+    }
 }

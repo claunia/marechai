@@ -37,20 +37,12 @@ namespace Cicm.Database.Schemas
         public string Acquired;
         /// <summary>Box present in collection</summary>
         public bool Boxed;
-        /// <summary>Capacity of first removable disk format</summary>
-        public int Cap1;
-        /// <summary>Capacity of second removable disk format</summary>
-        public int Cap2;
         /// <summary>Computer's ID</summary>
         public int ComputerId;
         /// <summary>Primary CPU</summary>
         public int Cpu1;
         /// <summary>Secondary CPU</summary>
         public int Cpu2;
-        /// <summary>ID of first removable disk format</summary>
-        public int Disk1;
-        /// <summary>ID of second removable disk format</summary>
-        public int Disk2;
         /// <summary>ID</summary>
         public int Id;
         /// <summary>Original manuals present in collection</summary>

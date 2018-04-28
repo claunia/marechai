@@ -37,20 +37,14 @@ namespace cicm_web.Models
 {
     public class Machine
     {
-        public string               Cap1;
-        public string               Cap2;
         public Company              Company;
-        public DiskFormat           Disk1;
-        public DiskFormat           Disk2;
         public GpuByMachine[]       Gpus;
-        public DiskFormat           Hdd1;
-        public DiskFormat           Hdd2;
-        public DiskFormat           Hdd3;
         public int                  Id;
         public MemoryByMachine[]    Memories;
         public string               Model;
         public ProcessorByMachine[] Processors;
         public SoundByMachine[]     SoundSynths;
+        public StorageByMachine[]   Storage;
         public MachineType          Type;
         public int                  Year;
 
@@ -83,35 +77,19 @@ namespace cicm_web.Models
 
         internal static Machine TransformItem(Cicm.Database.Schemas.Machine dbItem)
         {
-            Machine item = new Machine
+            return new Machine
             {
                 Company     = Company.GetItem(dbItem.Company),
                 Gpus        = GpuByMachine.GetAllItems(dbItem.Id),
-                Hdd1        = DiskFormat.GetItem(dbItem.Hdd1),
-                Hdd2        = DiskFormat.GetItem(dbItem.Hdd2),
-                Hdd3        = DiskFormat.GetItem(dbItem.Hdd3),
                 Id          = dbItem.Id,
                 Model       = dbItem.Model,
                 Year        = dbItem.Year,
                 Type        = dbItem.Type,
                 Processors  = ProcessorByMachine.GetAllItems(dbItem.Id),
                 SoundSynths = SoundByMachine.GetAllItems(dbItem.Id),
-                Memories    = MemoryByMachine.GetAllItems(dbItem.Id)
+                Memories    = MemoryByMachine.GetAllItems(dbItem.Id),
+                Storage     = StorageByMachine.GetAllItems(dbItem.Id)
             };
-
-            if(dbItem.Disk1 > 0)
-            {
-                item.Cap1  = dbItem.Cap1;
-                item.Disk1 = DiskFormat.GetItem(dbItem.Disk1);
-            }
-
-            if(dbItem.Disk2 > 0)
-            {
-                item.Cap2  = dbItem.Cap2;
-                item.Disk2 = DiskFormat.GetItem(dbItem.Disk2);
-            }
-
-            return item;
         }
     }
 

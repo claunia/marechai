@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : DiskFormat.cs
+// Filename       : StorageByMachine.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Disk format model
+//     Storage by machine model
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,30 +29,35 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using Cicm.Database.Schemas;
 
 namespace cicm_web.Models
 {
-    public class DiskFormat
+    public class StorageByMachine
     {
-        public string Description;
-        public int    Id;
+        /// <summary>Capacity in bytes</summary>
+        public long Capacity;
+        /// <summary>Storage interface</summary>
+        public StorageInterface Interface;
+        /// <summary>Storage type</summary>
+        public StorageType Type;
 
-        public static DiskFormat GetItem(int id)
+        public static StorageByMachine[] GetAllItems(int machineId)
         {
-            Cicm.Database.Schemas.DiskFormat dbItem = Program.Database?.Operations.GetDiskFormat(id);
-            return dbItem == null ? null : new DiskFormat {Description = dbItem.Description, Id = dbItem.Id};
-        }
-
-        public static DiskFormat[] GetAllItems()
-        {
-            List<Cicm.Database.Schemas.DiskFormat> dbItems = null;
-            bool?                                  result  = Program.Database?.Operations.GetDiskFormats(out dbItems);
+            List<Cicm.Database.Schemas.StorageByMachine> dbItems = null;
+            bool? result =
+                Program.Database?.Operations.GetStorageByMachines(out dbItems, machineId);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<DiskFormat> items = new List<DiskFormat>();
+            List<StorageByMachine> items = new List<StorageByMachine>();
 
-            foreach(Cicm.Database.Schemas.DiskFormat dbItem in dbItems)
-                items.Add(new DiskFormat {Id = dbItem.Id, Description = dbItem.Description});
+            foreach(Cicm.Database.Schemas.StorageByMachine dbItem in dbItems)
+                items.Add(new StorageByMachine
+                {
+                    Type      = dbItem.Type,
+                    Interface = dbItem.Interface,
+                    Capacity  = dbItem.Capacity
+                });
 
             return items.ToArray();
         }

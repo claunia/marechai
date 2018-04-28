@@ -164,6 +164,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV19();
                         break;
                     }
+                    case 19:
+                    {
+                        UpdateDatabaseToV20();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -2168,6 +2173,240 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 19...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('19')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV20()
+        {
+            Console.WriteLine("Updating database to version 20");
+
+            Console.WriteLine("Creating table `storage_by_machine`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V20.StorageByMachine;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `machines`");
+
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from machines";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                IDbCommand dbcmd = dbCon.CreateCommand();
+
+                IDbDataParameter param1 = dbcmd.CreateParameter();
+                IDbDataParameter param2 = dbcmd.CreateParameter();
+                IDbDataParameter param3 = dbcmd.CreateParameter();
+                IDbDataParameter param4 = dbcmd.CreateParameter();
+
+                param1.ParameterName = "@machine";
+                param2.ParameterName = "@type";
+                param3.ParameterName = "@interface";
+                param4.ParameterName = "@capacity";
+
+                param1.DbType = DbType.Int32;
+                param2.DbType = DbType.Int32;
+                param3.DbType = DbType.Int32;
+                param4.DbType = DbType.Int64;
+
+                param1.Value = (int)dataRow["id"];
+
+                const string SQL =
+                    "INSERT INTO `storage_by_machine` (`machine`, `type`, `interface`, `capacity`) VALUES (@machine, @type, @interface, @capacity)";
+
+                dbcmd.Parameters.Add(param1);
+                dbcmd.Parameters.Add(param2);
+                dbcmd.Parameters.Add(param3);
+                dbcmd.Parameters.Add(param4);
+
+                foreach(string media in new[] {"hdd1", "hdd2", "hdd3", "disk1", "disk2"})
+                {
+                    if(dataRow[media] == DBNull.Value || (int)dataRow[media] == 30) continue;
+
+                    param3.Value = StorageInterface.Unknown;
+
+                    switch((int)dataRow[media])
+                    {
+                        case 1:
+                            param2.Value = StorageType.CompactFloppy;
+                            break;
+                        case 3:
+                        case 5:
+                            param2.Value = StorageType.Microfloppy;
+                            break;
+                        case 4:
+                            param2.Value = StorageType.Minifloppy;
+                            break;
+                        case 7:
+                            param2.Value = StorageType.CompactDisc;
+                            break;
+                        case 8:
+                            param2.Value = StorageType.CompactCassette;
+                            break;
+                        case 9:
+                            param2.Value = StorageType.CompactFlash;
+                            break;
+                        case 11:
+                            param2.Value = StorageType.Dvd;
+                            break;
+                        case 12:
+                            param2.Value = StorageType.GDROM;
+                            break;
+                        case 13:
+                            param2.Value = StorageType.ZIP100;
+                            break;
+                        case 14:
+                            param2.Value = StorageType.LS120;
+                            break;
+                        case 15:
+                            param2.Value = StorageType.MagnetoOptical;
+                            break;
+                        case 17:
+                            param2.Value = StorageType.Microdrive;
+                            break;
+                        case 18:
+                            param2.Value = StorageType.MMC;
+                            break;
+                        case 20:
+                            param2.Value = StorageType.SecureDigital;
+                            break;
+                        case 21:
+                            param2.Value = StorageType.SmartMedia;
+                            break;
+                        case 23:
+                            param2.Value = StorageType.PunchedCard;
+                            break;
+                        case 24:
+                            param2.Value = StorageType.HardDisk;
+                            param3.Value = StorageInterface.ACSI;
+                            break;
+                        case 25:
+                        case 29:
+                            param2.Value = StorageType.HardDisk;
+                            param3.Value = StorageInterface.ATA;
+                            break;
+                        case 26:
+                            param2.Value = StorageType.HardDisk;
+                            param3.Value = StorageInterface.ESDI;
+                            break;
+                        case 27:
+                            param2.Value = StorageType.HardDisk;
+                            param3.Value = StorageInterface.FireWire;
+                            break;
+                        case 28:
+                            param2.Value = StorageType.CompactFloppy;
+                            break;
+                        case 32:
+                        case 35:
+                            param2.Value = StorageType.HardDisk;
+                            param3.Value = StorageInterface.ST506;
+                            break;
+                        case 33:
+                            param2.Value = StorageType.HardDisk;
+                            param3.Value = StorageInterface.SASI;
+                            break;
+                        case 34:
+                        case 41:
+                            param2.Value = StorageType.HardDisk;
+                            param3.Value = StorageInterface.SCSI;
+                            break;
+                        case 40:
+                            param2.Value = StorageType.Floppy;
+                            break;
+                        case 43:
+                            param2.Value = StorageType.Bluray;
+                            break;
+                        case 44:
+                            param2.Value = StorageType.GOD;
+                            break;
+                        case 45:
+                            param2.Value = StorageType.WOD;
+                            break;
+                        default:
+                            param2.Value = StorageType.Unknown;
+                            break;
+                    }
+
+                    param4.Value = null;
+
+                    switch(media)
+                    {
+                        case "disk1":
+                            if(dataRow["cap1"] != DBNull.Value)
+                                if(int.TryParse((string)dataRow["cap1"], out int cap))
+                                    param4.Value = cap == 0
+                                                       ? (object)null
+                                                       : (StorageType)param2.Value == StorageType.CompactCassette
+                                                           ? cap
+                                                           : cap * 1024;
+                            break;
+                        case "disk2":
+                            if(dataRow["cap2"] != DBNull.Value)
+                                if(int.TryParse((string)dataRow["cap2"], out int cap))
+                                    param4.Value = cap == 0
+                                                       ? (object)null
+                                                       : (StorageType)param2.Value == StorageType.CompactCassette
+                                                           ? cap
+                                                           : cap * 1024;
+                            break;
+                    }
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding storage type {0} with interface {1} to machine {2}",
+                                      (StorageType)param2.Value, (StorageInterface)param3.Value, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                dbcmd.Dispose();
+            }
+
+            Console.WriteLine("Removing memory columns from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_disk1`;\n" +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_disk2`;\n" +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_hdd1`;\n"  +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_hdd2`;\n"  +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_hdd3`;\n"  +
+                                "ALTER TABLE `machines` DROP COLUMN `hdd1`;\n"                   +
+                                "ALTER TABLE `machines` DROP COLUMN `hdd2`;\n"                   +
+                                "ALTER TABLE `machines` DROP COLUMN `hdd3`;\n"                   +
+                                "ALTER TABLE `machines` DROP COLUMN `disk1`;\n"                  +
+                                "ALTER TABLE `machines` DROP COLUMN `cap1`;\n"                   +
+                                "ALTER TABLE `machines` DROP COLUMN `disk2`;\n"                  +
+                                "ALTER TABLE `machines` DROP COLUMN `cap2`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Removing table `disk_formats`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "DROP TABLE `disk_formats`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 20...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('20')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

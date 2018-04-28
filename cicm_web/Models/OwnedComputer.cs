@@ -40,13 +40,9 @@ namespace cicm_web.Models
     {
         public DateTime   Acquired;
         public bool       Boxed;
-        public int        Cap1;
-        public int        Cap2;
         public Machine    Computer;
         public Processor  Cpu1;
         public Processor  Cpu2;
-        public DiskFormat Disk1;
-        public DiskFormat Disk2;
         public int        Id;
         public bool       Manuals;
         public float      Mhz1;
@@ -90,18 +86,6 @@ namespace cicm_web.Models
                 Trade    = dbItem.Trade,
                 Vram     = dbItem.Vram
             };
-
-            if(dbItem.Disk1 > 0)
-            {
-                item.Cap1  = dbItem.Cap1;
-                item.Disk1 = DiskFormat.GetItem(dbItem.Disk1);
-            }
-
-            if(dbItem.Disk2 > 0)
-            {
-                item.Cap2  = dbItem.Cap2;
-                item.Disk2 = DiskFormat.GetItem(dbItem.Disk2);
-            }
 
             if(dbItem.Cpu1 > 0)
             {

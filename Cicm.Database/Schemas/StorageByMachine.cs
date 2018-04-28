@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : DiskFormat.cs
+// Filename       : Computer.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of a disk format.
+//     High level representation of a computer.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,12 +30,16 @@
 
 namespace Cicm.Database.Schemas
 {
-    /// <summary>Storage format</summary>
-    public class DiskFormat
+    /// <summary>Computer</summary>
+    public class StorageByMachine
     {
-        /// <summary>Description</summary>
-        public string Description;
-        /// <summary>ID</summary>
-        public int Id;
+        /// <summary>Capacity in bytes</summary>
+        public long Capacity;
+        /// <summary>Storage interface</summary>
+        public StorageInterface Interface;
+        /// <summary>Machine ID</summary>
+        public int Machine;
+        /// <summary>Storage type</summary>
+        public StorageType Type;
     }
 }

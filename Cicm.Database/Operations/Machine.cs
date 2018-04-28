@@ -214,9 +214,7 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO machines (company, year, model, colors, res, hdd1, hdd2, hdd3, disk1, cap1, disk2, cap2, " +
-                "type) VALUES (@company, @year, @model, @colors, @res, @hdd1, @hdd2, @hdd3, @disk1, @cap1, @disk2, "    +
-                "@cap2, @type)";
+                "INSERT INTO machines (company, year, model, type) VALUES (@company, @year, @model, @type)";
 
             dbcmd.CommandText = SQL;
 
@@ -248,11 +246,8 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql =
-                "UPDATE machines SET company = @company, year = @year, model = @model, colors = @colors, res = @res, "   +
-                "hdd1 = @hdd1, hdd2 = @hdd2, hdd3 = @hdd3, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2, " +
-                "type = @type "                                                                                          +
-                $"WHERE id = {entry.Id}";
+            string sql = "UPDATE machines SET company = @company, year = @year, model = @model, type = @type " +
+                         $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -293,65 +288,30 @@ namespace Cicm.Database
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
-            IDbDataParameter param1  = dbcmd.CreateParameter();
-            IDbDataParameter param2  = dbcmd.CreateParameter();
-            IDbDataParameter param3  = dbcmd.CreateParameter();
-            IDbDataParameter param4  = dbcmd.CreateParameter();
-            IDbDataParameter param5  = dbcmd.CreateParameter();
-            IDbDataParameter param6  = dbcmd.CreateParameter();
-            IDbDataParameter param7  = dbcmd.CreateParameter();
-            IDbDataParameter param8  = dbcmd.CreateParameter();
-            IDbDataParameter param9  = dbcmd.CreateParameter();
-            IDbDataParameter param10 = dbcmd.CreateParameter();
-            IDbDataParameter param11 = dbcmd.CreateParameter();
+            IDbDataParameter param1 = dbcmd.CreateParameter();
+            IDbDataParameter param2 = dbcmd.CreateParameter();
+            IDbDataParameter param3 = dbcmd.CreateParameter();
+            IDbDataParameter param4 = dbcmd.CreateParameter();
 
-            param1.ParameterName  = "@company";
-            param2.ParameterName  = "@year";
-            param3.ParameterName  = "@model";
-            param4.ParameterName  = "@hdd1";
-            param5.ParameterName  = "@hdd2";
-            param6.ParameterName  = "@hdd3";
-            param7.ParameterName  = "@disk1";
-            param8.ParameterName  = "@cap1";
-            param9.ParameterName  = "@disk2";
-            param10.ParameterName = "@cap2";
-            param11.ParameterName = "@type";
+            param1.ParameterName = "@company";
+            param2.ParameterName = "@year";
+            param3.ParameterName = "@model";
+            param4.ParameterName = "@type";
 
-            param1.DbType  = DbType.Int32;
-            param2.DbType  = DbType.Int32;
-            param3.DbType  = DbType.String;
-            param4.DbType  = DbType.Int32;
-            param5.DbType  = DbType.Int32;
-            param6.DbType  = DbType.Int32;
-            param7.DbType  = DbType.Int32;
-            param8.DbType  = DbType.String;
-            param9.DbType  = DbType.Int32;
-            param10.DbType = DbType.String;
-            param11.DbType = DbType.Int32;
+            param1.DbType = DbType.Int32;
+            param2.DbType = DbType.Int32;
+            param3.DbType = DbType.String;
+            param4.DbType = DbType.Int32;
 
-            param1.Value  = entry.Company;
-            param2.Value  = entry.Year;
-            param3.Value  = entry.Model;
-            param4.Value  = entry.Hdd1;
-            param5.Value  = entry.Hdd2;
-            param6.Value  = entry.Hdd3;
-            param7.Value  = entry.Disk1;
-            param8.Value  = entry.Cap1;
-            param9.Value  = entry.Disk2;
-            param10.Value = entry.Cap2;
-            param11.Value = entry.Type;
+            param1.Value = entry.Company;
+            param2.Value = entry.Year;
+            param3.Value = entry.Model;
+            param4.Value = entry.Type;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
             dbcmd.Parameters.Add(param3);
             dbcmd.Parameters.Add(param4);
-            dbcmd.Parameters.Add(param5);
-            dbcmd.Parameters.Add(param6);
-            dbcmd.Parameters.Add(param7);
-            dbcmd.Parameters.Add(param8);
-            dbcmd.Parameters.Add(param9);
-            dbcmd.Parameters.Add(param10);
-            dbcmd.Parameters.Add(param11);
 
             return dbcmd;
         }
@@ -368,13 +328,6 @@ namespace Cicm.Database
                     Company = (int)dataRow["company"],
                     Year    = (int)dataRow["year"],
                     Model   = (string)dataRow["model"],
-                    Hdd1    = (int)dataRow["hdd1"],
-                    Hdd2    = dataRow["hdd2"] == DBNull.Value ? 0 : (int)dataRow["hdd2"],
-                    Hdd3    = dataRow["hdd3"] == DBNull.Value ? 0 : (int)dataRow["hdd3"],
-                    Disk1   = (int)dataRow["disk1"],
-                    Cap1    = (string)dataRow["cap1"],
-                    Disk2   = dataRow["disk2"] == DBNull.Value ? 0 : (int)dataRow["disk2"],
-                    Cap2    = dataRow["cap2"]  == DBNull.Value ? null : (string)dataRow["cap2"],
                     Type    = (MachineType)dataRow["type"]
                 };
 
