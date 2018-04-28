@@ -2,7 +2,7 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Computer.cs
+// Filename       : MemoryByMachine.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -31,35 +31,17 @@
 namespace Cicm.Database.Schemas
 {
     /// <summary>Computer</summary>
-    public class Machine
+    public class MemoryByMachine
     {
-        /// <summary>Capacity of first removable disk format</summary>
-        public string Cap1;
-        /// <summary>Capacity of second removable disk format</summary>
-        public string Cap2;
-        /// <summary>Maximum colors on screen</summary>
-        public int Colors;
-        /// <summary>Manufacturer's company ID</summary>
-        public int Company;
-        /// <summary>ID of first removable disk format</summary>
-        public int Disk1;
-        /// <summary>ID of second removable disk format</summary>
-        public int Disk2;
-        /// <summary>ID of first hard disk format</summary>
-        public int Hdd1;
-        /// <summary>ID of second hard disk format</summary>
-        public int Hdd2;
-        /// <summary>ID of third hard disk format</summary>
-        public int Hdd3;
-        /// <summary>ID</summary>
-        public int Id;
-        /// <summary>Model name</summary>
-        public string Model;
-        /// <summary>Resolution in WxH pixels</summary>
-        public string Resolution;
-        /// <summary>Machine type</summary>
-        public MachineType Type;
-        /// <summary>Introduction date, 0 if unknown, 1000 if prototype</summary>
-        public int Year;
+        /// <summary>Machine ID</summary>
+        public int Machine;
+        /// <summary>Memory type</summary>
+        public MemoryType Type;
+        /// <summary>Memory usage</summary>
+        public MemoryUsage Usage;
+        /// <summary>Memory size in bytes</summary>
+        public long Size;
+        /// <summary>Memory speed in Hz</summary>
+        public double Speed;
     }
 }

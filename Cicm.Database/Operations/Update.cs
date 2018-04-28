@@ -154,6 +154,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV17();
                         break;
                     }
+                    case 17:
+                    {
+                        UpdateDatabaseToV18();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -1898,6 +1903,125 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 17...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('17')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV18()
+        {
+            Console.WriteLine("Updating database to version 18");
+
+            Console.WriteLine("Creating table `memory_by_machine`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V18.MemoryByMachine;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `machines`");
+
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from machines";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                IDbCommand dbcmd = dbCon.CreateCommand();
+
+                IDbDataParameter param1 = dbcmd.CreateParameter();
+                IDbDataParameter param2 = dbcmd.CreateParameter();
+                IDbDataParameter param3 = dbcmd.CreateParameter();
+
+                param1.ParameterName = "@machine";
+                param2.ParameterName = "@usage";
+                param3.ParameterName = "@size";
+
+                param1.DbType = DbType.Int32;
+                param2.DbType = DbType.Int32;
+                param3.DbType = DbType.Int64;
+
+                param1.Value = (int)dataRow["id"];
+
+                const string SQL =
+                    "INSERT INTO `memory_by_machine` (`machine`, `usage`, `size`) VALUES (@machine, @usage, @size)";
+
+                dbcmd.Parameters.Add(param1);
+                dbcmd.Parameters.Add(param2);
+                dbcmd.Parameters.Add(param3);
+
+                if(dataRow["ram"] != DBNull.Value && (int)dataRow["ram"] > 0)
+                {
+                    param2.Value = MemoryUsage.Work;
+                    param3.Value = (int)dataRow["ram"] * 1024;
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding {0} bytes of {1} memory to machine {2}", (int)param3.Value,
+                                      MemoryUsage.Work, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                if(dataRow["rom"] != DBNull.Value && (int)dataRow["rom"] > 0)
+                {
+                    param2.Value = MemoryUsage.Firmware;
+                    param3.Value = (int)dataRow["rom"] * 1024;
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding {0} bytes of {1} memory to machine {2}", (int)param3.Value,
+                                      MemoryUsage.Firmware, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                if(dataRow["vram"] != DBNull.Value && (int)dataRow["vram"] > 0)
+                {
+                    param2.Value = MemoryUsage.Video;
+                    param3.Value = (int)dataRow["vram"] * 1024;
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding {0} bytes of {1} memory to machine {2}", (int)param3.Value,
+                                      MemoryUsage.Video, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                dbcmd.Dispose();
+            }
+
+            Console.WriteLine("Removing memory columns from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP COLUMN `ram`;\n" +
+                                "ALTER TABLE `machines` DROP COLUMN `rom`;\n" +
+                                "ALTER TABLE `machines` DROP COLUMN `vram`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 18...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('18')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

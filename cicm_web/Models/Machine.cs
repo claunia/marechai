@@ -48,14 +48,12 @@ namespace cicm_web.Models
         public DiskFormat           Hdd2;
         public DiskFormat           Hdd3;
         public int                  Id;
+        public MemoryByMachine[]    Memories;
         public string               Model;
         public ProcessorByMachine[] Processors;
-        public int                  Ram;
         public string               Resolution;
-        public int                  Rom;
         public SoundByMachine[]     SoundSynths;
         public MachineType          Type;
-        public int                  Vram;
         public int                  Year;
 
         public static Machine[] GetAllItems()
@@ -97,14 +95,12 @@ namespace cicm_web.Models
                 Hdd3        = DiskFormat.GetItem(dbItem.Hdd3),
                 Id          = dbItem.Id,
                 Model       = dbItem.Model,
-                Ram         = dbItem.Ram,
                 Resolution  = dbItem.Resolution,
-                Rom         = dbItem.Rom,
-                Vram        = dbItem.Vram,
                 Year        = dbItem.Year,
                 Type        = dbItem.Type,
                 Processors  = ProcessorByMachine.GetAllItems(dbItem.Id),
-                SoundSynths = SoundByMachine.GetAllItems(dbItem.Id)
+                SoundSynths = SoundByMachine.GetAllItems(dbItem.Id),
+                Memories    = MemoryByMachine.GetAllItems(dbItem.Id)
             };
 
             if(dbItem.Disk1 > 0)

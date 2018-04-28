@@ -329,64 +329,42 @@
     </td>
     </tr>
 }
-<tr>
-    <th scope=row>
-        <div align=right>
-            Base RAM memory
-        </div>
-    </th>
-    @if(Model.Ram > 1024)
-    {
-        if(Model.Ram > 1048576)
-        {
-            <td>@($"{Model.Ram / 1048576}") Gbytes</td>
-        }
-        else
-        {
-            <td>@($"{Model.Ram / 1024}") Mbytes</td>
-        }
-    }
-    else
-    {
-        if(Model.Ram == 0)
-        {
-            <td>Unknown data</td>
-        }
-        else
-        {
-            <td>@Model.Ram Kbytes</td>
-        }
-    }
-</tr>
-<tr>
-    <th scope=row>
-        <div align=right>
-            ROM
-        </div>
-    </th>
-    @if(Model.Rom > 1024)
-    {
-        if(Model.Rom > 1048576)
-        {
-            <td>@($"{Model.Rom / 1048576}") Gbytes</td>
-        }
-        else
-        {
-            <td>@($"{Model.Rom / 1024}") Mbytes</td>
-        }
-    }
-    else
-    {
-        if(Model.Rom == 0)
-        {
-            <td>Unknown data</td>
-        }
-        else
-        {
-            <td>@Model.Rom Kbytes</td>
-        }
-    }
-</tr>
+@if(Model.Memories != null && Model.Memories.Length > 0)
+{
+    <tr>
+        <th scope=row>
+            <div align=right>
+                Memory
+            </div>
+        </th>
+        <td>
+            <table>
+                @foreach(MemoryByMachine memory in Model.Memories)
+                {
+                    string memValue;
+                    if(memory.Size > 1073741824) { memValue = $"{memory.Size / 1073741824} GiB"; }
+                    else if(memory.Size > 1048576) { memValue = $"{memory.Size / 1048576} MiB"; }
+                    else if(memory.Size > 1024) { memValue = $"{memory.Size / 1024} KiB"; }
+                    else if(memory.Size > 0) { memValue = $"{memory.Size} bytes"; }
+                    else
+                    { memValue = "Unknown size"; }
+
+                    string speedValue;
+                    if(memory.Speed > 1000000000) { speedValue = $"{memory.Speed / 1000000000} GHz"; }
+                    else if(memory.Speed > 1000000) { speedValue = $"{memory.Speed / 1000000} MHz"; }
+                    else if(memory.Speed > 1000) { speedValue = $"{memory.Speed / 1000} KHz"; }
+                    else if(memory.Speed > 0) { speedValue = $"{memory.Speed} Hz"; }
+                    else
+                    { speedValue = "unknown speed"; }
+
+                    <tr>
+                        <td>@memValue of @memory.Usage memory (@memory.Type at @speedValue)</td>
+                    </tr>
+                }
+            </table>
+        </td>
+    </tr>
+}
 @if(Model.Gpus != null && Model.Gpus.Length > 0)
 {
     <tr>
@@ -511,35 +489,6 @@
         </td>
     </tr>
 }
-<tr>
-    <th scope=row>
-        <div align=right>
-            Video memory
-        </div>
-    </th>
-    @if(Model.Vram > 1024)
-    {
-        if(Model.Vram > 1048576)
-        {
-            <td>@($"{Model.Vram / 1048576}") Gbytes</td>
-        }
-        else
-        {
-            <td>@($"{Model.Vram / 1024}") Mbytes</td>
-        }
-    }
-    else
-    {
-        if(Model.Vram == 0)
-        {
-            <td>Unknown data</td>
-        }
-        else
-        {
-            <td>@Model.Vram Kbytes</td>
-        }
-    }
-</tr>
 <tr>
     <th scope=row>
         <div align=right>

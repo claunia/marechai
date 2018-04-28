@@ -49,111 +49,115 @@ namespace Cicm.Database
                 IDbCommand dbCmd = dbCon.CreateCommand();
 
                 Console.WriteLine("Creating table `admins`");
-                dbCmd.CommandText = V17.Admins;
+                dbCmd.CommandText = V18.Admins;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `browser_tests`");
-                dbCmd.CommandText = V17.BrowserTests;
+                dbCmd.CommandText = V18.BrowserTests;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `cicm_db`");
-                dbCmd.CommandText = V17.CicmDb;
+                dbCmd.CommandText = V18.CicmDb;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `companies`");
-                dbCmd.CommandText = V17.Companies;
+                dbCmd.CommandText = V18.Companies;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `machines`");
-                dbCmd.CommandText = V17.Machines;
+                dbCmd.CommandText = V18.Machines;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `disk_formats`");
-                dbCmd.CommandText = V17.DiskFormats;
+                dbCmd.CommandText = V18.DiskFormats;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `forbidden`");
-                dbCmd.CommandText = V17.Forbidden;
+                dbCmd.CommandText = V18.Forbidden;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `gpus`");
-                dbCmd.CommandText = V17.Gpus;
+                dbCmd.CommandText = V18.Gpus;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `log`");
-                dbCmd.CommandText = V17.Logs;
+                dbCmd.CommandText = V18.Logs;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `money_donations`");
-                dbCmd.CommandText = V17.MoneyDonations;
+                dbCmd.CommandText = V18.MoneyDonations;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `news`");
-                dbCmd.CommandText = V17.News;
+                dbCmd.CommandText = V18.News;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_computers`");
-                dbCmd.CommandText = V17.OwnedComputers;
+                dbCmd.CommandText = V18.OwnedComputers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_consoles`");
-                dbCmd.CommandText = V17.OwnedConsoles;
+                dbCmd.CommandText = V18.OwnedConsoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_sets`");
-                dbCmd.CommandText = V17.InstructionSets;
+                dbCmd.CommandText = V18.InstructionSets;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_set_extensions`");
-                dbCmd.CommandText = V17.InstructionSetExtensions;
+                dbCmd.CommandText = V18.InstructionSetExtensions;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `processors`");
-                dbCmd.CommandText = V17.Processors;
+                dbCmd.CommandText = V18.Processors;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_set_extensions_by_processor`");
-                dbCmd.CommandText = V17.InstructionSetExtensionsByProcessor;
+                dbCmd.CommandText = V18.InstructionSetExtensionsByProcessor;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `sound_synths`");
-                dbCmd.CommandText = V17.SoundSynths;
+                dbCmd.CommandText = V18.SoundSynths;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `iso3166_1_numeric`");
-                dbCmd.CommandText = V17.Iso3166Numeric;
+                dbCmd.CommandText = V18.Iso3166Numeric;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Filling table `iso3166_1_numeric`");
-                dbCmd.CommandText = V17.Iso3166NumericValues;
+                dbCmd.CommandText = V18.Iso3166NumericValues;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `companies`");
-                dbCmd.CommandText = V17.CompaniesForeignKeys;
+                dbCmd.CommandText = V18.CompaniesForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `machines`");
-                dbCmd.CommandText = V17.MachinesForeignKeys;
+                dbCmd.CommandText = V18.MachinesForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `company_logos`");
-                dbCmd.CommandText = V17.CompanyLogos;
+                dbCmd.CommandText = V18.CompanyLogos;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `company_descriptions`");
-                dbCmd.CommandText = V17.CompanyDescriptions;
+                dbCmd.CommandText = V18.CompanyDescriptions;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `processors_by_machine`");
-                dbCmd.CommandText = V17.ProcessorsByMachine;
+                dbCmd.CommandText = V18.ProcessorsByMachine;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `gpus_by_machine`");
-                dbCmd.CommandText = V17.GpusByMachine;
+                dbCmd.CommandText = V18.GpusByMachine;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `sound_by_machine`");
-                dbCmd.CommandText = V17.SoundByMachine;
+                dbCmd.CommandText = V18.SoundByMachine;
+                dbCmd.ExecuteNonQuery();
+
+                Console.WriteLine("Creating table `memory_by_machine`");
+                dbCmd.CommandText = V18.MemoryByMachine;
                 dbCmd.ExecuteNonQuery();
 
                 return true;
