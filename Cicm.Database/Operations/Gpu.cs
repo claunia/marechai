@@ -32,7 +32,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Cicm.Database.Schemas;
-using Console = System.Console;
 
 namespace Cicm.Database
 {
@@ -300,6 +299,14 @@ namespace Cicm.Database
             param9.Value = entry.Transistors;
 
             dbcmd.Parameters.Add(param1);
+            dbcmd.Parameters.Add(param2);
+            dbcmd.Parameters.Add(param3);
+            dbcmd.Parameters.Add(param4);
+            dbcmd.Parameters.Add(param5);
+            dbcmd.Parameters.Add(param6);
+            dbcmd.Parameters.Add(param7);
+            dbcmd.Parameters.Add(param8);
+            dbcmd.Parameters.Add(param9);
 
             return dbcmd;
         }

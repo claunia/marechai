@@ -28,7 +28,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
-
+    // TODO: Resolutions
     ViewData["Title"] = "Computer";
 }
 @using System.IO
@@ -489,37 +489,6 @@
         </td>
     </tr>
 }
-<tr>
-    <th scope=row>
-        <div align=right>
-            Video resolution
-        </div>
-    </th>
-    @if(Model.Resolution != "???")
-    {
-        <td>@Model.Resolution</td>
-    }
-    else
-    {
-        <td>Unknown data</td>
-    }
-</tr>
-<tr>
-    <th scope=row>
-        <div align=right>
-            Colors
-        </div>
-    </th>
-
-    @if(Model.Colors > 0)
-    {
-        <td>@Model.Colors</td>
-    }
-    else
-    {
-        <td>Unknown data</td>
-    }
-</tr>
 @if(Model.SoundSynths != null && Model.SoundSynths.Length > 0)
 {
     <tr>

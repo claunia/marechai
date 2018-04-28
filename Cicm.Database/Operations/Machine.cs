@@ -215,7 +215,7 @@ namespace Cicm.Database
 
             const string SQL =
                 "INSERT INTO machines (company, year, model, colors, res, hdd1, hdd2, hdd3, disk1, cap1, disk2, cap2, " +
-                "type) VALUES (@company, @year, @model, @colors, @res, @hdd1, @hdd2, @hdd3, @disk1, @cap1, @disk2, " +
+                "type) VALUES (@company, @year, @model, @colors, @res, @hdd1, @hdd2, @hdd3, @disk1, @cap1, @disk2, "    +
                 "@cap2, @type)";
 
             dbcmd.CommandText = SQL;
@@ -299,55 +299,47 @@ namespace Cicm.Database
             IDbDataParameter param4  = dbcmd.CreateParameter();
             IDbDataParameter param5  = dbcmd.CreateParameter();
             IDbDataParameter param6  = dbcmd.CreateParameter();
-            IDbDataParameter param7 = dbcmd.CreateParameter();
-            IDbDataParameter param8 = dbcmd.CreateParameter();
-            IDbDataParameter param9 = dbcmd.CreateParameter();
+            IDbDataParameter param7  = dbcmd.CreateParameter();
+            IDbDataParameter param8  = dbcmd.CreateParameter();
+            IDbDataParameter param9  = dbcmd.CreateParameter();
             IDbDataParameter param10 = dbcmd.CreateParameter();
             IDbDataParameter param11 = dbcmd.CreateParameter();
-            IDbDataParameter param12 = dbcmd.CreateParameter();
-            IDbDataParameter param13 = dbcmd.CreateParameter();
 
             param1.ParameterName  = "@company";
             param2.ParameterName  = "@year";
             param3.ParameterName  = "@model";
-            param4.ParameterName  = "@colors";
-            param5.ParameterName  = "@res";
-            param6.ParameterName  = "@hdd1";
-            param7.ParameterName = "@hdd2";
-            param8.ParameterName = "@hdd3";
-            param9.ParameterName = "@disk1";
-            param10.ParameterName = "@cap1";
-            param11.ParameterName = "@disk2";
-            param12.ParameterName = "@cap2";
-            param13.ParameterName = "@type";
+            param4.ParameterName  = "@hdd1";
+            param5.ParameterName  = "@hdd2";
+            param6.ParameterName  = "@hdd3";
+            param7.ParameterName  = "@disk1";
+            param8.ParameterName  = "@cap1";
+            param9.ParameterName  = "@disk2";
+            param10.ParameterName = "@cap2";
+            param11.ParameterName = "@type";
 
             param1.DbType  = DbType.Int32;
             param2.DbType  = DbType.Int32;
             param3.DbType  = DbType.String;
             param4.DbType  = DbType.Int32;
-            param5.DbType  = DbType.String;
+            param5.DbType  = DbType.Int32;
             param6.DbType  = DbType.Int32;
-            param7.DbType = DbType.Int32;
-            param8.DbType = DbType.Int32;
-            param9.DbType = DbType.Int32;
+            param7.DbType  = DbType.Int32;
+            param8.DbType  = DbType.String;
+            param9.DbType  = DbType.Int32;
             param10.DbType = DbType.String;
             param11.DbType = DbType.Int32;
-            param12.DbType = DbType.String;
-            param13.DbType = DbType.Int32;
 
             param1.Value  = entry.Company;
             param2.Value  = entry.Year;
             param3.Value  = entry.Model;
-            param4.Value  = entry.Colors;
-            param5.Value  = entry.Resolution;
-            param6.Value  = entry.Hdd1;
-            param7.Value = entry.Hdd2;
-            param8.Value = entry.Hdd3;
-            param9.Value = entry.Disk1;
-            param10.Value = entry.Cap1;
-            param11.Value = entry.Disk2;
-            param12.Value = entry.Cap2;
-            param13.Value = entry.Type;
+            param4.Value  = entry.Hdd1;
+            param5.Value  = entry.Hdd2;
+            param6.Value  = entry.Hdd3;
+            param7.Value  = entry.Disk1;
+            param8.Value  = entry.Cap1;
+            param9.Value  = entry.Disk2;
+            param10.Value = entry.Cap2;
+            param11.Value = entry.Type;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -360,8 +352,6 @@ namespace Cicm.Database
             dbcmd.Parameters.Add(param9);
             dbcmd.Parameters.Add(param10);
             dbcmd.Parameters.Add(param11);
-            dbcmd.Parameters.Add(param12);
-            dbcmd.Parameters.Add(param13);
 
             return dbcmd;
         }
@@ -374,20 +364,18 @@ namespace Cicm.Database
             {
                 Machine entry = new Machine
                 {
-                    Id         = (int)dataRow["id"],
-                    Company    = (int)dataRow["company"],
-                    Year       = (int)dataRow["year"],
-                    Model      = (string)dataRow["model"],
-                    Colors     = (int)dataRow["colors"],
-                    Resolution = (string)dataRow["res"],
-                    Hdd1       = (int)dataRow["hdd1"],
-                    Hdd2       = dataRow["hdd2"] == DBNull.Value ? 0 : (int)dataRow["hdd2"],
-                    Hdd3       = dataRow["hdd3"] == DBNull.Value ? 0 : (int)dataRow["hdd3"],
-                    Disk1      = (int)dataRow["disk1"],
-                    Cap1       = (string)dataRow["cap1"],
-                    Disk2      = dataRow["disk2"] == DBNull.Value ? 0 : (int)dataRow["disk2"],
-                    Cap2       = dataRow["cap2"]  == DBNull.Value ? null : (string)dataRow["cap2"],
-                    Type       = (MachineType)dataRow["type"]
+                    Id      = (int)dataRow["id"],
+                    Company = (int)dataRow["company"],
+                    Year    = (int)dataRow["year"],
+                    Model   = (string)dataRow["model"],
+                    Hdd1    = (int)dataRow["hdd1"],
+                    Hdd2    = dataRow["hdd2"] == DBNull.Value ? 0 : (int)dataRow["hdd2"],
+                    Hdd3    = dataRow["hdd3"] == DBNull.Value ? 0 : (int)dataRow["hdd3"],
+                    Disk1   = (int)dataRow["disk1"],
+                    Cap1    = (string)dataRow["cap1"],
+                    Disk2   = dataRow["disk2"] == DBNull.Value ? 0 : (int)dataRow["disk2"],
+                    Cap2    = dataRow["cap2"]  == DBNull.Value ? null : (string)dataRow["cap2"],
+                    Type    = (MachineType)dataRow["type"]
                 };
 
                 entries.Add(entry);

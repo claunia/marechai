@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Computer.cs
+// Filename       : Processor.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of a computer.
+//     High level representation of a processor .
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,32 +30,20 @@
 
 namespace Cicm.Database.Schemas
 {
-    /// <summary>Computer</summary>
-    public class Machine
+    /// <summary>Processor</summary>
+    public class Resolution
     {
-        /// <summary>Capacity of first removable disk format</summary>
-        public string Cap1;
-        /// <summary>Capacity of second removable disk format</summary>
-        public string Cap2;
-        /// <summary>Manufacturer's company ID</summary>
-        public int Company;
-        /// <summary>ID of first removable disk format</summary>
-        public int Disk1;
-        /// <summary>ID of second removable disk format</summary>
-        public int Disk2;
-        /// <summary>ID of first hard disk format</summary>
-        public int Hdd1;
-        /// <summary>ID of second hard disk format</summary>
-        public int Hdd2;
-        /// <summary>ID of third hard disk format</summary>
-        public int Hdd3;
-        /// <summary>ID</summary>
+        /// <summary>If <c>true</c> width and height indicate characters, else they indicate pixels</summary>
+        public bool Chars;
+        /// <summary>Colors</summary>
+        public long Colors;
+        /// <summary>Height</summary>
+        public int Height;
+        /// <summary>Resolution ID</summary>
         public int Id;
-        /// <summary>Model name</summary>
-        public string Model;
-        /// <summary>Machine type</summary>
-        public MachineType Type;
-        /// <summary>Introduction date, 0 if unknown, 1000 if prototype</summary>
-        public int Year;
+        /// <summary>Palette, 0 if same as <see cref="Colors" /></summary>
+        public long Palette;
+        /// <summary>Width</summary>
+        public int Width;
     }
 }

@@ -39,7 +39,6 @@ namespace cicm_web.Models
     {
         public string               Cap1;
         public string               Cap2;
-        public int                  Colors;
         public Company              Company;
         public DiskFormat           Disk1;
         public DiskFormat           Disk2;
@@ -51,7 +50,6 @@ namespace cicm_web.Models
         public MemoryByMachine[]    Memories;
         public string               Model;
         public ProcessorByMachine[] Processors;
-        public string               Resolution;
         public SoundByMachine[]     SoundSynths;
         public MachineType          Type;
         public int                  Year;
@@ -87,7 +85,6 @@ namespace cicm_web.Models
         {
             Machine item = new Machine
             {
-                Colors      = dbItem.Colors,
                 Company     = Company.GetItem(dbItem.Company),
                 Gpus        = GpuByMachine.GetAllItems(dbItem.Id),
                 Hdd1        = DiskFormat.GetItem(dbItem.Hdd1),
@@ -95,7 +92,6 @@ namespace cicm_web.Models
                 Hdd3        = DiskFormat.GetItem(dbItem.Hdd3),
                 Id          = dbItem.Id,
                 Model       = dbItem.Model,
-                Resolution  = dbItem.Resolution,
                 Year        = dbItem.Year,
                 Type        = dbItem.Type,
                 Processors  = ProcessorByMachine.GetAllItems(dbItem.Id),

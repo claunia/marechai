@@ -159,6 +159,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV18();
                         break;
                     }
+                    case 18:
+                    {
+                        UpdateDatabaseToV19();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -2022,6 +2027,147 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 18...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('18')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV19()
+        {
+            Console.WriteLine("Updating database to version 19");
+
+            Console.WriteLine("Creating table `resolutions`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V19.Resolutions;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating table `resolutions_by_gpu`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V19.ResolutionsByGpu;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `machines`");
+
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from machines";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                if(dataRow["colors"]      == DBNull.Value || dataRow["res"] == DBNull.Value ||
+                   (int)dataRow["colors"] == 0            ||
+                   (string)dataRow["res"] == "???") continue;
+
+                dbCmd = dbCon.CreateCommand();
+                IDbDataAdapter dataAdapter2 = dbCore.GetNewDataAdapter();
+                dbCmd.CommandText = $"SELECT * FROM gpus_by_machine WHERE machine = {(int)dataRow["id"]}";
+                DataSet dataSet2 = new DataSet();
+                dataAdapter2.SelectCommand = dbCmd;
+                dataAdapter2.Fill(dataSet2);
+
+                if(dataSet2.Tables[0].Rows.Count == 0) continue;
+
+                int gpuId = (int)dataSet2.Tables[0].Rows[0]["gpu"];
+
+                string[] resPieces = ((string)dataRow["res"]).Split('x');
+
+                if(!int.TryParse(resPieces[0], out int width)) continue;
+                if(!int.TryParse(resPieces[1], out int height)) continue;
+
+                dbCmd        = dbCon.CreateCommand();
+                dataAdapter2 = dbCore.GetNewDataAdapter();
+                dbCmd.CommandText =
+                    $"SELECT * FROM resolutions WHERE width = {width} AND height = {height} AND colors = {(int)dataRow["colors"]}";
+                dataSet2                   = new DataSet();
+                dataAdapter2.SelectCommand = dbCmd;
+                dataAdapter2.Fill(dataSet2);
+
+                int    resId;
+                string sql;
+
+                IDbCommand dbcmd = dbCon.CreateCommand();
+
+                IDbDataParameter param1 = dbcmd.CreateParameter();
+                IDbDataParameter param2 = dbcmd.CreateParameter();
+                IDbDataParameter param3 = dbcmd.CreateParameter();
+
+                if(dataSet2.Tables[0].Rows.Count == 0)
+                {
+                    param1.ParameterName = "@width";
+                    param2.ParameterName = "@height";
+                    param3.ParameterName = "@colors";
+
+                    param1.DbType = DbType.Int32;
+                    param2.DbType = DbType.Int32;
+                    param3.DbType = DbType.Int64;
+
+                    param1.Value = width;
+                    param2.Value = height;
+                    param3.Value = (int)dataRow["colors"];
+
+                    sql = "INSERT INTO `resolutions` (`width`, `height`, `colors`) VALUES (@width, @height, @colors)";
+
+                    dbcmd.Parameters.Add(param1);
+                    dbcmd.Parameters.Add(param2);
+                    dbcmd.Parameters.Add(param3);
+
+                    dbcmd.CommandText = sql;
+
+                    dbcmd.ExecuteNonQuery();
+                    dbcmd.Dispose();
+
+                    resId = (int)dbCore.LastInsertRowId;
+                }
+                else resId = (int)dataSet2.Tables[0].Rows[0]["id"];
+
+                dbcmd = dbCon.CreateCommand();
+
+                param1 = dbcmd.CreateParameter();
+                param2 = dbcmd.CreateParameter();
+
+                param1.ParameterName = "@gpu";
+                param2.ParameterName = "@resolution";
+
+                param1.DbType = DbType.Int32;
+                param2.DbType = DbType.Int32;
+
+                param1.Value = gpuId;
+                param2.Value = resId;
+
+                sql = "INSERT INTO `resolutions_by_gpu` (`gpu`, `resolution`) VALUES (@gpu, @resolution)";
+
+                dbcmd.Parameters.Add(param1);
+                dbcmd.Parameters.Add(param2);
+
+                dbcmd.CommandText = sql;
+
+                dbcmd.ExecuteNonQuery();
+                dbcmd.Dispose();
+            }
+
+            Console.WriteLine("Removing resolution columns from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP COLUMN `res`;\n" +
+                                "ALTER TABLE `machines` DROP COLUMN `colors`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 19...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('19')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
