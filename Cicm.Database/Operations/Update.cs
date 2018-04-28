@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using Cicm.Database.Schemas;
 using Cicm.Database.Schemas.Sql;
 
 namespace Cicm.Database
@@ -131,6 +132,11 @@ namespace Cicm.Database
                     case 12:
                     {
                         UpdateDatabaseToV13();
+                        break;
+                    }
+                    case 13:
+                    {
+                        UpdateDatabaseToV14();
                         break;
                     }
                 }
@@ -1286,6 +1292,281 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 13...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('13')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV14()
+        {
+            Console.WriteLine("Updating database to version 14");
+
+            Console.WriteLine("Renaming table `computers` to `machines`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `computers` RENAME TO `machines`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Removing column `bits` from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP COLUMN `bits`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Creating column `type` in table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                $"ALTER TABLE `machines` ADD COLUMN `type` INT NOT NULL DEFAULT '{(int)MachineType.Unknown}';";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Updating all entries in table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = $"UPDATE `machines` SET `type` = '{(int)MachineType.Computer}';";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Renaming all indexes on table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_company`, ADD INDEX `idx_machines_company` (`company`);\n"             +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_year`, ADD INDEX `idx_machines_year` (`year`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_model`, ADD INDEX `idx_machines_model` (`model`);\n"                   +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_cpu1`, ADD INDEX `idx_machines_cpu1` (`cpu1`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_cpu2`, ADD INDEX `idx_machines_cpu2` (`cpu2`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_mhz1`, ADD INDEX `idx_machines_mhz1` (`mhz1`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_mhz2`, ADD INDEX `idx_machines_mhz2` (`mhz2`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_ram`, ADD INDEX `idx_machines_ram` (`ram`);\n"                         +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_rom`, ADD INDEX `idx_machines_rom` (`rom`);\n"                         +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_gpu`, ADD INDEX `idx_machines_gpu` (`gpu`);\n"                         +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_vram`, ADD INDEX `idx_machines_vram` (`vram`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_colors`, ADD INDEX `idx_machines_colors` (`colors`);\n"                +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_res`, ADD INDEX `idx_machines_res` (`res`);\n"                         +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_sound_synth`, ADD INDEX `idx_machines_sound_synth` (`sound_synth`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_music_synth`, ADD INDEX `idx_machines_music_synth` (`music_synth`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd1`, ADD INDEX `idx_machines_hdd1` (`hdd1`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd2`, ADD INDEX `idx_machines_hdd2` (`hdd2`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd3`, ADD INDEX `idx_machines_hdd3` (`hdd3`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_disk1`, ADD INDEX `idx_machines_disk1` (`disk1`);\n"                   +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_disk2`, ADD INDEX `idx_machines_disk2` (`disk2`);\n"                   +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_cap1`, ADD INDEX `idx_machines_cap1` (`cap1`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_cap2`, ADD INDEX `idx_machines_cap2` (`cap2`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Removing old foreign keys from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_company`;\n"     +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_cpu1`;\n"        +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_cpu2`;\n"        +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_disk1`;\n"       +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_disk2`;\n"       +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_gpu`;\n"         +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_hdd1`;\n"        +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_hdd2`;\n"        +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_hdd3`;\n"        +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_music_synth`;\n" +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_sound_synth`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding foreign keys in table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;\n"            +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_cpu1` (cpu1) REFERENCES `processors` (`id`) ON UPDATE CASCADE;\n"                 +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_cpu2` (cpu2) REFERENCES `processors` (`id`) ON UPDATE CASCADE;\n"                 +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_disk1` (disk1) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"             +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_disk2` (disk2) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"             +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_gpu` (gpu) REFERENCES `gpus` (`id`) ON UPDATE CASCADE;\n"                         +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd1` (hdd1) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"               +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd2` (hdd2) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"               +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd3` (hdd3) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"               +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_music_synth` (music_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_sound_synth` (sound_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new index for `type` in table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX `idx_machines_type` ON `machines` (`type`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `consoles`");
+
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from consoles";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                IDbCommand dbcmd = dbCon.CreateCommand();
+
+                IDbDataParameter param1  = dbcmd.CreateParameter();
+                IDbDataParameter param2  = dbcmd.CreateParameter();
+                IDbDataParameter param3  = dbcmd.CreateParameter();
+                IDbDataParameter param4  = dbcmd.CreateParameter();
+                IDbDataParameter param5  = dbcmd.CreateParameter();
+                IDbDataParameter param6  = dbcmd.CreateParameter();
+                IDbDataParameter param7  = dbcmd.CreateParameter();
+                IDbDataParameter param8  = dbcmd.CreateParameter();
+                IDbDataParameter param9  = dbcmd.CreateParameter();
+                IDbDataParameter param10 = dbcmd.CreateParameter();
+                IDbDataParameter param11 = dbcmd.CreateParameter();
+                IDbDataParameter param12 = dbcmd.CreateParameter();
+                IDbDataParameter param13 = dbcmd.CreateParameter();
+                IDbDataParameter param14 = dbcmd.CreateParameter();
+                IDbDataParameter param15 = dbcmd.CreateParameter();
+                IDbDataParameter param16 = dbcmd.CreateParameter();
+                IDbDataParameter param17 = dbcmd.CreateParameter();
+                IDbDataParameter param18 = dbcmd.CreateParameter();
+                IDbDataParameter param19 = dbcmd.CreateParameter();
+                IDbDataParameter param20 = dbcmd.CreateParameter();
+                IDbDataParameter param21 = dbcmd.CreateParameter();
+
+                param1.ParameterName  = "@company";
+                param2.ParameterName  = "@year";
+                param3.ParameterName  = "@model";
+                param4.ParameterName  = "@cpu1";
+                param5.ParameterName  = "@mhz1";
+                param6.ParameterName  = "@cpu2";
+                param7.ParameterName  = "@mhz2";
+                param8.ParameterName  = "@ram";
+                param9.ParameterName  = "@rom";
+                param10.ParameterName = "@gpu";
+                param11.ParameterName = "@vram";
+                param12.ParameterName = "@colors";
+                param13.ParameterName = "@res";
+                param14.ParameterName = "@sound_synth";
+                param15.ParameterName = "@music_synth";
+                param16.ParameterName = "@sound_channels";
+                param17.ParameterName = "@music_channels";
+                param18.ParameterName = "@type";
+                param19.ParameterName = "@hdd1";
+                param20.ParameterName = "@disk1";
+                param21.ParameterName = "@cap1";
+
+                param1.DbType  = DbType.Int32;
+                param2.DbType  = DbType.Int32;
+                param3.DbType  = DbType.String;
+                param4.DbType  = DbType.Int32;
+                param5.DbType  = DbType.Double;
+                param6.DbType  = DbType.Int32;
+                param7.DbType  = DbType.Double;
+                param8.DbType  = DbType.Int32;
+                param9.DbType  = DbType.Int32;
+                param10.DbType = DbType.Int32;
+                param11.DbType = DbType.Int32;
+                param12.DbType = DbType.Int32;
+                param13.DbType = DbType.String;
+                param14.DbType = DbType.Int32;
+                param15.DbType = DbType.Int32;
+                param16.DbType = DbType.Int32;
+                param17.DbType = DbType.Int32;
+                param18.DbType = DbType.Int32;
+                param19.DbType = DbType.Int32;
+                param20.DbType = DbType.Int32;
+                param21.DbType = DbType.Int32;
+
+                param1.Value  = (int)dataRow["company"];
+                param2.Value  = (int)dataRow["year"];
+                param3.Value  = (string)dataRow["model"];
+                param4.Value  = dataRow["cpu1"] == DBNull.Value ? (object)null : (int)dataRow["cpu1"];
+                param5.Value  = dataRow["mhz1"] == DBNull.Value ? (object)null : float.Parse(dataRow["mhz1"].ToString());
+                param6.Value  = dataRow["cpu2"] == DBNull.Value ? (object)null : (int)dataRow["cpu2"];
+                param7.Value  = dataRow["mhz2"] == DBNull.Value ? (object)null : float.Parse(dataRow["mhz2"].ToString());
+                param8.Value  = (int)dataRow["ram"];
+                param9.Value  = (int)dataRow["rom"];
+                param10.Value = dataRow["gpu"] == DBNull.Value ? (object)null : (int)dataRow["gpu"];
+                param11.Value = (int)dataRow["vram"];
+                param12.Value = (int)dataRow["colors"];
+                param13.Value = (string)dataRow["res"];
+                param14.Value = (int)dataRow["sound_synth"];
+                param15.Value = (int)dataRow["music_synth"];
+                param16.Value = (int)dataRow["schannels"];
+                param17.Value = (int)dataRow["mchannels"];
+                param18.Value = MachineType.Console;
+                param19.Value = 30;
+                param20.Value = 30;
+                param21.Value = 0;
+
+                dbcmd.Parameters.Add(param1);
+                dbcmd.Parameters.Add(param2);
+                dbcmd.Parameters.Add(param3);
+                dbcmd.Parameters.Add(param4);
+                dbcmd.Parameters.Add(param5);
+                dbcmd.Parameters.Add(param6);
+                dbcmd.Parameters.Add(param7);
+                dbcmd.Parameters.Add(param8);
+                dbcmd.Parameters.Add(param9);
+                dbcmd.Parameters.Add(param10);
+                dbcmd.Parameters.Add(param11);
+                dbcmd.Parameters.Add(param12);
+                dbcmd.Parameters.Add(param13);
+                dbcmd.Parameters.Add(param14);
+                dbcmd.Parameters.Add(param15);
+                dbcmd.Parameters.Add(param16);
+                dbcmd.Parameters.Add(param17);
+                dbcmd.Parameters.Add(param18);
+                dbcmd.Parameters.Add(param19);
+                dbcmd.Parameters.Add(param20);
+                dbcmd.Parameters.Add(param21);
+
+                trans             = dbCon.BeginTransaction();
+                dbcmd.Transaction = trans;
+
+                Console.WriteLine("Converting console \"{0}\" to machine", (string)param3.Value);
+
+                const string SQL =
+                    "INSERT INTO machines (company, year, model, cpu1, mhz1, cpu2, mhz2, ram, rom, gpu, vram, colors, res, sound_synth, music_synth, sound_channels, music_channels, type, hdd1, disk1, cap1)" +
+                    " VALUES (@company, @year, @model, @cpu1, @mhz1, @cpu2, @mhz2, @ram, @rom, @gpu, @vram, @colors, @res, @sound_synth, @music_synth, @sound_channels, @music_channels, @type, @hdd1, @disk1, @cap1)";
+
+                dbcmd.CommandText = SQL;
+
+                dbcmd.ExecuteNonQuery();
+                trans.Commit();
+                dbcmd.Dispose();
+            }
+
+            Console.WriteLine("Dropping table `consoles`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "DROP TABLE `consoles`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 14...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('14')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

@@ -67,4 +67,14 @@ namespace Cicm.Database.Schemas
         /// <summary>Company renamed possibly with a change of intentions</summary>
         Renamed = 6
     }
+
+    public enum MachineType
+    {
+        /// <summary>Unknown machine type, should not happen</summary>
+        Unknown = 0,
+        /// <summary>Computer</summary>
+        Computer = 1,
+        /// <summary>Videogame console</summary>
+        Console = 2
+    }
 }

@@ -7,7 +7,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Videograme console controller
+//     Videogame console controller
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -33,7 +33,7 @@ using System.Linq;
 using cicm_web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Computer = Cicm.Database.Schemas.Computer;
+using Machine = Cicm.Database.Schemas.Machine;
 
 namespace cicm_web.Controllers
 {
@@ -48,7 +48,7 @@ namespace cicm_web.Controllers
 
         public IActionResult Index()
         {
-            Program.Database.Operations.GetConsoles(out List<Cicm.Database.Schemas.Console> consoles);
+            Program.Database.Operations.GetConsoles(out List<Machine> consoles);
 
             ViewBag.ItemCount = consoles.Count;
 
@@ -67,7 +67,7 @@ namespace cicm_web.Controllers
 
             ViewBag.Letter = id;
 
-            ConsoleMini[] consoles =
+            MachineMini[] consoles =
                 id == '\0' ? ConsoleMini.GetAllItems() : ConsoleMini.GetItemsStartingWithLetter(id);
 
             return View(consoles);
@@ -78,13 +78,6 @@ namespace cicm_web.Controllers
             ViewBag.Year = id;
 
             return View(ConsoleMini.GetItemsFromYear(id));
-        }
-
-        public IActionResult View(int id)
-        {
-            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-
-            return View(Models.Console.GetItem(id));
         }
     }
 }

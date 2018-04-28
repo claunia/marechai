@@ -34,164 +34,86 @@ using System.Linq;
 
 namespace cicm_web.Models
 {
-    public class Console
+    public static class Console
     {
-        public int        Bits;
-        public int        Cap;
-        public int        Colors;
-        public Company    Company;
-        public Processor  Cpu1;
-        public Processor  Cpu2;
-        public DiskFormat Format;
-        public Gpu        Gpu;
-        public int        Id;
-        public float      Mhz1;
-        public float      Mhz2;
-        public string     Model;
-        public int        MusicChannels;
-        public SoundSynth MusicSynth;
-        public int        Palette;
-        public int        Ram;
-        public string     Resolution;
-        public int        Rom;
-        public int        SoundChannels;
-        public SoundSynth SoundSynth;
-        public int        Vram;
-        public int        Year;
-
-        public static Console[] GetAllItems()
+        public static Machine[] GetAllItems()
         {
-            List<Cicm.Database.Schemas.Console> dbItems = null;
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetConsoles(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            return dbItems.OrderByDescending(i => i.Id).Select(TransformItem) as Console[];
+            return dbItems.OrderByDescending(i => i.Id).Select(Machine.TransformItem) as Machine[];
         }
 
-        public static Console[] GetItemsFromCompany(int id)
+        public static Machine[] GetItemsFromCompany(int id)
         {
-            List<Cicm.Database.Schemas.Console> dbItems = null;
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetConsoles(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
             // TODO: Company chosen by DB
-            return dbItems.Where(t => t.Company == id).Select(TransformItem).OrderBy(t => t.Model).ToArray();
+            return dbItems.Where(t => t.Company == id).Select(Machine.TransformItem).OrderBy(t => t.Model).ToArray();
         }
 
-        public static Console GetItem(int id)
+        public static Machine GetItem(int id)
         {
-            Cicm.Database.Schemas.Console dbItem = Program.Database?.Operations.GetConsole(id);
-            return dbItem == null ? null : TransformItem(dbItem);
-        }
-
-        static Console TransformItem(Cicm.Database.Schemas.Console dbItem)
-        {
-            Console item = new Console
-            {
-                Bits       = dbItem.Bits,
-                Colors     = dbItem.Colors,
-                Company    = Company.GetItem(dbItem.Company),
-                Gpu        = Gpu.GetItem(dbItem.Gpu),
-                Id         = dbItem.Id,
-                Model      = dbItem.Model,
-                Palette    = dbItem.Palette,
-                Ram        = dbItem.Ram,
-                Resolution = dbItem.Resolution,
-                Rom        = dbItem.Rom,
-                Vram       = dbItem.Vram,
-                Year       = dbItem.Year
-            };
-
-            if(dbItem.Format > 0)
-            {
-                item.Cap    = dbItem.Cap;
-                item.Format = DiskFormat.GetItem(dbItem.Format);
-            }
-
-            if(dbItem.Cpu1 > 0)
-            {
-                item.Cpu1 = Processor.GetItem(dbItem.Cpu1);
-                item.Mhz1 = dbItem.Mhz1;
-            }
-
-            if(dbItem.Cpu2 > 0)
-            {
-                item.Cpu2 = Processor.GetItem(dbItem.Cpu2);
-                item.Mhz2 = dbItem.Mhz2;
-            }
-
-            if(dbItem.MusicSynth > 0)
-            {
-                item.MusicSynth    = SoundSynth.GetItem(dbItem.MusicSynth);
-                item.MusicChannels = dbItem.MusicChannels;
-            }
-
-            if(dbItem.SoundSynth > 0)
-            {
-                item.SoundSynth    = SoundSynth.GetItem(dbItem.SoundSynth);
-                item.SoundChannels = dbItem.SoundChannels;
-            }
-
-            return item;
+            Cicm.Database.Schemas.Machine dbItem = Program.Database?.Operations.GetConsole(id);
+            return dbItem == null ? null : Machine.TransformItem(dbItem);
         }
     }
 
-    public class ConsoleMini
+    public static class ConsoleMini
     {
-        public Company Company;
-        public int     Id;
-        public string  Model;
-
-        public static ConsoleMini[] GetAllItems()
+        public static MachineMini[] GetAllItems()
         {
-            List<Cicm.Database.Schemas.Console> dbItems = null;
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetConsoles(out dbItems);
 
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<ConsoleMini> items = new List<ConsoleMini>();
-            foreach(Cicm.Database.Schemas.Console dbItem in dbItems) items.Add(TransformItem(dbItem));
+            List<MachineMini> items = new List<MachineMini>();
+            foreach(Cicm.Database.Schemas.Machine dbItem in dbItems) items.Add(MachineMini.TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
-        public static ConsoleMini[] GetItemsStartingWithLetter(char letter)
+        public static MachineMini[] GetItemsStartingWithLetter(char letter)
         {
-            List<Cicm.Database.Schemas.Console> dbItems = null;
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetConsoles(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<ConsoleMini> items = new List<ConsoleMini>();
-            foreach(Cicm.Database.Schemas.Console dbItem in dbItems)
+            List<MachineMini> items = new List<MachineMini>();
+            foreach(Cicm.Database.Schemas.Machine dbItem in dbItems)
                 if(dbItem.Model.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
-                    items.Add(TransformItem(dbItem));
+                    items.Add(MachineMini.TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
-        public static ConsoleMini[] GetItemsFromYear(int year)
+        public static MachineMini[] GetItemsFromYear(int year)
         {
-            List<Cicm.Database.Schemas.Console> dbItems = null;
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetConsoles(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<ConsoleMini> items = new List<ConsoleMini>();
-            foreach(Cicm.Database.Schemas.Console dbItem in dbItems)
+            List<MachineMini> items = new List<MachineMini>();
+            foreach(Cicm.Database.Schemas.Machine dbItem in dbItems)
                 if(dbItem.Year == year)
-                    items.Add(TransformItem(dbItem));
+                    items.Add(MachineMini.TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
-        public static ConsoleMini[] GetItemsWithCompany(int id, string companyName)
+        public static MachineMini[] GetItemsWithCompany(int id, string companyName)
         {
-            List<Cicm.Database.Schemas.Console> dbItems = null;
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetConsoles(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
             // TODO: Company chosen by DB
             return dbItems.Where(t => t.Company == id)
-                          .Select(t => new ConsoleMini
+                          .Select(t => new MachineMini
                            {
                                Company = new Company {Id = id, Name = companyName},
                                Id      = t.Id,
@@ -199,19 +121,15 @@ namespace cicm_web.Models
                            }).OrderBy(t => t.Model).ToArray();
         }
 
-        public static ConsoleMini[] GetItemsFromCompany(int id)
+        public static MachineMini[] GetItemsFromCompany(int id)
         {
-            List<Cicm.Database.Schemas.Console> dbItems = null;
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
             bool?                               result  = Program.Database?.Operations.GetConsoles(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
             // TODO: Company chosen by DB
-            return dbItems.Where(t => t.Company == id).Select(TransformItem).OrderBy(t => t.Model).ToArray();
-        }
-
-        static ConsoleMini TransformItem(Cicm.Database.Schemas.Console dbItem)
-        {
-            return new ConsoleMini {Company = Company.GetItem(dbItem.Company), Id = dbItem.Id, Model = dbItem.Model};
+            return dbItems.Where(t => t.Company == id).Select(MachineMini.TransformItem).OrderBy(t => t.Model)
+                          .ToArray();
         }
     }
 }

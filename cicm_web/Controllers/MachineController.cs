@@ -1,14 +1,13 @@
-﻿@{
-    /******************************************************************************
+﻿/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : ByYear.cshtml
+// Filename       : ConsoleController.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Lists computers by letter (or all)
+//     Machine controller
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,31 +28,26 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-    ViewData["Title"] = "Computers";
+using cicm_web.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+
+namespace cicm_web.Controllers
+{
+    public class MachineController : Controller
+    {
+        readonly IHostingEnvironment hostingEnvironment;
+
+        public MachineController(IHostingEnvironment env)
+        {
+            hostingEnvironment = env;
+        }
+
+        public IActionResult View(int id)
+        {
+            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+
+            return View(Machine.GetItem(id));
+        }
+    }
 }
-
-@model IEnumerable<MachineMini>
-
-<p>Search results:</p>
-<p align=center>
-    <b>@ViewBag.Year</b><br />
-
-    @if(Model.Any())
-    {
-        <p>
-            @Model.Count() computers found in the database.<br />
-            @foreach(MachineMini computer in Model)
-            {
-                <a asp-controller="Machine"
-                   asp-action="View"
-                   asp-route-id="@computer.Id">
-                    @computer.Company.Name @computer.Model</a>
-                <br />
-            }
-        </p>
-    }
-    else
-    {
-        <p>There are no computers found in the database released this year.</p>
-    }
-</p>

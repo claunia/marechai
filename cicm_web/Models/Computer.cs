@@ -34,178 +34,88 @@ using System.Linq;
 
 namespace cicm_web.Models
 {
-    public class Computer
+    public static class Computer
     {
-        public int        Bits;
-        public string     Cap1;
-        public string     Cap2;
-        public int        Colors;
-        public Company    Company;
-        public Processor  Cpu1;
-        public Processor  Cpu2;
-        public DiskFormat Disk1;
-        public DiskFormat Disk2;
-        public Gpu        Gpu;
-        public DiskFormat Hdd1;
-        public DiskFormat Hdd2;
-        public DiskFormat Hdd3;
-        public int        Id;
-        public float      Mhz1;
-        public float      Mhz2;
-        public string     Model;
-        public int        MusicChannels;
-        public SoundSynth MusicSynth;
-        public int        Ram;
-        public string     Resolution;
-        public int        Rom;
-        public int        SoundChannels;
-        public SoundSynth SoundSynth;
-        public int        Vram;
-        public int        Year;
-
-        public static Computer[] GetAllItems()
+        public static Machine[] GetAllItems()
         {
-            List<Cicm.Database.Schemas.Computer> dbItems = null;
-            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<Computer> items = new List<Computer>();
+            List<Machine> items = new List<Machine>();
 
-            return dbItems.Select(TransformItem).OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
+            return dbItems.Select(Machine.TransformItem).OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
-        public static Computer[] GetItemsFromCompany(int id)
+        public static Machine[] GetItemsFromCompany(int id)
         {
-            List<Cicm.Database.Schemas.Computer> dbItems = null;
-            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
             // TODO: Company chosen by DB
-            return dbItems.Where(t => t.Company == id).Select(TransformItem).OrderBy(t => t.Model).ToArray();
+            return dbItems.Where(t => t.Company == id).Select(Machine.TransformItem).OrderBy(t => t.Model).ToArray();
         }
 
-        public static Computer GetItem(int id)
+        public static Machine GetItem(int id)
         {
-            Cicm.Database.Schemas.Computer dbItem = Program.Database?.Operations.GetComputer(id);
-            return dbItem == null ? null : TransformItem(dbItem);
-        }
-
-        static Computer TransformItem(Cicm.Database.Schemas.Computer dbItem)
-        {
-            Computer item = new Computer
-            {
-                Bits       = dbItem.Bits,
-                Colors     = dbItem.Colors,
-                Company    = Company.GetItem(dbItem.Company),
-                Gpu        = Gpu.GetItem(dbItem.Gpu),
-                Hdd1       = DiskFormat.GetItem(dbItem.Hdd1),
-                Hdd2       = DiskFormat.GetItem(dbItem.Hdd2),
-                Hdd3       = DiskFormat.GetItem(dbItem.Hdd3),
-                Id         = dbItem.Id,
-                Model      = dbItem.Model,
-                Ram        = dbItem.Ram,
-                Resolution = dbItem.Resolution,
-                Rom        = dbItem.Rom,
-                Vram       = dbItem.Vram,
-                Year       = dbItem.Year
-            };
-
-            if(dbItem.Disk1 > 0)
-            {
-                item.Cap1  = dbItem.Cap1;
-                item.Disk1 = DiskFormat.GetItem(dbItem.Disk1);
-            }
-
-            if(dbItem.Disk2 > 0)
-            {
-                item.Cap2  = dbItem.Cap2;
-                item.Disk2 = DiskFormat.GetItem(dbItem.Disk2);
-            }
-
-            if(dbItem.Cpu1 > 0)
-            {
-                item.Cpu1 = Processor.GetItem(dbItem.Cpu1);
-                item.Mhz1 = dbItem.Mhz1;
-            }
-
-            if(dbItem.Cpu2 > 0)
-            {
-                item.Cpu2 = Processor.GetItem(dbItem.Cpu2);
-                item.Mhz2 = dbItem.Mhz2;
-            }
-
-            if(dbItem.MusicSynth > 0)
-            {
-                item.MusicSynth    = SoundSynth.GetItem(dbItem.MusicSynth);
-                item.MusicChannels = dbItem.MusicChannels;
-            }
-
-            if(dbItem.SoundSynth > 0)
-            {
-                item.SoundSynth    = SoundSynth.GetItem(dbItem.SoundSynth);
-                item.SoundChannels = dbItem.SoundChannels;
-            }
-
-            return item;
+            Cicm.Database.Schemas.Machine dbItem = Program.Database?.Operations.GetComputer(id);
+            return dbItem == null ? null : Machine.TransformItem(dbItem);
         }
     }
 
-    public class ComputerMini
+    public static class ComputerMini
     {
-        public Company Company;
-        public int     Id;
-        public string  Model;
-
-        public static ComputerMini[] GetAllItems()
+        public static MachineMini[] GetAllItems()
         {
-            List<Cicm.Database.Schemas.Computer> dbItems = null;
-            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetComputers(out dbItems);
 
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<ComputerMini> items = new List<ComputerMini>();
-            foreach(Cicm.Database.Schemas.Computer dbItem in dbItems) items.Add(TransformItem(dbItem));
+            List<MachineMini> items = new List<MachineMini>();
+            foreach(Cicm.Database.Schemas.Machine dbItem in dbItems) items.Add(MachineMini.TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
-        public static ComputerMini[] GetItemsStartingWithLetter(char letter)
+        public static MachineMini[] GetItemsStartingWithLetter(char letter)
         {
-            List<Cicm.Database.Schemas.Computer> dbItems = null;
-            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<ComputerMini> items = new List<ComputerMini>();
-            foreach(Cicm.Database.Schemas.Computer dbItem in dbItems)
+            List<MachineMini> items = new List<MachineMini>();
+            foreach(Cicm.Database.Schemas.Machine dbItem in dbItems)
                 if(dbItem.Model.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
-                    items.Add(TransformItem(dbItem));
+                    items.Add(MachineMini.TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
-        public static ComputerMini[] GetItemsFromYear(int year)
+        public static MachineMini[] GetItemsFromYear(int year)
         {
-            List<Cicm.Database.Schemas.Computer> dbItems = null;
-            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
-            List<ComputerMini> items = new List<ComputerMini>();
-            foreach(Cicm.Database.Schemas.Computer dbItem in dbItems)
+            List<MachineMini> items = new List<MachineMini>();
+            foreach(Cicm.Database.Schemas.Machine dbItem in dbItems)
                 if(dbItem.Year == year)
-                    items.Add(TransformItem(dbItem));
+                    items.Add(MachineMini.TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
         }
 
-        public static ComputerMini[] GetItemsWithCompany(int id, string companyName)
+        public static MachineMini[] GetItemsWithCompany(int id, string companyName)
         {
-            List<Cicm.Database.Schemas.Computer> dbItems = null;
-            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
             // TODO: Company chosen by DB
             return dbItems.Where(t => t.Company == id)
-                          .Select(t => new ComputerMini
+                          .Select(t => new MachineMini
                            {
                                Company = new Company {Id = id, Name = companyName},
                                Id      = t.Id,
@@ -213,19 +123,15 @@ namespace cicm_web.Models
                            }).OrderBy(t => t.Model).ToArray();
         }
 
-        public static ComputerMini[] GetItemsFromCompany(int id)
+        public static MachineMini[] GetItemsFromCompany(int id)
         {
-            List<Cicm.Database.Schemas.Computer> dbItems = null;
-            bool?                                result  = Program.Database?.Operations.GetComputers(out dbItems);
+            List<Cicm.Database.Schemas.Machine> dbItems = null;
+            bool?                               result  = Program.Database?.Operations.GetComputers(out dbItems);
             if(result == null || result.Value == false || dbItems == null) return null;
 
             // TODO: Company chosen by DB
-            return dbItems.Where(t => t.Company == id).Select(TransformItem).OrderBy(t => t.Model).ToArray();
-        }
-
-        static ComputerMini TransformItem(Cicm.Database.Schemas.Computer dbItem)
-        {
-            return new ComputerMini {Company = Company.GetItem(dbItem.Company), Id = dbItem.Id, Model = dbItem.Model};
+            return dbItems.Where(t => t.Company == id).Select(MachineMini.TransformItem).OrderBy(t => t.Model)
+                          .ToArray();
         }
     }
 }

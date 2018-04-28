@@ -40,8 +40,8 @@ namespace cicm_web.Models
     {
         public string                        Address;
         public string                        City;
-        public ComputerMini[]                Computers;
-        public ConsoleMini[]                 Consoles;
+        public MachineMini[]                 Computers;
+        public MachineMini[]                 Consoles;
         public Iso3166                       Country;
         public string                        Description;
         public string                        Facebook;

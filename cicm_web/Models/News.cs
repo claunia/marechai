@@ -71,13 +71,13 @@ namespace cicm_web.Models
 
         static News TransformItem(Cicm.Database.Schemas.News dbItem)
         {
-            string      imageUrl;
-            string      text;
-            string      targetView;
-            string      subtext;
-            Computer    computer;
+            string        imageUrl;
+            string        text;
+            string        targetView;
+            string        subtext;
+            Machine       computer;
             OwnedComputer owncomputer;
-            Console     console;
+            Machine       console;
             OwnedConsole  ownconsole;
 
             switch(dbItem.Type)

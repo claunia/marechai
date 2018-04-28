@@ -42,7 +42,7 @@ namespace cicm_web.Models
         public bool       Boxed;
         public int        Cap1;
         public int        Cap2;
-        public Computer   Computer;
+        public Machine    Computer;
         public Processor  Cpu1;
         public Processor  Cpu2;
         public DiskFormat Disk1;
@@ -75,7 +75,7 @@ namespace cicm_web.Models
 
         static OwnedComputer TransformItem(Cicm.Database.Schemas.OwnedComputer dbItem)
         {
-            Computer computer = Computer.GetItem(dbItem.ComputerId);
+            Machine computer = Machine.GetItem(dbItem.ComputerId);
 
             OwnedComputer item = new OwnedComputer
             {

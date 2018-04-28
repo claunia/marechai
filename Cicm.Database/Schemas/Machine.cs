@@ -31,10 +31,8 @@
 namespace Cicm.Database.Schemas
 {
     /// <summary>Computer</summary>
-    public class Computer
+    public class Machine
     {
-        /// <summary>Bits of GPRs of primary CPU</summary>
-        public int Bits;
         /// <summary>Capacity of first removable disk format</summary>
         public string Cap1;
         /// <summary>Capacity of second removable disk format</summary>
@@ -81,6 +79,8 @@ namespace Cicm.Database.Schemas
         public int SoundChannels;
         /// <summary>ID of DSP</summary>
         public int SoundSynth;
+        /// <summary>Machine type</summary>
+        public MachineType Type;
         /// <summary>Size in kibibytes for video RAM</summary>
         public int Vram;
         /// <summary>Introduction date, 0 if unknown, 1000 if prototype</summary>

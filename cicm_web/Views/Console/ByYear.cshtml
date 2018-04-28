@@ -32,7 +32,7 @@
     ViewData["Title"] = "Computers";
 }
 
-@model IEnumerable<ConsoleMini>
+@model IEnumerable<MachineMini>
 
 <p>Search results:</p>
 <p align=center>
@@ -42,9 +42,9 @@
     {
         <p>
             @Model.Count() videoconsoles found in the database.<br />
-            @foreach(ConsoleMini console in Model)
+            @foreach(MachineMini console in Model)
             {
-                <a asp-controller="Console"
+                <a asp-controller="Machine"
                    asp-action="View"
                    asp-route-id="@console.Id">
                     @console.Company.Name @console.Model</a>

@@ -40,7 +40,7 @@ namespace cicm_web.Models
     {
         public DateTime   Acquired;
         public bool       Boxed;
-        public Console    Console;
+        public Machine    Console;
         public int        Id;
         public bool       Manuals;
         public StatusType Status;
@@ -64,7 +64,7 @@ namespace cicm_web.Models
 
         static OwnedConsole TransformItem(Cicm.Database.Schemas.OwnedConsole dbItem)
         {
-            Console console = Console.GetItem(dbItem.ConsoleId);
+            Machine console = Machine.GetItem(dbItem.ConsoleId);
 
             return console == null
                        ? null

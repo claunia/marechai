@@ -29,10 +29,10 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-    ViewData["Title"] = "Videoconsoles";
+    ViewData["Title"] = "Computer";
 }
 @using System.IO
-@model cicm_web.Models.Console
+@model Machine
 
 <p align=center>
     @if(Model.Company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.LastLogo.Guid + ".svg")))
@@ -63,8 +63,13 @@
     </b>
 }
 
-<b>@Model.Company.Name @Model.Model</b>
+<b>
+    <a asp-controller=Company
+       asp-action=View
+       asp-route-id=@Model.Company.Id>
+        @Model.Company.Name</a> @Model.Model</b>
 <table width=100%>
+
 @if(Model.Year != 1000)
 {
     <tr>
@@ -75,7 +80,10 @@
             </div>
         </th>
         <td width="63%">
-            @Model.Year
+            <a asp-controller="Computer"
+               asp-action="ByYear"
+               asp-route-id="@Model.Year">
+                @Model.Year</a>
         </td>
     </tr>
 }
@@ -545,7 +553,7 @@ else
 <tr>
     <th scope=row>
         <div align=right>
-            RAM
+            Base RAM memory
         </div>
     </th>
     @if(Model.Ram > 1024)
@@ -625,7 +633,7 @@ else
                     <div class="collapse"
                          id="gpuInfo">
                         <div class="card card-body">
-                            This videoconsole directly draws pixels from software to a memory region that's converted to video output by a <abbr title="Digital to Analog Converter">DAC</abbr> or similar without using any specific graphics processing unit.
+                            This computer directly draws pixels from software to a memory region that's converted to video output by a <abbr title="Digital to Analog Converter">DAC</abbr> or similar without using any specific graphics processing unit.
                         </div>
                     </div>
                 </td>
@@ -771,14 +779,7 @@ else
 
     @if(Model.Colors > 0)
     {
-        if(Model.Palette > 0)
-        {
-            <td>@Model.Colors from a palette of @Model.Palette</td>
-        }
-        else
-        {
-            <td>@Model.Colors</td>
-        }
+        <td>@Model.Colors</td>
     }
     else
     {
@@ -839,7 +840,31 @@ else
     else
     { <td>None</td> }
 </tr>
-@if(Model.Format != null)
+@if(Model.Hdd1 != null && Model.Hdd1.Id > 0 && Model.Hdd1.Id != 30)
+{
+    <tr>
+        <th scope=row>
+            <div align=right>
+                Disk interfaces
+            </div>
+        </th>
+        <td>
+            @Model.Hdd1.Description
+            @if(Model.Hdd2 != null && Model.Hdd2.Id > 0 && Model.Hdd2.Id != 30)
+            {
+                <br>
+                @Model.Hdd2.Description
+            }
+            @if(Model.Hdd3 != null && Model.Hdd3.Id > 0 && Model.Hdd3.Id != 30)
+            {
+                <br>
+                @Model.Hdd3.Description
+            }
+        </td>
+    </tr>
+}
+
+@if(Model.Disk1 != null)
 {
     <tr>
         <th scope=row>
@@ -847,31 +872,33 @@ else
                 Primary disk
             </div>
         </th>
-        @if(Model.Format.Id != 30)
+        @if(Model.Disk1.Id != 30)
         {
-            if(Model.Format.Id != 8)
-            {
-                if(Model.Format.Id != 6)
-                {
-                    string cap1Bytes = Model.Cap > 1024 ? (Model.Cap > 1048576 ? $"{Model.Cap / 1048576} GBytes" : $"{Model.Cap / 1024} MBytes") : (Model.Cap > 0 ? $"{Model.Cap} Kbytes" : "Unknown capacity");
+            int cap1 = int.Parse(Model.Cap1);
 
-                    if(Model.Format.Id != 10)
+            if(Model.Disk1.Id != 8)
+            {
+                if(Model.Disk1.Id != 6)
+                {
+                    string cap1Bytes = cap1 > 1024 ? (cap1 > 1048576 ? $"{cap1 / 1048576} GBytes" : $"{cap1 / 1024} MBytes") : (cap1 > 0 ? $"{cap1} Kbytes" : "Unknown capacity");
+
+                    if(Model.Disk1.Id != 10)
                     {
-                        if(Model.Format.Id != 15)
+                        if(Model.Disk1.Id != 15)
                         {
-                            if(Model.Format.Id != 16)
+                            if(Model.Disk1.Id != 16)
                             {
-                                if(Model.Format.Id != 36)
+                                if(Model.Disk1.Id != 36)
                                 {
-                                    if(Model.Format.Id != 22)
+                                    if(Model.Disk1.Id != 22)
                                     {
-                                        if(Model.Format.Id != 23)
+                                        if(Model.Disk1.Id != 23)
                                         {
-                                            if(Model.Format.Id != 39)
+                                            if(Model.Disk1.Id != 39)
                                             {
-                                                if(Model.Format.Id != 31)
+                                                if(Model.Disk1.Id != 31)
                                                 {
-                                                    <td>@Model.Format.Description (@cap1Bytes)</td>
+                                                    <td>@Model.Disk1.Description (@cap1Bytes)</td>
                                                 }
                                                 else
                                                 {
@@ -915,14 +942,106 @@ else
                 }
                 else
                 {
-                    string cap1Bits = Model.Cap > 1000 ? (Model.Cap > 1000000 ? $"{Model.Cap / 1000000} GBits" : $"{Model.Cap / 1000} MBits") : (Model.Cap > 0 ? $"{Model.Cap} KBits" : "Unknown capacity");
+                    string cap1Bits = cap1 > 1000 ? (cap1 > 1000000 ? $"{cap1 / 1000000} GBits" : $"{cap1 / 1000} MBits") : (cap1 > 0 ? $"{cap1} KBits" : "Unknown capacity");
 
                     <td>Cartridge (@cap1Bits)</td>
                 }
             }
             else
             {
-                <td>Standard audio cassette (@Model.Cap bps)</td>
+                <td>Standard audio cassette (@cap1 bps)</td>
+            }
+        }
+        else
+        { <td>None</td> }
+    </tr>
+}
+@if(Model.Disk2 != null)
+{
+    <tr>
+        <th scope=row>
+            <div align=right>
+                Secondary disk
+            </div>
+        </th>
+        @if(Model.Disk2.Id != 30)
+        {
+            int cap2 = int.Parse(Model.Cap2);
+
+            if(Model.Disk2.Id != 8)
+            {
+                if(Model.Disk2.Id != 6)
+                {
+                    string cap2Bytes = cap2 > 1024 ? (cap2 > 1048576 ? $"{cap2 / 1048576} GBytes" : $"{cap2 / 1024} MBytes") : (cap2 > 0 ? $"{cap2} Kbytes" : "Unknown capacity");
+
+                    if(Model.Disk2.Id != 10)
+                    {
+                        if(Model.Disk2.Id != 15)
+                        {
+                            if(Model.Disk2.Id != 16)
+                            {
+                                if(Model.Disk2.Id != 36)
+                                {
+                                    if(Model.Disk2.Id != 22)
+                                    {
+                                        if(Model.Disk2.Id != 23)
+                                        {
+                                            if(Model.Disk2.Id != 39)
+                                            {
+                                                if(Model.Disk2.Id != 31)
+                                                {
+                                                    <td>@Model.Disk2.Description (@cap2Bytes)</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Propietary (@cap2Bytes)</td>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td>Digital tape (@cap2Bytes)</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>Punched card (@cap2Bytes)</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td>Chip card (@cap2Bytes)</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td>Magnetic card (@cap2Bytes)</td>
+                                }
+                            }
+                            else
+                            {
+                                <td>Memory (@cap2Bytes)</td>
+                            }
+                        }
+                        else
+                        {
+                            <td>Magneto-optical (@cap2Bytes)</td>
+                        }
+                    }
+                    else
+                    {
+                        <td>Optical disk (@cap2Bytes)</td>
+                    }
+                }
+                else
+                {
+                    string cap2Bits = cap2 > 1000 ? (cap2 > 1000000 ? $"{cap2 / 1000000} GBits" : $"{cap2 / 1000} MBits") : (cap2 > 0 ? $"{cap2} KBits" : "Unknown capacity");
+
+                    <td>Cartridge (@cap2Bits)</td>
+                }
+            }
+            else
+            {
+                <td>Standard audio cassette (@cap2 bps)</td>
             }
         }
         else
@@ -931,8 +1050,8 @@ else
 }
 </table>
 
-@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/photos/consoles", Model.Id + ".jpg")))
+@if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/photos/computers", Model.Id + ".jpg")))
 {
-    <img src="@System.IO.Path.Combine("/assets/photos/consoles", Model.Id + ".jpg")"
+    <img src="@System.IO.Path.Combine("/assets/photos/computers", Model.Id + ".jpg")"
          alt="">
 }
