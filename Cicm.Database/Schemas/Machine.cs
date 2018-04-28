@@ -41,10 +41,6 @@ namespace Cicm.Database.Schemas
         public int Colors;
         /// <summary>Manufacturer's company ID</summary>
         public int Company;
-        /// <summary>Primary CPU</summary>
-        public int Cpu1;
-        /// <summary>Secondary CPU</summary>
-        public int Cpu2;
         /// <summary>ID of first removable disk format</summary>
         public int Disk1;
         /// <summary>ID of second removable disk format</summary>
@@ -59,10 +55,6 @@ namespace Cicm.Database.Schemas
         public int Hdd3;
         /// <summary>ID</summary>
         public int Id;
-        /// <summary>Frequency in MHz of primary CPU</summary>
-        public float Mhz1;
-        /// <summary>Frequency in MHz of secondary CPU</summary>
-        public float Mhz2;
         /// <summary>Model name</summary>
         public string Model;
         /// <summary>Audio channels supported by the MPU</summary>

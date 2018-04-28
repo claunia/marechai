@@ -86,11 +86,11 @@ namespace Cicm.Database
 
             try
             {
-                const string SQL = "SELECT * from machines WHERE company = '{id}'";
+                string sql = $"SELECT * from machines WHERE company = '{company}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-                dbCmd.CommandText = SQL;
+                dbCmd.CommandText = sql;
                 DataSet dataSet = new DataSet();
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
@@ -214,8 +214,10 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO machines (company, year, model, cpu1, mhz1, cpu2, mhz2, ram, rom, gpu, vram, colors, res, sound_synth, music_synth, sound_channels, music_channels, hdd1, hdd2, hdd3, disk1, cap1, disk2, cap2, type)" +
-                " VALUES (@company, @year, @model, @cpu1, @mhz1, @cpu2, @mhz2, @ram, @rom, @gpu, @vram, @colors, @res, @sound_synth, @music_synth, @sound_channels, @music_channels, @hdd1, @hdd2, @hdd3, @disk1, @cap1, @disk2, @cap2, @type)";
+                "INSERT INTO machines (company, year, model, ram, rom, gpu, vram, colors, res, sound_synth, music_synth, " +
+                "sound_channels, music_channels, hdd1, hdd2, hdd3, disk1, cap1, disk2, cap2, type)"                        +
+                " VALUES (@company, @year, @model, @ram, @rom, @gpu, @vram, @colors, @res, @sound_synth, @music_synth, "   +
+                "@sound_channels, @music_channels, @hdd1, @hdd2, @hdd3, @disk1, @cap1, @disk2, @cap2, @type)";
 
             dbcmd.CommandText = SQL;
 
@@ -248,9 +250,11 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             string sql =
-                "UPDATE machines SET company = @company, year = @year, model = @model, cpu1 = @cpu1, mhz1 = @mhz1, cpu2 = @cpu2, "                                                                        +
-                "mhz2 = @mhz2, ram = @ram, rom = @rom, gpu = @gpu, vram = @vram, colors = @colors, res = @res, sound_synth = @sound_synth, music_synth = @music_synth "                                   +
-                "sound_channels = @sound_channels, music_channels = @music_channels, hdd1 = @hdd1, hdd2 = @hdd2, hdd3 = @hdd3, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2, type = @type " +
+                "UPDATE machines SET company = @company, year = @year, model = @model, ram = @ram, rom = @rom, "         +
+                "gpu = @gpu, vram = @vram, colors = @colors, res = @res, sound_synth = @sound_synth, "                   +
+                "music_synth = @music_synth, sound_channels = @sound_channels, music_channels = @music_channels, "       +
+                "hdd1 = @hdd1, hdd2 = @hdd2, hdd3 = @hdd3, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2, " +
+                "type = @type "                                                                                          +
                 $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
@@ -313,88 +317,72 @@ namespace Cicm.Database
             IDbDataParameter param19 = dbcmd.CreateParameter();
             IDbDataParameter param20 = dbcmd.CreateParameter();
             IDbDataParameter param21 = dbcmd.CreateParameter();
-            IDbDataParameter param22 = dbcmd.CreateParameter();
-            IDbDataParameter param23 = dbcmd.CreateParameter();
-            IDbDataParameter param24 = dbcmd.CreateParameter();
-            IDbDataParameter param25 = dbcmd.CreateParameter();
 
             param1.ParameterName  = "@company";
             param2.ParameterName  = "@year";
             param3.ParameterName  = "@model";
-            param4.ParameterName  = "@cpu1";
-            param5.ParameterName  = "@mhz1";
-            param6.ParameterName  = "@cpu2";
-            param7.ParameterName  = "@mhz2";
-            param8.ParameterName  = "@ram";
-            param9.ParameterName  = "@rom";
-            param10.ParameterName = "@gpu";
-            param11.ParameterName = "@vram";
-            param12.ParameterName = "@colors";
-            param13.ParameterName = "@res";
-            param14.ParameterName = "@sound_synth";
-            param15.ParameterName = "@music_synth";
-            param16.ParameterName = "@sound_channels";
-            param17.ParameterName = "@music_channels";
-            param18.ParameterName = "@hdd1";
-            param19.ParameterName = "@hdd2";
-            param20.ParameterName = "@hdd3";
-            param21.ParameterName = "@disk1";
-            param22.ParameterName = "@cap1";
-            param23.ParameterName = "@disk2";
-            param24.ParameterName = "@cap2";
-            param25.ParameterName = "@type";
+            param4.ParameterName  = "@ram";
+            param5.ParameterName  = "@rom";
+            param6.ParameterName  = "@gpu";
+            param7.ParameterName  = "@vram";
+            param8.ParameterName  = "@colors";
+            param9.ParameterName  = "@res";
+            param10.ParameterName = "@sound_synth";
+            param11.ParameterName = "@music_synth";
+            param12.ParameterName = "@sound_channels";
+            param13.ParameterName = "@music_channels";
+            param14.ParameterName = "@hdd1";
+            param15.ParameterName = "@hdd2";
+            param16.ParameterName = "@hdd3";
+            param17.ParameterName = "@disk1";
+            param17.ParameterName = "@cap1";
+            param19.ParameterName = "@disk2";
+            param20.ParameterName = "@cap2";
+            param21.ParameterName = "@type";
 
             param1.DbType  = DbType.Int32;
             param2.DbType  = DbType.Int32;
             param3.DbType  = DbType.String;
             param4.DbType  = DbType.Int32;
-            param5.DbType  = DbType.Double;
+            param5.DbType  = DbType.Int32;
             param6.DbType  = DbType.Int32;
-            param7.DbType  = DbType.Double;
+            param7.DbType  = DbType.Int32;
             param8.DbType  = DbType.Int32;
-            param9.DbType  = DbType.Int32;
+            param9.DbType  = DbType.String;
             param10.DbType = DbType.Int32;
             param11.DbType = DbType.Int32;
             param12.DbType = DbType.Int32;
-            param13.DbType = DbType.String;
+            param13.DbType = DbType.Int32;
             param14.DbType = DbType.Int32;
             param15.DbType = DbType.Int32;
             param16.DbType = DbType.Int32;
             param17.DbType = DbType.Int32;
-            param18.DbType = DbType.Int32;
+            param18.DbType = DbType.String;
             param19.DbType = DbType.Int32;
-            param20.DbType = DbType.Int32;
+            param20.DbType = DbType.String;
             param21.DbType = DbType.Int32;
-            param22.DbType = DbType.String;
-            param23.DbType = DbType.Int32;
-            param24.DbType = DbType.String;
-            param25.DbType = DbType.Int32;
 
             param1.Value  = entry.Company;
             param2.Value  = entry.Year;
             param3.Value  = entry.Model;
-            param4.Value  = entry.Cpu1;
-            param5.Value  = entry.Mhz1;
-            param6.Value  = entry.Cpu2;
-            param7.Value  = entry.Mhz2;
-            param8.Value  = entry.Ram;
-            param9.Value  = entry.Rom;
-            param10.Value = entry.Gpu;
-            param11.Value = entry.Vram;
-            param12.Value = entry.Colors;
-            param13.Value = entry.Resolution;
-            param14.Value = entry.SoundSynth;
-            param15.Value = entry.MusicSynth;
-            param16.Value = entry.SoundChannels;
-            param17.Value = entry.MusicChannels;
-            param18.Value = entry.Hdd1;
-            param19.Value = entry.Hdd2;
-            param20.Value = entry.Hdd3;
-            param21.Value = entry.Disk1;
-            param22.Value = entry.Cap1;
-            param23.Value = entry.Disk2;
-            param24.Value = entry.Cap2;
-            param25.Value = entry.Type;
+            param4.Value  = entry.Ram;
+            param5.Value  = entry.Rom;
+            param6.Value  = entry.Gpu;
+            param7.Value  = entry.Vram;
+            param8.Value  = entry.Colors;
+            param9.Value  = entry.Resolution;
+            param10.Value = entry.SoundSynth;
+            param11.Value = entry.MusicSynth;
+            param12.Value = entry.SoundChannels;
+            param13.Value = entry.MusicChannels;
+            param14.Value = entry.Hdd1;
+            param15.Value = entry.Hdd2;
+            param16.Value = entry.Hdd3;
+            param17.Value = entry.Disk1;
+            param18.Value = entry.Cap1;
+            param19.Value = entry.Disk2;
+            param20.Value = entry.Cap2;
+            param21.Value = entry.Type;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -417,10 +405,6 @@ namespace Cicm.Database
             dbcmd.Parameters.Add(param19);
             dbcmd.Parameters.Add(param20);
             dbcmd.Parameters.Add(param21);
-            dbcmd.Parameters.Add(param22);
-            dbcmd.Parameters.Add(param23);
-            dbcmd.Parameters.Add(param24);
-            dbcmd.Parameters.Add(param25);
 
             return dbcmd;
         }
@@ -437,10 +421,6 @@ namespace Cicm.Database
                     Company       = (int)dataRow["company"],
                     Year          = (int)dataRow["year"],
                     Model         = (string)dataRow["model"],
-                    Cpu1          = dataRow["cpu1"] == DBNull.Value ? 0 : (int)dataRow["cpu1"],
-                    Mhz1          = dataRow["mhz1"] == DBNull.Value ? 0 : float.Parse(dataRow["mhz1"].ToString()),
-                    Cpu2          = dataRow["cpu2"] == DBNull.Value ? 0 : (int)dataRow["cpu2"],
-                    Mhz2          = dataRow["mhz2"] == DBNull.Value ? 0 : float.Parse(dataRow["mhz2"].ToString()),
                     Ram           = (int)dataRow["ram"],
                     Rom           = (int)dataRow["rom"],
                     Gpu           = dataRow["gpu"] == DBNull.Value ? 0 : (int)dataRow["gpu"],

@@ -37,32 +37,29 @@ namespace cicm_web.Models
 {
     public class Machine
     {
-        public string      Cap1;
-        public string      Cap2;
-        public int         Colors;
-        public Company     Company;
-        public Processor   Cpu1;
-        public Processor   Cpu2;
-        public DiskFormat  Disk1;
-        public DiskFormat  Disk2;
-        public Gpu         Gpu;
-        public DiskFormat  Hdd1;
-        public DiskFormat  Hdd2;
-        public DiskFormat  Hdd3;
-        public int         Id;
-        public float       Mhz1;
-        public float       Mhz2;
-        public string      Model;
-        public int         MusicChannels;
-        public SoundSynth  MusicSynth;
-        public int         Ram;
-        public string      Resolution;
-        public int         Rom;
-        public int         SoundChannels;
-        public SoundSynth  SoundSynth;
-        public MachineType Type;
-        public int         Vram;
-        public int         Year;
+        public string               Cap1;
+        public string               Cap2;
+        public int                  Colors;
+        public Company              Company;
+        public DiskFormat           Disk1;
+        public DiskFormat           Disk2;
+        public Gpu                  Gpu;
+        public DiskFormat           Hdd1;
+        public DiskFormat           Hdd2;
+        public DiskFormat           Hdd3;
+        public int                  Id;
+        public string               Model;
+        public int                  MusicChannels;
+        public SoundSynth           MusicSynth;
+        public ProcessorByMachine[] Processors;
+        public int                  Ram;
+        public string               Resolution;
+        public int                  Rom;
+        public int                  SoundChannels;
+        public SoundSynth           SoundSynth;
+        public MachineType          Type;
+        public int                  Vram;
+        public int                  Year;
 
         public static Machine[] GetAllItems()
         {
@@ -108,7 +105,8 @@ namespace cicm_web.Models
                 Rom        = dbItem.Rom,
                 Vram       = dbItem.Vram,
                 Year       = dbItem.Year,
-                Type       = dbItem.Type
+                Type       = dbItem.Type,
+                Processors = ProcessorByMachine.GetAllItems(dbItem.Id)
             };
 
             if(dbItem.Disk1 > 0)
@@ -121,18 +119,6 @@ namespace cicm_web.Models
             {
                 item.Cap2  = dbItem.Cap2;
                 item.Disk2 = DiskFormat.GetItem(dbItem.Disk2);
-            }
-
-            if(dbItem.Cpu1 > 0)
-            {
-                item.Cpu1 = Processor.GetItem(dbItem.Cpu1);
-                item.Mhz1 = dbItem.Mhz1;
-            }
-
-            if(dbItem.Cpu2 > 0)
-            {
-                item.Cpu2 = Processor.GetItem(dbItem.Cpu2);
-                item.Mhz2 = dbItem.Mhz2;
             }
 
             if(dbItem.MusicSynth > 0)

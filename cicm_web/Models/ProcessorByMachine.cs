@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Operations.cs
+// Filename       : ProcessorByMachine.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains constructor and shared variables for database operations.
+//     Processor by machine model
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,26 +28,32 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Data;
+using System.Collections.Generic;
 
-namespace Cicm.Database
+namespace cicm_web.Models
 {
-    public partial class Operations
+    public class ProcessorByMachine
     {
-        /// <summary>Last known database version</summary>
-        const int DB_VERSION = 15;
-        /// <summary>The column with this value indicates there is no item of this type.</summary>
-        public const int DB_NONE = -1;
-        /// <summary>This value indicates there's no GPU, but a direct memory->display connection (a framebuffer).</summary>
-        public const int DB_FRAMEBUFFER = -2;
+        public Processor Processor;
+        public float     Speed;
 
-        readonly IDbConnection dbCon;
-        readonly IDbCore       dbCore;
-
-        public Operations(IDbConnection connection, IDbCore core)
+        public static ProcessorByMachine[] GetAllItems(int machineId)
         {
-            dbCon  = connection;
-            dbCore = core;
+            List<Cicm.Database.Schemas.ProcessorByMachine> dbItems = null;
+            bool? result =
+                Program.Database?.Operations.GetProcessorsByMachines(out dbItems, machineId);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<ProcessorByMachine> items = new List<ProcessorByMachine>();
+
+            foreach(Cicm.Database.Schemas.ProcessorByMachine dbItem in dbItems)
+                items.Add(new ProcessorByMachine
+                {
+                    Processor = Processor.GetItem(dbItem.Processor),
+                    Speed     = dbItem.Speed
+                });
+
+            return items.ToArray();
         }
     }
 }

@@ -139,6 +139,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV14();
                         break;
                     }
+                    case 14:
+                    {
+                        UpdateDatabaseToV15();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -1495,13 +1500,17 @@ namespace Cicm.Database
                 param20.DbType = DbType.Int32;
                 param21.DbType = DbType.Int32;
 
-                param1.Value  = (int)dataRow["company"];
-                param2.Value  = (int)dataRow["year"];
-                param3.Value  = (string)dataRow["model"];
-                param4.Value  = dataRow["cpu1"] == DBNull.Value ? (object)null : (int)dataRow["cpu1"];
-                param5.Value  = dataRow["mhz1"] == DBNull.Value ? (object)null : float.Parse(dataRow["mhz1"].ToString());
-                param6.Value  = dataRow["cpu2"] == DBNull.Value ? (object)null : (int)dataRow["cpu2"];
-                param7.Value  = dataRow["mhz2"] == DBNull.Value ? (object)null : float.Parse(dataRow["mhz2"].ToString());
+                param1.Value = (int)dataRow["company"];
+                param2.Value = (int)dataRow["year"];
+                param3.Value = (string)dataRow["model"];
+                param4.Value = dataRow["cpu1"] == DBNull.Value ? (object)null : (int)dataRow["cpu1"];
+                param5.Value = dataRow["mhz1"] == DBNull.Value
+                                    ? (object)null
+                                    : float.Parse(dataRow["mhz1"].ToString());
+                param6.Value = dataRow["cpu2"] == DBNull.Value ? (object)null : (int)dataRow["cpu2"];
+                param7.Value = dataRow["mhz2"] == DBNull.Value
+                                    ? (object)null
+                                    : float.Parse(dataRow["mhz2"].ToString());
                 param8.Value  = (int)dataRow["ram"];
                 param9.Value  = (int)dataRow["rom"];
                 param10.Value = dataRow["gpu"] == DBNull.Value ? (object)null : (int)dataRow["gpu"];
@@ -1567,6 +1576,113 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 14...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('14')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV15()
+        {
+            Console.WriteLine("Updating database to version 15");
+
+            Console.WriteLine("Creating table `processors_by_machine`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V15.ProcessorsByMachine;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `machines`");
+
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from machines";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                IDbCommand dbcmd = dbCon.CreateCommand();
+
+                IDbDataParameter param1 = dbcmd.CreateParameter();
+                IDbDataParameter param2 = dbcmd.CreateParameter();
+                IDbDataParameter param3 = dbcmd.CreateParameter();
+
+                param1.ParameterName = "@machine";
+                param2.ParameterName = "@processor";
+                param3.ParameterName = "@speed";
+
+                param1.DbType = DbType.Int32;
+                param2.DbType = DbType.Int32;
+                param3.DbType = DbType.Double;
+
+                param1.Value = (int)dataRow["id"];
+
+                const string SQL =
+                    "INSERT INTO processors_by_machine (machine, processor, speed) VALUES (@machine, @processor, @speed)";
+
+                dbcmd.Parameters.Add(param1);
+                dbcmd.Parameters.Add(param2);
+                dbcmd.Parameters.Add(param3);
+
+                if(dataRow["cpu1"] != DBNull.Value)
+                {
+                    param2.Value = (int)dataRow["cpu1"];
+                    param3.Value = dataRow["mhz1"] == DBNull.Value
+                                       ? (object)null
+                                       : float.Parse(dataRow["mhz1"].ToString());
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding processor {0} to machine {1}", (int)param2.Value, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                if(dataRow["cpu2"] != DBNull.Value)
+                {
+                    param2.Value = (int)dataRow["cpu2"];
+                    param3.Value = dataRow["mhz2"] == DBNull.Value
+                                       ? (object)null
+                                       : float.Parse(dataRow["mhz2"].ToString());
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding processor {0} to machine {1}", (int)param2.Value, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                dbcmd.Dispose();
+            }
+
+            Console.WriteLine("Removing processor columns from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_cpu1`;\n" +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_cpu2`;\n" +
+                                "ALTER TABLE `machines` DROP COLUMN `cpu1`;\n"                  +
+                                "ALTER TABLE `machines` DROP COLUMN `cpu2`;\n"                  +
+                                "ALTER TABLE `machines` DROP COLUMN `mhz1`;\n"                  +
+                                "ALTER TABLE `machines` DROP COLUMN `mhz2`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 15...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('15')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
