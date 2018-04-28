@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : SoundSynth.cs
+// Filename       : Computer.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     High level representation of a sound synthetizer.
+//     High level representation of a computer.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,34 +28,14 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System;
-
 namespace Cicm.Database.Schemas
 {
-    /// <summary>Sound synthetizer</summary>
-    public class SoundSynth
+    /// <summary>Computer</summary>
+    public class SoundByMachine
     {
-        /// <summary>Company</summary>
-        public Company Company;
-        /// <summary>Sample rate in bits of the generate sound</summary>
-        public int Depth;
-        /// <summary>Frequency in Hz of the generated sound</summary>
-        public double Frequency;
-        /// <summary>ID</summary>
-        public int Id;
-        /// <summary>Datetime of introduction</summary>
-        public DateTime Introduced;
-        /// <summary>Model/SKU code</summary>
-        public string ModelCode;
-        /// <summary>Name</summary>
-        public string Name;
-        /// <summary>Simultaneous square wave generators</summary>
-        public int SquareWave;
-        /// <summary>Type of sound synthetizer</summary>
-        public int Type;
-        /// <summary>Simultaneous voices that can be generated</summary>
-        public int Voices;
-        /// <summary>Simultaneous white noise generators</summary>
-        public int WhiteNoise;
+        /// <summary>Machine ID</summary>
+        public int Machine;
+        /// <summary>Sound synth ID</summary>
+        public int SoundSynth;
     }
 }

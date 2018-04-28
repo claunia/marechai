@@ -168,7 +168,7 @@ namespace Cicm.Database.Schemas.Sql
         public static readonly string Gpus =
             V11.Gpus                                                                         + "\n" +
             $"INSERT INTO `gpus` (`id`, `name`) VALUES ({Operations.DB_NONE}, `DB_NONE`);\n" +
-            $"INSERT INTO `gpus` (`id`, `name`) VALUES ({Operations.DB_FRAMEBUFFER}, `DB_FRAMEBUFFER`);";
+            $"INSERT INTO `gpus` (`id`, `name`) VALUES ({Operations.DB_SOFTWARE}, `DB_FRAMEBUFFER`);";
 
         public static readonly string Logs = V11.Logs;
 

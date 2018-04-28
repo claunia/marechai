@@ -28,19 +28,44 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 
 namespace cicm_web.Models
 {
     public class SoundSynth
     {
-        public int    Id;
-        public string Name;
+        public Company  Company;
+        public int      Depth;
+        public double   Frequency;
+        public int      Id;
+        public DateTime Introduced;
+        public string   ModelCode;
+        public string   Name;
+        public int      SquareWave;
+        public int      Type;
+        public int      Voices;
+        public int      WhiteNoise;
 
         public static SoundSynth GetItem(int id)
         {
             Cicm.Database.Schemas.SoundSynth dbItem = Program.Database?.Operations.GetSoundSynth(id);
-            return dbItem == null ? null : new SoundSynth {Name = dbItem.Name, Id = dbItem.Id};
+            return dbItem == null
+                       ? null
+                       : new SoundSynth
+                       {
+                           Name       = dbItem.Name,
+                           Id         = dbItem.Id,
+                           Company    = dbItem.Company == null ? null : Company.GetItem(dbItem.Company.Id),
+                           ModelCode  = dbItem.ModelCode,
+                           Introduced = dbItem.Introduced,
+                           Voices     = dbItem.Voices,
+                           Frequency  = dbItem.Frequency,
+                           Depth      = dbItem.Depth,
+                           SquareWave = dbItem.SquareWave,
+                           WhiteNoise = dbItem.WhiteNoise,
+                           Type       = dbItem.Type
+                       };
         }
 
         public static SoundSynth[] GetAllItems()
@@ -52,7 +77,20 @@ namespace cicm_web.Models
             List<SoundSynth> items = new List<SoundSynth>();
 
             foreach(Cicm.Database.Schemas.SoundSynth dbItem in dbItems)
-                items.Add(new SoundSynth {Id = dbItem.Id, Name = dbItem.Name});
+                items.Add(new SoundSynth
+                {
+                    Name       = dbItem.Name,
+                    Id         = dbItem.Id,
+                    Company    = dbItem.Company == null ? null : Company.GetItem(dbItem.Company.Id),
+                    ModelCode  = dbItem.ModelCode,
+                    Introduced = dbItem.Introduced,
+                    Voices     = dbItem.Voices,
+                    Frequency  = dbItem.Frequency,
+                    Depth      = dbItem.Depth,
+                    SquareWave = dbItem.SquareWave,
+                    WhiteNoise = dbItem.WhiteNoise,
+                    Type       = dbItem.Type
+                });
 
             return items.ToArray();
         }

@@ -55,20 +55,12 @@ namespace Cicm.Database.Schemas
         public int Id;
         /// <summary>Model name</summary>
         public string Model;
-        /// <summary>Audio channels supported by the MPU</summary>
-        public int MusicChannels;
-        /// <summary>ID of MPU</summary>
-        public int MusicSynth;
         /// <summary>Size in kibibytes of program RAM</summary>
         public int Ram;
         /// <summary>Resolution in WxH pixels</summary>
         public string Resolution;
         /// <summary>Size in kibibytes of firmware</summary>
         public int Rom;
-        /// <summary>Audio channels supported by the DSP</summary>
-        public int SoundChannels;
-        /// <summary>ID of DSP</summary>
-        public int SoundSynth;
         /// <summary>Machine type</summary>
         public MachineType Type;
         /// <summary>Size in kibibytes for video RAM</summary>

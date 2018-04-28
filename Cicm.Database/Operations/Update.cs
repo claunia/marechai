@@ -149,6 +149,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV16();
                         break;
                     }
+                    case 16:
+                    {
+                        UpdateDatabaseToV17();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -1063,7 +1068,7 @@ namespace Cicm.Database
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
             dbCmd.CommandText = $"INSERT INTO `gpus` (`id`, `name`) VALUES ({DB_NONE}, 'DB_NONE');\n" +
-                                $"INSERT INTO `gpus` (`id`, `name`) VALUES ({DB_FRAMEBUFFER}, 'DB_FRAMEBUFFER');";
+                                $"INSERT INTO `gpus` (`id`, `name`) VALUES ({DB_SOFTWARE}, 'DB_FRAMEBUFFER');";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1074,7 +1079,7 @@ namespace Cicm.Database
             dbCmd.Transaction = trans;
             dbCmd.CommandText = $"UPDATE `computers` SET `gpu` = {DB_NONE} WHERE `gpu` = 1;\n" +
                                 "UPDATE `computers` SET `gpu` = NULL WHERE `gpu` = 2;\n"       +
-                                $"UPDATE `computers` SET `gpu` = {DB_FRAMEBUFFER} WHERE `gpu` = 3;";
+                                $"UPDATE `computers` SET `gpu` = {DB_SOFTWARE} WHERE `gpu` = 3;";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1085,7 +1090,7 @@ namespace Cicm.Database
             dbCmd.Transaction = trans;
             dbCmd.CommandText = $"UPDATE `consoles` SET `gpu` = {DB_NONE} WHERE `gpu` = 1;\n" +
                                 "UPDATE `consoles` SET `gpu` = NULL WHERE `gpu` = 2;\n"       +
-                                $"UPDATE `consoles` SET `gpu` = {DB_FRAMEBUFFER} WHERE `gpu` = 3;";
+                                $"UPDATE `consoles` SET `gpu` = {DB_SOFTWARE} WHERE `gpu` = 3;";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1694,7 +1699,7 @@ namespace Cicm.Database
 
         void UpdateDatabaseToV16()
         {
-            Console.WriteLine("Updating database to version 15");
+            Console.WriteLine("Updating database to version 16");
 
             Console.WriteLine("Creating table `gpus_by_machine`");
             IDbCommand     dbCmd = dbCon.CreateCommand();
@@ -1729,8 +1734,7 @@ namespace Cicm.Database
 
                 param1.Value = (int)dataRow["id"];
 
-                const string SQL =
-                    "INSERT INTO gpus_by_machine (machine, gpu) VALUES (@machine, @gpu)";
+                const string SQL = "INSERT INTO gpus_by_machine (machine, gpu) VALUES (@machine, @gpu)";
 
                 dbcmd.Parameters.Add(param1);
                 dbcmd.Parameters.Add(param2);
@@ -1766,6 +1770,134 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 16...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('16')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV17()
+        {
+            Console.WriteLine("Updating database to version 17");
+
+            Console.WriteLine("Creating table `sound_by_machine`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V17.SoundByMachine;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new special items to table `sound_synths`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = $"INSERT INTO `sound_synths` (`id`, `name`) VALUES ({DB_SOFTWARE}, 'DB_SOFTWARE');";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Changing sound and music synths in machine from 27 to {0}", DB_SOFTWARE);
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = $"UPDATE `machines` SET sound_synth = {DB_SOFTWARE} WHERE sound_synth = 27;\n" +
+                                $"UPDATE `machines` SET music_synth = {DB_SOFTWARE} WHERE music_synth = 27;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `machines`");
+
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from machines";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                IDbCommand dbcmd = dbCon.CreateCommand();
+
+                IDbDataParameter param1 = dbcmd.CreateParameter();
+                IDbDataParameter param2 = dbcmd.CreateParameter();
+
+                param1.ParameterName = "@machine";
+                param2.ParameterName = "@sound_synth";
+
+                param1.DbType = DbType.Int32;
+                param2.DbType = DbType.Int32;
+
+                param1.Value = (int)dataRow["id"];
+
+                const string SQL =
+                    "INSERT INTO sound_by_machine (machine, sound_synth) VALUES (@machine, @sound_synth)";
+
+                dbcmd.Parameters.Add(param1);
+                dbcmd.Parameters.Add(param2);
+
+                if(dataRow["sound_synth"]      != DBNull.Value && (int)dataRow["sound_synth"] != 1 &&
+                   (int)dataRow["sound_synth"] != 2)
+                {
+                    param2.Value = (int)dataRow["sound_synth"];
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding sound {0} to machine {1}", (int)param2.Value, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                if(dataRow["music_synth"]      != DBNull.Value && (int)dataRow["music_synth"] != 1 &&
+                   (int)dataRow["music_synth"] != 2)
+                {
+                    param2.Value = (int)dataRow["music_synth"];
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding sound {0} to machine {1}", (int)param2.Value, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                dbcmd.Dispose();
+            }
+
+            Console.WriteLine("Removing sound columns from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_sound_synth`;\n" +
+                                "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_music_synth`;\n" +
+                                "ALTER TABLE `machines` DROP COLUMN `sound_channels`;\n"               +
+                                "ALTER TABLE `machines` DROP COLUMN `music_channels`;\n"               +
+                                "ALTER TABLE `machines` DROP COLUMN `sound_synth`;\n"                  +
+                                "ALTER TABLE `machines` DROP COLUMN `music_synth`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Removing old sound items `sound_synths`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "DELETE FROM sound_synths WHERE id = 1;\n" +
+                                "DELETE FROM sound_synths WHERE id = 2;\n" + "DELETE FROM sound_synths WHERE id = 27;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 17...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('17')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

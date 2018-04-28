@@ -43,20 +43,17 @@ namespace cicm_web.Models
         public Company              Company;
         public DiskFormat           Disk1;
         public DiskFormat           Disk2;
-        public GpuByMachine[]                  Gpus;
+        public GpuByMachine[]       Gpus;
         public DiskFormat           Hdd1;
         public DiskFormat           Hdd2;
         public DiskFormat           Hdd3;
         public int                  Id;
         public string               Model;
-        public int                  MusicChannels;
-        public SoundSynth           MusicSynth;
         public ProcessorByMachine[] Processors;
         public int                  Ram;
         public string               Resolution;
         public int                  Rom;
-        public int                  SoundChannels;
-        public SoundSynth           SoundSynth;
+        public SoundByMachine[]     SoundSynths;
         public MachineType          Type;
         public int                  Vram;
         public int                  Year;
@@ -92,21 +89,22 @@ namespace cicm_web.Models
         {
             Machine item = new Machine
             {
-                Colors     = dbItem.Colors,
-                Company    = Company.GetItem(dbItem.Company),
+                Colors      = dbItem.Colors,
+                Company     = Company.GetItem(dbItem.Company),
                 Gpus        = GpuByMachine.GetAllItems(dbItem.Id),
-                Hdd1       = DiskFormat.GetItem(dbItem.Hdd1),
-                Hdd2       = DiskFormat.GetItem(dbItem.Hdd2),
-                Hdd3       = DiskFormat.GetItem(dbItem.Hdd3),
-                Id         = dbItem.Id,
-                Model      = dbItem.Model,
-                Ram        = dbItem.Ram,
-                Resolution = dbItem.Resolution,
-                Rom        = dbItem.Rom,
-                Vram       = dbItem.Vram,
-                Year       = dbItem.Year,
-                Type       = dbItem.Type,
-                Processors = ProcessorByMachine.GetAllItems(dbItem.Id)
+                Hdd1        = DiskFormat.GetItem(dbItem.Hdd1),
+                Hdd2        = DiskFormat.GetItem(dbItem.Hdd2),
+                Hdd3        = DiskFormat.GetItem(dbItem.Hdd3),
+                Id          = dbItem.Id,
+                Model       = dbItem.Model,
+                Ram         = dbItem.Ram,
+                Resolution  = dbItem.Resolution,
+                Rom         = dbItem.Rom,
+                Vram        = dbItem.Vram,
+                Year        = dbItem.Year,
+                Type        = dbItem.Type,
+                Processors  = ProcessorByMachine.GetAllItems(dbItem.Id),
+                SoundSynths = SoundByMachine.GetAllItems(dbItem.Id)
             };
 
             if(dbItem.Disk1 > 0)
@@ -119,18 +117,6 @@ namespace cicm_web.Models
             {
                 item.Cap2  = dbItem.Cap2;
                 item.Disk2 = DiskFormat.GetItem(dbItem.Disk2);
-            }
-
-            if(dbItem.MusicSynth > 0)
-            {
-                item.MusicSynth    = SoundSynth.GetItem(dbItem.MusicSynth);
-                item.MusicChannels = dbItem.MusicChannels;
-            }
-
-            if(dbItem.SoundSynth > 0)
-            {
-                item.SoundSynth    = SoundSynth.GetItem(dbItem.SoundSynth);
-                item.SoundChannels = dbItem.SoundChannels;
             }
 
             return item;

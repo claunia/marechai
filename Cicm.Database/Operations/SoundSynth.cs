@@ -32,7 +32,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Cicm.Database.Schemas;
-using Console = System.Console;
 
 namespace Cicm.Database
 {
@@ -178,7 +177,9 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            const string SQL = "INSERT INTO sound_synths (name)" + " VALUES (@name)";
+            const string SQL = "INSERT INTO sound_synths (name, company, model_code, introduced, voices, frequency, " +
+                               "depth, square_wave, white_noise, type) VALUES (@name, @company, @model_code, "        +
+                               "@introduced, @voices, @frequency, @depth, @square_wave, @white_noise, @type)";
 
             dbcmd.CommandText = SQL;
 
@@ -210,7 +211,10 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE sound_synths SET name = @name " + $"WHERE id = {entry.Id}";
+            string sql = "UPDATE sound_synths SET name = @name, company = @company, model_code = @model_code, " +
+                         "introduced = @introduced, voices = @voices, frequency = @frequency, depth = @depth, " +
+                         "square_wave = @square_wave, white_noise = @white_noise, type = @type, "               +
+                         $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -251,26 +255,86 @@ namespace Cicm.Database
         {
             IDbCommand dbcmd = dbCon.CreateCommand();
 
-            IDbDataParameter param1 = dbcmd.CreateParameter();
+            IDbDataParameter param1  = dbcmd.CreateParameter();
+            IDbDataParameter param2  = dbcmd.CreateParameter();
+            IDbDataParameter param3  = dbcmd.CreateParameter();
+            IDbDataParameter param4  = dbcmd.CreateParameter();
+            IDbDataParameter param5  = dbcmd.CreateParameter();
+            IDbDataParameter param6  = dbcmd.CreateParameter();
+            IDbDataParameter param7  = dbcmd.CreateParameter();
+            IDbDataParameter param8  = dbcmd.CreateParameter();
+            IDbDataParameter param9  = dbcmd.CreateParameter();
+            IDbDataParameter param10 = dbcmd.CreateParameter();
 
-            param1.ParameterName = "@name";
+            param1.ParameterName  = "@name";
+            param2.ParameterName  = "@company";
+            param3.ParameterName  = "@model_code";
+            param4.ParameterName  = "@introduced";
+            param5.ParameterName  = "@voices";
+            param6.ParameterName  = "@frequency";
+            param7.ParameterName  = "@depth";
+            param8.ParameterName  = "@square_wave";
+            param9.ParameterName  = "@white_noise";
+            param10.ParameterName = "@type";
 
-            param1.DbType = DbType.String;
+            param1.DbType  = DbType.String;
+            param2.DbType  = DbType.Int32;
+            param3.DbType  = DbType.String;
+            param4.DbType  = DbType.DateTime;
+            param5.DbType  = DbType.Int32;
+            param6.DbType  = DbType.Double;
+            param7.DbType  = DbType.Int32;
+            param8.DbType  = DbType.Int32;
+            param9.DbType  = DbType.Int32;
+            param10.DbType = DbType.Int32;
 
-            param1.Value = entry.Name;
+            param1.Value  = entry.Name;
+            param2.Value  = entry.Company?.Id;
+            param3.Value  = entry.ModelCode;
+            param4.Value  = entry.Introduced == DateTime.MinValue ? (object)null : entry.Introduced;
+            param5.Value  = entry.Voices     == 0 ? (object)null : entry.Voices;
+            param6.Value  = entry.Frequency  <= 0 ? (object)null : entry.Frequency;
+            param7.Value  = entry.Depth      == 0 ? (object)null : entry.Depth;
+            param8.Value  = entry.SquareWave == 0 ? (object)null : entry.SquareWave;
+            param9.Value  = entry.WhiteNoise == 0 ? (object)null : entry.WhiteNoise;
+            param10.Value = entry.Type       == 0 ? (object)null : entry.Type;
 
             dbcmd.Parameters.Add(param1);
+            dbcmd.Parameters.Add(param2);
+            dbcmd.Parameters.Add(param3);
+            dbcmd.Parameters.Add(param4);
+            dbcmd.Parameters.Add(param5);
+            dbcmd.Parameters.Add(param6);
+            dbcmd.Parameters.Add(param7);
+            dbcmd.Parameters.Add(param8);
+            dbcmd.Parameters.Add(param9);
+            dbcmd.Parameters.Add(param10);
 
             return dbcmd;
         }
 
-        static List<SoundSynth> SoundSynthFromDataTable(DataTable dataTable)
+        List<SoundSynth> SoundSynthFromDataTable(DataTable dataTable)
         {
             List<SoundSynth> entries = new List<SoundSynth>();
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                SoundSynth entry = new SoundSynth {Id = (int)dataRow["id"], Name = (string)dataRow["name"]};
+                SoundSynth entry = new SoundSynth
+                {
+                    Id         = (int)dataRow["id"],
+                    Name       = (string)dataRow["name"],
+                    ModelCode  = dataRow["model_code"]  == DBNull.Value ? null : (string)dataRow["model_code"],
+                    Voices     = dataRow["voices"]      == DBNull.Value ? 0 : (int)dataRow["voices"],
+                    Frequency  = dataRow["frequency"]   == DBNull.Value ? 0 : (double)dataRow["frequency"],
+                    Depth      = dataRow["depth"]       == DBNull.Value ? 0 : (int)dataRow["depth"],
+                    SquareWave = dataRow["square_wave"] == DBNull.Value ? 0 : (int)dataRow["square_wave"],
+                    WhiteNoise = dataRow["white_noise"] == DBNull.Value ? 0 : (int)dataRow["white_noise"],
+                    Type       = dataRow["type"]        == DBNull.Value ? 0 : (int)dataRow["type"],
+                    Company    = dataRow["company"]     == DBNull.Value ? null : GetCompany((int)dataRow["company"]),
+                    Introduced = dataRow["introduced"] == DBNull.Value
+                                     ? DateTime.MinValue
+                                     : Convert.ToDateTime(dataRow["introduced"])
+                };
 
                 entries.Add(entry);
             }

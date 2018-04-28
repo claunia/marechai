@@ -214,10 +214,9 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO machines (company, year, model, ram, rom, vram, colors, res, sound_synth, music_synth, " +
-                "sound_channels, music_channels, hdd1, hdd2, hdd3, disk1, cap1, disk2, cap2, type)"                        +
-                " VALUES (@company, @year, @model, @ram, @rom, @vram, @colors, @res, @sound_synth, @music_synth, "   +
-                "@sound_channels, @music_channels, @hdd1, @hdd2, @hdd3, @disk1, @cap1, @disk2, @cap2, @type)";
+                "INSERT INTO machines (company, year, model, ram, rom, vram, colors, res, hdd1, hdd2, hdd3, disk1, "  +
+                "cap1, disk2, cap2, type) VALUES (@company, @year, @model, @ram, @rom, @vram, @colors, @res, @hdd1, " +
+                "@hdd2, @hdd3, @disk1, @cap1, @disk2, @cap2, @type)";
 
             dbcmd.CommandText = SQL;
 
@@ -251,10 +250,8 @@ namespace Cicm.Database
 
             string sql =
                 "UPDATE machines SET company = @company, year = @year, model = @model, ram = @ram, rom = @rom, "         +
-                "vram = @vram, colors = @colors, res = @res, sound_synth = @sound_synth, "                   +
-                "music_synth = @music_synth, sound_channels = @sound_channels, music_channels = @music_channels, "       +
-                "hdd1 = @hdd1, hdd2 = @hdd2, hdd3 = @hdd3, disk1 = @disk1, cap1 = @cap1, disk2 = @disk2, cap2 = @cap2, " +
-                "type = @type "                                                                                          +
+                "vram = @vram, colors = @colors, res = @res, hdd1 = @hdd1, hdd2 = @hdd2, hdd3 = @hdd3, disk1 = @disk1, " +
+                "cap1 = @cap1, disk2 = @disk2, cap2 = @cap2, type = @type "                                              +
                 $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
@@ -304,7 +301,7 @@ namespace Cicm.Database
             IDbDataParameter param6  = dbcmd.CreateParameter();
             IDbDataParameter param7  = dbcmd.CreateParameter();
             IDbDataParameter param8  = dbcmd.CreateParameter();
-            IDbDataParameter param9 = dbcmd.CreateParameter();
+            IDbDataParameter param9  = dbcmd.CreateParameter();
             IDbDataParameter param10 = dbcmd.CreateParameter();
             IDbDataParameter param11 = dbcmd.CreateParameter();
             IDbDataParameter param12 = dbcmd.CreateParameter();
@@ -312,10 +309,6 @@ namespace Cicm.Database
             IDbDataParameter param14 = dbcmd.CreateParameter();
             IDbDataParameter param15 = dbcmd.CreateParameter();
             IDbDataParameter param16 = dbcmd.CreateParameter();
-            IDbDataParameter param17 = dbcmd.CreateParameter();
-            IDbDataParameter param18 = dbcmd.CreateParameter();
-            IDbDataParameter param19 = dbcmd.CreateParameter();
-            IDbDataParameter param20 = dbcmd.CreateParameter();
 
             param1.ParameterName  = "@company";
             param2.ParameterName  = "@year";
@@ -325,18 +318,14 @@ namespace Cicm.Database
             param6.ParameterName  = "@vram";
             param7.ParameterName  = "@colors";
             param8.ParameterName  = "@res";
-            param9.ParameterName = "@sound_synth";
-            param10.ParameterName = "@music_synth";
-            param11.ParameterName = "@sound_channels";
-            param12.ParameterName = "@music_channels";
-            param13.ParameterName = "@hdd1";
-            param14.ParameterName = "@hdd2";
-            param15.ParameterName = "@hdd3";
-            param16.ParameterName = "@disk1";
-            param17.ParameterName = "@cap1";
-            param18.ParameterName = "@disk2";
-            param19.ParameterName = "@cap2";
-            param20.ParameterName = "@type";
+            param9.ParameterName  = "@hdd1";
+            param10.ParameterName = "@hdd2";
+            param11.ParameterName = "@hdd3";
+            param12.ParameterName = "@disk1";
+            param13.ParameterName = "@cap1";
+            param14.ParameterName = "@disk2";
+            param15.ParameterName = "@cap2";
+            param16.ParameterName = "@type";
 
             param1.DbType  = DbType.Int32;
             param2.DbType  = DbType.Int32;
@@ -346,18 +335,14 @@ namespace Cicm.Database
             param6.DbType  = DbType.Int32;
             param7.DbType  = DbType.Int32;
             param8.DbType  = DbType.String;
-            param9.DbType = DbType.Int32;
+            param9.DbType  = DbType.Int32;
             param10.DbType = DbType.Int32;
             param11.DbType = DbType.Int32;
             param12.DbType = DbType.Int32;
-            param13.DbType = DbType.Int32;
+            param13.DbType = DbType.String;
             param14.DbType = DbType.Int32;
-            param15.DbType = DbType.Int32;
+            param15.DbType = DbType.String;
             param16.DbType = DbType.Int32;
-            param17.DbType = DbType.String;
-            param18.DbType = DbType.Int32;
-            param19.DbType = DbType.String;
-            param20.DbType = DbType.Int32;
 
             param1.Value  = entry.Company;
             param2.Value  = entry.Year;
@@ -367,18 +352,14 @@ namespace Cicm.Database
             param6.Value  = entry.Vram;
             param7.Value  = entry.Colors;
             param8.Value  = entry.Resolution;
-            param9.Value = entry.SoundSynth;
-            param10.Value = entry.MusicSynth;
-            param11.Value = entry.SoundChannels;
-            param12.Value = entry.MusicChannels;
-            param13.Value = entry.Hdd1;
-            param14.Value = entry.Hdd2;
-            param15.Value = entry.Hdd3;
-            param16.Value = entry.Disk1;
-            param17.Value = entry.Cap1;
-            param18.Value = entry.Disk2;
-            param19.Value = entry.Cap2;
-            param20.Value = entry.Type;
+            param9.Value  = entry.Hdd1;
+            param10.Value = entry.Hdd2;
+            param11.Value = entry.Hdd3;
+            param12.Value = entry.Disk1;
+            param13.Value = entry.Cap1;
+            param14.Value = entry.Disk2;
+            param15.Value = entry.Cap2;
+            param16.Value = entry.Type;
 
             dbcmd.Parameters.Add(param1);
             dbcmd.Parameters.Add(param2);
@@ -396,10 +377,6 @@ namespace Cicm.Database
             dbcmd.Parameters.Add(param14);
             dbcmd.Parameters.Add(param15);
             dbcmd.Parameters.Add(param16);
-            dbcmd.Parameters.Add(param17);
-            dbcmd.Parameters.Add(param18);
-            dbcmd.Parameters.Add(param19);
-            dbcmd.Parameters.Add(param20);
 
             return dbcmd;
         }
@@ -412,27 +389,23 @@ namespace Cicm.Database
             {
                 Machine entry = new Machine
                 {
-                    Id            = (int)dataRow["id"],
-                    Company       = (int)dataRow["company"],
-                    Year          = (int)dataRow["year"],
-                    Model         = (string)dataRow["model"],
-                    Ram           = (int)dataRow["ram"],
-                    Rom           = (int)dataRow["rom"],
-                    Vram          = (int)dataRow["vram"],
-                    Colors        = (int)dataRow["colors"],
-                    Resolution    = (string)dataRow["res"],
-                    SoundSynth    = (int)dataRow["sound_synth"],
-                    MusicSynth    = (int)dataRow["music_synth"],
-                    SoundChannels = (int)dataRow["sound_channels"],
-                    MusicChannels = (int)dataRow["music_channels"],
-                    Hdd1          = (int)dataRow["hdd1"],
-                    Hdd2          = dataRow["hdd2"] == DBNull.Value ? 0 : (int)dataRow["hdd2"],
-                    Hdd3          = dataRow["hdd3"] == DBNull.Value ? 0 : (int)dataRow["hdd3"],
-                    Disk1         = (int)dataRow["disk1"],
-                    Cap1          = (string)dataRow["cap1"],
-                    Disk2         = dataRow["disk2"] == DBNull.Value ? 0 : (int)dataRow["disk2"],
-                    Cap2          = dataRow["cap2"]  == DBNull.Value ? null : (string)dataRow["cap2"],
-                    Type          = (MachineType)dataRow["type"]
+                    Id         = (int)dataRow["id"],
+                    Company    = (int)dataRow["company"],
+                    Year       = (int)dataRow["year"],
+                    Model      = (string)dataRow["model"],
+                    Ram        = (int)dataRow["ram"],
+                    Rom        = (int)dataRow["rom"],
+                    Vram       = (int)dataRow["vram"],
+                    Colors     = (int)dataRow["colors"],
+                    Resolution = (string)dataRow["res"],
+                    Hdd1       = (int)dataRow["hdd1"],
+                    Hdd2       = dataRow["hdd2"] == DBNull.Value ? 0 : (int)dataRow["hdd2"],
+                    Hdd3       = dataRow["hdd3"] == DBNull.Value ? 0 : (int)dataRow["hdd3"],
+                    Disk1      = (int)dataRow["disk1"],
+                    Cap1       = (string)dataRow["cap1"],
+                    Disk2      = dataRow["disk2"] == DBNull.Value ? 0 : (int)dataRow["disk2"],
+                    Cap2       = dataRow["cap2"]  == DBNull.Value ? null : (string)dataRow["cap2"],
+                    Type       = (MachineType)dataRow["type"]
                 };
 
                 entries.Add(entry);
