@@ -214,7 +214,7 @@ namespace Cicm.Database
             dbcmd.Transaction = trans;
 
             const string SQL =
-                "INSERT INTO machines (company, year, model, type) VALUES (@company, @year, @model, @type)";
+                "INSERT INTO machines (company, introduced, model, type) VALUES (@company, @introduced, @model, @type)";
 
             dbcmd.CommandText = SQL;
 
@@ -246,8 +246,9 @@ namespace Cicm.Database
             IDbTransaction trans = dbCon.BeginTransaction();
             dbcmd.Transaction = trans;
 
-            string sql = "UPDATE machines SET company = @company, year = @year, model = @model, type = @type " +
-                         $"WHERE id = {entry.Id}";
+            string sql =
+                "UPDATE machines SET company = @company, introduced = @introduced, model = @model, type = @type " +
+                $"WHERE id = {entry.Id}";
 
             dbcmd.CommandText = sql;
 
@@ -294,17 +295,17 @@ namespace Cicm.Database
             IDbDataParameter param4 = dbcmd.CreateParameter();
 
             param1.ParameterName = "@company";
-            param2.ParameterName = "@year";
+            param2.ParameterName = "@introduced";
             param3.ParameterName = "@model";
             param4.ParameterName = "@type";
 
             param1.DbType = DbType.Int32;
-            param2.DbType = DbType.Int32;
+            param2.DbType = DbType.DateTime;
             param3.DbType = DbType.String;
             param4.DbType = DbType.Int32;
 
             param1.Value = entry.Company;
-            param2.Value = entry.Year;
+            param2.Value = entry.Introduced;
             param3.Value = entry.Model;
             param4.Value = entry.Type;
 
@@ -326,9 +327,10 @@ namespace Cicm.Database
                 {
                     Id      = (int)dataRow["id"],
                     Company = (int)dataRow["company"],
-                    Year    = (int)dataRow["year"],
-                    Model   = (string)dataRow["model"],
-                    Type    = (MachineType)dataRow["type"]
+                    Introduced =
+                        dataRow["introduced"] == DBNull.Value ? DateTime.MinValue : (DateTime)dataRow["introduced"],
+                    Model = (string)dataRow["model"],
+                    Type  = (MachineType)dataRow["type"]
                 };
 
                 entries.Add(entry);

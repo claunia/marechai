@@ -49,123 +49,123 @@ namespace Cicm.Database
                 IDbCommand dbCmd = dbCon.CreateCommand();
 
                 Console.WriteLine("Creating table `admins`");
-                dbCmd.CommandText = V20.Admins;
+                dbCmd.CommandText = V21.Admins;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `browser_tests`");
-                dbCmd.CommandText = V20.BrowserTests;
+                dbCmd.CommandText = V21.BrowserTests;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `cicm_db`");
-                dbCmd.CommandText = V20.CicmDb;
+                dbCmd.CommandText = V21.CicmDb;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `companies`");
-                dbCmd.CommandText = V20.Companies;
+                dbCmd.CommandText = V21.Companies;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `machines`");
-                dbCmd.CommandText = V20.Machines;
+                dbCmd.CommandText = V21.Machines;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `forbidden`");
-                dbCmd.CommandText = V20.Forbidden;
+                dbCmd.CommandText = V21.Forbidden;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `gpus`");
-                dbCmd.CommandText = V20.Gpus;
+                dbCmd.CommandText = V21.Gpus;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `log`");
-                dbCmd.CommandText = V20.Logs;
+                dbCmd.CommandText = V21.Logs;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `money_donations`");
-                dbCmd.CommandText = V20.MoneyDonations;
+                dbCmd.CommandText = V21.MoneyDonations;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `news`");
-                dbCmd.CommandText = V20.News;
+                dbCmd.CommandText = V21.News;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_computers`");
-                dbCmd.CommandText = V20.OwnedComputers;
+                dbCmd.CommandText = V21.OwnedComputers;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `owned_consoles`");
-                dbCmd.CommandText = V20.OwnedConsoles;
+                dbCmd.CommandText = V21.OwnedConsoles;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_sets`");
-                dbCmd.CommandText = V20.InstructionSets;
+                dbCmd.CommandText = V21.InstructionSets;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_set_extensions`");
-                dbCmd.CommandText = V20.InstructionSetExtensions;
+                dbCmd.CommandText = V21.InstructionSetExtensions;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `processors`");
-                dbCmd.CommandText = V20.Processors;
+                dbCmd.CommandText = V21.Processors;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `instruction_set_extensions_by_processor`");
-                dbCmd.CommandText = V20.InstructionSetExtensionsByProcessor;
+                dbCmd.CommandText = V21.InstructionSetExtensionsByProcessor;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `sound_synths`");
-                dbCmd.CommandText = V20.SoundSynths;
+                dbCmd.CommandText = V21.SoundSynths;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `iso3166_1_numeric`");
-                dbCmd.CommandText = V20.Iso3166Numeric;
+                dbCmd.CommandText = V21.Iso3166Numeric;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Filling table `iso3166_1_numeric`");
-                dbCmd.CommandText = V20.Iso3166NumericValues;
+                dbCmd.CommandText = V21.Iso3166NumericValues;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `companies`");
-                dbCmd.CommandText = V20.CompaniesForeignKeys;
+                dbCmd.CommandText = V21.CompaniesForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating foreign keys for table `machines`");
-                dbCmd.CommandText = V20.MachinesForeignKeys;
+                dbCmd.CommandText = V21.MachinesForeignKeys;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `company_logos`");
-                dbCmd.CommandText = V20.CompanyLogos;
+                dbCmd.CommandText = V21.CompanyLogos;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `company_descriptions`");
-                dbCmd.CommandText = V20.CompanyDescriptions;
+                dbCmd.CommandText = V21.CompanyDescriptions;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `processors_by_machine`");
-                dbCmd.CommandText = V20.ProcessorsByMachine;
+                dbCmd.CommandText = V21.ProcessorsByMachine;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `gpus_by_machine`");
-                dbCmd.CommandText = V20.GpusByMachine;
+                dbCmd.CommandText = V21.GpusByMachine;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `sound_by_machine`");
-                dbCmd.CommandText = V20.SoundByMachine;
+                dbCmd.CommandText = V21.SoundByMachine;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `memory_by_machine`");
-                dbCmd.CommandText = V20.MemoryByMachine;
+                dbCmd.CommandText = V21.MemoryByMachine;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `resolutions`");
-                dbCmd.CommandText = V20.Resolutions;
+                dbCmd.CommandText = V21.Resolutions;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `resolutions_by_gpu`");
-                dbCmd.CommandText = V20.ResolutionsByGpu;
+                dbCmd.CommandText = V21.ResolutionsByGpu;
                 dbCmd.ExecuteNonQuery();
 
                 Console.WriteLine("Creating table `storage_by_machine`");
-                dbCmd.CommandText = V20.StorageByMachine;
+                dbCmd.CommandText = V21.StorageByMachine;
                 dbCmd.ExecuteNonQuery();
 
                 return true;

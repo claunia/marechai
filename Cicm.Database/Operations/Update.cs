@@ -169,6 +169,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV20();
                         break;
                     }
+                    case 20:
+                    {
+                        UpdateDatabaseToV21();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -2407,6 +2412,76 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 20...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('20')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV21()
+        {
+            Console.WriteLine("Updating database to version 21");
+
+            Console.WriteLine("Adding new columns to table `machines`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` ADD COLUMN `introduced` DATETIME NULL;\n" +
+                                "CREATE INDEX idx_machines_introduced ON machines (introduced);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `machines`");
+
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from machines";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                IDbCommand dbcmd = dbCon.CreateCommand();
+
+                IDbDataParameter param1 = dbcmd.CreateParameter();
+
+                param1.ParameterName = "@introduced";
+
+                param1.DbType = DbType.DateTime;
+
+                if((int)dataRow["year"] > 0) param1.Value = new DateTime((int)dataRow["year"], 1, 1);
+                else param1.Value                         = null;
+
+                string sql = $"UPDATE `machines` SET introduced = @introduced WHERE id = {(int)dataRow["id"]}";
+
+                dbcmd.Parameters.Add(param1);
+
+                trans             = dbCon.BeginTransaction();
+                dbcmd.Transaction = trans;
+
+                Console.WriteLine("Adding introduction date {0} to machine {1}", (int)dataRow["year"],
+                                  (int)dataRow["id"]);
+
+                dbcmd.CommandText = sql;
+
+                dbcmd.ExecuteNonQuery();
+                trans.Commit();
+
+                dbcmd.Dispose();
+            }
+
+            Console.WriteLine("Removing year column from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP COLUMN `year`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 21...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('21')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

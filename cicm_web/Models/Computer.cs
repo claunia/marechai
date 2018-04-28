@@ -101,7 +101,7 @@ namespace cicm_web.Models
 
             List<MachineMini> items = new List<MachineMini>();
             foreach(Cicm.Database.Schemas.Machine dbItem in dbItems)
-                if(dbItem.Year == year)
+                if(dbItem.Introduced.Year == year)
                     items.Add(MachineMini.TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();

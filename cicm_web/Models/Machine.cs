@@ -40,13 +40,13 @@ namespace cicm_web.Models
         public Company              Company;
         public GpuByMachine[]       Gpus;
         public int                  Id;
+        public DateTime             Introduced;
         public MemoryByMachine[]    Memories;
         public string               Model;
         public ProcessorByMachine[] Processors;
         public SoundByMachine[]     SoundSynths;
         public StorageByMachine[]   Storage;
         public MachineType          Type;
-        public int                  Year;
 
         public static Machine[] GetAllItems()
         {
@@ -83,7 +83,7 @@ namespace cicm_web.Models
                 Gpus        = GpuByMachine.GetAllItems(dbItem.Id),
                 Id          = dbItem.Id,
                 Model       = dbItem.Model,
-                Year        = dbItem.Year,
+                Introduced  = dbItem.Introduced,
                 Type        = dbItem.Type,
                 Processors  = ProcessorByMachine.GetAllItems(dbItem.Id),
                 SoundSynths = SoundByMachine.GetAllItems(dbItem.Id),
@@ -134,7 +134,7 @@ namespace cicm_web.Models
 
             List<MachineMini> items = new List<MachineMini>();
             foreach(Cicm.Database.Schemas.Machine dbItem in dbItems)
-                if(dbItem.Year == year)
+                if(dbItem.Introduced.Year == year)
                     items.Add(TransformItem(dbItem));
 
             return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();

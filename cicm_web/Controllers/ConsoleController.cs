@@ -52,8 +52,8 @@ namespace cicm_web.Controllers
 
             ViewBag.ItemCount = consoles.Count;
 
-            ViewBag.MinYear = consoles.Where(t => t.Year > 1000).Min(t => t.Year);
-            ViewBag.MaxYear = consoles.Where(t => t.Year > 1000).Max(t => t.Year);
+            ViewBag.MinYear = consoles.Where(t => t.Introduced.Year > 1000).Min(t => t.Introduced.Year);
+            ViewBag.MaxYear = consoles.Where(t => t.Introduced.Year > 1000).Max(t => t.Introduced.Year);
 
             return View();
         }

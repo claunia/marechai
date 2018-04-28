@@ -28,6 +28,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
+
 namespace Cicm.Database.Schemas
 {
     /// <summary>Computer</summary>
@@ -37,11 +39,11 @@ namespace Cicm.Database.Schemas
         public int Company;
         /// <summary>ID</summary>
         public int Id;
+        /// <summary>Introduction date, null if unknown, 1000 if prototype</summary>
+        public DateTime Introduced;
         /// <summary>Model name</summary>
         public string Model;
         /// <summary>Machine type</summary>
         public MachineType Type;
-        /// <summary>Introduction date, 0 if unknown, 1000 if prototype</summary>
-        public int Year;
     }
 }

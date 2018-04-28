@@ -59,7 +59,7 @@
     }
 </p>
 
-@if(Model.Year == 1000)
+@if(Model.Introduced.Year == 1000)
 {
     <b>
         <div style="text-align: center;">PROTOTYPE</div>
@@ -73,20 +73,20 @@
         @Model.Company.Name</a> @Model.Model</b>
 <table width=100%>
 
-@if(Model.Year != 1000)
+@if(Model.Introduced.Year != 1000)
 {
     <tr>
         <th scope=row
             width="37%">
             <div align=right>
-                Year
+                Introduction date
             </div>
         </th>
         <td width="63%">
             <a asp-controller="Computer"
                asp-action="ByYear"
-               asp-route-id="@Model.Year">
-                @Model.Year</a>
+               asp-route-id="@Model.Introduced.Year">
+                @Model.Introduced.ToLongDateString()</a>
         </td>
     </tr>
 }
