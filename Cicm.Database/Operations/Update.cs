@@ -144,6 +144,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV15();
                         break;
                     }
+                    case 15:
+                    {
+                        UpdateDatabaseToV16();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -1683,6 +1688,84 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 15...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('15')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV16()
+        {
+            Console.WriteLine("Updating database to version 15");
+
+            Console.WriteLine("Creating table `gpus_by_machine`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V16.GpusByMachine;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Getting all items from `machines`");
+
+            dbCmd = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * from machines";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                IDbCommand dbcmd = dbCon.CreateCommand();
+
+                IDbDataParameter param1 = dbcmd.CreateParameter();
+                IDbDataParameter param2 = dbcmd.CreateParameter();
+
+                param1.ParameterName = "@machine";
+                param2.ParameterName = "@gpu";
+
+                param1.DbType = DbType.Int32;
+                param2.DbType = DbType.Int32;
+
+                param1.Value = (int)dataRow["id"];
+
+                const string SQL =
+                    "INSERT INTO gpus_by_machine (machine, gpu) VALUES (@machine, @gpu)";
+
+                dbcmd.Parameters.Add(param1);
+                dbcmd.Parameters.Add(param2);
+
+                if(dataRow["gpu"] != DBNull.Value)
+                {
+                    param2.Value = (int)dataRow["gpu"];
+
+                    trans             = dbCon.BeginTransaction();
+                    dbcmd.Transaction = trans;
+
+                    Console.WriteLine("Adding gpu {0} to machine {1}", (int)param2.Value, (int)param1.Value);
+
+                    dbcmd.CommandText = SQL;
+
+                    dbcmd.ExecuteNonQuery();
+                    trans.Commit();
+                }
+
+                dbcmd.Dispose();
+            }
+
+            Console.WriteLine("Removing processor columns from table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_gpu`;\n" +
+                                "ALTER TABLE `machines` DROP COLUMN `gpu`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 16...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('16')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

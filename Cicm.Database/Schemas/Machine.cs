@@ -45,8 +45,6 @@ namespace Cicm.Database.Schemas
         public int Disk1;
         /// <summary>ID of second removable disk format</summary>
         public int Disk2;
-        /// <summary>ID of GPU</summary>
-        public int Gpu;
         /// <summary>ID of first hard disk format</summary>
         public int Hdd1;
         /// <summary>ID of second hard disk format</summary>

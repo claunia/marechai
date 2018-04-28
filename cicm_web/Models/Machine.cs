@@ -43,7 +43,7 @@ namespace cicm_web.Models
         public Company              Company;
         public DiskFormat           Disk1;
         public DiskFormat           Disk2;
-        public Gpu                  Gpu;
+        public GpuByMachine[]                  Gpus;
         public DiskFormat           Hdd1;
         public DiskFormat           Hdd2;
         public DiskFormat           Hdd3;
@@ -94,7 +94,7 @@ namespace cicm_web.Models
             {
                 Colors     = dbItem.Colors,
                 Company    = Company.GetItem(dbItem.Company),
-                Gpu        = Gpu.GetItem(dbItem.Gpu),
+                Gpus        = GpuByMachine.GetAllItems(dbItem.Id),
                 Hdd1       = DiskFormat.GetItem(dbItem.Hdd1),
                 Hdd2       = DiskFormat.GetItem(dbItem.Hdd2),
                 Hdd3       = DiskFormat.GetItem(dbItem.Hdd3),

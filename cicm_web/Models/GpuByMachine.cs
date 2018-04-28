@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Operations.cs
+// Filename       : GpuByMachine.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains constructor and shared variables for database operations.
+//     Gpu by machine model
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,26 +28,30 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Data;
+using System.Collections.Generic;
 
-namespace Cicm.Database
+namespace cicm_web.Models
 {
-    public partial class Operations
+    public class GpuByMachine
     {
-        /// <summary>Last known database version</summary>
-        const int DB_VERSION = 16;
-        /// <summary>The column with this value indicates there is no item of this type.</summary>
-        public const int DB_NONE = -1;
-        /// <summary>This value indicates there's no GPU, but a direct memory->display connection (a framebuffer).</summary>
-        public const int DB_FRAMEBUFFER = -2;
+        public Gpu Gpu;
 
-        readonly IDbConnection dbCon;
-        readonly IDbCore       dbCore;
-
-        public Operations(IDbConnection connection, IDbCore core)
+        public static GpuByMachine[] GetAllItems(int machineId)
         {
-            dbCon  = connection;
-            dbCore = core;
+            List<Cicm.Database.Schemas.GpuByMachine> dbItems = null;
+            bool? result =
+                Program.Database?.Operations.GetGpusByMachines(out dbItems, machineId);
+            if(result == null || result.Value == false || dbItems == null) return null;
+
+            List<GpuByMachine> items = new List<GpuByMachine>();
+
+            foreach(Cicm.Database.Schemas.GpuByMachine dbItem in dbItems)
+                items.Add(new GpuByMachine
+                {
+                    Gpu = Gpu.GetItem(dbItem.Gpu)
+                });
+
+            return items.ToArray();
         }
     }
 }

@@ -387,122 +387,128 @@
         }
     }
 </tr>
-@if(Model.Gpu == null || Model.Gpu != null && Model.Gpu.Id != -1)
+@if(Model.Gpus != null && Model.Gpus.Length > 0)
 {
     <tr>
         <th scope=row>
             <div align=right>
-                Graphics processor
+                Graphics processing units
             </div>
         </th>
-
-        @if(Model.Gpu != null)
-        {
-            if(Model.Gpu.Id == -2)
-            {
-                <td>
-                    Framebuffer
-                    <a aria-controls="gpuInfo"
-                       aria-expanded="false"
-                       class="btn btn-link"
-                       data-toggle="collapse"
-                       href="#gpuInfo">
-                        +info
-                    </a>
-                    <div class="collapse"
-                         id="gpuInfo">
-                        <div class="card card-body">
-                            This computer directly draws pixels from software to a memory region that's converted to video output by a <abbr title="Digital to Analog Converter">DAC</abbr> or similar without using any specific graphics processing unit.
-                        </div>
-                    </div>
-                </td>
-            }
-            else
-            {
-                <td>
-                    @($"{Model.Gpu.Name}")
-                    <a aria-controls="gpuInfo"
-                       aria-expanded="false"
-                       class="btn btn-link"
-                       data-toggle="collapse"
-                       href="#gpuInfo">
-                        +info
-                    </a>
-                    <div class="collapse"
-                         id="gpuInfo">
-                        <div class="card card-body">
-                            <table>
-                                @if(Model.Gpu.ModelCode != null && Model.Gpu.ModelCode != Model.Gpu.Name)
-                                {
-                                    <tr>
-                                        <td>Model</td>
-                                        <td>@Model.Gpu.ModelCode</td>
-                                    </tr>
-                                }
-                                <tr>
-                                    <td>Manufacturer</td>
-                                    <td>
-                                        <a asp-controller=Company
-                                           asp-action=View
-                                           asp-route-id=@Model.Gpu.Company.Id>
-                                            @Model.Gpu.Company.Name</a>
-                                    </td>
-                                </tr>
-                                @if(Model.Gpu.Introduced != DateTime.MinValue)
-                                {
-                                    <tr>
-                                        <td>Introduction date</td>
-                                        <td>@($"{Model.Gpu.Introduced:yyyy}")</td>
-                                    </tr>
-                                }
-                                @if(Model.Gpu.Package != null)
-                                {
-                                    <tr>
-                                        <td>Package</td>
-                                        <td>@Model.Gpu.Package</td>
-                                    </tr>
-                                }
-                                @if(Model.Gpu.Process != null || Model.Gpu.ProcessNm > 0)
-                                {
-                                    <tr>
-                                        <td>Manufacturing process</td>
-                                        <td>
-                                            @if(Model.Gpu.Process != null && Model.Gpu.ProcessNm > 0)
+        <td>
+            <table>
+                @for(int i = 0; i < Model.Gpus.Length; i++)
+                {
+                    if(Model.Gpus[i] != null)
+                    {
+                        if(Model.Gpus[i].Gpu.Id == -2)
+                        {
+                            <td>
+                                Framebuffer
+                                <a aria-controls="@($"gpuInfo{i}")"
+                                   aria-expanded="false"
+                                   class="btn btn-link"
+                                   data-toggle="collapse"
+                                   href="@($"#gpuInfo{i}")">
+                                    +info
+                                </a>
+                                <div class="collapse"
+                                     id="@($"gpuInfo{i}")">
+                                    <div class="card card-body">
+                                        This computer directly draws pixels from software to a memory region that's converted to video output by a <abbr title="Digital to Analog Converter">DAC</abbr> or similar without using any specific graphics processing unit.
+                                    </div>
+                                </div>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                @($"{Model.Gpus[i].Gpu.Name}")
+                                <a aria-controls="gpuInfo"
+                                   aria-expanded="false"
+                                   class="btn btn-link"
+                                   data-toggle="collapse"
+                                   href="#gpuInfo">
+                                    +info
+                                </a>
+                                <div class="collapse"
+                                     id="gpuInfo">
+                                    <div class="card card-body">
+                                        <table>
+                                            @if(Model.Gpus[i].Gpu.ModelCode != null && Model.Gpus[i].Gpu.ModelCode != Model.Gpus[i].Gpu.Name)
                                             {
-                                                @Model.Gpu.Process
-                                                @("@")
-                                                @(Model.Gpu.ProcessNm > 100 ? $"{Model.Gpu.ProcessNm / 100}µm" : $"{Model.Gpu.ProcessNm}nm")
+                                                <tr>
+                                                    <td>Model</td>
+                                                    <td>@Model.Gpus[i].Gpu.ModelCode</td>
+                                                </tr>
                                             }
-                                            else if(Model.Gpu.ProcessNm > 0) { @(Model.Gpu.ProcessNm > 100 ? $"{Model.Gpu.ProcessNm / 100}µm" : $"{Model.Gpu.ProcessNm}nm") }
-                                            else
-                                            { @Model.Gpu.Process }
-                                        </td>
-                                    </tr>
-                                }
-                                @if(Model.Gpu.DieSize > 0)
-                                {
-                                    <tr>
-                                        <td>Die size</td>
-                                        <td>@Model.Gpu.DieSize mm&sup2;</td>
-                                    </tr>
-                                }
-                                @if(Model.Gpu.Transistors > 0)
-                                {
-                                    <tr>
-                                        <td>Transistors</td>
-                                        <td>@Model.Gpu.Transistors</td>
-                                    </tr>
-                                }
-                            </table>
-                        </div>
-                    </div>
-                </td>
-            }
-        }
-        else
-        {
-            <td>Unknown data</td>
-        }
+                                            <tr>
+                                                <td>Manufacturer</td>
+                                                <td>
+                                                    <a asp-controller=Company
+                                                       asp-action=View
+                                                       asp-route-id=@Model.Gpus[i].Gpu.Company.Id>
+                                                        @Model.Gpus[i].Gpu.Company.Name</a>
+                                                </td>
+                                            </tr>
+                                            @if(Model.Gpus[i].Gpu.Introduced != DateTime.MinValue)
+                                            {
+                                                <tr>
+                                                    <td>Introduction date</td>
+                                                    <td>@($"{Model.Gpus[i].Gpu.Introduced:yyyy}")</td>
+                                                </tr>
+                                            }
+                                            @if(Model.Gpus[i].Gpu.Package != null)
+                                            {
+                                                <tr>
+                                                    <td>Package</td>
+                                                    <td>@Model.Gpus[i].Gpu.Package</td>
+                                                </tr>
+                                            }
+                                            @if(Model.Gpus[i].Gpu.Process != null || Model.Gpus[i].Gpu.ProcessNm > 0)
+                                            {
+                                                <tr>
+                                                    <td>Manufacturing process</td>
+                                                    <td>
+                                                        @if(Model.Gpus[i].Gpu.Process != null && Model.Gpus[i].Gpu.ProcessNm > 0)
+                                                        {
+                                                            @Model.Gpus[i].Gpu.Process
+                                                            @("@")
+                                                            @(Model.Gpus[i].Gpu.ProcessNm > 100 ? $"{Model.Gpus[i].Gpu.ProcessNm / 100}µm" : $"{Model.Gpus[i].Gpu.ProcessNm}nm")
+                                                        }
+                                                        else if(Model.Gpus[i].Gpu.ProcessNm > 0) { @(Model.Gpus[i].Gpu.ProcessNm > 100 ? $"{Model.Gpus[i].Gpu.ProcessNm / 100}µm" : $"{Model.Gpus[i].Gpu.ProcessNm}nm") }
+                                                        else
+                                                        { @Model.Gpus[i].Gpu.Process }
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @if(Model.Gpus[i].Gpu.DieSize > 0)
+                                            {
+                                                <tr>
+                                                    <td>Die size</td>
+                                                    <td>@Model.Gpus[i].Gpu.DieSize mm&sup2;</td>
+                                                </tr>
+                                            }
+                                            @if(Model.Gpus[i].Gpu.Transistors > 0)
+                                            {
+                                                <tr>
+                                                    <td>Transistors</td>
+                                                    <td>@Model.Gpus[i].Gpu.Transistors</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        }
+                    }
+                    else
+                    {
+                        <td>Unknown data</td>
+                    }
+                }
+            </table>
+        </td>
     </tr>
 }
 <tr>

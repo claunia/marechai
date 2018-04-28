@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : Operations.cs
+// Filename       : Computer.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains constructor and shared variables for database operations.
+//     High level representation of a computer.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,26 +28,14 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Data;
-
-namespace Cicm.Database
+namespace Cicm.Database.Schemas
 {
-    public partial class Operations
+    /// <summary>Computer</summary>
+    public class GpuByMachine
     {
-        /// <summary>Last known database version</summary>
-        const int DB_VERSION = 16;
-        /// <summary>The column with this value indicates there is no item of this type.</summary>
-        public const int DB_NONE = -1;
-        /// <summary>This value indicates there's no GPU, but a direct memory->display connection (a framebuffer).</summary>
-        public const int DB_FRAMEBUFFER = -2;
-
-        readonly IDbConnection dbCon;
-        readonly IDbCore       dbCore;
-
-        public Operations(IDbConnection connection, IDbCore core)
-        {
-            dbCon  = connection;
-            dbCore = core;
-        }
+        /// <summary>Machine ID</summary>
+        public int Machine;
+        /// <summary>GPU ID</summary>
+        public int Gpu;
     }
 }
