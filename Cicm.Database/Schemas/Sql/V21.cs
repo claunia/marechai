@@ -41,7 +41,7 @@ namespace Cicm.Database.Schemas.Sql
                                                "`version` int(11) NOT NULL,\n"                   +
                                                "`updated` datetime DEFAULT CURRENT_TIMESTAMP,\n" +
                                                "PRIMARY KEY (`id`));\n"                          +
-                                               "INSERT INTO cicm_db (version) VALUES ('20');";
+                                               "INSERT INTO cicm_db (version) VALUES ('21');";
 
         public static readonly string Companies = V20.Companies;
 

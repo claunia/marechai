@@ -1,14 +1,13 @@
-﻿@{
-    /******************************************************************************
+﻿/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : ByYear.cshtml
+// Filename       : GpuByMachine.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Lists computers by letter (or all)
+//     Gpu by machine model
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,31 +28,20 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-    ViewData["Title"] = "Computers";
+namespace cicm_web.Models
+{
+    public class MachineFamily
+    {
+        public int    Id;
+        public string Name;
+
+        public static MachineFamily GetItem(int familyId)
+        {
+            Cicm.Database.Schemas.MachineFamily result = Program.Database?.Operations.GetMachineFamily(familyId);
+
+            if(result == null || result.Id != familyId) return null;
+
+            return new MachineFamily {Name = result.Name, Id = familyId};
+        }
+    }
 }
-
-@model IEnumerable<MachineMini>
-
-<p>Search results:</p>
-<p align=center>
-    <b>@ViewBag.Year</b><br />
-
-    @if(Model.Any())
-    {
-        <p>
-            @Model.Count() computers found in the database.<br />
-            @foreach(MachineMini computer in Model)
-            {
-                <a asp-controller="Machine"
-                   asp-action="View"
-                   asp-route-id="@computer.Id">
-                    @computer.Company.Name @computer.Name</a>
-                <br />
-            }
-        </p>
-    }
-    else
-    {
-        <p>There are no computers found in the database released this year.</p>
-    }
-</p>

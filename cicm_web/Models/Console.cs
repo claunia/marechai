@@ -52,7 +52,7 @@ namespace cicm_web.Models
             if(result == null || result.Value == false || dbItems == null) return null;
 
             // TODO: Company chosen by DB
-            return dbItems.Where(t => t.Company == id).Select(Machine.TransformItem).OrderBy(t => t.Model).ToArray();
+            return dbItems.Where(t => t.Company == id).Select(Machine.TransformItem).OrderBy(t => t.Name).ToArray();
         }
 
         public static Machine GetItem(int id)
@@ -74,7 +74,7 @@ namespace cicm_web.Models
             List<MachineMini> items = new List<MachineMini>();
             foreach(Cicm.Database.Schemas.Machine dbItem in dbItems) items.Add(MachineMini.TransformItem(dbItem));
 
-            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Name).ToArray();
         }
 
         public static MachineMini[] GetItemsStartingWithLetter(char letter)
@@ -85,10 +85,10 @@ namespace cicm_web.Models
 
             List<MachineMini> items = new List<MachineMini>();
             foreach(Cicm.Database.Schemas.Machine dbItem in dbItems)
-                if(dbItem.Model.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
+                if(dbItem.Name.StartsWith(new string(letter, 1), StringComparison.InvariantCultureIgnoreCase))
                     items.Add(MachineMini.TransformItem(dbItem));
 
-            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Name).ToArray();
         }
 
         public static MachineMini[] GetItemsFromYear(int year)
@@ -102,7 +102,7 @@ namespace cicm_web.Models
                 if(dbItem.Introduced.Year == year)
                     items.Add(MachineMini.TransformItem(dbItem));
 
-            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Model).ToArray();
+            return items.OrderBy(t => t.Company.Name).ThenBy(t => t.Name).ToArray();
         }
 
         public static MachineMini[] GetItemsWithCompany(int id, string companyName)
@@ -117,8 +117,8 @@ namespace cicm_web.Models
                            {
                                Company = new Company {Id = id, Name = companyName},
                                Id      = t.Id,
-                               Model   = t.Model
-                           }).OrderBy(t => t.Model).ToArray();
+                               Name    = t.Name
+                           }).OrderBy(t => t.Name).ToArray();
         }
 
         public static MachineMini[] GetItemsFromCompany(int id)
@@ -128,8 +128,7 @@ namespace cicm_web.Models
             if(result == null || result.Value == false || dbItems == null) return null;
 
             // TODO: Company chosen by DB
-            return dbItems.Where(t => t.Company == id).Select(MachineMini.TransformItem).OrderBy(t => t.Model)
-                          .ToArray();
+            return dbItems.Where(t => t.Company == id).Select(MachineMini.TransformItem).OrderBy(t => t.Name).ToArray();
         }
     }
 }

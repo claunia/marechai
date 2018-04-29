@@ -87,56 +87,56 @@ namespace cicm_web.Models
                     imageUrl   = "assets/photos/computers/";
                     targetView = "Computer";
                     computer   = Computer.GetItem(dbItem.AffectedId);
-                    subtext    = $"{computer.Company.Name} - {computer.Model}";
+                    subtext    = $"{computer.Company.Name} - {computer.Name}";
                     break;
                 case NewsType.NewConsoleInDb:
                     text       = "New videoconsole added to the database.";
                     imageUrl   = "assets/photos/consoles/";
                     targetView = "Console";
                     console    = Console.GetItem(dbItem.AffectedId);
-                    subtext    = $"{console.Company.Name} - {console.Model}";
+                    subtext    = $"{console.Company.Name} - {console.Name}";
                     break;
                 case NewsType.NewComputerInCollection:
                     text        = "New computer added to the museum's collection.";
                     imageUrl    = "assets/photos/computers/";
                     targetView  = "CollectionComputer";
                     owncomputer = OwnedComputer.GetItem(dbItem.AffectedId);
-                    subtext     = $"{owncomputer.Computer.Company.Name} - {owncomputer.Computer.Model}";
+                    subtext     = $"{owncomputer.Computer.Company.Name} - {owncomputer.Computer.Name}";
                     break;
                 case NewsType.NewConsoleInCollection:
                     text       = "New videoconsole added to the museum's collection.";
                     imageUrl   = "assets/photos/consoles/";
                     targetView = "CollectionConsole";
                     ownconsole = OwnedConsole.GetItem(dbItem.AffectedId);
-                    subtext    = $"{ownconsole.Console.Company.Name} - {ownconsole.Console.Model}";
+                    subtext    = $"{ownconsole.Console.Company.Name} - {ownconsole.Console.Name}";
                     break;
                 case NewsType.UpdatedComputerInDb:
                     text       = "Updated computer from the database.";
                     imageUrl   = "assets/photos/computers/";
                     targetView = "Computer";
                     computer   = Computer.GetItem(dbItem.AffectedId);
-                    subtext    = $"{computer.Company.Name} - {computer.Model}";
+                    subtext    = $"{computer.Company.Name} - {computer.Name}";
                     break;
                 case NewsType.UpdatedConsoleInDb:
                     text       = "Updated videoconsole from the database.";
                     imageUrl   = "assets/photos/consoles/";
                     targetView = "Console";
                     console    = Console.GetItem(dbItem.AffectedId);
-                    subtext    = $"{console.Company.Name} - {console.Model}";
+                    subtext    = $"{console.Company.Name} - {console.Name}";
                     break;
                 case NewsType.UpdatedComputerInCollection:
                     text        = "Updated computer from museum's collection.";
                     imageUrl    = "assets/photos/computers/";
                     targetView  = "CollectionComputer";
                     owncomputer = OwnedComputer.GetItem(dbItem.AffectedId);
-                    subtext     = $"{owncomputer.Computer.Company.Name} - {owncomputer.Computer.Model}";
+                    subtext     = $"{owncomputer.Computer.Company.Name} - {owncomputer.Computer.Name}";
                     break;
                 case NewsType.UpdatedConsoleInCollection:
                     text       = "Updated videoconsole from museum's collection.";
                     imageUrl   = "assets/photos/consoles/";
                     targetView = "CollectionConsole";
                     ownconsole = OwnedConsole.GetItem(dbItem.AffectedId);
-                    subtext    = $"{ownconsole.Console.Company.Name} - {ownconsole.Console.Model}";
+                    subtext    = $"{ownconsole.Console.Company.Name} - {ownconsole.Console.Name}";
                     break;
                 case NewsType.NewMoneyDonation:
                     text       = "New money donation.";

@@ -37,12 +37,16 @@ namespace Cicm.Database.Schemas
     {
         /// <summary>Manufacturer's company ID</summary>
         public int Company;
+        /// <summary>Machine family</summary>
+        public int Family;
         /// <summary>ID</summary>
         public int Id;
         /// <summary>Introduction date, null if unknown, 1000 if prototype</summary>
         public DateTime Introduced;
-        /// <summary>Model name</summary>
+        /// <summary>Machine model/SKU</summary>
         public string Model;
+        /// <summary>Model name</summary>
+        public string Name;
         /// <summary>Machine type</summary>
         public MachineType Type;
     }

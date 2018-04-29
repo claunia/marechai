@@ -70,7 +70,7 @@
     <a asp-controller=Company
        asp-action=View
        asp-route-id=@Model.Company.Id>
-        @Model.Company.Name</a> @Model.Model</b>
+        @Model.Company.Name</a> @Model.Name</b>
 <table width=100%>
 
 @if(Model.Introduced.Year != 1000)
@@ -87,6 +87,37 @@
                asp-action="ByYear"
                asp-route-id="@Model.Introduced.Year">
                 @Model.Introduced.ToLongDateString()</a>
+        </td>
+    </tr>
+}
+@if(Model.Family != null)
+{
+    <tr>
+        <th scope=row
+            width="37%">
+            <div align=right>
+                Family
+            </div>
+        </th>
+        <td width="63%">
+            <a asp-controller="Computer"
+               asp-action="ByFamily"
+               asp-route-id="@Model.Family.Id">
+                @Model.Family.Name</a>
+        </td>
+    </tr>
+}
+@if(Model.Model != null)
+{
+    <tr>
+        <th scope=row
+            width="37%">
+            <div align=right>
+                Model
+            </div>
+        </th>
+        <td width="63%">
+            @Model.Model
         </td>
     </tr>
 }
@@ -504,143 +535,145 @@
             <table>
                 @for(int i = 0; i < Model.SoundSynths.Length; i++)
                 {
-                    if(Model.SoundSynths[i] != null)
-                    {
-                        if(Model.SoundSynths[i].SoundSynth.Id == -2)
+                    <tr>
+                        @if(Model.SoundSynths[i] != null)
                         {
-                            <td>
-                                Software
-                                <a aria-controls="@($"synthInfo{i}")"
-                                   aria-expanded="false"
-                                   class="btn btn-link"
-                                   data-toggle="collapse"
-                                   href="@($"#synthInfo{i}")">
-                                    +info
-                                </a>
-                                <div class="collapse"
-                                     id="@($"synthInfo{i}")">
-                                    <div class="card card-body">
-                                        This computer directly sends data to a <abbr title="Digital to Analog Converter">DAC</abbr> or similar connected to the audio output.
+                            if(Model.SoundSynths[i].SoundSynth.Id == -2)
+                            {
+                                <td>
+                                    Software
+                                    <a aria-controls="@($"synthInfo{i}")"
+                                       aria-expanded="false"
+                                       class="btn btn-link"
+                                       data-toggle="collapse"
+                                       href="@($"#synthInfo{i}")">
+                                        +info
+                                    </a>
+                                    <div class="collapse"
+                                         id="@($"synthInfo{i}")">
+                                        <div class="card card-body">
+                                            This computer directly sends data to a <abbr title="Digital to Analog Converter">DAC</abbr> or similar connected to the audio output.
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @($"{Model.SoundSynths[i].SoundSynth.Name}")
+                                    <a aria-controls="@($"synthInfo{i}")"
+                                       aria-expanded="false"
+                                       class="btn btn-link"
+                                       data-toggle="collapse"
+                                       href="@($"#synthInfo{i}")">
+                                        +info
+                                    </a>
+                                    <div class="collapse"
+                                         id="@($"synthInfo{i}")">
+                                        <div class="card card-body">
+                                            <table>
+                                                @if(Model.SoundSynths[i].SoundSynth.ModelCode != null && Model.SoundSynths[i].SoundSynth.ModelCode != Model.SoundSynths[i].SoundSynth.Name)
+                                                {
+                                                    <tr>
+                                                        <td>Model</td>
+                                                        <td>@Model.SoundSynths[i].SoundSynth.ModelCode</td>
+                                                    </tr>
+                                                }
+                                                @if(Model.SoundSynths[i].SoundSynth.Company != null)
+                                                {
+                                                    <tr>
+                                                        <td>Manufacturer</td>
+                                                        <td>
+                                                            <a asp-controller=Company
+                                                               asp-action=View
+                                                               asp-route-id=@Model.SoundSynths[i].SoundSynth.Company.Id>
+                                                                @Model.SoundSynths[i].SoundSynth.Company.Name</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @if(Model.SoundSynths[i].SoundSynth.Introduced != DateTime.MinValue)
+                                                {
+                                                    <tr>
+                                                        <td>Introduction date</td>
+                                                        <td>@($"{Model.Gpus[i].Gpu.Introduced:yyyy}")</td>
+                                                    </tr>
+                                                }
+                                                @if(Model.SoundSynths[i].SoundSynth.Voices != 0 || Model.SoundSynths[i].SoundSynth.SquareWave != 0 || Model.SoundSynths[i].SoundSynth.WhiteNoise != 0)
+                                                {
+                                                    <tr>
+                                                        <td>Generators</td>
+                                                        <td>
+                                                            <table>
+                                                                @if(Model.SoundSynths[i].SoundSynth.Voices != 0)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@Model.SoundSynths[i].SoundSynth.Voices voices</td>
+                                                                    </tr>
+                                                                }
+                                                                @if(Model.SoundSynths[i].SoundSynth.SquareWave != 0)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@Model.SoundSynths[i].SoundSynth.SquareWave square wave</td>
+                                                                    </tr>
+                                                                }
+                                                                @if(Model.SoundSynths[i].SoundSynth.WhiteNoise != 0)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@Model.SoundSynths[i].SoundSynth.WhiteNoise white noise</td>
+                                                                    </tr>
+                                                                }
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @if(Model.SoundSynths[i].SoundSynth.Depth != 0 || Model.SoundSynths[i].SoundSynth.Frequency > 0)
+                                                {
+                                                    <tr>
+                                                        <td>Sample rate</td>
+                                                        <td>
+                                                            <table>
+                                                                @if(Model.SoundSynths[i].SoundSynth.Depth != 0 && Model.SoundSynths[i].SoundSynth.Frequency > 0)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@Model.SoundSynths[i].SoundSynth.Depth bits at @(Model.SoundSynths[i].SoundSynth.Frequency > 1000 ? $"{Model.SoundSynths[i].SoundSynth.Frequency / 1000}KHz" : $"{Model.SoundSynths[i].SoundSynth.Frequency}Hz")</td>
+                                                                    </tr>
+                                                                }
+                                                                else if(Model.SoundSynths[i].SoundSynth.Depth != 0)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@Model.SoundSynths[i].SoundSynth.Depth bits</td>
+                                                                    </tr>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <tr>
+                                                                        <td>@(Model.SoundSynths[i].SoundSynth.Frequency > 1000 ? $"{Model.SoundSynths[i].SoundSynth.Frequency / 1000}KHz" : $"{Model.SoundSynths[i].SoundSynth.Frequency}Hz")</td>
+                                                                    </tr>
+                                                                }
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @if(Model.SoundSynths[i].SoundSynth.Type != 0)
+                                                {
+                                                    <tr>
+                                                        <td>Synthetizer type</td>
+                                                        <td>
+                                                            @Model.SoundSynths[i].SoundSynth.Type
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            }
                         }
                         else
                         {
-                            <td>
-                                @($"{Model.Gpus[i].Gpu.Name}")
-                                <a aria-controls="@($"synthInfo{i}")"
-                                   aria-expanded="false"
-                                   class="btn btn-link"
-                                   data-toggle="collapse"
-                                   href="@($"#synthInfo{i}")">
-                                    +info
-                                </a>
-                                <div class="collapse"
-                                     id="@($"synthInfo{i}")">
-                                    <div class="card card-body">
-                                        <table>
-                                            @if(Model.SoundSynths[i].SoundSynth.ModelCode != null && Model.SoundSynths[i].SoundSynth.ModelCode != Model.SoundSynths[i].SoundSynth.Name)
-                                            {
-                                                <tr>
-                                                    <td>Model</td>
-                                                    <td>@Model.SoundSynths[i].SoundSynth.ModelCode</td>
-                                                </tr>
-                                            }
-                                            @if(Model.SoundSynths[i].SoundSynth.Company != null)
-                                            {
-                                                <tr>
-                                                    <td>Manufacturer</td>
-                                                    <td>
-                                                        <a asp-controller=Company
-                                                           asp-action=View
-                                                           asp-route-id=@Model.SoundSynths[i].SoundSynth.Company.Id>
-                                                            @Model.SoundSynths[i].SoundSynth.Company.Name</a>
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(Model.SoundSynths[i].SoundSynth.Introduced != DateTime.MinValue)
-                                            {
-                                                <tr>
-                                                    <td>Introduction date</td>
-                                                    <td>@($"{Model.Gpus[i].Gpu.Introduced:yyyy}")</td>
-                                                </tr>
-                                            }
-                                            @if(Model.SoundSynths[i].SoundSynth.Voices != 0 || Model.SoundSynths[i].SoundSynth.SquareWave != 0 || Model.SoundSynths[i].SoundSynth.WhiteNoise != 0)
-                                            {
-                                                <tr>
-                                                    <td>Generators</td>
-                                                    <td>
-                                                        <table>
-                                                            @if(Model.SoundSynths[i].SoundSynth.Voices != 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>@Model.SoundSynths[i].SoundSynth.Voices voices</td>
-                                                                </tr>
-                                                            }
-                                                            @if(Model.SoundSynths[i].SoundSynth.SquareWave != 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>@Model.SoundSynths[i].SoundSynth.SquareWave square wave</td>
-                                                                </tr>
-                                                            }
-                                                            @if(Model.SoundSynths[i].SoundSynth.WhiteNoise != 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>@Model.SoundSynths[i].SoundSynth.WhiteNoise white noise</td>
-                                                                </tr>
-                                                            }
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(Model.SoundSynths[i].SoundSynth.Depth != 0 || Model.SoundSynths[i].SoundSynth.Frequency > 0)
-                                            {
-                                                <tr>
-                                                    <td>Sample rate</td>
-                                                    <td>
-                                                        <table>
-                                                            @if(Model.SoundSynths[i].SoundSynth.Depth != 0 && Model.SoundSynths[i].SoundSynth.Frequency > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>@Model.SoundSynths[i].SoundSynth.Depth bits at @(Model.SoundSynths[i].SoundSynth.Frequency > 1000 ? $"{Model.SoundSynths[i].SoundSynth.Frequency / 1000}KHz" : $"{Model.SoundSynths[i].SoundSynth.Frequency}Hz")</td>
-                                                                </tr>
-                                                            }
-                                                            else if(Model.SoundSynths[i].SoundSynth.Depth != 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>@Model.SoundSynths[i].SoundSynth.Depth bits</td>
-                                                                </tr>
-                                                            }
-                                                            else
-                                                            {
-                                                                <tr>
-                                                                    <td>@(Model.SoundSynths[i].SoundSynth.Frequency > 1000 ? $"{Model.SoundSynths[i].SoundSynth.Frequency / 1000}KHz" : $"{Model.SoundSynths[i].SoundSynth.Frequency}Hz")</td>
-                                                                </tr>
-                                                            }
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(Model.SoundSynths[i].SoundSynth.Type != 0)
-                                            {
-                                                <tr>
-                                                    <td>Synthetizer type</td>
-                                                    <td>
-                                                        @Model.SoundSynths[i].SoundSynth.Type
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </table>
-                                    </div>
-                                </div>
-                            </td>
+                            <td>Unknown data</td>
                         }
-                    }
-                    else
-                    {
-                        <td>Unknown data</td>
-                    }
+                    </tr>
                 }
             </table>
         </td>

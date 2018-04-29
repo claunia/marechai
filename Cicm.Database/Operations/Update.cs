@@ -174,6 +174,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV21();
                         break;
                     }
+                    case 21:
+                    {
+                        UpdateDatabaseToV22();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -2482,6 +2487,59 @@ namespace Cicm.Database
             Console.WriteLine("Setting new database version to 21...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('21')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
+
+        void UpdateDatabaseToV22()
+        {
+            Console.WriteLine("Updating database to version 22");
+
+            Console.WriteLine("Creating new table table `machine_families`");
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = V22.MachineFamilies;
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new columns to table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE `machines` ADD COLUMN `family` INT DEFAULT NULL;\n"               +
+                                "ALTER TABLE `machines` CHANGE COLUMN `model` `name` VARCHAR(255) NOT NULL;\n" +
+                                "ALTER TABLE `machines` DROP INDEX `idx_machines_model`;\n"                    +
+                                "ALTER TABLE `machines` ADD COLUMN `model` VARCHAR(50) DEFAULT NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new indexes to table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "CREATE INDEX `idx_machines_family` ON `machines` (`family`);\n" +
+                                "CREATE INDEX `idx_machines_name` ON `machines` (`name`);\n"     +
+                                "CREATE INDEX `idx_machines_model` ON `machines` (`model`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Adding new foreign keys to table `machines`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_family` (family) REFERENCES machine_families (`id`) ON UPDATE CASCADE";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 22...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('22')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
