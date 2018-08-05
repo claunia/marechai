@@ -29,7 +29,9 @@
 *******************************************************************************/
 
 using System.Diagnostics;
+using System.Linq;
 using cicm_web.Models;
+using Cicm.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,16 +40,18 @@ namespace cicm_web.Controllers
     public class HomeController : Controller
     {
         readonly IHostingEnvironment hostingEnvironment;
+        readonly cicmContext _context;
 
-        public HomeController(IHostingEnvironment env)
+        public HomeController(IHostingEnvironment env, cicmContext context)
         {
             hostingEnvironment = env;
+            _context = context;
         }
 
         public IActionResult Index()
         {
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(News.GetLastItems());
+            return View(_context.News.OrderByDescending(t => t.Date).Take(10).ToList());
         }
 
         public IActionResult About()

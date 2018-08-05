@@ -32,7 +32,8 @@
     ViewData["Title"] = "Home Page";
 }
 @using System.IO
-@model IEnumerable<News>
+@using News = Cicm.Database.Models.News
+@model List<Cicm.Database.Models.News>
 
 <h2>News</h2>
 
@@ -46,6 +47,8 @@
             </td>
         </tr>
         <tr>
+            News items not yet implemented!
+            @* // TODO
             @if(news.Image != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, news.Image + ".jpg")))
             {
                 <td height="128"
@@ -77,6 +80,7 @@
                     @news.SubText
                 </a>
             </td>
+        *@
         </tr>
     </table>
     <br />
