@@ -33,9 +33,9 @@ namespace Cicm.Database.Schemas
     /// <summary>Computer</summary>
     public class GpuByMachine
     {
-        /// <summary>Machine ID</summary>
-        public int Machine;
         /// <summary>GPU ID</summary>
         public int Gpu;
+        /// <summary>Machine ID</summary>
+        public int Machine;
     }
 }

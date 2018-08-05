@@ -86,7 +86,8 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * FROM machines WHERE company = '{company}' AND type = '{(int)MachineType.Console}'";
+                string sql =
+                    $"SELECT * FROM machines WHERE company = '{company}' AND type = '{(int)MachineType.Console}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();

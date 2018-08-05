@@ -72,24 +72,26 @@ namespace Cicm.Database.Schemas.Sql
 
         public static readonly string SoundSynths = V4.SoundSynths;
 
-        public static readonly string ComputersForeignKeys = "ALTER TABLE computers ADD FOREIGN KEY fk_computers_company (company) REFERENCES companies (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_cpu1 (cpu1) REFERENCES               processors (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_cpu2 (cpu2) REFERENCES               processors (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_gpu (gpu) REFERENCES                 gpus (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_sound_synth (sound_synth) REFERENCES sound_synths (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_music_synth (music_synth) REFERENCES music_synths (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_hdd1 (hdd1) REFERENCES               disk_formats (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_hdd2 (hdd2) REFERENCES               disk_formats (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_hdd3 (hdd3) REFERENCES               disk_formats (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_disk1 (disk1) REFERENCES             disk_formats (id);\n"+
-        "ALTER TABLE computers ADD FOREIGN KEY fk_computers_disk2 (disk2) REFERENCES disk_formats (id);";
-        
-        public static readonly string ConsolesForeignKeys = "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_company (company) REFERENCES companies (id);\n" +
-        "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_cpu1 (cpu1) REFERENCES               processors (id);\n"+
-        "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_cpu2 (cpu2) REFERENCES               processors (id);\n"+
-        "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_gpu (gpu) REFERENCES                 gpus (id);\n"+
-        "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_sound_synth (sound_synth) REFERENCES sound_synths (id);\n"+
-        "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_music_synth (music_synth) REFERENCES music_synths (id);\n"+
-        "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_format (format) REFERENCES disk_formats (id);";
+        public static readonly string ComputersForeignKeys =
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_company (company) REFERENCES companies (id);\n"            +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_cpu1 (cpu1) REFERENCES               processors (id);\n"   +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_cpu2 (cpu2) REFERENCES               processors (id);\n"   +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_gpu (gpu) REFERENCES                 gpus (id);\n"         +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_sound_synth (sound_synth) REFERENCES sound_synths (id);\n" +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_music_synth (music_synth) REFERENCES music_synths (id);\n" +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_hdd1 (hdd1) REFERENCES               disk_formats (id);\n" +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_hdd2 (hdd2) REFERENCES               disk_formats (id);\n" +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_hdd3 (hdd3) REFERENCES               disk_formats (id);\n" +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_disk1 (disk1) REFERENCES             disk_formats (id);\n" +
+            "ALTER TABLE computers ADD FOREIGN KEY fk_computers_disk2 (disk2) REFERENCES disk_formats (id);";
+
+        public static readonly string ConsolesForeignKeys =
+            "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_company (company) REFERENCES companies (id);\n"            +
+            "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_cpu1 (cpu1) REFERENCES               processors (id);\n"   +
+            "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_cpu2 (cpu2) REFERENCES               processors (id);\n"   +
+            "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_gpu (gpu) REFERENCES                 gpus (id);\n"         +
+            "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_sound_synth (sound_synth) REFERENCES sound_synths (id);\n" +
+            "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_music_synth (music_synth) REFERENCES music_synths (id);\n" +
+            "ALTER TABLE consoles ADD FOREIGN KEY fk_consoles_format (format) REFERENCES disk_formats (id);";
     }
 }

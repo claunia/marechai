@@ -41,6 +41,8 @@ namespace Cicm.Database.Schemas
         public string City;
         /// <summary>Country</summary>
         public Iso3166 Country;
+        /// <summary>Description</summary>
+        public string Description;
         /// <summary>Facebook account</summary>
         public string Facebook;
         /// <summary>Founding date</summary>
@@ -67,7 +69,5 @@ namespace Cicm.Database.Schemas
         public string Twitter;
         /// <summary>Website</summary>
         public string Website;
-        /// <summary>Description</summary>
-        public string Description;
     }
 }

@@ -2554,8 +2554,8 @@ namespace Cicm.Database
             Console.WriteLine("Updating database to version 23");
 
             Console.WriteLine("Altering `browser_tests` primary key");
-            IDbCommand dbCmd             = dbCon.CreateCommand();
-            IDbTransaction trans             = dbCon.BeginTransaction();
+            IDbCommand     dbCmd = dbCon.CreateCommand();
+            IDbTransaction trans = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
             dbCmd.CommandText = "ALTER TABLE browser_tests MODIFY id int NOT NULL auto_increment;";
             dbCmd.ExecuteNonQuery();
@@ -2570,7 +2570,7 @@ namespace Cicm.Database
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
-            
+
             Console.WriteLine("Altering `iso3166_1_numeric` primary key");
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
@@ -2584,8 +2584,7 @@ namespace Cicm.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
-            dbCmd.CommandText =
-                "ALTER TABLE companies MODIFY country smallint(3);";
+            dbCmd.CommandText = "ALTER TABLE companies MODIFY country smallint(3);";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2599,7 +2598,7 @@ namespace Cicm.Database
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
-            
+
             Console.WriteLine("Adding primary keys to several tables");
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
@@ -2621,6 +2620,7 @@ namespace Cicm.Database
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
+
         void OptimizeDatabase()
         {
             IDbCommand     dbCmd       = dbCon.CreateCommand();

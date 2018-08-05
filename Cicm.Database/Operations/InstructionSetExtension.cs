@@ -32,7 +32,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Cicm.Database.Schemas;
-using Console = System.Console;
 
 namespace Cicm.Database
 {

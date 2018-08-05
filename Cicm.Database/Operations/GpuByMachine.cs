@@ -134,11 +134,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                GpuByMachine entry = new GpuByMachine
-                {
-                    Machine   = (int)dataRow["machine"],
-                    Gpu = (int)dataRow["gpu"]
-                };
+                GpuByMachine entry = new GpuByMachine {Machine = (int)dataRow["machine"], Gpu = (int)dataRow["gpu"]};
 
                 entries.Add(entry);
             }

@@ -86,7 +86,8 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * FROM machines WHERE company = '{company}' AND type = '{(int)MachineType.Computer}'";
+                string sql =
+                    $"SELECT * FROM machines WHERE company = '{company}' AND type = '{(int)MachineType.Computer}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
@@ -123,7 +124,8 @@ namespace Cicm.Database
 
             try
             {
-                string sql = $"SELECT * FROM machines LIMIT {start}, {count} WHERE type = '{(int)MachineType.Computer}'";
+                string sql =
+                    $"SELECT * FROM machines LIMIT {start}, {count} WHERE type = '{(int)MachineType.Computer}'";
 
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();

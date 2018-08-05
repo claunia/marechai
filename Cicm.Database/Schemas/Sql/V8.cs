@@ -84,7 +84,7 @@ namespace Cicm.Database.Schemas.Sql
         public static readonly string CompanyLogos = "CREATE TABLE IF NOT EXISTS `company_logos` (\n"   +
                                                      "`id` INT NOT NULL AUTO_INCREMENT,\n"              +
                                                      "`company_id` INT(11) NOT NULL,\n"                 +
-                                                     "`year` INT(4) DEFAULT NULL,\n"                   +
+                                                     "`year` INT(4) DEFAULT NULL,\n"                    +
                                                      "`logo_guid` CHAR(36) NOT NULL,\n"                 +
                                                      "PRIMARY KEY (`id`, `company_id`, `logo_guid`),\n" +
                                                      "UNIQUE INDEX `idx_id` (`id` ASC),\n"              +

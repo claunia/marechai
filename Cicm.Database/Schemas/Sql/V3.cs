@@ -215,7 +215,7 @@ namespace Cicm.Database.Schemas.Sql
                                                        `manuals` int(11) NOT NULL DEFAULT '0',
                                                         PRIMARY KEY (`id`)
                                                         );";
- 
+
         public static readonly string Processors = @"CREATE TABLE IF NOT EXISTS `processors` (
                                                     `id` int(11) NOT NULL AUTO_INCREMENT,
                                                     `name` char(50) NOT NULL DEFAULT '',

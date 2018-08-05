@@ -35,13 +35,13 @@ namespace Cicm.Database.Schemas
     {
         /// <summary>Machine ID</summary>
         public int Machine;
-        /// <summary>Memory type</summary>
-        public MemoryType Type;
-        /// <summary>Memory usage</summary>
-        public MemoryUsage Usage;
         /// <summary>Memory size in bytes</summary>
         public long Size;
         /// <summary>Memory speed in Hz</summary>
         public double Speed;
+        /// <summary>Memory type</summary>
+        public MemoryType Type;
+        /// <summary>Memory usage</summary>
+        public MemoryUsage Usage;
     }
 }

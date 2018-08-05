@@ -132,7 +132,7 @@ namespace Cicm.Database
             param1.Value = entry.Machine;
             param2.Value = entry.Type;
             param3.Value = entry.Usage;
-            param4.Value = entry.Size == 0 ? (object)null : entry.Size;
+            param4.Value = entry.Size  == 0 ? (object)null : entry.Size;
             param5.Value = entry.Speed <= 0 ? (object)null : entry.Speed;
 
             dbcmd.Parameters.Add(param1);
@@ -156,7 +156,7 @@ namespace Cicm.Database
                     Type    = (MemoryType)dataRow["type"],
                     Usage   = (MemoryUsage)dataRow["usage"],
                     Size    = dataRow["size"]  == DBNull.Value ? 0 : (long)dataRow["size"],
-                    Speed   = dataRow["speed"] == DBNull.Value ? 0 : (double)dataRow["speed"],
+                    Speed   = dataRow["speed"] == DBNull.Value ? 0 : (double)dataRow["speed"]
                 };
 
                 entries.Add(entry);
