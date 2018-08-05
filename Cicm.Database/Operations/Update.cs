@@ -184,6 +184,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV23();
                         break;
                     }
+                    case 23:
+                    {
+                        UpdateVersionToEntityFramework();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -2639,6 +2644,49 @@ namespace Cicm.Database
                 dataAdapter       = dbCore.GetNewDataAdapter();
                 dbCmd.CommandText = $"OPTIMIZE TABLE '{tableName}'";
             }
+        }
+
+        public int GetVersion()
+        {
+            int            currentDbVersion = 2;
+            IDbCommand     dbCmd            = dbCon.CreateCommand();
+            IDbDataAdapter dataAdapter      = dbCore.GetNewDataAdapter();
+            dbCmd.CommandText = "SELECT * FROM cicm_db";
+            DataSet dataSet = new DataSet();
+            dataAdapter.SelectCommand = dbCmd;
+            dataAdapter.Fill(dataSet);
+
+            foreach(DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                int newId                                     = int.Parse(dataRow["version"].ToString());
+                if(newId > currentDbVersion) currentDbVersion = newId;
+            }
+
+            return currentDbVersion;
+        }
+
+        public void UpdateVersionToEntityFramework()
+        {
+            Console.WriteLine("Adding Entity Framework table...");
+            IDbCommand dbCmd = dbCon.CreateCommand();
+            dbCmd.CommandText = "create table `__EFMigrationsHistory`\n"              +
+                                "(MigrationId    varchar(95) not null primary key,\n" +
+                                "ProductVersion varchar(32) not null);";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+            
+            Console.WriteLine("Adding Entity Framework first migration...");
+            dbCmd = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm.`__EFMigrationsHistory` (MigrationId, ProductVersion)" +
+                                " VALUES ('20180805214952_InitialMigration', '2.1.1-rtm-30846');";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+            
+            Console.WriteLine("Setting new database version to 1984 (Entity Framework)...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('1984')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
         }
     }
 }

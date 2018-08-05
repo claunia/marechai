@@ -30,9 +30,12 @@
 
 using System;
 using Cicm.Database;
+using Cicm.Database.Models;
 using DiscImageChef.Interop;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Version = DiscImageChef.Interop.Version;
 
 namespace cicm_web
@@ -106,18 +109,14 @@ namespace cicm_web
                           DetectOS.IsMono ? "Mono" : ".NET Core",
                           DetectOS.IsMono ? Version.GetMonoVersion() : Version.GetNetCoreVersion());
 
-            Console.WriteLine("\u001b[31;1mConnecting to MySQL database...\u001b[0m");
+            Console.WriteLine("\u001b[31;1mUpdating MySQL database without Entity Framework if it exists...\u001b[0m");
             Database = new Mysql();
             bool res = Database.OpenDb("localhost", "cicm", "cicm", "cicmpass", 3306);
-            if(!res)
+
+            if(res)
             {
-                Console.WriteLine("\u001b[31;1mCould not open database, trying to create a new one...\u001b[0m");
-                res = Database.CreateDb("localhost", "cicm", "cicm", "cicmpass", 3306);
-                if(!res)
-                {
-                    Console.WriteLine("\u001b[31;1mCould create database, exiting...\u001b[0m");
-                    return;
-                }
+                Console.WriteLine("\u001b[31;1mClosing database...\u001b[0m");
+                Database.CloseDb();
             }
 
             DateTime start = DateTime.Now;
@@ -132,9 +131,31 @@ namespace cicm_web
             end = DateTime.Now;
             Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                               (end - start).TotalSeconds);
-            Console.WriteLine("\u001b[31;1mStarting web server...\u001b[0m");
 
-            BuildWebHost(args).Run();
+            IWebHost host = BuildWebHost(args);
+
+            using(IServiceScope scope = host.Services.CreateScope())
+            {
+                IServiceProvider services = scope.ServiceProvider;
+                try
+                {
+                    start = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mUpdating database with Entity Framework...\u001b[0m");
+                    cicmContext context = services.GetRequiredService<cicmContext>();
+                    context.Database.Migrate();
+                    end = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                                      (end - start).TotalSeconds);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("\u001b[31;1mCould not open database...\u001b[0m");
+                    return;
+                }
+            }
+
+            Console.WriteLine("\u001b[31;1mStarting web server...\u001b[0m");
+            host.Run();
         }
 
         static IWebHost BuildWebHost(string[] args)

@@ -35,7 +35,8 @@ namespace Cicm.Database
     public partial class Operations
     {
         /// <summary>Last known database version</summary>
-        const int DB_VERSION = 23;
+        const int DB_VERSION = 24;
+        public const int DbVersionEntityFramework = 1984;
         /// <summary>The column with this value indicates there is no item of this type.</summary>
         public const int DB_NONE = -1;
         /// <summary>
