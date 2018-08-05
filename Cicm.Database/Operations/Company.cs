@@ -438,7 +438,7 @@ namespace Cicm.Database
                             ? DateTime.MinValue
                             : Convert.ToDateTime(dataRow["sold"].ToString()),
                     SoldTo  = dataRow["sold_to"] == DBNull.Value ? null : GetCompany((int)dataRow["sold_to"]),
-                    Country = dataRow["country"] == DBNull.Value ? null : GetIso3166((ushort)dataRow["country"])
+                    Country = dataRow["country"] == DBNull.Value ? null : GetIso3166((short)dataRow["country"])
                 };
 
                 if(GetCompanyLogosByCompany(out List<CompanyLogo> logos, entry.Id))

@@ -68,7 +68,7 @@ namespace cicm_web.Controllers
             return View(company);
         }
 
-        public IActionResult ByCountry(ushort id)
+        public IActionResult ByCountry(short id)
         {
             Iso3166 iso3166 = Program.Database.Operations.GetIso3166(id);
 

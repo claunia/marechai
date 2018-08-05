@@ -67,6 +67,7 @@ namespace cicm_web.Models
         public static Processor GetItem(int id)
         {
             Cicm.Database.Schemas.Processor dbItem = Program.Database?.Operations.GetProcessor(id);
+
             return dbItem == null
                        ? null
                        : new Processor

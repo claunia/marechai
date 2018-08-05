@@ -115,7 +115,7 @@ namespace Cicm.Database
         /// </summary>
         /// <param name="id">Id</param>
         /// <returns>ISO 3166-1 code with specified id, <c>null</c> if not found or error</returns>
-        public Iso3166 GetIso3166(ushort id)
+        public Iso3166 GetIso3166(short id)
         {
             #if DEBUG
             Console.WriteLine("Getting ISO 3166-1 code with id {0}...", id);
@@ -270,7 +270,7 @@ namespace Cicm.Database
 
             foreach(DataRow dataRow in dataTable.Rows)
             {
-                Iso3166 entry = new Iso3166 {Id = (ushort)dataRow["id"], Name = (string)dataRow["name"]};
+                Iso3166 entry = new Iso3166 {Id = (short)dataRow["id"], Name = (string)dataRow["name"]};
 
                 entries.Add(entry);
             }

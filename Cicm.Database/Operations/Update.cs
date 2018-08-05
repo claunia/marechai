@@ -179,6 +179,11 @@ namespace Cicm.Database
                         UpdateDatabaseToV22();
                         break;
                     }
+                    case 22:
+                    {
+                        UpdateDatabaseToV23();
+                        break;
+                    }
                 }
 
             OptimizeDatabase();
@@ -2544,6 +2549,78 @@ namespace Cicm.Database
             dbCmd.Dispose();
         }
 
+        void UpdateDatabaseToV23()
+        {
+            Console.WriteLine("Updating database to version 23");
+
+            Console.WriteLine("Altering `browser_tests` primary key");
+            IDbCommand dbCmd             = dbCon.CreateCommand();
+            IDbTransaction trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE browser_tests MODIFY id int NOT NULL auto_increment;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Dropping foreign key between `iso3166_1_numeric` and `companies`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE companies DROP FOREIGN KEY `fk_companies_country`;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+            
+            Console.WriteLine("Altering `iso3166_1_numeric` primary key");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText = "ALTER TABLE iso3166_1_numeric MODIFY id smallint(3) NOT NULL;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Altering `country` column in `companies`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE companies MODIFY country smallint(3);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Re-adding new foreign keys to table `companies`");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE `companies` ADD FOREIGN KEY `fk_companies_country` (country) REFERENCES `iso3166_1_numeric` (`id`);";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+            
+            Console.WriteLine("Adding primary keys to several tables");
+            dbCmd             = dbCon.CreateCommand();
+            trans             = dbCon.BeginTransaction();
+            dbCmd.Transaction = trans;
+            dbCmd.CommandText =
+                "ALTER TABLE gpus_by_machine       ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
+                "ALTER TABLE memory_by_machine     ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
+                "ALTER TABLE processors_by_machine ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
+                "ALTER TABLE resolutions_by_gpu    ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
+                "ALTER TABLE sound_by_machine      ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
+                "ALTER TABLE storage_by_machine    ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;";
+            dbCmd.ExecuteNonQuery();
+            trans.Commit();
+            dbCmd.Dispose();
+
+            Console.WriteLine("Setting new database version to 23...");
+            dbCmd             = dbCon.CreateCommand();
+            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('23')";
+            dbCmd.ExecuteNonQuery();
+            dbCmd.Dispose();
+        }
         void OptimizeDatabase()
         {
             IDbCommand     dbCmd       = dbCon.CreateCommand();

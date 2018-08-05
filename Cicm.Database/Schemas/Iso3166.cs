@@ -34,7 +34,7 @@ namespace Cicm.Database.Schemas
     public class Iso3166
     {
         /// <summary>ISO assigned ID</summary>
-        public ushort Id;
+        public short Id;
         /// <summary>English name</summary>
         public string Name;
     }
