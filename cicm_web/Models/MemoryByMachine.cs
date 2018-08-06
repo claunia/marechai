@@ -29,16 +29,16 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
-using Cicm.Database.Schemas;
+using Cicm.Database;
 
 namespace cicm_web.Models
 {
     public class MemoryByMachine
     {
-        public MemoryType Type;
+        public long        Size;
+        public double      Speed;
+        public MemoryType  Type;
         public MemoryUsage Usage;
-        public long Size;
-        public double Speed;
 
         public static MemoryByMachine[] GetAllItems(int machineId)
         {
@@ -52,10 +52,10 @@ namespace cicm_web.Models
             foreach(Cicm.Database.Schemas.MemoryByMachine dbItem in dbItems)
                 items.Add(new MemoryByMachine
                 {
-                    Type =dbItem.Type,
-                    Usage =dbItem.Usage,
-                    Size =dbItem.Size,
-                    Speed =dbItem.Speed
+                    Type  = dbItem.Type,
+                    Usage = dbItem.Usage,
+                    Size  = dbItem.Size,
+                    Speed = dbItem.Speed
                 });
 
             return items.ToArray();

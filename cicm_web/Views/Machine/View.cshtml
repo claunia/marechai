@@ -32,12 +32,10 @@
     ViewData["Title"] = "Computer";
 }
 @using System.IO
-@using Cicm.Database.Schemas
-@using MemoryByMachine = cicm_web.Models.MemoryByMachine
-@using StorageByMachine = cicm_web.Models.StorageByMachine
-@model cicm_web.Models.Machine
+@using Cicm.Database
+@model Machine
 
-<p align=center>
+<p align="center">
     @if(Model.Company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.LastLogo.Guid + ".svg")))
     {
         <picture>
@@ -67,11 +65,11 @@
 }
 
 <b>
-    <a asp-controller=Company
-       asp-action=View
-       asp-route-id=@Model.Company.Id>
+    <a asp-controller="Company"
+       asp-action="View"
+       asp-route-id="@Model.Company.Id">
         @Model.Company.Name</a> @Model.Name</b>
-<table width=100%>
+<table width="100%">
 
 @if(Model.Introduced.Year != 1000)
 {

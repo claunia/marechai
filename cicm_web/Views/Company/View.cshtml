@@ -32,26 +32,27 @@
     ViewData["Title"] = "Companies";
 }
 @using System.IO
-@using Cicm.Database.Schemas
-@model CompanyWithItems
+@using Cicm.Database
+@using Cicm.Database.Models
+@model Cicm.Database.Models.Companies
 
 @if(Model != null)
 {
     <div class="container-fluid">
     <p align=center>
-        @if(Model.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.LastLogo.Guid + ".svg")))
+        @if(ViewBag.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", ViewBag.LastLogo.Guid + ".svg")))
         {
             <picture>
                 <source type="image/svg+xml"
-                        srcset="/assets/logos/@(Model.LastLogo.Guid).svg">
+                        srcset="/assets/logos/@(ViewBag.LastLogo.Guid).svg">
                 <source type="image/webp"
-                        srcset="/assets/logos/webp/1x/@(Model.LastLogo.Guid).webp,
-    /assets/logos/webp/1x/@(Model.LastLogo.Guid).webp 2x,
-    /assets/logos/webp/1x/@(Model.LastLogo.Guid).webp 3x">
-                <img srcset="/assets/logos/png/1x/@(Model.LastLogo.Guid).png,
-                             /assets/logos/png/1x/@(Model.LastLogo.Guid).png 2x,
-                             /assets/logos/png/1x/@(Model.LastLogo.Guid).webp 3x"
-                     src="/assets/logos/png/1x@(Model.LastLogo.Guid).png")
+                        srcset="/assets/logos/webp/1x/@(ViewBag.LastLogo.Guid).webp,
+    /assets/logos/webp/1x/@(ViewBag.LastLogo.Guid).webp 2x,
+    /assets/logos/webp/1x/@(ViewBag.LastLogo.Guid).webp 3x">
+                <img srcset="/assets/logos/png/1x/@(ViewBag.LastLogo.Guid).png,
+                             /assets/logos/png/1x/@(ViewBag.LastLogo.Guid).png 2x,
+                             /assets/logos/png/1x/@(ViewBag.LastLogo.Guid).webp 3x"
+                     src="/assets/logos/png/1x@(ViewBag.LastLogo.Guid).png")
                      alt=""
                      height="auto"
                      width="auto"
@@ -63,7 +64,7 @@
     @{
         string carrouselActive = "active";
     }
-    @if(Model.Logos != null && Model.Logos.Length > 1)
+    @if(ViewBag.Logos != null && ViewBag.Logos.Length > 1)
     {
         <div class="col-3">
             <div class="carousel slide"
@@ -72,7 +73,7 @@
                 <div class="carousel-inner">
 
 
-                    @foreach(CompanyLogo logo in Model.Logos)
+                    @foreach(CompanyLogos logo in ViewBag.Logos)
                     {
                         if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", logo.Guid + ".svg")))
                         {
@@ -129,11 +130,11 @@
             <b>@Model.Name</b>
         </th>
     </tr>
-    @if(Model.Founded > DateTime.MinValue)
+    @if(Model.Founded.HasValue)
     {
         <tr>
             <th>Founded</th>
-            <td>@Model.Founded.ToLongDateString().</td>
+            <td>@Model.Founded.Value.ToLongDateString().</td>
         </tr>
     }
     <tr>
@@ -183,12 +184,12 @@
                             <a asp-controller="Company"
                                asp-action="View"
                                asp-route-id="@Model.SoldTo.Id">
-                                @Model.SoldTo.Name</a> on @Model.Sold.ToLongDateString().
+                                @Model.SoldTo.Name</a> on @Model.Sold.Value.ToLongDateString().
                         </td>
                     }
                     else
                     {
-                        <td>Company was sold on @Model.Sold.ToLongDateString() to an unknown company.</td>
+                        <td>Company was sold on @Model.Sold.Value.ToLongDateString() to an unknown company.</td>
                     }
                 }
                 else
@@ -215,7 +216,7 @@
                     if(Model.SoldTo != null)
                     {
                         <td>
-                            Company was merged on @Model.Sold.ToLongDateString() to form
+                            Company was merged on @Model.Sold.Value.ToLongDateString() to form
                             <a asp-controller="Company"
                                asp-action="View"
                                asp-route-id="@Model.SoldTo.Id">
@@ -224,7 +225,7 @@
                     }
                     else
                     {
-                        <td>Company was merge on @Model.Sold.ToLongDateString() to form an unknown company.</td>
+                        <td>Company was merge on @Model.Sold.Value.ToLongDateString() to form an unknown company.</td>
                     }
                 }
                 else
@@ -248,7 +249,7 @@
             case CompanyStatus.Bankrupt:
                 if(Model.Sold != DateTime.MinValue)
                 {
-                    <td>Company declared bankruptcy on @Model.Sold.ToLongDateString().</td>
+                    <td>Company declared bankruptcy on @Model.Sold.Value.ToLongDateString().</td>
                 }
                 else
                 {
@@ -258,7 +259,7 @@
             case CompanyStatus.Defunct:
                 if(Model.Sold != DateTime.MinValue)
                 {
-                    <td>Company ceased operations on @Model.Sold.ToLongDateString().</td>
+                    <td>Company ceased operations on @Model.Sold.Value.ToLongDateString().</td>
                 }
                 else
                 {
@@ -275,12 +276,12 @@
                             <a asp-controller="Company"
                                asp-action="View"
                                asp-route-id="@Model.SoldTo.Id">
-                                @Model.SoldTo.Name</a> on @Model.Sold.ToLongDateString().
+                                @Model.SoldTo.Name</a> on @Model.Sold.Value.ToLongDateString().
                         </td>
                     }
                     else
                     {
-                        <td>Company was renamed on @Model.Sold.ToLongDateString() to an unknown name.</td>
+                        <td>Company was renamed on @Model.Sold.Value.ToLongDateString() to an unknown name.</td>
                     }
                 }
                 else
@@ -345,7 +346,7 @@
     <div class="row"
          id="itemsAccordion">
         <div class="card">
-            @if(Model.Computers.Any())
+            @if(Model.Machines.Any(t => t.Type == MachineType.Computer))
             {
                 <div class="card-header"
                      id="headingComputers">
@@ -355,7 +356,7 @@
                                 class="btn btn-info"
                                 data-target="#collapseComputers"
                                 data-toggle="collapse">
-                            <span class="badge badge-success">@Model.Computers.Count()</span> computers known.
+                            <span class="badge badge-success">@Model.Machines.Count(t => t.Type == MachineType.Computer)</span> computers known.
                         </button>
                     </h5>
 
@@ -365,7 +366,7 @@
                      data-parent="#itemsAccordion"
                      id="collapseComputers">
                     <div class="card-body">
-                        @foreach(MachineMini computer in Model.Computers)
+                        @foreach(Machines computer in Model.Machines.Where(t => t.Type == MachineType.Computer))
                         {
                             <a asp-controller="Machine"
                                asp-action="View"
@@ -387,7 +388,7 @@
                     </h5>
                 </div>
             }
-            @if(Model.Consoles.Any())
+            @if(Model.Machines.Any(t => t.Type == MachineType.Console))
             {
                 <div class="card-header"
                      id="headingConsoles">
@@ -397,7 +398,7 @@
                                 class="btn btn-info"
                                 data-target="#collapseConsoles"
                                 data-toggle="collapse">
-                            <span class="badge badge-success">@Model.Consoles.Count()</span> videogame consoles known.
+                            <span class="badge badge-success">@Model.Machines.Count(t => t.Type == MachineType.Console)</span> videogame consoles known.
                         </button>
                     </h5>
 
@@ -407,7 +408,7 @@
                      data-parent="#itemsAccordion"
                      id="collapseConsoles">
                     <div class="card-body">
-                        @foreach(MachineMini console in Model.Consoles)
+                        @foreach(Machines console in Model.Machines.Where(t => t.Type == MachineType.Console))
                         {
                             <a asp-controller="Machine"
                                asp-action="View"
@@ -432,6 +433,7 @@
         </div>
     </div>
 
+    @* TODO: This is not working with EF, check why *@
     @if(Model.Description != null)
     {
         <div class="container-fluid row">

@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
-using Cicm.Database.Schemas;
+using Cicm.Database;
 
 namespace cicm_web.Models
 {

@@ -28,21 +28,23 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using cicm_web.Models;
-using Cicm.Database.Schemas;
+using System.Linq;
+using Cicm.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Company = cicm_web.Models.Company;
+using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Controllers
 {
     public class CompanyController : Controller
     {
+        readonly cicmContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
 
-        public CompanyController(IHostingEnvironment env)
+        public CompanyController(IHostingEnvironment env, cicmContext context)
         {
             hostingEnvironment = env;
+            _context           = context;
         }
 
         public IActionResult ByLetter(char id)
@@ -54,36 +56,40 @@ namespace cicm_web.Controllers
 
             ViewBag.Letter = id;
 
-            Company[] companies = id == '\0' ? Company.GetAllItems() : Company.GetItemsStartingWithLetter(id);
-
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(companies);
+            return View(id == '\0'
+                            ? _context.Companies.ToArray()
+                            : _context.Companies.Where(c => c.Name.StartsWith(id)).ToArray());
         }
 
         public IActionResult View(int id)
         {
-            CompanyWithItems company = CompanyWithItems.GetItem(id);
-
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
+            Companies company = _context.Companies.Where(c => c.Id == id).Include(c => c.Description)
+                                        .Include(c => c.Machines).Include(c => c.Country).FirstOrDefault();
+
+            if(company == null) return Index();
+
+            ViewBag.LastLogo     = company.CompanyLogos.OrderByDescending(l => l.Year).FirstOrDefault();
+            ViewBag.CompanyLogos = company.CompanyLogos.OrderByDescending(l => l.Year).ToList();
+
             return View(company);
         }
 
         public IActionResult ByCountry(short id)
         {
-            Iso3166 iso3166 = Program.Database.Operations.GetIso3166(id);
-
-            ViewBag.Iso3166 = iso3166;
-
-            Company[] companies = iso3166 == null ? Company.GetAllItems() : Company.GetItemsByCountry(id);
+            ViewBag.Iso3166 = _context.Iso31661Numeric.FirstOrDefault(i => i.Id == id);
 
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(companies);
+            return View(ViewBag.Iso3166 == null
+                            ? _context.Companies.ToArray()
+                            : _context.Companies.Where(c => c.CountryId == id).ToArray());
         }
 
         public IActionResult Index()
         {
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(Company.GetAllItems());
+            return View(_context.Companies.ToArray());
         }
     }
 }

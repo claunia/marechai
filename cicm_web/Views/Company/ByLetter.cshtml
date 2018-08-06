@@ -31,11 +31,11 @@
 
     ViewData["Title"] = "Companies";
 }
-@using System.IO
-@model IEnumerable<Company>
+@using Cicm.Database.Models
+@model Cicm.Database.Models.Companies[]
 
 <p>Search results:</p>
-<p align=center>
+<p align="center">
     @if(ViewBag.Letter != '\0')
     {
         <b>@ViewBag.Letter</b>
@@ -46,11 +46,12 @@
     {
         <p>
             @Model.Count() companies found in the database.<br />
-            @foreach(Company company in Model)
+            @foreach(Companies company in Model)
             {
                 <a asp-controller="Company"
                    asp-action="View"
                    asp-route-id="@company.Id">
+                    @*
                     @if(company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.LastLogo.Guid + ".svg")))
                     {
                         <picture>
@@ -70,6 +71,7 @@
                                  style="max-height: 32px; max-width: 128px" />
                         </picture>
                     }
+                    *@
                     @company.Name
                 </a>
                 <br />
