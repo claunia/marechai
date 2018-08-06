@@ -125,12 +125,6 @@ namespace cicm_web
             DateTime end = DateTime.Now;
             Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                               (end - start).TotalSeconds);
-            start = DateTime.Now;
-            Console.WriteLine("\u001b[31;1mImporting company logos...\u001b[0m");
-            SvgRender.ImportCompanyLogos();
-            end = DateTime.Now;
-            Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
-                              (end - start).TotalSeconds);
 
             IWebHost host = BuildWebHost(args);
 
@@ -143,6 +137,12 @@ namespace cicm_web
                     Console.WriteLine("\u001b[31;1mUpdating database with Entity Framework...\u001b[0m");
                     cicmContext context = services.GetRequiredService<cicmContext>();
                     context.Database.Migrate();
+                    end = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                                      (end - start).TotalSeconds);
+                    start = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mImporting company logos...\u001b[0m");
+                    SvgRender.ImportCompanyLogos(context);
                     end = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);

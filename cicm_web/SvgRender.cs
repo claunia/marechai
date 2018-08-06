@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using Cicm.Database.Schemas;
+using Cicm.Database.Models;
 using SkiaSharp;
-using Console = System.Console;
 using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
 
 namespace cicm_web
@@ -74,7 +73,7 @@ namespace cicm_web
             }
         }
 
-        public static void ImportCompanyLogos()
+        public static void ImportCompanyLogos(cicmContext context)
         {
             if(!Directory.Exists("wwwroot/assets/incoming")) return;
 
@@ -95,9 +94,12 @@ namespace cicm_web
 
                 if(!int.TryParse(pieces[2], out int year)) continue;
 
-                CompanyLogo entry = new CompanyLogo {CompanyId = companyId, Year = year, Guid = guid};
-
-                if(!Program.Database.Operations.AddCompanyLogo(entry, out _)) continue;
+                try
+                {
+                    context.CompanyLogos.Add(new CompanyLogo {CompanyId = companyId, Year = year, Guid = guid});
+                    context.SaveChanges();
+                }
+                catch(Exception) { continue; }
 
                 File.Move(file, $"wwwroot/assets/logos/{guid}.svg");
             }
