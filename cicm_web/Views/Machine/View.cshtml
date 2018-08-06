@@ -33,8 +33,12 @@
 }
 @using System.IO
 @using Cicm.Database
-@model Machine
-
+@using Cicm.Database.Models
+@using MemoryByMachine = Cicm.Database.Models.MemoryByMachine
+@using SoundByMachine = Cicm.Database.Models.SoundByMachine
+@using StorageByMachine = Cicm.Database.Models.StorageByMachine
+@model Cicm.Database.Models.Machine
+@* TODO
 <p align="center">
     @if(Model.Company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.LastLogo.Guid + ".svg")))
     {
@@ -56,8 +60,11 @@
         </picture>
     }
 </p>
+*@
 
-@if(Model.Introduced.Year == 1000)
+@{ int counter = 0; }
+
+@if(Model.Introduced.HasValue && Model.Introduced.Value.Year == 1000)
 {
     <b>
         <div style="text-align: center;">PROTOTYPE</div>
@@ -71,7 +78,7 @@
         @Model.Company.Name</a> @Model.Name</b>
 <table width="100%">
 
-@if(Model.Introduced.Year != 1000)
+@if(Model.Introduced.HasValue && Model.Introduced.Value.Year != 1000)
 {
     <tr>
         <th scope=row
@@ -83,8 +90,8 @@
         <td width="63%">
             <a asp-controller="Computer"
                asp-action="ByYear"
-               asp-route-id="@Model.Introduced.Year">
-                @Model.Introduced.ToLongDateString()</a>
+               asp-route-id="@Model.Introduced.Value.Year">
+                @Model.Introduced.Value.ToLongDateString()</a>
         </td>
     </tr>
 }
@@ -119,7 +126,7 @@
         </td>
     </tr>
 }
-@if(Model.Processors != null && Model.Processors.Length > 0)
+@if(Model.Processors.Count > 0)
 {
     <tr>
     <th scope=row>
@@ -129,239 +136,239 @@
     </th>
     <td>
     <table>
-    @for(int i = 0; i < Model.Processors.Length; i++)
+    @{ counter = 0; }
+    @foreach(ProcessorsByMachine processorByMachine in Model.Processors)
     {
-        if(Model.Processors[i] != null)
+        <tr>
+        <td>
+        @if(processorByMachine.Speed > 0) { @(processorByMachine.Processor.GprSize > 0 ? $"{processorByMachine.Processor.Name} @ {processorByMachine.Speed}Mhz ({processorByMachine.Processor.GprSize} bits)" : $"{processorByMachine.Processor.Name} @ {processorByMachine.Speed}Mhz") }
+        else
+        { @($"{processorByMachine.Processor.Name}") }
+        <a aria-controls="@($"cpuInfo{counter}")"
+           aria-expanded="false"
+           class="btn btn-link"
+           data-toggle="collapse"
+           href="@($"#cpuInfo{counter}")">
+            +info
+        </a>
+        <div class="collapse"
+             id="@($"cpuInfo{counter}")">
+        <div class="card card-body">
+        <table>
+        @if(processorByMachine.Processor.ModelCode != null && processorByMachine.Processor.ModelCode != processorByMachine.Processor.Name)
         {
             <tr>
-            <td>
-            @if(Model.Processors[i].Speed > 0) { @(Model.Processors[i].Processor.GprSize > 0 ? $"{Model.Processors[i].Processor.Name} @ {Model.Processors[i].Speed}Mhz ({Model.Processors[i].Processor.GprSize} bits)" : $"{Model.Processors[i].Processor.Name} @ {Model.Processors[i].Speed}Mhz") }
-            else
-            { @($"{Model.Processors[i].Processor.Name}") }
-            <a aria-controls="@($"cpuInfo{i}")"
-               aria-expanded="false"
-               class="btn btn-link"
-               data-toggle="collapse"
-               href="@($"#cpuInfo{i}")">
-                +info
-            </a>
-            <div class="collapse"
-                 id="@($"cpuInfo{i}")">
-            <div class="card card-body">
-            <table>
-            @if(Model.Processors[i].Processor.ModelCode != null && Model.Processors[i].Processor.ModelCode != Model.Processors[i].Processor.Name)
-            {
-                <tr>
-                    <td>Model</td>
-                    <td>@Model.Processors[i].Processor.ModelCode</td>
-                </tr>
-            }
-            <tr>
-                <td>Manufacturer</td>
-                <td>
-                    <a asp-controller=Company
-                       asp-action=View
-                       asp-route-id=@Model.Processors[i].Processor.Company.Id>
-                        @Model.Processors[i].Processor.Company.Name</a>
-                </td>
-            </tr>
-            @if(Model.Processors[i].Processor.Introduced != DateTime.MinValue)
-            {
-                <tr>
-                    <td>Introduction date</td>
-                    <td>@($"{Model.Processors[i].Processor.Introduced:yyyy}")</td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.InstructionSet != null)
-            {
-                <tr>
-                    <td>Instruction set</td>
-                    <td>@Model.Processors[i].Processor.InstructionSet.Name</td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.Speed > 0)
-            {
-                <tr>
-                    <td>Nominal speed</td>
-                    <td>@Model.Processors[i].Processor.Speed MHz</td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.Gpr > 0 || Model.Processors[i].Processor.Fpr > 0 || Model.Processors[i].Processor.Simd > 0)
-            {
-                <tr>
-                    <td>Registers</td>
-                    <td>
-                        <table>
-                            @if(Model.Processors[i].Processor.Gpr > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @Model.Processors[i].Processor.Gpr general purpose registers of @Model.Processors[i].Processor.GprSize bits
-                                        @if(Model.Processors[i].Processor.FprSize > 0 && Model.Processors[i].Processor.Fpr == 0) { @($", that can be used as floating point registers of {Model.Processors[i].Processor.FprSize}") }
-                                        @if(Model.Processors[i].Processor.SimdSize > 0 && Model.Processors[i].Processor.Simd == 0) { @($", that can be used as SIMD registers of {Model.Processors[i].Processor.FprSize}") }
-                                    </td>
-                                </tr>
-                            }
-                            @if(Model.Processors[i].Processor.Fpr > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @Model.Processors[i].Processor.Fpr floating-point registers of @Model.Processors[i].Processor.FprSize bits
-                                        @if(Model.Processors[i].Processor.SimdSize > 0 && Model.Processors[i].Processor.Simd == 0) { @($", that can be used as SIMD registers of {Model.Processors[i].Processor.FprSize}") }
-                                    </td>
-                                </tr>
-                            }
-                            @if(Model.Processors[i].Processor.Simd > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @Model.Processors[i].Processor.Simd <abbr title="Single instruction, multiple data">SIMD</abbr>registers of @Model.Processors[i].Processor.SimdSize bits
-                                    </td>
-                                </tr>
-                            }
-                        </table>
-                    </td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.Cores > 1)
-            {
-                <tr>
-                    <td>Multi-core</td>
-                    <td>@Model.Processors[i].Processor.Cores cores</td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.Cores > 1)
-            {
-                <tr>
-                    <td>
-                        <abbr title="Simultanoeus multithreading">SMT</abbr>
-                    </td>
-                    <td>
-                        @Model.Processors[i].Processor.ThreadsPerCore threads
-                        @if(Model.Processors[i].Processor.Cores > 1) { @(" per core") }
-                    </td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.DataBus > 0 || Model.Processors[i].Processor.AddressBus > 0)
-            {
-                <tr>
-                    <td>Bus</td>
-                    <td>
-                        <table>
-                            @if(Model.Processors[i].Processor.DataBus > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @Model.Processors[i].Processor.DataBus-bit data
-                                    </td>
-                                </tr>
-                            }
-                            @if(Model.Processors[i].Processor.AddressBus > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @Model.Processors[i].Processor.AddressBus-bit address
-                                    </td>
-                                </tr>
-                            }
-                        </table>
-                    </td>
-                </tr>
-            }
-
-            @if(Model.Processors[i].Processor.L1Instruction > 0 || Model.Processors[i].Processor.L1Data > 0 || Model.Processors[i].Processor.L2 > 0 || Model.Processors[i].Processor.L2 > 0)
-            {
-                <tr>
-                    <td>Cache</td>
-                    <td>
-                        <table>
-                            @if(Model.Processors[i].Processor.L1Instruction > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @(Model.Processors[i].Processor.L1Data < 0 ? $"{Model.Processors[i].Processor.L1Instruction}KiB combined instruction-data L1" : $"{Model.Processors[i].Processor.L1Instruction}KiB instruction L1")
-                                    </td>
-                                </tr>
-                            }
-                            @if(Model.Processors[i].Processor.L1Data > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @($"{Model.Processors[i].Processor.L1Data}KiB data L1")
-                                    </td>
-                                </tr>
-                            }
-                            @if(Model.Processors[i].Processor.L2 > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @($"{Model.Processors[i].Processor.L2}KiB L2")
-                                    </td>
-                                </tr>
-                            }
-                            @if(Model.Processors[i].Processor.L3 > 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @($"{Model.Processors[i].Processor.L3}KiB L3")
-                                    </td>
-                                </tr>
-                            }
-                        </table>
-                    </td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.Package != null)
-            {
-                <tr>
-                    <td>Package</td>
-                    <td>@Model.Processors[i].Processor.Package</td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.Process != null || Model.Processors[i].Processor.ProcessNm > 0)
-            {
-                <tr>
-                    <td>Manufacturing process</td>
-                    <td>
-                        @if(Model.Processors[i].Processor.Process != null && Model.Processors[i].Processor.ProcessNm > 0)
-                        {
-                            @Model.Processors[i].Processor.Process
-                            @("@")
-                            @(Model.Processors[i].Processor.ProcessNm > 100 ? $"{Model.Processors[i].Processor.ProcessNm / 100}µm" : $"{Model.Processors[i].Processor.ProcessNm}nm")
-                        }
-                        else if(Model.Processors[i].Processor.ProcessNm > 0) { @(Model.Processors[i].Processor.ProcessNm > 100 ? $"{Model.Processors[i].Processor.ProcessNm / 100}µm" : $"{Model.Processors[i].Processor.ProcessNm}nm") }
-                        else
-                        { @Model.Processors[i].Processor.Process }
-                    </td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.DieSize > 0)
-            {
-                <tr>
-                    <td>Die size</td>
-                    <td>@Model.Processors[i].Processor.DieSize mm&sup2;</td>
-                </tr>
-            }
-            @if(Model.Processors[i].Processor.Transistors > 0)
-            {
-                <tr>
-                    <td>Transistors</td>
-                    <td>@Model.Processors[i].Processor.Transistors</td>
-                </tr>
-            }
-            </table>
-            </div>
-            </div>
-            </td>
-
+                <td>Model</td>
+                <td>@processorByMachine.Processor.ModelCode</td>
             </tr>
         }
+        <tr>
+            <td>Manufacturer</td>
+            <td>
+                <a asp-controller=Company
+                   asp-action=View
+                   asp-route-id=@processorByMachine.Processor.Company.Id>
+                    @processorByMachine.Processor.Company.Name</a>
+            </td>
+        </tr>
+        @if(processorByMachine.Processor.Introduced != DateTime.MinValue)
+        {
+            <tr>
+                <td>Introduction date</td>
+                <td>@($"{processorByMachine.Processor.Introduced:yyyy}")</td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.InstructionSet != null)
+        {
+            <tr>
+                <td>Instruction set</td>
+                <td>@processorByMachine.Processor.InstructionSet.Name</td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.Speed > 0)
+        {
+            <tr>
+                <td>Nominal speed</td>
+                <td>@processorByMachine.Processor.Speed MHz</td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.Gprs > 0 || processorByMachine.Processor.Fprs > 0 || processorByMachine.Processor.SimdRegisters > 0)
+        {
+            <tr>
+                <td>Registers</td>
+                <td>
+                    <table>
+                        @if(processorByMachine.Processor.Gprs > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @processorByMachine.Processor.Gprs general purpose registers of @processorByMachine.Processor.GprSize bits
+                                    @if(processorByMachine.Processor.FprSize > 0 && processorByMachine.Processor.Fprs == 0) { @($", that can be used as floating point registers of {processorByMachine.Processor.FprSize}") }
+                                    @if(processorByMachine.Processor.SimdSize > 0 && processorByMachine.Processor.SimdRegisters == 0) { @($", that can be used as SIMD registers of {processorByMachine.Processor.FprSize}") }
+                                </td>
+                            </tr>
+                        }
+                        @if(processorByMachine.Processor.Fprs > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @processorByMachine.Processor.Fprs floating-point registers of @processorByMachine.Processor.FprSize bits
+                                    @if(processorByMachine.Processor.SimdSize > 0 && processorByMachine.Processor.SimdRegisters == 0) { @($", that can be used as SIMD registers of {processorByMachine.Processor.FprSize}") }
+                                </td>
+                            </tr>
+                        }
+                        @if(processorByMachine.Processor.SimdRegisters > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @processorByMachine.Processor.SimdRegisters <abbr title="Single instruction, multiple data">SIMD</abbr>registers of @processorByMachine.Processor.SimdSize bits
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.Cores > 1)
+        {
+            <tr>
+                <td>Multi-core</td>
+                <td>@processorByMachine.Processor.Cores cores</td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.Cores > 1)
+        {
+            <tr>
+                <td>
+                    <abbr title="Simultanoeus multithreading">SMT</abbr>
+                </td>
+                <td>
+                    @processorByMachine.Processor.ThreadsPerCore threads
+                    @if(processorByMachine.Processor.Cores > 1) { @(" per core") }
+                </td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.DataBus > 0 || processorByMachine.Processor.AddrBus > 0)
+        {
+            <tr>
+                <td>Bus</td>
+                <td>
+                    <table>
+                        @if(processorByMachine.Processor.DataBus > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @processorByMachine.Processor.DataBus-bit data
+                                </td>
+                            </tr>
+                        }
+                        @if(processorByMachine.Processor.AddrBus > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @processorByMachine.Processor.AddrBus-bit address
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        }
+
+        @if(processorByMachine.Processor.L1Instruction > 0 || processorByMachine.Processor.L1Data > 0 || processorByMachine.Processor.L2 > 0 || processorByMachine.Processor.L2 > 0)
+        {
+            <tr>
+                <td>Cache</td>
+                <td>
+                    <table>
+                        @if(processorByMachine.Processor.L1Instruction > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @(processorByMachine.Processor.L1Data < 0 ? $"{processorByMachine.Processor.L1Instruction}KiB combined instruction-data L1" : $"{processorByMachine.Processor.L1Instruction}KiB instruction L1")
+                                </td>
+                            </tr>
+                        }
+                        @if(processorByMachine.Processor.L1Data > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @($"{processorByMachine.Processor.L1Data}KiB data L1")
+                                </td>
+                            </tr>
+                        }
+                        @if(processorByMachine.Processor.L2 > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @($"{processorByMachine.Processor.L2}KiB L2")
+                                </td>
+                            </tr>
+                        }
+                        @if(processorByMachine.Processor.L3 > 0)
+                        {
+                            <tr>
+                                <td>
+                                    @($"{processorByMachine.Processor.L3}KiB L3")
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.Package != null)
+        {
+            <tr>
+                <td>Package</td>
+                <td>@processorByMachine.Processor.Package</td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.Process != null || processorByMachine.Processor.ProcessNm > 0)
+        {
+            <tr>
+                <td>Manufacturing process</td>
+                <td>
+                    @if(processorByMachine.Processor.Process != null && processorByMachine.Processor.ProcessNm > 0)
+                    {
+                        @processorByMachine.Processor.Process
+                        @("@")
+                        @(processorByMachine.Processor.ProcessNm > 100 ? $"{processorByMachine.Processor.ProcessNm / 100}µm" : $"{processorByMachine.Processor.ProcessNm}nm")
+                    }
+                    else if(processorByMachine.Processor.ProcessNm > 0) { @(processorByMachine.Processor.ProcessNm > 100 ? $"{processorByMachine.Processor.ProcessNm / 100}µm" : $"{processorByMachine.Processor.ProcessNm}nm") }
+                    else
+                    { @processorByMachine.Processor.Process }
+                </td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.DieSize > 0)
+        {
+            <tr>
+                <td>Die size</td>
+                <td>@processorByMachine.Processor.DieSize mm&sup2;</td>
+            </tr>
+        }
+        @if(processorByMachine.Processor.Transistors > 0)
+        {
+            <tr>
+                <td>Transistors</td>
+                <td>@processorByMachine.Processor.Transistors</td>
+            </tr>
+        }
+        </table>
+        </div>
+        </div>
+        </td>
+
+        </tr>
+
+        counter++;
     }
     </table>
     </td>
     </tr>
 }
-@if(Model.Memories != null && Model.Memories.Length > 0)
+@if(Model.Memory != null && Model.Memory.Count > 0)
 {
     <tr>
         <th scope=row>
@@ -371,7 +378,7 @@
         </th>
         <td>
             <table>
-                @foreach(MemoryByMachine memory in Model.Memories)
+                @foreach(MemoryByMachine memory in Model.Memory)
                 {
                     string memValue;
                     if(memory.Size > 1073741824) { memValue = $"{memory.Size / 1073741824} GiB"; }
@@ -397,7 +404,7 @@
         </td>
     </tr>
 }
-@if(Model.Gpus != null && Model.Gpus.Length > 0)
+@if(Model.Gpus.Count > 0)
 {
     <tr>
         <th scope=row>
@@ -407,121 +414,116 @@
         </th>
         <td>
             <table>
-                @for(int i = 0; i < Model.Gpus.Length; i++)
+                @{ counter = 0; }
+                @foreach(GpusByMachine gpuByMachine in Model.Gpus)
                 {
-                    if(Model.Gpus[i] != null)
+                    if(gpuByMachine.Gpu.Id == -2)
                     {
-                        if(Model.Gpus[i].Gpu.Id == -2)
-                        {
-                            <td>
-                                Framebuffer
-                                <a aria-controls="@($"gpuInfo{i}")"
-                                   aria-expanded="false"
-                                   class="btn btn-link"
-                                   data-toggle="collapse"
-                                   href="@($"#gpuInfo{i}")">
-                                    +info
-                                </a>
-                                <div class="collapse"
-                                     id="@($"gpuInfo{i}")">
-                                    <div class="card card-body">
-                                        This computer directly draws pixels from software to a memory region that's converted to video output by a <abbr title="Digital to Analog Converter">DAC</abbr> or similar without using any specific graphics processing unit.
-                                    </div>
+                        <td>
+                            Framebuffer
+                            <a aria-controls="@($"gpuInfo{counter}")"
+                               aria-expanded="false"
+                               class="btn btn-link"
+                               data-toggle="collapse"
+                               href="@($"#gpuInfo{counter}")">
+                                +info
+                            </a>
+                            <div class="collapse"
+                                 id="@($"gpuInfo{counter}")">
+                                <div class="card card-body">
+                                    This computer directly draws pixels from software to a memory region that's converted to video output by a <abbr title="Digital to Analog Converter">DAC</abbr> or similar without using any specific graphics processing unit.
                                 </div>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>
-                                @($"{Model.Gpus[i].Gpu.Name}")
-                                <a aria-controls="@($"gpuInfo{i}")"
-                                   aria-expanded="false"
-                                   class="btn btn-link"
-                                   data-toggle="collapse"
-                                   href="@($"#gpuInfo{i}")">
-                                    +info
-                                </a>
-                                <div class="collapse"
-                                     id="@($"gpuInfo{i}")">
-                                    <div class="card card-body">
-                                        <table>
-                                            @if(Model.Gpus[i].Gpu.ModelCode != null && Model.Gpus[i].Gpu.ModelCode != Model.Gpus[i].Gpu.Name)
-                                            {
-                                                <tr>
-                                                    <td>Model</td>
-                                                    <td>@Model.Gpus[i].Gpu.ModelCode</td>
-                                                </tr>
-                                            }
-                                            <tr>
-                                                <td>Manufacturer</td>
-                                                <td>
-                                                    <a asp-controller=Company
-                                                       asp-action=View
-                                                       asp-route-id=@Model.Gpus[i].Gpu.Company.Id>
-                                                        @Model.Gpus[i].Gpu.Company.Name</a>
-                                                </td>
-                                            </tr>
-                                            @if(Model.Gpus[i].Gpu.Introduced != DateTime.MinValue)
-                                            {
-                                                <tr>
-                                                    <td>Introduction date</td>
-                                                    <td>@($"{Model.Gpus[i].Gpu.Introduced:yyyy}")</td>
-                                                </tr>
-                                            }
-                                            @if(Model.Gpus[i].Gpu.Package != null)
-                                            {
-                                                <tr>
-                                                    <td>Package</td>
-                                                    <td>@Model.Gpus[i].Gpu.Package</td>
-                                                </tr>
-                                            }
-                                            @if(Model.Gpus[i].Gpu.Process != null || Model.Gpus[i].Gpu.ProcessNm > 0)
-                                            {
-                                                <tr>
-                                                    <td>Manufacturing process</td>
-                                                    <td>
-                                                        @if(Model.Gpus[i].Gpu.Process != null && Model.Gpus[i].Gpu.ProcessNm > 0)
-                                                        {
-                                                            @Model.Gpus[i].Gpu.Process
-                                                            @("@")
-                                                            @(Model.Gpus[i].Gpu.ProcessNm > 100 ? $"{Model.Gpus[i].Gpu.ProcessNm / 100}µm" : $"{Model.Gpus[i].Gpu.ProcessNm}nm")
-                                                        }
-                                                        else if(Model.Gpus[i].Gpu.ProcessNm > 0) { @(Model.Gpus[i].Gpu.ProcessNm > 100 ? $"{Model.Gpus[i].Gpu.ProcessNm / 100}µm" : $"{Model.Gpus[i].Gpu.ProcessNm}nm") }
-                                                        else
-                                                        { @Model.Gpus[i].Gpu.Process }
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(Model.Gpus[i].Gpu.DieSize > 0)
-                                            {
-                                                <tr>
-                                                    <td>Die size</td>
-                                                    <td>@Model.Gpus[i].Gpu.DieSize mm&sup2;</td>
-                                                </tr>
-                                            }
-                                            @if(Model.Gpus[i].Gpu.Transistors > 0)
-                                            {
-                                                <tr>
-                                                    <td>Transistors</td>
-                                                    <td>@Model.Gpus[i].Gpu.Transistors</td>
-                                                </tr>
-                                            }
-                                        </table>
-                                    </div>
-                                </div>
-                            </td>
-                        }
+                            </div>
+                        </td>
                     }
                     else
                     {
-                        <td>Unknown data</td>
+                        <td>
+                            @($"{gpuByMachine.Gpu.Name}")
+                            <a aria-controls="@($"gpuInfo{counter}")"
+                               aria-expanded="false"
+                               class="btn btn-link"
+                               data-toggle="collapse"
+                               href="@($"#gpuInfo{counter}")">
+                                +info
+                            </a>
+                            <div class="collapse"
+                                 id="@($"gpuInfo{counter}")">
+                                <div class="card card-body">
+                                    <table>
+                                        @if(gpuByMachine.Gpu.ModelCode != null && gpuByMachine.Gpu.ModelCode != gpuByMachine.Gpu.Name)
+                                        {
+                                            <tr>
+                                                <td>Model</td>
+                                                <td>@gpuByMachine.Gpu.ModelCode</td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td>Manufacturer</td>
+                                            <td>
+                                                <a asp-controller=Company
+                                                   asp-action=View
+                                                   asp-route-id=@gpuByMachine.Gpu.Company.Id>
+                                                    @gpuByMachine.Gpu.Company.Name</a>
+                                            </td>
+                                        </tr>
+                                        @if(gpuByMachine.Gpu.Introduced != DateTime.MinValue)
+                                        {
+                                            <tr>
+                                                <td>Introduction date</td>
+                                                <td>@($"{gpuByMachine.Gpu.Introduced:yyyy}")</td>
+                                            </tr>
+                                        }
+                                        @if(gpuByMachine.Gpu.Package != null)
+                                        {
+                                            <tr>
+                                                <td>Package</td>
+                                                <td>@gpuByMachine.Gpu.Package</td>
+                                            </tr>
+                                        }
+                                        @if(gpuByMachine.Gpu.Process != null || gpuByMachine.Gpu.ProcessNm > 0)
+                                        {
+                                            <tr>
+                                                <td>Manufacturing process</td>
+                                                <td>
+                                                    @if(gpuByMachine.Gpu.Process != null && gpuByMachine.Gpu.ProcessNm > 0)
+                                                    {
+                                                        @gpuByMachine.Gpu.Process
+                                                        @("@")
+                                                        @(gpuByMachine.Gpu.ProcessNm > 100 ? $"{gpuByMachine.Gpu.ProcessNm / 100}µm" : $"{gpuByMachine.Gpu.ProcessNm}nm")
+                                                    }
+                                                    else if(gpuByMachine.Gpu.ProcessNm > 0) { @(gpuByMachine.Gpu.ProcessNm > 100 ? $"{gpuByMachine.Gpu.ProcessNm / 100}µm" : $"{gpuByMachine.Gpu.ProcessNm}nm") }
+                                                    else
+                                                    { @gpuByMachine.Gpu.Process }
+                                                </td>
+                                            </tr>
+                                        }
+                                        @if(gpuByMachine.Gpu.DieSize > 0)
+                                        {
+                                            <tr>
+                                                <td>Die size</td>
+                                                <td>@gpuByMachine.Gpu.DieSize mm&sup2;</td>
+                                            </tr>
+                                        }
+                                        @if(gpuByMachine.Gpu.Transistors > 0)
+                                        {
+                                            <tr>
+                                                <td>Transistors</td>
+                                                <td>@gpuByMachine.Gpu.Transistors</td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
                     }
+                    counter++;
                 }
             </table>
         </td>
     </tr>
 }
-@if(Model.SoundSynths != null && Model.SoundSynths.Length > 0)
+@if(Model.Sound.Count > 0)
 {
     <tr>
         <th scope=row>
@@ -531,153 +533,148 @@
         </th>
         <td>
             <table>
-                @for(int i = 0; i < Model.SoundSynths.Length; i++)
+                @{ counter = 0; }
+                @foreach(SoundByMachine soundByMachine in Model.Sound)
                 {
                     <tr>
-                        @if(Model.SoundSynths[i] != null)
+                        @if(soundByMachine.SoundSynth.Id == -2)
                         {
-                            if(Model.SoundSynths[i].SoundSynth.Id == -2)
-                            {
-                                <td>
-                                    Software
-                                    <a aria-controls="@($"synthInfo{i}")"
-                                       aria-expanded="false"
-                                       class="btn btn-link"
-                                       data-toggle="collapse"
-                                       href="@($"#synthInfo{i}")">
-                                        +info
-                                    </a>
-                                    <div class="collapse"
-                                         id="@($"synthInfo{i}")">
-                                        <div class="card card-body">
-                                            This computer directly sends data to a <abbr title="Digital to Analog Converter">DAC</abbr> or similar connected to the audio output.
-                                        </div>
+                            <td>
+                                Software
+                                <a aria-controls="@($"synthInfo{counter}")"
+                                   aria-expanded="false"
+                                   class="btn btn-link"
+                                   data-toggle="collapse"
+                                   href="@($"#synthInfo{counter}")">
+                                    +info
+                                </a>
+                                <div class="collapse"
+                                     id="@($"synthInfo{counter}")">
+                                    <div class="card card-body">
+                                        This computer directly sends data to a <abbr title="Digital to Analog Converter">DAC</abbr> or similar connected to the audio output.
                                     </div>
-                                </td>
-                            }
-                            else
-                            {
-                                <td>
-                                    @($"{Model.SoundSynths[i].SoundSynth.Name}")
-                                    <a aria-controls="@($"synthInfo{i}")"
-                                       aria-expanded="false"
-                                       class="btn btn-link"
-                                       data-toggle="collapse"
-                                       href="@($"#synthInfo{i}")">
-                                        +info
-                                    </a>
-                                    <div class="collapse"
-                                         id="@($"synthInfo{i}")">
-                                        <div class="card card-body">
-                                            <table>
-                                                @if(Model.SoundSynths[i].SoundSynth.ModelCode != null && Model.SoundSynths[i].SoundSynth.ModelCode != Model.SoundSynths[i].SoundSynth.Name)
-                                                {
-                                                    <tr>
-                                                        <td>Model</td>
-                                                        <td>@Model.SoundSynths[i].SoundSynth.ModelCode</td>
-                                                    </tr>
-                                                }
-                                                @if(Model.SoundSynths[i].SoundSynth.Company != null)
-                                                {
-                                                    <tr>
-                                                        <td>Manufacturer</td>
-                                                        <td>
-                                                            <a asp-controller=Company
-                                                               asp-action=View
-                                                               asp-route-id=@Model.SoundSynths[i].SoundSynth.Company.Id>
-                                                                @Model.SoundSynths[i].SoundSynth.Company.Name</a>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                                @if(Model.SoundSynths[i].SoundSynth.Introduced != DateTime.MinValue)
-                                                {
-                                                    <tr>
-                                                        <td>Introduction date</td>
-                                                        <td>@($"{Model.Gpus[i].Gpu.Introduced:yyyy}")</td>
-                                                    </tr>
-                                                }
-                                                @if(Model.SoundSynths[i].SoundSynth.Voices != 0 || Model.SoundSynths[i].SoundSynth.SquareWave != 0 || Model.SoundSynths[i].SoundSynth.WhiteNoise != 0)
-                                                {
-                                                    <tr>
-                                                        <td>Generators</td>
-                                                        <td>
-                                                            <table>
-                                                                @if(Model.SoundSynths[i].SoundSynth.Voices != 0)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@Model.SoundSynths[i].SoundSynth.Voices voices</td>
-                                                                    </tr>
-                                                                }
-                                                                @if(Model.SoundSynths[i].SoundSynth.SquareWave != 0)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@Model.SoundSynths[i].SoundSynth.SquareWave square wave</td>
-                                                                    </tr>
-                                                                }
-                                                                @if(Model.SoundSynths[i].SoundSynth.WhiteNoise != 0)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@Model.SoundSynths[i].SoundSynth.WhiteNoise white noise</td>
-                                                                    </tr>
-                                                                }
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                                @if(Model.SoundSynths[i].SoundSynth.Depth != 0 || Model.SoundSynths[i].SoundSynth.Frequency > 0)
-                                                {
-                                                    <tr>
-                                                        <td>Sample rate</td>
-                                                        <td>
-                                                            <table>
-                                                                @if(Model.SoundSynths[i].SoundSynth.Depth != 0 && Model.SoundSynths[i].SoundSynth.Frequency > 0)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@Model.SoundSynths[i].SoundSynth.Depth bits at @(Model.SoundSynths[i].SoundSynth.Frequency > 1000 ? $"{Model.SoundSynths[i].SoundSynth.Frequency / 1000}KHz" : $"{Model.SoundSynths[i].SoundSynth.Frequency}Hz")</td>
-                                                                    </tr>
-                                                                }
-                                                                else if(Model.SoundSynths[i].SoundSynth.Depth != 0)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@Model.SoundSynths[i].SoundSynth.Depth bits</td>
-                                                                    </tr>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <tr>
-                                                                        <td>@(Model.SoundSynths[i].SoundSynth.Frequency > 1000 ? $"{Model.SoundSynths[i].SoundSynth.Frequency / 1000}KHz" : $"{Model.SoundSynths[i].SoundSynth.Frequency}Hz")</td>
-                                                                    </tr>
-                                                                }
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                                @if(Model.SoundSynths[i].SoundSynth.Type != 0)
-                                                {
-                                                    <tr>
-                                                        <td>Synthetizer type</td>
-                                                        <td>
-                                                            @Model.SoundSynths[i].SoundSynth.Type
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </table>
-                                        </div>
-                                    </div>
-                                </td>
-                            }
+                                </div>
+                            </td>
                         }
                         else
                         {
-                            <td>Unknown data</td>
+                            <td>
+                                @($"{soundByMachine.SoundSynth.Name}")
+                                <a aria-controls="@($"synthInfo{counter}")"
+                                   aria-expanded="false"
+                                   class="btn btn-link"
+                                   data-toggle="collapse"
+                                   href="@($"#synthInfo{counter}")">
+                                    +info
+                                </a>
+                                <div class="collapse"
+                                     id="@($"synthInfo{counter}")">
+                                    <div class="card card-body">
+                                        <table>
+                                            @if(soundByMachine.SoundSynth.ModelCode != null && soundByMachine.SoundSynth.ModelCode != soundByMachine.SoundSynth.Name)
+                                            {
+                                                <tr>
+                                                    <td>Model</td>
+                                                    <td>@soundByMachine.SoundSynth.ModelCode</td>
+                                                </tr>
+                                            }
+                                            @if(soundByMachine.SoundSynth.Company != null)
+                                            {
+                                                <tr>
+                                                    <td>Manufacturer</td>
+                                                    <td>
+                                                        <a asp-controller=Company
+                                                           asp-action=View
+                                                           asp-route-id=@soundByMachine.SoundSynth.Company.Id>
+                                                            @soundByMachine.SoundSynth.Company.Name</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @if(soundByMachine.SoundSynth.Introduced != DateTime.MinValue)
+                                            {
+                                                <tr>
+                                                    <td>Introduction date</td>
+                                                    <td>@($"{soundByMachine.SoundSynth.Introduced:yyyy}")</td>
+                                                </tr>
+                                            }
+                                            @if(soundByMachine.SoundSynth.Voices != 0 || soundByMachine.SoundSynth.SquareWave != 0 || soundByMachine.SoundSynth.WhiteNoise != 0)
+                                            {
+                                                <tr>
+                                                    <td>Generators</td>
+                                                    <td>
+                                                        <table>
+                                                            @if(soundByMachine.SoundSynth.Voices != 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>@soundByMachine.SoundSynth.Voices voices</td>
+                                                                </tr>
+                                                            }
+                                                            @if(soundByMachine.SoundSynth.SquareWave != 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>@soundByMachine.SoundSynth.SquareWave square wave</td>
+                                                                </tr>
+                                                            }
+                                                            @if(soundByMachine.SoundSynth.WhiteNoise != 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>@soundByMachine.SoundSynth.WhiteNoise white noise</td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @if(soundByMachine.SoundSynth.Depth != 0 || soundByMachine.SoundSynth.Frequency > 0)
+                                            {
+                                                <tr>
+                                                    <td>Sample rate</td>
+                                                    <td>
+                                                        <table>
+                                                            @if(soundByMachine.SoundSynth.Depth != 0 && soundByMachine.SoundSynth.Frequency > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>@soundByMachine.SoundSynth.Depth bits at @(soundByMachine.SoundSynth.Frequency > 1000 ? $"{soundByMachine.SoundSynth.Frequency / 1000}KHz" : $"{soundByMachine.SoundSynth.Frequency}Hz")</td>
+                                                                </tr>
+                                                            }
+                                                            else if(soundByMachine.SoundSynth.Depth != 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>@soundByMachine.SoundSynth.Depth bits</td>
+                                                                </tr>
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td>@(soundByMachine.SoundSynth.Frequency > 1000 ? $"{soundByMachine.SoundSynth.Frequency / 1000}KHz" : $"{soundByMachine.SoundSynth.Frequency}Hz")</td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @if(soundByMachine.SoundSynth.Type != 0)
+                                            {
+                                                <tr>
+                                                    <td>Synthetizer type</td>
+                                                    <td>
+                                                        @soundByMachine.SoundSynth.Type
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
                         }
                     </tr>
+                    counter++;
                 }
             </table>
         </td>
     </tr>
 }
-@if(Model.Storage != null && Model.Storage.Length > 0)
+@if(Model.Storage.Count > 0)
 {
     <tr>
         <th scope=row>

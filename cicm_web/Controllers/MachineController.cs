@@ -28,7 +28,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using cicm_web.Models;
+using System.Linq;
+using Cicm.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,18 +37,20 @@ namespace cicm_web.Controllers
 {
     public class MachineController : Controller
     {
+        readonly cicmContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
 
-        public MachineController(IHostingEnvironment env)
+        public MachineController(IHostingEnvironment env, cicmContext context)
         {
             hostingEnvironment = env;
+            _context           = context;
         }
 
         public IActionResult View(int id)
         {
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
 
-            return View(Machine.GetItem(id));
+            return View(_context.Machines.FirstOrDefault(m => m.Id == id));
         }
     }
 }
