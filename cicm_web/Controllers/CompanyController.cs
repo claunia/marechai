@@ -65,8 +65,7 @@ namespace cicm_web.Controllers
         public IActionResult View(int id)
         {
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            Company company = _context.Companies.Where(c => c.Id == id).Include(c => c.Description)
-                                      .Include(c => c.Machines).Include(c => c.Country).FirstOrDefault();
+            Company company = _context.Companies.FirstOrDefault(c => c.Id == id);
 
             if(company == null) return Index();
 

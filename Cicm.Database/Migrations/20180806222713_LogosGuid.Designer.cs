@@ -3,14 +3,16 @@ using System;
 using Cicm.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Cicm.Database.Migrations
 {
     [DbContext(typeof(cicmContext))]
-    partial class cicmContextModelSnapshot : ModelSnapshot
+    [Migration("20180806222713_LogosGuid")]
+    partial class LogosGuid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

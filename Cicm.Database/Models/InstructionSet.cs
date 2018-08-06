@@ -12,6 +12,6 @@ namespace Cicm.Database.Models
         public int    Id   { get; set; }
         public string Name { get; set; }
 
-        public ICollection<Processor> Processors { get; set; }
+        public virtual ICollection<Processor> Processors { get; set; }
     }
 }

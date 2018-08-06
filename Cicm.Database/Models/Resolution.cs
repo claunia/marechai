@@ -16,6 +16,6 @@ namespace Cicm.Database.Models
         public long? Palette { get; set; }
         public sbyte Chars   { get; set; }
 
-        public ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
+        public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
     }
 }

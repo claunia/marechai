@@ -6,7 +6,7 @@
         public int ProcessorId { get; set; }
         public int ExtensionId { get; set; }
 
-        public InstructionSetExtension Extension { get; set; }
-        public Processor               Processor { get; set; }
+        public virtual InstructionSetExtension Extension { get; set; }
+        public virtual Processor               Processor { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Cicm.Database.Models
         public int    CompanyId { get; set; }
         public string Name      { get; set; }
 
-        public Company              Company  { get; set; }
-        public ICollection<Machine> Machines { get; set; }
+        public virtual Company              Company  { get; set; }
+        public virtual ICollection<Machine> Machines { get; set; }
     }
 }

@@ -22,12 +22,12 @@ namespace Cicm.Database.Models
         public int?        FamilyId   { get; set; }
         public string      Model      { get; set; }
 
-        public Company                          Company    { get; set; }
-        public MachineFamily                    Family     { get; set; }
-        public ICollection<GpusByMachine>       Gpus       { get; set; }
-        public ICollection<MemoryByMachine>     Memory     { get; set; }
-        public ICollection<ProcessorsByMachine> Processors { get; set; }
-        public ICollection<SoundByMachine>      Sound      { get; set; }
-        public ICollection<StorageByMachine>    Storage    { get; set; }
+        public virtual Company                          Company    { get; set; }
+        public virtual MachineFamily                    Family     { get; set; }
+        public virtual ICollection<GpusByMachine>       Gpus       { get; set; }
+        public virtual ICollection<MemoryByMachine>     Memory     { get; set; }
+        public virtual ICollection<ProcessorsByMachine> Processors { get; set; }
+        public virtual ICollection<SoundByMachine>      Sound      { get; set; }
+        public virtual ICollection<StorageByMachine>    Storage    { get; set; }
     }
 }

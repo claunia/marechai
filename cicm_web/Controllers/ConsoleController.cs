@@ -33,7 +33,6 @@ using Cicm.Database;
 using Cicm.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Controllers
 {
@@ -73,19 +72,18 @@ namespace cicm_web.Controllers
             ViewBag.Letter = id;
 
             return View(id == '\0'
-                            ? _context.Machines.Include(c => c.Company).Where(m => m.Type == MachineType.Console)
-                                      .ToArray()
-                            : _context.Machines.Include(c => c.Company)
-                                      .Where(m => m.Type == MachineType.Console && m.Name.StartsWith(id)).ToArray());
+                            ? _context.Machines.Where(m => m.Type == MachineType.Console).ToArray()
+                            : _context.Machines.Where(m => m.Type == MachineType.Console && m.Name.StartsWith(id))
+                                      .ToArray());
         }
 
         public IActionResult ByYear(int id)
         {
             ViewBag.Year = id;
 
-            return View(_context.Machines.Include(c => c.Company)
-                                .Where(t => t.Type                  == MachineType.Console && t.Introduced.HasValue &&
-                                            t.Introduced.Value.Year == id).ToArray());
+            return View(_context.Machines.Where(t => t.Type == MachineType.Console &&
+                                                     t.Introduced.HasValue         &&
+                                                     t.Introduced.Value.Year == id).ToArray());
         }
     }
 }

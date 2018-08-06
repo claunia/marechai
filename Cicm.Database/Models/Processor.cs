@@ -38,9 +38,9 @@ namespace Cicm.Database.Models
         public float?    L2               { get; set; }
         public float?    L3               { get; set; }
 
-        public Company                                          Company                  { get; set; }
-        public InstructionSet                                   InstructionSet           { get; set; }
-        public ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensions { get; set; }
-        public ICollection<ProcessorsByMachine>                 ProcessorsByMachine      { get; set; }
+        public virtual Company                                          Company                  { get; set; }
+        public virtual InstructionSet                                   InstructionSet           { get; set; }
+        public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensions { get; set; }
+        public virtual ICollection<ProcessorsByMachine>                 ProcessorsByMachine      { get; set; }
     }
 }

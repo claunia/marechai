@@ -12,6 +12,10 @@ namespace Cicm.Database.Models
         public int    Id        { get; set; }
         public string Extension { get; set; }
 
-        public ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor { get; set; }
+        public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor
+        {
+            get;
+            set;
+        }
     }
 }

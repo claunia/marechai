@@ -6,6 +6,6 @@
         public int    CompanyId { get; set; }
         public string Text      { get; set; }
 
-        public Company Company { get; set; }
+        public virtual Company Company { get; set; }
     }
 }

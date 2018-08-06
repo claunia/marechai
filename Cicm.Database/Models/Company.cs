@@ -31,15 +31,15 @@ namespace Cicm.Database.Models
         public short?        CountryId  { get; set; }
         public CompanyStatus Status     { get; set; }
 
-        public Iso31661Numeric            Country                 { get; set; }
-        public Company                    SoldTo                  { get; set; }
-        public CompanyDescription         Description             { get; set; }
-        public ICollection<CompanyLogo>   CompanyLogos            { get; set; }
-        public ICollection<Gpu>           Gpus                    { get; set; }
-        public ICollection<Company>       InverseSoldToNavigation { get; set; }
-        public ICollection<MachineFamily> MachineFamilies         { get; set; }
-        public ICollection<Machine>       Machines                { get; set; }
-        public ICollection<Processor>     Processors              { get; set; }
-        public ICollection<SoundSynth>    SoundSynths             { get; set; }
+        public virtual Iso31661Numeric            Country                 { get; set; }
+        public virtual Company                    SoldTo                  { get; set; }
+        public virtual CompanyDescription         Description             { get; set; }
+        public virtual ICollection<CompanyLogo>   CompanyLogos            { get; set; }
+        public virtual ICollection<Gpu>           Gpus                    { get; set; }
+        public virtual ICollection<Company>       InverseSoldToNavigation { get; set; }
+        public virtual ICollection<MachineFamily> MachineFamilies         { get; set; }
+        public virtual ICollection<Machine>       Machines                { get; set; }
+        public virtual ICollection<Processor>     Processors              { get; set; }
+        public virtual ICollection<SoundSynth>    SoundSynths             { get; set; }
     }
 }

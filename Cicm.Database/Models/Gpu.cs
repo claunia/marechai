@@ -22,8 +22,8 @@ namespace Cicm.Database.Models
         public float?    DieSize     { get; set; }
         public long?     Transistors { get; set; }
 
-        public Company                       Company          { get; set; }
-        public ICollection<GpusByMachine>    GpusByMachine    { get; set; }
-        public ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
+        public virtual Company                       Company          { get; set; }
+        public virtual ICollection<GpusByMachine>    GpusByMachine    { get; set; }
+        public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
     }
 }

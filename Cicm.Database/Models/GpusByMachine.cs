@@ -6,7 +6,7 @@
         public int  MachineId { get; set; }
         public long Id        { get; set; }
 
-        public Gpu     Gpu     { get; set; }
-        public Machine Machine { get; set; }
+        public virtual Gpu     Gpu     { get; set; }
+        public virtual Machine Machine { get; set; }
     }
 }

@@ -7,7 +7,7 @@
         public float? Speed       { get; set; }
         public long   Id          { get; set; }
 
-        public Machine   Machine   { get; set; }
-        public Processor Processor { get; set; }
+        public virtual Machine   Machine   { get; set; }
+        public virtual Processor Processor { get; set; }
     }
 }

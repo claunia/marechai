@@ -22,7 +22,7 @@ namespace Cicm.Database.Models
         public int?      WhiteNoise { get; set; }
         public int?      Type       { get; set; }
 
-        public Company                     Company        { get; set; }
-        public ICollection<SoundByMachine> SoundByMachine { get; set; }
+        public virtual Company                     Company        { get; set; }
+        public virtual ICollection<SoundByMachine> SoundByMachine { get; set; }
     }
 }
