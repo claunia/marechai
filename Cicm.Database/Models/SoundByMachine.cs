@@ -2,11 +2,11 @@
 {
     public class SoundByMachine
     {
-        public int  SoundSynth { get; set; }
-        public int  Machine    { get; set; }
-        public long Id         { get; set; }
+        public int  SoundSynthId { get; set; }
+        public int  MachineId    { get; set; }
+        public long Id           { get; set; }
 
-        public Machines    MachineNavigation    { get; set; }
-        public SoundSynths SoundSynthNavigation { get; set; }
+        public Machines    Machine    { get; set; }
+        public SoundSynths SoundSynth { get; set; }
     }
 }

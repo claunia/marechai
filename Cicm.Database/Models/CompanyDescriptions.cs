@@ -6,6 +6,6 @@
         public int    CompanyId { get; set; }
         public string Text      { get; set; }
 
-        public Companies IdNavigation { get; set; }
+        public Companies Company { get; set; }
     }
 }

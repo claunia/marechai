@@ -2,12 +2,12 @@
 {
     public class ProcessorsByMachine
     {
-        public int    Processor { get; set; }
-        public int    Machine   { get; set; }
-        public float? Speed     { get; set; }
-        public long   Id        { get; set; }
+        public int    ProcessorId { get; set; }
+        public int    MachineId   { get; set; }
+        public float? Speed       { get; set; }
+        public long   Id          { get; set; }
 
-        public Machines   MachineNavigation   { get; set; }
-        public Processors ProcessorNavigation { get; set; }
+        public Machines   Machine   { get; set; }
+        public Processors Processor { get; set; }
     }
 }

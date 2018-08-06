@@ -122,7 +122,7 @@ namespace Cicm.Database.Migrations
 
                 b.Property<string>("City").HasColumnName("city").HasColumnType("varchar(80)");
 
-                b.Property<short?>("Country").HasColumnName("country").HasColumnType("smallint(3)");
+                b.Property<short?>("CountryId").HasColumnName("country").HasColumnType("smallint(3)");
 
                 b.Property<string>("Facebook").HasColumnName("facebook").HasColumnType("varchar(45)");
 
@@ -137,7 +137,7 @@ namespace Cicm.Database.Migrations
 
                 b.Property<DateTime?>("Sold").HasColumnName("sold").HasColumnType("datetime");
 
-                b.Property<int?>("SoldTo").HasColumnName("sold_to").HasColumnType("int(11)");
+                b.Property<int?>("SoldToId").HasColumnName("sold_to").HasColumnType("int(11)");
 
                 b.Property<int>("Status").HasColumnName("status").HasColumnType("int(11)");
 
@@ -151,7 +151,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasIndex("City").HasName("idx_companies_city");
 
-                b.HasIndex("Country").HasName("idx_companies_country");
+                b.HasIndex("CountryId").HasName("idx_companies_country");
 
                 b.HasIndex("Facebook").HasName("idx_companies_facebook");
 
@@ -165,7 +165,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasIndex("Sold").HasName("idx_companies_sold");
 
-                b.HasIndex("SoldTo").HasName("idx_companies_sold_to");
+                b.HasIndex("SoldToId").HasName("idx_companies_sold_to");
 
                 b.HasIndex("Status").HasName("idx_companies_status");
 
@@ -186,7 +186,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.HasIndex("CompanyId").HasName("idx_company_id");
+                b.HasIndex("CompanyId").IsUnique().HasName("idx_company_id");
 
                 b.HasIndex("Text").HasName("idx_text");
 
@@ -247,7 +247,7 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<int?>("Company").HasColumnName("company").HasColumnType("int(11)");
+                b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
                 b.Property<float?>("DieSize").HasColumnName("die_size");
 
@@ -268,7 +268,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.HasIndex("Company").HasName("idx_gpus_company");
+                b.HasIndex("CompanyId").HasName("idx_gpus_company");
 
                 b.HasIndex("DieSize").HasName("idx_gpus_die_size");
 
@@ -293,15 +293,15 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
-                b.Property<int>("Gpu").HasColumnName("gpu").HasColumnType("int(11)");
+                b.Property<int>("GpuId").HasColumnName("gpu").HasColumnType("int(11)");
 
-                b.Property<int>("Machine").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Gpu").HasName("idx_gpus_by_machine_gpus");
+                b.HasIndex("GpuId").HasName("idx_gpus_by_machine_gpus");
 
-                b.HasIndex("Machine").HasName("idx_gpus_by_machine_machine");
+                b.HasIndex("MachineId").HasName("idx_gpus_by_machine_machine");
 
                 b.ToTable("gpus_by_machine");
             });
@@ -392,13 +392,13 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<int>("Company").HasColumnName("company").HasColumnType("int(11)");
+                b.Property<int>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
                 b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(255)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Company").HasName("idx_machine_families_company");
+                b.HasIndex("CompanyId").HasName("idx_machine_families_company");
 
                 b.HasIndex("Name").HasName("idx_machine_families_name");
 
@@ -409,9 +409,10 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<int>("Company").HasColumnName("company").HasColumnType("int(11)").HasDefaultValueSql("'0'");
+                b.Property<int>("CompanyId").ValueGeneratedOnAdd().HasColumnName("company").HasColumnType("int(11)")
+                 .HasDefaultValueSql("'0'");
 
-                b.Property<int?>("Family").HasColumnName("family").HasColumnType("int(11)");
+                b.Property<int?>("FamilyId").HasColumnName("family").HasColumnType("int(11)");
 
                 b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
 
@@ -424,9 +425,9 @@ namespace Cicm.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.HasIndex("Company").HasName("idx_machines_company");
+                b.HasIndex("CompanyId").HasName("idx_machines_company");
 
-                b.HasIndex("Family").HasName("idx_machines_family");
+                b.HasIndex("FamilyId").HasName("idx_machines_family");
 
                 b.HasIndex("Introduced").HasName("idx_machines_introduced");
 
@@ -443,7 +444,7 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
-                b.Property<int>("Machine").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
 
                 b.Property<long?>("Size").HasColumnName("size").HasColumnType("bigint(20)");
 
@@ -457,7 +458,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.HasIndex("Machine").HasName("idx_memory_by_machine_machine");
+                b.HasIndex("MachineId").HasName("idx_memory_by_machine_machine");
 
                 b.HasIndex("Size").HasName("idx_memory_by_machine_size");
 
@@ -652,7 +653,7 @@ namespace Cicm.Database.Migrations
 
                 b.Property<int?>("AddrBus").HasColumnName("addr_bus").HasColumnType("int(11)");
 
-                b.Property<int?>("Company").HasColumnName("company").HasColumnType("int(11)");
+                b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
                 b.Property<int?>("Cores").HasColumnName("cores").HasColumnType("int(11)");
 
@@ -668,7 +669,7 @@ namespace Cicm.Database.Migrations
 
                 b.Property<int?>("Gprs").HasColumnName("GPRs").HasColumnType("int(11)");
 
-                b.Property<int?>("InstructionSet").HasColumnName("instruction_set").HasColumnType("int(11)");
+                b.Property<int?>("InstructionSetId").HasColumnName("instruction_set").HasColumnType("int(11)");
 
                 b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
 
@@ -705,7 +706,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasIndex("AddrBus").HasName("idx_processors_addr_bus");
 
-                b.HasIndex("Company").HasName("idx_processors_company");
+                b.HasIndex("CompanyId").HasName("idx_processors_company");
 
                 b.HasIndex("Cores").HasName("idx_processors_cores");
 
@@ -721,7 +722,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasIndex("Gprs").HasName("idx_processors_GPRs");
 
-                b.HasIndex("InstructionSet").HasName("idx_processors_instruction_set");
+                b.HasIndex("InstructionSetId").HasName("idx_processors_instruction_set");
 
                 b.HasIndex("Introduced").HasName("idx_processors_introduced");
 
@@ -760,17 +761,17 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
-                b.Property<int>("Machine").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
 
-                b.Property<int>("Processor").HasColumnName("processor").HasColumnType("int(11)");
+                b.Property<int>("ProcessorId").HasColumnName("processor").HasColumnType("int(11)");
 
                 b.Property<float?>("Speed").HasColumnName("speed");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Machine").HasName("idx_processors_by_machine_machine");
+                b.HasIndex("MachineId").HasName("idx_processors_by_machine_machine");
 
-                b.HasIndex("Processor").HasName("idx_processors_by_machine_processor");
+                b.HasIndex("ProcessorId").HasName("idx_processors_by_machine_processor");
 
                 b.HasIndex("Speed").HasName("idx_processors_by_machine_speed");
 
@@ -818,15 +819,15 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
-                b.Property<int>("Gpu").HasColumnName("gpu").HasColumnType("int(11)");
+                b.Property<int>("GpuId").HasColumnName("gpu").HasColumnType("int(11)");
 
-                b.Property<int>("Resolution").HasColumnName("resolution").HasColumnType("int(11)");
+                b.Property<int>("ResolutionId").HasColumnName("resolution").HasColumnType("int(11)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Gpu").HasName("idx_resolutions_by_gpu_gpu");
+                b.HasIndex("GpuId").HasName("idx_resolutions_by_gpu_gpu");
 
-                b.HasIndex("Resolution").HasName("idx_resolutions_by_gpu_resolution");
+                b.HasIndex("ResolutionId").HasName("idx_resolutions_by_gpu_resolution");
 
                 b.ToTable("resolutions_by_gpu");
             });
@@ -835,15 +836,15 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
-                b.Property<int>("Machine").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
 
-                b.Property<int>("SoundSynth").HasColumnName("sound_synth").HasColumnType("int(11)");
+                b.Property<int>("SoundSynthId").HasColumnName("sound_synth").HasColumnType("int(11)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Machine").HasName("idx_sound_by_machine_machine");
+                b.HasIndex("MachineId").HasName("idx_sound_by_machine_machine");
 
-                b.HasIndex("SoundSynth").HasName("idx_sound_by_machine_sound_synth");
+                b.HasIndex("SoundSynthId").HasName("idx_sound_by_machine_sound_synth");
 
                 b.ToTable("sound_by_machine");
             });
@@ -852,7 +853,7 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<int?>("Company").HasColumnName("company").HasColumnType("int(11)");
+                b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
                 b.Property<int?>("Depth").HasColumnName("depth").HasColumnType("int(11)");
 
@@ -875,7 +876,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.HasIndex("Company").HasName("idx_sound_synths_company");
+                b.HasIndex("CompanyId").HasName("idx_sound_synths_company");
 
                 b.HasIndex("Depth").HasName("idx_sound_synths_depth");
 
@@ -907,7 +908,7 @@ namespace Cicm.Database.Migrations
                 b.Property<int>("Interface").ValueGeneratedOnAdd().HasColumnName("interface").HasColumnType("int(11)")
                  .HasDefaultValueSql("'0'");
 
-                b.Property<int>("Machine").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
 
                 b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)")
                  .HasDefaultValueSql("'0'");
@@ -918,7 +919,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasIndex("Interface").HasName("idx_storage_interface");
 
-                b.HasIndex("Machine").HasName("idx_storage_machine");
+                b.HasIndex("MachineId").HasName("idx_storage_machine");
 
                 b.HasIndex("Type").HasName("idx_storage_type");
 
@@ -927,18 +928,17 @@ namespace Cicm.Database.Migrations
 
             modelBuilder.Entity("Cicm.Database.Models.Companies", b =>
             {
-                b.HasOne("Cicm.Database.Models.Iso31661Numeric", "CountryNavigation").WithMany("Companies")
-                 .HasForeignKey("Country").HasConstraintName("fk_companies_country");
+                b.HasOne("Cicm.Database.Models.Iso31661Numeric", "Country").WithMany("Companies")
+                 .HasForeignKey("CountryId").HasConstraintName("fk_companies_country");
 
-                b.HasOne("Cicm.Database.Models.Companies", "SoldToNavigation").WithMany("InverseSoldToNavigation")
-                 .HasForeignKey("SoldTo").HasConstraintName("fk_companies_sold_to");
+                b.HasOne("Cicm.Database.Models.Companies", "SoldTo").WithMany("InverseSoldToNavigation")
+                 .HasForeignKey("SoldToId").HasConstraintName("fk_companies_sold_to");
             });
 
             modelBuilder.Entity("Cicm.Database.Models.CompanyDescriptions",
                                 b =>
                                 {
-                                    b.HasOne("Cicm.Database.Models.Companies", "IdNavigation")
-                                     .WithOne("CompanyDescriptions")
+                                    b.HasOne("Cicm.Database.Models.Companies", "Company").WithOne("CompanyDescriptions")
                                      .HasForeignKey("Cicm.Database.Models.CompanyDescriptions", "Id")
                                      .HasConstraintName("fk_company_id").OnDelete(DeleteBehavior.Cascade);
                                 });
@@ -953,18 +953,17 @@ namespace Cicm.Database.Migrations
             modelBuilder.Entity("Cicm.Database.Models.Gpus",
                                 b =>
                                 {
-                                    b.HasOne("Cicm.Database.Models.Companies", "CompanyNavigation").WithMany("Gpus")
-                                     .HasForeignKey("Company").HasConstraintName("fk_gpus_company");
+                                    b.HasOne("Cicm.Database.Models.Companies", "Company").WithMany("Gpus")
+                                     .HasForeignKey("CompanyId").HasConstraintName("fk_gpus_company");
                                 });
 
             modelBuilder.Entity("Cicm.Database.Models.GpusByMachine", b =>
             {
-                b.HasOne("Cicm.Database.Models.Gpus", "GpuNavigation").WithMany("GpusByMachine").HasForeignKey("Gpu")
+                b.HasOne("Cicm.Database.Models.Gpus", "Gpu").WithMany("GpusByMachine").HasForeignKey("GpuId")
                  .HasConstraintName("fk_gpus_by_machine_gpu").OnDelete(DeleteBehavior.Cascade);
 
-                b.HasOne("Cicm.Database.Models.Machines", "MachineNavigation").WithMany("GpusByMachine")
-                 .HasForeignKey("Machine").HasConstraintName("fk_gpus_by_machine_machine")
-                 .OnDelete(DeleteBehavior.Cascade);
+                b.HasOne("Cicm.Database.Models.Machines", "Machine").WithMany("Gpus").HasForeignKey("MachineId")
+                 .HasConstraintName("fk_gpus_by_machine_machine").OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Cicm.Database.Models.InstructionSetExtensionsByProcessor", b =>
@@ -973,91 +972,86 @@ namespace Cicm.Database.Migrations
                  .WithMany("InstructionSetExtensionsByProcessor").HasForeignKey("ExtensionId")
                  .HasConstraintName("fk_extension_extension_id");
 
-                b.HasOne("Cicm.Database.Models.Processors", "Processor").WithMany("InstructionSetExtensionsByProcessor")
+                b.HasOne("Cicm.Database.Models.Processors", "Processor").WithMany("InstructionSetExtensions")
                  .HasForeignKey("ProcessorId").HasConstraintName("fk_extension_processor_id");
             });
 
             modelBuilder.Entity("Cicm.Database.Models.MachineFamilies",
                                 b =>
                                 {
-                                    b.HasOne("Cicm.Database.Models.Companies", "CompanyNavigation")
-                                     .WithMany("MachineFamilies").HasForeignKey("Company")
-                                     .HasConstraintName("fk_machine_families_company").OnDelete(DeleteBehavior.Cascade);
+                                    b.HasOne("Cicm.Database.Models.Companies", "Company").WithMany("MachineFamilies")
+                                     .HasForeignKey("CompanyId").HasConstraintName("fk_machine_families_company")
+                                     .OnDelete(DeleteBehavior.Cascade);
                                 });
 
             modelBuilder.Entity("Cicm.Database.Models.Machines", b =>
             {
-                b.HasOne("Cicm.Database.Models.Companies", "CompanyNavigation").WithMany("Machines")
-                 .HasForeignKey("Company").HasConstraintName("fk_machines_company");
+                b.HasOne("Cicm.Database.Models.Companies", "Company").WithMany("Machines").HasForeignKey("CompanyId")
+                 .HasConstraintName("fk_machines_company");
 
-                b.HasOne("Cicm.Database.Models.MachineFamilies", "FamilyNavigation").WithMany("Machines")
-                 .HasForeignKey("Family").HasConstraintName("fk_machines_family");
+                b.HasOne("Cicm.Database.Models.MachineFamilies", "Family").WithMany("Machines")
+                 .HasForeignKey("FamilyId").HasConstraintName("fk_machines_family");
             });
 
             modelBuilder.Entity("Cicm.Database.Models.MemoryByMachine",
                                 b =>
                                 {
-                                    b.HasOne("Cicm.Database.Models.Machines", "MachineNavigation")
-                                     .WithMany("MemoryByMachine").HasForeignKey("Machine")
-                                     .HasConstraintName("fk_memory_by_machine_machine")
+                                    b.HasOne("Cicm.Database.Models.Machines", "Machine").WithMany("Memory")
+                                     .HasForeignKey("MachineId").HasConstraintName("fk_memory_by_machine_machine")
                                      .OnDelete(DeleteBehavior.Cascade);
                                 });
 
             modelBuilder.Entity("Cicm.Database.Models.Processors", b =>
             {
-                b.HasOne("Cicm.Database.Models.Companies", "CompanyNavigation").WithMany("Processors")
-                 .HasForeignKey("Company").HasConstraintName("fk_processors_company");
+                b.HasOne("Cicm.Database.Models.Companies", "Company").WithMany("Processors").HasForeignKey("CompanyId")
+                 .HasConstraintName("fk_processors_company");
 
-                b.HasOne("Cicm.Database.Models.InstructionSets", "InstructionSetNavigation").WithMany("Processors")
-                 .HasForeignKey("InstructionSet").HasConstraintName("fk_processors_instruction_set");
+                b.HasOne("Cicm.Database.Models.InstructionSets", "InstructionSet").WithMany("Processors")
+                 .HasForeignKey("InstructionSetId").HasConstraintName("fk_processors_instruction_set");
             });
 
             modelBuilder.Entity("Cicm.Database.Models.ProcessorsByMachine", b =>
             {
-                b.HasOne("Cicm.Database.Models.Machines", "MachineNavigation").WithMany("ProcessorsByMachine")
-                 .HasForeignKey("Machine").HasConstraintName("fk_processors_by_machine_machine")
-                 .OnDelete(DeleteBehavior.Cascade);
+                b.HasOne("Cicm.Database.Models.Machines", "Machine").WithMany("Processors").HasForeignKey("MachineId")
+                 .HasConstraintName("fk_processors_by_machine_machine").OnDelete(DeleteBehavior.Cascade);
 
-                b.HasOne("Cicm.Database.Models.Processors", "ProcessorNavigation").WithMany("ProcessorsByMachine")
-                 .HasForeignKey("Processor").HasConstraintName("fk_processors_by_machine_processor")
+                b.HasOne("Cicm.Database.Models.Processors", "Processor").WithMany("ProcessorsByMachine")
+                 .HasForeignKey("ProcessorId").HasConstraintName("fk_processors_by_machine_processor")
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Cicm.Database.Models.ResolutionsByGpu", b =>
             {
-                b.HasOne("Cicm.Database.Models.Gpus", "GpuNavigation").WithMany("ResolutionsByGpu").HasForeignKey("Gpu")
+                b.HasOne("Cicm.Database.Models.Gpus", "Gpu").WithMany("ResolutionsByGpu").HasForeignKey("GpuId")
                  .HasConstraintName("fk_resolutions_by_gpu_gpu").OnDelete(DeleteBehavior.Cascade);
 
-                b.HasOne("Cicm.Database.Models.Resolutions", "ResolutionNavigation").WithMany("ResolutionsByGpu")
-                 .HasForeignKey("Resolution").HasConstraintName("fk_resolutions_by_gpu_resolution")
+                b.HasOne("Cicm.Database.Models.Resolutions", "Resolution").WithMany("ResolutionsByGpu")
+                 .HasForeignKey("ResolutionId").HasConstraintName("fk_resolutions_by_gpu_resolution")
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Cicm.Database.Models.SoundByMachine", b =>
             {
-                b.HasOne("Cicm.Database.Models.Machines", "MachineNavigation").WithMany("SoundByMachine")
-                 .HasForeignKey("Machine").HasConstraintName("fk_sound_by_machine_machine")
-                 .OnDelete(DeleteBehavior.Cascade);
+                b.HasOne("Cicm.Database.Models.Machines", "Machine").WithMany("Sound").HasForeignKey("MachineId")
+                 .HasConstraintName("fk_sound_by_machine_machine").OnDelete(DeleteBehavior.Cascade);
 
-                b.HasOne("Cicm.Database.Models.SoundSynths", "SoundSynthNavigation").WithMany("SoundByMachine")
-                 .HasForeignKey("SoundSynth").HasConstraintName("fk_sound_by_machine_sound_synth")
+                b.HasOne("Cicm.Database.Models.SoundSynths", "SoundSynth").WithMany("SoundByMachine")
+                 .HasForeignKey("SoundSynthId").HasConstraintName("fk_sound_by_machine_sound_synth")
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Cicm.Database.Models.SoundSynths",
                                 b =>
                                 {
-                                    b.HasOne("Cicm.Database.Models.Companies", "CompanyNavigation")
-                                     .WithMany("SoundSynths").HasForeignKey("Company")
-                                     .HasConstraintName("fk_sound_synths_company");
+                                    b.HasOne("Cicm.Database.Models.Companies", "Company").WithMany("SoundSynths")
+                                     .HasForeignKey("CompanyId").HasConstraintName("fk_sound_synths_company");
                                 });
 
             modelBuilder.Entity("Cicm.Database.Models.StorageByMachine",
                                 b =>
                                 {
-                                    b.HasOne("Cicm.Database.Models.Machines", "MachineNavigation")
-                                     .WithMany("StorageByMachine").HasForeignKey("Machine")
-                                     .HasConstraintName("fk_storage_by_machine_machine")
+                                    b.HasOne("Cicm.Database.Models.Machines", "Machine").WithMany("Storage")
+                                     .HasForeignKey("MachineId").HasConstraintName("fk_storage_by_machine_machine")
                                      .OnDelete(DeleteBehavior.Cascade);
                                 });
             #pragma warning restore 612, 618

@@ -2,11 +2,11 @@
 {
     public class GpusByMachine
     {
-        public int  Gpu     { get; set; }
-        public int  Machine { get; set; }
-        public long Id      { get; set; }
+        public int  GpuId     { get; set; }
+        public int  MachineId { get; set; }
+        public long Id        { get; set; }
 
-        public Gpus     GpuNavigation     { get; set; }
-        public Machines MachineNavigation { get; set; }
+        public Gpus     Gpu     { get; set; }
+        public Machines Machine { get; set; }
     }
 }

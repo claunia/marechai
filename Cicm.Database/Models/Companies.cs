@@ -23,16 +23,16 @@ namespace Cicm.Database.Models
         public string    Twitter    { get; set; }
         public string    Facebook   { get; set; }
         public DateTime? Sold       { get; set; }
-        public int?      SoldTo     { get; set; }
+        public int?      SoldToId   { get; set; }
         public string    Address    { get; set; }
         public string    City       { get; set; }
         public string    Province   { get; set; }
         public string    PostalCode { get; set; }
-        public short?    Country    { get; set; }
+        public short?    CountryId  { get; set; }
         public int       Status     { get; set; }
 
-        public Iso31661Numeric              CountryNavigation       { get; set; }
-        public Companies                    SoldToNavigation        { get; set; }
+        public Iso31661Numeric              Country                 { get; set; }
+        public Companies                    SoldTo                  { get; set; }
         public CompanyDescriptions          CompanyDescriptions     { get; set; }
         public ICollection<CompanyLogos>    CompanyLogos            { get; set; }
         public ICollection<Gpus>            Gpus                    { get; set; }

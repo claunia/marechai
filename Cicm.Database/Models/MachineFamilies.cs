@@ -9,11 +9,11 @@ namespace Cicm.Database.Models
             Machines = new HashSet<Machines>();
         }
 
-        public int    Id      { get; set; }
-        public int    Company { get; set; }
-        public string Name    { get; set; }
+        public int    Id        { get; set; }
+        public int    CompanyId { get; set; }
+        public string Name      { get; set; }
 
-        public Companies             CompanyNavigation { get; set; }
-        public ICollection<Machines> Machines          { get; set; }
+        public Companies             Company  { get; set; }
+        public ICollection<Machines> Machines { get; set; }
     }
 }

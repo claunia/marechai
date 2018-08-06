@@ -12,7 +12,7 @@ namespace Cicm.Database.Models
 
         public int       Id         { get; set; }
         public string    Name       { get; set; }
-        public int?      Company    { get; set; }
+        public int?      CompanyId  { get; set; }
         public string    ModelCode  { get; set; }
         public DateTime? Introduced { get; set; }
         public int?      Voices     { get; set; }
@@ -22,7 +22,7 @@ namespace Cicm.Database.Models
         public int?      WhiteNoise { get; set; }
         public int?      Type       { get; set; }
 
-        public Companies                   CompanyNavigation { get; set; }
-        public ICollection<SoundByMachine> SoundByMachine    { get; set; }
+        public Companies                   Company        { get; set; }
+        public ICollection<SoundByMachine> SoundByMachine { get; set; }
     }
 }

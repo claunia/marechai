@@ -7,27 +7,27 @@ namespace Cicm.Database.Models
     {
         public Machines()
         {
-            GpusByMachine       = new HashSet<GpusByMachine>();
-            MemoryByMachine     = new HashSet<MemoryByMachine>();
-            ProcessorsByMachine = new HashSet<ProcessorsByMachine>();
-            SoundByMachine      = new HashSet<SoundByMachine>();
-            StorageByMachine    = new HashSet<StorageByMachine>();
+            Gpus       = new HashSet<GpusByMachine>();
+            Memory     = new HashSet<MemoryByMachine>();
+            Processors = new HashSet<ProcessorsByMachine>();
+            Sound      = new HashSet<SoundByMachine>();
+            Storage    = new HashSet<StorageByMachine>();
         }
 
         public int       Id         { get; set; }
-        public int       Company    { get; set; }
+        public int       CompanyId  { get; set; }
         public string    Name       { get; set; }
         public int       Type       { get; set; }
         public DateTime? Introduced { get; set; }
-        public int?      Family     { get; set; }
+        public int?      FamilyId   { get; set; }
         public string    Model      { get; set; }
 
-        public Companies                        CompanyNavigation   { get; set; }
-        public MachineFamilies                  FamilyNavigation    { get; set; }
-        public ICollection<GpusByMachine>       GpusByMachine       { get; set; }
-        public ICollection<MemoryByMachine>     MemoryByMachine     { get; set; }
-        public ICollection<ProcessorsByMachine> ProcessorsByMachine { get; set; }
-        public ICollection<SoundByMachine>      SoundByMachine      { get; set; }
-        public ICollection<StorageByMachine>    StorageByMachine    { get; set; }
+        public Companies                        Company    { get; set; }
+        public MachineFamilies                  Family     { get; set; }
+        public ICollection<GpusByMachine>       Gpus       { get; set; }
+        public ICollection<MemoryByMachine>     Memory     { get; set; }
+        public ICollection<ProcessorsByMachine> Processors { get; set; }
+        public ICollection<SoundByMachine>      Sound      { get; set; }
+        public ICollection<StorageByMachine>    Storage    { get; set; }
     }
 }

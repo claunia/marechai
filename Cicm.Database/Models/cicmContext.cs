@@ -37,6 +37,15 @@ namespace Cicm.Database.Models
         public virtual DbSet<SoundSynths>                         SoundSynths                         { get; set; }
         public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if(!optionsBuilder.IsConfigured)
+            {
+                #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySql("server=localhost;port=3306;user=cicm;password=cicmpass;database=cicm");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Admins>(entity =>
@@ -137,7 +146,7 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.City).HasName("idx_companies_city");
 
-                entity.HasIndex(e => e.Country).HasName("idx_companies_country");
+                entity.HasIndex(e => e.CountryId).HasName("idx_companies_country");
 
                 entity.HasIndex(e => e.Facebook).HasName("idx_companies_facebook");
 
@@ -151,7 +160,7 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.Sold).HasName("idx_companies_sold");
 
-                entity.HasIndex(e => e.SoldTo).HasName("idx_companies_sold_to");
+                entity.HasIndex(e => e.SoldToId).HasName("idx_companies_sold_to");
 
                 entity.HasIndex(e => e.Status).HasName("idx_companies_status");
 
@@ -165,7 +174,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.City).HasColumnName("city").HasColumnType("varchar(80)");
 
-                entity.Property(e => e.Country).HasColumnName("country").HasColumnType("smallint(3)");
+                entity.Property(e => e.CountryId).HasColumnName("country").HasColumnType("smallint(3)");
 
                 entity.Property(e => e.Facebook).HasColumnName("facebook").HasColumnType("varchar(45)");
 
@@ -180,7 +189,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Sold).HasColumnName("sold").HasColumnType("datetime");
 
-                entity.Property(e => e.SoldTo).HasColumnName("sold_to").HasColumnType("int(11)");
+                entity.Property(e => e.SoldToId).HasColumnName("sold_to").HasColumnType("int(11)");
 
                 entity.Property(e => e.Status).HasColumnName("status").HasColumnType("int(11)");
 
@@ -188,11 +197,11 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Website).HasColumnName("website").HasColumnType("varchar(255)");
 
-                entity.HasOne(d => d.CountryNavigation).WithMany(p => p.Companies).HasForeignKey(d => d.Country)
+                entity.HasOne(d => d.Country).WithMany(p => p.Companies).HasForeignKey(d => d.CountryId)
                       .HasConstraintName("fk_companies_country");
 
-                entity.HasOne(d => d.SoldToNavigation).WithMany(p => p.InverseSoldToNavigation)
-                      .HasForeignKey(d => d.SoldTo).HasConstraintName("fk_companies_sold_to");
+                entity.HasOne(d => d.SoldTo).WithMany(p => p.InverseSoldToNavigation).HasForeignKey(d => d.SoldToId)
+                      .HasConstraintName("fk_companies_sold_to");
             });
 
             modelBuilder.Entity<CompanyDescriptions>(entity =>
@@ -209,7 +218,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Text).HasColumnName("text").HasColumnType("text");
 
-                entity.HasOne(d => d.IdNavigation).WithOne(p => p.CompanyDescriptions)
+                entity.HasOne(d => d.Company).WithOne(p => p.CompanyDescriptions)
                       .HasForeignKey<CompanyDescriptions>(d => d.Id).HasConstraintName("fk_company_id");
             });
 
@@ -268,7 +277,7 @@ namespace Cicm.Database.Models
             {
                 entity.ToTable("gpus");
 
-                entity.HasIndex(e => e.Company).HasName("idx_gpus_company");
+                entity.HasIndex(e => e.CompanyId).HasName("idx_gpus_company");
 
                 entity.HasIndex(e => e.DieSize).HasName("idx_gpus_die_size");
 
@@ -288,7 +297,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Company).HasColumnName("company").HasColumnType("int(11)");
+                entity.Property(e => e.CompanyId).HasColumnName("company").HasColumnType("int(11)");
 
                 entity.Property(e => e.DieSize).HasColumnName("die_size");
 
@@ -307,7 +316,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Transistors).HasColumnName("transistors").HasColumnType("bigint(20)");
 
-                entity.HasOne(d => d.CompanyNavigation).WithMany(p => p.Gpus).HasForeignKey(d => d.Company)
+                entity.HasOne(d => d.Company).WithMany(p => p.Gpus).HasForeignKey(d => d.CompanyId)
                       .HasConstraintName("fk_gpus_company");
             });
 
@@ -315,20 +324,20 @@ namespace Cicm.Database.Models
             {
                 entity.ToTable("gpus_by_machine");
 
-                entity.HasIndex(e => e.Gpu).HasName("idx_gpus_by_machine_gpus");
+                entity.HasIndex(e => e.GpuId).HasName("idx_gpus_by_machine_gpus");
 
-                entity.HasIndex(e => e.Machine).HasName("idx_gpus_by_machine_machine");
+                entity.HasIndex(e => e.MachineId).HasName("idx_gpus_by_machine_machine");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
-                entity.Property(e => e.Gpu).HasColumnName("gpu").HasColumnType("int(11)");
+                entity.Property(e => e.GpuId).HasColumnName("gpu").HasColumnType("int(11)");
 
-                entity.Property(e => e.Machine).HasColumnName("machine").HasColumnType("int(11)");
+                entity.Property(e => e.MachineId).HasColumnName("machine").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.GpuNavigation).WithMany(p => p.GpusByMachine).HasForeignKey(d => d.Gpu)
+                entity.HasOne(d => d.Gpu).WithMany(p => p.GpusByMachine).HasForeignKey(d => d.GpuId)
                       .HasConstraintName("fk_gpus_by_machine_gpu");
 
-                entity.HasOne(d => d.MachineNavigation).WithMany(p => p.GpusByMachine).HasForeignKey(d => d.Machine)
+                entity.HasOne(d => d.Machine).WithMany(p => p.Gpus).HasForeignKey(d => d.MachineId)
                       .HasConstraintName("fk_gpus_by_machine_machine");
             });
 
@@ -361,7 +370,7 @@ namespace Cicm.Database.Models
                       .HasForeignKey(d => d.ExtensionId).OnDelete(DeleteBehavior.ClientSetNull)
                       .HasConstraintName("fk_extension_extension_id");
 
-                entity.HasOne(d => d.Processor).WithMany(p => p.InstructionSetExtensionsByProcessor)
+                entity.HasOne(d => d.Processor).WithMany(p => p.InstructionSetExtensions)
                       .HasForeignKey(d => d.ProcessorId).OnDelete(DeleteBehavior.ClientSetNull)
                       .HasConstraintName("fk_extension_processor_id");
             });
@@ -418,17 +427,17 @@ namespace Cicm.Database.Models
             {
                 entity.ToTable("machine_families");
 
-                entity.HasIndex(e => e.Company).HasName("idx_machine_families_company");
+                entity.HasIndex(e => e.CompanyId).HasName("idx_machine_families_company");
 
                 entity.HasIndex(e => e.Name).HasName("idx_machine_families_name");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Company).HasColumnName("company").HasColumnType("int(11)");
+                entity.Property(e => e.CompanyId).HasColumnName("company").HasColumnType("int(11)");
 
                 entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("varchar(255)");
 
-                entity.HasOne(d => d.CompanyNavigation).WithMany(p => p.MachineFamilies).HasForeignKey(d => d.Company)
+                entity.HasOne(d => d.Company).WithMany(p => p.MachineFamilies).HasForeignKey(d => d.CompanyId)
                       .HasConstraintName("fk_machine_families_company");
             });
 
@@ -436,9 +445,9 @@ namespace Cicm.Database.Models
             {
                 entity.ToTable("machines");
 
-                entity.HasIndex(e => e.Company).HasName("idx_machines_company");
+                entity.HasIndex(e => e.CompanyId).HasName("idx_machines_company");
 
-                entity.HasIndex(e => e.Family).HasName("idx_machines_family");
+                entity.HasIndex(e => e.FamilyId).HasName("idx_machines_family");
 
                 entity.HasIndex(e => e.Introduced).HasName("idx_machines_introduced");
 
@@ -450,10 +459,10 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Company).HasColumnName("company").HasColumnType("int(11)")
+                entity.Property(e => e.CompanyId).HasColumnName("company").HasColumnType("int(11)")
                       .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Family).HasColumnName("family").HasColumnType("int(11)");
+                entity.Property(e => e.FamilyId).HasColumnName("family").HasColumnType("int(11)");
 
                 entity.Property(e => e.Introduced).HasColumnName("introduced").HasColumnType("datetime");
 
@@ -463,10 +472,10 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
 
-                entity.HasOne(d => d.CompanyNavigation).WithMany(p => p.Machines).HasForeignKey(d => d.Company)
+                entity.HasOne(d => d.Company).WithMany(p => p.Machines).HasForeignKey(d => d.CompanyId)
                       .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_machines_company");
 
-                entity.HasOne(d => d.FamilyNavigation).WithMany(p => p.Machines).HasForeignKey(d => d.Family)
+                entity.HasOne(d => d.Family).WithMany(p => p.Machines).HasForeignKey(d => d.FamilyId)
                       .HasConstraintName("fk_machines_family");
             });
 
@@ -474,7 +483,7 @@ namespace Cicm.Database.Models
             {
                 entity.ToTable("memory_by_machine");
 
-                entity.HasIndex(e => e.Machine).HasName("idx_memory_by_machine_machine");
+                entity.HasIndex(e => e.MachineId).HasName("idx_memory_by_machine_machine");
 
                 entity.HasIndex(e => e.Size).HasName("idx_memory_by_machine_size");
 
@@ -486,7 +495,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
-                entity.Property(e => e.Machine).HasColumnName("machine").HasColumnType("int(11)");
+                entity.Property(e => e.MachineId).HasColumnName("machine").HasColumnType("int(11)");
 
                 entity.Property(e => e.Size).HasColumnName("size").HasColumnType("bigint(20)");
 
@@ -496,7 +505,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Usage).HasColumnName("usage").HasColumnType("int(11)").HasDefaultValueSql("'0'");
 
-                entity.HasOne(d => d.MachineNavigation).WithMany(p => p.MemoryByMachine).HasForeignKey(d => d.Machine)
+                entity.HasOne(d => d.Machine).WithMany(p => p.Memory).HasForeignKey(d => d.MachineId)
                       .HasConstraintName("fk_memory_by_machine_machine");
             });
 
@@ -659,7 +668,7 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.AddrBus).HasName("idx_processors_addr_bus");
 
-                entity.HasIndex(e => e.Company).HasName("idx_processors_company");
+                entity.HasIndex(e => e.CompanyId).HasName("idx_processors_company");
 
                 entity.HasIndex(e => e.Cores).HasName("idx_processors_cores");
 
@@ -675,7 +684,7 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.Gprs).HasName("idx_processors_GPRs");
 
-                entity.HasIndex(e => e.InstructionSet).HasName("idx_processors_instruction_set");
+                entity.HasIndex(e => e.InstructionSetId).HasName("idx_processors_instruction_set");
 
                 entity.HasIndex(e => e.Introduced).HasName("idx_processors_introduced");
 
@@ -711,7 +720,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.AddrBus).HasColumnName("addr_bus").HasColumnType("int(11)");
 
-                entity.Property(e => e.Company).HasColumnName("company").HasColumnType("int(11)");
+                entity.Property(e => e.CompanyId).HasColumnName("company").HasColumnType("int(11)");
 
                 entity.Property(e => e.Cores).HasColumnName("cores").HasColumnType("int(11)");
 
@@ -727,7 +736,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Gprs).HasColumnName("GPRs").HasColumnType("int(11)");
 
-                entity.Property(e => e.InstructionSet).HasColumnName("instruction_set").HasColumnType("int(11)");
+                entity.Property(e => e.InstructionSetId).HasColumnName("instruction_set").HasColumnType("int(11)");
 
                 entity.Property(e => e.Introduced).HasColumnName("introduced").HasColumnType("datetime");
 
@@ -756,36 +765,36 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Transistors).HasColumnName("transistors").HasColumnType("bigint(20)");
 
-                entity.HasOne(d => d.CompanyNavigation).WithMany(p => p.Processors).HasForeignKey(d => d.Company)
+                entity.HasOne(d => d.Company).WithMany(p => p.Processors).HasForeignKey(d => d.CompanyId)
                       .HasConstraintName("fk_processors_company");
 
-                entity.HasOne(d => d.InstructionSetNavigation).WithMany(p => p.Processors)
-                      .HasForeignKey(d => d.InstructionSet).HasConstraintName("fk_processors_instruction_set");
+                entity.HasOne(d => d.InstructionSet).WithMany(p => p.Processors).HasForeignKey(d => d.InstructionSetId)
+                      .HasConstraintName("fk_processors_instruction_set");
             });
 
             modelBuilder.Entity<ProcessorsByMachine>(entity =>
             {
                 entity.ToTable("processors_by_machine");
 
-                entity.HasIndex(e => e.Machine).HasName("idx_processors_by_machine_machine");
+                entity.HasIndex(e => e.MachineId).HasName("idx_processors_by_machine_machine");
 
-                entity.HasIndex(e => e.Processor).HasName("idx_processors_by_machine_processor");
+                entity.HasIndex(e => e.ProcessorId).HasName("idx_processors_by_machine_processor");
 
                 entity.HasIndex(e => e.Speed).HasName("idx_processors_by_machine_speed");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
-                entity.Property(e => e.Machine).HasColumnName("machine").HasColumnType("int(11)");
+                entity.Property(e => e.MachineId).HasColumnName("machine").HasColumnType("int(11)");
 
-                entity.Property(e => e.Processor).HasColumnName("processor").HasColumnType("int(11)");
+                entity.Property(e => e.ProcessorId).HasColumnName("processor").HasColumnType("int(11)");
 
                 entity.Property(e => e.Speed).HasColumnName("speed");
 
-                entity.HasOne(d => d.MachineNavigation).WithMany(p => p.ProcessorsByMachine)
-                      .HasForeignKey(d => d.Machine).HasConstraintName("fk_processors_by_machine_machine");
+                entity.HasOne(d => d.Machine).WithMany(p => p.Processors).HasForeignKey(d => d.MachineId)
+                      .HasConstraintName("fk_processors_by_machine_machine");
 
-                entity.HasOne(d => d.ProcessorNavigation).WithMany(p => p.ProcessorsByMachine)
-                      .HasForeignKey(d => d.Processor).HasConstraintName("fk_processors_by_machine_processor");
+                entity.HasOne(d => d.Processor).WithMany(p => p.ProcessorsByMachine).HasForeignKey(d => d.ProcessorId)
+                      .HasConstraintName("fk_processors_by_machine_processor");
             });
 
             modelBuilder.Entity<Resolutions>(entity =>
@@ -827,49 +836,49 @@ namespace Cicm.Database.Models
             {
                 entity.ToTable("resolutions_by_gpu");
 
-                entity.HasIndex(e => e.Gpu).HasName("idx_resolutions_by_gpu_gpu");
+                entity.HasIndex(e => e.GpuId).HasName("idx_resolutions_by_gpu_gpu");
 
-                entity.HasIndex(e => e.Resolution).HasName("idx_resolutions_by_gpu_resolution");
+                entity.HasIndex(e => e.ResolutionId).HasName("idx_resolutions_by_gpu_resolution");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
-                entity.Property(e => e.Gpu).HasColumnName("gpu").HasColumnType("int(11)");
+                entity.Property(e => e.GpuId).HasColumnName("gpu").HasColumnType("int(11)");
 
-                entity.Property(e => e.Resolution).HasColumnName("resolution").HasColumnType("int(11)");
+                entity.Property(e => e.ResolutionId).HasColumnName("resolution").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.GpuNavigation).WithMany(p => p.ResolutionsByGpu).HasForeignKey(d => d.Gpu)
+                entity.HasOne(d => d.Gpu).WithMany(p => p.ResolutionsByGpu).HasForeignKey(d => d.GpuId)
                       .HasConstraintName("fk_resolutions_by_gpu_gpu");
 
-                entity.HasOne(d => d.ResolutionNavigation).WithMany(p => p.ResolutionsByGpu)
-                      .HasForeignKey(d => d.Resolution).HasConstraintName("fk_resolutions_by_gpu_resolution");
+                entity.HasOne(d => d.Resolution).WithMany(p => p.ResolutionsByGpu).HasForeignKey(d => d.ResolutionId)
+                      .HasConstraintName("fk_resolutions_by_gpu_resolution");
             });
 
             modelBuilder.Entity<SoundByMachine>(entity =>
             {
                 entity.ToTable("sound_by_machine");
 
-                entity.HasIndex(e => e.Machine).HasName("idx_sound_by_machine_machine");
+                entity.HasIndex(e => e.MachineId).HasName("idx_sound_by_machine_machine");
 
-                entity.HasIndex(e => e.SoundSynth).HasName("idx_sound_by_machine_sound_synth");
+                entity.HasIndex(e => e.SoundSynthId).HasName("idx_sound_by_machine_sound_synth");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
-                entity.Property(e => e.Machine).HasColumnName("machine").HasColumnType("int(11)");
+                entity.Property(e => e.MachineId).HasColumnName("machine").HasColumnType("int(11)");
 
-                entity.Property(e => e.SoundSynth).HasColumnName("sound_synth").HasColumnType("int(11)");
+                entity.Property(e => e.SoundSynthId).HasColumnName("sound_synth").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.MachineNavigation).WithMany(p => p.SoundByMachine).HasForeignKey(d => d.Machine)
+                entity.HasOne(d => d.Machine).WithMany(p => p.Sound).HasForeignKey(d => d.MachineId)
                       .HasConstraintName("fk_sound_by_machine_machine");
 
-                entity.HasOne(d => d.SoundSynthNavigation).WithMany(p => p.SoundByMachine)
-                      .HasForeignKey(d => d.SoundSynth).HasConstraintName("fk_sound_by_machine_sound_synth");
+                entity.HasOne(d => d.SoundSynth).WithMany(p => p.SoundByMachine).HasForeignKey(d => d.SoundSynthId)
+                      .HasConstraintName("fk_sound_by_machine_sound_synth");
             });
 
             modelBuilder.Entity<SoundSynths>(entity =>
             {
                 entity.ToTable("sound_synths");
 
-                entity.HasIndex(e => e.Company).HasName("idx_sound_synths_company");
+                entity.HasIndex(e => e.CompanyId).HasName("idx_sound_synths_company");
 
                 entity.HasIndex(e => e.Depth).HasName("idx_sound_synths_depth");
 
@@ -891,7 +900,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Company).HasColumnName("company").HasColumnType("int(11)");
+                entity.Property(e => e.CompanyId).HasColumnName("company").HasColumnType("int(11)");
 
                 entity.Property(e => e.Depth).HasColumnName("depth").HasColumnType("int(11)");
 
@@ -912,7 +921,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.WhiteNoise).HasColumnName("white_noise").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.CompanyNavigation).WithMany(p => p.SoundSynths).HasForeignKey(d => d.Company)
+                entity.HasOne(d => d.Company).WithMany(p => p.SoundSynths).HasForeignKey(d => d.CompanyId)
                       .HasConstraintName("fk_sound_synths_company");
             });
 
@@ -924,7 +933,7 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.Interface).HasName("idx_storage_interface");
 
-                entity.HasIndex(e => e.Machine).HasName("idx_storage_machine");
+                entity.HasIndex(e => e.MachineId).HasName("idx_storage_machine");
 
                 entity.HasIndex(e => e.Type).HasName("idx_storage_type");
 
@@ -935,11 +944,11 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Interface).HasColumnName("interface").HasColumnType("int(11)")
                       .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Machine).HasColumnName("machine").HasColumnType("int(11)");
+                entity.Property(e => e.MachineId).HasColumnName("machine").HasColumnType("int(11)");
 
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
 
-                entity.HasOne(d => d.MachineNavigation).WithMany(p => p.StorageByMachine).HasForeignKey(d => d.Machine)
+                entity.HasOne(d => d.Machine).WithMany(p => p.Storage).HasForeignKey(d => d.MachineId)
                       .HasConstraintName("fk_storage_by_machine_machine");
             });
         }
