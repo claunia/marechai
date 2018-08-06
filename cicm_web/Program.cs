@@ -150,6 +150,9 @@ namespace cicm_web
                 catch(Exception ex)
                 {
                     Console.WriteLine("\u001b[31;1mCould not open database...\u001b[0m");
+                    #if DEBUG
+                    Console.WriteLine("\u001b[31;1mException: {0}\u001b[0m", ex.Message);
+                    #endif
                     return;
                 }
             }
