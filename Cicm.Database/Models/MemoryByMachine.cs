@@ -9,6 +9,6 @@
         public double?     Speed     { get; set; }
         public long        Id        { get; set; }
 
-        public Machines Machine { get; set; }
+        public Machine Machine { get; set; }
     }
 }

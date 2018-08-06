@@ -31,15 +31,15 @@
 
     ViewData["Title"] = "Companies";
 }
-@using Cicm.Database.Models
-@model Cicm.Database.Models.Companies[]
+@using Company = Cicm.Database.Models.Company
+@model Cicm.Database.Models.Company[]
 
 <p align="center">
     @if(Model.Any())
     {
         <p>
             @Model.Count() companies found in the database.<br />
-            @foreach(Companies company in Model)
+            @foreach(Company company in Model)
             {
                 <a asp-controller="Company"
                    asp-action="View"

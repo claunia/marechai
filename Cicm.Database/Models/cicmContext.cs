@@ -8,33 +8,33 @@ namespace Cicm.Database.Models
 
         public cicmContext(DbContextOptions<cicmContext> options) : base(options) { }
 
-        public virtual DbSet<Admins>                              Admins                              { get; set; }
-        public virtual DbSet<BrowserTests>                        BrowserTests                        { get; set; }
+        public virtual DbSet<Admin>                               Admins                              { get; set; }
+        public virtual DbSet<BrowserTest>                         BrowserTests                        { get; set; }
         public virtual DbSet<CicmDb>                              CicmDb                              { get; set; }
-        public virtual DbSet<Companies>                           Companies                           { get; set; }
-        public virtual DbSet<CompanyDescriptions>                 CompanyDescriptions                 { get; set; }
-        public virtual DbSet<CompanyLogos>                        CompanyLogos                        { get; set; }
+        public virtual DbSet<Company>                             Companies                           { get; set; }
+        public virtual DbSet<CompanyDescription>                  CompanyDescriptions                 { get; set; }
+        public virtual DbSet<CompanyLogo>                         CompanyLogos                        { get; set; }
         public virtual DbSet<Forbidden>                           Forbidden                           { get; set; }
-        public virtual DbSet<Gpus>                                Gpus                                { get; set; }
+        public virtual DbSet<Gpu>                                 Gpus                                { get; set; }
         public virtual DbSet<GpusByMachine>                       GpusByMachine                       { get; set; }
-        public virtual DbSet<InstructionSetExtensions>            InstructionSetExtensions            { get; set; }
+        public virtual DbSet<InstructionSetExtension>             InstructionSetExtensions            { get; set; }
         public virtual DbSet<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor { get; set; }
-        public virtual DbSet<InstructionSets>                     InstructionSets                     { get; set; }
+        public virtual DbSet<InstructionSet>                      InstructionSets                     { get; set; }
         public virtual DbSet<Iso31661Numeric>                     Iso31661Numeric                     { get; set; }
         public virtual DbSet<Log>                                 Log                                 { get; set; }
-        public virtual DbSet<MachineFamilies>                     MachineFamilies                     { get; set; }
-        public virtual DbSet<Machines>                            Machines                            { get; set; }
+        public virtual DbSet<MachineFamily>                       MachineFamilies                     { get; set; }
+        public virtual DbSet<Machine>                             Machines                            { get; set; }
         public virtual DbSet<MemoryByMachine>                     MemoryByMachine                     { get; set; }
-        public virtual DbSet<MoneyDonations>                      MoneyDonations                      { get; set; }
+        public virtual DbSet<MoneyDonation>                       MoneyDonations                      { get; set; }
         public virtual DbSet<News>                                News                                { get; set; }
-        public virtual DbSet<OwnedComputers>                      OwnedComputers                      { get; set; }
-        public virtual DbSet<OwnedConsoles>                       OwnedConsoles                       { get; set; }
-        public virtual DbSet<Processors>                          Processors                          { get; set; }
+        public virtual DbSet<OwnedComputer>                       OwnedComputers                      { get; set; }
+        public virtual DbSet<OwnedConsole>                        OwnedConsoles                       { get; set; }
+        public virtual DbSet<Processor>                           Processors                          { get; set; }
         public virtual DbSet<ProcessorsByMachine>                 ProcessorsByMachine                 { get; set; }
-        public virtual DbSet<Resolutions>                         Resolutions                         { get; set; }
+        public virtual DbSet<Resolution>                          Resolutions                         { get; set; }
         public virtual DbSet<ResolutionsByGpu>                    ResolutionsByGpu                    { get; set; }
         public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
-        public virtual DbSet<SoundSynths>                         SoundSynths                         { get; set; }
+        public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
         public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -48,7 +48,7 @@ namespace Cicm.Database.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Admins>(entity =>
+            modelBuilder.Entity<Admin>(entity =>
             {
                 entity.ToTable("admins");
 
@@ -63,7 +63,7 @@ namespace Cicm.Database.Models
                       .HasDefaultValueSql("''");
             });
 
-            modelBuilder.Entity<BrowserTests>(entity =>
+            modelBuilder.Entity<BrowserTest>(entity =>
             {
                 entity.ToTable("browser_tests");
 
@@ -138,7 +138,7 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Version).HasColumnName("version").HasColumnType("int(11)");
             });
 
-            modelBuilder.Entity<Companies>(entity =>
+            modelBuilder.Entity<Company>(entity =>
             {
                 entity.ToTable("companies");
 
@@ -204,7 +204,7 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_companies_sold_to");
             });
 
-            modelBuilder.Entity<CompanyDescriptions>(entity =>
+            modelBuilder.Entity<CompanyDescription>(entity =>
             {
                 entity.ToTable("company_descriptions");
 
@@ -218,11 +218,11 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Text).HasColumnName("text").HasColumnType("text");
 
-                entity.HasOne(d => d.Company).WithOne(p => p.Description).HasForeignKey<CompanyDescriptions>(d => d.Id)
+                entity.HasOne(d => d.Company).WithOne(p => p.Description).HasForeignKey<CompanyDescription>(d => d.Id)
                       .HasConstraintName("fk_company_id");
             });
 
-            modelBuilder.Entity<CompanyLogos>(entity =>
+            modelBuilder.Entity<CompanyLogo>(entity =>
             {
                 entity.HasKey(e => new {e.Id, e.CompanyId, LogoGuid = e.Guid});
 
@@ -273,7 +273,7 @@ namespace Cicm.Database.Models
                       .HasDefaultValueSql("''");
             });
 
-            modelBuilder.Entity<Gpus>(entity =>
+            modelBuilder.Entity<Gpu>(entity =>
             {
                 entity.ToTable("gpus");
 
@@ -341,7 +341,7 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_gpus_by_machine_machine");
             });
 
-            modelBuilder.Entity<InstructionSetExtensions>(entity =>
+            modelBuilder.Entity<InstructionSetExtension>(entity =>
             {
                 entity.ToTable("instruction_set_extensions");
 
@@ -375,14 +375,13 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_extension_processor_id");
             });
 
-            modelBuilder.Entity<InstructionSets>(entity =>
+            modelBuilder.Entity<InstructionSet>(entity =>
             {
                 entity.ToTable("instruction_sets");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.InstructionSet).IsRequired().HasColumnName("instruction_set")
-                      .HasColumnType("varchar(45)");
+                entity.Property(e => e.Name).IsRequired().HasColumnName("instruction_set").HasColumnType("varchar(45)");
             });
 
             modelBuilder.Entity<Iso31661Numeric>(entity =>
@@ -423,7 +422,7 @@ namespace Cicm.Database.Models
                       .HasDefaultValueSql("''");
             });
 
-            modelBuilder.Entity<MachineFamilies>(entity =>
+            modelBuilder.Entity<MachineFamily>(entity =>
             {
                 entity.ToTable("machine_families");
 
@@ -441,7 +440,7 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_machine_families_company");
             });
 
-            modelBuilder.Entity<Machines>(entity =>
+            modelBuilder.Entity<Machine>(entity =>
             {
                 entity.ToTable("machines");
 
@@ -509,7 +508,7 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_memory_by_machine_machine");
             });
 
-            modelBuilder.Entity<MoneyDonations>(entity =>
+            modelBuilder.Entity<MoneyDonation>(entity =>
             {
                 entity.ToTable("money_donations");
 
@@ -547,7 +546,7 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
             });
 
-            modelBuilder.Entity<OwnedComputers>(entity =>
+            modelBuilder.Entity<OwnedComputer>(entity =>
             {
                 entity.ToTable("owned_computers");
 
@@ -628,7 +627,7 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Vram).HasColumnName("vram").HasColumnType("int(11)").HasDefaultValueSql("'0'");
             });
 
-            modelBuilder.Entity<OwnedConsoles>(entity =>
+            modelBuilder.Entity<OwnedConsole>(entity =>
             {
                 entity.ToTable("owned_consoles");
 
@@ -662,7 +661,7 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Trade).HasColumnName("trade").HasColumnType("int(11)").HasDefaultValueSql("'0'");
             });
 
-            modelBuilder.Entity<Processors>(entity =>
+            modelBuilder.Entity<Processor>(entity =>
             {
                 entity.ToTable("processors");
 
@@ -797,7 +796,7 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_processors_by_machine_processor");
             });
 
-            modelBuilder.Entity<Resolutions>(entity =>
+            modelBuilder.Entity<Resolution>(entity =>
             {
                 entity.ToTable("resolutions");
 
@@ -874,7 +873,7 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_sound_by_machine_sound_synth");
             });
 
-            modelBuilder.Entity<SoundSynths>(entity =>
+            modelBuilder.Entity<SoundSynth>(entity =>
             {
                 entity.ToTable("sound_synths");
 

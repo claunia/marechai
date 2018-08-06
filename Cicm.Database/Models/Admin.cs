@@ -1,6 +1,6 @@
 ﻿namespace Cicm.Database.Models
 {
-    public class Admins
+    public class Admin
     {
         public int    Id       { get; set; }
         public string User     { get; set; }

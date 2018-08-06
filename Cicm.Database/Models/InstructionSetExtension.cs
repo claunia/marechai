@@ -2,9 +2,9 @@
 
 namespace Cicm.Database.Models
 {
-    public class InstructionSetExtensions
+    public class InstructionSetExtension
     {
-        public InstructionSetExtensions()
+        public InstructionSetExtension()
         {
             InstructionSetExtensionsByProcessor = new HashSet<InstructionSetExtensionsByProcessor>();
         }

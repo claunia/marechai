@@ -7,7 +7,7 @@
         public float? Speed       { get; set; }
         public long   Id          { get; set; }
 
-        public Machines   Machine   { get; set; }
-        public Processors Processor { get; set; }
+        public Machine   Machine   { get; set; }
+        public Processor Processor { get; set; }
     }
 }

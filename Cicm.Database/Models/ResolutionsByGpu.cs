@@ -6,7 +6,7 @@
         public int  ResolutionId { get; set; }
         public long Id           { get; set; }
 
-        public Gpus        Gpu        { get; set; }
-        public Resolutions Resolution { get; set; }
+        public Gpu        Gpu        { get; set; }
+        public Resolution Resolution { get; set; }
     }
 }

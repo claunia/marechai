@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Cicm.Database.Models
 {
-    public class SoundSynths
+    public class SoundSynth
     {
-        public SoundSynths()
+        public SoundSynth()
         {
             SoundByMachine = new HashSet<SoundByMachine>();
         }
@@ -22,7 +22,7 @@ namespace Cicm.Database.Models
         public int?      WhiteNoise { get; set; }
         public int?      Type       { get; set; }
 
-        public Companies                   Company        { get; set; }
+        public Company                     Company        { get; set; }
         public ICollection<SoundByMachine> SoundByMachine { get; set; }
     }
 }

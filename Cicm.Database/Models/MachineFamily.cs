@@ -2,18 +2,18 @@
 
 namespace Cicm.Database.Models
 {
-    public class MachineFamilies
+    public class MachineFamily
     {
-        public MachineFamilies()
+        public MachineFamily()
         {
-            Machines = new HashSet<Machines>();
+            Machines = new HashSet<Machine>();
         }
 
         public int    Id        { get; set; }
         public int    CompanyId { get; set; }
         public string Name      { get; set; }
 
-        public Companies             Company  { get; set; }
-        public ICollection<Machines> Machines { get; set; }
+        public Company              Company  { get; set; }
+        public ICollection<Machine> Machines { get; set; }
     }
 }

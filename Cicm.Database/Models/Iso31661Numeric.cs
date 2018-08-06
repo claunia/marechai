@@ -6,12 +6,12 @@ namespace Cicm.Database.Models
     {
         public Iso31661Numeric()
         {
-            Companies = new HashSet<Companies>();
+            Companies = new HashSet<Company>();
         }
 
         public short  Id   { get; set; }
         public string Name { get; set; }
 
-        public ICollection<Companies> Companies { get; set; }
+        public ICollection<Company> Companies { get; set; }
     }
 }

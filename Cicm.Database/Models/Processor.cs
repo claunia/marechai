@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Cicm.Database.Models
 {
-    public class Processors
+    public class Processor
     {
-        public Processors()
+        public Processor()
         {
             InstructionSetExtensions = new HashSet<InstructionSetExtensionsByProcessor>();
             ProcessorsByMachine      = new HashSet<ProcessorsByMachine>();
@@ -38,8 +38,8 @@ namespace Cicm.Database.Models
         public float?    L2               { get; set; }
         public float?    L3               { get; set; }
 
-        public Companies                                        Company                  { get; set; }
-        public InstructionSets                                  InstructionSet           { get; set; }
+        public Company                                          Company                  { get; set; }
+        public InstructionSet                                   InstructionSet           { get; set; }
         public ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensions { get; set; }
         public ICollection<ProcessorsByMachine>                 ProcessorsByMachine      { get; set; }
     }

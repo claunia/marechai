@@ -1,6 +1,6 @@
 ﻿namespace Cicm.Database.Models
 {
-    public class OwnedComputers
+    public class OwnedComputer
     {
         public int        Id      { get; set; }
         public int        DbId    { get; set; }

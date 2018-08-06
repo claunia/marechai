@@ -34,7 +34,8 @@
 @using System.IO
 @using Cicm.Database
 @using Cicm.Database.Models
-@model Cicm.Database.Models.Companies
+@using Machine = Cicm.Database.Models.Machine
+@model Cicm.Database.Models.Company
 
 @if(Model != null)
 {
@@ -73,7 +74,7 @@
                 <div class="carousel-inner">
 
 
-                    @foreach(CompanyLogos logo in ViewBag.Logos)
+                    @foreach(CompanyLogo logo in ViewBag.Logos)
                     {
                         if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", logo.Guid + ".svg")))
                         {
@@ -366,7 +367,7 @@
                      data-parent="#itemsAccordion"
                      id="collapseComputers">
                     <div class="card-body">
-                        @foreach(Machines computer in Model.Machines.Where(t => t.Type == MachineType.Computer))
+                        @foreach(Machine computer in Model.Machines.Where(t => t.Type == MachineType.Computer))
                         {
                             <a asp-controller="Machine"
                                asp-action="View"
@@ -408,7 +409,7 @@
                      data-parent="#itemsAccordion"
                      id="collapseConsoles">
                     <div class="card-body">
-                        @foreach(Machines console in Model.Machines.Where(t => t.Type == MachineType.Console))
+                        @foreach(Machine console in Model.Machines.Where(t => t.Type == MachineType.Console))
                         {
                             <a asp-controller="Machine"
                                asp-action="View"

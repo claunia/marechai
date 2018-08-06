@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Cicm.Database.Models
 {
-    public class Machines
+    public class Machine
     {
-        public Machines()
+        public Machine()
         {
             Gpus       = new HashSet<GpusByMachine>();
             Memory     = new HashSet<MemoryByMachine>();
@@ -22,8 +22,8 @@ namespace Cicm.Database.Models
         public int?        FamilyId   { get; set; }
         public string      Model      { get; set; }
 
-        public Companies                        Company    { get; set; }
-        public MachineFamilies                  Family     { get; set; }
+        public Company                          Company    { get; set; }
+        public MachineFamily                    Family     { get; set; }
         public ICollection<GpusByMachine>       Gpus       { get; set; }
         public ICollection<MemoryByMachine>     Memory     { get; set; }
         public ICollection<ProcessorsByMachine> Processors { get; set; }

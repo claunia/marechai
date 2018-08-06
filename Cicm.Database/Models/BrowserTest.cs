@@ -1,6 +1,6 @@
 ﻿namespace Cicm.Database.Models
 {
-    public class BrowserTests
+    public class BrowserTest
     {
         public int    Id        { get; set; }
         public string UserAgent { get; set; }

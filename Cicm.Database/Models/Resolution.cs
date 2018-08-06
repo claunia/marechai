@@ -2,9 +2,9 @@
 
 namespace Cicm.Database.Models
 {
-    public class Resolutions
+    public class Resolution
     {
-        public Resolutions()
+        public Resolution()
         {
             ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
         }

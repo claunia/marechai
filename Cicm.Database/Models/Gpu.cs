@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Cicm.Database.Models
 {
-    public class Gpus
+    public class Gpu
     {
-        public Gpus()
+        public Gpu()
         {
             GpusByMachine    = new HashSet<GpusByMachine>();
             ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
@@ -22,7 +22,7 @@ namespace Cicm.Database.Models
         public float?    DieSize     { get; set; }
         public long?     Transistors { get; set; }
 
-        public Companies                     Company          { get; set; }
+        public Company                       Company          { get; set; }
         public ICollection<GpusByMachine>    GpusByMachine    { get; set; }
         public ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
     }
