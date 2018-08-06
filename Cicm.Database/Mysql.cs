@@ -105,49 +105,6 @@ namespace Cicm.Database
         }
 
         /// <summary>
-        ///     Creates a new database
-        /// </summary>
-        /// <param name="server">Server</param>
-        /// <param name="user">User</param>
-        /// <param name="database">Database name</param>
-        /// <param name="password">Password</param>
-        /// <param name="port">Port</param>
-        /// <returns><c>true</c> if database is created correctly, <c>false</c> otherwise</returns>
-        public bool CreateDb(string database, string server, string user, string password, ushort port = 3306)
-        {
-            try
-            {
-                string connectionString =
-                    $"server={server};user={user};database={database};port={port};password={password}";
-
-                connection = new MySqlConnection(connectionString);
-                connection.Open();
-
-                IDbCommand command = connection.CreateCommand();
-                command.CommandText = $"CREATE DATABASE `{database}`;";
-                command.ExecuteNonQuery();
-                command.CommandText = $"USE `{database}`;";
-                command.ExecuteNonQuery();
-
-                Operations = new Operations(connection, this);
-
-                bool res = Operations.InitializeNewDatabase();
-
-                if(res) return true;
-
-                connection = null;
-                return false;
-            }
-            catch(MySqlException ex)
-            {
-                Console.WriteLine("Error opening database.");
-                Console.WriteLine(ex);
-                connection = null;
-                return false;
-            }
-        }
-
-        /// <summary>
         ///     Gets a data adapter for the opened database
         /// </summary>
         /// <returns>Data adapter</returns>

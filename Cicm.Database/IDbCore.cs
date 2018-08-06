@@ -58,17 +58,6 @@ namespace Cicm.Database
         void CloseDb();
 
         /// <summary>
-        ///     Creates a new database
-        /// </summary>
-        /// <param name="server">Server</param>
-        /// <param name="user">User</param>
-        /// <param name="database">Database name</param>
-        /// <param name="password">Password</param>
-        /// <param name="port">Port</param>
-        /// <returns><c>true</c> if database is created correctly, <c>false</c> otherwise</returns>
-        bool CreateDb(string database, string server, string user, string password, ushort port);
-
-        /// <summary>
         ///     Gets a data adapter for the opened database
         /// </summary>
         /// <returns>Data adapter</returns>
