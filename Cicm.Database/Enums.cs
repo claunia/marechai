@@ -28,7 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-namespace Cicm.Database.Schemas
+namespace Cicm.Database
 {
     public enum NewsType
     {
