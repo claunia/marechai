@@ -8,16 +8,16 @@
         public string Version   { get; set; }
         public string Os        { get; set; }
         public string Platform  { get; set; }
-        public sbyte  Gif87     { get; set; }
-        public sbyte  Gif89     { get; set; }
-        public sbyte  Jpeg      { get; set; }
-        public sbyte  Png       { get; set; }
-        public sbyte  Pngt      { get; set; }
-        public sbyte  Agif      { get; set; }
-        public sbyte  Table     { get; set; }
-        public sbyte  Colors    { get; set; }
-        public sbyte  Js        { get; set; }
-        public sbyte  Frames    { get; set; }
-        public sbyte  Flash     { get; set; }
+        public bool   Gif87     { get; set; }
+        public bool   Gif89     { get; set; }
+        public bool   Jpeg      { get; set; }
+        public bool   Png       { get; set; }
+        public bool   Pngt      { get; set; }
+        public bool   Agif      { get; set; }
+        public bool   Table     { get; set; }
+        public bool   Colors    { get; set; }
+        public bool   Js        { get; set; }
+        public bool   Frames    { get; set; }
+        public bool   Flash     { get; set; }
     }
 }
