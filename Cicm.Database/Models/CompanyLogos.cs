@@ -5,7 +5,7 @@
         public int    Id        { get; set; }
         public int    CompanyId { get; set; }
         public int?   Year      { get; set; }
-        public string LogoGuid  { get; set; }
+        public string Guid      { get; set; }
 
         public Companies Company { get; set; }
     }

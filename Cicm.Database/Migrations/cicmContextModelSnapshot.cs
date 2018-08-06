@@ -199,17 +199,17 @@ namespace Cicm.Database.Migrations
 
                 b.Property<int>("CompanyId").HasColumnName("company_id").HasColumnType("int(11)");
 
-                b.Property<string>("LogoGuid").HasColumnName("logo_guid").HasColumnType("char(36)");
+                b.Property<string>("Guid").HasColumnName("logo_guid").HasColumnType("char(36)");
 
                 b.Property<int?>("Year").HasColumnName("year").HasColumnType("int(4)");
 
-                b.HasKey("Id", "CompanyId", "LogoGuid");
+                b.HasKey("Id", "CompanyId", "Guid");
 
                 b.HasIndex("CompanyId").HasName("idx_company_id");
 
-                b.HasIndex("Id").IsUnique().HasName("idx_id");
+                b.HasIndex("Guid").HasName("idx_guid");
 
-                b.HasIndex("LogoGuid").HasName("idx_guid");
+                b.HasIndex("Id").IsUnique().HasName("idx_id");
 
                 b.ToTable("company_logos");
             });
@@ -938,7 +938,7 @@ namespace Cicm.Database.Migrations
             modelBuilder.Entity("Cicm.Database.Models.CompanyDescriptions",
                                 b =>
                                 {
-                                    b.HasOne("Cicm.Database.Models.Companies", "Company").WithOne("CompanyDescriptions")
+                                    b.HasOne("Cicm.Database.Models.Companies", "Company").WithOne("Description")
                                      .HasForeignKey("Cicm.Database.Models.CompanyDescriptions", "Id")
                                      .HasConstraintName("fk_company_id").OnDelete(DeleteBehavior.Cascade);
                                 });

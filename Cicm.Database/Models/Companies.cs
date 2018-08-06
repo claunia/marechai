@@ -16,24 +16,24 @@ namespace Cicm.Database.Models
             SoundSynths             = new HashSet<SoundSynths>();
         }
 
-        public int       Id         { get; set; }
-        public string    Name       { get; set; }
-        public DateTime? Founded    { get; set; }
-        public string    Website    { get; set; }
-        public string    Twitter    { get; set; }
-        public string    Facebook   { get; set; }
-        public DateTime? Sold       { get; set; }
-        public int?      SoldToId   { get; set; }
-        public string    Address    { get; set; }
-        public string    City       { get; set; }
-        public string    Province   { get; set; }
-        public string    PostalCode { get; set; }
-        public short?    CountryId  { get; set; }
-        public int       Status     { get; set; }
+        public int           Id         { get; set; }
+        public string        Name       { get; set; }
+        public DateTime?     Founded    { get; set; }
+        public string        Website    { get; set; }
+        public string        Twitter    { get; set; }
+        public string        Facebook   { get; set; }
+        public DateTime?     Sold       { get; set; }
+        public int?          SoldToId   { get; set; }
+        public string        Address    { get; set; }
+        public string        City       { get; set; }
+        public string        Province   { get; set; }
+        public string        PostalCode { get; set; }
+        public short?        CountryId  { get; set; }
+        public CompanyStatus Status     { get; set; }
 
         public Iso31661Numeric              Country                 { get; set; }
         public Companies                    SoldTo                  { get; set; }
-        public CompanyDescriptions          CompanyDescriptions     { get; set; }
+        public CompanyDescriptions          Description             { get; set; }
         public ICollection<CompanyLogos>    CompanyLogos            { get; set; }
         public ICollection<Gpus>            Gpus                    { get; set; }
         public ICollection<Companies>       InverseSoldToNavigation { get; set; }

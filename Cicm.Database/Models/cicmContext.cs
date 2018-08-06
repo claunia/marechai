@@ -218,13 +218,13 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Text).HasColumnName("text").HasColumnType("text");
 
-                entity.HasOne(d => d.Company).WithOne(p => p.CompanyDescriptions)
-                      .HasForeignKey<CompanyDescriptions>(d => d.Id).HasConstraintName("fk_company_id");
+                entity.HasOne(d => d.Company).WithOne(p => p.Description).HasForeignKey<CompanyDescriptions>(d => d.Id)
+                      .HasConstraintName("fk_company_id");
             });
 
             modelBuilder.Entity<CompanyLogos>(entity =>
             {
-                entity.HasKey(e => new {e.Id, e.CompanyId, e.LogoGuid});
+                entity.HasKey(e => new {e.Id, e.CompanyId, LogoGuid = e.Guid});
 
                 entity.ToTable("company_logos");
 
@@ -232,13 +232,13 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.Id).HasName("idx_id").IsUnique();
 
-                entity.HasIndex(e => e.LogoGuid).HasName("idx_guid");
+                entity.HasIndex(e => e.Guid).HasName("idx_guid");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)").ValueGeneratedOnAdd();
 
                 entity.Property(e => e.CompanyId).HasColumnName("company_id").HasColumnType("int(11)");
 
-                entity.Property(e => e.LogoGuid).HasColumnName("logo_guid").HasColumnType("char(36)");
+                entity.Property(e => e.Guid).HasColumnName("logo_guid").HasColumnType("char(36)");
 
                 entity.Property(e => e.Year).HasColumnName("year").HasColumnType("int(4)");
 

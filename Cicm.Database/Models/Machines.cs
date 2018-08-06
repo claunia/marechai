@@ -14,13 +14,13 @@ namespace Cicm.Database.Models
             Storage    = new HashSet<StorageByMachine>();
         }
 
-        public int       Id         { get; set; }
-        public int       CompanyId  { get; set; }
-        public string    Name       { get; set; }
-        public int       Type       { get; set; }
-        public DateTime? Introduced { get; set; }
-        public int?      FamilyId   { get; set; }
-        public string    Model      { get; set; }
+        public int         Id         { get; set; }
+        public int         CompanyId  { get; set; }
+        public string      Name       { get; set; }
+        public MachineType Type       { get; set; }
+        public DateTime?   Introduced { get; set; }
+        public int?        FamilyId   { get; set; }
+        public string      Model      { get; set; }
 
         public Companies                        Company    { get; set; }
         public MachineFamilies                  Family     { get; set; }

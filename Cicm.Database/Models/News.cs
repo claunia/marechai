@@ -2,9 +2,9 @@
 {
     public class News
     {
-        public int    Id      { get; set; }
-        public string Date    { get; set; }
-        public int    Type    { get; set; }
-        public int    AddedId { get; set; }
+        public int      Id      { get; set; }
+        public string   Date    { get; set; }
+        public NewsType Type    { get; set; }
+        public int      AddedId { get; set; }
     }
 }
