@@ -28,32 +28,37 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
 using System.Linq;
-using cicm_web.Models;
+using Cicm.Database;
+using Cicm.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Machine = Cicm.Database.Schemas.Machine;
+using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Controllers
 {
     public class ComputerController : Controller
     {
+        readonly cicmContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
 
-        public ComputerController(IHostingEnvironment env)
+        public ComputerController(IHostingEnvironment env, cicmContext context)
         {
             hostingEnvironment = env;
+            _context           = context;
         }
 
         public IActionResult Index()
         {
-            Program.Database.Operations.GetComputers(out List<Machine> computers);
-
-            ViewBag.ItemCount = computers.Count;
-
-            ViewBag.MinYear = computers.Where(t => t.Introduced.Year > 1000).Min(t => t.Introduced.Year);
-            ViewBag.MaxYear = computers.Where(t => t.Introduced.Year > 1000).Max(t => t.Introduced.Year);
+            ViewBag.ItemCount = _context.Machines.Count(m => m.Type == MachineType.Computer);
+            ViewBag.MinYear = _context
+                             .Machines.Where(t => t.Type == MachineType.Computer &&
+                                                  t.Introduced.HasValue          &&
+                                                  t.Introduced.Value.Year > 1000).Min(t => t.Introduced.Value.Year);
+            ViewBag.MaxYear = _context
+                             .Machines.Where(t => t.Type == MachineType.Computer &&
+                                                  t.Introduced.HasValue          &&
+                                                  t.Introduced.Value.Year > 1000).Max(t => t.Introduced.Value.Year);
 
             return View();
         }
@@ -67,17 +72,20 @@ namespace cicm_web.Controllers
 
             ViewBag.Letter = id;
 
-            MachineMini[] computers =
-                id == '\0' ? ComputerMini.GetAllItems() : ComputerMini.GetItemsStartingWithLetter(id);
-
-            return View(computers);
+            return View(id == '\0'
+                            ? _context.Machines.Include(c => c.Company).Where(m => m.Type == MachineType.Computer)
+                                      .ToArray()
+                            : _context.Machines.Include(c => c.Company)
+                                      .Where(m => m.Type == MachineType.Computer && m.Name.StartsWith(id)).ToArray());
         }
 
         public IActionResult ByYear(int id)
         {
             ViewBag.Year = id;
 
-            return View(ComputerMini.GetItemsFromYear(id));
+            return View(_context.Machines.Include(c => c.Company)
+                                .Where(t => t.Type                  == MachineType.Computer && t.Introduced.HasValue &&
+                                            t.Introduced.Value.Year == id).ToArray());
         }
     }
 }

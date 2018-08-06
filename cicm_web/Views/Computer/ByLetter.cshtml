@@ -31,11 +31,11 @@
 
     ViewData["Title"] = "Computers";
 }
-
-@model IEnumerable<MachineMini>
+@using Machine = Cicm.Database.Models.Machine
+@model Cicm.Database.Models.Machine[]
 
 <p>Search results:</p>
-<p align=center>
+<p align="center">
     @if(ViewBag.Letter != '\0')
     {
         <b>@ViewBag.Letter</b>
@@ -46,7 +46,7 @@
     {
         <p>
             @Model.Count() computers found in the database.<br />
-            @foreach(MachineMini computer in Model)
+            @foreach(Machine computer in Model)
             {
                 <a asp-controller="Machine"
                    asp-action="View"

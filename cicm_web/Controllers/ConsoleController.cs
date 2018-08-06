@@ -28,32 +28,37 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
 using System.Linq;
-using cicm_web.Models;
+using Cicm.Database;
+using Cicm.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Machine = Cicm.Database.Schemas.Machine;
+using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Controllers
 {
     public class ConsoleController : Controller
     {
+        readonly cicmContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
 
-        public ConsoleController(IHostingEnvironment env)
+        public ConsoleController(IHostingEnvironment env, cicmContext context)
         {
             hostingEnvironment = env;
+            _context           = context;
         }
 
         public IActionResult Index()
         {
-            Program.Database.Operations.GetConsoles(out List<Machine> consoles);
-
-            ViewBag.ItemCount = consoles.Count;
-
-            ViewBag.MinYear = consoles.Where(t => t.Introduced.Year > 1000).Min(t => t.Introduced.Year);
-            ViewBag.MaxYear = consoles.Where(t => t.Introduced.Year > 1000).Max(t => t.Introduced.Year);
+            ViewBag.ItemCount = _context.Machines.Count(m => m.Type == MachineType.Console);
+            ViewBag.MinYear = _context
+                             .Machines.Where(t => t.Type == MachineType.Console &&
+                                                  t.Introduced.HasValue         &&
+                                                  t.Introduced.Value.Year > 1000).Min(t => t.Introduced.Value.Year);
+            ViewBag.MaxYear = _context
+                             .Machines.Where(t => t.Type == MachineType.Console &&
+                                                  t.Introduced.HasValue         &&
+                                                  t.Introduced.Value.Year > 1000).Max(t => t.Introduced.Value.Year);
 
             return View();
         }
@@ -67,17 +72,20 @@ namespace cicm_web.Controllers
 
             ViewBag.Letter = id;
 
-            MachineMini[] consoles =
-                id == '\0' ? ConsoleMini.GetAllItems() : ConsoleMini.GetItemsStartingWithLetter(id);
-
-            return View(consoles);
+            return View(id == '\0'
+                            ? _context.Machines.Include(c => c.Company).Where(m => m.Type == MachineType.Console)
+                                      .ToArray()
+                            : _context.Machines.Include(c => c.Company)
+                                      .Where(m => m.Type == MachineType.Console && m.Name.StartsWith(id)).ToArray());
         }
 
         public IActionResult ByYear(int id)
         {
             ViewBag.Year = id;
 
-            return View(ConsoleMini.GetItemsFromYear(id));
+            return View(_context.Machines.Include(c => c.Company)
+                                .Where(t => t.Type                  == MachineType.Console && t.Introduced.HasValue &&
+                                            t.Introduced.Value.Year == id).ToArray());
         }
     }
 }
