@@ -34,26 +34,25 @@
 @using System.IO
 @using Cicm.Database
 @using Cicm.Database.Models
-@using Machine = Cicm.Database.Models.Machine
 @model Cicm.Database.Models.Company
 
 @if(Model != null)
 {
     <div class="container-fluid">
     <p align=center>
-        @if(ViewBag.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", ViewBag.LastLogo.Guid + ".svg")))
+        @if(Model.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.LastLogo.Guid + ".svg")))
         {
             <picture>
                 <source type="image/svg+xml"
-                        srcset="/assets/logos/@(ViewBag.LastLogo.Guid).svg">
+                        srcset="/assets/logos/@(Model.LastLogo.Guid).svg">
                 <source type="image/webp"
-                        srcset="/assets/logos/webp/1x/@(ViewBag.LastLogo.Guid).webp,
-    /assets/logos/webp/1x/@(ViewBag.LastLogo.Guid).webp 2x,
-    /assets/logos/webp/1x/@(ViewBag.LastLogo.Guid).webp 3x">
-                <img srcset="/assets/logos/png/1x/@(ViewBag.LastLogo.Guid).png,
-                             /assets/logos/png/1x/@(ViewBag.LastLogo.Guid).png 2x,
-                             /assets/logos/png/1x/@(ViewBag.LastLogo.Guid).webp 3x"
-                     src="/assets/logos/png/1x@(ViewBag.LastLogo.Guid).png")
+                        srcset="/assets/logos/webp/1x/@(Model.LastLogo.Guid).webp,
+    /assets/logos/webp/1x/@(Model.LastLogo.Guid).webp 2x,
+    /assets/logos/webp/1x/@(Model.LastLogo.Guid).webp 3x">
+                <img srcset="/assets/logos/png/1x/@(Model.LastLogo.Guid).png,
+                             /assets/logos/png/1x/@(Model.LastLogo.Guid).png 2x,
+                             /assets/logos/png/1x/@(Model.LastLogo.Guid).webp 3x"
+                     src="/assets/logos/png/1x@(Model.LastLogo.Guid).png")
                      alt=""
                      height="auto"
                      width="auto"
@@ -65,7 +64,7 @@
     @{
         string carrouselActive = "active";
     }
-    @if(ViewBag.Logos != null && ViewBag.Logos.Length > 1)
+    @if(Model.Logos != null && Model.Logos.Count > 1)
     {
         <div class="col-3">
             <div class="carousel slide"
@@ -74,7 +73,7 @@
                 <div class="carousel-inner">
 
 
-                    @foreach(CompanyLogo logo in ViewBag.Logos)
+                    @foreach(CompanyLogo logo in Model.Logos)
                     {
                         if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", logo.Guid + ".svg")))
                         {

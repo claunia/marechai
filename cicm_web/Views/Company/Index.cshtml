@@ -31,7 +31,8 @@
 
     ViewData["Title"] = "Companies";
 }
-@using Company = Cicm.Database.Models.Company
+@using System.IO
+@using Cicm.Database.Models
 @model Cicm.Database.Models.Company[]
 
 <p align="center">
@@ -44,7 +45,6 @@
                 <a asp-controller="Company"
                    asp-action="View"
                    asp-route-id="@company.Id">
-                    @* TODO
                     @if(company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.LastLogo.Guid + ".svg")))
                     {
                         <picture>
@@ -63,9 +63,7 @@
                                  width="auto"
                                  style="max-height: 32px; max-width: 128px" />
                         </picture>
-
                     }
-                    *@
                     @company.Name
                 </a>
                 <br />

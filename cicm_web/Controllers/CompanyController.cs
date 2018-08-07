@@ -32,7 +32,6 @@ using System.Linq;
 using Cicm.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Controllers
 {
@@ -68,9 +67,6 @@ namespace cicm_web.Controllers
             Company company = _context.Companies.FirstOrDefault(c => c.Id == id);
 
             if(company == null) return Index();
-
-            ViewBag.LastLogo     = company.CompanyLogos.OrderByDescending(l => l.Year).FirstOrDefault();
-            ViewBag.CompanyLogos = company.CompanyLogos.OrderByDescending(l => l.Year).ToList();
 
             return View(company);
         }

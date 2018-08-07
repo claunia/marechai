@@ -34,11 +34,7 @@
 @using System.IO
 @using Cicm.Database
 @using Cicm.Database.Models
-@using MemoryByMachine = Cicm.Database.Models.MemoryByMachine
-@using SoundByMachine = Cicm.Database.Models.SoundByMachine
-@using StorageByMachine = Cicm.Database.Models.StorageByMachine
 @model Cicm.Database.Models.Machine
-@* TODO
 <p align="center">
     @if(Model.Company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.LastLogo.Guid + ".svg")))
     {
@@ -60,7 +56,6 @@
         </picture>
     }
 </p>
-*@
 
 @{ int counter = 0; }
 
