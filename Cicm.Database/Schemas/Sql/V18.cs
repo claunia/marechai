@@ -7,7 +7,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains SQL queries to create the database version 7.
+//     Contains SQL queries to create the database version 18.
 //
 // --[ License ] --------------------------------------------------------------
 //

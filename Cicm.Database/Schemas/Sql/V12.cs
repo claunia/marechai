@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : V11.cs
+// Filename       : V12.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains SQL queries to create the database version 7.
+//     Contains SQL queries to create the database version 12.
 //
 // --[ License ] --------------------------------------------------------------
 //
