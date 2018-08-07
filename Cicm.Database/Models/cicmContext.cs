@@ -273,7 +273,7 @@ namespace Cicm.Database.Models
 
                 entity.Property(e => e.Year).HasColumnName("year").HasColumnType("int(4)");
 
-                entity.HasOne(d => d.Company).WithMany(p => p.CompanyLogos).HasForeignKey(d => d.CompanyId)
+                entity.HasOne(d => d.Company).WithMany(p => p.Logos).HasForeignKey(d => d.CompanyId)
                       .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_company_logos_company1");
             });
 
