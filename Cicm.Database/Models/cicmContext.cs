@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -28,11 +28,12 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cicm.Database.Models
 {
-    public class cicmContext : DbContext
+    public class cicmContext : IdentityDbContext
     {
         public cicmContext() { }
 
@@ -79,6 +80,8 @@ namespace Cicm.Database.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Admin>(entity =>
             {
                 entity.ToTable("admins");

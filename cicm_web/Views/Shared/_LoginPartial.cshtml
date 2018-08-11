@@ -1,0 +1,68 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+/******************************************************************************
+// Canary Islands Computer Museum Website
+// ----------------------------------------------------------------------------
+//
+// Filename       : _LoginPartial.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Provides login options to navigation bar.
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2018 Natalia Portillo
+*******************************************************************************/
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" method="post" id="logoutForm" class="navbar-right">
+        <ul class="ml-auto navbar-nav">
+            <li>
+                <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" class=nav-link>Hello @UserManager.GetUserName(User)!</a>
+            </li>
+            <li>
+                <button type="submit" class="btn btn-link nav-link">Logout</button>
+            </li>
+        </ul>
+    </form>
+}
+else
+{
+    <ul class="ml-auto navbar-nav">
+        <li class="dropdown nav-item">
+        <a aria-expanded=false
+           aria-haspopup=true
+           class="dropdown-toggle nav-link"
+           data-toggle=dropdown
+           href=#
+           id=accountDropdown
+           role=button>
+            Account
+        </a>
+        <div aria-labelledby=accountDropdown
+             class=dropdown-menu>
+            <a asp-area="Identity" asp-page="/Account/Register" class=dropdown-item>Register</a>
+            <a asp-area="Identity" asp-page="/Account/Login" class=dropdown-item>Login</a>
+        </div>
+    </ul>
+}

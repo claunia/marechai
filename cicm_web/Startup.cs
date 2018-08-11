@@ -31,6 +31,8 @@
 using Cicm.Database.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,12 +52,19 @@ namespace cicm_web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
-
-            #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
             services.AddDbContext<cicmContext>(options => options
                                                          .UseLazyLoadingProxies()
                                                          .UseMySql("server=localhost;port=3306;user=cicm;password=cicmpass;database=cicm"));
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddEntityFrameworkStores<cicmContext>();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +74,8 @@ namespace cicm_web
             else app.UseExceptionHandler("/Home/Error");
 
             app.UseStaticFiles();
+            app.UseAuthentication();
+            app.UseCookiePolicy();
 
             app.UseMvc(routes => { routes.MapRoute(
                 name: "areas",
