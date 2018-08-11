@@ -1,0 +1,103 @@
+﻿@{
+    /******************************************************************************
+// Canary Islands Computer Museum Website
+// ----------------------------------------------------------------------------
+//
+// Filename       : Create.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view create
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2018 Natalia Portillo
+*******************************************************************************/
+}
+@model Cicm.Database.Models.SoundSynth
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<h4>SoundSynth</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CompanyId" class="control-label"></label>
+                <select asp-for="CompanyId" class ="form-control" asp-items="ViewBag.CompanyId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModelCode" class="control-label"></label>
+                <input asp-for="ModelCode" class="form-control" />
+                <span asp-validation-for="ModelCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Introduced" class="control-label"></label>
+                <input asp-for="Introduced" class="form-control" />
+                <span asp-validation-for="Introduced" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Voices" class="control-label"></label>
+                <input asp-for="Voices" class="form-control" />
+                <span asp-validation-for="Voices" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Frequency" class="control-label"></label>
+                <input asp-for="Frequency" class="form-control" />
+                <span asp-validation-for="Frequency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Depth" class="control-label"></label>
+                <input asp-for="Depth" class="form-control" />
+                <span asp-validation-for="Depth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SquareWave" class="control-label"></label>
+                <input asp-for="SquareWave" class="form-control" />
+                <span asp-validation-for="SquareWave" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WhiteNoise" class="control-label"></label>
+                <input asp-for="WhiteNoise" class="form-control" />
+                <span asp-validation-for="WhiteNoise" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Type" class="control-label"></label>
+                <input asp-for="Type" class="form-control" />
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

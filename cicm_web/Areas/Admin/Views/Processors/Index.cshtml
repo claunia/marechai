@@ -1,0 +1,210 @@
+﻿@{
+    /******************************************************************************
+// Canary Islands Computer Museum Website
+// ----------------------------------------------------------------------------
+//
+// Filename       : Index.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view index
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2018 Natalia Portillo
+*******************************************************************************/
+}
+@model IEnumerable<Cicm.Database.Models.Processor>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModelCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Introduced)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Speed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Package)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gprs)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GprSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fprs)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FprSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cores)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThreadsPerCore)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Process)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProcessNm)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DieSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transistors)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataBus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AddrBus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SimdRegisters)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SimdSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.L1Instruction)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.L1Data)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.L2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.L3)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Company)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InstructionSet)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModelCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Introduced)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Speed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Package)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gprs)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GprSize)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fprs)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FprSize)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cores)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThreadsPerCore)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Process)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProcessNm)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DieSize)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Transistors)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataBus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AddrBus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SimdRegisters)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SimdSize)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.L1Instruction)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.L1Data)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.L2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.L3)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InstructionSet.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

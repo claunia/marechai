@@ -1,0 +1,67 @@
+﻿@{
+    /******************************************************************************
+// Canary Islands Computer Museum Website
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2018 Natalia Portillo
+*******************************************************************************/
+}
+@model Cicm.Database.Models.ProcessorsByMachine
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ProcessorsByMachine</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Speed)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Speed)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Machine)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Machine.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Processor)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Processor.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
