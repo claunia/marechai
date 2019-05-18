@@ -48,9 +48,6 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Text)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Company)
         </th>
         <th></th>
@@ -60,9 +57,6 @@
     @foreach(CompanyDescription item in Model)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Text)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Company.Name)
             </td>
