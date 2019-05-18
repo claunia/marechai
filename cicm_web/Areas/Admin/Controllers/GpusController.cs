@@ -54,7 +54,8 @@ namespace cicm_web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<Gpu, Company> cicmContext = _context.Gpus.Include(g => g.Company);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(g => g.Company.Name).ThenBy(g => g.Name).ThenBy(g => g.Introduced)
+                                         .ToListAsync());
         }
 
         // GET: Admin/Gpus/Details/5
