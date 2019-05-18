@@ -29,9 +29,11 @@
 *******************************************************************************/
 
 using System;
+using System.Linq;
 using Cicm.Database;
 using Cicm.Database.Models;
 using DiscImageChef.Interop;
+using Markdig;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -103,7 +105,7 @@ namespace cicm_web
                           "DEBUG"
                           #else
                           "RELEASE"
-                                                                                                        #endif
+                          #endif
                         , DetectOS.GetPlatformName(DetectOS.GetRealPlatformID()),
                           Environment.Is64BitOperatingSystem ? 64 : 32, Environment.Is64BitProcess ? 64 : 32,
                           DetectOS.IsMono ? "Mono" : ".NET Core",
@@ -140,9 +142,27 @@ namespace cicm_web
                     end = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);
+
                     start = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mImporting company logos...\u001b[0m");
                     SvgRender.ImportCompanyLogos(context);
+                    end = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                                      (end - start).TotalSeconds);
+
+                    start = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mRendering markdown in company descriptions...\u001b[0m");
+                    MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+                    foreach(CompanyDescription companyDescription in
+                        context.CompanyDescriptions.Where(cd => cd.Html == null))
+                    {
+                        companyDescription.Html = Markdown.ToHtml(companyDescription.Text, pipeline);
+                        context.Update(companyDescription);
+                    }
+
+                    context.SaveChanges();
+
                     end = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);
@@ -161,9 +181,7 @@ namespace cicm_web
             host.Run();
         }
 
-        static IWebHost BuildWebHost(string[] args)
-        {
-            return WebHost.CreateDefaultBuilder(args).UseStartup<Startup>().UseUrls("http://*:5000").Build();
-        }
+        static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>().UseUrls("http://*:5000").Build();
     }
 }

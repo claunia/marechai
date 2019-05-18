@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -43,10 +44,12 @@ namespace cicm_web.Areas.Admin.Controllers
     [Authorize]
     public class CompanyDescriptionsController : Controller
     {
-        readonly cicmContext _context;
+        readonly cicmContext      _context;
+        readonly MarkdownPipeline pipeline;
 
         public CompanyDescriptionsController(cicmContext context)
         {
+            pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             _context = context;
         }
 
@@ -87,6 +90,7 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             if(ModelState.IsValid)
             {
+                companyDescription.Html = Markdown.ToHtml(companyDescription.Text, pipeline);
                 _context.Add(companyDescription);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -121,6 +125,7 @@ namespace cicm_web.Areas.Admin.Controllers
             {
                 try
                 {
+                    companyDescription.Html = Markdown.ToHtml(companyDescription.Text, pipeline);
                     _context.Update(companyDescription);
                     await _context.SaveChangesAsync();
                 }
