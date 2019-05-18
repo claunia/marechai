@@ -1,4 +1,7 @@
+@using Microsoft.AspNetCore.Identity
 @using Microsoft.Extensions.PlatformAbstractions
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 @{
     /******************************************************************************
 // Canary Islands Computer Museum Website
@@ -33,109 +36,122 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset=utf-8 />
+    <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0"
-          name=viewport />
+          name="viewport" />
     <title>Canary Islands Computer Museum - @ViewData["Title"]</title>
 
-    <environment include=Development>
-        <link href=~/lib/bootstrap/dist/css/bootstrap.css
-              rel=stylesheet />
-        <link href=~/css/site.css
-              rel=stylesheet />
+    <environment include="Development">
+        <link href="~/lib/bootstrap/dist/css/bootstrap.css"
+              rel="stylesheet" />
+        <link href="~/css/site.css"
+              rel="stylesheet" />
     </environment>
-    <environment exclude=Development>
-        <link asp-fallback-href=~/lib/bootstrap/dist/css/bootstrap.min.css
-              asp-fallback-test-class=sr-only
-              asp-fallback-test-property=position
-              asp-fallback-test-value=absolute
-              href=https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css
-              rel=stylesheet />
-        <link asp-append-version=true
-              href=~/css/site.min.css
-              rel=stylesheet />
+    <environment exclude="Development">
+        <link asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only"
+              asp-fallback-test-property="position"
+              asp-fallback-test-value="absolute"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+              rel="stylesheet" />
+        <link asp-append-version="true"
+              href="~/css/site.min.css"
+              rel="stylesheet" />
     </environment>
 </head>
 <body>
 <nav class="bg-dark navbar navbar-dark navbar-expand-lg">
-    <a class=navbar-brand
-       href=#>
+    <a class="navbar-brand"
+       href="#">
         CICM
     </a>
-    <button aria-controls=navbarSupportedContent
-            aria-expanded=false
+    <button aria-controls="navbarSupportedContent"
+            aria-expanded="false"
             aria-label="Toggle navigation"
-            class=navbar-toggler
-            data-target=#navbarSupportedContent
-            data-toggle=collapse
-            type=button>
-        <span class=navbar-toggler-icon>
+            class="navbar-toggler"
+            data-target="#navbarSupportedContent"
+            data-toggle="collapse"
+            type="button">
+        <span class="navbar-toggler-icon">
         </span>
     </button>
 
     <div class="collapse navbar-collapse"
-         id=navbarSupportedContent>
+         id="navbarSupportedContent">
         <ul class="mr-auto navbar-nav">
-            <li class=nav-item>
-                <a asp-action=Index
+            <li class="nav-item">
+                <a asp-action="Index"
                    asp-area=""
-                   asp-controller=Home
-                   class=nav-link>
+                   asp-controller="Home"
+                   class="nav-link">
                     Home
                 </a>
             </li>
             <li class="dropdown nav-item">
-                <a aria-expanded=false
-                   aria-haspopup=true
+                <a aria-expanded="false"
+                   aria-haspopup="true"
                    class="dropdown-toggle nav-link"
-                   data-toggle=dropdown
-                   href=#
-                   id=navbarDropdown
-                   role=button>
+                   data-toggle="dropdown"
+                   href="#"
+                   id="navbarDropdown"
+                   role="button">
                     Database
                 </a>
-                <div aria-labelledby=navbarDropdown
-                     class=dropdown-menu>
-                    <a asp-action=Index
-                       asp-controller=Company
-                       class=dropdown-item>
+                <div aria-labelledby="navbarDropdown"
+                     class="dropdown-menu">
+                    <a asp-action="Index"
+                       asp-controller="Company"
+                       class="dropdown-item">
                         Companies
                     </a>
-                    <div class=dropdown-divider>
+                    <div class="dropdown-divider">
                     </div>
-                    <a asp-action=Index
-                       asp-controller=Computer
-                       class=dropdown-item>
+                    <a asp-action="Index"
+                       asp-controller="Computer"
+                       class="dropdown-item">
                         Computers
                     </a>
-                    <div class=dropdown-divider>
+                    <div class="dropdown-divider">
                     </div>
-                    <a asp-action=Index
-                       asp-controller=Console
-                       class=dropdown-item>
+                    <a asp-action="Index"
+                       asp-controller="Console"
+                       class="dropdown-item">
                         Consoles
                     </a>
                 </div>
             </li>
-            <li class=nav-item>
-                <a asp-action=About
+            <li class="nav-item">
+                <a asp-action="About"
                    asp-area=""
-                   asp-controller=Home
-                   class=nav-link>
+                   asp-controller="Home"
+                   class="nav-link">
                     About
                 </a>
             </li>
-            <li class=nav-item>
-                <a asp-action=Contact
+            <li class="nav-item">
+                <a asp-action="Contact"
                    asp-area=""
-                   asp-controller=Home
-                   class=nav-link>
+                   asp-controller="Home"
+                   class="nav-link">
                     Contact
                 </a>
             </li>
+
+            @if(SignInManager.IsSignedIn(User))
+            {
+                <li class=nav-item>
+                    <a asp-action=Index
+                       asp-area="Admin"
+                       class=nav-link>
+                        Admin
+                    </a>
+                </li>
+            }
+
+
         </ul>
         <partial name="_LoginPartial" />
-        </div>
+    </div>
 </nav>
 <div class="body-content container">
     @RenderBody()
@@ -145,25 +161,25 @@
     </footer>
 </div>
 
-<environment include=Development>
-    <script src=~/lib/jquery/dist/jquery.js></script>
-    <script src=~/lib/bootstrap/dist/js/bootstrap.js></script>
-    <script asp-append-version=true
-            src=~/js/site.js></script>
+<environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script asp-append-version="true"
+            src="~/js/site.js"></script>
 </environment>
-<environment exclude=Development>
-    <script asp-fallback-src=~/lib/jquery/dist/jquery.min.js
-            asp-fallback-test=window.jQuery
-            crossorigin=anonymous
-            src=https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js>
+<environment exclude="Development">
+    <script asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js">
     </script>
-    <script asp-fallback-src=~/lib/bootstrap/dist/js/bootstrap.min.js
+    <script asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
             asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-            crossorigin=anonymous
-            src=https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/bootstrap.min.js>
+            crossorigin="anonymous"
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/bootstrap.min.js">
     </script>
-    <script asp-append-version=true
-            src=~/js/site.min.js></script>
+    <script asp-append-version="true"
+            src="~/js/site.min.js"></script>
 </environment>
 
 @RenderSection("Scripts", false)
