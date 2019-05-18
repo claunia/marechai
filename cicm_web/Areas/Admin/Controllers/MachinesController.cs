@@ -55,7 +55,8 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<Machine, MachineFamily> cicmContext =
                 _context.Machines.Include(m => m.Company).Include(m => m.Family);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).ThenBy(m => m.Family)
+                                         .ToListAsync());
         }
 
         // GET: Admin/Machines/Details/5

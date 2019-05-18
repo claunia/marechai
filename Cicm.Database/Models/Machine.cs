@@ -30,6 +30,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
 {
@@ -59,5 +61,10 @@ namespace Cicm.Database.Models
         public virtual ICollection<ProcessorsByMachine> Processors { get; set; }
         public virtual ICollection<SoundByMachine>      Sound      { get; set; }
         public virtual ICollection<StorageByMachine>    Storage    { get; set; }
+
+        [NotMapped]
+        [DisplayName("Introduced")]
+        public string IntroducedView =>
+            Introduced == DateTime.MinValue ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
     }
 }
