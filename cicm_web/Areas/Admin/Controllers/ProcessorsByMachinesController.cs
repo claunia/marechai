@@ -55,7 +55,7 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<ProcessorsByMachine, Processor> cicmContext =
                 _context.ProcessorsByMachine.Include(p => p.Machine).Include(p => p.Processor);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(p => p.Machine.Name).ThenBy(p => p.Processor.Name).ToListAsync());
         }
 
         // GET: Admin/ProcessorsByMachines/Details/5

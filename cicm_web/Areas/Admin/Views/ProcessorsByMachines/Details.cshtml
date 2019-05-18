@@ -42,12 +42,6 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Speed)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Speed)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.Machine)
         </dt>
         <dd>
@@ -59,9 +53,22 @@
         <dd>
             @Html.DisplayFor(model => model.Processor.Name)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Speed)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Speed)
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    <a asp-action="Edit"
+       asp-route-id="@Model.Id"
+       class="btn btn-primary">
+        Edit
+    </a>
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
 </div>

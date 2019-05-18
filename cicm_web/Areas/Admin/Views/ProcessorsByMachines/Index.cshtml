@@ -48,13 +48,13 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Speed)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Machine)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Processor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Speed)
         </th>
         <th></th>
     </tr>
@@ -64,13 +64,13 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Speed)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Machine.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Processor.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Speed)
             </td>
             <td>
                 <a asp-action="Details"
