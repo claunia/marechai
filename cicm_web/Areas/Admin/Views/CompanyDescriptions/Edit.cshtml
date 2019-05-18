@@ -66,7 +66,7 @@
                     <label asp-for="Text"
                            class="control-label">
                     </label>
-                    <textarea asp-for="Text" class="form-control" cols="80" rows="20"> </textarea>
+                    <textarea asp-for="Text" class="form-control" cols="120" rows="20"> </textarea>
                     <span asp-validation-for="Text"
                           class="text-danger">
                     </span>
@@ -74,16 +74,16 @@
             </div>
             <div class="col-md-4">
 
-            <div class="form-group">
-                <input class="btn btn-primary"
-                       type="submit"
-                       value="Save" />
-                <a asp-action="Index"
-                   class="btn btn-secondary">
-                    Back to List
-                </a>
+                <div class="form-group">
+                    <input class="btn btn-primary"
+                           type="submit"
+                           value="Save" />
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+                        Back to List
+                    </a>
+                </div>
             </div>
-        </div>
         </form>
     </div>
 </div>
