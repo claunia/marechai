@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -64,7 +64,7 @@ namespace cicm_web.Areas.Identity.Pages.Account
             // Ensure the user has gone through the username & password screen first
             IdentityUser user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
 
-            if(user == null) throw new InvalidOperationException($"Unable to load two-factor authentication user.");
+            if(user == null) throw new InvalidOperationException("Unable to load two-factor authentication user.");
 
             ReturnUrl  = returnUrl;
             RememberMe = rememberMe;
@@ -79,7 +79,7 @@ namespace cicm_web.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
 
             IdentityUser user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if(user == null) throw new InvalidOperationException($"Unable to load two-factor authentication user.");
+            if(user == null) throw new InvalidOperationException("Unable to load two-factor authentication user.");
 
             string authenticatorCode = Input.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
 

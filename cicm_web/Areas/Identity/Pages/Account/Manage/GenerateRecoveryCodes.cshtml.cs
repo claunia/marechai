@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -63,14 +63,11 @@ namespace cicm_web.Areas.Identity.Pages.Account.Manage
             if(user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
             bool isTwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
-            if(!isTwoFactorEnabled)
-            {
-                string userId = await _userManager.GetUserIdAsync(user);
-                throw new
-                    InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' because they do not have 2FA enabled.");
-            }
+            if(isTwoFactorEnabled) return Page();
 
-            return Page();
+            string userId = await _userManager.GetUserIdAsync(user);
+            throw new
+                InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' because they do not have 2FA enabled.");
         }
 
         public async Task<IActionResult> OnPostAsync()

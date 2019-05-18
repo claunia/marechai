@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -38,9 +38,9 @@ namespace cicm_web.Areas.Identity.Pages.Account.Manage
 {
     public class ResetAuthenticatorModel : PageModel
     {
-        readonly SignInManager<IdentityUser> _signInManager;
-        ILogger<ResetAuthenticatorModel>     _logger;
-        UserManager<IdentityUser>            _userManager;
+        readonly SignInManager<IdentityUser>      _signInManager;
+        readonly ILogger<ResetAuthenticatorModel> _logger;
+        readonly UserManager<IdentityUser>        _userManager;
 
         public ResetAuthenticatorModel(UserManager<IdentityUser>        userManager,
                                        SignInManager<IdentityUser>      signInManager,

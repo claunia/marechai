@@ -1,8 +1,8 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : ResetPassword.cshtml.cs
+// Filename       : ResetPasswordConfirmation.cshtml.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -63,7 +63,9 @@ namespace cicm_web.Areas.Identity.Pages.Account
             if(!ModelState.IsValid) return Page();
 
             IdentityUser user = await _userManager.FindByEmailAsync(Input.Email);
-            if(user == null) return RedirectToPage("./ResetPasswordConfirmation");
+            if(user == null)
+                // Don't reveal that the user does not exist
+                return RedirectToPage("./ResetPasswordConfirmation");
 
             IdentityResult result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
             if(result.Succeeded) return RedirectToPage("./ResetPasswordConfirmation");

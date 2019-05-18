@@ -62,8 +62,6 @@ namespace cicm_web
             services.AddDbContext<cicmContext>(options => options
                                                          .UseLazyLoadingProxies()
                                                          .UseMySql("server=localhost;port=3306;user=cicm;password=cicmpass;database=cicm"));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<cicmContext>();
             services.AddMvc();
         }
 

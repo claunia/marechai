@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -56,24 +56,22 @@ namespace cicm_web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if(ModelState.IsValid)
-            {
-                IdentityUser user = await _userManager.FindByEmailAsync(Input.Email);
-                if(user == null || !await _userManager.IsEmailConfirmedAsync(user))
-                    return RedirectToPage("./ForgotPasswordConfirmation");
+            if(!ModelState.IsValid) return Page();
 
-                // For more information on how to enable account confirmation and password reset please 
-                // visit https://go.microsoft.com/fwlink/?LinkID=532713
-                string code        = await _userManager.GeneratePasswordResetTokenAsync(user);
-                string callbackUrl = Url.Page("/Account/ResetPassword", null, new {code}, Request.Scheme);
-
-                await _emailSender.SendEmailAsync(Input.Email, "Reset Password",
-                                                  $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
+            IdentityUser user = await _userManager.FindByEmailAsync(Input.Email);
+            if(user == null || !await _userManager.IsEmailConfirmedAsync(user))
+                // Don't reveal that the user does not exist or is not confirmed
                 return RedirectToPage("./ForgotPasswordConfirmation");
-            }
 
-            return Page();
+            // For more information on how to enable account confirmation and password reset please 
+            // visit https://go.microsoft.com/fwlink/?LinkID=532713
+            string code        = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string callbackUrl = Url.Page("/Account/ResetPassword", null, new {code}, Request.Scheme);
+
+            await _emailSender.SendEmailAsync(Input.Email, "Reset Password",
+                                              $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+            return RedirectToPage("./ForgotPasswordConfirmation");
         }
 
         public class InputModel

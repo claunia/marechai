@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -153,11 +153,9 @@ namespace cicm_web.Areas.Identity.Pages.Account.Manage
             return result.ToString().ToLowerInvariant();
         }
 
-        string GenerateQrCodeUri(string email, string unformattedKey)
-        {
-            return string.Format(AuthenticatorUriFormat, _urlEncoder.Encode("cicm_web"), _urlEncoder.Encode(email),
-                                 unformattedKey);
-        }
+        string GenerateQrCodeUri(string email, string unformattedKey) =>
+            string.Format(AuthenticatorUriFormat, _urlEncoder.Encode("cicm_web"), _urlEncoder.Encode(email),
+                          unformattedKey);
 
         public class InputModel
         {
