@@ -48,10 +48,10 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Company)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Company)
+            @Html.DisplayNameFor(model => model.Name)
         </th>
         <th></th>
     </tr>
@@ -61,10 +61,10 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.Company.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
                 <a asp-action="Details"
