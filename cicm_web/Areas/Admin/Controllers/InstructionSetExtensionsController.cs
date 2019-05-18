@@ -49,7 +49,7 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/InstructionSetExtensions
-        public async Task<IActionResult> Index() => View(await _context.InstructionSetExtensions.ToListAsync());
+        public async Task<IActionResult> Index() => View(await _context.InstructionSetExtensions.OrderBy(e => e.Extension).ToListAsync());
 
         // GET: Admin/InstructionSetExtensions/Details/5
         public async Task<IActionResult> Details(int? id)

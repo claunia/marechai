@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
@@ -40,6 +41,7 @@ namespace Cicm.Database.Models
         }
 
         public int    Id        { get; set; }
+        [DisplayName("Name")]
         public string Extension { get; set; }
 
         public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor
