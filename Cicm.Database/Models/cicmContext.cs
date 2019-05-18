@@ -557,8 +557,7 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.AddedId).HasColumnName("added_id").HasColumnType("int(11)")
                       .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("char(20)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("datetime");
 
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
             });

@@ -498,8 +498,7 @@ namespace Cicm.Database.Migrations
                 b.Property<int>("AddedId").ValueGeneratedOnAdd().HasColumnName("added_id").HasColumnType("int(11)")
                  .HasDefaultValueSql("'0'");
 
-                b.Property<string>("Date").IsRequired().ValueGeneratedOnAdd().HasColumnName("date")
-                 .HasColumnType("char(20)").HasDefaultValueSql("''");
+                b.Property<DateTime>("Date").HasColumnName("date").HasColumnType("datetime");
 
                 b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)")
                  .HasDefaultValueSql("'0'");

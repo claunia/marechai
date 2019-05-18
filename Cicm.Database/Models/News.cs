@@ -28,12 +28,14 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
+
 namespace Cicm.Database.Models
 {
     public class News
     {
         public int      Id      { get; set; }
-        public string   Date    { get; set; }
+        public DateTime Date    { get; set; }
         public NewsType Type    { get; set; }
         public int      AddedId { get; set; }
     }
