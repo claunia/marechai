@@ -1,4 +1,4 @@
-﻿@{
+@{
     /******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
@@ -8,7 +8,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Admin view details
+//     Admin view create
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -35,33 +35,34 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h1>Details</h1>
 
 <div>
     <h4>Company description</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.CompanyId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.CompanyId)
-        </dd>
-        <dt>
+    <dl class="row">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Text)
         </dt>
-        <dd>
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Text)
         </dd>
-        <dt>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Company)
         </dt>
-        <dd>
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Company.Name)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit"
+       asp-route-id="@Model.Id"
+       class="btn btn-primary">
+        Edit
+    </a>
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
 </div>

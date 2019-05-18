@@ -13,7 +13,7 @@ namespace Cicm.Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                         .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Cicm.Database.Models.Admin", b =>
@@ -178,19 +178,19 @@ namespace Cicm.Database.Migrations
 
             modelBuilder.Entity("Cicm.Database.Models.CompanyDescription", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<int>("CompanyId").HasColumnName("company_id").HasColumnType("int(11)");
+                b.Property<int>("CompanyId");
 
-                b.Property<string>("Text").HasColumnName("text").HasColumnType("text");
+                b.Property<string>("Text");
 
                 b.HasKey("Id");
 
-                b.HasIndex("CompanyId").IsUnique().HasName("idx_company_id");
+                b.HasIndex("CompanyId");
 
-                b.HasIndex("Text").HasName("idx_text");
+                b.HasIndex("Text").HasAnnotation("MySql:FullTextIndex", true);
 
-                b.ToTable("company_descriptions");
+                b.ToTable("CompanyDescriptions");
             });
 
             modelBuilder.Entity("Cicm.Database.Models.CompanyLogo", b =>
@@ -1074,9 +1074,8 @@ namespace Cicm.Database.Migrations
             modelBuilder.Entity("Cicm.Database.Models.CompanyDescription",
                                 b =>
                                 {
-                                    b.HasOne("Cicm.Database.Models.Company", "Company").WithOne("Description")
-                                     .HasForeignKey("Cicm.Database.Models.CompanyDescription", "Id")
-                                     .HasConstraintName("fk_company_id").OnDelete(DeleteBehavior.Cascade);
+                                    b.HasOne("Cicm.Database.Models.Company", "Company").WithMany("Descriptions")
+                                     .HasForeignKey("CompanyId").OnDelete(DeleteBehavior.Cascade);
                                 });
 
             modelBuilder.Entity("Cicm.Database.Models.CompanyLogo",

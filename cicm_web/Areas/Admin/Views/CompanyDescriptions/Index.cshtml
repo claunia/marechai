@@ -1,4 +1,4 @@
-﻿@{
+@{
     /******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
@@ -8,7 +8,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Admin view index
+//     Admin view create
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -36,7 +36,7 @@
     ViewData["Title"] = "Company descriptions (Admin)";
 }
 
-<h2>Company descriptions</h2>
+<h1>Company description</h1>
 
 <p>
     <a asp-action="Create"
@@ -47,9 +47,6 @@
 <table class="table">
     <thead>
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CompanyId)
-        </th>
         <th>
             @Html.DisplayNameFor(model => model.Text)
         </th>
@@ -63,9 +60,6 @@
     @foreach(CompanyDescription item in Model)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CompanyId)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Text)
             </td>

@@ -68,15 +68,15 @@ namespace Cicm.Database.Models
 
         public virtual Iso31661Numeric Country { get; set; }
         [DisplayName("Sold to")]
-        public virtual Company SoldTo { get;                                     set; }
-        public virtual CompanyDescription         Description             { get; set; }
-        public virtual ICollection<CompanyLogo>   Logos                   { get; set; }
-        public virtual ICollection<Gpu>           Gpus                    { get; set; }
-        public virtual ICollection<Company>       InverseSoldToNavigation { get; set; }
-        public virtual ICollection<MachineFamily> MachineFamilies         { get; set; }
-        public virtual ICollection<Machine>       Machines                { get; set; }
-        public virtual ICollection<Processor>     Processors              { get; set; }
-        public virtual ICollection<SoundSynth>    SoundSynths             { get; set; }
+        public virtual Company SoldTo { get;                                          set; }
+        public virtual ICollection<CompanyDescription> Descriptions            { get; set; }
+        public virtual ICollection<CompanyLogo>        Logos                   { get; set; }
+        public virtual ICollection<Gpu>                Gpus                    { get; set; }
+        public virtual ICollection<Company>            InverseSoldToNavigation { get; set; }
+        public virtual ICollection<MachineFamily>      MachineFamilies         { get; set; }
+        public virtual ICollection<Machine>            Machines                { get; set; }
+        public virtual ICollection<Processor>          Processors              { get; set; }
+        public virtual ICollection<SoundSynth>         SoundSynths             { get; set; }
         public virtual CompanyLogo LastLogo =>
             Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
 
@@ -92,5 +92,8 @@ namespace Cicm.Database.Models
                           ? ""
                           : "Unknown"
                     : Sold.Value.ToShortDateString();
+
+        [NotMapped]
+        public CompanyDescription Description => Descriptions.FirstOrDefault();
     }
 }

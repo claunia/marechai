@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -50,7 +50,7 @@ namespace cicm_web.Areas.Admin.Controllers
             _context = context;
         }
 
-        // GET: Admin/CompanyDescriptions
+        // GET: CompanyDescription
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<CompanyDescription, Company> cicmContext =
@@ -58,26 +58,27 @@ namespace cicm_web.Areas.Admin.Controllers
             return View(await cicmContext.ToListAsync());
         }
 
-        // GET: Admin/CompanyDescriptions/Details/5
+        // GET: CompanyDescription/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if(id == null) return NotFound();
 
-            CompanyDescription companyDescription =
-                await _context.CompanyDescriptions.Include(c => c.Company).FirstOrDefaultAsync(m => m.Id == id);
+            CompanyDescription companyDescription = await _context.CompanyDescriptions
+                                                                  .Include(c => c.Company)
+                                                                  .FirstOrDefaultAsync(m => m.Id == id);
             if(companyDescription == null) return NotFound();
 
             return View(companyDescription);
         }
 
-        // GET: Admin/CompanyDescriptions/Create
+        // GET: CompanyDescription/Create
         public IActionResult Create()
         {
-            ViewData["Id"] = new SelectList(_context.Companies, "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             return View();
         }
 
-        // POST: Admin/CompanyDescriptions/Create
+        // POST: CompanyDescription/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -91,11 +92,11 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["Id"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.Id);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.CompanyId);
             return View(companyDescription);
         }
 
-        // GET: Admin/CompanyDescriptions/Edit/5
+        // GET: CompanyDescription/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if(id == null) return NotFound();
@@ -103,11 +104,11 @@ namespace cicm_web.Areas.Admin.Controllers
             CompanyDescription companyDescription = await _context.CompanyDescriptions.FindAsync(id);
             if(companyDescription == null) return NotFound();
 
-            ViewData["Id"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.Id);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.CompanyId);
             return View(companyDescription);
         }
 
-        // POST: Admin/CompanyDescriptions/Edit/5
+        // POST: CompanyDescription/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -133,23 +134,24 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["Id"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.Id);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.CompanyId);
             return View(companyDescription);
         }
 
-        // GET: Admin/CompanyDescriptions/Delete/5
+        // GET: CompanyDescription/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if(id == null) return NotFound();
 
-            CompanyDescription companyDescription =
-                await _context.CompanyDescriptions.Include(c => c.Company).FirstOrDefaultAsync(m => m.Id == id);
+            CompanyDescription companyDescription = await _context.CompanyDescriptions
+                                                                  .Include(c => c.Company)
+                                                                  .FirstOrDefaultAsync(m => m.Id == id);
             if(companyDescription == null) return NotFound();
 
             return View(companyDescription);
         }
 
-        // POST: Admin/CompanyDescriptions/Delete/5
+        // POST: CompanyDescription/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]

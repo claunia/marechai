@@ -70,12 +70,11 @@ namespace Cicm.Database.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if(!optionsBuilder.IsConfigured)
-            {
-                #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=localhost;port=3306;user=cicm;password=cicmpass;database=cicm");
-                optionsBuilder.UseLazyLoadingProxies();
-            }
+            if(optionsBuilder.IsConfigured) return;
+
+            #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+            optionsBuilder.UseMySql("server=localhost;port=3306;user=cicm;password=cicmpass;database=cicm");
+            optionsBuilder.UseLazyLoadingProxies();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -238,23 +237,7 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_companies_sold_to");
             });
 
-            modelBuilder.Entity<CompanyDescription>(entity =>
-            {
-                entity.ToTable("company_descriptions");
-
-                entity.HasIndex(e => e.CompanyId).HasName("idx_company_id");
-
-                entity.HasIndex(e => e.Text).HasName("idx_text");
-
-                entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)").ValueGeneratedOnAdd();
-
-                entity.Property(e => e.CompanyId).HasColumnName("company_id").HasColumnType("int(11)");
-
-                entity.Property(e => e.Text).HasColumnName("text").HasColumnType("text");
-
-                entity.HasOne(d => d.Company).WithOne(p => p.Description).HasForeignKey<CompanyDescription>(d => d.Id)
-                      .HasConstraintName("fk_company_id");
-            });
+            modelBuilder.Entity<CompanyDescription>().HasIndex(e => e.Text).ForMySqlIsFullText();
 
             modelBuilder.Entity<CompanyLogo>(entity =>
             {

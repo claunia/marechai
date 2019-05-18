@@ -1,4 +1,4 @@
-﻿@{
+@{
     /******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
@@ -8,7 +8,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Admin view edit
+//     Admin view create
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -35,9 +35,9 @@
     ViewData["Title"] = "Edit";
 }
 
-<h2>Edit</h2>
+<h1>Edit</h1>
 
-<h4>Company description</h4>
+<h4>CompanyDescription</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -51,8 +51,10 @@
                 <label asp-for="CompanyId"
                        class="control-label">
                 </label>
-                <input asp-for="CompanyId"
-                       class="form-control" />
+                <select asp-for="CompanyId"
+                        class="form-control"
+                        asp-items="ViewBag.CompanyId">
+                </select>
                 <span asp-validation-for="CompanyId"
                       class="text-danger">
                 </span>

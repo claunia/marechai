@@ -1,4 +1,4 @@
-﻿@{
+@{
     /******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
@@ -35,7 +35,7 @@
     ViewData["Title"] = "Create";
 }
 
-<h2>Create</h2>
+<h1>Create</h1>
 
 <h4>Company description</h4>
 <hr />
@@ -49,11 +49,10 @@
                 <label asp-for="CompanyId"
                        class="control-label">
                 </label>
-                <input asp-for="CompanyId"
-                       class="form-control" />
-                <span asp-validation-for="CompanyId"
-                      class="text-danger">
-                </span>
+                <select asp-for="CompanyId"
+                        class="form-control"
+                        asp-items="ViewBag.CompanyId">
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="Text"
