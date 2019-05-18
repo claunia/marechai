@@ -38,12 +38,6 @@
 
 <h2>News</h2>
 
-<p>
-    <a asp-action="Create"
-       class="btn btn-primary">
-        Create New
-    </a>
-</p>
 <table class="table">
     <thead>
     <tr>
@@ -73,16 +67,6 @@
                 @Html.DisplayFor(modelItem => item.AddedId)
             </td>
             <td>
-                <a asp-action="Details"
-                   asp-route-id="@item.Id"
-                   class="btn btn-primary">
-                    Details
-                </a>
-                <a asp-action="Edit"
-                   asp-route-id="@item.Id"
-                   class="btn btn-secondary">
-                    Edit
-                </a>
                 <a asp-action="Delete"
                    asp-route-id="@item.Id"
                    class="btn btn-danger">

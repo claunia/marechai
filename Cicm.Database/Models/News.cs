@@ -29,14 +29,16 @@
 *******************************************************************************/
 
 using System;
+using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
     public class News
     {
-        public int      Id      { get; set; }
-        public DateTime Date    { get; set; }
-        public NewsType Type    { get; set; }
-        public int      AddedId { get; set; }
+        public int      Id   { get; set; }
+        public DateTime Date { get; set; }
+        public NewsType Type { get; set; }
+        [DisplayName("Affected ID")]
+        public int AddedId { get; set; }
     }
 }
