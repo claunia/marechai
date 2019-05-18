@@ -49,7 +49,8 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/InstructionSets
-        public async Task<IActionResult> Index() => View(await _context.InstructionSets.ToListAsync());
+        public async Task<IActionResult> Index() =>
+            View(await _context.InstructionSets.OrderBy(s => s.Name).ToListAsync());
 
         // GET: Admin/InstructionSets/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -72,14 +73,11 @@ namespace cicm_web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] InstructionSet instructionSet)
         {
-            if(ModelState.IsValid)
-            {
-                _context.Add(instructionSet);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            if(!ModelState.IsValid) return View(instructionSet);
 
-            return View(instructionSet);
+            _context.Add(instructionSet);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Admin/InstructionSets/Edit/5
