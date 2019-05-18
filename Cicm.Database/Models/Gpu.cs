@@ -31,6 +31,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
 {
@@ -42,19 +44,25 @@ namespace Cicm.Database.Models
             ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
         }
 
-        public int       Id          { get; set; }
-        public string    Name        { get; set; }
-        public int?      CompanyId   { get; set; }
-        public string    ModelCode   { get; set; }
-        public DateTime? Introduced  { get; set; }
-        public string    Package     { get; set; }
-        public string    Process     { get; set; }
-        public float?    ProcessNm   { get; set; }
-        public float?    DieSize     { get; set; }
-        public long?     Transistors { get; set; }
+        public int    Id        { get; set; }
+        public string Name      { get; set; }
+        public int?   CompanyId { get; set; }
+        [DisplayName("Model code")]
+        public string ModelCode { get;     set; }
+        public DateTime? Introduced { get; set; }
+        public string    Package    { get; set; }
+        public string    Process    { get; set; }
+        [DisplayName("Process (nm)")]
+        public float? ProcessNm { get; set; }
+        [DisplayName("Die size (mm²)")]
+        public float? DieSize { get;    set; }
+        public long? Transistors { get; set; }
 
         public virtual Company                       Company          { get; set; }
         public virtual ICollection<GpusByMachine>    GpusByMachine    { get; set; }
         public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
+
+        [NotMapped]
+        public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
     }
 }
