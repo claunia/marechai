@@ -49,7 +49,9 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/BrowserTests
-        public async Task<IActionResult> Index() => View(await _context.BrowserTests.ToListAsync());
+        public async Task<IActionResult> Index() =>
+            View(await _context.BrowserTests.OrderBy(b => b.Browser).ThenBy(b => b.Version).ThenBy(b => b.Os)
+                               .ThenBy(b => b.Platform).ThenBy(b => b.UserAgent).ToListAsync());
 
         // GET: Admin/BrowserTests/Details/5
         public async Task<IActionResult> Details(int? id)

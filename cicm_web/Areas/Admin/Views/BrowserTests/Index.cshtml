@@ -42,9 +42,6 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.UserAgent)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Browser)
         </th>
         <th>
@@ -55,6 +52,9 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Platform)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserAgent)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Gif87)
@@ -97,9 +97,6 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.UserAgent)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Browser)
             </td>
             <td>
@@ -110,6 +107,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Platform)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserAgent)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gif87)

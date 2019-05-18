@@ -28,26 +28,37 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel;
+
 namespace Cicm.Database.Models
 {
     public class BrowserTest
     {
-        public int    Id        { get; set; }
+        public int Id { get; set; }
+        [DisplayName("User agent")]
         public string UserAgent { get; set; }
-        public string Browser   { get; set; }
-        public string Version   { get; set; }
-        public string Os        { get; set; }
-        public string Platform  { get; set; }
-        public bool   Gif87     { get; set; }
-        public bool   Gif89     { get; set; }
-        public bool   Jpeg      { get; set; }
-        public bool   Png       { get; set; }
-        public bool   Pngt      { get; set; }
-        public bool   Agif      { get; set; }
-        public bool   Table     { get; set; }
-        public bool   Colors    { get; set; }
-        public bool   Js        { get; set; }
-        public bool   Frames    { get; set; }
-        public bool   Flash     { get; set; }
+        public string Browser { get;   set; }
+        public string Version { get;   set; }
+        [DisplayName("Operating system")]
+        public string Os { get;       set; }
+        public string Platform { get; set; }
+        [DisplayName("GIF87")]
+        public bool Gif87 { get; set; }
+        [DisplayName("GIF89")]
+        public bool Gif89 { get; set; }
+        [DisplayName("JPEG")]
+        public bool Jpeg { get; set; }
+        [DisplayName("PNG")]
+        public bool Png { get; set; }
+        [DisplayName("Transparent PNG")]
+        public bool Pngt { get; set; }
+        [DisplayName("Animated GIF")]
+        public bool Agif { get;   set; }
+        public bool Table  { get; set; }
+        public bool Colors { get; set; }
+        [DisplayName("JavaScript")]
+        public bool Js { get;     set; }
+        public bool Frames { get; set; }
+        public bool Flash  { get; set; }
     }
 }
