@@ -62,29 +62,6 @@ namespace cicm_web.Areas.Admin.Controllers
             return View(browserTest);
         }
 
-        // GET: Admin/BrowserTests/Create
-        public IActionResult Create() => View();
-
-        // POST: Admin/BrowserTests/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind(
-                "Id,UserAgent,Browser,Version,Os,Platform,Gif87,Gif89,Jpeg,Png,Pngt,Agif,Table,Colors,Js,Frames,Flash")]
-            BrowserTest browserTest)
-        {
-            if(ModelState.IsValid)
-            {
-                _context.Add(browserTest);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(browserTest);
-        }
-
         // GET: Admin/BrowserTests/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -108,24 +85,21 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             if(id != browserTest.Id) return NotFound();
 
-            if(ModelState.IsValid)
+            if(!ModelState.IsValid) return View(browserTest);
+
+            try
             {
-                try
-                {
-                    _context.Update(browserTest);
-                    await _context.SaveChangesAsync();
-                }
-                catch(DbUpdateConcurrencyException)
-                {
-                    if(!BrowserTestExists(browserTest.Id)) return NotFound();
+                _context.Update(browserTest);
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                if(!BrowserTestExists(browserTest.Id)) return NotFound();
 
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
+                throw;
             }
 
-            return View(browserTest);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Admin/BrowserTests/Delete/5
