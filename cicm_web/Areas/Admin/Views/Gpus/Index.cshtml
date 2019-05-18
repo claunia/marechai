@@ -48,6 +48,9 @@
     <thead>
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.Company)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
@@ -55,24 +58,6 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Introduced)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Package)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Process)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ProcessNm)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DieSize)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Transistors)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Company)
         </th>
         <th></th>
     </tr>
@@ -82,6 +67,9 @@
     {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Company.Name)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
@@ -89,24 +77,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Introduced)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Package)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Process)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProcessNm)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DieSize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Transistors)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
             </td>
             <td>
                 <a asp-action="Details"

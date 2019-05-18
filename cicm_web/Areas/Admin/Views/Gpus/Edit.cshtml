@@ -48,17 +48,7 @@
             <input type="hidden"
                    asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Name"
-                       class="control-label">
-                </label>
-                <input asp-for="Name"
-                       class="form-control" />
-                <span asp-validation-for="Name"
-                      class="text-danger">
-                </span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CompanyId"
+                <label asp-for="Company"
                        class="control-label">
                 </label>
                 <select asp-for="CompanyId"
@@ -66,6 +56,16 @@
                         asp-items="ViewBag.CompanyId">
                 </select>
                 <span asp-validation-for="CompanyId"
+                      class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name"
+                       class="control-label">
+                </label>
+                <input asp-for="Name"
+                       class="form-control" />
+                <span asp-validation-for="Name"
                       class="text-danger">
                 </span>
             </div>
