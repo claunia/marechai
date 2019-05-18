@@ -68,6 +68,8 @@ namespace cicm_web.Controllers
 
             if(company == null) return Index();
 
+            ViewBag.CompanyDescription = company.Description?.Text;
+
             return View(company);
         }
 

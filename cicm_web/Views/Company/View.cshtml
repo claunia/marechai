@@ -433,11 +433,10 @@
         </div>
     </div>
 
-    @* TODO: This is not working with EF, check why *@
-    @if(Model.Description != null)
+    @if(ViewBag.CompanyDescription != null)
     {
         <div class="container-fluid row">
-            @Html.Raw(Model.Description)
+            @Html.Raw(ViewBag.CompanyDescription)
         </div>
     }
     </div>
