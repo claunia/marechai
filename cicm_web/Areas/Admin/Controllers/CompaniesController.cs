@@ -55,7 +55,7 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<Company, Company> cicmContext =
                 _context.Companies.Include(c => c.Country).Include(c => c.SoldTo);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(c => c.Name).ToListAsync());
         }
 
         // GET: Admin/Companies/Details/5

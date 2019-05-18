@@ -36,12 +36,15 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Companies</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Create New
+    </a>
 </p>
-<table class="table">
+<table class="table table-striped">
     <thead>
     <tr>
         <th>
@@ -57,7 +60,7 @@
             @Html.DisplayNameFor(model => model.Country)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Sold)
+            @Html.DisplayNameFor(model => model.SoldView)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.SoldTo)
@@ -82,7 +85,7 @@
                 @Html.DisplayFor(modelItem => item.Country.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Sold)
+                @Html.DisplayFor(modelItem => item.SoldView)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SoldTo.Name)

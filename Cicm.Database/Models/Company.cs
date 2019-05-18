@@ -30,6 +30,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace Cicm.Database.Models
@@ -47,9 +50,10 @@ namespace Cicm.Database.Models
             SoundSynths             = new HashSet<SoundSynth>();
         }
 
-        public int           Id         { get; set; }
-        public string        Name       { get; set; }
-        public DateTime?     Founded    { get; set; }
+        public int    Id   { get; set; }
+        public string Name { get; set; }
+        [DisplayFormat(DataFormatString = "{0:d}")]
+        public DateTime? Founded { get;        set; }
         public string        Website    { get; set; }
         public string        Twitter    { get; set; }
         public string        Facebook   { get; set; }
@@ -62,8 +66,9 @@ namespace Cicm.Database.Models
         public short?        CountryId  { get; set; }
         public CompanyStatus Status     { get; set; }
 
-        public virtual Iso31661Numeric            Country                 { get; set; }
-        public virtual Company                    SoldTo                  { get; set; }
+        public virtual Iso31661Numeric Country { get; set; }
+        [DisplayName("Sold to")]
+        public virtual Company SoldTo { get;                                     set; }
         public virtual CompanyDescription         Description             { get; set; }
         public virtual ICollection<CompanyLogo>   Logos                   { get; set; }
         public virtual ICollection<Gpu>           Gpus                    { get; set; }
@@ -74,5 +79,18 @@ namespace Cicm.Database.Models
         public virtual ICollection<SoundSynth>    SoundSynths             { get; set; }
         public virtual CompanyLogo LastLogo =>
             Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
+
+        [DisplayName("Sold")]
+        [NotMapped]
+        public string SoldView =>
+            Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
+                ? Sold is null
+                      ? "Unknown"
+                      : Sold.Value.ToShortDateString()
+                : Sold is null
+                    ? SoldToId is null
+                          ? ""
+                          : "Unknown"
+                    : Sold.Value.ToShortDateString();
     }
 }
