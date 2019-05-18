@@ -43,6 +43,12 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
+            @Html.DisplayNameFor(model => model.Company)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Company.Name)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Name)
         </dt>
         <dd>
@@ -61,6 +67,12 @@
             @Html.DisplayFor(model => model.Introduced)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.InstructionSet)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.InstructionSet.Name)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Speed)
         </dt>
         <dd>
@@ -71,30 +83,6 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Package)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Gprs)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Gprs)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.GprSize)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.GprSize)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Fprs)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Fprs)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.FprSize)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.FprSize)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Cores)
@@ -145,6 +133,30 @@
             @Html.DisplayFor(model => model.AddrBus)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Gprs)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Gprs)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.GprSize)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.GprSize)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Fprs)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Fprs)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FprSize)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FprSize)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.SimdRegisters)
         </dt>
         <dd>
@@ -179,18 +191,6 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.L3)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Company)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Company.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.InstructionSet)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.InstructionSet.Name)
         </dd>
     </dl>
 

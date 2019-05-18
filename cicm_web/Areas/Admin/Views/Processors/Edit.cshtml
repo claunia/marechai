@@ -48,24 +48,21 @@
 <input type="hidden"
        asp-for="Id" />
 <div class="form-group">
-    <label asp-for="Name"
-           class="control-label">
-    </label>
-    <input asp-for="Name"
-           class="form-control" />
-    <span asp-validation-for="Name"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="CompanyId"
+    <label asp-for="Company"
            class="control-label">
     </label>
     <select asp-for="CompanyId"
             class="form-control"
             asp-items="ViewBag.CompanyId">
     </select>
-    <span asp-validation-for="CompanyId"
+</div>
+<div class="form-group">
+    <label asp-for="Name"
+           class="control-label">
+    </label>
+    <input asp-for="Name"
+           class="form-control" />
+    <span asp-validation-for="Name"
           class="text-danger">
     </span>
 </div>
@@ -97,9 +94,6 @@
             class="form-control"
             asp-items="ViewBag.InstructionSetId">
     </select>
-    <span asp-validation-for="InstructionSetId"
-          class="text-danger">
-    </span>
 </div>
 <div class="form-group">
     <label asp-for="Speed"
@@ -118,46 +112,6 @@
     <input asp-for="Package"
            class="form-control" />
     <span asp-validation-for="Package"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Gprs"
-           class="control-label">
-    </label>
-    <input asp-for="Gprs"
-           class="form-control" />
-    <span asp-validation-for="Gprs"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="GprSize"
-           class="control-label">
-    </label>
-    <input asp-for="GprSize"
-           class="form-control" />
-    <span asp-validation-for="GprSize"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Fprs"
-           class="control-label">
-    </label>
-    <input asp-for="Fprs"
-           class="form-control" />
-    <span asp-validation-for="Fprs"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="FprSize"
-           class="control-label">
-    </label>
-    <input asp-for="FprSize"
-           class="form-control" />
-    <span asp-validation-for="FprSize"
           class="text-danger">
     </span>
 </div>
@@ -242,6 +196,46 @@
     </span>
 </div>
 <div class="form-group">
+    <label asp-for="Gprs"
+           class="control-label">
+    </label>
+    <input asp-for="Gprs"
+           class="form-control" />
+    <span asp-validation-for="Gprs"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="GprSize"
+           class="control-label">
+    </label>
+    <input asp-for="GprSize"
+           class="form-control" />
+    <span asp-validation-for="GprSize"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Fprs"
+           class="control-label">
+    </label>
+    <input asp-for="Fprs"
+           class="form-control" />
+    <span asp-validation-for="Fprs"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="FprSize"
+           class="control-label">
+    </label>
+    <input asp-for="FprSize"
+           class="form-control" />
+    <span asp-validation-for="FprSize"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
     <label asp-for="SimdRegisters"
            class="control-label">
     </label>
@@ -304,7 +298,7 @@
 <div class="form-group">
     <input class="btn btn-primary"
            type="submit"
-           value="Save" />
+           value="Create" />
     <a asp-action="Index"
        class="btn btn-secondary">
         Back to List

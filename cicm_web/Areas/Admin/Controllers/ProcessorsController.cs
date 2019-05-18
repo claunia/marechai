@@ -55,7 +55,7 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<Processor, InstructionSet> cicmContext =
                 _context.Processors.Include(p => p.Company).Include(p => p.InstructionSet);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(p => p.Company.Name).ThenBy(p => p.Name).ToListAsync());
         }
 
         // GET: Admin/Processors/Details/5

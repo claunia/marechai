@@ -48,6 +48,9 @@
     <thead>
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.Company)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
@@ -55,69 +58,6 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Introduced)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Speed)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Package)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Gprs)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.GprSize)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Fprs)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FprSize)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Cores)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ThreadsPerCore)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Process)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ProcessNm)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DieSize)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Transistors)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DataBus)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AddrBus)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SimdRegisters)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SimdSize)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.L1Instruction)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.L1Data)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.L2)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.L3)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Company)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.InstructionSet)
@@ -130,76 +70,16 @@
     {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Company.Name)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ModelCode)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Introduced)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Speed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Package)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gprs)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GprSize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Fprs)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FprSize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cores)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ThreadsPerCore)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Process)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProcessNm)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DieSize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Transistors)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataBus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AddrBus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SimdRegisters)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SimdSize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.L1Instruction)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.L1Data)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.L2)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.L3)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.IntroducedView)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.InstructionSet.Name)
