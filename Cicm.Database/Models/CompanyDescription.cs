@@ -28,13 +28,16 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Cicm.Database.Models
 {
     public class CompanyDescription
     {
-        public int    Id        { get; set; }
-        public int    CompanyId { get; set; }
-        public string Text      { get; set; }
+        public int Id        { get; set; }
+        public int CompanyId { get; set; }
+        [MaxLength(262144, ErrorMessage = "Description is too long")]
+        public string Text { get; set; }
 
         public virtual Company Company { get; set; }
     }
