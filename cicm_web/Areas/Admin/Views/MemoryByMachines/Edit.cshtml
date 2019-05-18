@@ -29,6 +29,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
+@using Cicm.Database
 @model Cicm.Database.Models.MemoryByMachine
 
 @{
@@ -53,7 +54,16 @@
                         class="form-control"
                         asp-items="ViewBag.MachineId">
                 </select>
-                <span asp-validation-for="MachineId"
+            </div>
+            <div class="form-group">
+                <label asp-for="Usage"
+                       class="control-label">
+                </label>
+                <select asp-for="Usage"
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<MemoryUsage>().OrderBy(s => s.Text)">
+                </select>
+                <span asp-validation-for="Usage"
                       class="text-danger">
                 </span>
             </div>
@@ -62,20 +72,10 @@
                        class="control-label">
                 </label>
                 <select asp-for="Type"
-                        class="form-control">
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<MemoryType>().OrderBy(s => s.Text)">
                 </select>
                 <span asp-validation-for="Type"
-                      class="text-danger">
-                </span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Usage"
-                       class="control-label">
-                </label>
-                <select asp-for="Usage"
-                        class="form-control">
-                </select>
-                <span asp-validation-for="Usage"
                       class="text-danger">
                 </span>
             </div>

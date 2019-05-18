@@ -28,6 +28,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel;
+
 namespace Cicm.Database.Models
 {
     public class MemoryByMachine
@@ -36,8 +38,9 @@ namespace Cicm.Database.Models
         public MemoryType  Type      { get; set; }
         public MemoryUsage Usage     { get; set; }
         public long?       Size      { get; set; }
-        public double?     Speed     { get; set; }
-        public long        Id        { get; set; }
+        [DisplayName("Speed (Hz)")]
+        public double? Speed { get; set; }
+        public long Id { get;       set; }
 
         public virtual Machine Machine { get; set; }
     }

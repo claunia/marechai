@@ -43,16 +43,22 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Type)
+            @Html.DisplayNameFor(model => model.Machine)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Type)
+            @Html.DisplayFor(model => model.Machine.Name)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Usage)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Usage)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Size)
@@ -65,12 +71,6 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Speed)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Machine)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Machine.Name)
         </dd>
     </dl>
 
