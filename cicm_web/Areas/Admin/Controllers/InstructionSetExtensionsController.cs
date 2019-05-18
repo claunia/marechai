@@ -31,12 +31,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class InstructionSetExtensionsController : Controller
     {
         readonly cicmContext _context;
@@ -47,10 +49,7 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/InstructionSetExtensions
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.InstructionSetExtensions.ToListAsync());
-        }
+        public async Task<IActionResult> Index() => View(await _context.InstructionSetExtensions.ToListAsync());
 
         // GET: Admin/InstructionSetExtensions/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -65,10 +64,7 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/InstructionSetExtensions/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: Admin/InstructionSetExtensions/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 

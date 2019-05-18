@@ -38,6 +38,7 @@ using Microsoft.EntityFrameworkCore;
 namespace cicm_web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class BrowserTestsController : Controller
     {
         readonly cicmContext _context;
@@ -48,10 +49,7 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/BrowserTests
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.BrowserTests.ToListAsync());
-        }
+        public async Task<IActionResult> Index() => View(await _context.BrowserTests.ToListAsync());
 
         // GET: Admin/BrowserTests/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -65,10 +63,7 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/BrowserTests/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: Admin/BrowserTests/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 

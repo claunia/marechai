@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,7 @@ using Microsoft.EntityFrameworkCore.Query;
 namespace cicm_web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class GpusController : Controller
     {
         readonly cicmContext _context;
