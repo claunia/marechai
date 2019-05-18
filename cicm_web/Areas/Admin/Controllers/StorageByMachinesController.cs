@@ -55,7 +55,8 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<StorageByMachine, Machine> cicmContext =
                 _context.StorageByMachine.Include(s => s.Machine);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(s => s.Machine.Company.Name).ThenBy(s => s.Machine.Name)
+                                         .ToListAsync());
         }
 
         // GET: Admin/StorageByMachines/Details/5

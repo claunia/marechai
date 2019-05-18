@@ -48,6 +48,12 @@
     <thead>
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.Machine.Company)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Machine)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Type)
         </th>
         <th>
@@ -55,9 +61,6 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Capacity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Machine)
         </th>
         <th></th>
     </tr>
@@ -67,6 +70,12 @@
     {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Machine.Company.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Machine.Name)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
@@ -74,9 +83,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Capacity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Machine.Name)
             </td>
             <td>
                 <a asp-action="Details"
