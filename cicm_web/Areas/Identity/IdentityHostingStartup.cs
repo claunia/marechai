@@ -32,7 +32,6 @@ using Cicm.Database.Models;
 using cicm_web.Areas.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: HostingStartup(typeof(IdentityHostingStartup))]
@@ -45,11 +44,7 @@ namespace cicm_web.Areas.Identity
         {
             builder.ConfigureServices((context, services) =>
             {
-                services.AddDbContext<cicmContext>(options => options
-                                                             .UseLazyLoadingProxies()
-                                                             .UseMySql("server=localhost;port=3306;user=cicm;password=cicmpass;database=cicm"));
-
-                services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>()
+                services.AddDefaultIdentity<IdentityUser>()
                         .AddEntityFrameworkStores<cicmContext>();
             });
         }
