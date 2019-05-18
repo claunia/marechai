@@ -29,6 +29,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
+@using Cicm.Database.Models
 @model IEnumerable<Cicm.Database.Models.Resolution>
 
 @{
@@ -38,31 +39,35 @@
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Create New
+    </a>
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Width)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Height)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Colors)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Palette)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Chars)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Width)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Height)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Colors)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Palette)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Chars)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach(Resolution item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Width)
@@ -80,11 +85,23 @@
                 @Html.DisplayFor(modelItem => item.Chars)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details"
+                   asp-route-id="@item.Id"
+                   class="btn btn-primary">
+                    Details
+                </a>
+                <a asp-action="Edit"
+                   asp-route-id="@item.Id"
+                   class="btn btn-secondary">
+                    Edit
+                </a>
+                <a asp-action="Delete"
+                   asp-route-id="@item.Id"
+                   class="btn btn-danger">
+                    Delete
+                </a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
