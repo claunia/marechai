@@ -28,6 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
@@ -49,7 +50,8 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/InstructionSetExtensions
-        public async Task<IActionResult> Index() => View(await _context.InstructionSetExtensions.OrderBy(e => e.Extension).ToListAsync());
+        public async Task<IActionResult> Index() =>
+            View(await _context.InstructionSetExtensions.OrderBy(e => e.Extension).ToListAsync());
 
         // GET: Admin/InstructionSetExtensions/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -152,5 +154,12 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             return _context.InstructionSetExtensions.Any(e => e.Id == id);
         }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult VerifyUnique(string extension) =>
+            _context.InstructionSetExtensions.Any(i => string.Equals(i.Extension, extension,
+                                                                     StringComparison.InvariantCultureIgnoreCase))
+                ? Json("Instruction set extension already exists.")
+                : Json(true);
     }
 }
