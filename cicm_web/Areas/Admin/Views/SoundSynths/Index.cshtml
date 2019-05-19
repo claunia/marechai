@@ -30,7 +30,7 @@
 *******************************************************************************/
 }
 @using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.SoundSynth>
+@model IEnumerable<Cicm.Database.Models.SoundSynthViewModel>
 
 @{
     ViewData["Title"] = "Sound synthetizers (Admin)";
@@ -66,11 +66,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(SoundSynth item in Model)
+    @foreach(SoundSynthViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Company)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)

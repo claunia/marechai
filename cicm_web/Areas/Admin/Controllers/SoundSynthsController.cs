@@ -54,7 +54,16 @@ namespace cicm_web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<SoundSynth, Company> cicmContext = _context.SoundSynths.Include(s => s.Company);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(s => s.Company).ThenBy(s => s.Name).ThenBy(s => s.ModelCode)
+                                         .Select(s => new SoundSynthViewModel
+                                          {
+                                              Company    = s.Company.Name,
+                                              Id         = s.Id,
+                                              Introduced = s.Introduced,
+                                              ModelCode  = s.ModelCode,
+                                              Name       = s.Name,
+                                              Type       = s.Type
+                                          }).ToListAsync());
         }
 
         // GET: Admin/SoundSynths/Details/5
