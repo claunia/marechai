@@ -71,6 +71,7 @@ namespace Cicm.Database.Models
         [StringLength(80)]
         public string Province { get; set; }
         [StringLength(25)]
+        [DisplayName("Postal code")]
         public string PostalCode { get; set; }
         public short? CountryId { get;  set; }
         [Required]
