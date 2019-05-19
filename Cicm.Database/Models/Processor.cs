@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
@@ -44,15 +45,20 @@ namespace Cicm.Database.Models
             ProcessorsByMachine      = new HashSet<ProcessorsByMachine>();
         }
 
-        public string Name      { get; set; }
-        public int?   CompanyId { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string Name { get;    set; }
+        public int? CompanyId { get; set; }
         [DisplayName("Model code")]
-        public string ModelCode { get;     set; }
+        [StringLength(45)]
+        public string ModelCode { get; set; }
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? Introduced { get; set; }
         [DisplayName("Instruction set")]
         public int? InstructionSetId { get; set; }
         [DisplayName("Nominal speed (MHz)")]
-        public double? Speed { get;  set; }
+        public double? Speed { get; set; }
+        [StringLength(45)]
         public string Package { get; set; }
         [DisplayName("General Purpose Registers")]
         public int? Gprs { get; set; }
@@ -65,7 +71,8 @@ namespace Cicm.Database.Models
         public int? Cores { get;   set; }
         [DisplayName("Threads per core")]
         public int? ThreadsPerCore { get; set; }
-        public string Process { get;      set; }
+        [StringLength(45)]
+        public string Process { get; set; }
         [DisplayName("Process (nm)")]
         public float? ProcessNm { get; set; }
         [DisplayName("Die size (mm²)")]

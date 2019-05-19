@@ -29,17 +29,28 @@
 *******************************************************************************/
 
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Cicm.Database.Models
 {
     public class BrowserTest : BaseModel<int>
     {
         [DisplayName("User agent")]
+        [Required]
+        [StringLength(128)]
         public string UserAgent { get; set; }
-        public string Browser { get;   set; }
-        public string Version { get;   set; }
+        [Required]
+        [StringLength(64)]
+        public string Browser { get; set; }
+        [Required]
+        [StringLength(16)]
+        public string Version { get; set; }
         [DisplayName("Operating system")]
-        public string Os { get;       set; }
+        [Required]
+        [StringLength(32)]
+        public string Os { get; set; }
+        [Required]
+        [StringLength(8)]
         public string Platform { get; set; }
         [DisplayName("GIF87")]
         public bool Gif87 { get; set; }

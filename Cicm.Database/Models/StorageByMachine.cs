@@ -28,6 +28,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Cicm.Database.Models
 {
     public class StorageByMachine : BaseModel<long>
@@ -35,7 +37,8 @@ namespace Cicm.Database.Models
         public int              MachineId { get; set; }
         public StorageType      Type      { get; set; }
         public StorageInterface Interface { get; set; }
-        public long?            Capacity  { get; set; }
+        [Range(1, long.MaxValue)]
+        public long? Capacity { get; set; }
 
         public virtual Machine Machine { get; set; }
     }

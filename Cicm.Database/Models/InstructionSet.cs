@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Cicm.Database.Models
 {
@@ -39,6 +40,8 @@ namespace Cicm.Database.Models
             Processors = new HashSet<Processor>();
         }
 
+        [Required]
+        [StringLength(45)]
         public string Name { get; set; }
 
         public virtual ICollection<Processor> Processors { get; set; }

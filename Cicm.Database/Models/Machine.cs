@@ -31,6 +31,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
@@ -46,12 +47,18 @@ namespace Cicm.Database.Models
             Storage    = new HashSet<StorageByMachine>();
         }
 
-        public int         CompanyId  { get; set; }
-        public string      Name       { get; set; }
-        public MachineType Type       { get; set; }
-        public DateTime?   Introduced { get; set; }
-        public int?        FamilyId   { get; set; }
-        public string      Model      { get; set; }
+        [Required]
+        public int CompanyId { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }
+        [Required]
+        public MachineType Type { get; set; }
+        [DisplayFormat(DataFormatString = "{0:d}")]
+        public DateTime? Introduced { get; set; }
+        public int? FamilyId { get;        set; }
+        [StringLength(50)]
+        public string Model { get; set; }
 
         public virtual Company                          Company    { get; set; }
         public virtual MachineFamily                    Family     { get; set; }

@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Cicm.Database.Models
 {
@@ -39,8 +40,10 @@ namespace Cicm.Database.Models
             Machines = new HashSet<Machine>();
         }
 
-        public int    CompanyId { get; set; }
-        public string Name      { get; set; }
+        public int CompanyId { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Name { get; set; }
 
         public virtual Company              Company  { get; set; }
         public virtual ICollection<Machine> Machines { get; set; }

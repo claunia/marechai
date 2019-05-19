@@ -30,6 +30,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Cicm.Database.Models
 {
@@ -40,9 +41,15 @@ namespace Cicm.Database.Models
             ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
         }
 
-        public int   Width   { get; set; }
-        public int   Height  { get; set; }
-        public long? Colors  { get; set; }
+        [Required]
+        [Range(1, 131072)]
+        public int Width { get; set; }
+        [Required]
+        [Range(1, 131072)]
+        public int Height { get; set; }
+        [Range(2, 281474976710656)]
+        public long? Colors { get; set; }
+        [Range(2, 281474976710656)]
         public long? Palette { get; set; }
         [DisplayName("Character based")]
         public bool Chars { get; set; }

@@ -37,6 +37,7 @@ namespace Cicm.Database.Models
     {
         public int CompanyId { get; set; }
         [MaxLength(262144, ErrorMessage = "Description is too long")]
+        [Required]
         public string Text { get; set; }
         [MaxLength(262144, ErrorMessage = "Description is too long")]
         [DisplayName("HTML")]

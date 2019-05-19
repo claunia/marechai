@@ -31,6 +31,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
@@ -42,20 +43,28 @@ namespace Cicm.Database.Models
             SoundByMachine = new HashSet<SoundByMachine>();
         }
 
-        public string Name      { get; set; }
-        public int?   CompanyId { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string Name { get;    set; }
+        public int? CompanyId { get; set; }
         [DisplayName("Model code")]
-        public string ModelCode { get;     set; }
+        [StringLength(45)]
+        public string ModelCode { get; set; }
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? Introduced { get; set; }
         [DisplayName("PCM voices")]
+        [Range(1, int.MaxValue)]
         public int? Voices { get; set; }
         [DisplayName("Sample rate (Hz)")]
         public double? Frequency { get; set; }
         [DisplayName("Sample resolution")]
+        [Range(1, int.MaxValue)]
         public int? Depth { get; set; }
         [DisplayName("Square wave channels")]
+        [Range(1, int.MaxValue)]
         public int? SquareWave { get; set; }
         [DisplayName("White noise channels")]
+        [Range(1, int.MaxValue)]
         public int? WhiteNoise { get; set; }
         public int? Type { get;       set; }
 

@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
@@ -44,17 +45,24 @@ namespace Cicm.Database.Models
             ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
         }
 
-        public string Name      { get; set; }
-        public int?   CompanyId { get; set; }
+        [Required]
+        [StringLength(128)]
+        public string Name { get;    set; }
+        public int? CompanyId { get; set; }
         [DisplayName("Model code")]
-        public string ModelCode { get;     set; }
+        [StringLength(45)]
+        public string ModelCode { get; set; }
+        [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? Introduced { get; set; }
-        public string    Package    { get; set; }
-        public string    Process    { get; set; }
+        [StringLength(45)]
+        public string Package { get; set; }
+        [StringLength(45)]
+        public string Process { get; set; }
         [DisplayName("Process (nm)")]
         public float? ProcessNm { get; set; }
         [DisplayName("Die size (mm²)")]
-        public float? DieSize { get;    set; }
+        public float? DieSize { get; set; }
+        [Range(1, long.MaxValue)]
         public long? Transistors { get; set; }
 
         public virtual Company                       Company          { get; set; }

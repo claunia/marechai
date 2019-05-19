@@ -24,7 +24,7 @@ namespace Cicm.Database.Migrations
                  .HasDefaultValueSql("'0'");
 
                 b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnName("browser")
-                 .HasColumnType("varchar(64)").HasDefaultValueSql("''");
+                 .HasColumnType("varchar(64)").HasDefaultValueSql("''").HasMaxLength(64);
 
                 b.Property<sbyte>("Colors").ValueGeneratedOnAdd().HasColumnName("colors").HasColumnType("tinyint(1)")
                  .HasDefaultValueSql("'0'");
@@ -48,10 +48,10 @@ namespace Cicm.Database.Migrations
                  .HasDefaultValueSql("'0'");
 
                 b.Property<string>("Os").IsRequired().ValueGeneratedOnAdd().HasColumnName("os")
-                 .HasColumnType("varchar(32)").HasDefaultValueSql("''");
+                 .HasColumnType("varchar(32)").HasDefaultValueSql("''").HasMaxLength(32);
 
                 b.Property<string>("Platform").IsRequired().ValueGeneratedOnAdd().HasColumnName("platform")
-                 .HasColumnType("varchar(8)").HasDefaultValueSql("''");
+                 .HasColumnType("varchar(8)").HasDefaultValueSql("''").HasMaxLength(8);
 
                 b.Property<sbyte>("Png").ValueGeneratedOnAdd().HasColumnName("png").HasColumnType("tinyint(1)")
                  .HasDefaultValueSql("'0'");
@@ -63,10 +63,10 @@ namespace Cicm.Database.Migrations
                  .HasDefaultValueSql("'0'");
 
                 b.Property<string>("UserAgent").IsRequired().ValueGeneratedOnAdd().HasColumnName("user_agent")
-                 .HasColumnType("varchar(128)").HasDefaultValueSql("''");
+                 .HasColumnType("varchar(128)").HasDefaultValueSql("''").HasMaxLength(128);
 
                 b.Property<string>("Version").IsRequired().ValueGeneratedOnAdd().HasColumnName("version")
-                 .HasColumnType("varchar(16)").HasDefaultValueSql("''");
+                 .HasColumnType("varchar(16)").HasDefaultValueSql("''").HasMaxLength(16);
 
                 b.HasKey("Id");
 
@@ -101,22 +101,23 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<string>("Address").HasColumnName("address").HasColumnType("varchar(80)");
+                b.Property<string>("Address").HasColumnName("address").HasColumnType("varchar(80)").HasMaxLength(80);
 
-                b.Property<string>("City").HasColumnName("city").HasColumnType("varchar(80)");
+                b.Property<string>("City").HasColumnName("city").HasColumnType("varchar(80)").HasMaxLength(80);
 
                 b.Property<short?>("CountryId").HasColumnName("country").HasColumnType("smallint(3)");
 
-                b.Property<string>("Facebook").HasColumnName("facebook").HasColumnType("varchar(45)");
+                b.Property<string>("Facebook").HasColumnName("facebook").HasColumnType("varchar(45)").HasMaxLength(45);
 
                 b.Property<DateTime?>("Founded").HasColumnName("founded").HasColumnType("datetime");
 
                 b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name")
                  .HasColumnType("varchar(128)").HasDefaultValueSql("''");
 
-                b.Property<string>("PostalCode").HasColumnName("postal_code").HasColumnType("varchar(25)");
+                b.Property<string>("PostalCode").HasColumnName("postal_code").HasColumnType("varchar(25)")
+                 .HasMaxLength(25);
 
-                b.Property<string>("Province").HasColumnName("province").HasColumnType("varchar(80)");
+                b.Property<string>("Province").HasColumnName("province").HasColumnType("varchar(80)").HasMaxLength(80);
 
                 b.Property<DateTime?>("Sold").HasColumnName("sold").HasColumnType("datetime");
 
@@ -124,9 +125,9 @@ namespace Cicm.Database.Migrations
 
                 b.Property<int>("Status").HasColumnName("status").HasColumnType("int(11)");
 
-                b.Property<string>("Twitter").HasColumnName("twitter").HasColumnType("varchar(45)");
+                b.Property<string>("Twitter").HasColumnName("twitter").HasColumnType("varchar(45)").HasMaxLength(45);
 
-                b.Property<string>("Website").HasColumnName("website").HasColumnType("varchar(255)");
+                b.Property<string>("Website").HasColumnName("website").HasColumnType("varchar(255)").HasMaxLength(255);
 
                 b.HasKey("Id");
 
@@ -167,7 +168,7 @@ namespace Cicm.Database.Migrations
 
                 b.Property<string>("Html").HasMaxLength(262144);
 
-                b.Property<string>("Text").HasMaxLength(262144);
+                b.Property<string>("Text").IsRequired().HasMaxLength(262144);
 
                 b.HasKey("Id");
 
@@ -238,14 +239,15 @@ namespace Cicm.Database.Migrations
 
                 b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
 
-                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)");
+                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)")
+                 .HasMaxLength(45);
 
                 b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name")
-                 .HasColumnType("char(128)").HasDefaultValueSql("''");
+                 .HasColumnType("char(128)").HasDefaultValueSql("''").HasMaxLength(128);
 
-                b.Property<string>("Package").HasColumnName("package").HasColumnType("varchar(45)");
+                b.Property<string>("Package").HasColumnName("package").HasColumnType("varchar(45)").HasMaxLength(45);
 
-                b.Property<string>("Process").HasColumnName("process").HasColumnType("varchar(45)");
+                b.Property<string>("Process").HasColumnName("process").HasColumnType("varchar(45)").HasMaxLength(45);
 
                 b.Property<float?>("ProcessNm").HasColumnName("process_nm");
 
@@ -295,7 +297,8 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<string>("Name").IsRequired().HasColumnName("instruction_set").HasColumnType("varchar(45)");
+                b.Property<string>("Name").IsRequired().HasColumnName("instruction_set").HasColumnType("varchar(45)")
+                 .HasMaxLength(45);
 
                 b.HasKey("Id");
 
@@ -306,7 +309,8 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<string>("Extension").IsRequired().HasColumnName("extension").HasColumnType("varchar(45)");
+                b.Property<string>("Extension").IsRequired().HasColumnName("extension").HasColumnType("varchar(45)")
+                 .HasMaxLength(45);
 
                 b.HasKey("Id");
 
@@ -334,7 +338,8 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<short>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("smallint(3)");
 
-                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(64)");
+                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(64)")
+                 .HasMaxLength(64);
 
                 b.HasKey("Id");
 
@@ -383,9 +388,10 @@ namespace Cicm.Database.Migrations
 
                 b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
 
-                b.Property<string>("Model").HasColumnName("model").HasColumnType("varchar(50)");
+                b.Property<string>("Model").HasColumnName("model").HasColumnType("varchar(50)").HasMaxLength(50);
 
-                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(255)");
+                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(255)")
+                 .HasMaxLength(255);
 
                 b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)")
                  .HasDefaultValueSql("'0'");
@@ -413,7 +419,8 @@ namespace Cicm.Database.Migrations
 
                 b.Property<int>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
-                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(255)");
+                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(255)")
+                 .HasMaxLength(255);
 
                 b.HasKey("Id");
 
@@ -664,14 +671,15 @@ namespace Cicm.Database.Migrations
 
                 b.Property<float?>("L3");
 
-                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)");
+                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)")
+                 .HasMaxLength(45);
 
                 b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name")
-                 .HasColumnType("char(50)").HasDefaultValueSql("''");
+                 .HasColumnType("char(50)").HasDefaultValueSql("''").HasMaxLength(50);
 
-                b.Property<string>("Package").HasColumnName("package").HasColumnType("varchar(45)");
+                b.Property<string>("Package").HasColumnName("package").HasColumnType("varchar(45)").HasMaxLength(45);
 
-                b.Property<string>("Process").HasColumnName("process").HasColumnType("varchar(45)");
+                b.Property<string>("Process").HasColumnName("process").HasColumnType("varchar(45)").HasMaxLength(45);
 
                 b.Property<float?>("ProcessNm").HasColumnName("process_nm");
 
@@ -846,10 +854,11 @@ namespace Cicm.Database.Migrations
 
                 b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
 
-                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)");
+                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)")
+                 .HasMaxLength(45);
 
                 b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name")
-                 .HasColumnType("char(50)").HasDefaultValueSql("''");
+                 .HasColumnType("char(50)").HasDefaultValueSql("''").HasMaxLength(50);
 
                 b.Property<int?>("SquareWave").HasColumnName("square_wave").HasColumnType("int(11)");
 

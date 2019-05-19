@@ -50,20 +50,31 @@ namespace Cicm.Database.Models
             SoundSynths             = new HashSet<SoundSynth>();
         }
 
+        [Required]
         public string Name { get; set; }
         [DisplayFormat(DataFormatString = "{0:d}")]
-        public DateTime? Founded { get;        set; }
-        public string        Website    { get; set; }
-        public string        Twitter    { get; set; }
-        public string        Facebook   { get; set; }
-        public DateTime?     Sold       { get; set; }
-        public int?          SoldToId   { get; set; }
-        public string        Address    { get; set; }
-        public string        City       { get; set; }
-        public string        Province   { get; set; }
-        public string        PostalCode { get; set; }
-        public short?        CountryId  { get; set; }
-        public CompanyStatus Status     { get; set; }
+        public DateTime? Founded { get; set; }
+        [Url]
+        [StringLength(255)]
+        public string Website { get; set; }
+        [StringLength(45)]
+        public string Twitter { get; set; }
+        [StringLength(45)]
+        public string Facebook { get; set; }
+        [DisplayFormat(DataFormatString = "{0:d}")]
+        public DateTime? Sold { get; set; }
+        public int? SoldToId { get;  set; }
+        [StringLength(80)]
+        public string Address { get; set; }
+        [StringLength(80)]
+        public string City { get; set; }
+        [StringLength(80)]
+        public string Province { get; set; }
+        [StringLength(25)]
+        public string PostalCode { get; set; }
+        public short? CountryId { get;  set; }
+        [Required]
+        public CompanyStatus Status { get; set; }
 
         public virtual Iso31661Numeric Country { get; set; }
         [DisplayName("Sold to")]
