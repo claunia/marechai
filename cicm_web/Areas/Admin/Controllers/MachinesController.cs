@@ -28,8 +28,10 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Cicm.Database;
 using Cicm.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -91,6 +93,21 @@ namespace cicm_web.Areas.Admin.Controllers
             {
                 _context.Add(machine);
                 await _context.SaveChangesAsync();
+
+                NewsType newsType = new NewsType();
+                switch(machine.Type)
+                {
+                    case MachineType.Computer:
+                        newsType = NewsType.NewComputerInDb;
+                        break;
+                    case MachineType.Console:
+                        newsType = NewsType.NewConsoleInDb;
+                        break;
+                }
+
+                _context.News.Add(new News {AddedId = machine.Id, Date = DateTime.UtcNow, Type = newsType});
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -127,6 +144,20 @@ namespace cicm_web.Areas.Admin.Controllers
                 try
                 {
                     _context.Update(machine);
+                    await _context.SaveChangesAsync();
+
+                    NewsType newsType = new NewsType();
+                    switch(machine.Type)
+                    {
+                        case MachineType.Computer:
+                            newsType = NewsType.UpdatedComputerInDb;
+                            break;
+                        case MachineType.Console:
+                            newsType = NewsType.UpdatedConsoleInDb;
+                            break;
+                    }
+
+                    _context.News.Add(new News {AddedId = machine.Id, Date = DateTime.UtcNow, Type = newsType});
                     await _context.SaveChangesAsync();
                 }
                 catch(DbUpdateConcurrencyException)
