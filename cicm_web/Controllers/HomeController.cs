@@ -28,10 +28,12 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using cicm_web.Models;
+using Cicm.Database;
 using Cicm.Database.Models;
+using cicm_web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,34 +41,84 @@ namespace cicm_web.Controllers
 {
     public class HomeController : Controller
     {
+        readonly cicmContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
-        readonly cicmContext _context;
 
         public HomeController(IHostingEnvironment env, cicmContext context)
         {
             hostingEnvironment = env;
-            _context = context;
+            _context           = context;
         }
 
         public IActionResult Index()
         {
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(_context.News.OrderByDescending(t => t.Date).Take(10).ToList());
+
+            List<NewsModel> news = new List<NewsModel>();
+
+            foreach(News @new in _context.News.OrderByDescending(t => t.Date).Take(10))
+            {
+                Machine machine = _context.Machines.Find(@new.AddedId);
+
+                if(machine is null) continue;
+
+                switch(@new.Type)
+                {
+                    case NewsType.NewComputerInDb:
+                        news.Add(new NewsModel(@new.AddedId, "New computer in database", @new.Date, "Machine", "View",
+                                               $"{machine.Company.Name} {machine.Name}"));
+                        break;
+                    case NewsType.NewConsoleInDb:
+                        news.Add(new NewsModel(@new.AddedId, "New console in database", @new.Date, "Machine", "View",
+                                               $"{machine.Company.Name} {machine.Name}"));
+                        break;
+
+                    case NewsType.NewComputerInCollection:
+                        news.Add(new NewsModel(@new.AddedId, "New computer in collection", @new.Date, "Machine", "View",
+                                               $"{machine.Company.Name} {machine.Name}"));
+                        break;
+
+                    case NewsType.NewConsoleInCollection:
+                        news.Add(new NewsModel(@new.AddedId, "New console in collection", @new.Date, "Machine", "View",
+                                               $"{machine.Company.Name} {machine.Name}"));
+                        break;
+
+                    case NewsType.UpdatedComputerInDb:
+                        news.Add(new NewsModel(@new.AddedId, "Updated computer in database", @new.Date, "Machine",
+                                               "View", $"{machine.Company.Name} {machine.Name}"));
+                        break;
+
+                    case NewsType.UpdatedConsoleInDb:
+                        news.Add(new NewsModel(@new.AddedId, "Updated console in database", @new.Date, "Machine",
+                                               "View", $"{machine.Company.Name} {machine.Name}"));
+                        break;
+
+                    case NewsType.UpdatedComputerInCollection:
+                        news.Add(new NewsModel(@new.AddedId, "Updated computer in collection", @new.Date, "Machine",
+                                               "View", $"{machine.Company.Name} {machine.Name}"));
+                        break;
+
+                    case NewsType.UpdatedConsoleInCollection:
+                        news.Add(new NewsModel(@new.AddedId, "Updated console in collection", @new.Date, "Machine",
+                                               "View", $"{machine.Company.Name} {machine.Name}"));
+                        break;
+
+                    case NewsType.NewMoneyDonation:
+                        // TODO
+                        break;
+
+                    default: continue;
+                }
+            }
+
+            return View(news);
         }
 
-        public IActionResult About()
-        {
-            return View();
-        }
+        public IActionResult About() => View();
 
-        public IActionResult Contact()
-        {
-            return View();
-        }
+        public IActionResult Contact() => View();
 
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
-        }
+        public IActionResult Error() =>
+            View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
     }
 }

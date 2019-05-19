@@ -33,55 +33,34 @@
 }
 @using System.IO
 @using News = Cicm.Database.Models.News
-@model List<Cicm.Database.Models.News>
+@model List<NewsModel>
 
 <h2>News</h2>
 
-@foreach(News news in Model)
+@foreach(NewsModel news in Model)
 {
     <table border="0"
            width="100%">
         <tr>
             <td colspan="2">
-                <b>@news.Date</b>
+                <b>@news.Timestamp</b>
             </td>
-        </tr>
-        <tr>
-            News items not yet implemented!
-            @* // TODO
-            @if(news.Image != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, news.Image + ".jpg")))
-            {
-                <td height="128"
-                    width="128">
-                    <a asp-action="View"
-                       asp-controller="@news.TargetView"
-                       asp-route-id="@news.AffectedId">
-                        <img height="128"
-                             width="128"
-                             src="@(news.Image + ".jpg")">
-                    </a>
-                </td>
-                <td>
-                    @news.Text
-                </td>
-            }
-            else
-            {
-                <td colspan="2">
-                    @news.Text
-                </td>
-            }
         </tr>
         <tr>
             <td colspan="2">
-                <a asp-action="View"
-                   asp-controller="@news.TargetView"
-                   asp-route-id="@news.AffectedId">
-                    @news.SubText
-                </a>
+                @news.Text
             </td>
-        *@
         </tr>
+    <tr>
+        <td>@* TODO: Image *@</td>
+        <td>
+            <a asp-action="@news.Action"
+                               asp-route-id="@news.AffectedId"
+                               asp-controller="@news.Controller">
+                                @news.ItemName
+                            </a>
+        </td>
+    </tr>
     </table>
     <br />
 }
