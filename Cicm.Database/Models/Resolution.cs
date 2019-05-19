@@ -44,7 +44,7 @@ namespace Cicm.Database.Models
         public int   Height  { get; set; }
         public long? Colors  { get; set; }
         public long? Palette { get; set; }
-        public sbyte Chars   { get; set; }
+        public bool  Chars   { get; set; }
 
         public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
     }
