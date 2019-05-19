@@ -28,6 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
@@ -147,5 +148,11 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             return _context.InstructionSets.Any(e => e.Id == id);
         }
+
+        [AcceptVerbs("Get", "Post")]
+        public IActionResult VerifyUnique(string name) =>
+            _context.InstructionSets.Any(i => string.Equals(i.Name, name, StringComparison.InvariantCultureIgnoreCase))
+                ? Json("Instruction set already exists.")
+                : Json(true);
     }
 }
