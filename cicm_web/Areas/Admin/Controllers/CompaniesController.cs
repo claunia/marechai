@@ -73,8 +73,8 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: Admin/Companies/Create
         public IActionResult Create()
         {
-            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric, "Id", "Name");
-            ViewData["SoldToId"]  = new SelectList(_context.Companies,       "Id", "Name");
+            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name");
+            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name),       "Id", "Name");
             return View();
         }
 
@@ -95,8 +95,8 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric, "Id", "Name", company.CountryId);
-            ViewData["SoldToId"]  = new SelectList(_context.Companies,       "Id", "Name", company.SoldToId);
+            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name),       "Id", "Name", company.SoldToId);
             return View(company);
         }
 
@@ -108,8 +108,8 @@ namespace cicm_web.Areas.Admin.Controllers
             Company company = await _context.Companies.FindAsync(id);
             if(company == null) return NotFound();
 
-            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric, "Id", "Name", company.CountryId);
-            ViewData["SoldToId"]  = new SelectList(_context.Companies,       "Id", "Name", company.SoldToId);
+            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name),       "Id", "Name", company.SoldToId);
             return View(company);
         }
 
@@ -142,8 +142,8 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric, "Id", "Name", company.CountryId);
-            ViewData["SoldToId"]  = new SelectList(_context.Companies,       "Id", "Name", company.SoldToId);
+            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name),       "Id", "Name", company.SoldToId);
             return View(company);
         }
 
