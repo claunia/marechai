@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -56,7 +57,15 @@ namespace cicm_web.Areas.Admin.Controllers
             IIncludableQueryable<StorageByMachine, Machine> cicmContext =
                 _context.StorageByMachine.Include(s => s.Machine);
             return View(await cicmContext.OrderBy(s => s.Machine.Company.Name).ThenBy(s => s.Machine.Name)
-                                         .ToListAsync());
+                                         .Select(s => new StorageByMachineViewModel
+                                          {
+                                              Id        = s.Id,
+                                              Company   = s.Machine.Company.Name,
+                                              Machine   = s.Machine.Name,
+                                              Type      = s.Type,
+                                              Interface = s.Interface,
+                                              Capacity  = s.Capacity
+                                          }).ToListAsync());
         }
 
         // GET: Admin/StorageByMachines/Details/5

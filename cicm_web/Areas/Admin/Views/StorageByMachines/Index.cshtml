@@ -29,8 +29,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.StorageByMachine>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.StorageByMachineViewModel>
 
 @{
     ViewData["Title"] = "Storage by machines (Admin)";
@@ -48,7 +48,7 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Machine.Company)
+            @Html.DisplayNameFor(model => model.Company)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Machine)
@@ -66,14 +66,14 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(StorageByMachine item in Model)
+    @foreach(StorageByMachineViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Machine.Company.Name)
+                @Html.DisplayFor(modelItem => item.Company)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Machine.Name)
+                @Html.DisplayFor(modelItem => item.Machine)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Type)
