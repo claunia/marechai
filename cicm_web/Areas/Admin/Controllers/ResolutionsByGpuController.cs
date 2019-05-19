@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -28,7 +29,13 @@ namespace cicm_web.Areas.Admin.Controllers
             return View(await cicmContext.OrderBy(r => r.Gpu.Company.Name).ThenBy(r => r.Gpu.Name)
                                          .ThenBy(r => r.Resolution.Chars).ThenBy(r => r.Resolution.Width)
                                          .ThenBy(r => r.Resolution.Height).ThenBy(r => r.Resolution.Colors)
-                                         .ToListAsync());
+                                         .Select(r => new ResolutionsByGpuViewModel
+                                          {
+                                              Gpu        = r.Gpu.Name,
+                                              GpuCompany = r.Gpu.Company.Name,
+                                              Id         = r.Id,
+                                              Resolution = r.Resolution
+                                          }).ToListAsync());
         }
 
         // GET: ResolutionsByGpu/Details/5
