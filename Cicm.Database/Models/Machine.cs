@@ -55,6 +55,7 @@ namespace Cicm.Database.Models
         [Required]
         public MachineType Type { get; set; }
         [DisplayFormat(DataFormatString = "{0:d}")]
+        [DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
         public int? FamilyId { get;        set; }
         [StringLength(50)]

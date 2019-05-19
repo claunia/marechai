@@ -52,7 +52,8 @@ namespace Cicm.Database.Models
 
         [Required]
         public string Name { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
         public DateTime? Founded { get; set; }
         [Url]
         [StringLength(255)]
@@ -62,6 +63,7 @@ namespace Cicm.Database.Models
         [StringLength(45)]
         public string Facebook { get; set; }
         [DisplayFormat(DataFormatString = "{0:d}")]
+        [DataType(DataType.Date)]
         public DateTime? Sold { get; set; }
         public int? SoldToId { get;  set; }
         [StringLength(80)]
@@ -105,6 +107,6 @@ namespace Cicm.Database.Models
                     : Sold.Value.ToShortDateString();
 
         [NotMapped]
-        public CompanyDescription Description => Descriptions.FirstOrDefault();
+        public CompanyDescription Description => Descriptions?.FirstOrDefault();
     }
 }

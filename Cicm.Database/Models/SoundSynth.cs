@@ -51,6 +51,7 @@ namespace Cicm.Database.Models
         [StringLength(45)]
         public string ModelCode { get; set; }
         [DisplayFormat(DataFormatString = "{0:d}")]
+        [DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
         [DisplayName("PCM voices")]
         [Range(1, int.MaxValue)]

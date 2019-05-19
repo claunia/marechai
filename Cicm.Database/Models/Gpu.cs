@@ -53,6 +53,7 @@ namespace Cicm.Database.Models
         [StringLength(45)]
         public string ModelCode { get; set; }
         [DisplayFormat(DataFormatString = "{0:d}")]
+        [DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
         [StringLength(45)]
         public string Package { get; set; }
