@@ -24,7 +24,11 @@ namespace cicm_web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<CompanyLogo, Company> cicmContext = _context.CompanyLogos.Include(c => c.Company);
-            return View(await cicmContext.OrderBy(l => l.Company.Name).ThenBy(l => l.Year).ToListAsync());
+            return View(await cicmContext.OrderBy(l => l.Company.Name).ThenBy(l => l.Year)
+                                         .Select(l => new CompanyLogoViewModel
+                                          {
+                                              Company = l.Company.Name, Id = l.Id, Year = l.Year
+                                          }).ToListAsync());
         }
 
         // GET: CompanyLogos/Details/5
@@ -73,7 +77,8 @@ namespace cicm_web.Areas.Admin.Controllers
             CompanyLogo companyLogo = await _context.CompanyLogos.FirstOrDefaultAsync(c => c.Id == id);
             if(companyLogo == null) return NotFound();
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(l => l.Name), "Id", "Name", companyLogo.CompanyId);
+            ViewData["CompanyId"] =
+                new SelectList(_context.Companies.OrderBy(l => l.Name), "Id", "Name", companyLogo.CompanyId);
             return View(companyLogo);
         }
 
@@ -103,7 +108,8 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(l => l.Name), "Id", "Name", companyLogo.CompanyId);
+            ViewData["CompanyId"] =
+                new SelectList(_context.Companies.OrderBy(l => l.Name), "Id", "Name", companyLogo.CompanyId);
             return View(companyLogo);
         }
 

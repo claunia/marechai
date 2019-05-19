@@ -1,5 +1,5 @@
 @using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.CompanyLogo>
+@model IEnumerable<Cicm.Database.Models.CompanyLogoViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -27,11 +27,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(CompanyLogo item in Model)
+    @foreach(CompanyLogoViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Company)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Year)
