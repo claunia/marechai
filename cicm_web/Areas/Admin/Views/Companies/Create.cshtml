@@ -29,6 +29,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
+@using Cicm.Database
 @model Cicm.Database.Models.Company
 
 @{
@@ -168,7 +169,8 @@
                        class="control-label">
                 </label>
                 <select asp-for="Status"
-                        class="form-control">
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<CompanyStatus>().OrderBy(s => s.Text)">
                 </select>
                 <span asp-validation-for="Status"
                       class="text-danger">
