@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -56,7 +57,16 @@ namespace cicm_web.Areas.Admin.Controllers
             IIncludableQueryable<MemoryByMachine, Machine> cicmContext =
                 _context.MemoryByMachine.Include(m => m.Machine);
             return View(await cicmContext.OrderBy(m => m.Machine.Name).ThenBy(m => m.Usage).ThenBy(m => m.Size)
-                                         .ThenBy(m => m.Type).ToListAsync());
+                                         .ThenBy(m => m.Type)
+                                         .Select(m => new MemoryByMachineViewModel
+                                          {
+                                              Id      = m.Id,
+                                              Machine = m.Machine.Name,
+                                              Size    = m.Size,
+                                              Speed   = m.Speed,
+                                              Type    = m.Type,
+                                              Usage   = m.Usage
+                                          }).ToListAsync());
         }
 
         // GET: Admin/MemoryByMachines/Details/5

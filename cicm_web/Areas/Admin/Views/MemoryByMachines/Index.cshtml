@@ -29,8 +29,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.MemoryByMachine>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.MemoryByMachineViewModel>
 
 @{
     ViewData["Title"] = "Memory by machines (Admin)";
@@ -66,11 +66,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(MemoryByMachine item in Model)
+    @foreach(MemoryByMachineViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Machine.Name)
+                @Html.DisplayFor(modelItem => item.Machine)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Usage)
