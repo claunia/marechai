@@ -156,5 +156,18 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             return _context.InstructionSetExtensionsByProcessor.Any(e => e.Id == id);
         }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyUnique(int processorId, int extensionId)
+        {
+            return
+                await _context.InstructionSetExtensionsByProcessor.FirstOrDefaultAsync(i =>
+                                                                                           i.ProcessorId ==
+                                                                                           processorId &&
+                                                                                           i.ExtensionId == extensionId)
+                    is null
+                    ? Json(true)
+                    : Json("The selected processor already has the selected extension.");
+        }
     }
 }

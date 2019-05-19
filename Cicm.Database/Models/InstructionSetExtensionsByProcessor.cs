@@ -28,11 +28,15 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using Microsoft.AspNetCore.Mvc;
+
 namespace Cicm.Database.Models
 {
     public class InstructionSetExtensionsByProcessor : BaseModel<int>
     {
+        [Remote("VerifyUnique", "InstructionSetExtensionsByProcessor", "Admin", AdditionalFields = nameof(ExtensionId))]
         public int ProcessorId { get; set; }
+        [Remote("VerifyUnique", "InstructionSetExtensionsByProcessor", "Admin", AdditionalFields = nameof(ProcessorId))]
         public int ExtensionId { get; set; }
 
         public virtual InstructionSetExtension Extension { get; set; }
