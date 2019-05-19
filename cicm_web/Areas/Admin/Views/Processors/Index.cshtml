@@ -30,7 +30,7 @@
 *******************************************************************************/
 }
 @using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.Processor>
+@model IEnumerable<Cicm.Database.Models.ProcessorViewModel>
 
 @{
     ViewData["Title"] = "Processors (Admin)";
@@ -66,11 +66,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(Processor item in Model)
+    @foreach(ProcessorViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Company)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -82,7 +82,7 @@
                 @Html.DisplayFor(modelItem => item.IntroducedView)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.InstructionSet.Name)
+                @Html.DisplayFor(modelItem => item.InstructionSet)
             </td>
             <td>
                 <a asp-action="Details"
