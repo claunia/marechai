@@ -1,5 +1,5 @@
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.InstructionSetExtensionsByProcessor>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.InstructionSetExtensionsByProcessorViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -26,14 +26,14 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(InstructionSetExtensionsByProcessor item in Model)
+    @foreach(InstructionSetExtensionsByProcessorViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Processor.Name)
+                @Html.DisplayFor(modelItem => item.Processor)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Extension.Extension)
+                @Html.DisplayFor(modelItem => item.Extension)
             </td>
             <td>
                 <a asp-action="Details"

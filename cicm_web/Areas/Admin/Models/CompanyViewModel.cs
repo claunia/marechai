@@ -16,7 +16,8 @@ namespace cicm_web.Areas.Admin.Models
         [DisplayFormat(DataFormatString = "{0:d}")]
         [DataType(DataType.Date)]
         public DateTime? Sold { get; set; }
-        public string SoldTo  { get; set; }
+        [DisplayName("Sold to")]
+        public string SoldTo { get;  set; }
         public string Country { get; set; }
         [Required]
         public CompanyStatus Status { get; set; }

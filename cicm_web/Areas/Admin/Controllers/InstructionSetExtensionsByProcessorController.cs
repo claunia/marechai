@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -26,7 +27,12 @@ namespace cicm_web.Areas.Admin.Controllers
             IIncludableQueryable<InstructionSetExtensionsByProcessor, Processor> cicmContext =
                 _context.InstructionSetExtensionsByProcessor.Include(i => i.Extension).Include(i => i.Processor);
             return View(await cicmContext.OrderBy(e => e.Processor.Name).ThenBy(e => e.Extension.Extension)
-                                         .ToListAsync());
+                                         .Select(e => new InstructionSetExtensionsByProcessorViewModel
+                                          {
+                                              Id        = e.Id,
+                                              Extension = e.Extension.Extension,
+                                              Processor = e.Processor.Name
+                                          }).ToListAsync());
         }
 
         // GET: InstructionSetExtensionsByProcessor/Details/5
