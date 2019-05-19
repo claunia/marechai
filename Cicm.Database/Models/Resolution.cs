@@ -51,5 +51,25 @@ namespace Cicm.Database.Models
         public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
 
         public long? PaletteView => Palette ?? Colors;
+
+        public override string ToString()
+        {
+            if(Chars)
+            {
+                if(Colors == null) return $"{Width}x{Height} characters";
+
+                if(Palette != null && Colors != Palette)
+                    return $"{Width}x{Height} characters at {Colors} colors from a palette of {Palette}";
+
+                return $"{Width}x{Height} characters at {Colors} colors";
+            }
+
+            if(Colors == null) return $"{Width}x{Height} pixels";
+
+            if(Palette != null && Colors != Palette)
+                return $"{Width}x{Height} pixels at {Colors} colors from a palette of {Palette}";
+
+            return $"{Width}x{Height} pixels at {Colors} colors";
+        }
     }
 }
