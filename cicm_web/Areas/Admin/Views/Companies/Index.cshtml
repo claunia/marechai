@@ -29,8 +29,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.Company>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.CompanyViewModel>
 
 @{
     ViewData["Title"] = "Companies (Admin)";
@@ -69,7 +69,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(Company item in Model)
+    @foreach(CompanyViewModel item in Model)
     {
         <tr>
             <td>
@@ -82,13 +82,13 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Country.Name)
+                @Html.DisplayFor(modelItem => item.Country)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SoldView)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SoldTo.Name)
+                @Html.DisplayFor(modelItem => item.SoldTo)
             </td>
             <td>
                 <a asp-action="Details"

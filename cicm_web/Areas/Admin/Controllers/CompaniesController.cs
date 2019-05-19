@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -55,7 +56,16 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<Company, Company> cicmContext =
                 _context.Companies.Include(c => c.Country).Include(c => c.SoldTo);
-            return View(await cicmContext.OrderBy(c => c.Name).ToListAsync());
+            return View(cicmContext.OrderBy(c => c.Name).Select(c => new CompanyViewModel
+            {
+                Id      = c.Id,
+                Name    = c.Name,
+                Founded = c.Founded,
+                Status  = c.Status,
+                Country = c.Country.Name,
+                Sold    = c.Sold,
+                SoldTo  = c.SoldTo.Name
+            }));
         }
 
         // GET: Admin/Companies/Details/5
@@ -95,8 +105,10 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
-            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name),       "Id", "Name", company.SoldToId);
+            ViewData["CountryId"] =
+                new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+            ViewData["SoldToId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", company.SoldToId);
             return View(company);
         }
 
@@ -108,8 +120,10 @@ namespace cicm_web.Areas.Admin.Controllers
             Company company = await _context.Companies.FindAsync(id);
             if(company == null) return NotFound();
 
-            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
-            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name),       "Id", "Name", company.SoldToId);
+            ViewData["CountryId"] =
+                new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+            ViewData["SoldToId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", company.SoldToId);
             return View(company);
         }
 
@@ -142,8 +156,10 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
-            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name),       "Id", "Name", company.SoldToId);
+            ViewData["CountryId"] =
+                new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+            ViewData["SoldToId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", company.SoldToId);
             return View(company);
         }
 
