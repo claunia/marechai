@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -54,7 +55,11 @@ namespace cicm_web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<MachineFamily, Company> cicmContext = _context.MachineFamilies.Include(m => m.Company);
-            return View(await cicmContext.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).ToListAsync());
+            return View(await cicmContext.OrderBy(m => m.Company.Name).ThenBy(m => m.Name)
+                                         .Select(m => new MachineFamilyViewModel
+                                          {
+                                              Id = m.Id, Company = m.Company.Name, Name = m.Name
+                                          }).ToListAsync());
         }
 
         // GET: Admin/MachineFamilies/Details/5
