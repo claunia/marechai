@@ -29,12 +29,15 @@
 *******************************************************************************/
 
 using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Cicm.Database.Models
 {
     public class ResolutionsByGpu : BaseModel<long>
     {
-        public int GpuId        { get; set; }
+        [Remote("VerifyUnique", "ResolutionsByGpu", "Admin", AdditionalFields = nameof(ResolutionId))]
+        public int GpuId { get; set; }
+        [Remote("VerifyUnique", "ResolutionsByGpu", "Admin", AdditionalFields = nameof(GpuId))]
         public int ResolutionId { get; set; }
 
         [DisplayName("GPU")]

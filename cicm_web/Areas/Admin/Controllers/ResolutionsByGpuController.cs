@@ -169,5 +169,14 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             return _context.ResolutionsByGpu.Any(e => e.Id == id);
         }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyUnique(int gpuId, int resolutionId)
+        {
+            return await _context.ResolutionsByGpu.FirstOrDefaultAsync(i => i.GpuId        == gpuId &&
+                                                                            i.ResolutionId == resolutionId) is null
+                       ? Json(true)
+                       : Json("The selected GPU already has the selected resolution.");
+        }
     }
 }
