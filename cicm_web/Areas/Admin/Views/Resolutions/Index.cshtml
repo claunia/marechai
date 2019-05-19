@@ -48,19 +48,7 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Width)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Height)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Colors)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Palette)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Chars)
+            Resolution
         </th>
         <th></th>
     </tr>
@@ -70,19 +58,7 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Width)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Height)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Colors)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PaletteView)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Chars)
+                @item.ToString()
             </td>
             <td>
                 <a asp-action="Details"

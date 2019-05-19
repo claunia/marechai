@@ -51,7 +51,7 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: Admin/Resolutions
         public async Task<IActionResult> Index() =>
             View(await _context.Resolutions.OrderBy(r => r.Chars).ThenBy(r => r.Width).ThenBy(r => r.Height)
-                               .ThenBy(r => r.Colors).ToListAsync());
+                               .ThenBy(r => r.Colors).ThenBy(r => r.Grayscale).ToListAsync());
 
         // GET: Admin/Resolutions/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -72,7 +72,7 @@ namespace cicm_web.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Width,Height,Colors,Palette,Chars")]
+        public async Task<IActionResult> Create([Bind("Id,Width,Height,Colors,Palette,Chars,Grayscale")]
                                                 Resolution resolution)
         {
             if(ModelState.IsValid)
@@ -101,7 +101,7 @@ namespace cicm_web.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Width,Height,Colors,Palette,Chars")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Width,Height,Colors,Palette,Chars,Grayscale")]
                                               Resolution resolution)
         {
             if(id != resolution.Id) return NotFound();

@@ -47,6 +47,8 @@ namespace Cicm.Database.Models
         public long? Palette { get; set; }
         [DisplayName("Character based")]
         public bool Chars { get; set; }
+        [DisplayName("Grayscale")]
+        public bool Grayscale { get; set; }
 
         public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
 
@@ -59,17 +61,25 @@ namespace Cicm.Database.Models
                 if(Colors == null) return $"{Width}x{Height} characters";
 
                 if(Palette != null && Colors != Palette)
-                    return $"{Width}x{Height} characters at {Colors} colors from a palette of {Palette}";
+                    return Grayscale
+                               ? $"{Width}x{Height} characters at {Colors} grays from a palette of {Palette}"
+                               : $"{Width}x{Height} characters at {Colors} colors from a palette of {Palette}";
 
-                return $"{Width}x{Height} characters at {Colors} colors";
+                return Colors == 2 && Grayscale
+                           ? $"{Width}x{Height} black and white characters"
+                           : $"{Width}x{Height} characters at {Colors} colors";
             }
 
             if(Colors == null) return $"{Width}x{Height} pixels";
 
             if(Palette != null && Colors != Palette)
-                return $"{Width}x{Height} pixels at {Colors} colors from a palette of {Palette}";
+                return Grayscale
+                           ? $"{Width}x{Height} pixels at {Colors} grays from a palette of {Palette}"
+                           : $"{Width}x{Height} pixels at {Colors} colors from a palette of {Palette}";
 
-            return $"{Width}x{Height} pixels at {Colors} colors";
+            return Colors == 2 && Grayscale
+                       ? $"{Width}x{Height} black and white pixels"
+                       : $"{Width}x{Height} pixels at {Colors} colors";
         }
     }
 }

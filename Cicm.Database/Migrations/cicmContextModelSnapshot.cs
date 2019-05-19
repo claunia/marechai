@@ -770,6 +770,8 @@ namespace Cicm.Database.Migrations
 
                 b.Property<long?>("Colors").HasColumnName("colors").HasColumnType("bigint(20)");
 
+                b.Property<bool>("Grayscale");
+
                 b.Property<int>("Height").ValueGeneratedOnAdd().HasColumnName("height").HasColumnType("int(11)")
                  .HasDefaultValueSql("'0'");
 
