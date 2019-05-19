@@ -43,6 +43,12 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
+            @Html.DisplayNameFor(model => model.Company)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Company.Name)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Name)
         </dt>
         <dd>
@@ -58,7 +64,13 @@
             @Html.DisplayNameFor(model => model.Introduced)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Introduced)
+            @Html.DisplayFor(model => model.IntroducedView)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Voices)
@@ -89,18 +101,6 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.WhiteNoise)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Type)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Type)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Company)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Company.Name)
         </dd>
     </dl>
 

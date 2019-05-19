@@ -48,6 +48,9 @@
     <thead>
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.Company)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
@@ -57,25 +60,7 @@
             @Html.DisplayNameFor(model => model.Introduced)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Voices)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Frequency)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Depth)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SquareWave)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.WhiteNoise)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Type)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Company)
         </th>
         <th></th>
     </tr>
@@ -85,34 +70,19 @@
     {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Company.Name)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ModelCode)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Introduced)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Voices)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Frequency)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Depth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SquareWave)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WhiteNoise)
+                @Html.DisplayFor(modelItem => item.IntroducedView)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
             </td>
             <td>
                 <a asp-action="Details"

@@ -30,6 +30,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
 {
@@ -40,19 +42,28 @@ namespace Cicm.Database.Models
             SoundByMachine = new HashSet<SoundByMachine>();
         }
 
-        public int       Id         { get; set; }
-        public string    Name       { get; set; }
-        public int?      CompanyId  { get; set; }
-        public string    ModelCode  { get; set; }
+        public int    Id        { get; set; }
+        public string Name      { get; set; }
+        public int?   CompanyId { get; set; }
+        [DisplayName("Model code")]
+        public string ModelCode { get;     set; }
         public DateTime? Introduced { get; set; }
-        public int?      Voices     { get; set; }
-        public double?   Frequency  { get; set; }
-        public int?      Depth      { get; set; }
-        public int?      SquareWave { get; set; }
-        public int?      WhiteNoise { get; set; }
-        public int?      Type       { get; set; }
+        [DisplayName("PCM voices")]
+        public int? Voices { get; set; }
+        [DisplayName("Sample rate (Hz)")]
+        public double? Frequency { get; set; }
+        [DisplayName("Sample resolution")]
+        public int? Depth { get; set; }
+        [DisplayName("Square wave channels")]
+        public int? SquareWave { get; set; }
+        [DisplayName("White noise channels")]
+        public int? WhiteNoise { get; set; }
+        public int? Type { get;       set; }
 
         public virtual Company                     Company        { get; set; }
         public virtual ICollection<SoundByMachine> SoundByMachine { get; set; }
+
+        [NotMapped]
+        public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
     }
 }
