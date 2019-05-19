@@ -29,8 +29,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.Machine>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.MachineViewModel>
 
 @{
     ViewData["Title"] = "Machines (Admin)";
@@ -69,14 +69,14 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(Machine item in Model)
+    @foreach(MachineViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Company)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Family.Name)
+                @Html.DisplayFor(modelItem => item.Family)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
