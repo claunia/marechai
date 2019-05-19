@@ -28,6 +28,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel;
+
 namespace Cicm.Database.Models
 {
     public class SoundByMachine
@@ -37,6 +39,7 @@ namespace Cicm.Database.Models
         public long Id           { get; set; }
 
         public virtual Machine    Machine    { get; set; }
+        [DisplayName("Sound synthetizer")]
         public virtual SoundSynth SoundSynth { get; set; }
     }
 }
