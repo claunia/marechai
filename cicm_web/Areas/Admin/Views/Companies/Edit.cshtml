@@ -115,6 +115,7 @@
                 <select asp-for="SoldToId"
                         class="form-control"
                         asp-items="ViewBag.SoldToId">
+                    <option value="">None or unknown</option>
                 </select>
                 <span asp-validation-for="SoldToId"
                       class="text-danger">
