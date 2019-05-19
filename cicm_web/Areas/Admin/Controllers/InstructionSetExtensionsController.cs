@@ -62,6 +62,10 @@ namespace cicm_web.Areas.Admin.Controllers
                 await _context.InstructionSetExtensions.FirstOrDefaultAsync(m => m.Id == id);
             if(instructionSetExtension == null) return NotFound();
 
+            ViewBag.Processors = _context.InstructionSetExtensionsByProcessor.Where(e => e.ExtensionId == id)
+                                         .Join(_context.Processors, p => p.ProcessorId, i => i.Id, (p, i) => i)
+                                         .Select(p => p.Name);
+
             return View(instructionSetExtension);
         }
 
