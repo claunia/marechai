@@ -28,6 +28,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel;
+
 namespace Cicm.Database.Models
 {
     public class GpusByMachine
@@ -36,7 +38,8 @@ namespace Cicm.Database.Models
         public int  MachineId { get; set; }
         public long Id        { get; set; }
 
-        public virtual Gpu     Gpu     { get; set; }
+        [DisplayName("GPU")]
+        public virtual Gpu Gpu { get;         set; }
         public virtual Machine Machine { get; set; }
     }
 }
