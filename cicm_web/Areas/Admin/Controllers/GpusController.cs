@@ -72,7 +72,7 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: Admin/Gpus/Create
         public IActionResult Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name");
             return View();
         }
 
@@ -92,7 +92,8 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", gpu.CompanyId);
+            ViewData["CompanyId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", gpu.CompanyId);
             return View(gpu);
         }
 
@@ -104,7 +105,8 @@ namespace cicm_web.Areas.Admin.Controllers
             Gpu gpu = await _context.Gpus.FindAsync(id);
             if(gpu == null) return NotFound();
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", gpu.CompanyId);
+            ViewData["CompanyId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", gpu.CompanyId);
             return View(gpu);
         }
 
@@ -136,7 +138,8 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", gpu.CompanyId);
+            ViewData["CompanyId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", gpu.CompanyId);
             return View(gpu);
         }
 
