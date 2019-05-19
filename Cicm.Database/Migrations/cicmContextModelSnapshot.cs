@@ -16,23 +16,6 @@ namespace Cicm.Database.Migrations
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                         .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Cicm.Database.Models.Admin", b =>
-            {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
-
-                b.Property<string>("Password").IsRequired().ValueGeneratedOnAdd().HasColumnName("password")
-                 .HasColumnType("char(50)").HasDefaultValueSql("''");
-
-                b.Property<string>("User").IsRequired().ValueGeneratedOnAdd().HasColumnName("user")
-                 .HasColumnType("char(50)").HasDefaultValueSql("''");
-
-                b.HasKey("Id");
-
-                b.HasIndex("User").HasName("idx_admins_user");
-
-                b.ToTable("admins");
-            });
-
             modelBuilder.Entity("Cicm.Database.Models.BrowserTest", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");

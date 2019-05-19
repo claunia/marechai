@@ -39,7 +39,6 @@ namespace Cicm.Database.Models
 
         public cicmContext(DbContextOptions<cicmContext> options) : base(options) { }
 
-        public virtual DbSet<Admin>                               Admins                              { get; set; }
         public virtual DbSet<BrowserTest>                         BrowserTests                        { get; set; }
         public virtual DbSet<CicmDb>                              CicmDb                              { get; set; }
         public virtual DbSet<Company>                             Companies                           { get; set; }
@@ -80,21 +79,6 @@ namespace Cicm.Database.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Admin>(entity =>
-            {
-                entity.ToTable("admins");
-
-                entity.HasIndex(e => e.User).HasName("idx_admins_user");
-
-                entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
-
-                entity.Property(e => e.Password).IsRequired().HasColumnName("password").HasColumnType("char(50)")
-                      .HasDefaultValueSql("''");
-
-                entity.Property(e => e.User).IsRequired().HasColumnName("user").HasColumnType("char(50)")
-                      .HasDefaultValueSql("''");
-            });
 
             modelBuilder.Entity<BrowserTest>(entity =>
             {
