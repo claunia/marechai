@@ -29,8 +29,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.CompanyDescription>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.CompanyDescriptionViewModel>
 
 @{
     ViewData["Title"] = "Company descriptions (Admin)";
@@ -54,11 +54,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(CompanyDescription item in Model)
+    @foreach(CompanyDescriptionViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Company)
             </td>
             <td>
                 <a asp-action="Details"

@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,7 +59,11 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<CompanyDescription, Company> cicmContext =
                 _context.CompanyDescriptions.Include(c => c.Company);
-            return View(await cicmContext.OrderBy(c => c.Company.Name).ToListAsync());
+            return View(await cicmContext.OrderBy(c => c.Company.Name)
+                                         .Select(c => new CompanyDescriptionViewModel
+                                          {
+                                              Id = c.Id, Company = c.Company.Name
+                                          }).ToListAsync());
         }
 
         // GET: CompanyDescription/Details/5
