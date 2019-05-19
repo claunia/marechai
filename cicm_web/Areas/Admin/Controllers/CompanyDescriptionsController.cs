@@ -58,7 +58,7 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<CompanyDescription, Company> cicmContext =
                 _context.CompanyDescriptions.Include(c => c.Company);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(c => c.Company.Name).ToListAsync());
         }
 
         // GET: CompanyDescription/Details/5
@@ -77,7 +77,7 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: CompanyDescription/Create
         public IActionResult Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name");
             return View();
         }
 
@@ -96,7 +96,8 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name",
+                                                   companyDescription.CompanyId);
             return View(companyDescription);
         }
 
@@ -108,7 +109,8 @@ namespace cicm_web.Areas.Admin.Controllers
             CompanyDescription companyDescription = await _context.CompanyDescriptions.FindAsync(id);
             if(companyDescription == null) return NotFound();
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name",
+                                                   companyDescription.CompanyId);
             return View(companyDescription);
         }
 
@@ -139,7 +141,8 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", companyDescription.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name",
+                                                   companyDescription.CompanyId);
             return View(companyDescription);
         }
 
