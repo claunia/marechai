@@ -29,8 +29,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.ProcessorsByMachine>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.ProcessorsByMachineViewModel>
 
 @{
     ViewData["Title"] = "Processors by machine (Admin)";
@@ -60,14 +60,14 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(ProcessorsByMachine item in Model)
+    @foreach(ProcessorsByMachineViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Machine.Name)
+                @Html.DisplayFor(modelItem => item.Machine)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Processor.Name)
+                @Html.DisplayFor(modelItem => item.Processor)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Speed)

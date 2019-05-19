@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -55,7 +56,14 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<ProcessorsByMachine, Processor> cicmContext =
                 _context.ProcessorsByMachine.Include(p => p.Machine).Include(p => p.Processor);
-            return View(await cicmContext.OrderBy(p => p.Machine.Name).ThenBy(p => p.Processor.Name).ToListAsync());
+            return View(await cicmContext.OrderBy(p => p.Machine.Name).ThenBy(p => p.Processor.Name)
+                                         .Select(p => new ProcessorsByMachineViewModel
+                                          {
+                                              Id        = p.Id,
+                                              Machine   = p.Machine.Name,
+                                              Processor = p.Processor.Name,
+                                              Speed     = p.Speed
+                                          }).ToListAsync());
         }
 
         // GET: Admin/ProcessorsByMachines/Details/5
