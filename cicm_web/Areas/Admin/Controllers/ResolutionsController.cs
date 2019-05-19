@@ -49,7 +49,9 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Admin/Resolutions
-        public async Task<IActionResult> Index() => View(await _context.Resolutions.ToListAsync());
+        public async Task<IActionResult> Index() =>
+            View(await _context.Resolutions.OrderBy(r => r.Chars).ThenBy(r => r.Width).ThenBy(r => r.Height)
+                               .ThenBy(r => r.Colors).ToListAsync());
 
         // GET: Admin/Resolutions/Details/5
         public async Task<IActionResult> Details(int? id)

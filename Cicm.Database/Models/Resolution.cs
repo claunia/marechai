@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
@@ -44,8 +45,11 @@ namespace Cicm.Database.Models
         public int   Height  { get; set; }
         public long? Colors  { get; set; }
         public long? Palette { get; set; }
-        public bool  Chars   { get; set; }
+        [DisplayName("Character based")]
+        public bool Chars { get; set; }
 
         public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
+
+        public long? PaletteView => Palette ?? Colors;
     }
 }

@@ -88,14 +88,11 @@
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Chars"
-                       class="control-label">
-                </label>
-                <input asp-for="Chars"
-                       class="form-control" />
-                <span asp-validation-for="Chars"
-                      class="text-danger">
-                </span>
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Chars" /> @Html.DisplayNameFor(model => model.Chars)
+                    </label>
+                </div>
             </div>
             <div class="form-group">
                 <input class="btn btn-primary"
