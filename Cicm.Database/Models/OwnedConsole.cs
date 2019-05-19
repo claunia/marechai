@@ -30,9 +30,8 @@
 
 namespace Cicm.Database.Models
 {
-    public class OwnedConsole
+    public class OwnedConsole : BaseModel<int>
     {
-        public int        Id      { get; set; }
         public int        DbId    { get; set; }
         public string     Date    { get; set; }
         public StatusType Status  { get; set; }

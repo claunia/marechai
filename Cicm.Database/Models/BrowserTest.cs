@@ -32,9 +32,8 @@ using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
-    public class BrowserTest
+    public class BrowserTest : BaseModel<int>
     {
-        public int Id { get; set; }
         [DisplayName("User agent")]
         public string UserAgent { get; set; }
         public string Browser { get;   set; }

@@ -33,14 +33,13 @@ using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
-    public class InstructionSetExtension
+    public class InstructionSetExtension : BaseModel<int>
     {
         public InstructionSetExtension()
         {
             InstructionSetExtensionsByProcessor = new HashSet<InstructionSetExtensionsByProcessor>();
         }
 
-        public int    Id        { get; set; }
         [DisplayName("Name")]
         public string Extension { get; set; }
 

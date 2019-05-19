@@ -32,13 +32,12 @@ using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
-    public class SoundByMachine
+    public class SoundByMachine : BaseModel<long>
     {
-        public int  SoundSynthId { get; set; }
-        public int  MachineId    { get; set; }
-        public long Id           { get; set; }
+        public int SoundSynthId { get; set; }
+        public int MachineId    { get; set; }
 
-        public virtual Machine    Machine    { get; set; }
+        public virtual Machine Machine { get; set; }
         [DisplayName("Sound synthetizer")]
         public virtual SoundSynth SoundSynth { get; set; }
     }

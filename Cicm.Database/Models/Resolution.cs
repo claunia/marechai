@@ -33,14 +33,13 @@ using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
-    public class Resolution
+    public class Resolution : BaseModel<int>
     {
         public Resolution()
         {
             ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
         }
 
-        public int   Id      { get; set; }
         public int   Width   { get; set; }
         public int   Height  { get; set; }
         public long? Colors  { get; set; }

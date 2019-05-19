@@ -35,14 +35,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
 {
-    public class SoundSynth
+    public class SoundSynth : BaseModel<int>
     {
         public SoundSynth()
         {
             SoundByMachine = new HashSet<SoundByMachine>();
         }
 
-        public int    Id        { get; set; }
         public string Name      { get; set; }
         public int?   CompanyId { get; set; }
         [DisplayName("Model code")]

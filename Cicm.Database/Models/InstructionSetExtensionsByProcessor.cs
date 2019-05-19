@@ -30,9 +30,8 @@
 
 namespace Cicm.Database.Models
 {
-    public class InstructionSetExtensionsByProcessor
+    public class InstructionSetExtensionsByProcessor : BaseModel<int>
     {
-        public int Id          { get; set; }
         public int ProcessorId { get; set; }
         public int ExtensionId { get; set; }
 

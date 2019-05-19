@@ -32,11 +32,10 @@ using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
-    public class GpusByMachine
+    public class GpusByMachine : BaseModel<long>
     {
-        public int  GpuId     { get; set; }
-        public int  MachineId { get; set; }
-        public long Id        { get; set; }
+        public int GpuId     { get; set; }
+        public int MachineId { get; set; }
 
         [DisplayName("GPU")]
         public virtual Gpu Gpu { get;         set; }

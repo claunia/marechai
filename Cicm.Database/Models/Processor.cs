@@ -36,7 +36,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
 {
-    public class Processor
+    public class Processor : BaseModel<int>
     {
         public Processor()
         {
@@ -44,7 +44,6 @@ namespace Cicm.Database.Models
             ProcessorsByMachine      = new HashSet<ProcessorsByMachine>();
         }
 
-        public int    Id        { get; set; }
         public string Name      { get; set; }
         public int?   CompanyId { get; set; }
         [DisplayName("Model code")]

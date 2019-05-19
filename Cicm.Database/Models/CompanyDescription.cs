@@ -33,9 +33,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cicm.Database.Models
 {
-    public class CompanyDescription
+    public class CompanyDescription : BaseModel<int>
     {
-        public int Id        { get; set; }
         public int CompanyId { get; set; }
         [MaxLength(262144, ErrorMessage = "Description is too long")]
         public string Text { get; set; }

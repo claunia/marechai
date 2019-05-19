@@ -36,7 +36,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
 {
-    public class Gpu
+    public class Gpu : BaseModel<int>
     {
         public Gpu()
         {
@@ -44,7 +44,6 @@ namespace Cicm.Database.Models
             ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
         }
 
-        public int    Id        { get; set; }
         public string Name      { get; set; }
         public int?   CompanyId { get; set; }
         [DisplayName("Model code")]

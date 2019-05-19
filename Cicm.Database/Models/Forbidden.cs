@@ -30,9 +30,8 @@
 
 namespace Cicm.Database.Models
 {
-    public class Forbidden
+    public class Forbidden : BaseModel<int>
     {
-        public int    Id      { get; set; }
         public string Browser { get; set; }
         public string Date    { get; set; }
         public string Ip      { get; set; }

@@ -37,7 +37,7 @@ using System.Linq;
 
 namespace Cicm.Database.Models
 {
-    public class Company
+    public class Company : BaseModel<int>
     {
         public Company()
         {
@@ -50,7 +50,6 @@ namespace Cicm.Database.Models
             SoundSynths             = new HashSet<SoundSynth>();
         }
 
-        public int    Id   { get; set; }
         public string Name { get; set; }
         [DisplayFormat(DataFormatString = "{0:d}")]
         public DateTime? Founded { get;        set; }

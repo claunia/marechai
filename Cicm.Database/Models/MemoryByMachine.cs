@@ -32,7 +32,7 @@ using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
-    public class MemoryByMachine
+    public class MemoryByMachine : BaseModel<long>
     {
         public int         MachineId { get; set; }
         public MemoryType  Type      { get; set; }
@@ -40,7 +40,6 @@ namespace Cicm.Database.Models
         public long?       Size      { get; set; }
         [DisplayName("Speed (Hz)")]
         public double? Speed { get; set; }
-        public long Id { get;       set; }
 
         public virtual Machine Machine { get; set; }
     }

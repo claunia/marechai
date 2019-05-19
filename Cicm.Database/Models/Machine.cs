@@ -35,7 +35,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cicm.Database.Models
 {
-    public class Machine
+    public class Machine : BaseModel<int>
     {
         public Machine()
         {
@@ -46,7 +46,6 @@ namespace Cicm.Database.Models
             Storage    = new HashSet<StorageByMachine>();
         }
 
-        public int         Id         { get; set; }
         public int         CompanyId  { get; set; }
         public string      Name       { get; set; }
         public MachineType Type       { get; set; }

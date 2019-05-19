@@ -33,9 +33,8 @@ using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
-    public class News
+    public class News : BaseModel<int>
     {
-        public int      Id   { get; set; }
         public DateTime Date { get; set; }
         public NewsType Type { get; set; }
         [DisplayName("Affected ID")]
