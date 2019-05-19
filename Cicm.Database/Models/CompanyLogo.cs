@@ -29,12 +29,14 @@
 *******************************************************************************/
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Cicm.Database.Models
 {
     public class CompanyLogo : BaseModel<int>
     {
         public int  CompanyId { get; set; }
+        [Range(1000, 3000)]
         public int? Year      { get; set; }
         public Guid Guid      { get; set; }
 
