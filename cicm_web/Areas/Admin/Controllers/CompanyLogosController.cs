@@ -73,7 +73,7 @@ namespace cicm_web.Areas.Admin.Controllers
             CompanyLogo companyLogo = await _context.CompanyLogos.FirstOrDefaultAsync(c => c.Id == id);
             if(companyLogo == null) return NotFound();
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", companyLogo.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(l => l.Name), "Id", "Name", companyLogo.CompanyId);
             return View(companyLogo);
         }
 
@@ -103,7 +103,7 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", companyLogo.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(l => l.Name), "Id", "Name", companyLogo.CompanyId);
             return View(companyLogo);
         }
 
