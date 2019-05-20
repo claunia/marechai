@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,13 @@ namespace cicm_web.Areas.Admin.Controllers
     [Authorize]
     public class CompanyLogosController : Controller
     {
-        readonly cicmContext _context;
+        readonly cicmContext         _context;
+        readonly IHostingEnvironment hostingEnvironment;
 
-        public CompanyLogosController(cicmContext context)
+        public CompanyLogosController(cicmContext context, IHostingEnvironment env)
         {
-            _context = context;
+            _context           = context;
+            hostingEnvironment = env;
         }
 
         // GET: CompanyLogos
