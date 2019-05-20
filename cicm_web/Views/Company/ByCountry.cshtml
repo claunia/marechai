@@ -32,8 +32,7 @@
     ViewData["Title"] = "Companies";
 }
 @using System.IO
-@using Cicm.Database.Models
-@model Cicm.Database.Models.Company[]
+@model IEnumerable<CompanyViewModel>
 
 <p align="center">
     @if(ViewBag.Iso3166 != null)
@@ -63,24 +62,24 @@
     {
         <p>
             @Model.Count() companies found in the database.<br />
-            @foreach(Company company in Model)
+            @foreach(CompanyViewModel company in Model)
             {
                 <a asp-controller="Company"
                    asp-action="View"
                    asp-route-id="@company.Id">
-                    @if(company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.LastLogo.Guid + ".svg")))
+                    @if(company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
                     {
                         <picture>
                             <source type="image/svg+xml"
-                                    srcset="/assets/logos/@(company.LastLogo.Guid).svg">
+                                    srcset="/assets/logos/@(company.LastLogo).svg">
                             <source type="image/webp"
-                                    srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp,
-/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp 2x,
-/assets/logos/thumbs/webp/1x/@(company.LastLogo.Guid).webp 3x">
-                            <img srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).png,
-                         /assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).png 2x,
-                         /assets/logos/thumbs/png/1x/@(company.LastLogo.Guid).webp 3x"
-                                 src="/assets/logos/thumbs/png/1x@(company.LastLogo.Guid).png")
+                                    srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
+/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp 2x,
+/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp 3x">
+                            <img srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
+                         /assets/logos/thumbs/png/1x/@(company.LastLogo).png 2x,
+                         /assets/logos/thumbs/png/1x/@(company.LastLogo).webp 3x"
+                                 src="/assets/logos/thumbs/png/1x@(company.LastLogo).png")
                                  alt=""
                                  height="auto"
                                  width="auto"

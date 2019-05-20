@@ -30,8 +30,10 @@
 
 using System.Linq;
 using Cicm.Database.Models;
+using cicm_web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Controllers
 {
@@ -56,9 +58,16 @@ namespace cicm_web.Controllers
             ViewBag.Letter = id;
 
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(id == '\0'
-                            ? _context.Companies.ToArray()
-                            : _context.Companies.Where(c => c.Name.StartsWith(id)).ToArray());
+
+            if(id == '\0') return RedirectToAction(nameof(Index));
+
+            return View(_context.Companies.Include(c => c.Logos).Where(c => c.Name.StartsWith(id)).OrderBy(c => c.Name)
+                                .Select(c => new CompanyViewModel
+                                 {
+                                     Id       = c.Id,
+                                     LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
+                                     Name     = c.Name
+                                 }).ToList());
         }
 
         public IActionResult View(int id)
@@ -77,16 +86,33 @@ namespace cicm_web.Controllers
         {
             ViewBag.Iso3166 = _context.Iso31661Numeric.FirstOrDefault(i => i.Id == id);
 
+            if(ViewBag.Iso3166 is null) RedirectToAction(nameof(Index));
+
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(ViewBag.Iso3166 == null
-                            ? _context.Companies.ToArray()
-                            : _context.Companies.Where(c => c.CountryId == id).ToArray());
+            return View(_context.Companies.Include(c => c.Logos).Where(c => c.CountryId == id).OrderBy(c => c.Name)
+                                .Select(c => new CompanyViewModel
+                                 {
+                                     Id       = c.Id,
+                                     LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
+                                     Name     = c.Name
+                                 }).ToList());
         }
 
         public IActionResult Index()
         {
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(_context.Companies.ToArray());
+
+            return View(_context.Companies.Include(c => c.Logos).OrderBy(c => c.Name).Select(c => new CompanyViewModel
+            {
+                Id = c.Id,
+                LastLogo = c
+                          .Logos
+                          .OrderByDescending(l =>
+                                                 l.Year)
+                          .FirstOrDefault()
+                          .Guid,
+                Name = c.Name
+            }).ToList());
         }
     }
 }
