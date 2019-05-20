@@ -29,8 +29,8 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 }
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.Gpu>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.GpuViewModel>
 
 @{
     ViewData["Title"] = "GPUs (Admin)";
@@ -63,11 +63,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(Gpu item in Model)
+    @foreach(GpuViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Company)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)

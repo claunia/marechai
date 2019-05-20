@@ -31,6 +31,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -55,7 +56,14 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<Gpu, Company> cicmContext = _context.Gpus.Include(g => g.Company);
             return View(await cicmContext.OrderBy(g => g.Company.Name).ThenBy(g => g.Name).ThenBy(g => g.Introduced)
-                                         .ToListAsync());
+                                         .Select(g => new GpuViewModel
+                                          {
+                                              Id         = g.Id,
+                                              Company    = g.Company.Name,
+                                              Introduced = g.Introduced,
+                                              ModelCode  = g.ModelCode,
+                                              Name       = g.Name
+                                          }).ToListAsync());
         }
 
         // GET: Admin/Gpus/Details/5
