@@ -29,17 +29,28 @@
 *******************************************************************************/
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace Cicm.Database.Models
 {
     public class CompanyLogo : BaseModel<int>
     {
-        public int  CompanyId { get; set; }
+        public int CompanyId { get; set; }
         [Range(1000, 3000)]
-        public int? Year      { get; set; }
-        public Guid Guid      { get; set; }
+        public int? Year { get; set; }
+        public Guid Guid { get; set; }
 
         public virtual Company Company { get; set; }
+
+        [NotMapped]
+        [Required(ErrorMessage = "SVG logo required")]
+        [DisplayName("Upload SVG logo:")]
+        public IFormFile SvgLogo { get; set; }
+
+        [NotMapped]
+        public string ErrorMessage { get; set; }
     }
 }
