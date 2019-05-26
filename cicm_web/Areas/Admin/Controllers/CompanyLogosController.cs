@@ -334,7 +334,9 @@ namespace cicm_web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            CompanyLogo companyLogo = await _context.CompanyLogos.FindAsync(id);
+            CompanyLogo companyLogo = await _context.CompanyLogos.FirstOrDefaultAsync(m => m.Id == id);
+            if(companyLogo == null) return NotFound();
+
             _context.CompanyLogos.Remove(companyLogo);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
