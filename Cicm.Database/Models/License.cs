@@ -19,10 +19,12 @@ namespace Cicm.Database.Models
         public bool OsiApproved { get; set; }
         [DisplayName("License text link")]
         [StringLength(512)]
+        [Url]
         public string Link { get; set; }
         [DisplayName("License text")]
         [Column(TypeName = "longtext")]
         [StringLength(131072)]
+        [DataType(DataType.MultilineText)]
         public string Text { get;                              set; }
         public virtual ICollection<MachinePhoto> Photos { get; set; }
     }
