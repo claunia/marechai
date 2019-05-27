@@ -33,13 +33,11 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Cicm.Database.Models
+namespace cicm_web.Areas.Admin.Models
 {
-    public class SoundSynthViewModel
+    public class SoundSynthViewModel : BaseViewModel<int>
 
     {
-        public int Id;
-
         public string Name { get; set; }
         [DisplayName("Model code")]
         public string ModelCode { get; set; }

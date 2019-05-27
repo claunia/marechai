@@ -28,12 +28,11 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-namespace Cicm.Database.Models
+namespace cicm_web.Areas.Admin.Models
 {
-    public class CompanyLogoViewModel
+    public class CompanyLogoViewModel : BaseViewModel<int>
     {
         public string Company;
-        public int    Id;
         public int?   Year;
     }
 }

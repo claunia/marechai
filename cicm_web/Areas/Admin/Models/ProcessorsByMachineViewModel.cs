@@ -32,9 +32,8 @@ using System.ComponentModel;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class ProcessorsByMachineViewModel
+    public class ProcessorsByMachineViewModel : BaseViewModel<long>
     {
-        public long   Id        { get; set; }
         public string Processor { get; set; }
         public string Machine   { get; set; }
         [DisplayName("Speed (MHz)")]

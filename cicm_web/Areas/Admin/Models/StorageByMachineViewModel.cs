@@ -32,10 +32,9 @@ using Cicm.Database;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class StorageByMachineViewModel
+    public class StorageByMachineViewModel : BaseViewModel<long>
     {
         public string           Company;
-        public long             Id;
         public string           Machine;
         public StorageType      Type      { get; set; }
         public StorageInterface Interface { get; set; }

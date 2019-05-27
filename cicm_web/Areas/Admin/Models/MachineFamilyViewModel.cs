@@ -1,9 +1,8 @@
 namespace cicm_web.Areas.Admin.Models
 {
-    public class MachineFamilyViewModel
+    public class MachineFamilyViewModel : BaseViewModel<int>
     {
         public string Company;
-        public int    Id;
         public string Name;
     }
 }

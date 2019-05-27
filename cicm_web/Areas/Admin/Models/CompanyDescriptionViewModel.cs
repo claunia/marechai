@@ -30,9 +30,8 @@
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class CompanyDescriptionViewModel
+    public class CompanyDescriptionViewModel : BaseViewModel<int>
     {
         public string Company;
-        public int    Id;
     }
 }

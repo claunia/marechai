@@ -6,9 +6,8 @@ using Cicm.Database;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class CompanyViewModel
+    public class CompanyViewModel : BaseViewModel<int>
     {
-        public int    Id   { get; set; }
         public string Name { get; set; }
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]

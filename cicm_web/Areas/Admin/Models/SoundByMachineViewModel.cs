@@ -32,9 +32,8 @@ using System.ComponentModel;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class SoundByMachineViewModel
+    public class SoundByMachineViewModel : BaseViewModel<long>
     {
-        public long   Id;
         public string Machine { get; set; }
         [DisplayName("Sound synthetizer")]
         public string SoundSynth { get; set; }

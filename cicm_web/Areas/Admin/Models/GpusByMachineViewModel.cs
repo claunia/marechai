@@ -29,15 +29,13 @@
 *******************************************************************************/
 
 using System.ComponentModel;
-using Cicm.Database.Models;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class GpusByMachineViewModel : BaseModel<long>
+    public class GpusByMachineViewModel : BaseViewModel<long>
     {
         [DisplayName("GPU")]
         public string Gpu;
-        public long   Id;
         public string Machine;
     }
 }

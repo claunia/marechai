@@ -33,10 +33,9 @@ using Cicm.Database.Models;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class ResolutionsByGpuViewModel
+    public class ResolutionsByGpuViewModel : BaseViewModel<long>
     {
         public string GpuCompany;
-        public long   Id;
         [DisplayName("GPU")]
         public string Gpu { get;            set; }
         public Resolution Resolution { get; set; }

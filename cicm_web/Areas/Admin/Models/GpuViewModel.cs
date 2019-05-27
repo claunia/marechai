@@ -36,10 +36,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class GpuViewModel
+    public class GpuViewModel : BaseViewModel<int>
     {
         public string Company;
-        public int    Id;
         [DisplayFormat(DataFormatString = "{0:d}")]
         [DataType(DataType.Date)]
         public DateTime? Introduced;

@@ -5,9 +5,8 @@ using Cicm.Database;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class MachineViewModel
+    public class MachineViewModel : BaseViewModel<int>
     {
-        public int Id { get; set; }
         [StringLength(255)]
         public string Name { get;      set; }
         public MachineType Type { get; set; }
@@ -16,8 +15,7 @@ namespace cicm_web.Areas.Admin.Models
         public DateTime? Introduced { get; set; }
         public string Family { get;        set; }
         [StringLength(50)]
-        public string Model { get; set; }
-
+        public string Model { get;   set; }
         public string Company { get; set; }
 
         [DisplayName("Introduced")]

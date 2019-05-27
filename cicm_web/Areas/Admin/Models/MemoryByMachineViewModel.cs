@@ -33,9 +33,8 @@ using Cicm.Database;
 
 namespace cicm_web.Areas.Admin.Models
 {
-    public class MemoryByMachineViewModel
+    public class MemoryByMachineViewModel : BaseViewModel<long>
     {
-        public long        Id;
         public MemoryType  Type  { get; set; }
         public MemoryUsage Usage { get; set; }
         public long?       Size  { get; set; }
