@@ -3718,11 +3718,11 @@ namespace Cicm.Database.Migrations
 
                 b.Property<string>("CameraModel");
 
-                b.Property<string>("ColorSpace");
+                b.Property<ushort?>("ColorSpace");
 
                 b.Property<string>("Comments");
 
-                b.Property<string>("Contrast");
+                b.Property<ushort?>("Contrast");
 
                 b.Property<DateTime?>("CreationDate");
 
@@ -3730,59 +3730,57 @@ namespace Cicm.Database.Migrations
 
                 b.Property<string>("ExifVersion");
 
-                b.Property<double?>("Exposure");
+                b.Property<string>("Exposure");
 
-                b.Property<string>("ExposureMethod");
+                b.Property<ushort?>("ExposureMethod");
 
-                b.Property<string>("ExposureProgram");
+                b.Property<ushort?>("ExposureProgram");
 
-                b.Property<string>("Flash");
+                b.Property<ushort?>("Flash");
 
-                b.Property<int?>("Focal");
+                b.Property<double?>("Focal");
 
-                b.Property<int?>("FocalLength");
+                b.Property<double?>("FocalLength");
 
-                b.Property<string>("FocalLengthEquivalent");
+                b.Property<ushort?>("FocalLengthEquivalent");
 
-                b.Property<int?>("HorizontalResolution");
+                b.Property<double?>("HorizontalResolution");
 
-                b.Property<int?>("IsoRating");
+                b.Property<ushort?>("IsoRating");
 
                 b.Property<string>("Lens");
 
                 b.Property<int>("LicenseId");
 
-                b.Property<string>("LightSource");
+                b.Property<ushort?>("LightSource");
 
                 b.Property<int?>("MachineId");
 
-                b.Property<string>("MeteringMode");
+                b.Property<ushort?>("MeteringMode");
 
-                b.Property<string>("Orientation");
+                b.Property<ushort?>("Orientation");
 
-                b.Property<string>("PixelComposition");
+                b.Property<ushort?>("ResolutionUnit");
 
-                b.Property<string>("Saturation");
+                b.Property<ushort?>("Saturation");
 
-                b.Property<string>("SceneCaptureType");
+                b.Property<ushort?>("SceneCaptureType");
 
-                b.Property<string>("SceneControl");
-
-                b.Property<string>("SensingMethod");
+                b.Property<ushort?>("SensingMethod");
 
                 b.Property<string>("Sharpness");
 
                 b.Property<string>("SoftwareUsed");
 
-                b.Property<string>("SubjectDistanceRange");
+                b.Property<ushort?>("SubjectDistanceRange");
 
                 b.Property<DateTime>("UploadDate").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
                 b.Property<string>("UserId");
 
-                b.Property<int?>("VerticalResolution");
+                b.Property<double?>("VerticalResolution");
 
-                b.Property<string>("WhiteBalance");
+                b.Property<ushort?>("WhiteBalance");
 
                 b.HasKey("Id");
 
@@ -3834,13 +3832,11 @@ namespace Cicm.Database.Migrations
 
                 b.HasIndex("Orientation");
 
-                b.HasIndex("PixelComposition");
+                b.HasIndex("ResolutionUnit");
 
                 b.HasIndex("Saturation");
 
                 b.HasIndex("SceneCaptureType");
-
-                b.HasIndex("SceneControl");
 
                 b.HasIndex("SensingMethod");
 

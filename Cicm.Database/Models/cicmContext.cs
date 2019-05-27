@@ -525,15 +525,13 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.MeteringMode);
 
-                entity.HasIndex(e => e.Orientation);
+                entity.HasIndex(e => e.ResolutionUnit);
 
-                entity.HasIndex(e => e.PixelComposition);
+                entity.HasIndex(e => e.Orientation);
 
                 entity.HasIndex(e => e.Saturation);
 
                 entity.HasIndex(e => e.SceneCaptureType);
-
-                entity.HasIndex(e => e.SceneControl);
 
                 entity.HasIndex(e => e.SensingMethod);
 

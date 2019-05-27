@@ -12,10 +12,10 @@ namespace Cicm.Database.Models
         [DisplayName("Camera model")]
         public string CameraModel { get; set; }
         [DisplayName("Color space")]
-        public string ColorSpace { get; set; }
+        public ColorSpace? ColorSpace { get; set; }
         [DisplayName("User comments")]
-        public string Comments { get; set; }
-        public string Contrast { get; set; }
+        public string Comments { get;    set; }
+        public Contrast? Contrast { get; set; }
         [DisplayName("Date and time of digitizing")]
         public DateTime? CreationDate { get; set; }
         [DisplayName("Digital zoom ratio")]
@@ -23,49 +23,46 @@ namespace Cicm.Database.Models
         [DisplayName("Exif version")]
         public string ExifVersion { get; set; }
         [DisplayName("Exposure time")]
-        public double? Exposure { get; set; }
+        public string Exposure { get; set; }
         [DisplayName("Exposure mode")]
-        public string ExposureMethod { get; set; }
+        public ExposureMode? ExposureMethod { get; set; }
         [DisplayName("Exposure Program")]
-        public string ExposureProgram { get; set; }
-        public string Flash { get;           set; }
+        public ExposureProgram? ExposureProgram { get; set; }
+        public Flash? Flash { get;                     set; }
         [DisplayName("F-number")]
-        public int? Focal { get; set; }
+        public double? Focal { get; set; }
         [DisplayName("Lens focal length")]
-        public int? FocalLength { get; set; }
+        public double? FocalLength { get; set; }
         [DisplayName("Focal length in 35 mm film")]
-        public string FocalLengthEquivalent { get; set; }
+        public ushort? FocalLengthEquivalent { get; set; }
         [DisplayName("Horizontal resolution")]
-        public int? HorizontalResolution { get; set; }
+        public double? HorizontalResolution { get; set; }
         [DisplayName("ISO speed rating")]
-        public int? IsoRating { get; set; }
+        public ushort? IsoRating { get; set; }
         [DisplayName("Lens used")]
         public string Lens { get; set; }
         [DisplayName("Light source")]
-        public string LightSource { get; set; }
+        public LightSource? LightSource { get; set; }
         [DisplayName("Metering mode")]
-        public string MeteringMode { get; set; }
-        public string Orientation { get;  set; }
-        [DisplayName("Pixel composition")]
-        public string PixelComposition { get; set; }
-        public string Saturation { get;       set; }
+        public MeteringMode? MeteringMode { get;     set; }
+        public ResolutionUnit? ResolutionUnit { get; set; }
+        public Orientation?    Orientation    { get; set; }
+        public Saturation?     Saturation     { get; set; }
         [DisplayName("Scene capture type")]
-        public string SceneCaptureType { get; set; }
-        [DisplayName("Scene control")]
-        public string SceneControl { get; set; }
+        public SceneCaptureType? SceneCaptureType { get; set; }
         [DisplayName("Sensing method")]
-        public string SensingMethod { get; set; }
-        public string Sharpness { get;     set; }
+        public SensingMethod? SensingMethod { get; set; }
+        public string Sharpness { get;             set; }
         [DisplayName("Software used")]
         public string SoftwareUsed { get; set; }
         [DisplayName("Subject distance range")]
-        public string SubjectDistanceRange { get; set; }
+        public SubjectDistanceRange? SubjectDistanceRange { get; set; }
         [Timestamp]
         public DateTime UploadDate { get; set; }
         [DisplayName("Vertical resolution")]
-        public int? VerticalResolution { get; set; }
+        public double? VerticalResolution { get; set; }
         [DisplayName("White balance")]
-        public string WhiteBalance { get; set; }
+        public WhiteBalance? WhiteBalance { get; set; }
 
         public virtual ApplicationUser User    { get; set; }
         public virtual Machine         Machine { get; set; }
