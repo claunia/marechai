@@ -40,8 +40,7 @@ namespace Cicm.Database.Models
         [DisplayName("ISO speed rating")]
         public int? IsoRating { get; set; }
         [DisplayName("Lens used")]
-        public string Lens { get;    set; }
-        public string License { get; set; }
+        public string Lens { get; set; }
         [DisplayName("Light source")]
         public string LightSource { get; set; }
         [DisplayName("Metering mode")]
@@ -70,5 +69,7 @@ namespace Cicm.Database.Models
 
         public virtual ApplicationUser User    { get; set; }
         public virtual Machine         Machine { get; set; }
+        [Required]
+        public virtual License License { get; set; }
     }
 }

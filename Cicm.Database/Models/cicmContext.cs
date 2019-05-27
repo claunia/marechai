@@ -521,8 +521,6 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.Lens);
 
-                entity.HasIndex(e => e.License);
-
                 entity.HasIndex(e => e.LightSource);
 
                 entity.HasIndex(e => e.MeteringMode);
@@ -554,6 +552,8 @@ namespace Cicm.Database.Models
                 entity.HasOne(d => d.Machine).WithMany(p => p.Photos).OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.User).WithMany(p => p.Photos).OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(d => d.License).WithMany(p => p.Photos).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<MemoryByMachine>(entity =>

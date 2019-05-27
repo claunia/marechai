@@ -3750,7 +3750,7 @@ namespace Cicm.Database.Migrations
 
                 b.Property<string>("Lens");
 
-                b.Property<string>("License");
+                b.Property<int>("LicenseId");
 
                 b.Property<string>("LightSource");
 
@@ -3824,7 +3824,7 @@ namespace Cicm.Database.Migrations
 
                 b.HasIndex("Lens");
 
-                b.HasIndex("License");
+                b.HasIndex("LicenseId");
 
                 b.HasIndex("LightSource");
 
@@ -4566,6 +4566,9 @@ namespace Cicm.Database.Migrations
 
             modelBuilder.Entity("Cicm.Database.Models.MachinePhoto", b =>
             {
+                b.HasOne("Cicm.Database.Models.License", "License").WithMany("Photos").HasForeignKey("LicenseId")
+                 .OnDelete(DeleteBehavior.Cascade);
+
                 b.HasOne("Cicm.Database.Models.Machine", "Machine").WithMany("Photos").HasForeignKey("MachineId")
                  .OnDelete(DeleteBehavior.Cascade);
 

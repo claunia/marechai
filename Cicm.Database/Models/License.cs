@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,6 +23,7 @@ namespace Cicm.Database.Models
         [DisplayName("License text")]
         [Column(TypeName = "longtext")]
         [StringLength(131072)]
-        public string Text { get; set; }
+        public string Text { get;                              set; }
+        public virtual ICollection<MachinePhoto> Photos { get; set; }
     }
 }
