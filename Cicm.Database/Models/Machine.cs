@@ -68,6 +68,7 @@ namespace Cicm.Database.Models
         public virtual ICollection<ProcessorsByMachine> Processors { get; set; }
         public virtual ICollection<SoundByMachine>      Sound      { get; set; }
         public virtual ICollection<StorageByMachine>    Storage    { get; set; }
+        public virtual ICollection<MachinePhoto>        Photos     { get; set; }
 
         [NotMapped]
         [DisplayName("Introduced")]

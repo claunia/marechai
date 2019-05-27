@@ -54,6 +54,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<Log>                                 Log                                 { get; set; }
         public virtual DbSet<MachineFamily>                       MachineFamilies                     { get; set; }
         public virtual DbSet<Machine>                             Machines                            { get; set; }
+        public virtual DbSet<MachinePhoto>                        MachinePhotos                       { get; set; }
         public virtual DbSet<MemoryByMachine>                     MemoryByMachine                     { get; set; }
         public virtual DbSet<MoneyDonation>                       MoneyDonations                      { get; set; }
         public virtual DbSet<News>                                News                                { get; set; }
@@ -477,6 +478,81 @@ namespace Cicm.Database.Models
 
                 entity.HasOne(d => d.Family).WithMany(p => p.Machines).HasForeignKey(d => d.FamilyId)
                       .HasConstraintName("fk_machines_family");
+            });
+
+            modelBuilder.Entity<MachinePhoto>(entity =>
+            {
+                entity.HasIndex(e => e.Author);
+
+                entity.HasIndex(e => e.CameraManufacturer);
+
+                entity.HasIndex(e => e.CameraModel);
+
+                entity.HasIndex(e => e.ColorSpace);
+
+                entity.HasIndex(e => e.Comments);
+
+                entity.HasIndex(e => e.Contrast);
+
+                entity.HasIndex(e => e.CreationDate);
+
+                entity.HasIndex(e => e.DigitalZoomRatio);
+
+                entity.HasIndex(e => e.ExifVersion);
+
+                entity.HasIndex(e => e.Exposure);
+
+                entity.HasIndex(e => e.ExposureMethod);
+
+                entity.HasIndex(e => e.ExposureProgram);
+
+                entity.HasIndex(e => e.Flash);
+
+                entity.HasIndex(e => e.Focal);
+
+                entity.HasIndex(e => e.FocalLength);
+
+                entity.HasIndex(e => e.FocalLengthEquivalent);
+
+                entity.HasIndex(e => e.HorizontalResolution);
+
+                entity.HasIndex(e => e.IsoRating);
+
+                entity.HasIndex(e => e.Lens);
+
+                entity.HasIndex(e => e.License);
+
+                entity.HasIndex(e => e.LightSource);
+
+                entity.HasIndex(e => e.MeteringMode);
+
+                entity.HasIndex(e => e.Orientation);
+
+                entity.HasIndex(e => e.PixelComposition);
+
+                entity.HasIndex(e => e.Saturation);
+
+                entity.HasIndex(e => e.SceneCaptureType);
+
+                entity.HasIndex(e => e.SceneControl);
+
+                entity.HasIndex(e => e.SensingMethod);
+
+                entity.HasIndex(e => e.Sharpness);
+
+                entity.HasIndex(e => e.SoftwareUsed);
+
+                entity.HasIndex(e => e.SubjectDistanceRange);
+
+                entity.HasIndex(e => e.UploadDate);
+
+                entity.HasIndex(e => e.VerticalResolution);
+
+                entity.HasIndex(e => e.WhiteBalance);
+
+                entity.HasOne(d => d.Machine).WithMany(p => p.Photos).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.User).WithMany(p => p.Photos).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<MemoryByMachine>(entity =>
