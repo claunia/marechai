@@ -1,0 +1,358 @@
+@model Cicm.Database.Models.MachinePhoto
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>MachinePhoto</h4>
+<hr />
+<div class="row">
+<div class="col-md-4">
+<form asp-action="Create">
+<div asp-validation-summary="ModelOnly"
+     class="text-danger">
+</div>
+<div class="form-group">
+    <label asp-for="Author"
+           class="control-label">
+    </label>
+    <input asp-for="Author"
+           class="form-control" />
+    <span asp-validation-for="Author"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="CameraManufacturer"
+           class="control-label">
+    </label>
+    <input asp-for="CameraManufacturer"
+           class="form-control" />
+    <span asp-validation-for="CameraManufacturer"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="CameraModel"
+           class="control-label">
+    </label>
+    <input asp-for="CameraModel"
+           class="form-control" />
+    <span asp-validation-for="CameraModel"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="ColorSpace"
+           class="control-label">
+    </label>
+    <input asp-for="ColorSpace"
+           class="form-control" />
+    <span asp-validation-for="ColorSpace"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Comments"
+           class="control-label">
+    </label>
+    <input asp-for="Comments"
+           class="form-control" />
+    <span asp-validation-for="Comments"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Contrast"
+           class="control-label">
+    </label>
+    <input asp-for="Contrast"
+           class="form-control" />
+    <span asp-validation-for="Contrast"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="CreationDate"
+           class="control-label">
+    </label>
+    <input asp-for="CreationDate"
+           class="form-control" />
+    <span asp-validation-for="CreationDate"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="DigitalZoomRatio"
+           class="control-label">
+    </label>
+    <input asp-for="DigitalZoomRatio"
+           class="form-control" />
+    <span asp-validation-for="DigitalZoomRatio"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="ExifVersion"
+           class="control-label">
+    </label>
+    <input asp-for="ExifVersion"
+           class="form-control" />
+    <span asp-validation-for="ExifVersion"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Exposure"
+           class="control-label">
+    </label>
+    <input asp-for="Exposure"
+           class="form-control" />
+    <span asp-validation-for="Exposure"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="ExposureMethod"
+           class="control-label">
+    </label>
+    <input asp-for="ExposureMethod"
+           class="form-control" />
+    <span asp-validation-for="ExposureMethod"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="ExposureProgram"
+           class="control-label">
+    </label>
+    <input asp-for="ExposureProgram"
+           class="form-control" />
+    <span asp-validation-for="ExposureProgram"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Flash"
+           class="control-label">
+    </label>
+    <input asp-for="Flash"
+           class="form-control" />
+    <span asp-validation-for="Flash"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Focal"
+           class="control-label">
+    </label>
+    <input asp-for="Focal"
+           class="form-control" />
+    <span asp-validation-for="Focal"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="FocalLength"
+           class="control-label">
+    </label>
+    <input asp-for="FocalLength"
+           class="form-control" />
+    <span asp-validation-for="FocalLength"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="FocalLengthEquivalent"
+           class="control-label">
+    </label>
+    <input asp-for="FocalLengthEquivalent"
+           class="form-control" />
+    <span asp-validation-for="FocalLengthEquivalent"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="HorizontalResolution"
+           class="control-label">
+    </label>
+    <input asp-for="HorizontalResolution"
+           class="form-control" />
+    <span asp-validation-for="HorizontalResolution"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="IsoRating"
+           class="control-label">
+    </label>
+    <input asp-for="IsoRating"
+           class="form-control" />
+    <span asp-validation-for="IsoRating"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Lens"
+           class="control-label">
+    </label>
+    <input asp-for="Lens"
+           class="form-control" />
+    <span asp-validation-for="Lens"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="License"
+           class="control-label">
+    </label>
+    <input asp-for="License"
+           class="form-control" />
+    <span asp-validation-for="License"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="LightSource"
+           class="control-label">
+    </label>
+    <input asp-for="LightSource"
+           class="form-control" />
+    <span asp-validation-for="LightSource"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="MeteringMode"
+           class="control-label">
+    </label>
+    <input asp-for="MeteringMode"
+           class="form-control" />
+    <span asp-validation-for="MeteringMode"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Orientation"
+           class="control-label">
+    </label>
+    <input asp-for="Orientation"
+           class="form-control" />
+    <span asp-validation-for="Orientation"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="PixelComposition"
+           class="control-label">
+    </label>
+    <input asp-for="PixelComposition"
+           class="form-control" />
+    <span asp-validation-for="PixelComposition"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Saturation"
+           class="control-label">
+    </label>
+    <input asp-for="Saturation"
+           class="form-control" />
+    <span asp-validation-for="Saturation"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="SceneCaptureType"
+           class="control-label">
+    </label>
+    <input asp-for="SceneCaptureType"
+           class="form-control" />
+    <span asp-validation-for="SceneCaptureType"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="SceneControl"
+           class="control-label">
+    </label>
+    <input asp-for="SceneControl"
+           class="form-control" />
+    <span asp-validation-for="SceneControl"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="SensingMethod"
+           class="control-label">
+    </label>
+    <input asp-for="SensingMethod"
+           class="form-control" />
+    <span asp-validation-for="SensingMethod"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="Sharpness"
+           class="control-label">
+    </label>
+    <input asp-for="Sharpness"
+           class="form-control" />
+    <span asp-validation-for="Sharpness"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="SoftwareUsed"
+           class="control-label">
+    </label>
+    <input asp-for="SoftwareUsed"
+           class="form-control" />
+    <span asp-validation-for="SoftwareUsed"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="SubjectDistanceRange"
+           class="control-label">
+    </label>
+    <input asp-for="SubjectDistanceRange"
+           class="form-control" />
+    <span asp-validation-for="SubjectDistanceRange"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="VerticalResolution"
+           class="control-label">
+    </label>
+    <input asp-for="VerticalResolution"
+           class="form-control" />
+    <span asp-validation-for="VerticalResolution"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="WhiteBalance"
+           class="control-label">
+    </label>
+    <input asp-for="WhiteBalance"
+           class="form-control" />
+    <span asp-validation-for="WhiteBalance"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <input class="btn btn-primary"
+           type="submit"
+           value="Create" />
+</div>
+</form>
+</div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

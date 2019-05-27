@@ -1,0 +1,228 @@
+@model Cicm.Database.Models.MachinePhoto
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+<h4>MachinePhoto</h4>
+<hr />
+<dl class="row">
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Author)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Author)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.CameraManufacturer)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.CameraManufacturer)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.CameraModel)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.CameraModel)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.ColorSpace)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.ColorSpace)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Comments)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Comments)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Contrast)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Contrast)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.CreationDate)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.CreationDate)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.DigitalZoomRatio)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.DigitalZoomRatio)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.ExifVersion)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.ExifVersion)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Exposure)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Exposure)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.ExposureMethod)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.ExposureMethod)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.ExposureProgram)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.ExposureProgram)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Flash)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Flash)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Focal)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Focal)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.FocalLength)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.FocalLength)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.FocalLengthEquivalent)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.FocalLengthEquivalent)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.HorizontalResolution)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.HorizontalResolution)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.IsoRating)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.IsoRating)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Lens)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Lens)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.License)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.License)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.LightSource)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.LightSource)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.MeteringMode)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.MeteringMode)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Orientation)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Orientation)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.PixelComposition)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.PixelComposition)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Saturation)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Saturation)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.SceneCaptureType)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.SceneCaptureType)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.SceneControl)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.SceneControl)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.SensingMethod)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.SensingMethod)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.Sharpness)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.Sharpness)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.SoftwareUsed)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.SoftwareUsed)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.SubjectDistanceRange)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.SubjectDistanceRange)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.UploadDate)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.UploadDate)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.VerticalResolution)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.VerticalResolution)
+</dd>
+<dt class="col-sm-2">
+    @Html.DisplayNameFor(model => model.WhiteBalance)
+</dt>
+<dd class="col-sm-10">
+    @Html.DisplayFor(model => model.WhiteBalance)
+</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden"
+           asp-for="Id" />
+    <input class="btn btn-danger"
+           type="submit"
+           value="Delete" /> |
+    <a asp-action="Index">Back to List</a>
+</form>
+</div>
