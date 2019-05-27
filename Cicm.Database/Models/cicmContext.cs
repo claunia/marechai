@@ -67,6 +67,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
         public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
         public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
+        public virtual DbSet<License>                             Licenses                            { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1026,6 +1027,16 @@ namespace Cicm.Database.Models
                 entity.HasOne(d => d.Machine).WithMany(p => p.Storage).HasForeignKey(d => d.MachineId)
                       .HasConstraintName("fk_storage_by_machine_machine");
             });
+
+            modelBuilder.Entity<License>(entity =>
+            {
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.SPDX);
+                entity.HasIndex(e => e.FsfApproved);
+                entity.HasIndex(e => e.OsiApproved);
+            });
+
+            Seeders.License.Seed(modelBuilder);
         }
     }
 }
