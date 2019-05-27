@@ -1,244 +1,76 @@
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.MachinePhoto>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.MachinePhotoViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Machine photos</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Create New
+    </a>
 </p>
 <table class="table">
-<thead>
-<tr>
-    <th>
-        @Html.DisplayNameFor(model => model.Author)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.CameraManufacturer)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.CameraModel)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.ColorSpace)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Comments)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Contrast)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.CreationDate)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.DigitalZoomRatio)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.ExifVersion)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Exposure)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.ExposureMethod)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.ExposureProgram)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Flash)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Focal)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.FocalLength)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.FocalLengthEquivalent)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.HorizontalResolution)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.IsoRating)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Lens)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.License)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.LightSource)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.MeteringMode)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Orientation)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.PixelComposition)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Saturation)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.SceneCaptureType)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.SceneControl)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.SensingMethod)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.Sharpness)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.SoftwareUsed)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.SubjectDistanceRange)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.UploadDate)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.VerticalResolution)
-    </th>
-    <th>
-        @Html.DisplayNameFor(model => model.WhiteBalance)
-    </th>
-    <th></th>
-</tr>
-</thead>
-<tbody>
-@foreach(MachinePhoto item in Model)
-{
+    <thead>
     <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Author)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CameraManufacturer)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CameraModel)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ColorSpace)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Comments)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Contrast)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreationDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DigitalZoomRatio)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ExifVersion)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Exposure)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ExposureMethod)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ExposureProgram)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Flash)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Focal)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FocalLength)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FocalLengthEquivalent)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.HorizontalResolution)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsoRating)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Lens)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.License)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LightSource)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MeteringMode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Orientation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PixelComposition)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Saturation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SceneCaptureType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SceneControl)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SensingMethod)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Sharpness)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SoftwareUsed)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SubjectDistanceRange)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UploadDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.VerticalResolution)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.WhiteBalance)
-        </td>
-        <td>
-            <a asp-action="Edit"
-               asp-route-id="@item.Id">
-                Edit
-            </a> |
-            <a asp-action="Details"
-               asp-route-id="@item.Id">
-                Details
-            </a> |
-            <a asp-action="Delete"
-               asp-route-id="@item.Id">
-                Delete
-            </a>
-        </td>
+        <th>
+            @Html.DisplayNameFor(model => model.Machine)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UploadUser)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UploadDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Author)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.License)
+        </th>
+        <th></th>
     </tr>
-}
-</tbody>
+    </thead>
+    <tbody>
+    @foreach(MachinePhotoViewModel item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Machine)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UploadUser)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UploadDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.License)
+            </td>
+            <td>
+                <a asp-action="Details"
+                   asp-route-id="@item.Id"
+                   class="btn btn-primary">
+                    Details
+                </a>
+                <a asp-action="Edit"
+                   asp-route-id="@item.Id"
+                   class="btn btn-secondary">
+                    Edit
+                </a>
+                <a asp-action="Delete"
+                   asp-route-id="@item.Id"
+                   class="btn btn-danger">
+                    Delete
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
 </table>

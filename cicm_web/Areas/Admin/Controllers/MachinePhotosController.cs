@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,17 @@ namespace cicm_web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.MachinePhotos.Include(m => m.Machine).Include(m => m.Machine.Company)
-                                      .Include(m => m.User).ToListAsync());
+                                      .Include(m => m.User).Select(p => new MachinePhotoViewModel
+                                       {
+                                           Id      = p.Id,
+                                           Author  = p.Author,
+                                           License = p.License,
+                                           Machine =
+                                               $"{p.Machine.Company.Name} {p.Machine.Name}",
+                                           UploadDate = p.UploadDate,
+                                           UploadUser = p.User.UserName
+                                       }).OrderBy(p => p.Machine)
+                                      .ThenBy(p => p.UploadUser).ThenBy(p => p.UploadDate).ToListAsync());
         }
 
         // GET: MachinePhotos/Details/5
