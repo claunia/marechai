@@ -5,6 +5,7 @@ using Cicm.Database.Models;
 using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Areas.Admin.Controllers
@@ -28,11 +29,12 @@ namespace cicm_web.Areas.Admin.Controllers
                                        {
                                            Id      = p.Id,
                                            Author  = p.Author,
-                                           License = p.License,
+                                           License = p.License.Name,
                                            Machine =
                                                $"{p.Machine.Company.Name} {p.Machine.Name}",
                                            UploadDate = p.UploadDate,
-                                           UploadUser = p.User.UserName
+                                           UploadUser = p.User.UserName,
+                                           LicenseId  = p.License.Id
                                        }).OrderBy(p => p.Machine)
                                       .ThenBy(p => p.UploadUser).ThenBy(p => p.UploadDate).ToListAsync());
         }
@@ -49,28 +51,37 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: MachinePhotos/Create
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(c => c.Company.Name).ThenBy(c => c.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name");
+            ViewData["LicenseId"] =
+                new SelectList(_context.Licenses.OrderBy(c => c.Name).Select(l => new {l.Id, l.Name}), "Id", "Name");
+            return View();
+        }
 
         // POST: MachinePhotos/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind(
-                "Author,CameraManufacturer,CameraModel,ColorSpace,Comments,Contrast,CreationDate,DigitalZoomRatio,ExifVersion,Exposure,ExposureMethod,ExposureProgram,Flash,Focal,FocalLength,FocalLengthEquivalent,HorizontalResolution,IsoRating,Lens,License,LightSource,MeteringMode,Orientation,PixelComposition,Saturation,SceneCaptureType,SceneControl,SensingMethod,Sharpness,SoftwareUsed,SubjectDistanceRange,UploadDate,VerticalResolution,WhiteBalance,Id")]
-            MachinePhoto machinePhoto)
-        {
-            if(ModelState.IsValid)
-            {
-                machinePhoto.Id = Guid.NewGuid();
-                _context.Add(machinePhoto);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(machinePhoto);
-        }
+        // [HttpPost]
+        // [ValidateAntiForgeryToken]
+        // public async Task<IActionResult> Create(
+        //     [Bind(
+        //         "Author,CameraManufacturer,CameraModel,ColorSpace,Comments,Contrast,CreationDate,DigitalZoomRatio,ExifVersion,Exposure,ExposureMethod,ExposureProgram,Flash,Focal,FocalLength,FocalLengthEquivalent,HorizontalResolution,IsoRating,Lens,License,LightSource,MeteringMode,Orientation,PixelComposition,Saturation,SceneCaptureType,SceneControl,SensingMethod,Sharpness,SoftwareUsed,SubjectDistanceRange,UploadDate,VerticalResolution,WhiteBalance,Id")]
+        //     MachinePhoto machinePhoto)
+        // {
+        //     if(ModelState.IsValid)
+        //     {
+        //         machinePhoto.Id = Guid.NewGuid();
+        //         _context.Add(machinePhoto);
+        //         await _context.SaveChangesAsync();
+        //         return RedirectToAction(nameof(Index));
+        //     }
+        //
+        //     return View(machinePhoto);
+        // }
 
         // GET: MachinePhotos/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
