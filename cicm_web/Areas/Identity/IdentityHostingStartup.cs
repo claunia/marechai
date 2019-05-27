@@ -31,7 +31,6 @@
 using Cicm.Database.Models;
 using cicm_web.Areas.Identity;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: HostingStartup(typeof(IdentityHostingStartup))]
@@ -44,7 +43,7 @@ namespace cicm_web.Areas.Identity
         {
             builder.ConfigureServices((context, services) =>
             {
-                services.AddDefaultIdentity<IdentityUser>()
+                services.AddDefaultIdentity<ApplicationUser>()
                         .AddEntityFrameworkStores<cicmContext>();
             });
         }

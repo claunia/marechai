@@ -1,8 +1,9 @@
+@using Cicm.Database.Models
 @using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
-/******************************************************************************
+    /******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -33,15 +34,28 @@
 *******************************************************************************/
 }
 
-@if (SignInManager.IsSignedIn(User))
+@if(SignInManager.IsSignedIn(User))
 {
-    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" method="post" id="logoutForm" class="navbar-right">
+    <form asp-area="Identity"
+          asp-page="/Account/Logout"
+          asp-route-returnUrl="@Url.Page("/Index", new {area = ""})"
+          method="post"
+          id="logoutForm"
+          class="navbar-right">
         <ul class="ml-auto navbar-nav">
             <li>
-                <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" class=nav-link>Hello @UserManager.GetUserName(User)!</a>
+                <a asp-area="Identity"
+                   asp-page="/Account/Manage/Index"
+                   class=nav-link
+                   title="Manage">
+                    Hello @UserManager.GetUserName(User)!
+                </a>
             </li>
             <li>
-                <button type="submit" class="btn btn-link nav-link">Logout</button>
+                <button class="btn btn-link nav-link"
+                        type="submit">
+                    Logout
+                </button>
             </li>
         </ul>
     </form>
@@ -61,8 +75,16 @@ else
         </a>
         <div aria-labelledby=accountDropdown
              class=dropdown-menu>
-            <a asp-area="Identity" asp-page="/Account/Register" class=dropdown-item>Register</a>
-            <a asp-area="Identity" asp-page="/Account/Login" class=dropdown-item>Login</a>
+            <a asp-area="Identity"
+               asp-page="/Account/Register"
+               class=dropdown-item>
+                Register
+            </a>
+            <a asp-area="Identity"
+               asp-page="/Account/Login"
+               class=dropdown-item>
+                Login
+            </a>
         </div>
     </ul>
 }
