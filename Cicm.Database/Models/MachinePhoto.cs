@@ -52,7 +52,7 @@ namespace Cicm.Database.Models
         public SceneCaptureType? SceneCaptureType { get; set; }
         [DisplayName("Sensing method")]
         public SensingMethod? SensingMethod { get; set; }
-        public string Sharpness { get;             set; }
+        public Sharpness? Sharpness { get;         set; }
         [DisplayName("Software used")]
         public string SoftwareUsed { get; set; }
         [DisplayName("Subject distance range")]
@@ -68,5 +68,8 @@ namespace Cicm.Database.Models
         public virtual Machine         Machine { get; set; }
         [Required]
         public virtual License License { get; set; }
+
+        public int MachineId { get; set; }
+        public int LicenseId { get; set; }
     }
 }

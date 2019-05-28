@@ -54,7 +54,7 @@ namespace cicm_web.Areas.Admin.Models
         public SceneCaptureType? SceneCaptureType { get; set; }
         [DisplayName("Sensing method")]
         public SensingMethod? SensingMethod { get; set; }
-        public string Sharpness { get;             set; }
+        public Sharpness? Sharpness { get;         set; }
         [DisplayName("Software used")]
         public string SoftwareUsed { get; set; }
         [DisplayName("Subject distance range")]

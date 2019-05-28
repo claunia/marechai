@@ -3754,7 +3754,7 @@ namespace Cicm.Database.Migrations
 
                 b.Property<ushort?>("LightSource");
 
-                b.Property<int?>("MachineId");
+                b.Property<int>("MachineId");
 
                 b.Property<ushort?>("MeteringMode");
 
@@ -3768,7 +3768,7 @@ namespace Cicm.Database.Migrations
 
                 b.Property<ushort?>("SensingMethod");
 
-                b.Property<string>("Sharpness");
+                b.Property<ushort?>("Sharpness");
 
                 b.Property<string>("SoftwareUsed");
 

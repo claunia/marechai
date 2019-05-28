@@ -672,4 +672,11 @@ namespace Cicm.Database
         Auto   = 0,
         Manual = 1
     }
+
+    public enum Sharpness : ushort
+    {
+        Normal = 0,
+        Low    = 1,
+        Hig    = 2
+    }
 }
