@@ -452,6 +452,14 @@ namespace cicm_web.Areas.Admin.Controllers
             MachinePhoto machinePhoto = await _context.MachinePhotos.FindAsync(id);
             _context.MachinePhotos.Remove(machinePhoto);
             await _context.SaveChangesAsync();
+
+            foreach(string format in new[] {"jpg", "webp"})
+            {
+                foreach(int multiplier in new[] {1, 2, 3})
+                    System.IO.File.Delete(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs",
+                                                       format, $"{multiplier}x", id + $".{format}"));
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
