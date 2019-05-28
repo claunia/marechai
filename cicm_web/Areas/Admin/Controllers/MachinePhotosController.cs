@@ -19,7 +19,6 @@ using SixLabors.ImageSharp.MetaData;
 using SixLabors.ImageSharp.MetaData.Profiles.Exif;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Primitives;
-using SixLabors.ImageSharp.Processing;
 using SkiaSharp;
 
 namespace cicm_web.Areas.Admin.Controllers
@@ -28,15 +27,16 @@ namespace cicm_web.Areas.Admin.Controllers
     [Authorize]
     public class MachinePhotosController : Controller
     {
-        readonly cicmContext _context;
-        readonly IHostingEnvironment hostingEnvironment;
+        readonly cicmContext                  _context;
+        readonly IHostingEnvironment          hostingEnvironment;
         readonly UserManager<ApplicationUser> userManager;
 
-        public MachinePhotosController(cicmContext context, IHostingEnvironment hostingEnvironment, UserManager<ApplicationUser> userManager)
+        public MachinePhotosController(cicmContext                  context, IHostingEnvironment hostingEnvironment,
+                                       UserManager<ApplicationUser> userManager)
         {
-            _context = context;
+            _context                = context;
             this.hostingEnvironment = hostingEnvironment;
-            this.userManager = userManager;
+            this.userManager        = userManager;
         }
 
         // GET: MachinePhotos
@@ -62,7 +62,50 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             if(id == null) return NotFound();
 
-            MachinePhoto machinePhoto = await _context.MachinePhotos.FirstOrDefaultAsync(m => m.Id == id);
+            MachinePhotoDetailsViewModel machinePhoto = await _context
+                                                             .MachinePhotos
+                                                             .Select(m => new MachinePhotoDetailsViewModel
+                                                              {
+                                                                  Id                 = m.Id,
+                                                                  CameraManufacturer = m.CameraManufacturer,
+                                                                  CameraModel        = m.CameraModel,
+                                                                  ColorSpace         = m.ColorSpace,
+                                                                  Comments           = m.Comments,
+                                                                  Contrast           = m.Contrast,
+                                                                  CreationDate       = m.CreationDate,
+                                                                  DigitalZoomRatio   = m.DigitalZoomRatio,
+                                                                  ExifVersion        = m.ExifVersion,
+                                                                  Exposure           = m.Exposure,
+                                                                  ExposureProgram    = m.ExposureProgram,
+                                                                  Flash              = m.Flash,
+                                                                  Focal              = m.Focal,
+                                                                  FocalLength        = m.FocalLength,
+                                                                  FocalLengthEquivalent =
+                                                                      m.FocalLengthEquivalent,
+                                                                  HorizontalResolution =
+                                                                      m.HorizontalResolution,
+                                                                  IsoRating        = m.IsoRating,
+                                                                  Lens             = m.Lens,
+                                                                  LightSource      = m.LightSource,
+                                                                  MeteringMode     = m.MeteringMode,
+                                                                  ResolutionUnit   = m.ResolutionUnit,
+                                                                  Orientation      = m.Orientation,
+                                                                  Saturation       = m.Saturation,
+                                                                  SceneCaptureType = m.SceneCaptureType,
+                                                                  SensingMethod    = m.SensingMethod,
+                                                                  Sharpness        = m.Sharpness,
+                                                                  SoftwareUsed     = m.SoftwareUsed,
+                                                                  SubjectDistanceRange =
+                                                                      m.SubjectDistanceRange,
+                                                                  UploadDate         = m.UploadDate,
+                                                                  VerticalResolution = m.VerticalResolution,
+                                                                  WhiteBalance       = m.WhiteBalance,
+                                                                  License            = m.License.Name,
+                                                                  UploadUser         = m.User.UserName,
+                                                                  Machine =
+                                                                      $"{m.Machine.Company.Name} {m.Machine.Name}",
+                                                                  MachineId = m.Machine.Id
+                                                              }).FirstOrDefaultAsync(m => m.Id == id);
             if(machinePhoto == null) return NotFound();
 
             return View(machinePhoto);
@@ -151,7 +194,9 @@ namespace cicm_web.Areas.Admin.Controllers
                         photo.Contrast = (Contrast)exif.Value;
                         break;
                     case ExifTag.DateTimeDigitized:
-                        photo.CreationDate = DateTime.ParseExact(exif.Value.ToString(), "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture);
+                        photo.CreationDate =
+                            DateTime.ParseExact(exif.Value.ToString(), "yyyy:MM:dd HH:mm:ss",
+                                                CultureInfo.InvariantCulture);
                         break;
                     case ExifTag.DigitalZoomRatio:
                         photo.DigitalZoomRatio = ((Rational)exif.Value).ToDouble();
@@ -189,7 +234,7 @@ namespace cicm_web.Areas.Admin.Controllers
                         photo.HorizontalResolution = ((Rational)exif.Value).ToDouble();
                         break;
                     case ExifTag.ISOSpeedRatings:
-                        photo.IsoRating =(ushort) exif.Value;
+                        photo.IsoRating = (ushort)exif.Value;
                         break;
                     case ExifTag.LensModel:
                         photo.Lens = exif.Value as string;
@@ -225,7 +270,7 @@ namespace cicm_web.Areas.Admin.Controllers
                         photo.VerticalResolution = ((Rational)exif.Value).ToDouble();
                         break;
                     case ExifTag.WhiteBalance:
-                        photo.WhiteBalance =(WhiteBalance) exif.Value;
+                        photo.WhiteBalance = (WhiteBalance)exif.Value;
                         break;
                     default:
                         image.MetaData.ExifProfile.RemoveValue(exif.Tag);
@@ -234,31 +279,34 @@ namespace cicm_web.Areas.Admin.Controllers
 
             if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath,          "assets", "photos")))
                 Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos"));
-            if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines")))
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath,          "assets", "photos", "machines")))
                 Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines"));
-            if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines", "thumbs")))
-                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines", "thumbs"));
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines", "thumbs"))
+            )
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines",
+                                                       "thumbs"));
 
-            var outJpeg = Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines",
-                                       newId + ".jpg");
-            
-            using(var jpegStream = new FileStream(outJpeg, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
-            {
-                image.SaveAsJpeg(jpegStream);                
-            }
+            string outJpeg = Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines",
+                                          newId + ".jpg");
+
+            using(FileStream jpegStream =
+                new FileStream(outJpeg, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
+                image.SaveAsJpeg(jpegStream);
 
             int imgMax = Math.Max(image.Width, image.Height);
-            int width = image.Width;
-            int height= image.Height;
-            
+            int width  = image.Width;
+            int height = image.Height;
+
             image.Dispose();
-            
+
             SKBitmap skBitmap = SKBitmap.Decode(outJpeg);
 
             foreach(string format in new[] {"jpg", "webp"})
             {
-                if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format))) ;
-                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format));
+                if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs",
+                                                  format))) ;
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs",
+                                                       format));
 
                 SKEncodedImageFormat skFormat;
                 switch(format)
@@ -273,24 +321,25 @@ namespace cicm_web.Areas.Admin.Controllers
 
                 foreach(int multiplier in new[] {1, 2, 3})
                 {
-                    if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format,
-                                                      $"{multiplier}x"))) ;
-                    Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format,
-                                                           $"{multiplier}x"));
+                    if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs",
+                                                      format, $"{multiplier}x"))) ;
+                    Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath,
+                                                           "assets/photos/machines/thumbs", format, $"{multiplier}x"));
 
-                    string resized = Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format, $"{multiplier}x",
-                                                  newId + $".{format}");
+                    string resized = Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs",
+                                                  format, $"{multiplier}x", newId + $".{format}");
 
                     if(System.IO.File.Exists(resized)) continue;
 
-                    float    canvasMin = 256       * multiplier;
-                    
-                    float    scale     = canvasMin / imgMax;
+                    float canvasMin = 256 * multiplier;
+
+                    float scale = canvasMin / imgMax;
 
                     // Do not enlarge images
-                    if(scale > 1) { scale = 1; }
-                    
-                    var skResized = skBitmap.Resize(new SKImageInfo((int)(width * scale), (int)(height * scale)), SKFilterQuality.High);
+                    if(scale > 1) scale = 1;
+
+                    SKBitmap skResized = skBitmap.Resize(new SKImageInfo((int)(width * scale), (int)(height * scale)),
+                                                         SKFilterQuality.High);
                     SKImage    skImage = SKImage.FromBitmap(skResized);
                     SKData     data    = skImage.Encode(skFormat, 100);
                     FileStream outfs   = new FileStream(resized, FileMode.CreateNew);
@@ -303,13 +352,16 @@ namespace cicm_web.Areas.Admin.Controllers
                 Directory.CreateDirectory(Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos"));
             if(!Directory.Exists(Path.Combine(hostingEnvironment.ContentRootPath,          "originals", "photos")))
                 Directory.CreateDirectory(Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos"));
-            if(!Directory.Exists(Path.Combine(hostingEnvironment.ContentRootPath,          "originals", "photos", "machines")))
-                Directory.CreateDirectory(Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos", "machines"));
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos", "machines")))
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos",
+                                                       "machines"));
 
-            System.IO.File.Move(tmpFile, Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos", "machines", newId + extension));
+            System.IO.File.Move(tmpFile,
+                                Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos", "machines",
+                                             newId + extension));
 
-            photo.Id = newId;
-            photo.User = await userManager.GetUserAsync(HttpContext.User);
+            photo.Id      = newId;
+            photo.User    = await userManager.GetUserAsync(HttpContext.User);
             photo.License = await _context.Licenses.FindAsync(machinePhoto.LicenseId);
             photo.Machine = await _context.Machines.FindAsync(machinePhoto.MachineId);
 
