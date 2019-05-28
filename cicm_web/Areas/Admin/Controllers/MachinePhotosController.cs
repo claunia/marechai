@@ -395,29 +395,26 @@ namespace cicm_web.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind(
-                                                  "Author,CameraManufacturer,CameraModel,ColorSpace,Comments,Contrast,CreationDate,DigitalZoomRatio,ExifVersion,Exposure,ExposureMethod,ExposureProgram,Flash,Focal,FocalLength,FocalLengthEquivalent,HorizontalResolution,IsoRating,Lens,License,LightSource,MeteringMode,Orientation,PixelComposition,Saturation,SceneCaptureType,SceneControl,SensingMethod,Sharpness,SoftwareUsed,SubjectDistanceRange,UploadDate,VerticalResolution,WhiteBalance,Id")]
+                                                  "Author,CameraManufacturer,CameraModel,ColorSpace,Comments,Contrast,CreationDate,DigitalZoomRatio,ExifVersion,Exposure,ExposureMethod,ExposureProgram,Flash,Focal,FocalLength,FocalLengthEquivalent,HorizontalResolution,IsoRating,Lens,LicenseId,LightSource,MachineId,MeteringMode,ResolutionUnit,Orientation,Saturation,SceneCaptureType,SensingMethod,Sharpness,SoftwareUsed,SubjectDistanceRange,VerticalResolution,WhiteBalance,Id")]
                                               MachinePhoto machinePhoto)
         {
             if(id != machinePhoto.Id) return NotFound();
 
-            if(ModelState.IsValid)
+            if(!ModelState.IsValid) return View(machinePhoto);
+
+            try
             {
-                try
-                {
-                    _context.Update(machinePhoto);
-                    await _context.SaveChangesAsync();
-                }
-                catch(DbUpdateConcurrencyException)
-                {
-                    if(!MachinePhotoExists(machinePhoto.Id)) return NotFound();
+                _context.Update(machinePhoto);
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                if(!MachinePhotoExists(machinePhoto.Id)) return NotFound();
 
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
+                throw;
             }
 
-            return View(machinePhoto);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: MachinePhotos/Delete/5
