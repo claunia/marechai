@@ -422,7 +422,22 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             if(id == null) return NotFound();
 
-            MachinePhoto machinePhoto = await _context.MachinePhotos.FirstOrDefaultAsync(m => m.Id == id);
+            MachinePhotoViewModel machinePhoto = await _context
+                                                      .MachinePhotos.Include(m => m.Machine)
+                                                      .Include(m => m.Machine.Company).Include(m => m.User)
+                                                      .Select(p => new MachinePhotoViewModel
+                                                       {
+                                                           Id      = p.Id,
+                                                           Author  = p.Author,
+                                                           License = p.License.Name,
+                                                           Machine =
+                                                               $"{p.Machine.Company.Name} {p.Machine.Name}",
+                                                           UploadDate = p.UploadDate,
+                                                           UploadUser = p.User.UserName,
+                                                           LicenseId  = p.License.Id
+                                                       }).OrderBy(p => p.Machine).ThenBy(p => p.UploadUser)
+                                                      .ThenBy(p => p.UploadDate).FirstOrDefaultAsync(m => m.Id == id);
+
             if(machinePhoto == null) return NotFound();
 
             return View(machinePhoto);
