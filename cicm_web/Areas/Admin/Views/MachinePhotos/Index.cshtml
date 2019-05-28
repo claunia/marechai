@@ -16,6 +16,7 @@
 <table class="table">
     <thead>
     <tr>
+        <th></th>
         <th>
             @Html.DisplayNameFor(model => model.Machine)
         </th>
@@ -38,22 +39,38 @@
     @foreach(MachinePhotoViewModel item in Model)
     {
         <tr>
-            <td>
+            <td class="text-center">
+                <picture>
+                    <source type="image/webp"
+                            srcset="/assets/photos/machines/thumbs/webp/1x/@(item.Id).webp,
+    /assets/photos/machines/thumbs/webp/2x/@(item.Id).webp 2x,
+    /assets/photos/machines/thumbs/webp/3x/@(item.Id).webp 3x">
+                    <img srcset="/assets/photos/machines/thumbs/jpg/1x/@(item.Id).jpg,
+                             /assets/photos/machines/thumbs/jpg/2x/@(item.Id).jpg 2x,
+                             /assets/photos/machines/thumbs/jpg/3x/@(item.Id).jpg 3x"
+                         src="/assets/photos/machines/thumbs/jpg/1x/@(item.Id).jpg")
+                         alt=""
+                         height="auto"
+                         width="auto"
+                         style="max-height: 64px; max-width: 64px" />
+                </picture>
+            </td>
+            <td class="align-middle">
                 @Html.DisplayFor(modelItem => item.Machine)
             </td>
-            <td>
+            <td class="align-middle">
                 @Html.DisplayFor(modelItem => item.UploadUser)
             </td>
-            <td>
+            <td class="align-middle">
                 @Html.DisplayFor(modelItem => item.UploadDate)
             </td>
-            <td>
+            <td class="align-middle">
                 @Html.DisplayFor(modelItem => item.Author)
             </td>
-            <td>
+            <td class="align-middle">
                 @Html.DisplayFor(modelItem => item.License)
             </td>
-            <td>
+            <td class="align-middle">
                 <a asp-action="Details"
                    asp-route-id="@item.Id"
                    class="btn btn-primary">

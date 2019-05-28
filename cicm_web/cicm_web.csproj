@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Version>3.0.99.647</Version>
+    <Version>3.0.99.649</Version>
     <Company>Canary Islands Computer Museum</Company>
     <Copyright>Copyright © 2003-2018 Natalia Portillo</Copyright>
     <Product>Canary Islands Computer Museum Website</Product>
