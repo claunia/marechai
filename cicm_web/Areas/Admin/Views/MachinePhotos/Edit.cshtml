@@ -1,3 +1,4 @@
+@using Cicm.Database
 @model Cicm.Database.Models.MachinePhoto
 
 @{
@@ -6,7 +7,7 @@
 
 <h1>Edit</h1>
 
-<h4>MachinePhoto</h4>
+<h4>Machine photo</h4>
 <hr />
 <div class="row">
 <div class="col-md-4">
@@ -48,8 +49,11 @@
     <label asp-for="ColorSpace"
            class="control-label">
     </label>
-    <input asp-for="ColorSpace"
-           class="form-control" />
+    <select asp-for="ColorSpace"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<ColorSpace>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="ColorSpace"
           class="text-danger">
     </span>
@@ -68,8 +72,11 @@
     <label asp-for="Contrast"
            class="control-label">
     </label>
-    <input asp-for="Contrast"
-           class="form-control" />
+    <select asp-for="Contrast"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<Contrast>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="Contrast"
           class="text-danger">
     </span>
@@ -118,8 +125,11 @@
     <label asp-for="ExposureMethod"
            class="control-label">
     </label>
-    <input asp-for="ExposureMethod"
-           class="form-control" />
+    <select asp-for="ExposureMethod"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<ExposureMode>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="ExposureMethod"
           class="text-danger">
     </span>
@@ -128,8 +138,11 @@
     <label asp-for="ExposureProgram"
            class="control-label">
     </label>
-    <input asp-for="ExposureProgram"
-           class="form-control" />
+    <select asp-for="ExposureProgram"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<ExposureProgram>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="ExposureProgram"
           class="text-danger">
     </span>
@@ -138,8 +151,11 @@
     <label asp-for="Flash"
            class="control-label">
     </label>
-    <input asp-for="Flash"
-           class="form-control" />
+    <select asp-for="Flash"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<Flash>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="Flash"
           class="text-danger">
     </span>
@@ -208,8 +224,10 @@
     <label asp-for="License"
            class="control-label">
     </label>
-    <input asp-for="License"
-           class="form-control" />
+    <select asp-for="LicenseId"
+            class="form-control"
+            asp-items="ViewBag.LicenseId">
+    </select>
     <span asp-validation-for="License"
           class="text-danger">
     </span>
@@ -218,19 +236,47 @@
     <label asp-for="LightSource"
            class="control-label">
     </label>
-    <input asp-for="LightSource"
-           class="form-control" />
+    <select asp-for="LightSource"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<LightSource>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="LightSource"
           class="text-danger">
     </span>
 </div>
 <div class="form-group">
+    <label asp-for="Machine"
+           class="control-label">
+    </label>
+    <select asp-for="MachineId"
+            class="form-control"
+            asp-items="ViewBag.MachineId">
+    </select>
+</div>
+<div class="form-group">
     <label asp-for="MeteringMode"
            class="control-label">
     </label>
-    <input asp-for="MeteringMode"
-           class="form-control" />
+    <select asp-for="MeteringMode"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<MeteringMode>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="MeteringMode"
+          class="text-danger">
+    </span>
+</div>
+<div class="form-group">
+    <label asp-for="ResolutionUnit"
+           class="control-label">
+    </label>
+    <select asp-for="ResolutionUnit"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<ResolutionUnit>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
+    <span asp-validation-for="ResolutionUnit"
           class="text-danger">
     </span>
 </div>
@@ -238,19 +284,12 @@
     <label asp-for="Orientation"
            class="control-label">
     </label>
-    <input asp-for="Orientation"
-           class="form-control" />
+    <select asp-for="Orientation"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<Orientation>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="Orientation"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="PixelComposition"
-           class="control-label">
-    </label>
-    <input asp-for="PixelComposition"
-           class="form-control" />
-    <span asp-validation-for="PixelComposition"
           class="text-danger">
     </span>
 </div>
@@ -258,8 +297,11 @@
     <label asp-for="Saturation"
            class="control-label">
     </label>
-    <input asp-for="Saturation"
-           class="form-control" />
+    <select asp-for="Saturation"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<Saturation>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="Saturation"
           class="text-danger">
     </span>
@@ -268,19 +310,12 @@
     <label asp-for="SceneCaptureType"
            class="control-label">
     </label>
-    <input asp-for="SceneCaptureType"
-           class="form-control" />
+    <select asp-for="SceneCaptureType"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<SceneCaptureType>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="SceneCaptureType"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="SceneControl"
-           class="control-label">
-    </label>
-    <input asp-for="SceneControl"
-           class="form-control" />
-    <span asp-validation-for="SceneControl"
           class="text-danger">
     </span>
 </div>
@@ -288,8 +323,11 @@
     <label asp-for="SensingMethod"
            class="control-label">
     </label>
-    <input asp-for="SensingMethod"
-           class="form-control" />
+    <select asp-for="SensingMethod"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<SensingMethod>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="SensingMethod"
           class="text-danger">
     </span>
@@ -298,8 +336,11 @@
     <label asp-for="Sharpness"
            class="control-label">
     </label>
-    <input asp-for="Sharpness"
-           class="form-control" />
+    <select asp-for="Sharpness"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<Sharpness>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="Sharpness"
           class="text-danger">
     </span>
@@ -318,8 +359,11 @@
     <label asp-for="SubjectDistanceRange"
            class="control-label">
     </label>
-    <input asp-for="SubjectDistanceRange"
-           class="form-control" />
+    <select asp-for="SubjectDistanceRange"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<SubjectDistanceRange>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="SubjectDistanceRange"
           class="text-danger">
     </span>
@@ -338,8 +382,11 @@
     <label asp-for="WhiteBalance"
            class="control-label">
     </label>
-    <input asp-for="WhiteBalance"
-           class="form-control" />
+    <select asp-for="WhiteBalance"
+            class="form-control"
+            asp-items="Html.GetEnumSelectList<WhiteBalance>().OrderBy(s => s.Text)">
+        <option value="">Unknown</option>
+    </select>
     <span asp-validation-for="WhiteBalance"
           class="text-danger">
     </span>
@@ -350,13 +397,13 @@
     <input class="btn btn-primary"
            type="submit"
            value="Save" />
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
 </div>
 </form>
 </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

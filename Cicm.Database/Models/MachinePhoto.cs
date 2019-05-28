@@ -44,10 +44,11 @@ namespace Cicm.Database.Models
         [DisplayName("Light source")]
         public LightSource? LightSource { get; set; }
         [DisplayName("Metering mode")]
-        public MeteringMode? MeteringMode { get;     set; }
+        public MeteringMode? MeteringMode { get; set; }
+        [DisplayName("Resolution unit")]
         public ResolutionUnit? ResolutionUnit { get; set; }
-        public Orientation?    Orientation    { get; set; }
-        public Saturation?     Saturation     { get; set; }
+        public Orientation? Orientation { get;       set; }
+        public Saturation?  Saturation  { get;       set; }
         [DisplayName("Scene capture type")]
         public SceneCaptureType? SceneCaptureType { get; set; }
         [DisplayName("Sensing method")]

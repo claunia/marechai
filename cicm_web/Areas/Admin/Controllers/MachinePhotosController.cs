@@ -378,6 +378,14 @@ namespace cicm_web.Areas.Admin.Controllers
             MachinePhoto machinePhoto = await _context.MachinePhotos.FindAsync(id);
             if(machinePhoto == null) return NotFound();
 
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name", machinePhoto.MachineId);
+            ViewData["LicenseId"] =
+                new SelectList(_context.Licenses.OrderBy(l => l.Name).Select(l => new {l.Id, l.Name}), "Id", "Name",
+                               machinePhoto.LicenseId);
+
             return View(machinePhoto);
         }
 
