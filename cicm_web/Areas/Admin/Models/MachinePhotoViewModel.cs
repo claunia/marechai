@@ -18,8 +18,9 @@ namespace cicm_web.Areas.Admin.Models
         [NotMapped]
         [Required(ErrorMessage = "Image file required")]
         [DisplayName("Upload photo:")]
-        public IFormFile Photo { get; set; }
-        public int MachineId { get;   set; }
-        public int LicenseId { get;   set; }
+        public IFormFile Photo { get;     set; }
+        public int    MachineId    { get; set; }
+        public int    LicenseId    { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

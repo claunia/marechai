@@ -1,12 +1,26 @@
 using System;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Cicm.Database;
 using Cicm.Database.Models;
 using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.MetaData;
+using SixLabors.ImageSharp.MetaData.Profiles.Exif;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Primitives;
+using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 
 namespace cicm_web.Areas.Admin.Controllers
 {
@@ -15,10 +29,14 @@ namespace cicm_web.Areas.Admin.Controllers
     public class MachinePhotosController : Controller
     {
         readonly cicmContext _context;
+        readonly IHostingEnvironment hostingEnvironment;
+        readonly UserManager<ApplicationUser> userManager;
 
-        public MachinePhotosController(cicmContext context)
+        public MachinePhotosController(cicmContext context, IHostingEnvironment hostingEnvironment, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            this.hostingEnvironment = hostingEnvironment;
+            this.userManager = userManager;
         }
 
         // GET: MachinePhotos
@@ -65,23 +83,240 @@ namespace cicm_web.Areas.Admin.Controllers
         // POST: MachinePhotos/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Create(
-        //     [Bind(
-        //         "Author,CameraManufacturer,CameraModel,ColorSpace,Comments,Contrast,CreationDate,DigitalZoomRatio,ExifVersion,Exposure,ExposureMethod,ExposureProgram,Flash,Focal,FocalLength,FocalLengthEquivalent,HorizontalResolution,IsoRating,Lens,License,LightSource,MeteringMode,Orientation,PixelComposition,Saturation,SceneCaptureType,SceneControl,SensingMethod,Sharpness,SoftwareUsed,SubjectDistanceRange,UploadDate,VerticalResolution,WhiteBalance,Id")]
-        //     MachinePhoto machinePhoto)
-        // {
-        //     if(ModelState.IsValid)
-        //     {
-        //         machinePhoto.Id = Guid.NewGuid();
-        //         _context.Add(machinePhoto);
-        //         await _context.SaveChangesAsync();
-        //         return RedirectToAction(nameof(Index));
-        //     }
-        //
-        //     return View(machinePhoto);
-        // }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("MachineId,LicenseId,Photo")] MachinePhotoViewModel machinePhoto)
+        {
+            if(!ModelState.IsValid) return View(machinePhoto);
+
+            Guid   newId       = Guid.NewGuid();
+            string tmpPath     = Path.GetTempPath();
+            string tmpFileName = newId + ".tmp";
+            string tmpFile     = Path.Combine(tmpPath, tmpFileName);
+
+            if(System.IO.File.Exists(tmpFile))
+            {
+                machinePhoto.ErrorMessage = "Colliding temp file please retry.";
+                return View(machinePhoto);
+            }
+
+            using(FileStream tmpStream = new FileStream(tmpFile, FileMode.CreateNew))
+                await machinePhoto.Photo.CopyToAsync(tmpStream);
+
+            IImageFormat imageinfo = Image.DetectFormat(tmpFile);
+
+            string extension;
+            switch(imageinfo?.Name)
+            {
+                case "JPEG":
+                    extension = ".jpg";
+                    break;
+                case "PNG":
+                    extension = ".png";
+                    break;
+                default:
+                    System.IO.File.Delete(tmpFile);
+                    machinePhoto.ErrorMessage = "Unsupported file format, only JPEG and PNG are allowed at the moment.";
+                    return View(machinePhoto);
+            }
+
+            Image<Rgba32> image = Image.Load(tmpFile);
+
+            MachinePhoto photo = new MachinePhoto();
+
+            foreach(ImageProperty prop in image.MetaData.Properties)
+                switch(prop.Name)
+                {
+                    case "aux:Lens":
+                        photo.Lens = prop.Value;
+                        break;
+                }
+
+            foreach(ExifValue exif in image.MetaData.ExifProfile.Values.ToList())
+                switch(exif.Tag)
+                {
+                    case ExifTag.Artist:
+                        photo.Author = exif.Value as string;
+                        break;
+                    case ExifTag.Make:
+                        photo.CameraManufacturer = exif.Value as string;
+                        break;
+                    case ExifTag.ColorSpace:
+                        photo.ColorSpace = (ColorSpace)exif.Value;
+                        break;
+                    case ExifTag.UserComment:
+                        photo.Comments = Encoding.ASCII.GetString(exif.Value as byte[]);
+                        break;
+                    case ExifTag.Contrast:
+                        photo.Contrast = (Contrast)exif.Value;
+                        break;
+                    case ExifTag.DateTimeDigitized:
+                        photo.CreationDate = DateTime.ParseExact(exif.Value.ToString(), "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture);
+                        break;
+                    case ExifTag.DigitalZoomRatio:
+                        photo.DigitalZoomRatio = ((Rational)exif.Value).ToDouble();
+                        break;
+                    case ExifTag.ExifVersion:
+                        photo.ExifVersion = Encoding.ASCII.GetString(exif.Value as byte[]);
+                        break;
+                    case ExifTag.ExposureTime:
+                    {
+                        Rational rat = (Rational)exif.Value;
+                        photo.Exposure = rat.Denominator == 1 ? rat.Numerator.ToString() : rat.ToString();
+
+                        break;
+                    }
+
+                    case ExifTag.ExposureMode:
+                        photo.ExposureMethod = (ExposureMode)exif.Value;
+                        break;
+                    case ExifTag.ExposureProgram:
+                        photo.ExposureProgram = (ExposureProgram)exif.Value;
+                        break;
+                    case ExifTag.Flash:
+                        photo.Flash = (Flash)exif.Value;
+                        break;
+                    case ExifTag.FNumber:
+                        photo.Focal = ((Rational)exif.Value).ToDouble();
+                        break;
+                    case ExifTag.FocalLength:
+                        photo.FocalLength = ((Rational)exif.Value).ToDouble();
+                        break;
+                    case ExifTag.FocalLengthIn35mmFilm:
+                        photo.FocalLengthEquivalent = exif.Value as ushort?;
+                        break;
+                    case ExifTag.XResolution:
+                        photo.HorizontalResolution = ((Rational)exif.Value).ToDouble();
+                        break;
+                    case ExifTag.ISOSpeedRatings:
+                        photo.IsoRating =(ushort) exif.Value;
+                        break;
+                    case ExifTag.LensModel:
+                        photo.Lens = exif.Value as string;
+                        break;
+                    case ExifTag.LightSource:
+                        photo.LightSource = (LightSource)exif.Value;
+                        break;
+                    case ExifTag.MeteringMode:
+                        photo.MeteringMode = (MeteringMode)exif.Value;
+                        break;
+                    case ExifTag.ResolutionUnit:
+                        photo.ResolutionUnit = (ResolutionUnit)exif.Value;
+                        break;
+                    case ExifTag.Orientation:
+                        photo.Orientation = (Orientation)exif.Value;
+                        break;
+                    case ExifTag.Saturation:
+                        photo.Saturation = (Saturation)exif.Value;
+                        break;
+                    case ExifTag.SceneCaptureType:
+                        photo.SceneCaptureType = (SceneCaptureType)exif.Value;
+                        break;
+                    case ExifTag.SensingMethod:
+                        photo.SensingMethod = (SensingMethod)exif.Value;
+                        break;
+                    case ExifTag.Software:
+                        photo.SoftwareUsed = exif.Value as string;
+                        break;
+                    case ExifTag.SubjectDistanceRange:
+                        photo.SubjectDistanceRange = (SubjectDistanceRange)exif.Value;
+                        break;
+                    case ExifTag.YResolution:
+                        photo.VerticalResolution = ((Rational)exif.Value).ToDouble();
+                        break;
+                    case ExifTag.WhiteBalance:
+                        photo.WhiteBalance =(WhiteBalance) exif.Value;
+                        break;
+                    default:
+                        image.MetaData.ExifProfile.RemoveValue(exif.Tag);
+                        break;
+                }
+
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath,          "assets", "photos")))
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos"));
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines")))
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines"));
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines", "thumbs")))
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines", "thumbs"));
+
+            var outJpeg = Path.Combine(hostingEnvironment.WebRootPath, "assets", "photos", "machines",
+                                       newId + ".jpg");
+            
+            using(var jpegStream = new FileStream(outJpeg, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
+            {
+                image.SaveAsJpeg(jpegStream);                
+            }
+
+            int imgMax = Math.Max(image.Width, image.Height);
+            int width = image.Width;
+            int height= image.Height;
+            
+            image.Dispose();
+            
+            SKBitmap skBitmap = SKBitmap.Decode(outJpeg);
+
+            foreach(string format in new[] {"jpg", "webp"})
+            {
+                if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format))) ;
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format));
+
+                SKEncodedImageFormat skFormat;
+                switch(format)
+                {
+                    case "webp":
+                        skFormat = SKEncodedImageFormat.Webp;
+                        break;
+                    default:
+                        skFormat = SKEncodedImageFormat.Jpeg;
+                        break;
+                }
+
+                foreach(int multiplier in new[] {1, 2, 3})
+                {
+                    if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format,
+                                                      $"{multiplier}x"))) ;
+                    Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format,
+                                                           $"{multiplier}x"));
+
+                    string resized = Path.Combine(hostingEnvironment.WebRootPath, "assets/photos/machines/thumbs", format, $"{multiplier}x",
+                                                  newId + $".{format}");
+
+                    if(System.IO.File.Exists(resized)) continue;
+
+                    float    canvasMin = 256       * multiplier;
+                    
+                    float    scale     = canvasMin / imgMax;
+
+                    // Do not enlarge images
+                    if(scale > 1) { scale = 1; }
+                    
+                    var skResized = skBitmap.Resize(new SKImageInfo((int)(width * scale), (int)(height * scale)), SKFilterQuality.High);
+                    SKImage    skImage = SKImage.FromBitmap(skResized);
+                    SKData     data    = skImage.Encode(skFormat, 100);
+                    FileStream outfs   = new FileStream(resized, FileMode.CreateNew);
+                    data.SaveTo(outfs);
+                    outfs.Close();
+                }
+            }
+
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.ContentRootPath,          "originals", "photos")))
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos"));
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.ContentRootPath,          "originals", "photos")))
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos"));
+            if(!Directory.Exists(Path.Combine(hostingEnvironment.ContentRootPath,          "originals", "photos", "machines")))
+                Directory.CreateDirectory(Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos", "machines"));
+
+            System.IO.File.Move(tmpFile, Path.Combine(hostingEnvironment.ContentRootPath, "originals", "photos", "machines", newId + extension));
+
+            photo.Id = newId;
+            photo.User = await userManager.GetUserAsync(HttpContext.User);
+            photo.License = await _context.Licenses.FindAsync(machinePhoto.LicenseId);
+            photo.Machine = await _context.Machines.FindAsync(machinePhoto.MachineId);
+
+            _context.Add(photo);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new {Id = newId});
+        }
 
         // GET: MachinePhotos/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
