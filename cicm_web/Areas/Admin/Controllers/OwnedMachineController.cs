@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,7 +23,15 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: OwnedMachine
         public async Task<IActionResult> Index()
         {
-            var cicmContext = _context.OwnedMachines.Include(o => o.Machine);
+            var cicmContext = _context.OwnedMachines.Include(o => o.Machine).OrderBy(o => o.Machine.Company.Name).ThenBy(o => o.Machine.Name).ThenBy(o => o.User.UserName).ThenBy(o => o.AcquisitionDate).Select(o => new OwnedMachineViewModel
+            {
+                AcquisitionDate = o.AcquisitionDate,
+                Id = o.Id,
+                Machine = $"{o.Machine.Company.Name} {o.Machine.Name}",
+                Status = o.Status,
+                User = o.User.UserName
+            });
+
             return View(await cicmContext.ToListAsync());
         }
 

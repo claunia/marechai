@@ -29,6 +29,8 @@
 *******************************************************************************/
 
 using System.ComponentModel.DataAnnotations;
+// ReSharper disable UnusedMember.Global
+// ReSharper disable InconsistentNaming
 
 namespace Cicm.Database
 {
@@ -47,9 +49,13 @@ namespace Cicm.Database
 
     public enum StatusType
     {
+        [Display(Name = "Unknown")]
         Unknown    = 0,
+        [Display(Name = "Tested good")]
         TestedGood = 1,
+        [Display(Name = "Not tested")]
         NotTested  = 2,
+        [Display(Name = "Tested bad")]
         TestedBad  = 3
     }
 

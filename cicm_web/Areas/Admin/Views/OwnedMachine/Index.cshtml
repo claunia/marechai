@@ -1,89 +1,53 @@
-@model IEnumerable<Cicm.Database.Models.OwnedMachine>
+@model IEnumerable<cicm_web.Areas.Admin.Models.OwnedMachineViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Owned machines</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.AcquisitionDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LostDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastStatusDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trade)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Boxed)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Manuals)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SerialNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SerialNumberVisible)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Machine)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Machine)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AcquisitionDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.AcquisitionDate)
+                @Html.DisplayFor(modelItem => item.Machine)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LostDate)
+                @Html.DisplayFor(modelItem => item.User)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AcquisitionDate)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastStatusDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Trade)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Boxed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Manuals)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SerialNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SerialNumberVisible)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Machine.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
