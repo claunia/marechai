@@ -71,5 +71,6 @@ namespace cicm_web.Areas.Admin.Models
         public string UploadUser { get; set; }
         public string Machine   { get;  set; }
         public int    MachineId { get;  set; }
+        public string Source    { get;  set; }
     }
 }

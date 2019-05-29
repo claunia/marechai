@@ -104,7 +104,8 @@ namespace cicm_web.Areas.Admin.Controllers
                                                                   UploadUser         = m.User.UserName,
                                                                   Machine =
                                                                       $"{m.Machine.Company.Name} {m.Machine.Name}",
-                                                                  MachineId = m.Machine.Id
+                                                                  MachineId = m.Machine.Id,
+                                                                  Source    = m.Source
                                                               }).FirstOrDefaultAsync(m => m.Id == id);
             if(machinePhoto == null) return NotFound();
 
@@ -128,7 +129,8 @@ namespace cicm_web.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MachineId,LicenseId,Photo")] MachinePhotoViewModel machinePhoto)
+        public async Task<IActionResult> Create([Bind("MachineId,LicenseId,Photo,Source")]
+                                                MachinePhotoViewModel machinePhoto)
         {
             if(!ModelState.IsValid) return View(machinePhoto);
 
@@ -395,7 +397,7 @@ namespace cicm_web.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind(
-                                                  "Author,CameraManufacturer,CameraModel,ColorSpace,Comments,Contrast,CreationDate,DigitalZoomRatio,ExifVersion,Exposure,ExposureMethod,ExposureProgram,Flash,Focal,FocalLength,FocalLengthEquivalent,HorizontalResolution,IsoRating,Lens,LicenseId,LightSource,MachineId,MeteringMode,ResolutionUnit,Orientation,Saturation,SceneCaptureType,SensingMethod,Sharpness,SoftwareUsed,SubjectDistanceRange,VerticalResolution,WhiteBalance,Id")]
+                                                  "Author,CameraManufacturer,CameraModel,ColorSpace,Comments,Contrast,CreationDate,DigitalZoomRatio,ExifVersion,Exposure,ExposureMethod,ExposureProgram,Flash,Focal,FocalLength,FocalLengthEquivalent,HorizontalResolution,IsoRating,Lens,LicenseId,LightSource,MachineId,MeteringMode,ResolutionUnit,Orientation,Saturation,SceneCaptureType,SensingMethod,Sharpness,SoftwareUsed,SubjectDistanceRange,VerticalResolution,WhiteBalance,Id,Source")]
                                               MachinePhoto machinePhoto)
         {
             if(id != machinePhoto.Id) return NotFound();

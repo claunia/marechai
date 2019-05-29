@@ -64,6 +64,8 @@ namespace Cicm.Database.Models
         public double? VerticalResolution { get; set; }
         [DisplayName("White balance")]
         public WhiteBalance? WhiteBalance { get; set; }
+        [Url]
+        public string Source { get; set; }
 
         public virtual ApplicationUser User    { get; set; }
         public virtual Machine         Machine { get; set; }

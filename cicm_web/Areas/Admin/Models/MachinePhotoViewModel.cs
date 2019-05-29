@@ -22,5 +22,7 @@ namespace cicm_web.Areas.Admin.Models
         public int    MachineId    { get; set; }
         public int    LicenseId    { get; set; }
         public string ErrorMessage { get; set; }
+        [Url]
+        public string Source { get; set; }
     }
 }

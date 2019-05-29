@@ -3772,6 +3772,8 @@ namespace Cicm.Database.Migrations
 
                 b.Property<string>("SoftwareUsed");
 
+                b.Property<string>("Source");
+
                 b.Property<ushort?>("SubjectDistanceRange");
 
                 b.Property<DateTime>("UploadDate").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();

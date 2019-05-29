@@ -32,9 +32,22 @@
         @Html.DisplayNameFor(model => model.Machine)
     </dt>
     <dd class="col-sm-10">
-        <a asp-area="" asp-controller="Machine" asp-route-id="@Model.MachineId" asp-action="View" target="_blank"> 
-        @Html.DisplayFor(model => model.Machine)
+        <a asp-area=""
+           asp-controller="Machine"
+           asp-route-id="@Model.MachineId"
+           asp-action="View"
+           target="_blank">
+            @Html.DisplayFor(model => model.Machine)
         </a>
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Source)
+    </dt>
+    <dd class="col-sm-10">
+        @if(Model.Source != null)
+        {
+            <a hred="@Html.DisplayFor(model => model.Source)">Link</a>
+        }
     </dd>
     <dd class="col-sm-10">
         <img src="/assets/photos/machines/@(Model.Id).jpg" />
