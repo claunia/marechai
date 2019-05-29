@@ -46,8 +46,24 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             if(id == null) return NotFound();
 
-            OwnedMachine ownedMachine = await _context.OwnedMachines
-                                                      .Include(o => o.Machine).FirstOrDefaultAsync(m => m.Id == id);
+            OwnedMachineViewModel ownedMachine = await _context.OwnedMachines
+                                                               .Include(o => o.Machine)
+                                                               .Select(o => new OwnedMachineViewModel
+                                                                {
+                                                                    AcquisitionDate = o.AcquisitionDate,
+                                                                    Boxed           = o.Boxed,
+                                                                    LastStatusDate  = o.LastStatusDate,
+                                                                    LostDate        = o.LostDate,
+                                                                    Machine =
+                                                                        $"{o.Machine.Company.Name} {o.Machine.Name}",
+                                                                    Manuals      = o.Manuals,
+                                                                    SerialNumber = o.SerialNumber,
+                                                                    SerialNumberVisible =
+                                                                        o.SerialNumberVisible,
+                                                                    Status = o.Status,
+                                                                    User   = o.User.UserName,
+                                                                    Id     = o.Id
+                                                                }).FirstOrDefaultAsync(m => m.Id == id);
             if(ownedMachine == null) return NotFound();
 
             return View(ownedMachine);
