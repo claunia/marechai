@@ -58,8 +58,6 @@ namespace Cicm.Database.Models
         public virtual DbSet<MemoryByMachine>                     MemoryByMachine                     { get; set; }
         public virtual DbSet<MoneyDonation>                       MoneyDonations                      { get; set; }
         public virtual DbSet<News>                                News                                { get; set; }
-        public virtual DbSet<OwnedComputer>                       OwnedComputers                      { get; set; }
-        public virtual DbSet<OwnedConsole>                        OwnedConsoles                       { get; set; }
         public virtual DbSet<Processor>                           Processors                          { get; set; }
         public virtual DbSet<ProcessorsByMachine>                 ProcessorsByMachine                 { get; set; }
         public virtual DbSet<Resolution>                          Resolutions                         { get; set; }
@@ -68,6 +66,13 @@ namespace Cicm.Database.Models
         public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
         public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
         public virtual DbSet<License>                             Licenses                            { get; set; }
+        public virtual DbSet<GpusByOwnedMachine>                  GpusByOwnedMachine                  { get; set; }
+        public virtual DbSet<MemoryByOwnedMachine>                MemoryByOwnedMachine                { get; set; }
+        public virtual DbSet<OwnedMachine>                        OwnedMachines                       { get; set; }
+        public virtual DbSet<OwnedMachinePhoto>                   OwnedMachinePhotos                  { get; set; }
+        public virtual DbSet<ProcessorsByOwnedMachine>            ProcessorsByOwnedMachine            { get; set; }
+        public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
+        public virtual DbSet<StorageByOwnedMachine>               StorageByOwnedMachine               { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -344,6 +349,15 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_gpus_by_machine_machine");
             });
 
+            modelBuilder.Entity<GpusByOwnedMachine>(entity =>
+            {
+                entity.HasIndex(e => e.GpuId);
+
+                entity.HasIndex(e => e.OwnedMachineId);
+
+                entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Gpus).HasForeignKey(d => d.OwnedMachineId);
+            });
+
             modelBuilder.Entity<InstructionSetExtension>(entity =>
             {
                 entity.ToTable("instruction_set_extensions");
@@ -481,6 +495,31 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_machines_family");
             });
 
+            modelBuilder.Entity<OwnedMachine>(entity =>
+            {
+                entity.HasIndex(e => e.AcquisitionDate);
+
+                entity.HasIndex(e => e.LostDate);
+
+                entity.HasIndex(e => e.Status);
+
+                entity.HasIndex(e => e.LastStatusDate);
+
+                entity.HasIndex(e => e.Trade);
+
+                entity.HasIndex(e => e.Boxed);
+
+                entity.HasIndex(e => e.Manuals);
+
+                entity.HasIndex(e => e.SerialNumber);
+
+                entity.HasIndex(e => e.SerialNumberVisible);
+
+                entity.Property(e => e.SerialNumberVisible).HasDefaultValue(true);
+
+                entity.HasOne(d => d.User).WithMany(p => p.OwnedMachines).OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<MachinePhoto>(entity =>
             {
                 entity.HasIndex(e => e.Author);
@@ -554,6 +593,79 @@ namespace Cicm.Database.Models
                 entity.HasOne(d => d.License).WithMany(p => p.Photos).OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<OwnedMachinePhoto>(entity =>
+            {
+                entity.HasIndex(e => e.Author);
+
+                entity.HasIndex(e => e.CameraManufacturer);
+
+                entity.HasIndex(e => e.CameraModel);
+
+                entity.HasIndex(e => e.ColorSpace);
+
+                entity.HasIndex(e => e.Comments);
+
+                entity.HasIndex(e => e.Contrast);
+
+                entity.HasIndex(e => e.CreationDate);
+
+                entity.HasIndex(e => e.DigitalZoomRatio);
+
+                entity.HasIndex(e => e.ExifVersion);
+
+                entity.HasIndex(e => e.Exposure);
+
+                entity.HasIndex(e => e.ExposureMethod);
+
+                entity.HasIndex(e => e.ExposureProgram);
+
+                entity.HasIndex(e => e.Flash);
+
+                entity.HasIndex(e => e.Focal);
+
+                entity.HasIndex(e => e.FocalLength);
+
+                entity.HasIndex(e => e.FocalLengthEquivalent);
+
+                entity.HasIndex(e => e.HorizontalResolution);
+
+                entity.HasIndex(e => e.IsoRating);
+
+                entity.HasIndex(e => e.Lens);
+
+                entity.HasIndex(e => e.LightSource);
+
+                entity.HasIndex(e => e.MeteringMode);
+
+                entity.HasIndex(e => e.ResolutionUnit);
+
+                entity.HasIndex(e => e.Orientation);
+
+                entity.HasIndex(e => e.Saturation);
+
+                entity.HasIndex(e => e.SceneCaptureType);
+
+                entity.HasIndex(e => e.SensingMethod);
+
+                entity.HasIndex(e => e.Sharpness);
+
+                entity.HasIndex(e => e.SoftwareUsed);
+
+                entity.HasIndex(e => e.SubjectDistanceRange);
+
+                entity.HasIndex(e => e.UploadDate);
+
+                entity.HasIndex(e => e.VerticalResolution);
+
+                entity.HasIndex(e => e.WhiteBalance);
+
+                entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Photos).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.User).WithMany(p => p.OwnedMachinePhotos).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.License).WithMany(p => p.OwnedMachinePhotos).OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<MemoryByMachine>(entity =>
             {
                 entity.ToTable("memory_by_machine");
@@ -582,6 +694,21 @@ namespace Cicm.Database.Models
 
                 entity.HasOne(d => d.Machine).WithMany(p => p.Memory).HasForeignKey(d => d.MachineId)
                       .HasConstraintName("fk_memory_by_machine_machine");
+            });
+
+            modelBuilder.Entity<MemoryByOwnedMachine>(entity =>
+            {
+                entity.HasIndex(e => e.OwnedMachineId);
+
+                entity.HasIndex(e => e.Size);
+
+                entity.HasIndex(e => e.Speed);
+
+                entity.HasIndex(e => e.Type);
+
+                entity.HasIndex(e => e.Usage);
+
+                entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Memory).HasForeignKey(d => d.OwnedMachineId);
             });
 
             modelBuilder.Entity<MoneyDonation>(entity =>
@@ -619,121 +746,6 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("datetime");
 
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-            });
-
-            modelBuilder.Entity<OwnedComputer>(entity =>
-            {
-                entity.ToTable("owned_computers");
-
-                entity.HasIndex(e => e.Boxed).HasName("idx_owned_computers_boxed");
-
-                entity.HasIndex(e => e.Cap1).HasName("idx_owned_computers_cap1");
-
-                entity.HasIndex(e => e.Cap2).HasName("idx_owned_computers_cap2");
-
-                entity.HasIndex(e => e.Cpu1).HasName("idx_owned_computers_cpu1");
-
-                entity.HasIndex(e => e.Cpu2).HasName("idx_owned_computers_cpu2");
-
-                entity.HasIndex(e => e.Date).HasName("idx_owned_computers_date");
-
-                entity.HasIndex(e => e.DbId).HasName("idx_owned_computers_db_id");
-
-                entity.HasIndex(e => e.Disk1).HasName("idx_owned_computers_disk1");
-
-                entity.HasIndex(e => e.Disk2).HasName("idx_owned_computers_disk2");
-
-                entity.HasIndex(e => e.Manuals).HasName("idx_owned_computers_manuals");
-
-                entity.HasIndex(e => e.Mhz1).HasName("idx_owned_computers_mhz1");
-
-                entity.HasIndex(e => e.Mhz2).HasName("idx_owned_computers_mhz2");
-
-                entity.HasIndex(e => e.Ram).HasName("idx_owned_computers_ram");
-
-                entity.HasIndex(e => e.Rigid).HasName("idx_owned_computers_rigid");
-
-                entity.HasIndex(e => e.Status).HasName("idx_owned_computers_status");
-
-                entity.HasIndex(e => e.Trade).HasName("idx_owned_computers_trade");
-
-                entity.HasIndex(e => e.Vram).HasName("idx_owned_computers_vram");
-
-                entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
-
-                entity.Property(e => e.Boxed).HasColumnName("boxed").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Cap1).HasColumnName("cap1").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Cap2).HasColumnName("cap2").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Cpu1).HasColumnName("cpu1").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Cpu2).HasColumnName("cpu2").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("varchar(20)")
-                      .HasDefaultValueSql("''");
-
-                entity.Property(e => e.DbId).HasColumnName("db_id").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Disk1).HasColumnName("disk1").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Disk2).HasColumnName("disk2").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Manuals).HasColumnName("manuals").HasColumnType("int(11)")
-                      .HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Mhz1).HasColumnName("mhz1").HasColumnType("decimal(10,0)")
-                      .HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Mhz2).HasColumnName("mhz2").HasColumnType("decimal(10,0)")
-                      .HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Ram).HasColumnName("ram").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Rigid).IsRequired().HasColumnName("rigid").HasColumnType("varchar(64)")
-                      .HasDefaultValueSql("''");
-
-                entity.Property(e => e.Status).HasColumnName("status").HasColumnType("int(11)")
-                      .HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Trade).HasColumnName("trade").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Vram).HasColumnName("vram").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-            });
-
-            modelBuilder.Entity<OwnedConsole>(entity =>
-            {
-                entity.ToTable("owned_consoles");
-
-                entity.HasIndex(e => e.Boxed).HasName("idx_owned_consoles_boxed");
-
-                entity.HasIndex(e => e.Date).HasName("idx_owned_consoles_date");
-
-                entity.HasIndex(e => e.DbId).HasName("idx_owned_consoles_db_id");
-
-                entity.HasIndex(e => e.Manuals).HasName("idx_owned_consoles_manuals");
-
-                entity.HasIndex(e => e.Status).HasName("idx_owned_consoles_status");
-
-                entity.HasIndex(e => e.Trade).HasName("idx_owned_consoles_trade");
-
-                entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
-
-                entity.Property(e => e.Boxed).HasColumnName("boxed").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("char(20)")
-                      .HasDefaultValueSql("''");
-
-                entity.Property(e => e.DbId).HasColumnName("db_id").HasColumnType("int(11)").HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Manuals).HasColumnName("manuals").HasColumnType("int(11)")
-                      .HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Status).HasColumnName("status").HasColumnType("int(11)")
-                      .HasDefaultValueSql("'0'");
-
-                entity.Property(e => e.Trade).HasColumnName("trade").HasColumnType("int(11)").HasDefaultValueSql("'0'");
             });
 
             modelBuilder.Entity<Processor>(entity =>
@@ -871,6 +883,17 @@ namespace Cicm.Database.Models
                       .HasConstraintName("fk_processors_by_machine_processor");
             });
 
+            modelBuilder.Entity<ProcessorsByOwnedMachine>(entity =>
+            {
+                entity.HasIndex(e => e.OwnedMachineId);
+
+                entity.HasIndex(e => e.ProcessorId);
+
+                entity.HasIndex(e => e.Speed);
+
+                entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Processors).HasForeignKey(d => d.OwnedMachineId);
+            });
+
             modelBuilder.Entity<Resolution>(entity =>
             {
                 entity.ToTable("resolutions");
@@ -946,6 +969,15 @@ namespace Cicm.Database.Models
 
                 entity.HasOne(d => d.SoundSynth).WithMany(p => p.SoundByMachine).HasForeignKey(d => d.SoundSynthId)
                       .HasConstraintName("fk_sound_by_machine_sound_synth");
+            });
+
+            modelBuilder.Entity<SoundByOwnedMachine>(entity =>
+            {
+                entity.HasIndex(e => e.OwnedMachineId);
+
+                entity.HasIndex(e => e.SoundSynthId);
+
+                entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Sound).HasForeignKey(d => d.OwnedMachineId);
             });
 
             modelBuilder.Entity<SoundSynth>(entity =>
@@ -1024,6 +1056,19 @@ namespace Cicm.Database.Models
 
                 entity.HasOne(d => d.Machine).WithMany(p => p.Storage).HasForeignKey(d => d.MachineId)
                       .HasConstraintName("fk_storage_by_machine_machine");
+            });
+
+            modelBuilder.Entity<StorageByOwnedMachine>(entity =>
+            {
+                entity.HasIndex(e => e.Capacity);
+
+                entity.HasIndex(e => e.Interface);
+
+                entity.HasIndex(e => e.OwnedMachineId);
+
+                entity.HasIndex(e => e.Type);
+
+                entity.HasOne(d => d.OwnedMachine).WithMany(p => p.Storage).HasForeignKey(d => d.OwnedMachineId);
             });
 
             modelBuilder.Entity<License>(entity =>

@@ -5,6 +5,8 @@ namespace Cicm.Database.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public virtual ICollection<MachinePhoto> Photos { get; set; }
+        public virtual ICollection<MachinePhoto>      Photos             { get; set; }
+        public virtual ICollection<OwnedMachinePhoto> OwnedMachinePhotos { get; set; }
+        public virtual ICollection<OwnedMachine>      OwnedMachines      { get; set; }
     }
 }

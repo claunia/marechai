@@ -25,7 +25,8 @@ namespace Cicm.Database.Models
         [Column(TypeName = "longtext")]
         [StringLength(131072)]
         [DataType(DataType.MultilineText)]
-        public string Text { get;                              set; }
-        public virtual ICollection<MachinePhoto> Photos { get; set; }
+        public string Text { get;                                               set; }
+        public virtual ICollection<MachinePhoto>      Photos             { get; set; }
+        public virtual ICollection<OwnedMachinePhoto> OwnedMachinePhotos { get; set; }
     }
 }

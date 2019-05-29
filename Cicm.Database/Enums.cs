@@ -47,6 +47,7 @@ namespace Cicm.Database
 
     public enum StatusType
     {
+        Unknown    = 0,
         TestedGood = 1,
         NotTested  = 2,
         TestedBad  = 3
