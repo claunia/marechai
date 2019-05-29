@@ -1,20 +1,30 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Cicm.Database.Models
 {
     public class OwnedMachine : BaseModel<long>
     {
-        public DateTime   AcquisitionDate     { get; set; }
-        public DateTime?  LostDate            { get; set; }
-        public StatusType Status              { get; set; }
-        public DateTime?  LastStatusDate      { get; set; }
-        public bool       Trade               { get; set; }
-        public bool       Boxed               { get; set; }
-        public bool       Manuals             { get; set; }
-        public string     SerialNumber        { get; set; }
-        public bool       SerialNumberVisible { get; set; }
-        public int        MachineId           { get; set; }
+        [DisplayName("Acquisition date")]
+        public DateTime AcquisitionDate { get; set; }
+        [DisplayName("Date when sold, traded, or otherwise lost")]
+        public DateTime? LostDate { get; set; }
+        public StatusType Status { get;  set; }
+        [DisplayName("Last status check date")]
+        public DateTime? LastStatusDate { get; set; }
+        [DisplayName("Available for trade or sale")]
+        public bool Trade { get; set; }
+        [DisplayName("Has original boxes")]
+        public bool Boxed { get; set; }
+        [DisplayName("Has original manuals")]
+        public bool Manuals { get; set; }
+        [DisplayName("Serial number")]
+        public string SerialNumber { get; set; }
+        [DisplayName("Serial number visible to other users")]
+        public bool SerialNumberVisible { get; set; }
+        public int    MachineId { get;         set; }
+        public string UserId    { get;         set; }
 
         public virtual ICollection<GpusByOwnedMachine>       Gpus       { get; set; }
         public virtual ICollection<MemoryByOwnedMachine>     Memory     { get; set; }

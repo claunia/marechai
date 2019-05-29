@@ -1,3 +1,4 @@
+@using Cicm.Database
 @model Cicm.Database.Models.OwnedMachine
 
 @{
@@ -6,64 +7,122 @@
 
 <h1>Create</h1>
 
-<h4>OwnedMachine</h4>
+<h4>Owned machine</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="AcquisitionDate" class="control-label"></label>
-                <input asp-for="AcquisitionDate" class="form-control" />
-                <span asp-validation-for="AcquisitionDate" class="text-danger"></span>
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger">
             </div>
             <div class="form-group">
-                <label asp-for="LostDate" class="control-label"></label>
-                <input asp-for="LostDate" class="form-control" />
-                <span asp-validation-for="LostDate" class="text-danger"></span>
+                <label asp-for="AcquisitionDate"
+                       class="control-label">
+                </label>
+                <input asp-for="AcquisitionDate"
+                       class="form-control" />
+                <span asp-validation-for="AcquisitionDate"
+                      class="text-danger">
+                </span>
             </div>
             <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
+                <label asp-for="LostDate"
+                       class="control-label">
+                </label>
+                <input asp-for="LostDate"
+                       class="form-control" />
+                <span asp-validation-for="LostDate"
+                      class="text-danger">
+                </span>
             </div>
             <div class="form-group">
-                <label asp-for="LastStatusDate" class="control-label"></label>
-                <input asp-for="LastStatusDate" class="form-control" />
-                <span asp-validation-for="LastStatusDate" class="text-danger"></span>
+                <label asp-for="Status"
+                       class="control-label">
+                </label>
+                <select asp-for="Status"
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<StatusType>().OrderBy(s => s.Text)">
+                </select>
+                <span asp-validation-for="Status"
+                      class="text-danger">
+                </span>
             </div>
-            <div class="form-group form-check">
+            <div class="form-group">
+                <label asp-for="LastStatusDate"
+                       class="control-label">
+                </label>
+                <input asp-for="LastStatusDate"
+                       class="form-control" />
+                <span asp-validation-for="LastStatusDate"
+                      class="text-danger">
+                </span>
+            </div>
+            <div class="form-check form-group">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Trade" /> @Html.DisplayNameFor(model => model.Trade)
+                    <input class="form-check-input"
+                           asp-for="Trade" /> @Html.DisplayNameFor(model => model.Trade)
                 </label>
             </div>
-            <div class="form-group form-check">
+            <div class="form-check form-group">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Boxed" /> @Html.DisplayNameFor(model => model.Boxed)
+                    <input class="form-check-input"
+                           asp-for="Boxed" /> @Html.DisplayNameFor(model => model.Boxed)
                 </label>
             </div>
-            <div class="form-group form-check">
+            <div class="form-check form-group">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Manuals" /> @Html.DisplayNameFor(model => model.Manuals)
+                    <input class="form-check-input"
+                           asp-for="Manuals" /> @Html.DisplayNameFor(model => model.Manuals)
                 </label>
             </div>
             <div class="form-group">
-                <label asp-for="SerialNumber" class="control-label"></label>
-                <input asp-for="SerialNumber" class="form-control" />
-                <span asp-validation-for="SerialNumber" class="text-danger"></span>
+                <label asp-for="SerialNumber"
+                       class="control-label">
+                </label>
+                <input asp-for="SerialNumber"
+                       class="form-control" />
+                <span asp-validation-for="SerialNumber"
+                      class="text-danger">
+                </span>
+            </div>
+            <div class="form-check form-group">
+                <label class="form-check-label">
+                    <input class="form-check-input"
+                           asp-for="SerialNumberVisible"
+                           checked /> @Html.DisplayNameFor(model => model.SerialNumberVisible)
+                </label>
             </div>
             <div class="form-group">
-                <label asp-for="MachineId" class="control-label"></label>
-                <select asp-for="MachineId" class ="form-control" asp-items="ViewBag.MachineId"></select>
+                <label asp-for="Machine"
+                       class="control-label">
+                </label>
+                <select asp-for="MachineId"
+                        class="form-control"
+                        asp-items="ViewBag.MachineId">
+                </select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="User"
+                       class="control-label">
+                </label>
+                <select asp-for="UserId"
+                        class="form-control"
+                        asp-items="ViewBag.UserId">
+                </select>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary"
+                       type="submit"
+                       value="Create" />
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+                    Back to List
+                </a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -13,7 +13,7 @@ namespace cicm_web.Areas.Admin.Controllers
     [Authorize]
     public class OwnedMachineController : Controller
     {
-        private readonly cicmContext _context;
+        readonly cicmContext _context;
 
         public OwnedMachineController(cicmContext context)
         {
@@ -23,14 +23,20 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: OwnedMachine
         public async Task<IActionResult> Index()
         {
-            var cicmContext = _context.OwnedMachines.Include(o => o.Machine).OrderBy(o => o.Machine.Company.Name).ThenBy(o => o.Machine.Name).ThenBy(o => o.User.UserName).ThenBy(o => o.AcquisitionDate).Select(o => new OwnedMachineViewModel
-            {
-                AcquisitionDate = o.AcquisitionDate,
-                Id = o.Id,
-                Machine = $"{o.Machine.Company.Name} {o.Machine.Name}",
-                Status = o.Status,
-                User = o.User.UserName
-            });
+            IQueryable<OwnedMachineViewModel> cicmContext = _context
+                                                           .OwnedMachines.Include(o => o.Machine)
+                                                           .OrderBy(o => o.Machine.Company.Name)
+                                                           .ThenBy(o => o.Machine.Name).ThenBy(o => o.User.UserName)
+                                                           .ThenBy(o => o.AcquisitionDate)
+                                                           .Select(o => new OwnedMachineViewModel
+                                                            {
+                                                                AcquisitionDate = o.AcquisitionDate,
+                                                                Id              = o.Id,
+                                                                Machine =
+                                                                    $"{o.Machine.Company.Name} {o.Machine.Name}",
+                                                                Status = o.Status,
+                                                                User   = o.User.UserName
+                                                            });
 
             return View(await cicmContext.ToListAsync());
         }
@@ -38,18 +44,11 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: OwnedMachine/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if(id == null) return NotFound();
 
-            var ownedMachine = await _context.OwnedMachines
-                .Include(o => o.Machine)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (ownedMachine == null)
-            {
-                return NotFound();
-            }
+            OwnedMachine ownedMachine = await _context.OwnedMachines
+                                                      .Include(o => o.Machine).FirstOrDefaultAsync(m => m.Id == id);
+            if(ownedMachine == null) return NotFound();
 
             return View(ownedMachine);
         }
@@ -57,7 +56,13 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: OwnedMachine/Create
         public IActionResult Create()
         {
-            ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name");
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name");
+            ViewData["UserId"] =
+                new SelectList(_context.Users.OrderBy(u => u.UserName).Select(u => new {u.Id, u.UserName}), "Id",
+                               "UserName");
             return View();
         }
 
@@ -66,31 +71,36 @@ namespace cicm_web.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AcquisitionDate,LostDate,Status,LastStatusDate,Trade,Boxed,Manuals,SerialNumber,SerialNumberVisible,MachineId,Id")] OwnedMachine ownedMachine)
+        public async Task<IActionResult> Create(
+            [Bind(
+                "AcquisitionDate,LostDate,Status,LastStatusDate,Trade,Boxed,Manuals,SerialNumber,SerialNumberVisible,MachineId,UserId,Id")]
+            OwnedMachine ownedMachine)
         {
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 _context.Add(ownedMachine);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", ownedMachine.MachineId);
+
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name");
+            ViewData["UserId"] =
+                new SelectList(_context.Users.OrderBy(u => u.UserName).Select(u => new {u.Id, u.UserName}), "Id",
+                               "UserName");
             return View(ownedMachine);
         }
 
         // GET: OwnedMachine/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if(id == null) return NotFound();
 
-            var ownedMachine = await _context.OwnedMachines.FindAsync(id);
-            if (ownedMachine == null)
-            {
-                return NotFound();
-            }
+            OwnedMachine ownedMachine = await _context.OwnedMachines.FindAsync(id);
+            if(ownedMachine == null) return NotFound();
+
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", ownedMachine.MachineId);
             return View(ownedMachine);
         }
@@ -100,33 +110,30 @@ namespace cicm_web.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("AcquisitionDate,LostDate,Status,LastStatusDate,Trade,Boxed,Manuals,SerialNumber,SerialNumberVisible,MachineId,Id")] OwnedMachine ownedMachine)
+        public async Task<IActionResult> Edit(
+            long id, [Bind(
+                "AcquisitionDate,LostDate,Status,LastStatusDate,Trade,Boxed,Manuals,SerialNumber,SerialNumberVisible,MachineId,Id")]
+            OwnedMachine ownedMachine)
         {
-            if (id != ownedMachine.Id)
-            {
-                return NotFound();
-            }
+            if(id != ownedMachine.Id) return NotFound();
 
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(ownedMachine);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch(DbUpdateConcurrencyException)
                 {
-                    if (!OwnedMachineExists(ownedMachine.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if(!OwnedMachineExists(ownedMachine.Id)) return NotFound();
+
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", ownedMachine.MachineId);
             return View(ownedMachine);
         }
@@ -134,34 +141,28 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: OwnedMachine/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if(id == null) return NotFound();
 
-            var ownedMachine = await _context.OwnedMachines
-                .Include(o => o.Machine)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (ownedMachine == null)
-            {
-                return NotFound();
-            }
+            OwnedMachine ownedMachine = await _context.OwnedMachines
+                                                      .Include(o => o.Machine).FirstOrDefaultAsync(m => m.Id == id);
+            if(ownedMachine == null) return NotFound();
 
             return View(ownedMachine);
         }
 
         // POST: OwnedMachine/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var ownedMachine = await _context.OwnedMachines.FindAsync(id);
+            OwnedMachine ownedMachine = await _context.OwnedMachines.FindAsync(id);
             _context.OwnedMachines.Remove(ownedMachine);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OwnedMachineExists(long id)
+        bool OwnedMachineExists(long id)
         {
             return _context.OwnedMachines.Any(e => e.Id == id);
         }
