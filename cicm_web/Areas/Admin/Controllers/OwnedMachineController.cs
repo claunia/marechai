@@ -117,7 +117,14 @@ namespace cicm_web.Areas.Admin.Controllers
             OwnedMachine ownedMachine = await _context.OwnedMachines.FindAsync(id);
             if(ownedMachine == null) return NotFound();
 
-            ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", ownedMachine.MachineId);
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name");
+            ViewData["UserId"] =
+                new
+                    SelectList(_context.Users.OrderBy(u => u.UserName).Where(u => u.Id == ownedMachine.UserId).Select(u => new {u.Id, u.UserName}),
+                               "Id", "UserName");
             return View(ownedMachine);
         }
 
@@ -150,7 +157,14 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", ownedMachine.MachineId);
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name");
+            ViewData["UserId"] =
+                new
+                    SelectList(_context.Users.OrderBy(u => u.UserName).Where(u => u.Id == ownedMachine.UserId).Select(u => new {u.Id, u.UserName}),
+                               "Id", "UserName");
             return View(ownedMachine);
         }
 
