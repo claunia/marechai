@@ -5,22 +5,22 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Screens</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Create New
+    </a>
 </p>
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Width)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Height)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Diagonal)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Size)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.EffectiveColors)
@@ -36,13 +36,10 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Width)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Height)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Diagonal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Size)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EffectiveColors)
@@ -51,16 +48,19 @@
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
-                <a asp-action="Edit"
-                   asp-route-id="@item.Id">
-                    Edit
-                </a> |
                 <a asp-action="Details"
-                   asp-route-id="@item.Id">
+                   asp-route-id="@item.Id"
+                   class="btn btn-primary">
                     Details
-                </a> |
+                </a>
+                <a asp-action="Edit"
+                   asp-route-id="@item.Id"
+                   class="btn btn-secondary">
+                    Edit
+                </a>
                 <a asp-action="Delete"
-                   asp-route-id="@item.Id">
+                   asp-route-id="@item.Id"
+                   class="btn btn-danger">
                     Delete
                 </a>
             </td>
