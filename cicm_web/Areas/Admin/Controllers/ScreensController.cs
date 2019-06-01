@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Cicm.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Areas.Admin.Controllers
@@ -36,15 +37,24 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: Screens/Create
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+            ViewData["NativeResolutionId"] =
+                new
+                    SelectList(_context.Resolutions.OrderBy(r => r.Chars).ThenBy(r => r.Width).ThenBy(r => r.Height).ThenBy(r => r.Colors).Select(r => new {r.Id, Name = r.ToString()}),
+                               "Id", "Name");
+
+            return View();
+        }
 
         // POST: Screens/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Width,Height,Diagonal,EffectiveColors,Type,Id")]
-                                                Screen screen)
+        public async Task<IActionResult> Create(
+            [Bind("Width,Height,Diagonal,EffectiveColors,Type,NativeResolutionId,Id")]
+            Screen screen)
         {
             if(ModelState.IsValid)
             {
@@ -52,6 +62,11 @@ namespace cicm_web.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["NativeResolutionId"] =
+                new
+                    SelectList(_context.Resolutions.OrderBy(r => r.Chars).ThenBy(r => r.Width).ThenBy(r => r.Height).ThenBy(r => r.Colors).Select(r => new {r.Id, Name = r.ToString()}),
+                               "Id", "Name");
 
             return View(screen);
         }

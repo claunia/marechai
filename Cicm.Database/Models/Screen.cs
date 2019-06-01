@@ -16,7 +16,6 @@ namespace Cicm.Database.Models
         [Required]
         [DisplayName("Diagonal (inches)")]
         public double Diagonal { get; set; }
-        [Required]
         [DisplayName("Native resolution")]
         public virtual Resolution NativeResolution { get; set; }
         [Range(2, 281474976710656)]
@@ -41,5 +40,7 @@ namespace Cicm.Database.Models
 
         public virtual ICollection<ResolutionsByScreen> Resolutions       { get; set; }
         public virtual ICollection<ScreensByMachine>    ScreensByMachines { get; set; }
+        [Required]
+        public int NativeResolutionId { get; set; }
     }
 }
