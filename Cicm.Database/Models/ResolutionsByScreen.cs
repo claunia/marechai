@@ -40,7 +40,6 @@ namespace Cicm.Database.Models
         [Remote("VerifyUnique", "ResolutionsByScreen", "Admin", AdditionalFields = nameof(ScreenId))]
         public int ResolutionId { get; set; }
 
-        [DisplayName("GPU")]
         public virtual Screen Screen { get;         set; }
         public virtual Resolution Resolution { get; set; }
     }
