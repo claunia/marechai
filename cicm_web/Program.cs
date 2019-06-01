@@ -167,6 +167,22 @@ namespace cicm_web
                     end = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);
+
+                    start = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mImporting photos...\u001b[0m");
+
+                    try { Photos.ImportPhotos(context); }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine("Exception {0} importing photos, saving changes and continuing...", e);
+                        throw;
+                    }
+
+                    context.SaveChanges();
+
+                    end = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                                      (end - start).TotalSeconds);
                 }
                 catch(Exception ex)
                 {
