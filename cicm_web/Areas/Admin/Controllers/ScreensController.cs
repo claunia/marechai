@@ -79,6 +79,11 @@ namespace cicm_web.Areas.Admin.Controllers
             Screen screen = await _context.Screens.FindAsync(id);
             if(screen == null) return NotFound();
 
+            ViewData["NativeResolutionId"] =
+                new
+                    SelectList(_context.Resolutions.OrderBy(r => r.Chars).ThenBy(r => r.Width).ThenBy(r => r.Height).ThenBy(r => r.Colors).Select(r => new {r.Id, Name = r.ToString()}),
+                               "Id", "Name");
+
             return View(screen);
         }
 
@@ -87,8 +92,9 @@ namespace cicm_web.Areas.Admin.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Width,Height,Diagonal,EffectiveColors,Type,Id")]
-                                              Screen screen)
+        public async Task<IActionResult> Edit(
+            int id, [Bind("Width,Height,Diagonal,EffectiveColors,NativeResolutionId,Type,Id")]
+            Screen screen)
         {
             if(id != screen.Id) return NotFound();
 
@@ -108,6 +114,11 @@ namespace cicm_web.Areas.Admin.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["NativeResolutionId"] =
+                new
+                    SelectList(_context.Resolutions.OrderBy(r => r.Chars).ThenBy(r => r.Width).ThenBy(r => r.Height).ThenBy(r => r.Colors).Select(r => new {r.Id, Name = r.ToString()}),
+                               "Id", "Name");
 
             return View(screen);
         }
