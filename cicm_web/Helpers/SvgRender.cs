@@ -34,7 +34,7 @@ using Cicm.Database.Models;
 using SkiaSharp;
 using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
 
-namespace cicm_web
+namespace cicm_web.Helpers
 {
     public static class SvgRender
     {
