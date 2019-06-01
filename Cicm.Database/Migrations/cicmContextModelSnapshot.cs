@@ -4389,6 +4389,73 @@ namespace Cicm.Database.Migrations
                 b.ToTable("resolutions_by_gpu");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.ResolutionsByScreen", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<int>("ResolutionId");
+
+                b.Property<int>("ScreenId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ResolutionId");
+
+                b.HasIndex("ScreenId");
+
+                b.ToTable("ResolutionsByScreen");
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.Screen", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<double>("Diagonal");
+
+                b.Property<long?>("EffectiveColors");
+
+                b.Property<double?>("Height");
+
+                b.Property<int>("NativeResolutionId");
+
+                b.Property<string>("Type").IsRequired();
+
+                b.Property<double?>("Width");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Diagonal");
+
+                b.HasIndex("EffectiveColors");
+
+                b.HasIndex("Height");
+
+                b.HasIndex("NativeResolutionId");
+
+                b.HasIndex("Type");
+
+                b.HasIndex("Width");
+
+                b.ToTable("Screens");
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.ScreensByMachine", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<int>("MachineId");
+
+                b.Property<int>("ScreenId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("MachineId");
+
+                b.HasIndex("ScreenId");
+
+                b.ToTable("ScreensByMachine");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.SoundByMachine", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
@@ -4833,6 +4900,31 @@ namespace Cicm.Database.Migrations
                 b.HasOne("Cicm.Database.Models.Resolution", "Resolution").WithMany("ResolutionsByGpu")
                  .HasForeignKey("ResolutionId").HasConstraintName("fk_resolutions_by_gpu_resolution")
                  .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.ResolutionsByScreen", b =>
+            {
+                b.HasOne("Cicm.Database.Models.Resolution", "Resolution").WithMany("ResolutionsByScreen")
+                 .HasForeignKey("ResolutionId").OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.Screen", "Screen").WithMany("Resolutions").HasForeignKey("ScreenId")
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.Screen",
+                                b =>
+                                {
+                                    b.HasOne("Cicm.Database.Models.Resolution", "NativeResolution").WithMany("Screens")
+                                     .HasForeignKey("NativeResolutionId").OnDelete(DeleteBehavior.Cascade);
+                                });
+
+            modelBuilder.Entity("Cicm.Database.Models.ScreensByMachine", b =>
+            {
+                b.HasOne("Cicm.Database.Models.Machine", "Machine").WithMany("Screens").HasForeignKey("MachineId")
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.Screen", "Screen").WithMany("ScreensByMachines")
+                 .HasForeignKey("ScreenId").OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Cicm.Database.Models.SoundByMachine", b =>

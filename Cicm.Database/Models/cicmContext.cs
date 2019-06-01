@@ -73,6 +73,9 @@ namespace Cicm.Database.Models
         public virtual DbSet<ProcessorsByOwnedMachine>            ProcessorsByOwnedMachine            { get; set; }
         public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
         public virtual DbSet<StorageByOwnedMachine>               StorageByOwnedMachine               { get; set; }
+        public virtual DbSet<Screen>                              Screens                             { get; set; }
+        public virtual DbSet<ScreensByMachine>                    ScreensByMachine                    { get; set; }
+        public virtual DbSet<ResolutionsByScreen>                 ResolutionsByScreen                 { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -948,6 +951,35 @@ namespace Cicm.Database.Models
 
                 entity.HasOne(d => d.Resolution).WithMany(p => p.ResolutionsByGpu).HasForeignKey(d => d.ResolutionId)
                       .HasConstraintName("fk_resolutions_by_gpu_resolution");
+            });
+
+            modelBuilder.Entity<ResolutionsByScreen>(entity =>
+            {
+                entity.HasIndex(e => e.ScreenId);
+
+                entity.HasIndex(e => e.ResolutionId);
+            });
+
+            modelBuilder.Entity<ScreensByMachine>(entity =>
+            {
+                entity.HasIndex(e => e.ScreenId);
+
+                entity.HasIndex(e => e.MachineId);
+            });
+
+            modelBuilder.Entity<Screen>(entity =>
+            {
+                entity.HasIndex(e => e.Width);
+
+                entity.HasIndex(e => e.Height);
+
+                entity.HasIndex(e => e.Diagonal);
+
+                entity.HasIndex(e => e.EffectiveColors);
+
+                entity.HasIndex(e => e.Type);
+
+                entity.HasOne(d => d.NativeResolution).WithMany(p => p.Screens);
             });
 
             modelBuilder.Entity<SoundByMachine>(entity =>

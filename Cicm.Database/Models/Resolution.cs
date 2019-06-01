@@ -56,7 +56,9 @@ namespace Cicm.Database.Models
         [DisplayName("Grayscale")]
         public bool Grayscale { get; set; }
 
-        public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
+        public virtual ICollection<ResolutionsByGpu>    ResolutionsByGpu    { get; set; }
+        public virtual ICollection<ResolutionsByScreen> ResolutionsByScreen { get; set; }
+        public virtual ICollection<Screen>              Screens             { get; set; }
 
         public long? PaletteView => Palette ?? Colors;
 
