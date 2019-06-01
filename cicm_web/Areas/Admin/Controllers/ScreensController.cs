@@ -20,8 +20,9 @@ namespace cicm_web.Areas.Admin.Controllers
 
         // GET: Screens
         public async Task<IActionResult> Index() =>
-            View(await _context.Screens.OrderBy(s => s.Diagonal).ThenBy(s => s.EffectiveColors).ThenBy(s => s.Type)
-                               .ThenBy(s => s.Size).ToListAsync());
+            View(await _context.Screens.OrderBy(s => s.Diagonal).ThenBy(s => s.EffectiveColors)
+                               .ThenBy(s => s.NativeResolution.ToString()).ThenBy(s => s.Type).ThenBy(s => s.Size)
+                               .ToListAsync());
 
         // GET: Screens/Details/5
         public async Task<IActionResult> Details(int? id)

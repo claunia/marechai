@@ -17,6 +17,7 @@ namespace Cicm.Database.Models
         [DisplayName("Diagonal (inches)")]
         public double Diagonal { get; set; }
         [Required]
+        [DisplayName("Native resolution")]
         public virtual Resolution NativeResolution { get; set; }
         [Range(2, 281474976710656)]
         [DisplayName("Effective colors")]
