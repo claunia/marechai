@@ -161,9 +161,20 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             if(id == null) return NotFound();
 
-            ScreensByMachine screensByMachine = await _context.ScreensByMachine
-                                                              .Include(s => s.Machine).Include(s => s.Screen)
-                                                              .FirstOrDefaultAsync(m => m.Id == id);
+            ScreensByMachineViewModel screensByMachine = await _context.ScreensByMachine
+                                                                       .Include(s => s.Machine).Include(s => s.Screen)
+                                                                       .Select(s => new ScreensByMachineViewModel
+                                                                        {
+                                                                            Id = s.Id,
+                                                                            Screen =
+                                                                                s.Screen.NativeResolution !=
+                                                                                null
+                                                                                    ? $"{s.Screen.Diagonal}\" {s.Screen.Type} with {s.Screen.NativeResolution}"
+                                                                                    : $"{s.Screen.Diagonal}\" {s.Screen}",
+                                                                            Machine =
+                                                                                $"{s.Machine.Company.Name} {s.Machine.Name}"
+                                                                        }).FirstOrDefaultAsync(m => m.Id ==
+                                                                                                    id);
             if(screensByMachine == null) return NotFound();
 
             return View(screensByMachine);
