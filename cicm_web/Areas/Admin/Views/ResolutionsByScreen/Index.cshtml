@@ -30,10 +30,12 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Screen.Type)
+                @if(item.Screen.NativeResolution != null) { @($"{item.Screen.Diagonal}\" {item.Screen.Type} with {item.Screen.NativeResolution}") }
+                else
+                { @($"{item.Screen.Diagonal}\" {item.Screen.Type}") }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Resolution.Id)
+                @item.Resolution.ToString()
             </td>
             <td>
                 <a asp-action="Details"

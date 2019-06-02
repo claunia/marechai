@@ -50,7 +50,7 @@ namespace cicm_web.Areas.Admin.Controllers
                                "Id", "Name");
             ViewData["ScreenId"] =
                 new
-                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} at {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} with {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
                                "Id", "Name");
             return View();
         }
@@ -75,7 +75,7 @@ namespace cicm_web.Areas.Admin.Controllers
                                "Id", "Name", resolutionsByScreen.ResolutionId);
             ViewData["ScreenId"] =
                 new
-                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} at {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} with {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
                                "Id", "Name", resolutionsByScreen.ScreenId);
             return View(resolutionsByScreen);
         }
@@ -93,7 +93,7 @@ namespace cicm_web.Areas.Admin.Controllers
                                "Id", "Name", resolutionsByScreen.ResolutionId);
             ViewData["ScreenId"] =
                 new
-                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} at {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} with {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
                                "Id", "Name", resolutionsByScreen.ScreenId);
             return View(resolutionsByScreen);
         }
@@ -130,7 +130,7 @@ namespace cicm_web.Areas.Admin.Controllers
                                "Id", "Name", resolutionsByScreen.ResolutionId);
             ViewData["ScreenId"] =
                 new
-                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} at {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} with {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
                                "Id", "Name", resolutionsByScreen.ScreenId);
             return View(resolutionsByScreen);
         }
