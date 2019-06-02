@@ -52,8 +52,14 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: ScreensByMachine/Create
         public IActionResult Create()
         {
-            ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name");
-            ViewData["ScreenId"]  = new SelectList(_context.Screens,  "Id", "Type");
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name");
+            ViewData["ScreenId"] =
+                new
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} with {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                               "Id", "Name");
             return View();
         }
 
@@ -71,8 +77,14 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", screensByMachine.MachineId);
-            ViewData["ScreenId"]  = new SelectList(_context.Screens,  "Id", "Type", screensByMachine.ScreenId);
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name", screensByMachine.MachineId);
+            ViewData["ScreenId"] =
+                new
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} with {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                               "Id", "Name", screensByMachine.ScreenId);
             return View(screensByMachine);
         }
 
@@ -84,8 +96,14 @@ namespace cicm_web.Areas.Admin.Controllers
             ScreensByMachine screensByMachine = await _context.ScreensByMachine.FindAsync(id);
             if(screensByMachine == null) return NotFound();
 
-            ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", screensByMachine.MachineId);
-            ViewData["ScreenId"]  = new SelectList(_context.Screens,  "Id", "Type", screensByMachine.ScreenId);
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name", screensByMachine.MachineId);
+            ViewData["ScreenId"] =
+                new
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} with {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                               "Id", "Name", screensByMachine.ScreenId);
             return View(screensByMachine);
         }
 
@@ -116,8 +134,14 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", screensByMachine.MachineId);
-            ViewData["ScreenId"]  = new SelectList(_context.Screens,  "Id", "Type", screensByMachine.ScreenId);
+            ViewData["MachineId"] =
+                new
+                    SelectList(_context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new {m.Id, Name = $"{m.Company.Name} {m.Name}"}),
+                               "Id", "Name", screensByMachine.MachineId);
+            ViewData["ScreenId"] =
+                new
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} with {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                               "Id", "Name", screensByMachine.ScreenId);
             return View(screensByMachine);
         }
 
@@ -149,6 +173,15 @@ namespace cicm_web.Areas.Admin.Controllers
         bool ScreensByMachineExists(long id)
         {
             return _context.ScreensByMachine.Any(e => e.Id == id);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyUnique(int screenId, int machineId)
+        {
+            return await _context.ScreensByMachine.FirstOrDefaultAsync(i => i.ScreenId  == screenId &&
+                                                                            i.MachineId == machineId) is null
+                       ? Json(true)
+                       : Json("The selected machine already has the selected screen.");
         }
     }
 }
