@@ -1,14 +1,17 @@
-@using Cicm.Database.Models
-@model IEnumerable<Cicm.Database.Models.ScreensByMachine>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.ScreensByMachineViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Screens by machine</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Create New
+    </a>
 </p>
 <table class="table">
     <thead>
@@ -23,26 +26,29 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(ScreensByMachine item in Model)
+    @foreach(ScreensByMachineViewModel item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Screen.Type)
+                @Html.DisplayFor(modelItem => item.Screen)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Machine.Name)
+                @Html.DisplayFor(modelItem => item.Machine)
             </td>
             <td>
-                <a asp-action="Edit"
-                   asp-route-id="@item.Id">
-                    Edit
-                </a> |
                 <a asp-action="Details"
-                   asp-route-id="@item.Id">
+                   asp-route-id="@item.Id"
+                   class="btn btn-primary">
                     Details
-                </a> |
+                </a>
+                <a asp-action="Edit"
+                   asp-route-id="@item.Id"
+                   class="btn btn-secondary">
+                    Edit
+                </a>
                 <a asp-action="Delete"
-                   asp-route-id="@item.Id">
+                   asp-route-id="@item.Id"
+                   class="btn btn-danger">
                     Delete
                 </a>
             </td>

@@ -2,12 +2,12 @@
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
-// Filename       : ResolutionsByGpu.cs
+// Filename       : GpusByMachine.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Junction of resolutions and gpus.
+//     Junction betweeen GPU and machine.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,18 +28,11 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using Microsoft.AspNetCore.Mvc;
-
-namespace Cicm.Database.Models
+namespace cicm_web.Areas.Admin.Models
 {
-    public class ScreensByMachine : BaseModel<long>
+    public class ScreensByMachineViewModel : BaseViewModel<long>
     {
-        [Remote("VerifyUnique", "ScreensByMachine", "Admin", AdditionalFields = nameof(MachineId))]
-        public int ScreenId { get; set; }
-        [Remote("VerifyUnique", "ScreensByMachine", "Admin", AdditionalFields = nameof(ScreenId))]
-        public int MachineId { get; set; }
-
-        public virtual Screen  Screen  { get; set; }
-        public virtual Machine Machine { get; set; }
+        public string Machine;
+        public string Screen;
     }
 }

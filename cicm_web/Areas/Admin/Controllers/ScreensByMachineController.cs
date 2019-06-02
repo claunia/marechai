@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,7 +26,14 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<ScreensByMachine, Screen> cicmContext =
                 _context.ScreensByMachine.Include(s => s.Machine).Include(s => s.Screen);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.Select(s => new ScreensByMachineViewModel
+            {
+                Id = s.Id,
+                Screen = s.Screen.NativeResolution != null
+                             ? $"{s.Screen.Diagonal}\" {s.Screen.Type} with {s.Screen.NativeResolution}"
+                             : $"{s.Screen.Diagonal}\" {s.Screen}",
+                Machine = $"{s.Machine.Company.Name} {s.Machine.Name}"
+            }).OrderBy(s => s.Machine).ThenBy(s => s.Screen).ToListAsync());
         }
 
         // GET: ScreensByMachine/Details/5
