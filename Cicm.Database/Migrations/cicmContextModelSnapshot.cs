@@ -4180,6 +4180,51 @@ namespace Cicm.Database.Migrations
                 b.ToTable("OwnedMachinePhotos");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.Person", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<DateTime>("BirthDate");
+
+                b.Property<short?>("CountryOfBirthId");
+
+                b.Property<DateTime?>("DeathDate");
+
+                b.Property<string>("Facebook");
+
+                b.Property<string>("Name").IsRequired();
+
+                b.Property<Guid>("Photo");
+
+                b.Property<string>("Surname").IsRequired();
+
+                b.Property<string>("Twitter");
+
+                b.Property<string>("Webpage");
+
+                b.HasKey("Id");
+
+                b.HasIndex("BirthDate");
+
+                b.HasIndex("CountryOfBirthId");
+
+                b.HasIndex("DeathDate");
+
+                b.HasIndex("Facebook");
+
+                b.HasIndex("Name");
+
+                b.HasIndex("Photo");
+
+                b.HasIndex("Surname");
+
+                b.HasIndex("Twitter");
+
+                b.HasIndex("Webpage");
+
+                b.ToTable("People");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.Processor", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -4863,6 +4908,13 @@ namespace Cicm.Database.Migrations
                 b.HasOne("Cicm.Database.Models.ApplicationUser", "User").WithMany("OwnedMachinePhotos")
                  .HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade);
             });
+
+            modelBuilder.Entity("Cicm.Database.Models.Person",
+                                b =>
+                                {
+                                    b.HasOne("Cicm.Database.Models.Iso31661Numeric", "CountryOfBirth")
+                                     .WithMany("People").HasForeignKey("CountryOfBirthId");
+                                });
 
             modelBuilder.Entity("Cicm.Database.Models.Processor", b =>
             {

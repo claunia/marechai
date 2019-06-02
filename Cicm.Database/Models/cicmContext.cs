@@ -76,6 +76,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<Screen>                              Screens                             { get; set; }
         public virtual DbSet<ScreensByMachine>                    ScreensByMachine                    { get; set; }
         public virtual DbSet<ResolutionsByScreen>                 ResolutionsByScreen                 { get; set; }
+        public virtual DbSet<Person>                              People                              { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -749,6 +750,29 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("datetime");
 
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
+            });
+
+            modelBuilder.Entity<Person>(entity =>
+            {
+                entity.HasIndex(e => e.Name);
+
+                entity.HasIndex(e => e.Surname);
+
+                entity.HasIndex(e => e.CountryOfBirthId);
+
+                entity.HasIndex(e => e.BirthDate);
+
+                entity.HasIndex(e => e.DeathDate);
+
+                entity.HasIndex(e => e.Webpage);
+
+                entity.HasIndex(e => e.Twitter);
+
+                entity.HasIndex(e => e.Facebook);
+
+                entity.HasIndex(e => e.Photo);
+
+                entity.HasOne(d => d.CountryOfBirth).WithMany(p => p.People).HasForeignKey(d => d.CountryOfBirthId);
             });
 
             modelBuilder.Entity<Processor>(entity =>
