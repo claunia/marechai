@@ -42,5 +42,8 @@ namespace Cicm.Database.Models
         public virtual ICollection<ScreensByMachine>    ScreensByMachines { get; set; }
         [Required]
         public int NativeResolutionId { get; set; }
+
+        public override string ToString() =>
+            NativeResolution != null ? $"{Diagonal}\" {Type} at {NativeResolution}" : $"{Diagonal}\" {Type}";
     }
 }

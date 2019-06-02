@@ -25,7 +25,8 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             IIncludableQueryable<ResolutionsByScreen, Screen> cicmContext =
                 _context.ResolutionsByScreen.Include(r => r.Resolution).Include(r => r.Screen);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(r => r.Screen.ToString()).ThenBy(r => r.Resolution.ToString())
+                                         .ToListAsync());
         }
 
         // GET: ResolutionsByScreen/Details/5
