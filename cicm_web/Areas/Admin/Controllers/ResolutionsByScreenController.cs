@@ -45,8 +45,13 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: ResolutionsByScreen/Create
         public IActionResult Create()
         {
-            ViewData["ResolutionId"] = new SelectList(_context.Resolutions, "Id", "Id");
-            ViewData["ScreenId"]     = new SelectList(_context.Screens,     "Id", "Type");
+            ViewData["ResolutionId"] =
+                new SelectList(_context.Resolutions.Select(r => new {r.Id, Name = r.ToString()}).OrderBy(r => r.Name),
+                               "Id", "Name");
+            ViewData["ScreenId"] =
+                new
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} at {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                               "Id", "Name");
             return View();
         }
 
@@ -66,8 +71,12 @@ namespace cicm_web.Areas.Admin.Controllers
             }
 
             ViewData["ResolutionId"] =
-                new SelectList(_context.Resolutions, "Id", "Id", resolutionsByScreen.ResolutionId);
-            ViewData["ScreenId"] = new SelectList(_context.Screens, "Id", "Type", resolutionsByScreen.ScreenId);
+                new SelectList(_context.Resolutions.Select(r => new {r.Id, Name = r.ToString()}).OrderBy(r => r.Name),
+                               "Id", "Name", resolutionsByScreen.ResolutionId);
+            ViewData["ScreenId"] =
+                new
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} at {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                               "Id", "Name", resolutionsByScreen.ScreenId);
             return View(resolutionsByScreen);
         }
 
@@ -80,8 +89,12 @@ namespace cicm_web.Areas.Admin.Controllers
             if(resolutionsByScreen == null) return NotFound();
 
             ViewData["ResolutionId"] =
-                new SelectList(_context.Resolutions, "Id", "Id", resolutionsByScreen.ResolutionId);
-            ViewData["ScreenId"] = new SelectList(_context.Screens, "Id", "Type", resolutionsByScreen.ScreenId);
+                new SelectList(_context.Resolutions.Select(r => new {r.Id, Name = r.ToString()}).OrderBy(r => r.Name),
+                               "Id", "Name", resolutionsByScreen.ResolutionId);
+            ViewData["ScreenId"] =
+                new
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} at {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                               "Id", "Name", resolutionsByScreen.ScreenId);
             return View(resolutionsByScreen);
         }
 
@@ -113,8 +126,12 @@ namespace cicm_web.Areas.Admin.Controllers
             }
 
             ViewData["ResolutionId"] =
-                new SelectList(_context.Resolutions, "Id", "Id", resolutionsByScreen.ResolutionId);
-            ViewData["ScreenId"] = new SelectList(_context.Screens, "Id", "Type", resolutionsByScreen.ScreenId);
+                new SelectList(_context.Resolutions.Select(r => new {r.Id, Name = r.ToString()}).OrderBy(r => r.Name),
+                               "Id", "Name", resolutionsByScreen.ResolutionId);
+            ViewData["ScreenId"] =
+                new
+                    SelectList(_context.Screens.Select(s => new {s.Id, Name = s.NativeResolution != null ? $"{s.Diagonal}\" {s.Type} at {s.NativeResolution}" : $"{s.Diagonal}\" {s.Type}"}).OrderBy(s => s.Name),
+                               "Id", "Name", resolutionsByScreen.ScreenId);
             return View(resolutionsByScreen);
         }
 
@@ -146,6 +163,15 @@ namespace cicm_web.Areas.Admin.Controllers
         bool ResolutionsByScreenExists(long id)
         {
             return _context.ResolutionsByScreen.Any(e => e.Id == id);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> VerifyUnique(int screenId, int resolutionId)
+        {
+            return await _context.ResolutionsByScreen.FirstOrDefaultAsync(i => i.ScreenId     == screenId &&
+                                                                               i.ResolutionId == resolutionId) is null
+                       ? Json(true)
+                       : Json("The selected screen already has the selected resolution.");
         }
     }
 }
