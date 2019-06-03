@@ -1,0 +1,268 @@
+using Microsoft.EntityFrameworkCore;
+
+namespace Cicm.Database.Seeders.Iso639Split
+{
+    public static class O
+    {
+        public static void Seed(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Models.Iso639>()
+                        .HasData(new {Id = "oaa", Scope = "I", Type = "L", ReferenceName = "Orok"},
+                                 new {Id = "oac", Scope = "I", Type = "L", ReferenceName = "Oroch"},
+                                 new
+                                 {
+                                     Id            = "oar",
+                                     Scope         = "I",
+                                     Type          = "A",
+                                     ReferenceName = "Old Aramaic (up to 700 BCE)"
+                                 }, new {Id = "oav", Scope = "I", Type = "H", ReferenceName = "Old Avar"},
+                                 new {Id    = "obi", Scope = "I", Type = "E", ReferenceName = "Obispeño"},
+                                 new {Id    = "obk", Scope = "I", Type = "L", ReferenceName = "Southern Bontok"},
+                                 new {Id    = "obl", Scope = "I", Type = "L", ReferenceName = "Oblo"},
+                                 new {Id    = "obm", Scope = "I", Type = "A", ReferenceName = "Moabite"},
+                                 new {Id    = "obo", Scope = "I", Type = "L", ReferenceName = "Obo Manobo"},
+                                 new {Id    = "obr", Scope = "I", Type = "H", ReferenceName = "Old Burmese"},
+                                 new {Id    = "obt", Scope = "I", Type = "H", ReferenceName = "Old Breton"},
+                                 new {Id    = "obu", Scope = "I", Type = "L", ReferenceName = "Obulom"},
+                                 new {Id    = "oca", Scope = "I", Type = "L", ReferenceName = "Ocaina"},
+                                 new {Id    = "och", Scope = "I", Type = "A", ReferenceName = "Old Chinese"},
+                                 new
+                                 {
+                                     Id            = "oci",
+                                     Part2B        = "oci",
+                                     Part2T        = "oci",
+                                     Part1         = "oc",
+                                     Scope         = "I",
+                                     Type          = "L",
+                                     ReferenceName = "Occitan (post 1500)"
+                                 }, new {Id = "oco", Scope = "I", Type = "H", ReferenceName = "Old Cornish"},
+                                 new {Id    = "ocu", Scope = "I", Type = "L", ReferenceName = "Atzingo Matlatzinca"},
+                                 new {Id    = "oda", Scope = "I", Type = "L", ReferenceName = "Odut"},
+                                 new {Id    = "odk", Scope = "I", Type = "L", ReferenceName = "Od"},
+                                 new {Id    = "odt", Scope = "I", Type = "H", ReferenceName = "Old Dutch"},
+                                 new {Id    = "odu", Scope = "I", Type = "L", ReferenceName = "Odual"},
+                                 new {Id    = "ofo", Scope = "I", Type = "E", ReferenceName = "Ofo"},
+                                 new {Id    = "ofs", Scope = "I", Type = "H", ReferenceName = "Old Frisian"},
+                                 new {Id    = "ofu", Scope = "I", Type = "L", ReferenceName = "Efutop"},
+                                 new {Id    = "ogb", Scope = "I", Type = "L", ReferenceName = "Ogbia"},
+                                 new {Id    = "ogc", Scope = "I", Type = "L", ReferenceName = "Ogbah"},
+                                 new {Id    = "oge", Scope = "I", Type = "H", ReferenceName = "Old Georgian"},
+                                 new {Id    = "ogg", Scope = "I", Type = "L", ReferenceName = "Ogbogolo"},
+                                 new {Id    = "ogo", Scope = "I", Type = "L", ReferenceName = "Khana"},
+                                 new {Id    = "ogu", Scope = "I", Type = "L", ReferenceName = "Ogbronuagum"},
+                                 new {Id    = "oht", Scope = "I", Type = "A", ReferenceName = "Old Hittite"},
+                                 new {Id    = "ohu", Scope = "I", Type = "H", ReferenceName = "Old Hungarian"},
+                                 new {Id    = "oia", Scope = "I", Type = "L", ReferenceName = "Oirata"},
+                                 new {Id    = "oin", Scope = "I", Type = "L", ReferenceName = "Inebu One"},
+                                 new {Id    = "ojb", Scope = "I", Type = "L", ReferenceName = "Northwestern Ojibwa"},
+                                 new {Id    = "ojc", Scope = "I", Type = "L", ReferenceName = "Central Ojibwa"},
+                                 new {Id    = "ojg", Scope = "I", Type = "L", ReferenceName = "Eastern Ojibwa"},
+                                 new
+                                 {
+                                     Id            = "oji",
+                                     Part2B        = "oji",
+                                     Part2T        = "oji",
+                                     Part1         = "oj",
+                                     Scope         = "M",
+                                     Type          = "L",
+                                     ReferenceName = "Ojibwa"
+                                 }, new {Id = "ojp", Scope = "I", Type = "H", ReferenceName = "Old Japanese"},
+                                 new {Id    = "ojs", Scope = "I", Type = "L", ReferenceName = "Severn Ojibwa"},
+                                 new {Id    = "ojv", Scope = "I", Type = "L", ReferenceName = "Ontong Java"},
+                                 new {Id    = "ojw", Scope = "I", Type = "L", ReferenceName = "Western Ojibwa"},
+                                 new {Id    = "oka", Scope = "I", Type = "L", ReferenceName = "Okanagan"},
+                                 new {Id    = "okb", Scope = "I", Type = "L", ReferenceName = "Okobo"},
+                                 new {Id    = "okd", Scope = "I", Type = "L", ReferenceName = "Okodia"},
+                                 new
+                                     {
+                                         Id            = "oke",
+                                         Scope         = "I",
+                                         Type          = "L",
+                                         ReferenceName = "Okpe (Southwestern Edo)"
+                                     },
+                                 new {Id = "okg", Scope = "I", Type = "E", ReferenceName = "Koko Babangk"},
+                                 new {Id = "okh", Scope = "I", Type = "L", ReferenceName = "Koresh-e Rostam"},
+                                 new {Id = "oki", Scope = "I", Type = "L", ReferenceName = "Okiek"},
+                                 new {Id = "okj", Scope = "I", Type = "E", ReferenceName = "Oko-Juwoi"},
+                                 new {Id = "okk", Scope = "I", Type = "L", ReferenceName = "Kwamtim One"},
+                                 new
+                                     {
+                                         Id            = "okl",
+                                         Scope         = "I",
+                                         Type          = "E",
+                                         ReferenceName = "Old Kentish Sign Language"
+                                     },
+                                 new
+                                 {
+                                     Id            = "okm",
+                                     Scope         = "I",
+                                     Type          = "H",
+                                     ReferenceName = "Middle Korean (10th-16th cent.)"
+                                 }, new {Id = "okn", Scope = "I", Type = "L", ReferenceName = "Oki-No-Erabu"},
+                                 new
+                                 {
+                                     Id            = "oko",
+                                     Scope         = "I",
+                                     Type          = "H",
+                                     ReferenceName = "Old Korean (3rd-9th cent.)"
+                                 }, new {Id = "okr", Scope = "I", Type = "L", ReferenceName = "Kirike"},
+                                 new {Id    = "oks", Scope = "I", Type = "L", ReferenceName = "Oko-Eni-Osayen"},
+                                 new {Id    = "oku", Scope = "I", Type = "L", ReferenceName = "Oku"},
+                                 new {Id    = "okv", Scope = "I", Type = "L", ReferenceName = "Orokaiva"},
+                                 new
+                                     {
+                                         Id            = "okx",
+                                         Scope         = "I",
+                                         Type          = "L",
+                                         ReferenceName = "Okpe (Northwestern Edo)"
+                                     },
+                                 new {Id = "ola", Scope = "I", Type = "L", ReferenceName = "Walungge"},
+                                 new {Id = "old", Scope = "I", Type = "L", ReferenceName = "Mochi"},
+                                 new {Id = "ole", Scope = "I", Type = "L", ReferenceName = "Olekha"},
+                                 new {Id = "olk", Scope = "I", Type = "E", ReferenceName = "Olkol"},
+                                 new {Id = "olm", Scope = "I", Type = "L", ReferenceName = "Oloma"},
+                                 new {Id = "olo", Scope = "I", Type = "L", ReferenceName = "Livvi"},
+                                 new {Id = "olr", Scope = "I", Type = "L", ReferenceName = "Olrat"},
+                                 new {Id = "olt", Scope = "I", Type = "H", ReferenceName = "Old Lithuanian"},
+                                 new {Id = "olu", Scope = "I", Type = "L", ReferenceName = "Kuvale"},
+                                 new {Id = "oma", Scope = "I", Type = "L", ReferenceName = "Omaha-Ponca"},
+                                 new {Id = "omb", Scope = "I", Type = "L", ReferenceName = "East Ambae"},
+                                 new {Id = "omc", Scope = "I", Type = "E", ReferenceName = "Mochica"},
+                                 new {Id = "omg", Scope = "I", Type = "L", ReferenceName = "Omagua"},
+                                 new {Id = "omi", Scope = "I", Type = "L", ReferenceName = "Omi"},
+                                 new {Id = "omk", Scope = "I", Type = "E", ReferenceName = "Omok"},
+                                 new {Id = "oml", Scope = "I", Type = "L", ReferenceName = "Ombo"},
+                                 new {Id = "omn", Scope = "I", Type = "A", ReferenceName = "Minoan"},
+                                 new {Id = "omo", Scope = "I", Type = "L", ReferenceName = "Utarmbung"},
+                                 new {Id = "omp", Scope = "I", Type = "H", ReferenceName = "Old Manipuri"},
+                                 new {Id = "omr", Scope = "I", Type = "H", ReferenceName = "Old Marathi"},
+                                 new {Id = "omt", Scope = "I", Type = "L", ReferenceName = "Omotik"},
+                                 new {Id = "omu", Scope = "I", Type = "E", ReferenceName = "Omurano"},
+                                 new {Id = "omw", Scope = "I", Type = "L", ReferenceName = "South Tairora"},
+                                 new {Id = "omx", Scope = "I", Type = "H", ReferenceName = "Old Mon"},
+                                 new {Id = "ona", Scope = "I", Type = "L", ReferenceName = "Ona"},
+                                 new {Id = "onb", Scope = "I", Type = "L", ReferenceName = "Lingao"},
+                                 new {Id = "one", Scope = "I", Type = "L", ReferenceName = "Oneida"},
+                                 new {Id = "ong", Scope = "I", Type = "L", ReferenceName = "Olo"},
+                                 new {Id = "oni", Scope = "I", Type = "L", ReferenceName = "Onin"},
+                                 new {Id = "onj", Scope = "I", Type = "L", ReferenceName = "Onjob"},
+                                 new {Id = "onk", Scope = "I", Type = "L", ReferenceName = "Kabore One"},
+                                 new {Id = "onn", Scope = "I", Type = "L", ReferenceName = "Onobasulu"},
+                                 new {Id = "ono", Scope = "I", Type = "L", ReferenceName = "Onondaga"},
+                                 new {Id = "onp", Scope = "I", Type = "L", ReferenceName = "Sartang"},
+                                 new {Id = "onr", Scope = "I", Type = "L", ReferenceName = "Northern One"},
+                                 new {Id = "ons", Scope = "I", Type = "L", ReferenceName = "Ono"},
+                                 new {Id = "ont", Scope = "I", Type = "L", ReferenceName = "Ontenu"},
+                                 new {Id = "onu", Scope = "I", Type = "L", ReferenceName = "Unua"},
+                                 new {Id = "onw", Scope = "I", Type = "H", ReferenceName = "Old Nubian"},
+                                 new {Id = "onx", Scope = "I", Type = "L", ReferenceName = "Onin Based Pidgin"},
+                                 new {Id = "ood", Scope = "I", Type = "L", ReferenceName = "Tohono O'odham"},
+                                 new {Id = "oog", Scope = "I", Type = "L", ReferenceName = "Ong"},
+                                 new {Id = "oon", Scope = "I", Type = "L", ReferenceName = "Önge"},
+                                 new {Id = "oor", Scope = "I", Type = "L", ReferenceName = "Oorlams"},
+                                 new {Id = "oos", Scope = "I", Type = "A", ReferenceName = "Old Ossetic"},
+                                 new {Id = "opa", Scope = "I", Type = "L", ReferenceName = "Okpamheri"},
+                                 new {Id = "opk", Scope = "I", Type = "L", ReferenceName = "Kopkaka"},
+                                 new {Id = "opm", Scope = "I", Type = "L", ReferenceName = "Oksapmin"},
+                                 new {Id = "opo", Scope = "I", Type = "L", ReferenceName = "Opao"},
+                                 new {Id = "opt", Scope = "I", Type = "E", ReferenceName = "Opata"},
+                                 new {Id = "opy", Scope = "I", Type = "L", ReferenceName = "Ofayé"},
+                                 new {Id = "ora", Scope = "I", Type = "L", ReferenceName = "Oroha"},
+                                 new {Id = "orc", Scope = "I", Type = "L", ReferenceName = "Orma"},
+                                 new {Id = "ore", Scope = "I", Type = "L", ReferenceName = "Orejón"},
+                                 new {Id = "org", Scope = "I", Type = "L", ReferenceName = "Oring"},
+                                 new {Id = "orh", Scope = "I", Type = "L", ReferenceName = "Oroqen"},
+                                 new
+                                 {
+                                     Id            = "ori",
+                                     Part2B        = "ori",
+                                     Part2T        = "ori",
+                                     Part1         = "or",
+                                     Scope         = "M",
+                                     Type          = "L",
+                                     ReferenceName = "Oriya (macrolanguage)"
+                                 }, new
+                                 {
+                                     Id            = "orm",
+                                     Part2B        = "orm",
+                                     Part2T        = "orm",
+                                     Part1         = "om",
+                                     Scope         = "M",
+                                     Type          = "L",
+                                     ReferenceName = "Oromo"
+                                 }, new {Id = "orn", Scope = "I", Type = "L", ReferenceName = "Orang Kanaq"},
+                                 new {Id    = "oro", Scope = "I", Type = "L", ReferenceName = "Orokolo"},
+                                 new {Id    = "orr", Scope = "I", Type = "L", ReferenceName = "Oruma"},
+                                 new {Id    = "ors", Scope = "I", Type = "L", ReferenceName = "Orang Seletar"},
+                                 new {Id    = "ort", Scope = "I", Type = "L", ReferenceName = "Adivasi Oriya"},
+                                 new {Id    = "oru", Scope = "I", Type = "L", ReferenceName = "Ormuri"},
+                                 new {Id    = "orv", Scope = "I", Type = "H", ReferenceName = "Old Russian"},
+                                 new {Id    = "orw", Scope = "I", Type = "L", ReferenceName = "Oro Win"},
+                                 new {Id    = "orx", Scope = "I", Type = "L", ReferenceName = "Oro"},
+                                 new {Id    = "ory", Scope = "I", Type = "L", ReferenceName = "Odia"},
+                                 new {Id    = "orz", Scope = "I", Type = "L", ReferenceName = "Ormu"},
+                                 new
+                                 {
+                                     Id            = "osa",
+                                     Part2B        = "osa",
+                                     Part2T        = "osa",
+                                     Scope         = "I",
+                                     Type          = "L",
+                                     ReferenceName = "Osage"
+                                 }, new {Id = "osc", Scope = "I", Type = "A", ReferenceName = "Oscan"},
+                                 new {Id    = "osi", Scope = "I", Type = "L", ReferenceName = "Osing"},
+                                 new {Id    = "oso", Scope = "I", Type = "L", ReferenceName = "Ososo"},
+                                 new {Id    = "osp", Scope = "I", Type = "H", ReferenceName = "Old Spanish"},
+                                 new
+                                 {
+                                     Id            = "oss",
+                                     Part2B        = "oss",
+                                     Part2T        = "oss",
+                                     Part1         = "os",
+                                     Scope         = "I",
+                                     Type          = "L",
+                                     ReferenceName = "Ossetian"
+                                 }, new {Id = "ost", Scope = "I", Type = "L", ReferenceName = "Osatu"},
+                                 new {Id    = "osu", Scope = "I", Type = "L", ReferenceName = "Southern One"},
+                                 new {Id    = "osx", Scope = "I", Type = "H", ReferenceName = "Old Saxon"},
+                                 new
+                                 {
+                                     Id            = "ota",
+                                     Part2B        = "ota",
+                                     Part2T        = "ota",
+                                     Scope         = "I",
+                                     Type          = "H",
+                                     ReferenceName = "Ottoman Turkish (1500-1928)"
+                                 }, new {Id = "otb", Scope = "I", Type = "H", ReferenceName = "Old Tibetan"},
+                                 new {Id    = "otd", Scope = "I", Type = "L", ReferenceName = "Ot Danum"},
+                                 new {Id    = "ote", Scope = "I", Type = "L", ReferenceName = "Mezquital Otomi"},
+                                 new {Id    = "oti", Scope = "I", Type = "E", ReferenceName = "Oti"},
+                                 new {Id    = "otk", Scope = "I", Type = "H", ReferenceName = "Old Turkish"},
+                                 new {Id    = "otl", Scope = "I", Type = "L", ReferenceName = "Tilapa Otomi"},
+                                 new {Id    = "otm", Scope = "I", Type = "L", ReferenceName = "Eastern Highland Otomi"},
+                                 new {Id    = "otn", Scope = "I", Type = "L", ReferenceName = "Tenango Otomi"},
+                                 new {Id    = "otq", Scope = "I", Type = "L", ReferenceName = "Querétaro Otomi"},
+                                 new {Id    = "otr", Scope = "I", Type = "L", ReferenceName = "Otoro"},
+                                 new {Id    = "ots", Scope = "I", Type = "L", ReferenceName = "Estado de México Otomi"},
+                                 new {Id    = "ott", Scope = "I", Type = "L", ReferenceName = "Temoaya Otomi"},
+                                 new {Id    = "otu", Scope = "I", Type = "E", ReferenceName = "Otuke"},
+                                 new {Id    = "otw", Scope = "I", Type = "L", ReferenceName = "Ottawa"},
+                                 new {Id    = "otx", Scope = "I", Type = "L", ReferenceName = "Texcatepec Otomi"},
+                                 new {Id    = "oty", Scope = "I", Type = "A", ReferenceName = "Old Tamil"},
+                                 new {Id    = "otz", Scope = "I", Type = "L", ReferenceName = "Ixtenco Otomi"},
+                                 new {Id    = "oua", Scope = "I", Type = "L", ReferenceName = "Tagargrent"},
+                                 new {Id    = "oub", Scope = "I", Type = "L", ReferenceName = "Glio-Oubi"},
+                                 new {Id    = "oue", Scope = "I", Type = "L", ReferenceName = "Oune"},
+                                 new {Id    = "oui", Scope = "I", Type = "H", ReferenceName = "Old Uighur"},
+                                 new {Id    = "oum", Scope = "I", Type = "E", ReferenceName = "Ouma"},
+                                 new {Id    = "ovd", Scope = "I", Type = "L", ReferenceName = "Elfdalian"},
+                                 new {Id    = "owi", Scope = "I", Type = "L", ReferenceName = "Owiniga"},
+                                 new {Id    = "owl", Scope = "I", Type = "H", ReferenceName = "Old Welsh"},
+                                 new {Id    = "oyb", Scope = "I", Type = "L", ReferenceName = "Oy"},
+                                 new {Id    = "oyd", Scope = "I", Type = "L", ReferenceName = "Oyda"},
+                                 new {Id    = "oym", Scope = "I", Type = "L", ReferenceName = "Wayampi"},
+                                 new {Id    = "oyy", Scope = "I", Type = "L", ReferenceName = "Oya'oya"},
+                                 new {Id    = "ozm", Scope = "I", Type = "L", ReferenceName = "Koonzime"});
+        }
+    }
+}

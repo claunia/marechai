@@ -77,6 +77,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<ScreensByMachine>                    ScreensByMachine                    { get; set; }
         public virtual DbSet<ResolutionsByScreen>                 ResolutionsByScreen                 { get; set; }
         public virtual DbSet<Person>                              People                              { get; set; }
+        public virtual DbSet<Iso639>                              Iso639                              { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -414,6 +415,29 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("smallint(3)");
 
                 entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("varchar(64)");
+            });
+
+            modelBuilder.Entity<Iso639>(entity =>
+            {
+                entity.ToTable("ISO_639-3");
+
+                entity.HasKey(e => e.Id);
+                
+                entity.HasIndex(e => e.Part2B);
+                
+                entity.HasIndex(e => e.Part2T);
+                
+                entity.HasIndex(e => e.Part1);
+                
+                entity.HasIndex(e => e.Scope);
+                
+                entity.HasIndex(e => e.Type);
+                
+                entity.HasIndex(e => e.ReferenceName);
+                
+                entity.HasIndex(e => e.Comment);
+                
+                entity.Property(e => e.ReferenceName).HasColumnName("Ref_Name");
             });
 
             modelBuilder.Entity<Log>(entity =>
@@ -1136,6 +1160,7 @@ namespace Cicm.Database.Models
             });
 
             Seeders.License.Seed(modelBuilder);
+            Seeders.Iso639.Seed(modelBuilder);
         }
     }
 }
