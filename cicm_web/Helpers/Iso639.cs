@@ -10,6 +10,7 @@ namespace cicm_web.Helpers
     public static class Iso639
     {
         // TODO: Changes file
+        // Data files can be found in https://iso639-3.sil.org/code_tables/download_tables
         internal static void Import(cicmContext context)
         {
             if(!Directory.Exists("iso639")) return;
