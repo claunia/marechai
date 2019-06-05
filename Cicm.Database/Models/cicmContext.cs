@@ -776,6 +776,23 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
             });
 
+            modelBuilder.Entity<PeopleByCompany>(entity =>
+            {
+                entity.HasIndex(e => e.PersonId);
+
+                entity.HasIndex(e => e.CompanyId);
+
+                entity.HasIndex(e => e.Position);
+
+                entity.HasIndex(e => e.Start);
+
+                entity.HasIndex(e => e.End);
+
+                entity.HasOne(d => d.Person).WithMany(p => p.Companies).HasForeignKey(d => d.PersonId);
+
+                entity.HasOne(d => d.Company).WithMany(p => p.People).HasForeignKey(d => d.CompanyId);
+            });
+
             modelBuilder.Entity<Person>(entity =>
             {
                 entity.HasIndex(e => e.Name);

@@ -90,6 +90,7 @@ namespace Cicm.Database.Models
         public virtual ICollection<Machine>            Machines                { get; set; }
         public virtual ICollection<Processor>          Processors              { get; set; }
         public virtual ICollection<SoundSynth>         SoundSynths             { get; set; }
+        public virtual ICollection<PeopleByCompany>    People                  { get; set; }
         public virtual CompanyLogo LastLogo =>
             Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -22,5 +23,6 @@ namespace Cicm.Database.Models
         public string FullName => $"{Name} {Surname}";
 
         public short? CountryOfBirthId { get; set; }
+        public virtual ICollection<PeopleByCompany> Companies { get; set; }
     }
 }
