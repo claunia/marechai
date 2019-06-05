@@ -39,6 +39,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Iso639 = cicm_web.Helpers.Iso639;
 using Version = DiscImageChef.Interop.Version;
 
 namespace cicm_web
@@ -175,6 +176,22 @@ namespace cicm_web
                     catch(Exception e)
                     {
                         Console.WriteLine("Exception {0} importing photos, saving changes and continuing...", e);
+                        throw;
+                    }
+
+                    context.SaveChanges();
+
+                    end = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                                      (end - start).TotalSeconds);
+
+                    start = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mImporting ISO-639 codes...\u001b[0m");
+
+                    try { Iso639.Import(context); }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine("Exception {0} importing ISO-639 codes, saving changes and continuing...", e);
                         throw;
                     }
 

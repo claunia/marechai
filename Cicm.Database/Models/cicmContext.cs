@@ -1160,7 +1160,6 @@ namespace Cicm.Database.Models
             });
 
             Seeders.License.Seed(modelBuilder);
-            Seeders.Iso639.Seed(modelBuilder);
         }
     }
 }
