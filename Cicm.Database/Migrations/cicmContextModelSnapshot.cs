@@ -4588,6 +4588,27 @@ namespace Cicm.Database.Migrations
                 b.ToTable("PeopleByCompany");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.PeopleByDocument", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<long>("DocumentId");
+
+                b.Property<int>("PersonId");
+
+                b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("DocumentId");
+
+                b.HasIndex("PersonId");
+
+                b.HasIndex("RoleId");
+
+                b.ToTable("PeopleByDocuments");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.Person", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
@@ -5340,6 +5361,18 @@ namespace Cicm.Database.Migrations
                  .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasOne("Cicm.Database.Models.Person", "Person").WithMany("Companies").HasForeignKey("PersonId")
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.PeopleByDocument", b =>
+            {
+                b.HasOne("Cicm.Database.Models.Document", "Document").WithMany("People").HasForeignKey("DocumentId")
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.DocumentPerson", "Person").WithMany("Documents")
+                 .HasForeignKey("PersonId").OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId")
                  .OnDelete(DeleteBehavior.Cascade);
             });
 

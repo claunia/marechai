@@ -81,6 +81,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<Document>                            Documents                           { get; set; }
         public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
         public virtual DbSet<DocumentPerson>                      DocumentPeople                      { get; set; }
+        public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -830,6 +831,17 @@ namespace Cicm.Database.Models
                 entity.HasOne(d => d.Person).WithMany(p => p.Companies).HasForeignKey(d => d.PersonId);
 
                 entity.HasOne(d => d.Company).WithMany(p => p.People).HasForeignKey(d => d.CompanyId);
+            });
+
+            modelBuilder.Entity<PeopleByDocument>(entity =>
+            {
+                entity.HasIndex(e => e.PersonId);
+
+                entity.HasIndex(e => e.DocumentId);
+
+                entity.HasOne(d => d.Person).WithMany(p => p.Documents).HasForeignKey(d => d.PersonId);
+
+                entity.HasOne(d => d.Document).WithMany(p => p.People).HasForeignKey(d => d.DocumentId);
             });
 
             modelBuilder.Entity<Person>(entity =>

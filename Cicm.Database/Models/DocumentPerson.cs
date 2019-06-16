@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,7 +12,8 @@ namespace Cicm.Database.Models
         public string Surname { get; set; }
         public int? PersonId { get;  set; }
 
-        public virtual Person Person { get; set; }
+        public virtual Person                        Person    { get; set; }
+        public virtual ICollection<PeopleByDocument> Documents { get; set; }
 
         [NotMapped]
         public string FullName => $"{Name} {Surname}";
