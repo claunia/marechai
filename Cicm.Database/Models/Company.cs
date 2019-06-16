@@ -77,7 +77,8 @@ namespace Cicm.Database.Models
         public string PostalCode { get; set; }
         public short? CountryId { get;  set; }
         [Required]
-        public CompanyStatus Status { get; set; }
+        public CompanyStatus Status { get;   set; }
+        public int? DocumentCompanyId { get; set; }
 
         public virtual Iso31661Numeric Country { get; set; }
         [DisplayName("Sold to")]
@@ -93,6 +94,7 @@ namespace Cicm.Database.Models
         public virtual ICollection<PeopleByCompany>    People                  { get; set; }
         public virtual CompanyLogo LastLogo =>
             Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
+        public virtual DocumentCompany DocumentCompany { get; set; }
 
         [DisplayName("Sold")]
         [NotMapped]

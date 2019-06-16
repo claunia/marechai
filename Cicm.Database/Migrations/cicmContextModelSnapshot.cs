@@ -107,6 +107,8 @@ namespace Cicm.Database.Migrations
 
                 b.Property<short?>("CountryId").HasColumnName("country").HasColumnType("smallint(3)");
 
+                b.Property<int?>("DocumentCompanyId");
+
                 b.Property<string>("Facebook").HasColumnName("facebook").HasColumnType("varchar(45)").HasMaxLength(45);
 
                 b.Property<DateTime?>("Founded").HasColumnName("founded").HasColumnType("datetime");
@@ -136,6 +138,8 @@ namespace Cicm.Database.Migrations
                 b.HasIndex("City").HasName("idx_companies_city");
 
                 b.HasIndex("CountryId").HasName("idx_companies_country");
+
+                b.HasIndex("DocumentCompanyId").IsUnique();
 
                 b.HasIndex("Facebook").HasName("idx_companies_facebook");
 
@@ -227,6 +231,23 @@ namespace Cicm.Database.Migrations
                 b.HasIndex("Title");
 
                 b.ToTable("Documents");
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.DocumentCompany", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<int?>("CompanyId");
+
+                b.Property<string>("Name").IsRequired();
+
+                b.HasKey("Id");
+
+                b.HasIndex("CompanyId").IsUnique();
+
+                b.HasIndex("Name");
+
+                b.ToTable("DocumentCompanies");
             });
 
             modelBuilder.Entity("Cicm.Database.Models.DocumentPerson", b =>
@@ -5221,6 +5242,9 @@ namespace Cicm.Database.Migrations
             {
                 b.HasOne("Cicm.Database.Models.Iso31661Numeric", "Country").WithMany("Companies")
                  .HasForeignKey("CountryId").HasConstraintName("fk_companies_country");
+
+                b.HasOne("Cicm.Database.Models.DocumentCompany", "DocumentCompany").WithOne("Company")
+                 .HasForeignKey("Cicm.Database.Models.Company", "DocumentCompanyId").OnDelete(DeleteBehavior.SetNull);
 
                 b.HasOne("Cicm.Database.Models.Company", "SoldTo").WithMany("InverseSoldToNavigation")
                  .HasForeignKey("SoldToId").HasConstraintName("fk_companies_sold_to");

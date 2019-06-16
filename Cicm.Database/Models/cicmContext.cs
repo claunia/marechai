@@ -82,6 +82,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
         public virtual DbSet<DocumentPerson>                      DocumentPeople                      { get; set; }
         public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
+        public virtual DbSet<DocumentCompany>                     DocumentCompanies                   { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -235,6 +236,9 @@ namespace Cicm.Database.Models
 
                 entity.HasOne(d => d.SoldTo).WithMany(p => p.InverseSoldToNavigation).HasForeignKey(d => d.SoldToId)
                       .HasConstraintName("fk_companies_sold_to");
+
+                entity.HasOne(d => d.DocumentCompany).WithOne(p => p.Company)
+                      .HasForeignKey<DocumentCompany>(d => d.CompanyId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<CompanyDescription>().HasIndex(e => e.Text).ForMySqlIsFullText();
@@ -276,6 +280,16 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
 
                 entity.HasOne(d => d.Country).WithMany(p => p.Documents).HasForeignKey(d => d.CountryId);
+            });
+
+            modelBuilder.Entity<DocumentCompany>(entity =>
+            {
+                entity.HasIndex(e => e.Name);
+
+                entity.HasIndex(e => e.CompanyId).IsUnique();
+
+                entity.HasOne(d => d.Company).WithOne(p => p.DocumentCompany)
+                      .HasForeignKey<Company>(d => d.DocumentCompanyId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<DocumentPerson>(entity =>
