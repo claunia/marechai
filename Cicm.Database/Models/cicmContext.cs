@@ -79,6 +79,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<Person>                              People                              { get; set; }
         public virtual DbSet<Iso639>                              Iso639                              { get; set; }
         public virtual DbSet<Document>                            Documents                           { get; set; }
+        public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -273,6 +274,15 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
 
                 entity.HasOne(d => d.Country).WithMany(p => p.Documents).HasForeignKey(d => d.CountryId);
+            });
+
+            modelBuilder.Entity<DocumentRole>(entity =>
+            {
+                entity.HasIndex(e => e.Name);
+
+                entity.HasIndex(e => e.Enabled);
+
+                entity.Property(p => p.Enabled).HasDefaultValue(true);
             });
 
             modelBuilder.Entity<Forbidden>(entity =>
@@ -1193,6 +1203,7 @@ namespace Cicm.Database.Models
             });
 
             Seeders.License.Seed(modelBuilder);
+            Seeders.DocumentRoles.Seed(modelBuilder);
         }
     }
 }
