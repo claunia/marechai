@@ -229,6 +229,27 @@ namespace Cicm.Database.Migrations
                 b.ToTable("Documents");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.DocumentPerson", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Name").IsRequired();
+
+                b.Property<int?>("PersonId");
+
+                b.Property<string>("Surname").IsRequired();
+
+                b.HasKey("Id");
+
+                b.HasIndex("Name");
+
+                b.HasIndex("PersonId").IsUnique();
+
+                b.HasIndex("Surname");
+
+                b.ToTable("DocumentPeople");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.DocumentRole", b =>
             {
                 b.Property<string>("Id").ValueGeneratedOnAdd().HasColumnType("char(3)");
@@ -4577,6 +4598,8 @@ namespace Cicm.Database.Migrations
 
                 b.Property<DateTime?>("DeathDate");
 
+                b.Property<int?>("DocumentPersonId");
+
                 b.Property<string>("Facebook");
 
                 b.Property<string>("Name").IsRequired();
@@ -5201,6 +5224,14 @@ namespace Cicm.Database.Migrations
                                 {
                                     b.HasOne("Cicm.Database.Models.Iso31661Numeric", "Country").WithMany("Documents")
                                      .HasForeignKey("CountryId");
+                                });
+
+            modelBuilder.Entity("Cicm.Database.Models.DocumentPerson",
+                                b =>
+                                {
+                                    b.HasOne("Cicm.Database.Models.Person", "Person").WithOne("DocumentPerson")
+                                     .HasForeignKey("Cicm.Database.Models.DocumentPerson", "PersonId")
+                                     .OnDelete(DeleteBehavior.SetNull);
                                 });
 
             modelBuilder.Entity("Cicm.Database.Models.Gpu",

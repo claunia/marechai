@@ -80,6 +80,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<Iso639>                              Iso639                              { get; set; }
         public virtual DbSet<Document>                            Documents                           { get; set; }
         public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
+        public virtual DbSet<DocumentPerson>                      DocumentPeople                      { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -274,6 +275,18 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
 
                 entity.HasOne(d => d.Country).WithMany(p => p.Documents).HasForeignKey(d => d.CountryId);
+            });
+
+            modelBuilder.Entity<DocumentPerson>(entity =>
+            {
+                entity.HasIndex(e => e.Name);
+
+                entity.HasIndex(e => e.Surname);
+
+                entity.HasIndex(e => e.PersonId).IsUnique();
+
+                entity.HasOne(d => d.Person).WithOne(p => p.DocumentPerson)
+                      .HasForeignKey<Person>(d => d.DocumentPersonId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<DocumentRole>(entity =>
@@ -840,6 +853,9 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Photo);
 
                 entity.HasOne(d => d.CountryOfBirth).WithMany(p => p.People).HasForeignKey(d => d.CountryOfBirthId);
+
+                entity.HasOne(d => d.DocumentPerson).WithOne(p => p.Person)
+                      .HasForeignKey<DocumentPerson>(d => d.PersonId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Processor>(entity =>
