@@ -78,6 +78,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<ResolutionsByScreen>                 ResolutionsByScreen                 { get; set; }
         public virtual DbSet<Person>                              People                              { get; set; }
         public virtual DbSet<Iso639>                              Iso639                              { get; set; }
+        public virtual DbSet<Document>                            Documents                           { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -259,6 +260,21 @@ namespace Cicm.Database.Models
                       .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_company_logos_company1");
             });
 
+            modelBuilder.Entity<Document>(entity =>
+            {
+                entity.HasIndex(e => e.Title);
+
+                entity.HasIndex(e => e.NativeTitle);
+
+                entity.HasIndex(e => e.Published);
+
+                entity.HasIndex(e => e.CountryId);
+
+                entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
+
+                entity.HasOne(d => d.Country).WithMany(p => p.Documents).HasForeignKey(d => d.CountryId);
+            });
+
             modelBuilder.Entity<Forbidden>(entity =>
             {
                 entity.ToTable("forbidden");
@@ -422,21 +438,21 @@ namespace Cicm.Database.Models
                 entity.ToTable("ISO_639-3");
 
                 entity.HasKey(e => e.Id);
-                
+
                 entity.HasIndex(e => e.Part2B);
-                
+
                 entity.HasIndex(e => e.Part2T);
-                
+
                 entity.HasIndex(e => e.Part1);
-                
+
                 entity.HasIndex(e => e.Scope);
-                
+
                 entity.HasIndex(e => e.Type);
-                
+
                 entity.HasIndex(e => e.ReferenceName);
-                
+
                 entity.HasIndex(e => e.Comment);
-                
+
                 entity.Property(e => e.ReferenceName).HasColumnName("Ref_Name");
             });
 
