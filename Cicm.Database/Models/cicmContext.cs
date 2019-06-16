@@ -83,6 +83,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<DocumentPerson>                      DocumentPeople                      { get; set; }
         public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
         public virtual DbSet<DocumentCompany>                     DocumentCompanies                   { get; set; }
+        public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -170,6 +171,19 @@ namespace Cicm.Database.Models
                       .HasDefaultValueSql("'CURRENT_TIMESTAMP'");
 
                 entity.Property(e => e.Version).HasColumnName("version").HasColumnType("int(11)");
+            });
+
+            modelBuilder.Entity<CompaniesByDocument>(entity =>
+            {
+                entity.HasIndex(e => e.DocumentId);
+
+                entity.HasIndex(e => e.CompanyId);
+
+                entity.HasIndex(e => e.RoleId);
+
+                entity.HasOne(d => d.Document).WithMany(p => p.Companies).HasForeignKey(d => d.DocumentId);
+
+                entity.HasOne(d => d.Company).WithMany(p => p.Documents).HasForeignKey(d => d.CompanyId);
             });
 
             modelBuilder.Entity<Company>(entity =>
