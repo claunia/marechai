@@ -85,6 +85,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<DocumentCompany>                     DocumentCompanies                   { get; set; }
         public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
         public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
+        public virtual DbSet<Book>                                Books                               { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -98,6 +99,33 @@ namespace Cicm.Database.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Book>(entity =>
+            {
+                entity.HasIndex(e => e.Title);
+
+                entity.HasIndex(e => e.NativeTitle);
+
+                entity.HasIndex(e => e.Published);
+
+                entity.HasIndex(e => e.CountryId);
+
+                entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
+
+                entity.HasIndex(e => e.Isbn);
+
+                entity.HasIndex(e => e.Pages);
+
+                entity.HasIndex(e => e.Edition);
+
+                entity.HasOne(d => d.Previous).WithOne(d => d.Next).HasForeignKey<Book>(d => d.PreviousId)
+                      .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.Source).WithMany(d => d.Derivates).HasForeignKey(d => d.SourceId)
+                      .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.Country).WithMany(p => p.Books).HasForeignKey(d => d.CountryId);
+            });
 
             modelBuilder.Entity<BrowserTest>(entity =>
             {

@@ -16,6 +16,55 @@ namespace Cicm.Database.Migrations
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                         .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("Cicm.Database.Models.Book", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<short?>("CountryId");
+
+                b.Property<int?>("Edition");
+
+                b.Property<string>("Isbn").HasMaxLength(13);
+
+                b.Property<string>("NativeTitle");
+
+                b.Property<short?>("Pages");
+
+                b.Property<long?>("PreviousId");
+
+                b.Property<DateTime?>("Published");
+
+                b.Property<long?>("SourceId");
+
+                b.Property<string>("Synopsis").HasMaxLength(262144);
+
+                b.Property<string>("Title").IsRequired();
+
+                b.HasKey("Id");
+
+                b.HasIndex("CountryId");
+
+                b.HasIndex("Edition");
+
+                b.HasIndex("Isbn");
+
+                b.HasIndex("NativeTitle");
+
+                b.HasIndex("Pages");
+
+                b.HasIndex("PreviousId").IsUnique();
+
+                b.HasIndex("Published");
+
+                b.HasIndex("SourceId");
+
+                b.HasIndex("Synopsis").HasAnnotation("MySql:FullTextIndex", true);
+
+                b.HasIndex("Title");
+
+                b.ToTable("Books");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.BrowserTest", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -5291,6 +5340,17 @@ namespace Cicm.Database.Migrations
                 b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
                 b.HasDiscriminator().HasValue("ApplicationUser");
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.Book", b =>
+            {
+                b.HasOne("Cicm.Database.Models.Iso31661Numeric", "Country").WithMany("Books")
+                 .HasForeignKey("CountryId");
+
+                b.HasOne("Cicm.Database.Models.Book", "Previous").WithOne("Next")
+                 .HasForeignKey("Cicm.Database.Models.Book", "PreviousId");
+
+                b.HasOne("Cicm.Database.Models.Book", "Source").WithMany("Derivates").HasForeignKey("SourceId");
             });
 
             modelBuilder.Entity("Cicm.Database.Models.CompaniesByDocument", b =>

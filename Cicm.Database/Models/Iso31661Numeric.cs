@@ -49,5 +49,6 @@ namespace Cicm.Database.Models
         public virtual ICollection<Company>  Companies { get; set; }
         public virtual ICollection<Person>   People    { get; set; }
         public virtual ICollection<Document> Documents { get; set; }
+        public virtual ICollection<Book>     Books     { get; set; }
     }
 }
