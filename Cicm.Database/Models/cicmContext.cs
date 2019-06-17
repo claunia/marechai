@@ -39,63 +39,63 @@ namespace Cicm.Database.Models
 
         public cicmContext(DbContextOptions<cicmContext> options) : base(options) { }
 
+        public virtual DbSet<Book>                                Books                               { get; set; }
+        public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
+        public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
         public virtual DbSet<BrowserTest>                         BrowserTests                        { get; set; }
         public virtual DbSet<CicmDb>                              CicmDb                              { get; set; }
+        public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
+        public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
+        public virtual DbSet<CompaniesByMagazine>                 CompaniesByMagazines                { get; set; }
         public virtual DbSet<Company>                             Companies                           { get; set; }
         public virtual DbSet<CompanyDescription>                  CompanyDescriptions                 { get; set; }
         public virtual DbSet<CompanyLogo>                         CompanyLogos                        { get; set; }
+        public virtual DbSet<Document>                            Documents                           { get; set; }
+        public virtual DbSet<DocumentCompany>                     DocumentCompanies                   { get; set; }
+        public virtual DbSet<DocumentPerson>                      DocumentPeople                      { get; set; }
+        public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
+        public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
         public virtual DbSet<Forbidden>                           Forbidden                           { get; set; }
         public virtual DbSet<Gpu>                                 Gpus                                { get; set; }
         public virtual DbSet<GpusByMachine>                       GpusByMachine                       { get; set; }
+        public virtual DbSet<GpusByOwnedMachine>                  GpusByOwnedMachine                  { get; set; }
+        public virtual DbSet<InstructionSet>                      InstructionSets                     { get; set; }
         public virtual DbSet<InstructionSetExtension>             InstructionSetExtensions            { get; set; }
         public virtual DbSet<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor { get; set; }
-        public virtual DbSet<InstructionSet>                      InstructionSets                     { get; set; }
         public virtual DbSet<Iso31661Numeric>                     Iso31661Numeric                     { get; set; }
-        public virtual DbSet<Log>                                 Log                                 { get; set; }
-        public virtual DbSet<MachineFamily>                       MachineFamilies                     { get; set; }
-        public virtual DbSet<Machine>                             Machines                            { get; set; }
-        public virtual DbSet<MachinePhoto>                        MachinePhotos                       { get; set; }
-        public virtual DbSet<MemoryByMachine>                     MemoryByMachine                     { get; set; }
-        public virtual DbSet<MoneyDonation>                       MoneyDonations                      { get; set; }
-        public virtual DbSet<News>                                News                                { get; set; }
-        public virtual DbSet<Processor>                           Processors                          { get; set; }
-        public virtual DbSet<ProcessorsByMachine>                 ProcessorsByMachine                 { get; set; }
-        public virtual DbSet<Resolution>                          Resolutions                         { get; set; }
-        public virtual DbSet<ResolutionsByGpu>                    ResolutionsByGpu                    { get; set; }
-        public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
-        public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
-        public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
-        public virtual DbSet<License>                             Licenses                            { get; set; }
-        public virtual DbSet<GpusByOwnedMachine>                  GpusByOwnedMachine                  { get; set; }
-        public virtual DbSet<MemoryByOwnedMachine>                MemoryByOwnedMachine                { get; set; }
-        public virtual DbSet<OwnedMachine>                        OwnedMachines                       { get; set; }
-        public virtual DbSet<OwnedMachinePhoto>                   OwnedMachinePhotos                  { get; set; }
-        public virtual DbSet<ProcessorsByOwnedMachine>            ProcessorsByOwnedMachine            { get; set; }
-        public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
-        public virtual DbSet<StorageByOwnedMachine>               StorageByOwnedMachine               { get; set; }
-        public virtual DbSet<Screen>                              Screens                             { get; set; }
-        public virtual DbSet<ScreensByMachine>                    ScreensByMachine                    { get; set; }
-        public virtual DbSet<ResolutionsByScreen>                 ResolutionsByScreen                 { get; set; }
-        public virtual DbSet<Person>                              People                              { get; set; }
         public virtual DbSet<Iso639>                              Iso639                              { get; set; }
-        public virtual DbSet<Document>                            Documents                           { get; set; }
-        public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
-        public virtual DbSet<DocumentPerson>                      DocumentPeople                      { get; set; }
-        public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
-        public virtual DbSet<DocumentCompany>                     DocumentCompanies                   { get; set; }
-        public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
-        public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
-        public virtual DbSet<Book>                                Books                               { get; set; }
-        public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
-        public virtual DbSet<PeopleByBook>                        PeopleByBooks                       { get; set; }
-        public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
-        public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
+        public virtual DbSet<License>                             Licenses                            { get; set; }
+        public virtual DbSet<Log>                                 Log                                 { get; set; }
+        public virtual DbSet<Machine>                             Machines                            { get; set; }
+        public virtual DbSet<MachineFamily>                       MachineFamilies                     { get; set; }
+        public virtual DbSet<MachinePhoto>                        MachinePhotos                       { get; set; }
         public virtual DbSet<Magazine>                            Magazines                           { get; set; }
         public virtual DbSet<MagazineIssue>                       MagazineIssues                      { get; set; }
-        public virtual DbSet<CompaniesByMagazine>                 CompaniesByMagazines                { get; set; }
-        public virtual DbSet<PeopleByMagazine>                    PeopleByMagazines                   { get; set; }
         public virtual DbSet<MagazinesByMachine>                  MagazinesByMachines                 { get; set; }
         public virtual DbSet<MagazinesByMachineFamily>            MagazinesByMachinesFamilies         { get; set; }
+        public virtual DbSet<MemoryByMachine>                     MemoryByMachine                     { get; set; }
+        public virtual DbSet<MemoryByOwnedMachine>                MemoryByOwnedMachine                { get; set; }
+        public virtual DbSet<MoneyDonation>                       MoneyDonations                      { get; set; }
+        public virtual DbSet<News>                                News                                { get; set; }
+        public virtual DbSet<OwnedMachine>                        OwnedMachines                       { get; set; }
+        public virtual DbSet<OwnedMachinePhoto>                   OwnedMachinePhotos                  { get; set; }
+        public virtual DbSet<PeopleByBook>                        PeopleByBooks                       { get; set; }
+        public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
+        public virtual DbSet<PeopleByMagazine>                    PeopleByMagazines                   { get; set; }
+        public virtual DbSet<Person>                              People                              { get; set; }
+        public virtual DbSet<Processor>                           Processors                          { get; set; }
+        public virtual DbSet<ProcessorsByMachine>                 ProcessorsByMachine                 { get; set; }
+        public virtual DbSet<ProcessorsByOwnedMachine>            ProcessorsByOwnedMachine            { get; set; }
+        public virtual DbSet<Resolution>                          Resolutions                         { get; set; }
+        public virtual DbSet<ResolutionsByGpu>                    ResolutionsByGpu                    { get; set; }
+        public virtual DbSet<ResolutionsByScreen>                 ResolutionsByScreen                 { get; set; }
+        public virtual DbSet<Screen>                              Screens                             { get; set; }
+        public virtual DbSet<ScreensByMachine>                    ScreensByMachine                    { get; set; }
+        public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
+        public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
+        public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
+        public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
+        public virtual DbSet<StorageByOwnedMachine>               StorageByOwnedMachine               { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
