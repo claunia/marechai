@@ -339,6 +339,17 @@ namespace Cicm.Database.Models
                 entity.HasOne(d => d.Machine).WithMany(p => p.Documents).HasForeignKey(d => d.MachineId);
             });
 
+            modelBuilder.Entity<DocumentsByMachineFamily>(entity =>
+            {
+                entity.HasIndex(e => e.DocumentId);
+
+                entity.HasIndex(e => e.MachineFamilyId);
+
+                entity.HasOne(d => d.Document).WithMany(p => p.MachineFamilies).HasForeignKey(d => d.DocumentId);
+
+                entity.HasOne(d => d.MachineFamily).WithMany(p => p.Documents).HasForeignKey(d => d.MachineFamilyId);
+            });
+
             modelBuilder.Entity<Forbidden>(entity =>
             {
                 entity.ToTable("forbidden");

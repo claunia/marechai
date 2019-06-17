@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Cicm.Database.Migrations
 {
-    public partial class AddDocumentssByMachine : Migration
+    public partial class AddDocumentsByMachine : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -598,6 +598,23 @@ namespace Cicm.Database.Migrations
                 b.ToTable("DocumentsByMachines");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.DocumentsByMachineFamily", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<long>("DocumentId");
+
+                b.Property<int>("MachineFamilyId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("DocumentId");
+
+                b.HasIndex("MachineFamilyId");
+
+                b.ToTable("DocumentsByMachineFamily");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.Forbidden", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -5336,6 +5353,15 @@ namespace Cicm.Database.Migrations
 
                 b.HasOne("Cicm.Database.Models.Machine", "Machine").WithMany("Documents").HasForeignKey("MachineId")
                  .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.DocumentsByMachineFamily", b =>
+            {
+                b.HasOne("Cicm.Database.Models.Document", "Document").WithMany("MachineFamilies")
+                 .HasForeignKey("DocumentId").OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.MachineFamily", "MachineFamily").WithMany("Documents")
+                 .HasForeignKey("MachineFamilyId").OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Cicm.Database.Models.Gpu",

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cicm.Database.Migrations
 {
     [DbContext(typeof(cicmContext))]
-    [Migration("20190616235255_AddDocumentssByMachine")]
-    partial class AddDocumentssByMachine
+    [Migration("20190616235255_AddDocumentsByMachine")]
+    partial class AddDocumentsByMachine
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
