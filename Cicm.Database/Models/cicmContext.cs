@@ -92,6 +92,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
         public virtual DbSet<Magazine>                            Magazines                           { get; set; }
         public virtual DbSet<MagazineIssue>                       MagazineIssues                      { get; set; }
+        public virtual DbSet<CompaniesByMagazine>                 CompaniesByMagazines                { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -254,6 +255,19 @@ namespace Cicm.Database.Models
                 entity.HasOne(d => d.Document).WithMany(p => p.Companies).HasForeignKey(d => d.DocumentId);
 
                 entity.HasOne(d => d.Company).WithMany(p => p.Documents).HasForeignKey(d => d.CompanyId);
+            });
+
+            modelBuilder.Entity<CompaniesByMagazine>(entity =>
+            {
+                entity.HasIndex(e => e.MagazineId);
+
+                entity.HasIndex(e => e.CompanyId);
+
+                entity.HasIndex(e => e.RoleId);
+
+                entity.HasOne(d => d.Magazine).WithMany(p => p.Companies).HasForeignKey(d => d.MagazineId);
+
+                entity.HasOne(d => d.Company).WithMany(p => p.Magazines).HasForeignKey(d => d.CompanyId);
             });
 
             modelBuilder.Entity<Company>(entity =>

@@ -11,6 +11,7 @@ namespace Cicm.Database.Models
 
         public virtual Company                          Company   { get; set; }
         public virtual ICollection<CompaniesByDocument> Documents { get; set; }
-        public virtual ICollection<CompaniesByBook> Books { get; set; }
+        public virtual ICollection<CompaniesByBook>     Books     { get; set; }
+        public virtual ICollection<CompaniesByMagazine> Magazines { get; set; }
     }
 }

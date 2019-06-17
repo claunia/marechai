@@ -222,6 +222,27 @@ namespace Cicm.Database.Migrations
                 b.ToTable("CompaniesByDocuments");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.CompaniesByMagazine", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<int>("CompanyId");
+
+                b.Property<long>("MagazineId");
+
+                b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("CompanyId");
+
+                b.HasIndex("MagazineId");
+
+                b.HasIndex("RoleId");
+
+                b.ToTable("CompaniesByMagazines");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.Company", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -5535,6 +5556,18 @@ namespace Cicm.Database.Migrations
                  .HasForeignKey("CompanyId").OnDelete(DeleteBehavior.Cascade);
 
                 b.HasOne("Cicm.Database.Models.Document", "Document").WithMany("Companies").HasForeignKey("DocumentId")
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId")
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.CompaniesByMagazine", b =>
+            {
+                b.HasOne("Cicm.Database.Models.DocumentCompany", "Company").WithMany("Magazines")
+                 .HasForeignKey("CompanyId").OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.Magazine", "Magazine").WithMany("Companies").HasForeignKey("MagazineId")
                  .OnDelete(DeleteBehavior.Cascade);
 
                 b.HasOne("Cicm.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId")
