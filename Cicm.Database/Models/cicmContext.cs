@@ -86,7 +86,8 @@ namespace Cicm.Database.Models
         public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
         public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
         public virtual DbSet<Book>                                Books                               { get; set; }
-        public virtual DbSet<CompaniesByBook> CompaniesByBooks { get; set; }
+        public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
+        public virtual DbSet<PeopleByBook>                        PeopleByBooks                       { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -215,7 +216,7 @@ namespace Cicm.Database.Models
 
                 entity.HasOne(d => d.Company).WithMany(p => p.Books).HasForeignKey(d => d.CompanyId);
             });
-            
+
             modelBuilder.Entity<CompaniesByDocument>(entity =>
             {
                 entity.HasIndex(e => e.DocumentId);
@@ -907,6 +908,17 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("datetime");
 
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
+            });
+
+            modelBuilder.Entity<PeopleByBook>(entity =>
+            {
+                entity.HasIndex(e => e.PersonId);
+
+                entity.HasIndex(e => e.BookId);
+
+                entity.HasOne(d => d.Person).WithMany(p => p.Books).HasForeignKey(d => d.PersonId);
+
+                entity.HasOne(d => d.Book).WithMany(p => p.People).HasForeignKey(d => d.BookId);
             });
 
             modelBuilder.Entity<PeopleByCompany>(entity =>

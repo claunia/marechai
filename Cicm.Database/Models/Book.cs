@@ -12,11 +12,12 @@ namespace Cicm.Database.Models
         public long?  PreviousId { get; set; }
         public long?  SourceId   { get; set; }
 
-        public virtual Book              Previous  { get; set; }
-        public virtual Book              Source    { get; set; }
-        public virtual Book              Next      { get; set; }
-        public virtual Iso31661Numeric   Country   { get; set; }
-        public virtual ICollection<Book> Derivates { get; set; }
+        public virtual Book                         Previous  { get; set; }
+        public virtual Book                         Source    { get; set; }
+        public virtual Book                         Next      { get; set; }
+        public virtual Iso31661Numeric              Country   { get; set; }
+        public virtual ICollection<Book>            Derivates { get; set; }
         public virtual ICollection<CompaniesByBook> Companies { get; set; }
+        public virtual ICollection<PeopleByBook>    People    { get; set; }
     }
 }
