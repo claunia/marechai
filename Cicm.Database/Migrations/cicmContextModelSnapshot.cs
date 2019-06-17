@@ -4470,6 +4470,39 @@ namespace Cicm.Database.Migrations
                 b.ToTable("Magazines");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.MagazineIssue", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Caption").IsRequired();
+
+                b.Property<long>("MagazineId");
+
+                b.Property<string>("NativeCaption");
+
+                b.Property<short>("Pages");
+
+                b.Property<string>("ProductCode").HasMaxLength(18);
+
+                b.Property<DateTime?>("Published");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Caption");
+
+                b.HasIndex("MagazineId");
+
+                b.HasIndex("NativeCaption");
+
+                b.HasIndex("Pages");
+
+                b.HasIndex("ProductCode");
+
+                b.HasIndex("Published");
+
+                b.ToTable("MagazineIssues");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.MemoryByMachine", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
@@ -5636,6 +5669,13 @@ namespace Cicm.Database.Migrations
                                 {
                                     b.HasOne("Cicm.Database.Models.Iso31661Numeric", "Country").WithMany("Magazines")
                                      .HasForeignKey("CountryId");
+                                });
+
+            modelBuilder.Entity("Cicm.Database.Models.MagazineIssue",
+                                b =>
+                                {
+                                    b.HasOne("Cicm.Database.Models.Magazine", "Magazine").WithMany("Issues")
+                                     .HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade);
                                 });
 
             modelBuilder.Entity("Cicm.Database.Models.MemoryByMachine",

@@ -91,6 +91,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
         public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
         public virtual DbSet<Magazine>                            Magazines                           { get; set; }
+        public virtual DbSet<MagazineIssue>                       MagazineIssues                      { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -870,6 +871,21 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.FirstPublication);
 
                 entity.HasOne(d => d.Country).WithMany(p => p.Magazines).HasForeignKey(d => d.CountryId);
+            });
+
+            modelBuilder.Entity<MagazineIssue>(entity =>
+            {
+                entity.HasIndex(e => e.Caption);
+
+                entity.HasIndex(e => e.NativeCaption);
+
+                entity.HasIndex(e => e.Published);
+
+                entity.HasIndex(e => e.ProductCode);
+
+                entity.HasIndex(e => e.Pages);
+
+                entity.HasOne(d => d.Magazine).WithMany(p => p.Issues).HasForeignKey(d => d.MagazineId);
             });
 
             modelBuilder.Entity<MemoryByMachine>(entity =>

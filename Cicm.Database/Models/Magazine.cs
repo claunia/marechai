@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Cicm.Database.Models
@@ -11,6 +12,7 @@ namespace Cicm.Database.Models
         [DataType(DataType.Date)]
         public DateTime? FirstPublication { get; set; }
 
-        public virtual Iso31661Numeric Country { get; set; }
+        public virtual Iso31661Numeric            Country { get; set; }
+        public virtual ICollection<MagazineIssue> Issues  { get; set; }
     }
 }
