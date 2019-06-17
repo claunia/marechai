@@ -90,6 +90,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<PeopleByBook>                        PeopleByBooks                       { get; set; }
         public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
         public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
+        public virtual DbSet<Magazine>                            Magazines                           { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -850,6 +851,25 @@ namespace Cicm.Database.Models
                 entity.HasOne(d => d.User).WithMany(p => p.OwnedMachinePhotos).OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.License).WithMany(p => p.OwnedMachinePhotos).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Magazine>(entity =>
+            {
+                entity.HasIndex(e => e.Title);
+
+                entity.HasIndex(e => e.NativeTitle);
+
+                entity.HasIndex(e => e.Published);
+
+                entity.HasIndex(e => e.CountryId);
+
+                entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
+
+                entity.HasIndex(e => e.Issn);
+
+                entity.HasIndex(e => e.FirstPublication);
+
+                entity.HasOne(d => d.Country).WithMany(p => p.Magazines).HasForeignKey(d => d.CountryId);
             });
 
             modelBuilder.Entity<MemoryByMachine>(entity =>

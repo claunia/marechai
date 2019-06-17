@@ -4433,6 +4433,43 @@ namespace Cicm.Database.Migrations
                 b.ToTable("MachinePhotos");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.Magazine", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<short?>("CountryId");
+
+                b.Property<DateTime?>("FirstPublication");
+
+                b.Property<string>("Issn").HasMaxLength(8);
+
+                b.Property<string>("NativeTitle");
+
+                b.Property<DateTime?>("Published");
+
+                b.Property<string>("Synopsis").HasMaxLength(262144);
+
+                b.Property<string>("Title").IsRequired();
+
+                b.HasKey("Id");
+
+                b.HasIndex("CountryId");
+
+                b.HasIndex("FirstPublication");
+
+                b.HasIndex("Issn");
+
+                b.HasIndex("NativeTitle");
+
+                b.HasIndex("Published");
+
+                b.HasIndex("Synopsis").HasAnnotation("MySql:FullTextIndex", true);
+
+                b.HasIndex("Title");
+
+                b.ToTable("Magazines");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.MemoryByMachine", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
@@ -5593,6 +5630,13 @@ namespace Cicm.Database.Migrations
                 b.HasOne("Cicm.Database.Models.ApplicationUser", "User").WithMany("Photos").HasForeignKey("UserId")
                  .OnDelete(DeleteBehavior.SetNull);
             });
+
+            modelBuilder.Entity("Cicm.Database.Models.Magazine",
+                                b =>
+                                {
+                                    b.HasOne("Cicm.Database.Models.Iso31661Numeric", "Country").WithMany("Magazines")
+                                     .HasForeignKey("CountryId");
+                                });
 
             modelBuilder.Entity("Cicm.Database.Models.MemoryByMachine",
                                 b =>
