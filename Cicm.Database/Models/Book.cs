@@ -17,5 +17,6 @@ namespace Cicm.Database.Models
         public virtual Book              Next      { get; set; }
         public virtual Iso31661Numeric   Country   { get; set; }
         public virtual ICollection<Book> Derivates { get; set; }
+        public virtual ICollection<CompaniesByBook> Companies { get; set; }
     }
 }

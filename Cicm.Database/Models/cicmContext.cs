@@ -86,6 +86,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
         public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
         public virtual DbSet<Book>                                Books                               { get; set; }
+        public virtual DbSet<CompaniesByBook> CompaniesByBooks { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -202,6 +203,19 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Version).HasColumnName("version").HasColumnType("int(11)");
             });
 
+            modelBuilder.Entity<CompaniesByBook>(entity =>
+            {
+                entity.HasIndex(e => e.BookId);
+
+                entity.HasIndex(e => e.CompanyId);
+
+                entity.HasIndex(e => e.RoleId);
+
+                entity.HasOne(d => d.Book).WithMany(p => p.Companies).HasForeignKey(d => d.BookId);
+
+                entity.HasOne(d => d.Company).WithMany(p => p.Books).HasForeignKey(d => d.CompanyId);
+            });
+            
             modelBuilder.Entity<CompaniesByDocument>(entity =>
             {
                 entity.HasIndex(e => e.DocumentId);
