@@ -8,5 +8,6 @@ namespace Cicm.Database.Models
 
         public virtual ICollection<PeopleByDocument>    People    { get; set; }
         public virtual ICollection<CompaniesByDocument> Companies { get; set; }
+        public virtual ICollection<DocumentsByMachine>  Machines  { get; set; }
     }
 }

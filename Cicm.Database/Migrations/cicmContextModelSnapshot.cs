@@ -581,6 +581,23 @@ namespace Cicm.Database.Migrations
                           new {Id = "wst", Enabled = true, Name  = "Writer of supplementary textual content"});
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.DocumentsByMachine", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<long>("DocumentId");
+
+                b.Property<int>("MachineId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("DocumentId");
+
+                b.HasIndex("MachineId");
+
+                b.ToTable("DocumentsByMachines");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.Forbidden", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -5311,6 +5328,15 @@ namespace Cicm.Database.Migrations
                                      .HasForeignKey("Cicm.Database.Models.DocumentPerson", "PersonId")
                                      .OnDelete(DeleteBehavior.SetNull);
                                 });
+
+            modelBuilder.Entity("Cicm.Database.Models.DocumentsByMachine", b =>
+            {
+                b.HasOne("Cicm.Database.Models.Document", "Document").WithMany("Machines").HasForeignKey("DocumentId")
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.Machine", "Machine").WithMany("Documents").HasForeignKey("MachineId")
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity("Cicm.Database.Models.Gpu",
                                 b =>

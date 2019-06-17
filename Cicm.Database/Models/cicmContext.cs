@@ -84,6 +84,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
         public virtual DbSet<DocumentCompany>                     DocumentCompanies                   { get; set; }
         public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
+        public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -325,6 +326,17 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Enabled);
 
                 entity.Property(p => p.Enabled).HasDefaultValue(true);
+            });
+
+            modelBuilder.Entity<DocumentsByMachine>(entity =>
+            {
+                entity.HasIndex(e => e.DocumentId);
+
+                entity.HasIndex(e => e.MachineId);
+
+                entity.HasOne(d => d.Document).WithMany(p => p.Machines).HasForeignKey(d => d.DocumentId);
+
+                entity.HasOne(d => d.Machine).WithMany(p => p.Documents).HasForeignKey(d => d.MachineId);
             });
 
             modelBuilder.Entity<Forbidden>(entity =>
