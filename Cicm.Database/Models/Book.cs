@@ -19,5 +19,6 @@ namespace Cicm.Database.Models
         public virtual ICollection<Book>            Derivates { get; set; }
         public virtual ICollection<CompaniesByBook> Companies { get; set; }
         public virtual ICollection<PeopleByBook>    People    { get; set; }
+        public virtual ICollection<BooksByMachine>  Machines  { get; set; }
     }
 }

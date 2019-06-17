@@ -65,6 +65,23 @@ namespace Cicm.Database.Migrations
                 b.ToTable("Books");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.BooksByMachine", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<long>("BookId");
+
+                b.Property<int>("MachineId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("BookId");
+
+                b.HasIndex("MachineId");
+
+                b.ToTable("BooksByMachines");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.BrowserTest", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -5393,6 +5410,15 @@ namespace Cicm.Database.Migrations
                  .HasForeignKey("Cicm.Database.Models.Book", "PreviousId");
 
                 b.HasOne("Cicm.Database.Models.Book", "Source").WithMany("Derivates").HasForeignKey("SourceId");
+            });
+
+            modelBuilder.Entity("Cicm.Database.Models.BooksByMachine", b =>
+            {
+                b.HasOne("Cicm.Database.Models.Book", "Book").WithMany("Machines").HasForeignKey("BookId")
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.Machine", "Machine").WithMany("Books").HasForeignKey("MachineId")
+                 .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Cicm.Database.Models.CompaniesByBook", b =>
