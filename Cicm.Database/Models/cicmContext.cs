@@ -89,6 +89,7 @@ namespace Cicm.Database.Models
         public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
         public virtual DbSet<PeopleByBook>                        PeopleByBooks                       { get; set; }
         public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
+        public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -139,6 +140,17 @@ namespace Cicm.Database.Models
                 entity.HasOne(d => d.Book).WithMany(p => p.Machines).HasForeignKey(d => d.BookId);
 
                 entity.HasOne(d => d.Machine).WithMany(p => p.Books).HasForeignKey(d => d.MachineId);
+            });
+
+            modelBuilder.Entity<BooksByMachineFamily>(entity =>
+            {
+                entity.HasIndex(e => e.BookId);
+
+                entity.HasIndex(e => e.MachineFamilyId);
+
+                entity.HasOne(d => d.Book).WithMany(p => p.MachineFamilies).HasForeignKey(d => d.BookId);
+
+                entity.HasOne(d => d.MachineFamily).WithMany(p => p.Books).HasForeignKey(d => d.MachineFamilyId);
             });
 
             modelBuilder.Entity<BrowserTest>(entity =>
