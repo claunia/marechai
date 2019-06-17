@@ -49,5 +49,6 @@ namespace Cicm.Database.Models
         public virtual ICollection<Machine>                  Machines  { get; set; }
         public virtual ICollection<DocumentsByMachineFamily> Documents { get; set; }
         public virtual ICollection<BooksByMachineFamily>     Books     { get; set; }
+        public virtual ICollection<MagazinesByMachineFamily> Magazines { get; set; }
     }
 }

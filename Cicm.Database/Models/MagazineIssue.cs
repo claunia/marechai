@@ -18,8 +18,9 @@ namespace Cicm.Database.Models
         public string ProductCode { get; set; }
         public short Pages { get;        set; }
 
-        public virtual Magazine                        Magazine { get; set; }
-        public virtual ICollection<PeopleByMagazine>   People   { get; set; }
-        public virtual ICollection<MagazinesByMachine> Machines { get; set; }
+        public virtual Magazine                              Magazine        { get; set; }
+        public virtual ICollection<PeopleByMagazine>         People          { get; set; }
+        public virtual ICollection<MagazinesByMachine>       Machines        { get; set; }
+        public virtual ICollection<MagazinesByMachineFamily> MachineFamilies { get; set; }
     }
 }
