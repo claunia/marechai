@@ -15,6 +15,7 @@ namespace Cicm.Database.Models
         public virtual Person                        Person    { get; set; }
         public virtual ICollection<PeopleByDocument> Documents { get; set; }
         public virtual ICollection<PeopleByBook>     Books     { get; set; }
+        public virtual ICollection<PeopleByMagazine> Magazines { get; set; }
 
         [NotMapped]
         public string FullName => $"{Name} {Surname}";

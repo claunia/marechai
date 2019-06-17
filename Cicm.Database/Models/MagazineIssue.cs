@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Cicm.Database.Models
@@ -17,6 +18,7 @@ namespace Cicm.Database.Models
         public string ProductCode { get; set; }
         public short Pages { get;        set; }
 
-        public virtual Magazine Magazine { get; set; }
+        public virtual Magazine                      Magazine { get; set; }
+        public virtual ICollection<PeopleByMagazine> People   { get; set; }
     }
 }
