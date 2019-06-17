@@ -4524,6 +4524,23 @@ namespace Cicm.Database.Migrations
                 b.ToTable("MagazineIssues");
             });
 
+            modelBuilder.Entity("Cicm.Database.Models.MagazinesByMachine", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd();
+
+                b.Property<int>("MachineId");
+
+                b.Property<long>("MagazineId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("MachineId");
+
+                b.HasIndex("MagazineId");
+
+                b.ToTable("MagazinesByMachines");
+            });
+
             modelBuilder.Entity("Cicm.Database.Models.MemoryByMachine", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
@@ -5731,6 +5748,15 @@ namespace Cicm.Database.Migrations
                                     b.HasOne("Cicm.Database.Models.Magazine", "Magazine").WithMany("Issues")
                                      .HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade);
                                 });
+
+            modelBuilder.Entity("Cicm.Database.Models.MagazinesByMachine", b =>
+            {
+                b.HasOne("Cicm.Database.Models.Machine", "Machine").WithMany("Magazines").HasForeignKey("MachineId")
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Cicm.Database.Models.MagazineIssue", "Magazine").WithMany("Machines")
+                 .HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity("Cicm.Database.Models.MemoryByMachine",
                                 b =>

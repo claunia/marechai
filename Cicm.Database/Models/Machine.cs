@@ -72,6 +72,7 @@ namespace Cicm.Database.Models
         public virtual ICollection<ScreensByMachine>    Screens    { get; set; }
         public virtual ICollection<DocumentsByMachine>  Documents  { get; set; }
         public virtual ICollection<BooksByMachine>      Books      { get; set; }
+        public virtual ICollection<MagazinesByMachine>  Magazines  { get; set; }
 
         [NotMapped]
         [DisplayName("Introduced")]
