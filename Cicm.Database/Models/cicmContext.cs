@@ -398,6 +398,10 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.PersonId).IsUnique();
 
+                entity.HasIndex(e => e.Alias);
+
+                entity.HasIndex(e => e.DisplayName);
+
                 entity.HasOne(d => d.Person).WithOne(p => p.DocumentPerson)
                       .HasForeignKey<Person>(d => d.DocumentPersonId).OnDelete(DeleteBehavior.SetNull);
             });

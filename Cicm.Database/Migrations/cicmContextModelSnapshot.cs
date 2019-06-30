@@ -398,6 +398,10 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
 
+                b.Property<string>("Alias");
+
+                b.Property<string>("DisplayName");
+
                 b.Property<string>("Name").IsRequired();
 
                 b.Property<int?>("PersonId");
@@ -405,6 +409,10 @@ namespace Cicm.Database.Migrations
                 b.Property<string>("Surname").IsRequired();
 
                 b.HasKey("Id");
+
+                b.HasIndex("Alias");
+
+                b.HasIndex("DisplayName");
 
                 b.HasIndex("Name");
 
