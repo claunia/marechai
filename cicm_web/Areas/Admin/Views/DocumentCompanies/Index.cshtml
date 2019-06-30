@@ -1,4 +1,5 @@
-@model IEnumerable<CompanyViewModel>
+@using cicm_web.Areas.Admin.Models
+@model IEnumerable<cicm_web.Areas.Admin.Models.DocumentCompanyViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,15 +19,24 @@
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Company)
+        </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach(CompanyViewModel item in Model)
+    @foreach(DocumentCompanyViewModel item in Model)
     {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <a asp-action="Details"
+                   asp-route-id="@item.CompanyId"
+                   asp-controller="Companies">
+                    @Html.DisplayFor(modelItem => item.Company)</a>
             </td>
             <td>
                 <a asp-action="Details"

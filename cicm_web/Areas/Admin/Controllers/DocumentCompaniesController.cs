@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
-using cicm_web.Models;
+using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,8 +23,14 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: DocumentCompanies
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DocumentCompanies.Select(d => new CompanyViewModel {Id = d.Id, Name = d.Name})
-                                      .ToListAsync());
+            return View(await _context.DocumentCompanies
+                                      .Select(d => new DocumentCompanyViewModel
+                                       {
+                                           Id        = d.Id,
+                                           Name      = d.Name,
+                                           Company   = d.Company.Name,
+                                           CompanyId = d.CompanyId
+                                       }).ToListAsync());
         }
 
         // GET: DocumentCompanies/Details/5
@@ -32,7 +38,15 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             if(id == null) return NotFound();
 
-            DocumentCompany documentCompany = await _context.DocumentCompanies.FirstOrDefaultAsync(m => m.Id == id);
+            DocumentCompanyViewModel documentCompany =
+                await _context.DocumentCompanies
+                              .Select(d => new DocumentCompanyViewModel
+                               {
+                                   Id        = d.Id,
+                                   Name      = d.Name,
+                                   Company   = d.Company.Name,
+                                   CompanyId = d.CompanyId
+                               }).FirstOrDefaultAsync(m => m.Id == id);
             if(documentCompany == null) return NotFound();
 
             return View(documentCompany);
