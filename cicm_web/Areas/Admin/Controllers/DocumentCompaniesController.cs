@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Cicm.Database.Models;
+using cicm_web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,11 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: DocumentCompanies
-        public async Task<IActionResult> Index() => View(await _context.DocumentCompanies.ToListAsync());
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.DocumentCompanies.Select(d => new CompanyViewModel {Id = d.Id, Name = d.Name})
+                                      .ToListAsync());
+        }
 
         // GET: DocumentCompanies/Details/5
         public async Task<IActionResult> Details(int? id)
