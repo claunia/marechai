@@ -4958,11 +4958,15 @@ namespace Cicm.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
 
+                b.Property<string>("Alias");
+
                 b.Property<DateTime>("BirthDate");
 
                 b.Property<short?>("CountryOfBirthId");
 
                 b.Property<DateTime?>("DeathDate");
+
+                b.Property<string>("DisplayName");
 
                 b.Property<int?>("DocumentPersonId");
 
@@ -4980,11 +4984,15 @@ namespace Cicm.Database.Migrations
 
                 b.HasKey("Id");
 
+                b.HasIndex("Alias");
+
                 b.HasIndex("BirthDate");
 
                 b.HasIndex("CountryOfBirthId");
 
                 b.HasIndex("DeathDate");
+
+                b.HasIndex("DisplayName");
 
                 b.HasIndex("Facebook");
 

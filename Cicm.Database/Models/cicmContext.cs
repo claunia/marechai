@@ -1076,6 +1076,10 @@ namespace Cicm.Database.Models
 
                 entity.HasIndex(e => e.Photo);
 
+                entity.HasIndex(e => e.Alias);
+
+                entity.HasIndex(e => e.DisplayName);
+
                 entity.HasOne(d => d.CountryOfBirth).WithMany(p => p.People).HasForeignKey(d => d.CountryOfBirthId);
 
                 entity.HasOne(d => d.DocumentPerson).WithOne(p => p.Person)

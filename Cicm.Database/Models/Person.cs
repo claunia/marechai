@@ -28,10 +28,13 @@ namespace Cicm.Database.Models
         public string Facebook         { get; set; }
         public Guid   Photo            { get; set; }
         public int?   DocumentPersonId { get; set; }
+        public string Alias            { get; set; }
+        [DisplayName("Name to be displayed")]
+        public string DisplayName { get; set; }
 
         [NotMapped]
         [DisplayName("Name")]
-        public string FullName => $"{Name} {Surname}";
+        public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 
         public         short?                       CountryOfBirthId { get; set; }
         public virtual ICollection<PeopleByCompany> Companies        { get; set; }

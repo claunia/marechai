@@ -51,7 +51,8 @@ namespace cicm_web.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Name,Surname,BirthDate,DeathDate,Webpage,Twitter,Facebook,Photo,CountryOfBirthId,Id")]
+            [Bind(
+                "Name,Surname,BirthDate,DeathDate,Webpage,Twitter,Facebook,Photo,CountryOfBirthId,Id,Alias,DisplayName")]
             Person person)
         {
             if(ModelState.IsValid)
@@ -85,7 +86,8 @@ namespace cicm_web.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
-            int id, [Bind("Name,Surname,BirthDate,DeathDate,Webpage,Twitter,Facebook,Photo,CountryOfBirthId,Id")]
+            int id, [Bind(
+                "Name,Surname,BirthDate,DeathDate,Webpage,Twitter,Facebook,Photo,CountryOfBirthId,Id,Alias,DisplayName")]
             Person person)
         {
             if(id != person.Id) return NotFound();

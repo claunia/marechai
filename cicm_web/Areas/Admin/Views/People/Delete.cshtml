@@ -24,6 +24,18 @@
             @Html.DisplayFor(model => model.Surname)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Alias)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Alias)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DisplayName)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CountryOfBirth)
         </dt>
         <dd class="col-sm-10">
@@ -66,10 +78,16 @@
             }
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" />
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        <input type="hidden"
+               asp-for="Id" />
+        <input class="btn btn-danger"
+               type="submit"
+               value="Delete" />
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Back to List
+        </a>
     </form>
 </div>
