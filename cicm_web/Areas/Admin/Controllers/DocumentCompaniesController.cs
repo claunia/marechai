@@ -80,7 +80,10 @@ namespace cicm_web.Areas.Admin.Controllers
             if(id == null) return NotFound();
 
             DocumentCompany documentCompany = await _context.DocumentCompanies.FindAsync(id);
+
             if(documentCompany == null) return NotFound();
+
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name).Select(c => new {c.Id, c.Name}), "Id", "Name", documentCompany.CompanyId);
 
             return View(documentCompany);
         }
@@ -110,6 +113,8 @@ namespace cicm_web.Areas.Admin.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name).Select(c => new {c.Id, c.Name}), "Id", "Name", documentCompany.CompanyId);
 
             return View(documentCompany);
         }
