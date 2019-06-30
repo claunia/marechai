@@ -24,7 +24,7 @@ namespace cicm_web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<Person, Iso31661Numeric> cicmContext = _context.People.Include(p => p.CountryOfBirth);
-            return View(await cicmContext.ToListAsync());
+            return View(await cicmContext.OrderBy(p => p.FullName).ToListAsync());
         }
 
         // GET: People/Details/5
