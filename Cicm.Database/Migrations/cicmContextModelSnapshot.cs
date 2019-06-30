@@ -285,8 +285,6 @@ namespace Cicm.Database.Migrations
 
                 b.HasIndex("CountryId").HasName("idx_companies_country");
 
-                b.HasIndex("DocumentCompanyId").IsUnique();
-
                 b.HasIndex("Facebook").HasName("idx_companies_facebook");
 
                 b.HasIndex("Founded").HasName("idx_companies_founded");
@@ -5634,9 +5632,6 @@ namespace Cicm.Database.Migrations
                 b.HasOne("Cicm.Database.Models.Iso31661Numeric", "Country").WithMany("Companies")
                  .HasForeignKey("CountryId").HasConstraintName("fk_companies_country");
 
-                b.HasOne("Cicm.Database.Models.DocumentCompany", "DocumentCompany").WithOne("Company")
-                 .HasForeignKey("Cicm.Database.Models.Company", "DocumentCompanyId").OnDelete(DeleteBehavior.SetNull);
-
                 b.HasOne("Cicm.Database.Models.Company", "SoldTo").WithMany("InverseSoldToNavigation")
                  .HasForeignKey("SoldToId").HasConstraintName("fk_companies_sold_to");
             });
@@ -5660,6 +5655,14 @@ namespace Cicm.Database.Migrations
                                 {
                                     b.HasOne("Cicm.Database.Models.Iso31661Numeric", "Country").WithMany("Documents")
                                      .HasForeignKey("CountryId");
+                                });
+
+            modelBuilder.Entity("Cicm.Database.Models.DocumentCompany",
+                                b =>
+                                {
+                                    b.HasOne("Cicm.Database.Models.Company", "Company").WithOne("DocumentCompany")
+                                     .HasForeignKey("Cicm.Database.Models.DocumentCompany", "CompanyId")
+                                     .OnDelete(DeleteBehavior.SetNull);
                                 });
 
             modelBuilder.Entity("Cicm.Database.Models.DocumentPerson",

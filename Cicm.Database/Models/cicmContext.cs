@@ -388,9 +388,6 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Name);
 
                 entity.HasIndex(e => e.CompanyId).IsUnique();
-
-                entity.HasOne(d => d.Company).WithOne(p => p.DocumentCompany)
-                      .HasForeignKey<Company>(d => d.DocumentCompanyId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<DocumentPerson>(entity =>
