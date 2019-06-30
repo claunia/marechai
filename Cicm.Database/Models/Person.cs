@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Cicm.Database.Models
 {
@@ -21,8 +22,9 @@ namespace Cicm.Database.Models
         [DataType(DataType.Date)]
         public DateTime? DeathDate { get; set; }
         [Url]
-        public string Webpage { get;          set; }
-        public string Twitter          { get; set; }
+        public string Webpage { get; set; }
+        [Remote("VerifyTwitter", "People", "Admin")]
+        public string Twitter { get;          set; }
         public string Facebook         { get; set; }
         public Guid   Photo            { get; set; }
         public int?   DocumentPersonId { get; set; }
