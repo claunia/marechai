@@ -20,7 +20,8 @@ namespace Cicm.Database.Models
         [DisplayName("Name")]
         public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 
-        public virtual Person                        Person    { get; set; }
+        [DisplayName("Linked person")]
+        public virtual Person Person { get;                           set; }
         public virtual ICollection<PeopleByDocument> Documents { get; set; }
         public virtual ICollection<PeopleByBook>     Books     { get; set; }
         public virtual ICollection<PeopleByMagazine> Magazines { get; set; }
