@@ -83,7 +83,9 @@ namespace cicm_web.Areas.Admin.Controllers
 
             if(documentCompany == null) return NotFound();
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name).Select(c => new {c.Id, c.Name}), "Id", "Name", documentCompany.CompanyId);
+            ViewData["CompanyId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name).Select(c => new {c.Id, c.Name}), "Id", "Name",
+                               documentCompany.CompanyId);
 
             return View(documentCompany);
         }
@@ -114,7 +116,9 @@ namespace cicm_web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name).Select(c => new {c.Id, c.Name}), "Id", "Name", documentCompany.CompanyId);
+            ViewData["CompanyId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name).Select(c => new {c.Id, c.Name}), "Id", "Name",
+                               documentCompany.CompanyId);
 
             return View(documentCompany);
         }
@@ -124,7 +128,15 @@ namespace cicm_web.Areas.Admin.Controllers
         {
             if(id == null) return NotFound();
 
-            DocumentCompany documentCompany = await _context.DocumentCompanies.FirstOrDefaultAsync(m => m.Id == id);
+            DocumentCompanyViewModel documentCompany =
+                await _context.DocumentCompanies
+                              .Select(d => new DocumentCompanyViewModel
+                               {
+                                   Id        = d.Id,
+                                   Name      = d.Name,
+                                   Company   = d.Company.Name,
+                                   CompanyId = d.CompanyId
+                               }).FirstOrDefaultAsync(m => m.Id == id);
             if(documentCompany == null) return NotFound();
 
             return View(documentCompany);
