@@ -30,6 +30,7 @@ namespace Cicm.Database.Models
         public int?   DocumentPersonId { get; set; }
 
         [NotMapped]
+        [DisplayName("Name")]
         public string FullName => $"{Name} {Surname}";
 
         public         short?                       CountryOfBirthId { get; set; }
