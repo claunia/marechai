@@ -23,7 +23,7 @@ namespace cicm_web.Areas.Admin.Controllers
         // GET: DocumentCompanies
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DocumentCompanies
+            return View(await _context.DocumentCompanies.OrderBy(c => c.Name)
                                       .Select(d => new DocumentCompanyViewModel
                                        {
                                            Id        = d.Id,
