@@ -4,6 +4,7 @@ using Cicm.Database.Models;
 using cicm_web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace cicm_web.Areas.Admin.Controllers
@@ -38,7 +39,12 @@ namespace cicm_web.Areas.Admin.Controllers
         }
 
         // GET: DocumentCompanies/Create
-        public IActionResult Create() => View();
+        public IActionResult Create()
+        {
+            ViewData["CompanyId"] =
+                new SelectList(_context.Companies.OrderBy(c => c.Name).Select(c => new {c.Id, c.Name}), "Id", "Name");
+            return View();
+        }
 
         // POST: DocumentCompanies/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -47,14 +53,11 @@ namespace cicm_web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,CompanyId,Id")] DocumentCompany documentCompany)
         {
-            if(ModelState.IsValid)
-            {
-                _context.Add(documentCompany);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            if(!ModelState.IsValid) return View(documentCompany);
 
-            return View(documentCompany);
+            _context.Add(documentCompany);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: DocumentCompanies/Edit/5
