@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -36,6 +36,6 @@ namespace Cicm.Database.Models
     {
         public int       Id      { get; set; }
         public int       Version { get; set; }
-        public DateTime? Updated { get; set; }
+        public DateTimeOffset? Updated { get; set; }
     }
 }
