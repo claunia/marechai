@@ -229,7 +229,7 @@ namespace Cicm.Database.Models
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
                 entity.Property(e => e.Updated).HasColumnName("updated").HasColumnType("datetime")
-                      .HasDefaultValueSql("'CURRENT_TIMESTAMP'");
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.Property(e => e.Version).HasColumnName("version").HasColumnType("int(11)");
             });

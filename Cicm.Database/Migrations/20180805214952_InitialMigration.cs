@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // Canary Islands Computer Museum Website
 // ----------------------------------------------------------------------------
 //
@@ -114,8 +114,8 @@ namespace Cicm.Database.Migrations
                                                        .Annotation("MySql:ValueGenerationStrategy",
                                                                    MySqlValueGenerationStrategy.IdentityColumn),
                                              version = table.Column<int>("int(11)", nullable: false),
-                                             updated = table.Column<DateTime>("datetime", nullable: true,
-                                                                              defaultValueSql: "'CURRENT_TIMESTAMP'")
+                                             updated = table.Column<DateTimeOffset?>("timestamp", nullable: true,
+                                                                              defaultValueSql: "CURRENT_TIMESTAMP")
                                          }, constraints: table => { table.PrimaryKey("PK_cicm_db", x => x.id); });
 
             migrationBuilder.CreateTable("forbidden",
