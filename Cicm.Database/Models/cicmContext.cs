@@ -388,9 +388,6 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Name);
 
                 entity.HasIndex(e => e.CompanyId).IsUnique();
-
-                entity.HasOne(d => d.Company).WithOne(p => p.DocumentCompany)
-                      .HasForeignKey<Company>(d => d.DocumentCompanyId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<DocumentPerson>(entity =>
@@ -400,6 +397,10 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Surname);
 
                 entity.HasIndex(e => e.PersonId).IsUnique();
+
+                entity.HasIndex(e => e.Alias);
+
+                entity.HasIndex(e => e.DisplayName);
 
                 entity.HasOne(d => d.Person).WithOne(p => p.DocumentPerson)
                       .HasForeignKey<Person>(d => d.DocumentPersonId).OnDelete(DeleteBehavior.SetNull);
@@ -1078,6 +1079,10 @@ namespace Cicm.Database.Models
                 entity.HasIndex(e => e.Facebook);
 
                 entity.HasIndex(e => e.Photo);
+
+                entity.HasIndex(e => e.Alias);
+
+                entity.HasIndex(e => e.DisplayName);
 
                 entity.HasOne(d => d.CountryOfBirth).WithMany(p => p.People).HasForeignKey(d => d.CountryOfBirthId);
 

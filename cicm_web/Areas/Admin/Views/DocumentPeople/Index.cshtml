@@ -1,11 +1,11 @@
 @using cicm_web.Areas.Admin.Models
-@model IEnumerable<cicm_web.Areas.Admin.Models.DocumentCompanyViewModel>
+@model IEnumerable<cicm_web.Areas.Admin.Models.DocumentPersonViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Document companies</h1>
+<h1>Document people</h1>
 
 <p>
     <a asp-action="Create"
@@ -20,13 +20,13 @@
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Company)
+            @Html.DisplayNameFor(model => model.Person)
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach(DocumentCompanyViewModel item in Model)
+    @foreach(DocumentPersonViewModel item in Model)
     {
         <tr>
             <td>
@@ -34,9 +34,9 @@
             </td>
             <td>
                 <a asp-action="Details"
-                   asp-route-id="@item.CompanyId"
-                   asp-controller="Companies">
-                    @Html.DisplayFor(modelItem => item.Company)</a>
+                   asp-route-id="@item.PersonId"
+                   asp-controller="People">
+                    @Html.DisplayFor(modelItem => item.Person)</a>
             </td>
             <td>
                 <a asp-action="Details"

@@ -448,3 +448,4 @@ cicm_web/wwwroot/assets/**/*.png
 cicm_web/wwwroot/assets/**/*.tif
 cicm_web/wwwroot/assets/**/*.jpg
 cicm_web/wwwroot/assets/**/*.tiff
+cicm_web/wwwroot/assets/**/*.webp

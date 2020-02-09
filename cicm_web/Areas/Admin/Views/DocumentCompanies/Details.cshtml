@@ -1,4 +1,4 @@
-@model Cicm.Database.Models.DocumentCompany
+@model cicm_web.Areas.Admin.Models.DocumentCompanyViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,7 +7,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>DocumentCompany</h4>
+    <h4>Document company</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -17,17 +17,24 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CompanyId)
+            @Html.DisplayNameFor(model => model.Company)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CompanyId)
+            <a asp-action="Details"
+               asp-route-id="@Model.CompanyId"
+               asp-controller="Companies">
+                @Html.DisplayFor(modelItem => Model.Company)</a>
         </dd>
     </dl>
 </div>
 <div>
     <a asp-action="Edit"
-       asp-route-id="@Model.Id">
+       asp-route-id="@Model.Id"
+       class="btn btn-primary">
         Edit
-    </a> |
-    <a asp-action="Index">Back to List</a>
+    </a>
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
 </div>
