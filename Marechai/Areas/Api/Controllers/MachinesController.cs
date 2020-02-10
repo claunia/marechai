@@ -39,9 +39,9 @@ namespace Marechai.Areas.Api.Controllers
     [ApiController]
     public class MachinesController : ControllerBase
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public MachinesController(cicmContext context)
+        public MachinesController(MarechaiContext context)
         {
             _context = context;
         }

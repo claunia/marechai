@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class StorageByMachinesController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public StorageByMachinesController(cicmContext context)
+        public StorageByMachinesController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,9 +54,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/StorageByMachines
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<StorageByMachine, Machine> cicmContext =
+            IIncludableQueryable<StorageByMachine, Machine> marechaiContext =
                 _context.StorageByMachine.Include(s => s.Machine);
-            return View(await cicmContext.OrderBy(s => s.Machine.Company.Name).ThenBy(s => s.Machine.Name)
+            return View(await marechaiContext.OrderBy(s => s.Machine.Company.Name).ThenBy(s => s.Machine.Name)
                                          .Select(s => new StorageByMachineViewModel
                                           {
                                               Id        = s.Id,

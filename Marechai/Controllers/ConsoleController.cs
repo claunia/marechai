@@ -38,10 +38,10 @@ namespace Marechai.Controllers
 {
     public class ConsoleController : Controller
     {
-        readonly cicmContext         _context;
+        readonly MarechaiContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
 
-        public ConsoleController(IHostingEnvironment env, cicmContext context)
+        public ConsoleController(IHostingEnvironment env, MarechaiContext context)
         {
             hostingEnvironment = env;
             _context           = context;

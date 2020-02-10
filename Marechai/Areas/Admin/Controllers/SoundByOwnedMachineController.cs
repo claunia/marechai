@@ -14,9 +14,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class SoundByOwnedMachineController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public SoundByOwnedMachineController(cicmContext context)
+        public SoundByOwnedMachineController(MarechaiContext context)
         {
             _context = context;
         }
@@ -24,9 +24,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: SoundByOwnedMachine
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<SoundByOwnedMachine, SoundSynth> cicmContext =
+            IIncludableQueryable<SoundByOwnedMachine, SoundSynth> marechaiContext =
                 _context.SoundByOwnedMachine.Include(s => s.OwnedMachine).Include(s => s.SoundSynth);
-            return View(await cicmContext.OrderBy(s => s.OwnedMachine.Machine.Company.Name)
+            return View(await marechaiContext.OrderBy(s => s.OwnedMachine.Machine.Company.Name)
                                          .ThenBy(s => s.OwnedMachine.Machine.Name)
                                          .ThenBy(s => s.OwnedMachine.User.UserName).ThenBy(s => s.SoundSynth.Name)
                                          .Select(s => new SoundByMachineViewModel

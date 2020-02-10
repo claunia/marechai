@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Marechai.Database.Migrations
 {
-    [DbContext(typeof(cicmContext))]
+    [DbContext(typeof(MarechaiContext))]
     [Migration("20190519012635_DropOldAdminsTable")]
     partial class DropOldAdminsTable
     {

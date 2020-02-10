@@ -21,10 +21,10 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class CompanyLogosController : Controller
     {
-        readonly cicmContext         _context;
+        readonly MarechaiContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
 
-        public CompanyLogosController(cicmContext context, IHostingEnvironment env)
+        public CompanyLogosController(MarechaiContext context, IHostingEnvironment env)
         {
             _context           = context;
             hostingEnvironment = env;
@@ -33,8 +33,8 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: CompanyLogos
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<CompanyLogo, Company> cicmContext = _context.CompanyLogos.Include(c => c.Company);
-            return View(await cicmContext.OrderBy(l => l.Company.Name).ThenBy(l => l.Year)
+            IIncludableQueryable<CompanyLogo, Company> marechaiContext = _context.CompanyLogos.Include(c => c.Company);
+            return View(await marechaiContext.OrderBy(l => l.Company.Name).ThenBy(l => l.Year)
                                          .Select(l => new CompanyLogoViewModel
                                           {
                                               Company = l.Company.Name, Id = l.Id, Year = l.Year

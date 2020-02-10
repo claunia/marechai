@@ -14,9 +14,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class SoundByMachineController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public SoundByMachineController(cicmContext context)
+        public SoundByMachineController(MarechaiContext context)
         {
             _context = context;
         }
@@ -24,9 +24,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: SoundByMachine
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<SoundByMachine, SoundSynth> cicmContext =
+            IIncludableQueryable<SoundByMachine, SoundSynth> marechaiContext =
                 _context.SoundByMachine.Include(s => s.Machine).Include(s => s.SoundSynth);
-            return View(await cicmContext.OrderBy(s => s.Machine.Name).ThenBy(s => s.SoundSynth.Name)
+            return View(await marechaiContext.OrderBy(s => s.Machine.Name).ThenBy(s => s.SoundSynth.Name)
                                          .Select(s => new SoundByMachineViewModel
                                           {
                                               Id         = s.Id,

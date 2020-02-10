@@ -39,9 +39,9 @@ namespace Marechai.Areas.Api.Controllers
     [ApiController]
     public class NewsController : ControllerBase
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public NewsController(cicmContext context)
+        public NewsController(MarechaiContext context)
         {
             _context = context;
         }

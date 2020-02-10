@@ -13,9 +13,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class OwnedMachineController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public OwnedMachineController(cicmContext context)
+        public OwnedMachineController(MarechaiContext context)
         {
             _context = context;
         }
@@ -23,7 +23,7 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: OwnedMachine
         public async Task<IActionResult> Index()
         {
-            IQueryable<OwnedMachineViewModel> cicmContext = _context
+            IQueryable<OwnedMachineViewModel> marechaiContext = _context
                                                            .OwnedMachines.Include(o => o.Machine)
                                                            .OrderBy(o => o.Machine.Company.Name)
                                                            .ThenBy(o => o.Machine.Name).ThenBy(o => o.User.UserName)
@@ -38,7 +38,7 @@ namespace Marechai.Areas.Admin.Controllers
                                                                 User   = o.User.UserName
                                                             });
 
-            return View(await cicmContext.ToListAsync());
+            return View(await marechaiContext.ToListAsync());
         }
 
         // GET: OwnedMachine/Details/5

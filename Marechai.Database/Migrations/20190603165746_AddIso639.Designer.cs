@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Marechai.Database.Migrations
 {
-    [DbContext(typeof(cicmContext))]
+    [DbContext(typeof(MarechaiContext))]
     [Migration("20190603165746_AddIso639")]
     partial class AddIso639
     {

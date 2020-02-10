@@ -11,9 +11,9 @@ namespace Marechai
     [Authorize]
     public class LicensesController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public LicensesController(cicmContext context)
+        public LicensesController(MarechaiContext context)
         {
             _context = context;
         }

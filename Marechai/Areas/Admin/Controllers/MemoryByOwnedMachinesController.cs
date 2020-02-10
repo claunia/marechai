@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class MemoryByOwnedMachinesController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public MemoryByOwnedMachinesController(cicmContext context)
+        public MemoryByOwnedMachinesController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,9 +54,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/MemoryByOwnedMachines
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<MemoryByOwnedMachine, OwnedMachine> cicmContext =
+            IIncludableQueryable<MemoryByOwnedMachine, OwnedMachine> marechaiContext =
                 _context.MemoryByOwnedMachine.Include(m => m.OwnedMachine);
-            return View(await cicmContext.OrderBy(m => m.OwnedMachine.Machine.Company.Name)
+            return View(await marechaiContext.OrderBy(m => m.OwnedMachine.Machine.Company.Name)
                                          .ThenBy(m => m.OwnedMachine.Machine.Name)
                                          .ThenBy(m => m.OwnedMachine.User.UserName).ThenBy(m => m.Usage)
                                          .ThenBy(m => m.Size).ThenBy(m => m.Type)
@@ -77,9 +77,9 @@ namespace Marechai.Areas.Admin.Controllers
         {
             if(id == null) return NotFound();
 
-            IIncludableQueryable<MemoryByOwnedMachine, OwnedMachine> cicmContext =
+            IIncludableQueryable<MemoryByOwnedMachine, OwnedMachine> marechaiContext =
                 _context.MemoryByOwnedMachine.Include(m => m.OwnedMachine);
-            MemoryByMachineViewModel memoryByOwnedMachine = await cicmContext
+            MemoryByMachineViewModel memoryByOwnedMachine = await marechaiContext
                                                                  .OrderBy(m => m.OwnedMachine.Machine.Company.Name)
                                                                  .ThenBy(m => m.OwnedMachine.Machine.Name)
                                                                  .ThenBy(m => m.OwnedMachine.User.UserName)

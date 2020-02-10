@@ -41,9 +41,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class BrowserTestsController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public BrowserTestsController(cicmContext context)
+        public BrowserTestsController(MarechaiContext context)
         {
             _context = context;
         }

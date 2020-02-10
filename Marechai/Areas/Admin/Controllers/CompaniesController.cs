@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class CompaniesController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public CompaniesController(cicmContext context)
+        public CompaniesController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,9 +54,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/Companies
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<Company, Company> cicmContext =
+            IIncludableQueryable<Company, Company> marechaiContext =
                 _context.Companies.Include(c => c.Country).Include(c => c.SoldTo);
-            return View(cicmContext.OrderBy(c => c.Name).Select(c => new CompanyViewModel
+            return View(marechaiContext.OrderBy(c => c.Name).Select(c => new CompanyViewModel
             {
                 Id      = c.Id,
                 Name    = c.Name,

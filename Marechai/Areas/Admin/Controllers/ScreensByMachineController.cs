@@ -14,9 +14,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class ScreensByMachineController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public ScreensByMachineController(cicmContext context)
+        public ScreensByMachineController(MarechaiContext context)
         {
             _context = context;
         }
@@ -24,9 +24,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: ScreensByMachine
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<ScreensByMachine, Screen> cicmContext =
+            IIncludableQueryable<ScreensByMachine, Screen> marechaiContext =
                 _context.ScreensByMachine.Include(s => s.Machine).Include(s => s.Screen);
-            return View(await cicmContext.Select(s => new ScreensByMachineViewModel
+            return View(await marechaiContext.Select(s => new ScreensByMachineViewModel
             {
                 Id = s.Id,
                 Screen = s.Screen.NativeResolution != null

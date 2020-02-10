@@ -11,7 +11,7 @@ namespace Marechai.Helpers
     {
         // TODO: Changes file
         // Data files can be found in https://iso639-3.sil.org/code_tables/download_tables
-        internal static void Import(cicmContext context)
+        internal static void Import(MarechaiContext context)
         {
             if(!Directory.Exists("iso639")) return;
 

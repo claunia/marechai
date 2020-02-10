@@ -14,9 +14,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class InstructionSetExtensionsByProcessorController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public InstructionSetExtensionsByProcessorController(cicmContext context)
+        public InstructionSetExtensionsByProcessorController(MarechaiContext context)
         {
             _context = context;
         }
@@ -24,9 +24,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: InstructionSetExtensionsByProcessor
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<InstructionSetExtensionsByProcessor, Processor> cicmContext =
+            IIncludableQueryable<InstructionSetExtensionsByProcessor, Processor> marechaiContext =
                 _context.InstructionSetExtensionsByProcessor.Include(i => i.Extension).Include(i => i.Processor);
-            return View(await cicmContext.OrderBy(e => e.Processor.Name).ThenBy(e => e.Extension.Extension)
+            return View(await marechaiContext.OrderBy(e => e.Processor.Name).ThenBy(e => e.Extension.Extension)
                                          .Select(e => new InstructionSetExtensionsByProcessorViewModel
                                           {
                                               Id        = e.Id,

@@ -44,7 +44,7 @@ namespace Marechai.Areas.Identity
             builder.ConfigureServices((context, services) =>
             {
                 services.AddDefaultIdentity<ApplicationUser>()
-                        .AddEntityFrameworkStores<cicmContext>();
+                        .AddEntityFrameworkStores<MarechaiContext>();
             });
         }
     }

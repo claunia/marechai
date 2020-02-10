@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class ProcessorsController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public ProcessorsController(cicmContext context)
+        public ProcessorsController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,9 +54,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/Processors
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<Processor, InstructionSet> cicmContext =
+            IIncludableQueryable<Processor, InstructionSet> marechaiContext =
                 _context.Processors.Include(p => p.Company).Include(p => p.InstructionSet);
-            return View(await cicmContext.OrderBy(p => p.Company.Name).ThenBy(p => p.Name)
+            return View(await marechaiContext.OrderBy(p => p.Company.Name).ThenBy(p => p.Name)
                                          .Select(p => new ProcessorViewModel
                                           {
                                               Company        = p.Company.Name,

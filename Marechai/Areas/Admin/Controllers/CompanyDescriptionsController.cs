@@ -45,10 +45,10 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class CompanyDescriptionsController : Controller
     {
-        readonly cicmContext      _context;
+        readonly MarechaiContext      _context;
         readonly MarkdownPipeline pipeline;
 
-        public CompanyDescriptionsController(cicmContext context)
+        public CompanyDescriptionsController(MarechaiContext context)
         {
             pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             _context = context;
@@ -57,9 +57,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: CompanyDescription
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<CompanyDescription, Company> cicmContext =
+            IIncludableQueryable<CompanyDescription, Company> marechaiContext =
                 _context.CompanyDescriptions.Include(c => c.Company);
-            return View(await cicmContext.OrderBy(c => c.Company.Name)
+            return View(await marechaiContext.OrderBy(c => c.Company.Name)
                                          .Select(c => new CompanyDescriptionViewModel
                                           {
                                               Id = c.Id, Company = c.Company.Name

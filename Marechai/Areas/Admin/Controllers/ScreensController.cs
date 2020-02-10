@@ -12,9 +12,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class ScreensController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public ScreensController(cicmContext context)
+        public ScreensController(MarechaiContext context)
         {
             _context = context;
         }

@@ -13,9 +13,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class DocumentPeopleController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public DocumentPeopleController(cicmContext context)
+        public DocumentPeopleController(MarechaiContext context)
         {
             _context = context;
         }

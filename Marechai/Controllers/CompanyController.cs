@@ -39,10 +39,10 @@ namespace Marechai.Controllers
 {
     public class CompanyController : Controller
     {
-        readonly cicmContext         _context;
+        readonly MarechaiContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
 
-        public CompanyController(IHostingEnvironment env, cicmContext context)
+        public CompanyController(IHostingEnvironment env, MarechaiContext context)
         {
             hostingEnvironment = env;
             _context           = context;

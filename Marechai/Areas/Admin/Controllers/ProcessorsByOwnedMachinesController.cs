@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class ProcessorsByOwnedMachinesController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public ProcessorsByOwnedMachinesController(cicmContext context)
+        public ProcessorsByOwnedMachinesController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,9 +54,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/ProcessorsByOwnedMachines
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<ProcessorsByOwnedMachine, Processor> cicmContext =
+            IIncludableQueryable<ProcessorsByOwnedMachine, Processor> marechaiContext =
                 _context.ProcessorsByOwnedMachine.Include(p => p.OwnedMachine).Include(p => p.Processor);
-            return View(await cicmContext.OrderBy(p => p.OwnedMachine.Machine.Name).ThenBy(p => p.Processor.Name)
+            return View(await marechaiContext.OrderBy(p => p.OwnedMachine.Machine.Name).ThenBy(p => p.Processor.Name)
                                          .Select(p => new ProcessorsByMachineViewModel
                                           {
                                               Id = p.Id,

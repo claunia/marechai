@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class GpusController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public GpusController(cicmContext context)
+        public GpusController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,8 +54,8 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/Gpus
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<Gpu, Company> cicmContext = _context.Gpus.Include(g => g.Company);
-            return View(await cicmContext.OrderBy(g => g.Company.Name).ThenBy(g => g.Name).ThenBy(g => g.Introduced)
+            IIncludableQueryable<Gpu, Company> marechaiContext = _context.Gpus.Include(g => g.Company);
+            return View(await marechaiContext.OrderBy(g => g.Company.Name).ThenBy(g => g.Name).ThenBy(g => g.Introduced)
                                          .Select(g => new GpuViewModel
                                           {
                                               Id         = g.Id,

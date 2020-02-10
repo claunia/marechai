@@ -41,9 +41,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class ResolutionsController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public ResolutionsController(cicmContext context)
+        public ResolutionsController(MarechaiContext context)
         {
             _context = context;
         }

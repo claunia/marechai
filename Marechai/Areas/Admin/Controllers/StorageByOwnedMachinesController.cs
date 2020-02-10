@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class StorageByOwnedMachinesController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public StorageByOwnedMachinesController(cicmContext context)
+        public StorageByOwnedMachinesController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,9 +54,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/StorageByOwnedMachines
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<StorageByOwnedMachine, OwnedMachine> cicmContext =
+            IIncludableQueryable<StorageByOwnedMachine, OwnedMachine> marechaiContext =
                 _context.StorageByOwnedMachine.Include(s => s.OwnedMachine);
-            return View(await cicmContext.OrderBy(s => s.OwnedMachine.Machine.Company.Name)
+            return View(await marechaiContext.OrderBy(s => s.OwnedMachine.Machine.Company.Name)
                                          .ThenBy(s => s.OwnedMachine.Machine.Name)
                                          .ThenBy(s => s.OwnedMachine.User.UserName)
                                          .Select(s => new StorageByMachineViewModel

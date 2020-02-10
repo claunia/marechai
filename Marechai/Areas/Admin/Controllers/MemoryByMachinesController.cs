@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class MemoryByMachinesController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public MemoryByMachinesController(cicmContext context)
+        public MemoryByMachinesController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,9 +54,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/MemoryByMachines
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<MemoryByMachine, Machine> cicmContext =
+            IIncludableQueryable<MemoryByMachine, Machine> marechaiContext =
                 _context.MemoryByMachine.Include(m => m.Machine);
-            return View(await cicmContext.OrderBy(m => m.Machine.Name).ThenBy(m => m.Usage).ThenBy(m => m.Size)
+            return View(await marechaiContext.OrderBy(m => m.Machine.Name).ThenBy(m => m.Usage).ThenBy(m => m.Size)
                                          .ThenBy(m => m.Type)
                                          .Select(m => new MemoryByMachineViewModel
                                           {

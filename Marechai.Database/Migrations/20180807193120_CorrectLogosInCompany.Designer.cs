@@ -37,7 +37,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Marechai.Database.Migrations
 {
-    [DbContext(typeof(cicmContext))]
+    [DbContext(typeof(MarechaiContext))]
     [Migration("20180807193120_CorrectLogosInCompany")]
     partial class CorrectLogosInCompany
     {

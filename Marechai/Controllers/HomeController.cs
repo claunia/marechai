@@ -41,10 +41,10 @@ namespace Marechai.Controllers
 {
     public class HomeController : Controller
     {
-        readonly cicmContext         _context;
+        readonly MarechaiContext         _context;
         readonly IHostingEnvironment hostingEnvironment;
 
-        public HomeController(IHostingEnvironment env, cicmContext context)
+        public HomeController(IHostingEnvironment env, MarechaiContext context)
         {
             hostingEnvironment = env;
             _context           = context;

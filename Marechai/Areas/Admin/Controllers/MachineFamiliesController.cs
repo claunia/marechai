@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class MachineFamiliesController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public MachineFamiliesController(cicmContext context)
+        public MachineFamiliesController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,8 +54,8 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/MachineFamilies
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<MachineFamily, Company> cicmContext = _context.MachineFamilies.Include(m => m.Company);
-            return View(await cicmContext.OrderBy(m => m.Company.Name).ThenBy(m => m.Name)
+            IIncludableQueryable<MachineFamily, Company> marechaiContext = _context.MachineFamilies.Include(m => m.Company);
+            return View(await marechaiContext.OrderBy(m => m.Company.Name).ThenBy(m => m.Name)
                                          .Select(m => new MachineFamilyViewModel
                                           {
                                               Id = m.Id, Company = m.Company.Name, Name = m.Name

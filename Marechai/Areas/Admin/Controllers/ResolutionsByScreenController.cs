@@ -13,9 +13,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class ResolutionsByScreenController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public ResolutionsByScreenController(cicmContext context)
+        public ResolutionsByScreenController(MarechaiContext context)
         {
             _context = context;
         }
@@ -23,9 +23,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: ResolutionsByScreen
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<ResolutionsByScreen, Screen> cicmContext =
+            IIncludableQueryable<ResolutionsByScreen, Screen> marechaiContext =
                 _context.ResolutionsByScreen.Include(r => r.Resolution).Include(r => r.Screen);
-            return View(await cicmContext.OrderBy(r => r.Screen.ToString()).ThenBy(r => r.Resolution.ToString())
+            return View(await marechaiContext.OrderBy(r => r.Screen.ToString()).ThenBy(r => r.Resolution.ToString())
                                          .ToListAsync());
         }
 

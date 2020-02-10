@@ -2,7 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : cicmContext.cs
+// Filename       : MarechaiContext.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -33,11 +33,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Database.Models
 {
-    public class cicmContext : IdentityDbContext
+    public class MarechaiContext : IdentityDbContext
     {
-        public cicmContext() { }
+        public MarechaiContext() { }
 
-        public cicmContext(DbContextOptions<cicmContext> options) : base(options) { }
+        public MarechaiContext(DbContextOptions<MarechaiContext> options) : base(options) { }
 
         public virtual DbSet<Book>                                Books                               { get; set; }
         public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }

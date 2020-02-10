@@ -103,7 +103,7 @@ namespace Marechai.Helpers
             }
         }
 
-        public static void ImportCompanyLogos(cicmContext context)
+        public static void ImportCompanyLogos(MarechaiContext context)
         {
             if(!Directory.Exists("wwwroot/assets/incoming")) return;
 

@@ -44,9 +44,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class SoundSynthsController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public SoundSynthsController(cicmContext context)
+        public SoundSynthsController(MarechaiContext context)
         {
             _context = context;
         }
@@ -54,8 +54,8 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/SoundSynths
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<SoundSynth, Company> cicmContext = _context.SoundSynths.Include(s => s.Company);
-            return View(await cicmContext.OrderBy(s => s.Company).ThenBy(s => s.Name).ThenBy(s => s.ModelCode)
+            IIncludableQueryable<SoundSynth, Company> marechaiContext = _context.SoundSynths.Include(s => s.Company);
+            return View(await marechaiContext.OrderBy(s => s.Company).ThenBy(s => s.Name).ThenBy(s => s.ModelCode)
                                          .Select(s => new SoundSynthViewModel
                                           {
                                               Company    = s.Company.Name,

@@ -14,9 +14,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class ResolutionsByGpuController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public ResolutionsByGpuController(cicmContext context)
+        public ResolutionsByGpuController(MarechaiContext context)
         {
             _context = context;
         }
@@ -24,9 +24,9 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: ResolutionsByGpu
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<ResolutionsByGpu, Resolution> cicmContext =
+            IIncludableQueryable<ResolutionsByGpu, Resolution> marechaiContext =
                 _context.ResolutionsByGpu.Include(r => r.Gpu).Include(r => r.Resolution);
-            return View(await cicmContext.OrderBy(r => r.Gpu.Company.Name).ThenBy(r => r.Gpu.Name)
+            return View(await marechaiContext.OrderBy(r => r.Gpu.Company.Name).ThenBy(r => r.Gpu.Name)
                                          .ThenBy(r => r.Resolution.Chars).ThenBy(r => r.Resolution.Width)
                                          .ThenBy(r => r.Resolution.Height).ThenBy(r => r.Resolution.Colors)
                                          .Select(r => new ResolutionsByGpuViewModel

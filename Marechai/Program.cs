@@ -139,7 +139,7 @@ namespace Marechai
                 {
                     start = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mUpdating database with Entity Framework...\u001b[0m");
-                    cicmContext context = services.GetRequiredService<cicmContext>();
+                    MarechaiContext context = services.GetRequiredService<MarechaiContext>();
                     context.Database.Migrate();
                     end = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",

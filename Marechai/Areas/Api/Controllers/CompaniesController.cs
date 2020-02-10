@@ -39,9 +39,9 @@ namespace Marechai.Areas.Api.Controllers
     [ApiController]
     public class CompaniesController : ControllerBase
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public CompaniesController(cicmContext context)
+        public CompaniesController(MarechaiContext context)
         {
             _context = context;
         }

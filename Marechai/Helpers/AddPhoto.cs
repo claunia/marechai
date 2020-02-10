@@ -213,7 +213,7 @@ namespace Marechai.Helpers
             return photo;
         }
 
-        public static void ImportPhotos(cicmContext context)
+        public static void ImportPhotos(MarechaiContext context)
         {
             if(!Directory.Exists("wwwroot/assets/photos/computers") &&
                !Directory.Exists("wwwroot/assets/photos/consoles")) return;

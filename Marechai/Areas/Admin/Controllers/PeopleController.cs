@@ -13,9 +13,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class PeopleController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public PeopleController(cicmContext context)
+        public PeopleController(MarechaiContext context)
         {
             _context = context;
         }
@@ -23,8 +23,8 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: People
         public async Task<IActionResult> Index()
         {
-            IIncludableQueryable<Person, Iso31661Numeric> cicmContext = _context.People.Include(p => p.CountryOfBirth);
-            return View(await cicmContext.OrderBy(p => p.FullName).ToListAsync());
+            IIncludableQueryable<Person, Iso31661Numeric> marechaiContext = _context.People.Include(p => p.CountryOfBirth);
+            return View(await marechaiContext.OrderBy(p => p.FullName).ToListAsync());
         }
 
         // GET: People/Details/5

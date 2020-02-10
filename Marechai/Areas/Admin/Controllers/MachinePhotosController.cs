@@ -20,11 +20,11 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class MachinePhotosController : Controller
     {
-        readonly cicmContext                  _context;
+        readonly MarechaiContext                  _context;
         readonly IHostingEnvironment          hostingEnvironment;
         readonly UserManager<ApplicationUser> userManager;
 
-        public MachinePhotosController(cicmContext                  context, IHostingEnvironment hostingEnvironment,
+        public MachinePhotosController(MarechaiContext                  context, IHostingEnvironment hostingEnvironment,
                                        UserManager<ApplicationUser> userManager)
         {
             _context                = context;

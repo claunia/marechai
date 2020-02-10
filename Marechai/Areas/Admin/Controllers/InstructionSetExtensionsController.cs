@@ -42,9 +42,9 @@ namespace Marechai.Areas.Admin.Controllers
     [Authorize]
     public class InstructionSetExtensionsController : Controller
     {
-        readonly cicmContext _context;
+        readonly MarechaiContext _context;
 
-        public InstructionSetExtensionsController(cicmContext context)
+        public InstructionSetExtensionsController(MarechaiContext context)
         {
             _context = context;
         }
