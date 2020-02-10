@@ -144,9 +144,7 @@ namespace Marechai.Areas.Admin.Controllers
                     })
                     {
                         if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format)))
-                            ;
-
-                        Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format));
+                            Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format));
 
                         SKEncodedImageFormat skFormat;
 

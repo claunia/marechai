@@ -48,7 +48,7 @@ namespace Marechai.Areas.Admin.Controllers
         public CompaniesController(MarechaiContext context) => _context = context;
 
         // GET: Admin/Companies
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             IIncludableQueryable<Company, Company> marechaiContext =
                 _context.Companies.Include(c => c.Country).Include(c => c.SoldTo);
