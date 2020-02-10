@@ -1,5 +1,5 @@
 /******************************************************************************
-// Canary Islands Computer Museum Website
+// MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
 // Filename       : CicmDb.cs
@@ -34,8 +34,8 @@ namespace Cicm.Database.Models
 {
     public class CicmDb
     {
-        public int       Id      { get; set; }
-        public int       Version { get; set; }
+        public int Id { get; set; }
+        public int Version { get; set; }
         public DateTimeOffset? Updated { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿/******************************************************************************
-// Canary Islands Computer Museum Website
+// MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
 // Filename       : V3.cs
