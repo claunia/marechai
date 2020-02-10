@@ -8,6 +8,7 @@
     <Product>Canary Islands Computer Museum Website</Product>
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <RootNamespace>Marechai</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>

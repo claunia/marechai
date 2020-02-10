@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cicm_web", "cicm_web\cicm_web.csproj", "{EB95B2DA-41CF-456F-B5E6-33B353F84258}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marechai", "Marechai\Marechai.csproj", "{EB95B2DA-41CF-456F-B5E6-33B353F84258}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marechai.Database", "Marechai.Database\Marechai.Database.csproj", "{F914D5B9-0C7F-4A40-B187-269B83497AF8}"
 EndProject
