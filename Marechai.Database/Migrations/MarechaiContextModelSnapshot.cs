@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 namespace Marechai.Database.Migrations
 {
     [DbContext(typeof(MarechaiContext))]
-    class marechaiContextModelSnapshot : ModelSnapshot
+    class MarechaiContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
