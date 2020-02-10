@@ -31,7 +31,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class cicmContext : IdentityDbContext
     {

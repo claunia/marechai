@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class ApplicationUser : IdentityUser
     {

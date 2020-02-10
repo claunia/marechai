@@ -30,7 +30,7 @@
 
 using System.Data;
 
-namespace Cicm.Database
+namespace Marechai.Database
 {
     /// <summary>Interface to database</summary>
     public interface IDbCore

@@ -31,7 +31,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class Iso31661Numeric
     {

@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public abstract class DocumentBase : BaseModel<long>
     {

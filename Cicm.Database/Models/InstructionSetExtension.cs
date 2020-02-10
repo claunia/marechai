@@ -33,7 +33,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class InstructionSetExtension : BaseModel<int>
     {

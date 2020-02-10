@@ -30,7 +30,7 @@
 
 using System.Data;
 
-namespace Cicm.Database
+namespace Marechai.Database
 {
     public partial class Operations
     {

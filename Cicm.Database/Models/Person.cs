@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class Person : BaseModel<int>
     {

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Cicm.Database.Models;
+using Marechai.Database.Models;
 using cicm_web.Areas.Admin.Models;
 using cicm_web.Helpers;
 using Microsoft.AspNetCore.Authorization;

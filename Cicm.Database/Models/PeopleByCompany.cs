@@ -1,6 +1,6 @@
 using System;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class PeopleByCompany : BaseModel<long>
     {

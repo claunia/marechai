@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class SoundByOwnedMachine : BaseModel<long>
     {

@@ -30,7 +30,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cicm.Database.Models;
+using Marechai.Database.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace cicm_web.Areas.Api.Controllers

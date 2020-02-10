@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 using System.Linq;
-using Cicm.Database.Models;
+using Marechai.Database.Models;
 using cicm_web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;

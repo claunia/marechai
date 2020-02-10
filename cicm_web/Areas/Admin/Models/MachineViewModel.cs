@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Cicm.Database;
+using Marechai.Database;
 
 namespace cicm_web.Areas.Admin.Models
 {

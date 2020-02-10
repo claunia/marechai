@@ -35,7 +35,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class Company : BaseModel<int>
     {

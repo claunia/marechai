@@ -28,7 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-namespace Cicm.Database.Schemas.Sql
+namespace Marechai.Database.Schemas.Sql
 {
     public static class V9
     {

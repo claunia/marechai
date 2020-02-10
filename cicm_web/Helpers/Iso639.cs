@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Cicm.Database.Models;
+using Marechai.Database.Models;
 
 namespace cicm_web.Helpers
 {
@@ -65,11 +65,11 @@ namespace cicm_web.Helpers
                                 if(pieces[p] == "")
                                     pieces[p] = null;
 
-                            Cicm.Database.Models.Iso639 lang = context.Iso639.FirstOrDefault(i => i.Id == pieces[0]);
+                            Marechai.Database.Models.Iso639 lang = context.Iso639.FirstOrDefault(i => i.Id == pieces[0]);
 
                             if(lang is null)
                             {
-                                context.Iso639.Add(new Cicm.Database.Models.Iso639
+                                context.Iso639.Add(new Marechai.Database.Models.Iso639
                                 {
                                     Id            = pieces[0],
                                     Part2B        = pieces[1],

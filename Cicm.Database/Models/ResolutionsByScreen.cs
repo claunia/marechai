@@ -31,7 +31,7 @@
 using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class ResolutionsByScreen : BaseModel<long>
     {

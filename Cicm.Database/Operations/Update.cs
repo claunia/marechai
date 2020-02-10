@@ -32,10 +32,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using Cicm.Database.Schemas;
-using Cicm.Database.Schemas.Sql;
+using Marechai.Database.Schemas;
+using Marechai.Database.Schemas.Sql;
 
-namespace Cicm.Database
+namespace Marechai.Database
 {
     public partial class Operations
     {

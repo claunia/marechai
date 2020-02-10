@@ -34,7 +34,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Http;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class CompanyLogo : BaseModel<int>
     {

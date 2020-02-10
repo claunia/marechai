@@ -32,7 +32,7 @@ using System.ComponentModel.DataAnnotations;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
-namespace Cicm.Database
+namespace Marechai.Database
 {
     public enum NewsType
     {

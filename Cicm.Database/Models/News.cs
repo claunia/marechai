@@ -31,7 +31,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class News : BaseModel<int>
     {

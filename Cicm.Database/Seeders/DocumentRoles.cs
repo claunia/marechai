@@ -1,7 +1,7 @@
-using Cicm.Database.Models;
+using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cicm.Database.Seeders
+namespace Marechai.Database.Seeders
 {
     public static class DocumentRoles
     {

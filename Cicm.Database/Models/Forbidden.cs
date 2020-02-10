@@ -28,7 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class Forbidden : BaseModel<int>
     {

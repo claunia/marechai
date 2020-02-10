@@ -32,7 +32,7 @@ using System;
 using System.Data;
 using MySql.Data.MySqlClient;
 
-namespace Cicm.Database
+namespace Marechai.Database
 {
     public class Mysql : IDbCore
     {

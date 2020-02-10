@@ -34,7 +34,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class Machine : BaseModel<int>
     {

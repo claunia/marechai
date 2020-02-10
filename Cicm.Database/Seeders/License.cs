@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Cicm.Database.Seeders
+namespace Marechai.Database.Seeders
 {
     public static class License
     {

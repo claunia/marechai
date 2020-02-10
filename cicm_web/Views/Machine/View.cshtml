@@ -32,9 +32,9 @@
     ViewData["Title"] = "Computer";
 }
 @using System.IO
-@using Cicm.Database
-@using Cicm.Database.Models
-@model Cicm.Database.Models.Machine
+@using Marechai.Database
+@using Marechai.Database.Models
+@model Marechai.Database.Models.Machine
 <p align="center">
     @if(Model.Company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.LastLogo.Guid + ".svg")))
     {

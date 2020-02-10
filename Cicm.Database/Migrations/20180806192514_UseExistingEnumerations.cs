@@ -30,7 +30,7 @@
 
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Cicm.Database.Migrations
+namespace Marechai.Database.Migrations
 {
     public partial class UseExistingEnumerations : Migration
     {

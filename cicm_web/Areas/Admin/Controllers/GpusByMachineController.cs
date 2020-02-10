@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Cicm.Database.Models;
+using Marechai.Database.Models;
 using cicm_web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

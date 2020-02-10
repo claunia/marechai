@@ -1,4 +1,4 @@
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class DocumentsByMachine : BaseModel<long>
     {

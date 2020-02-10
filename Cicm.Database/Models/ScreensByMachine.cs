@@ -30,7 +30,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class ScreensByMachine : BaseModel<long>
     {

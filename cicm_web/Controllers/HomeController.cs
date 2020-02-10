@@ -31,8 +31,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Cicm.Database;
-using Cicm.Database.Models;
+using Marechai.Database;
+using Marechai.Database.Models;
 using cicm_web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;

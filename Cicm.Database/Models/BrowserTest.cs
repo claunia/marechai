@@ -31,7 +31,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class BrowserTest : BaseModel<int>
     {

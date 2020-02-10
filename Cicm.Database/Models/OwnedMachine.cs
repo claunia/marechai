@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class OwnedMachine : BaseModel<long>
     {

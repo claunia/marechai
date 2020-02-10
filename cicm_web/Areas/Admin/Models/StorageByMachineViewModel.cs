@@ -28,7 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-using Cicm.Database;
+using Marechai.Database;
 
 namespace cicm_web.Areas.Admin.Models
 {

@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 using System.ComponentModel;
-using Cicm.Database.Models;
+using Marechai.Database.Models;
 
 namespace cicm_web.Areas.Admin.Models
 {

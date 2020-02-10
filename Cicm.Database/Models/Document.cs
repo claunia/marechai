@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Cicm.Database.Models
+namespace Marechai.Database.Models
 {
     public class Document : DocumentBase
     {

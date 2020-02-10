@@ -32,7 +32,7 @@ using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Cicm.Database.Migrations
+namespace Marechai.Database.Migrations
 {
     public partial class InitialMigration : Migration
     {
