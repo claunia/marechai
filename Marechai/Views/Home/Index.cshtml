@@ -1,0 +1,59 @@
+﻿@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Index.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Index page (and news)
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+
+    ViewData["Title"] = "Home Page";
+}
+@model List<NewsModel>
+<h2>News</h2>
+@foreach (var news in Model)
+{
+    <table border="0" width="100%">
+        <tr>
+            <td colspan="2">
+                <b>@news.Timestamp</b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @news.Text
+            </td>
+        </tr>
+        <tr>
+            <td>@* TODO: Image *@</td>
+            <td>
+                <a asp-action="@news.Action" asp-route-id="@news.AffectedId" asp-controller="@news.Controller">
+                    @news.ItemName
+                </a>
+            </td>
+        </tr>
+    </table>
+    <br />
+}

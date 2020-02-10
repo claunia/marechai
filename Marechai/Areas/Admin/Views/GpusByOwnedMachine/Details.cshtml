@@ -1,0 +1,32 @@
+@model Marechai.Areas.Admin.Models.GpusByMachineViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+<h1>Details</h1>
+<div>
+    <h4>GPU by owned machine</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Machine)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Machine)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Gpu)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Gpu)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+        Edit
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        Back to List
+    </a>
+</div>

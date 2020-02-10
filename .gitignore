@@ -442,10 +442,10 @@ $RECYCLE.BIN/
 
 
 # Assets
-cicm_web/wwwroot/assets/**/*.jpeg
-cicm_web/wwwroot/assets/**/*.svg
-cicm_web/wwwroot/assets/**/*.png
-cicm_web/wwwroot/assets/**/*.tif
-cicm_web/wwwroot/assets/**/*.jpg
-cicm_web/wwwroot/assets/**/*.tiff
-cicm_web/wwwroot/assets/**/*.webp
+Marechai/wwwroot/assets/**/*.jpeg
+Marechai/wwwroot/assets/**/*.svg
+Marechai/wwwroot/assets/**/*.png
+Marechai/wwwroot/assets/**/*.tif
+Marechai/wwwroot/assets/**/*.jpg
+Marechai/wwwroot/assets/**/*.tiff
+Marechai/wwwroot/assets/**/*.webp

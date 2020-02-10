@@ -1,0 +1,42 @@
+@model Marechai.Database.Models.InstructionSetExtensionsByProcessor
+
+@{
+    ViewData["Title"] = "Create";
+}
+<h1>Create</h1>
+<h4>Instruction set extensions by processor</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
+            </div>
+            <div class="form-group">
+                <label asp-for="Processor" class="control-label">
+                </label>
+                <select asp-for="ProcessorId" class="form-control" asp-items="ViewBag.ProcessorId">
+                </select>
+                <span asp-validation-for="ProcessorId" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Extension" class="control-label">
+                </label>
+                <select asp-for="ExtensionId" class="form-control" asp-items="ViewBag.ExtensionId">
+                </select>
+                <span asp-validation-for="ExtensionId" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" value="Create" />
+                <a asp-action="Index" class="btn btn-secondary">
+                    Back to List
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

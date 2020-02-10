@@ -1,0 +1,76 @@
+@model Marechai.Database.Models.CompanyLogo
+
+@{
+    ViewData["Title"] = "Delete";
+}
+<h1>Delete</h1>
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Company logo</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Company)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Company.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CompanyId" />
+        <input type="hidden" asp-for="Guid" />
+        <input class="btn btn-danger" type="submit" value="Delete" />
+        <a asp-action="Index" class="btn btn-secondary">
+            Back to List
+        </a>
+        <dt class="col-sm-2">
+            SVG
+        </dt>
+        <dd class="col-sm-10">
+            <img src="/assets/logos/@(Model.Guid).svg" />
+        </dd>
+        <dt class="col-sm-2">
+            PNG 1x
+        </dt>
+        <dd class="col-sm-10">
+            <img src="/assets/logos/png/1x/@(Model.Guid).png" />
+        </dd>
+        <dt class="col-sm-2">
+            PNG 2x
+        </dt>
+        <dd class="col-sm-10">
+            <img src="/assets/logos/png/2x/@(Model.Guid).png" />
+        </dd>
+        <dt class="col-sm-2">
+            PNG 3x
+        </dt>
+        <dd class="col-sm-10">
+            <img src="/assets/logos/png/3x/@(Model.Guid).png" />
+        </dd>
+        <dt class="col-sm-2">
+            WebP 1x
+        </dt>
+        <dd class="col-sm-10">
+            <img src="/assets/logos/webp/1x/@(Model.Guid).webp" />
+        </dd>
+        <dt class="col-sm-2">
+            WebP 2x
+        </dt>
+        <dd class="col-sm-10">
+            <img src="/assets/logos/webp/2x/@(Model.Guid).webp" />
+        </dd>
+        <dt class="col-sm-2">
+            WebP 3x
+        </dt>
+        <dd class="col-sm-10">
+            <img src="/assets/logos/webp/3x/@(Model.Guid).webp" />
+        </dd>
+    </form>
+</div>

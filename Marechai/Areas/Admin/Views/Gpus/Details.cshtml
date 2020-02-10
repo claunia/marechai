@@ -1,0 +1,105 @@
+﻿@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+@model Marechai.Database.Models.Gpu
+
+@{
+    ViewData["Title"] = "Details";
+}
+<h2>Details</h2>
+<div>
+    <h4>GPU</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Company)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Company.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ModelCode)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ModelCode)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Introduced)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IntroducedView)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Package)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Package)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Process)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Process)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ProcessNm)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ProcessNm)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DieSize)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DieSize)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Transistors)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Transistors)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+        Edit
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        Back to List
+    </a>
+</div>
