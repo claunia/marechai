@@ -102,7 +102,7 @@ namespace Marechai.Database.Models
             if(optionsBuilder.IsConfigured) return;
 
             #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-            optionsBuilder.UseMySql("server=localhost;port=3306;user=cicm;password=cicmpass;database=cicm");
+            optionsBuilder.UseMySql("server=localhost;port=3306;user=marechai;password=marechaipass;database=marechai");
             optionsBuilder.UseLazyLoadingProxies();
         }
 

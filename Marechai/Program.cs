@@ -115,7 +115,7 @@ namespace Marechai
 
             Console.WriteLine("\u001b[31;1mUpdating MySQL database without Entity Framework if it exists...\u001b[0m");
             Database = new Mysql();
-            bool res = Database.OpenDb("localhost", "cicm", "cicm", "cicmpass", 3306);
+            bool res = Database.OpenDb("localhost", "marechai", "marechai", "marechaipass", 3306);
 
             if(res)
             {

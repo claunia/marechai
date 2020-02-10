@@ -2677,7 +2677,7 @@ namespace Marechai.Database
             
             Console.WriteLine("Adding Entity Framework first migration...");
             dbCmd = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm.`__EFMigrationsHistory` (MigrationId, ProductVersion)" +
+            dbCmd.CommandText = "INSERT INTO marechai.`__EFMigrationsHistory` (MigrationId, ProductVersion)" +
                                 " VALUES ('20180805214952_InitialMigration', '2.1.1-rtm-30846');";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
