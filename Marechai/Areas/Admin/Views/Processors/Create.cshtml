@@ -34,276 +34,195 @@
 @{
     ViewData["Title"] = "Create";
 }
-
 <h2>Create</h2>
-
 <h4>Processor</h4>
 <hr />
 <div class="row">
-<div class="col-md-4">
-<form asp-action="Create">
-<div asp-validation-summary="ModelOnly"
-     class="text-danger">
-</div>
-<div class="form-group">
-    <label asp-for="Company"
-           class="control-label">
-    </label>
-    <select asp-for="CompanyId"
-            class="form-control"
-            asp-items="ViewBag.CompanyId">
-    </select>
-</div>
-<div class="form-group">
-    <label asp-for="Name"
-           class="control-label">
-    </label>
-    <input asp-for="Name"
-           class="form-control" />
-    <span asp-validation-for="Name"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="ModelCode"
-           class="control-label">
-    </label>
-    <input asp-for="ModelCode"
-           class="form-control" />
-    <span asp-validation-for="ModelCode"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Introduced"
-           class="control-label">
-    </label>
-    <input asp-for="Introduced"
-           class="form-control" />
-    <span asp-validation-for="Introduced"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="InstructionSetId"
-           class="control-label">
-    </label>
-    <select asp-for="InstructionSetId"
-            class="form-control"
-            asp-items="ViewBag.InstructionSetId">
-    </select>
-</div>
-<div class="form-group">
-    <label asp-for="Speed"
-           class="control-label">
-    </label>
-    <input asp-for="Speed"
-           class="form-control" />
-    <span asp-validation-for="Speed"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Package"
-           class="control-label">
-    </label>
-    <input asp-for="Package"
-           class="form-control" />
-    <span asp-validation-for="Package"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Cores"
-           class="control-label">
-    </label>
-    <input asp-for="Cores"
-           class="form-control" />
-    <span asp-validation-for="Cores"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="ThreadsPerCore"
-           class="control-label">
-    </label>
-    <input asp-for="ThreadsPerCore"
-           class="form-control" />
-    <span asp-validation-for="ThreadsPerCore"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Process"
-           class="control-label">
-    </label>
-    <input asp-for="Process"
-           class="form-control" />
-    <span asp-validation-for="Process"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="ProcessNm"
-           class="control-label">
-    </label>
-    <input asp-for="ProcessNm"
-           class="form-control" />
-    <span asp-validation-for="ProcessNm"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="DieSize"
-           class="control-label">
-    </label>
-    <input asp-for="DieSize"
-           class="form-control" />
-    <span asp-validation-for="DieSize"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Transistors"
-           class="control-label">
-    </label>
-    <input asp-for="Transistors"
-           class="form-control" />
-    <span asp-validation-for="Transistors"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="DataBus"
-           class="control-label">
-    </label>
-    <input asp-for="DataBus"
-           class="form-control" />
-    <span asp-validation-for="DataBus"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="AddrBus"
-           class="control-label">
-    </label>
-    <input asp-for="AddrBus"
-           class="form-control" />
-    <span asp-validation-for="AddrBus"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Gprs"
-           class="control-label">
-    </label>
-    <input asp-for="Gprs"
-           class="form-control" />
-    <span asp-validation-for="Gprs"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="GprSize"
-           class="control-label">
-    </label>
-    <input asp-for="GprSize"
-           class="form-control" />
-    <span asp-validation-for="GprSize"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="Fprs"
-           class="control-label">
-    </label>
-    <input asp-for="Fprs"
-           class="form-control" />
-    <span asp-validation-for="Fprs"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="FprSize"
-           class="control-label">
-    </label>
-    <input asp-for="FprSize"
-           class="form-control" />
-    <span asp-validation-for="FprSize"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="SimdRegisters"
-           class="control-label">
-    </label>
-    <input asp-for="SimdRegisters"
-           class="form-control" />
-    <span asp-validation-for="SimdRegisters"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="SimdSize"
-           class="control-label">
-    </label>
-    <input asp-for="SimdSize"
-           class="form-control" />
-    <span asp-validation-for="SimdSize"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="L1Instruction"
-           class="control-label">
-    </label>
-    <input asp-for="L1Instruction"
-           class="form-control" />
-    <span asp-validation-for="L1Instruction"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="L1Data"
-           class="control-label">
-    </label>
-    <input asp-for="L1Data"
-           class="form-control" />
-    <span asp-validation-for="L1Data"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="L2"
-           class="control-label">
-    </label>
-    <input asp-for="L2"
-           class="form-control" />
-    <span asp-validation-for="L2"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <label asp-for="L3"
-           class="control-label">
-    </label>
-    <input asp-for="L3"
-           class="form-control" />
-    <span asp-validation-for="L3"
-          class="text-danger">
-    </span>
-</div>
-<div class="form-group">
-    <input class="btn btn-primary"
-           type="submit"
-           value="Create" />
-    <a asp-action="Index"
-       class="btn btn-secondary">
-        Back to List
-    </a>
-</div>
-</form>
-</div>
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
+            </div>
+            <div class="form-group">
+                <label asp-for="Company" class="control-label">
+                </label>
+                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId">
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">
+                </label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModelCode" class="control-label">
+                </label>
+                <input asp-for="ModelCode" class="form-control" />
+                <span asp-validation-for="ModelCode" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Introduced" class="control-label">
+                </label>
+                <input asp-for="Introduced" class="form-control" />
+                <span asp-validation-for="Introduced" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InstructionSetId" class="control-label">
+                </label>
+                <select asp-for="InstructionSetId" class="form-control" asp-items="ViewBag.InstructionSetId">
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Speed" class="control-label">
+                </label>
+                <input asp-for="Speed" class="form-control" />
+                <span asp-validation-for="Speed" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Package" class="control-label">
+                </label>
+                <input asp-for="Package" class="form-control" />
+                <span asp-validation-for="Package" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cores" class="control-label">
+                </label>
+                <input asp-for="Cores" class="form-control" />
+                <span asp-validation-for="Cores" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ThreadsPerCore" class="control-label">
+                </label>
+                <input asp-for="ThreadsPerCore" class="form-control" />
+                <span asp-validation-for="ThreadsPerCore" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Process" class="control-label">
+                </label>
+                <input asp-for="Process" class="form-control" />
+                <span asp-validation-for="Process" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProcessNm" class="control-label">
+                </label>
+                <input asp-for="ProcessNm" class="form-control" />
+                <span asp-validation-for="ProcessNm" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DieSize" class="control-label">
+                </label>
+                <input asp-for="DieSize" class="form-control" />
+                <span asp-validation-for="DieSize" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transistors" class="control-label">
+                </label>
+                <input asp-for="Transistors" class="form-control" />
+                <span asp-validation-for="Transistors" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataBus" class="control-label">
+                </label>
+                <input asp-for="DataBus" class="form-control" />
+                <span asp-validation-for="DataBus" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AddrBus" class="control-label">
+                </label>
+                <input asp-for="AddrBus" class="form-control" />
+                <span asp-validation-for="AddrBus" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gprs" class="control-label">
+                </label>
+                <input asp-for="Gprs" class="form-control" />
+                <span asp-validation-for="Gprs" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GprSize" class="control-label">
+                </label>
+                <input asp-for="GprSize" class="form-control" />
+                <span asp-validation-for="GprSize" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fprs" class="control-label">
+                </label>
+                <input asp-for="Fprs" class="form-control" />
+                <span asp-validation-for="Fprs" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FprSize" class="control-label">
+                </label>
+                <input asp-for="FprSize" class="form-control" />
+                <span asp-validation-for="FprSize" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SimdRegisters" class="control-label">
+                </label>
+                <input asp-for="SimdRegisters" class="form-control" />
+                <span asp-validation-for="SimdRegisters" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SimdSize" class="control-label">
+                </label>
+                <input asp-for="SimdSize" class="form-control" />
+                <span asp-validation-for="SimdSize" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="L1Instruction" class="control-label">
+                </label>
+                <input asp-for="L1Instruction" class="form-control" />
+                <span asp-validation-for="L1Instruction" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="L1Data" class="control-label">
+                </label>
+                <input asp-for="L1Data" class="form-control" />
+                <span asp-validation-for="L1Data" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="L2" class="control-label">
+                </label>
+                <input asp-for="L2" class="form-control" />
+                <span asp-validation-for="L2" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <label asp-for="L3" class="control-label">
+                </label>
+                <input asp-for="L3" class="form-control" />
+                <span asp-validation-for="L3" class="text-danger">
+                </span>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-primary" type="submit" value="Create" />
+                <a asp-action="Index" class="btn btn-secondary">
+                    Back to List
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {

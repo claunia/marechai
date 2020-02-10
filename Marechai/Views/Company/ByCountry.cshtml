@@ -33,57 +33,44 @@
 }
 @using System.IO
 @model IEnumerable<CompanyViewModel>
-
 <p align="center">
-    @if(ViewBag.Iso3166 != null)
+    @if (ViewBag.Iso3166 != null)
     {
         <b>Companies founded in @ViewBag.Iso3166.Name</b>
-        if(File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/flags/countries", ViewBag.Iso3166.Id + ".svg")))
+        if (File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/flags/countries", ViewBag.Iso3166.Id + ".svg")))
         {
             <picture>
-                <source type="image/svg+xml"
-                        srcset="/assets/flags/countries/@(ViewBag.Iso3166.Id).svg">
-                <source type="image/webp"
-                        srcset="/assets/flags/countries/webp/1x/@(ViewBag.Iso3166.Id).webp,
+                <source type="image/svg+xml" srcset="/assets/flags/countries/@(ViewBag.Iso3166.Id).svg">
+                <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(ViewBag.Iso3166.Id).webp,
             /assets/flags/countries/webp/1x/@(ViewBag.Iso3166.Id).webp 2x,
             /assets/flags/countries/webp/1x/@(ViewBag.Iso3166.Id).webp 3x">
                 <img srcset="/assets/flags/countries/png/1x/@(ViewBag.Iso3166.Id).png,
                                      /assets/flags/countries/png/1x/@(ViewBag.Iso3166.Id).png 2x,
-                                     /assets/flags/countries/png/1x/@(ViewBag.Iso3166.Id).webp 3x"
-                     src="/assets/flags/countries/png/1x@(ViewBag.Iso3166.Id).png")
-                     alt=""
-                     height="32" />
+                                     /assets/flags/countries/png/1x/@(ViewBag.Iso3166.Id).webp 3x" src="/assets/flags/countries/png/1x@(ViewBag.Iso3166.Id).png" ) alt="" height="32" />
             </picture>
         }
         <br />
     }
 
-    @if(Model.Any())
+    @if (Model.Any())
     {
         <p>
-            @Model.Count() companies found in the database.<br />
-            @foreach(CompanyViewModel company in Model)
+            @Model.Count() companies found in the database.
+            <br />
+            @foreach (var company in Model)
             {
-                <a asp-controller="Company"
-                   asp-action="View"
-                   asp-route-id="@company.Id">
-                    @if(company.LastLogo != null && File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
+                <a asp-controller="Company" asp-action="View" asp-route-id="@company.Id">
+                    @if (company.LastLogo != null &&
+                         File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
                     {
                         <picture>
-                            <source type="image/svg+xml"
-                                    srcset="/assets/logos/@(company.LastLogo).svg">
-                            <source type="image/webp"
-                                    srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
+                            <source type="image/svg+xml" srcset="/assets/logos/@(company.LastLogo).svg">
+                            <source type="image/webp" srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
 /assets/logos/thumbs/webp/2x/@(company.LastLogo).webp 2x,
 /assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x">
                             <img srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
                          /assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
-                         /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x"
-                                 src="/assets/logos/thumbs/png/1x@(company.LastLogo).png")
-                                 alt=""
-                                 height="auto"
-                                 width="auto"
-                                 style="max-height: 32px; max-width: 128px" />
+                         /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" src="/assets/logos/thumbs/png/1x@(company.LastLogo).png" ) alt="" height="auto" width="auto" style="max-height: 32px; max-width: 128px" />
                         </picture>
                     }
                     @company.Name

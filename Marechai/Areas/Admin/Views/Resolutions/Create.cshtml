@@ -34,55 +34,40 @@
 @{
     ViewData["Title"] = "Create";
 }
-
 <h2>Create</h2>
-
 <h4>Resolution</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
             </div>
             <div class="form-group">
-                <label asp-for="Width"
-                       class="control-label">
+                <label asp-for="Width" class="control-label">
                 </label>
-                <input asp-for="Width"
-                       class="form-control" />
-                <span asp-validation-for="Width"
-                      class="text-danger">
+                <input asp-for="Width" class="form-control" />
+                <span asp-validation-for="Width" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Height"
-                       class="control-label">
+                <label asp-for="Height" class="control-label">
                 </label>
-                <input asp-for="Height"
-                       class="form-control" />
-                <span asp-validation-for="Height"
-                      class="text-danger">
+                <input asp-for="Height" class="form-control" />
+                <span asp-validation-for="Height" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Colors"
-                       class="control-label">
+                <label asp-for="Colors" class="control-label">
                 </label>
-                <input asp-for="Colors"
-                       class="form-control" />
-                <span asp-validation-for="Colors"
-                      class="text-danger">
+                <input asp-for="Colors" class="form-control" />
+                <span asp-validation-for="Colors" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Palette"
-                       class="control-label">
+                <label asp-for="Palette" class="control-label">
                 </label>
-                <input asp-for="Palette"
-                       class="form-control" />
-                <span asp-validation-for="Palette"
-                      class="text-danger">
+                <input asp-for="Palette" class="form-control" />
+                <span asp-validation-for="Palette" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
@@ -100,11 +85,8 @@
                 </div>
             </div>
             <div class="form-group">
-                <input class="btn btn-primary"
-                       type="submit"
-                       value="Create" />
-                <a asp-action="Index"
-                   class="btn btn-secondary">
+                <input class="btn btn-primary" type="submit" value="Create" />
+                <a asp-action="Index" class="btn btn-secondary">
                     Back to List
                 </a>
             </div>

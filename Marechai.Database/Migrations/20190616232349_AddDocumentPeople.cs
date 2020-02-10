@@ -9,21 +9,19 @@ namespace Marechai.Database.Migrations
         {
             migrationBuilder.AddColumn<int>("DocumentPersonId", "People", nullable: true);
 
-            migrationBuilder.CreateTable("DocumentPeople",
-                                         table => new
-                                         {
-                                             Id = table.Column<int>()
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             Name     = table.Column<string>(),
-                                             Surname  = table.Column<string>(),
-                                             PersonId = table.Column<int>(nullable: true)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_DocumentPeople", x => x.Id);
-                                             table.ForeignKey("FK_DocumentPeople_People_PersonId", x => x.PersonId,
-                                                              "People", "Id", onDelete: ReferentialAction.SetNull);
-                                         });
+            migrationBuilder.CreateTable("DocumentPeople", table => new
+            {
+                Id = table.Column<int>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                Name     = table.Column<string>(), Surname = table.Column<string>(),
+                PersonId = table.Column<int>(nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_DocumentPeople", x => x.Id);
+
+                table.ForeignKey("FK_DocumentPeople_People_PersonId", x => x.PersonId, "People", "Id",
+                                 onDelete: ReferentialAction.SetNull);
+            });
 
             migrationBuilder.CreateIndex("IX_DocumentPeople_Name", "DocumentPeople", "Name");
 

@@ -35,15 +35,11 @@ namespace Marechai.Database.Models
 {
     public class Iso31661Numeric
     {
-        public Iso31661Numeric()
-        {
-            Companies = new HashSet<Company>();
-        }
+        public Iso31661Numeric() => Companies = new HashSet<Company>();
 
         [Required]
         public short Id { get; set; }
-        [Required]
-        [StringLength(64)]
+        [Required, StringLength(64)]
         public string Name { get; set; }
 
         public virtual ICollection<Company>  Companies { get; set; }

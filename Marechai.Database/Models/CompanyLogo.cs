@@ -45,9 +45,7 @@ namespace Marechai.Database.Models
 
         public virtual Company Company { get; set; }
 
-        [NotMapped]
-        [Required(ErrorMessage = "SVG logo required")]
-        [DisplayName("Upload SVG logo:")]
+        [NotMapped, Required(ErrorMessage = "SVG logo required"), DisplayName("Upload SVG logo:")]
         public IFormFile SvgLogo { get; set; }
 
         [NotMapped]

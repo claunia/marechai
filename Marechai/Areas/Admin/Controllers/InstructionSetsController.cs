@@ -38,16 +38,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class InstructionSetsController : Controller
     {
         readonly MarechaiContext _context;
 
-        public InstructionSetsController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public InstructionSetsController(MarechaiContext context) => _context = context;
 
         // GET: Admin/InstructionSets
         public async Task<IActionResult> Index() =>
@@ -56,10 +52,13 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/InstructionSets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             InstructionSet instructionSet = await _context.InstructionSets.FirstOrDefaultAsync(m => m.Id == id);
-            if(instructionSet == null) return NotFound();
+
+            if(instructionSet == null)
+                return NotFound();
 
             return View(instructionSet);
         }
@@ -70,24 +69,28 @@ namespace Marechai.Areas.Admin.Controllers
         // POST: Admin/InstructionSets/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] InstructionSet instructionSet)
         {
-            if(!ModelState.IsValid) return View(instructionSet);
+            if(!ModelState.IsValid)
+                return View(instructionSet);
 
             _context.Add(instructionSet);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Admin/InstructionSets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             InstructionSet instructionSet = await _context.InstructionSets.FindAsync(id);
-            if(instructionSet == null) return NotFound();
+
+            if(instructionSet == null)
+                return NotFound();
 
             return View(instructionSet);
         }
@@ -95,11 +98,11 @@ namespace Marechai.Areas.Admin.Controllers
         // POST: Admin/InstructionSets/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] InstructionSet instructionSet)
         {
-            if(id != instructionSet.Id) return NotFound();
+            if(id != instructionSet.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -110,7 +113,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!InstructionSetExists(instructionSet.Id)) return NotFound();
+                    if(!InstructionSetExists(instructionSet.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -124,35 +128,33 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/InstructionSets/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             InstructionSet instructionSet = await _context.InstructionSets.FirstOrDefaultAsync(m => m.Id == id);
-            if(instructionSet == null) return NotFound();
+
+            if(instructionSet == null)
+                return NotFound();
 
             return View(instructionSet);
         }
 
         // POST: Admin/InstructionSets/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             InstructionSet instructionSet = await _context.InstructionSets.FindAsync(id);
             _context.InstructionSets.Remove(instructionSet);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool InstructionSetExists(int id)
-        {
-            return _context.InstructionSets.Any(e => e.Id == id);
-        }
+        bool InstructionSetExists(int id) => _context.InstructionSets.Any(e => e.Id == id);
 
         [AcceptVerbs("Get", "Post")]
         public IActionResult VerifyUnique(string name) =>
             _context.InstructionSets.Any(i => string.Equals(i.Name, name, StringComparison.InvariantCultureIgnoreCase))
-                ? Json("Instruction set already exists.")
-                : Json(true);
+                ? Json("Instruction set already exists.") : Json(true);
     }
 }

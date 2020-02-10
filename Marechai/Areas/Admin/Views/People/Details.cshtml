@@ -3,9 +3,7 @@
 @{
     ViewData["Title"] = "Details";
 }
-
 <h1>Details</h1>
-
 <div>
     <h4>Person</h4>
     <hr />
@@ -62,7 +60,7 @@
             @Html.DisplayNameFor(model => model.Twitter)
         </dt>
         <dd class="col-sm-10">
-            @if(Model.Twitter != null)
+            @if (Model.Twitter != null)
             {
                 <a href="https://twitter.com/@Html.DisplayFor(model => model.Twitter)">@Html.DisplayFor(model => model.Twitter)</a>
             }
@@ -71,7 +69,7 @@
             @Html.DisplayNameFor(model => model.Facebook)
         </dt>
         <dd class="col-sm-10">
-            @if(Model.Facebook != null)
+            @if (Model.Facebook != null)
             {
                 <a href="https://www.facebook.com/@Html.DisplayFor(model => model.Facebook)">@Html.DisplayFor(model => model.Facebook)</a>
             }
@@ -79,13 +77,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit"
-       asp-route-id="@Model.Id"
-       class="btn btn-primary">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
         Edit
     </a>
-    <a asp-action="Index"
-       class="btn btn-secondary">
+    <a asp-action="Index" class="btn btn-secondary">
         Back to List
     </a>
 </div>

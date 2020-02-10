@@ -37,29 +37,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class BrowserTestsController : Controller
     {
         readonly MarechaiContext _context;
 
-        public BrowserTestsController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public BrowserTestsController(MarechaiContext context) => _context = context;
 
         // GET: Admin/BrowserTests
         public async Task<IActionResult> Index() =>
-            View(await _context.BrowserTests.OrderBy(b => b.Browser).ThenBy(b => b.Version).ThenBy(b => b.Os)
-                               .ThenBy(b => b.Platform).ThenBy(b => b.UserAgent).ToListAsync());
+            View(await _context.BrowserTests.OrderBy(b => b.Browser).ThenBy(b => b.Version).ThenBy(b => b.Os).
+                                ThenBy(b => b.Platform).ThenBy(b => b.UserAgent).ToListAsync());
 
         // GET: Admin/BrowserTests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             BrowserTest browserTest = await _context.BrowserTests.FirstOrDefaultAsync(m => m.Id == id);
-            if(browserTest == null) return NotFound();
+
+            if(browserTest == null)
+                return NotFound();
 
             return View(browserTest);
         }
@@ -67,10 +66,13 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/BrowserTests/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             BrowserTest browserTest = await _context.BrowserTests.FindAsync(id);
-            if(browserTest == null) return NotFound();
+
+            if(browserTest == null)
+                return NotFound();
 
             return View(browserTest);
         }
@@ -78,16 +80,17 @@ namespace Marechai.Areas.Admin.Controllers
         // POST: Admin/BrowserTests/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
-            int id, [Bind(
-                "Id,UserAgent,Browser,Version,Os,Platform,Gif87,Gif89,Jpeg,Png,Pngt,Agif,Table,Colors,Js,Frames,Flash")]
+            int id,
+            [Bind("Id,UserAgent,Browser,Version,Os,Platform,Gif87,Gif89,Jpeg,Png,Pngt,Agif,Table,Colors,Js,Frames,Flash")]
             BrowserTest browserTest)
         {
-            if(id != browserTest.Id) return NotFound();
+            if(id != browserTest.Id)
+                return NotFound();
 
-            if(!ModelState.IsValid) return View(browserTest);
+            if(!ModelState.IsValid)
+                return View(browserTest);
 
             try
             {
@@ -96,7 +99,8 @@ namespace Marechai.Areas.Admin.Controllers
             }
             catch(DbUpdateConcurrencyException)
             {
-                if(!BrowserTestExists(browserTest.Id)) return NotFound();
+                if(!BrowserTestExists(browserTest.Id))
+                    return NotFound();
 
                 throw;
             }
@@ -107,29 +111,28 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/BrowserTests/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             BrowserTest browserTest = await _context.BrowserTests.FirstOrDefaultAsync(m => m.Id == id);
-            if(browserTest == null) return NotFound();
+
+            if(browserTest == null)
+                return NotFound();
 
             return View(browserTest);
         }
 
         // POST: Admin/BrowserTests/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             BrowserTest browserTest = await _context.BrowserTests.FindAsync(id);
             _context.BrowserTests.Remove(browserTest);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool BrowserTestExists(int id)
-        {
-            return _context.BrowserTests.Any(e => e.Id == id);
-        }
+        bool BrowserTestExists(int id) => _context.BrowserTests.Any(e => e.Id == id);
     }
 }

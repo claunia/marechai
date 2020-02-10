@@ -30,8 +30,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Database.Models;
 using Marechai.Areas.Admin.Models;
+using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -40,41 +40,37 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class SoundSynthsController : Controller
     {
         readonly MarechaiContext _context;
 
-        public SoundSynthsController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public SoundSynthsController(MarechaiContext context) => _context = context;
 
         // GET: Admin/SoundSynths
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<SoundSynth, Company> marechaiContext = _context.SoundSynths.Include(s => s.Company);
-            return View(await marechaiContext.OrderBy(s => s.Company).ThenBy(s => s.Name).ThenBy(s => s.ModelCode)
-                                         .Select(s => new SoundSynthViewModel
-                                          {
-                                              Company    = s.Company.Name,
-                                              Id         = s.Id,
-                                              Introduced = s.Introduced,
-                                              ModelCode  = s.ModelCode,
-                                              Name       = s.Name,
-                                              Type       = s.Type
-                                          }).ToListAsync());
+
+            return View(await marechaiContext.OrderBy(s => s.Company).ThenBy(s => s.Name).ThenBy(s => s.ModelCode).
+                                              Select(s => new SoundSynthViewModel
+                                              {
+                                                  Company   = s.Company.Name, Id = s.Id, Introduced = s.Introduced,
+                                                  ModelCode = s.ModelCode, Name  = s.Name, Type     = s.Type
+                                              }).ToListAsync());
         }
 
         // GET: Admin/SoundSynths/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             SoundSynth soundSynth =
                 await _context.SoundSynths.Include(s => s.Company).FirstOrDefaultAsync(m => m.Id == id);
-            if(soundSynth == null) return NotFound();
+
+            if(soundSynth == null)
+                return NotFound();
 
             return View(soundSynth);
         }
@@ -83,14 +79,14 @@ namespace Marechai.Areas.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
+
             return View();
         }
 
         // POST: Admin/SoundSynths/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             [Bind("Id,Name,CompanyId,ModelCode,Introduced,Voices,Frequency,Depth,SquareWave,WhiteNoise,Type")]
             SoundSynth soundSynth)
@@ -99,35 +95,41 @@ namespace Marechai.Areas.Admin.Controllers
             {
                 _context.Add(soundSynth);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", soundSynth.CompanyId);
+
             return View(soundSynth);
         }
 
         // GET: Admin/SoundSynths/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             SoundSynth soundSynth = await _context.SoundSynths.FindAsync(id);
-            if(soundSynth == null) return NotFound();
+
+            if(soundSynth == null)
+                return NotFound();
 
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", soundSynth.CompanyId);
+
             return View(soundSynth);
         }
 
         // POST: Admin/SoundSynths/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id, [Bind("Id,Name,CompanyId,ModelCode,Introduced,Voices,Frequency,Depth,SquareWave,WhiteNoise,Type")]
             SoundSynth soundSynth)
         {
-            if(id != soundSynth.Id) return NotFound();
+            if(id != soundSynth.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -138,7 +140,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!SoundSynthExists(soundSynth.Id)) return NotFound();
+                    if(!SoundSynthExists(soundSynth.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -147,36 +150,36 @@ namespace Marechai.Areas.Admin.Controllers
             }
 
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", soundSynth.CompanyId);
+
             return View(soundSynth);
         }
 
         // GET: Admin/SoundSynths/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             SoundSynth soundSynth =
                 await _context.SoundSynths.Include(s => s.Company).FirstOrDefaultAsync(m => m.Id == id);
-            if(soundSynth == null) return NotFound();
+
+            if(soundSynth == null)
+                return NotFound();
 
             return View(soundSynth);
         }
 
         // POST: Admin/SoundSynths/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             SoundSynth soundSynth = await _context.SoundSynths.FindAsync(id);
             _context.SoundSynths.Remove(soundSynth);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool SoundSynthExists(int id)
-        {
-            return _context.SoundSynths.Any(e => e.Id == id);
-        }
+        bool SoundSynthExists(int id) => _context.SoundSynths.Any(e => e.Id == id);
     }
 }

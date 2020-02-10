@@ -35,14 +35,10 @@ namespace Marechai.Database.Models
 {
     public class MachineFamily : BaseModel<int>
     {
-        public MachineFamily()
-        {
-            Machines = new HashSet<Machine>();
-        }
+        public MachineFamily() => Machines = new HashSet<Machine>();
 
         public int CompanyId { get; set; }
-        [Required]
-        [StringLength(255)]
+        [Required, StringLength(255)]
         public string Name { get; set; }
 
         public virtual Company                               Company   { get; set; }

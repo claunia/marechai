@@ -32,16 +32,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using Marechai.Database.Schemas;
 using Marechai.Database.Schemas.Sql;
 
 namespace Marechai.Database
 {
     public partial class Operations
     {
-        /// <summary>
-        ///     Updates opened database to last known version
-        /// </summary>
+        /// <summary>Updates opened database to last known version</summary>
         /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateDatabase()
         {
@@ -53,7 +50,7 @@ namespace Marechai.Database
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
                 dbCmd.CommandText = "SELECT * FROM marechai_db";
-                DataSet dataSet = new DataSet();
+                var dataSet = new DataSet();
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
 
@@ -61,7 +58,8 @@ namespace Marechai.Database
                 {
                     int newId = int.Parse(dataRow["version"].ToString());
 
-                    if(newId > currentDbVersion) currentDbVersion = newId;
+                    if(newId > currentDbVersion)
+                        currentDbVersion = newId;
                 }
             }
 
@@ -71,10 +69,12 @@ namespace Marechai.Database
             {
                 Console.WriteLine("Current database version is higher than last supported version {0}, cannot continue...",
                                   DB_VERSION);
+
                 return false;
             }
 
-            if(currentDbVersion == DB_VERSION) return true;
+            if(currentDbVersion == DB_VERSION)
+                return true;
 
             for(int i = currentDbVersion; i < DB_VERSION; i++)
                 switch(i)
@@ -82,116 +82,139 @@ namespace Marechai.Database
                     case 2:
                     {
                         UpdateDatabaseToV3();
+
                         break;
                     }
                     case 3:
                     {
                         UpdateDatabaseToV4();
+
                         break;
                     }
                     case 4:
                     {
                         UpdateDatabaseToV5();
+
                         break;
                     }
                     case 5:
                     {
                         UpdateDatabaseToV6();
+
                         break;
                     }
                     case 6:
                     {
                         UpdateDatabaseToV7();
+
                         break;
                     }
                     case 7:
                     {
                         UpdateDatabaseToV8();
+
                         break;
                     }
                     case 8:
                     {
                         UpdateDatabaseToV9();
+
                         break;
                     }
                     case 9:
                     {
                         UpdateDatabaseToV10();
+
                         break;
                     }
                     case 10:
                     {
                         UpdateDatabaseToV11();
+
                         break;
                     }
                     case 11:
                     {
                         UpdateDatabaseToV12();
+
                         break;
                     }
                     case 12:
                     {
                         UpdateDatabaseToV13();
+
                         break;
                     }
                     case 13:
                     {
                         UpdateDatabaseToV14();
+
                         break;
                     }
                     case 14:
                     {
                         UpdateDatabaseToV15();
+
                         break;
                     }
                     case 15:
                     {
                         UpdateDatabaseToV16();
+
                         break;
                     }
                     case 16:
                     {
                         UpdateDatabaseToV17();
+
                         break;
                     }
                     case 17:
                     {
                         UpdateDatabaseToV18();
+
                         break;
                     }
                     case 18:
                     {
                         UpdateDatabaseToV19();
+
                         break;
                     }
                     case 19:
                     {
                         UpdateDatabaseToV20();
+
                         break;
                     }
                     case 20:
                     {
                         UpdateDatabaseToV21();
+
                         break;
                     }
                     case 21:
                     {
                         UpdateDatabaseToV22();
+
                         break;
                     }
                     case 22:
                     {
                         UpdateDatabaseToV23();
+
                         break;
                     }
                     case 23:
                     {
                         UpdateVersionToEntityFramework();
+
                         break;
                     }
                 }
 
             OptimizeDatabase();
+
             return true;
         }
 
@@ -201,11 +224,13 @@ namespace Marechai.Database
 
             Console.WriteLine("Creating versioning table");
             IDbCommand dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText = @"CREATE TABLE `marechai_db` (
                                              `id` INT NOT NULL AUTO_INCREMENT,
                                              `version` INT NOT NULL,
                                              `updated` DATETIME DEFAULT CURRENT_TIMESTAMP,
                                              PRIMARY KEY (`id`) )";
+
             dbCmd.ExecuteNonQuery();
 
             Console.WriteLine("Renaming table `admin` to `admins`");
@@ -215,8 +240,10 @@ namespace Marechai.Database
 
             Console.WriteLine("Renaming column `browser_test.idstring` to `browser_test.user_agent`");
             dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText =
                 @"ALTER TABLE `browser_test` CHANGE COLUMN `idstring` `user_agent` varchar(128) NOT NULL DEFAULT '';";
+
             dbCmd.ExecuteNonQuery();
             Console.WriteLine("Renaming table `browser_test` to `browser_tests`");
             dbCmd             = dbCon.CreateCommand();
@@ -225,8 +252,10 @@ namespace Marechai.Database
 
             Console.WriteLine("Renaming column `Companias.Compania` to `Companias.name`");
             dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText =
                 @"ALTER TABLE `Companias` CHANGE COLUMN `Compania` `name` varchar(128) NOT NULL DEFAULT '';";
+
             dbCmd.ExecuteNonQuery();
             Console.WriteLine("Renaming table `Companias` to `companies`");
             dbCmd             = dbCon.CreateCommand();
@@ -235,13 +264,17 @@ namespace Marechai.Database
 
             Console.WriteLine("Renaming column `computers.spu` to `computers.sound_synth`");
             dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText =
                 @"ALTER TABLE `computers` CHANGE COLUMN `spu` `sound_synth` int(11) NOT NULL DEFAULT '0'";
+
             dbCmd.ExecuteNonQuery();
             Console.WriteLine("Renaming column `computers.mpu` to `music_synth.name`");
             dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText =
                 @"ALTER TABLE `computers` CHANGE COLUMN `mpu` `music_synth` int(11) NOT NULL DEFAULT '0'";
+
             dbCmd.ExecuteNonQuery();
             Console.WriteLine("Dropping column `computers.comment`");
             dbCmd             = dbCon.CreateCommand();
@@ -254,13 +287,17 @@ namespace Marechai.Database
             dbCmd.ExecuteNonQuery();
             Console.WriteLine("Renaming column `consoles.spu` to `consoles.sound_synth`");
             dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText =
                 @"ALTER TABLE `consoles` CHANGE COLUMN `spu` `sound_synth` int(11) NOT NULL DEFAULT '0'";
+
             dbCmd.ExecuteNonQuery();
             Console.WriteLine("Renaming column `consoles.mpu` to `consoles.music_synth`");
             dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText =
                 @"ALTER TABLE `consoles` CHANGE COLUMN `mpu` `music_synth` int(11) NOT NULL DEFAULT '0'";
+
             dbCmd.ExecuteNonQuery();
             Console.WriteLine("Dropping column `consoles.comments`");
             dbCmd             = dbCon.CreateCommand();
@@ -287,8 +324,10 @@ namespace Marechai.Database
 
             Console.WriteLine("Renaming column `Formatos_de_disco.Format` to `Formatos_de_disco.description`");
             dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText =
                 @"ALTER TABLE `Formatos_de_disco` CHANGE COLUMN `Format` `description` char(50) NOT NULL DEFAULT ''";
+
             dbCmd.ExecuteNonQuery();
             Console.WriteLine("Renaming table `Formatos_de_disco` to `disk_formats`");
             dbCmd             = dbCon.CreateCommand();
@@ -335,7 +374,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from console_company";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -346,6 +385,7 @@ namespace Marechai.Database
             IDbTransaction       trans;
 
             Console.WriteLine("Converting all items from `console_company` to `companies`");
+
             foreach(KeyValuePair<int, string> consoleCompany in consoleCompanies)
             {
                 dbCmd                     = dbCon.CreateCommand();
@@ -359,6 +399,7 @@ namespace Marechai.Database
                 {
                     Console.WriteLine("Converting console company `{0}` to company `{1}`", consoleCompany.Value,
                                       dataSet.Tables[0].Rows[0]["name"]);
+
                     conversionEquivalents.Add(consoleCompany.Key,
                                               int.Parse(dataSet.Tables[0].Rows[0]["id"].ToString()));
                 }
@@ -388,16 +429,20 @@ namespace Marechai.Database
             dataSet                   = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
+
             foreach(DataRow dataRow in dataSet.Tables[0].Rows)
                 consoleIdAndCompanyId.Add(int.Parse(dataRow["id"].ToString()),
                                           int.Parse(dataRow["company"].ToString()));
 
             trans = dbCon.BeginTransaction();
+
             foreach(KeyValuePair<int, int> keyValuePair in consoleIdAndCompanyId)
             {
                 conversionEquivalents.TryGetValue(keyValuePair.Value, out int newId);
+
                 Console.WriteLine("Converting console company {0} to company {1} for console {2}... ",
                                   keyValuePair.Value, newId, keyValuePair.Key);
+
                 dbCmd             = dbCon.CreateCommand();
                 dbCmd.Transaction = trans;
                 dbCmd.CommandText = $"UPDATE consoles SET company = {newId} WHERE id = {keyValuePair.Key}";
@@ -409,6 +454,7 @@ namespace Marechai.Database
             trans.Commit();
 
             Console.WriteLine("Moving company logos...");
+
             foreach(string file in Directory.GetFiles("wwwroot/assets/logos/computers/", "*",
                                                       SearchOption.TopDirectoryOnly))
             {
@@ -421,14 +467,17 @@ namespace Marechai.Database
             Directory.Delete("wwwroot/assets/logos/computers");
 
             Console.WriteLine("Moving console company logos...");
+
             foreach(string file in Directory.GetFiles("wwwroot/assets/logos/consoles/", "*",
                                                       SearchOption.TopDirectoryOnly))
             {
                 string oldNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
+
                 if(!int.TryParse(oldNameWithoutExtension, out int oldId))
                 {
                     Console.WriteLine("Removing stray file {0}...", file);
                     File.Delete(file);
+
                     continue;
                 }
 
@@ -436,6 +485,7 @@ namespace Marechai.Database
                 string extension = Path.GetExtension(file);
 
                 string newPath = Path.Combine("wwwroot/assets/logos/", $"{newId}{extension}");
+
                 if(File.Exists(newPath))
                 {
                     Console.WriteLine("Removing duplicate file {0}...", file);
@@ -480,9 +530,10 @@ namespace Marechai.Database
                 dbCmd             = dbCon.CreateCommand();
                 trans             = dbCon.BeginTransaction();
                 dbCmd.Transaction = trans;
+
                 dbCmd.CommandText = "ALTER TABLE `admins` ROW_FORMAT = DYNAMIC;\n"          +
                                     "ALTER TABLE `browser_tests` ROW_FORMAT = DYNAMIC;\n"   +
-                                    "ALTER TABLE `marechai_db` ROW_FORMAT = DYNAMIC;\n"         +
+                                    "ALTER TABLE `marechai_db` ROW_FORMAT = DYNAMIC;\n"     +
                                     "ALTER TABLE `companies` ROW_FORMAT = DYNAMIC;\n"       +
                                     "ALTER TABLE `computers` ROW_FORMAT = DYNAMIC;\n"       +
                                     "ALTER TABLE `consoles` ROW_FORMAT = DYNAMIC;\n"        +
@@ -497,6 +548,7 @@ namespace Marechai.Database
                                     "ALTER TABLE `owned_consoles` ROW_FORMAT = DYNAMIC;\n"  +
                                     "ALTER TABLE `processors` ROW_FORMAT = DYNAMIC;\n"      +
                                     "ALTER TABLE `sound_synths` ROW_FORMAT = DYNAMIC;\n";
+
                 dbCmd.ExecuteNonQuery();
                 trans.Commit();
                 dbCmd.Dispose();
@@ -520,11 +572,13 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_browser_tests_user_agent ON browser_tests (user_agent);\n" +
                                 "CREATE INDEX idx_browser_tests_browser ON browser_tests (browser);\n"       +
                                 "CREATE INDEX idx_browser_tests_version ON browser_tests (version);\n"       +
                                 "CREATE INDEX idx_browser_tests_os ON browser_tests (os);\n"                 +
                                 "CREATE INDEX idx_browser_tests_platform ON browser_tests (platform);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -542,6 +596,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_computers_company ON computers (company);\n"         +
                                 "CREATE INDEX idx_computers_year ON computers (year);\n"               +
                                 "CREATE INDEX idx_computers_model ON computers (model);\n"             +
@@ -565,6 +620,7 @@ namespace Marechai.Database
                                 "CREATE INDEX idx_computers_disk2 ON computers (disk2);\n"             +
                                 "CREATE INDEX idx_computers_cap1 ON computers (cap1);\n"               +
                                 "CREATE INDEX idx_computers_cap2 ON computers (cap2);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -573,6 +629,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_consoles_company ON consoles (company);\n"         +
                                 "CREATE INDEX idx_consoles_year ON consoles (year);\n"               +
                                 "CREATE INDEX idx_consoles_model ON consoles (model);\n"             +
@@ -592,6 +649,7 @@ namespace Marechai.Database
                                 "CREATE INDEX idx_consoles_palette ON consoles (palette);\n"         +
                                 "CREATE INDEX idx_consoles_format ON consoles (format);\n"           +
                                 "CREATE INDEX idx_consoles_cap ON consoles (cap);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -609,10 +667,12 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_forbidden_browser ON forbidden (browser);\n" +
                                 "CREATE INDEX idx_forbidden_date ON forbidden (date);\n"       +
                                 "CREATE INDEX idx_forbidden_ip ON forbidden (ip);\n"           +
                                 "CREATE INDEX idx_forbidden_referer ON forbidden (referer);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -630,10 +690,12 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_log_browser ON log (browser);\n" +
                                 "CREATE INDEX idx_log_date ON log (date);\n"       +
                                 "CREATE INDEX idx_log_ip ON log (ip);\n"           +
                                 "CREATE INDEX idx_log_referer ON log (referer);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -642,8 +704,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_money_donations_donator ON money_donations (donator);\n" +
                                 "CREATE INDEX idx_money_donations_quantity ON money_donations (quantity);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -661,9 +725,11 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_news_date ON news (date);\n" +
                                 "CREATE INDEX idx_news_type ON news (type);\n" +
                                 "CREATE INDEX idx_news_ip ON news (added_id);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -672,6 +738,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_owned_computers_db_id ON owned_computers (db_id);\n"     +
                                 "CREATE INDEX idx_owned_computers_date ON owned_computers (date);\n"       +
                                 "CREATE INDEX idx_owned_computers_status ON owned_computers (status);\n"   +
@@ -689,6 +756,7 @@ namespace Marechai.Database
                                 "CREATE INDEX idx_owned_computers_disk2 ON owned_computers (disk2);\n"     +
                                 "CREATE INDEX idx_owned_computers_cap1 ON owned_computers (cap1);\n"       +
                                 "CREATE INDEX idx_owned_computers_cap2 ON owned_computers (cap2);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -697,12 +765,14 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX idx_owned_consoles_db_id ON owned_consoles (db_id);\n"    +
                                 "CREATE INDEX idx_owned_consoles_date    ON owned_consoles (date);\n"   +
                                 "CREATE INDEX idx_owned_consoles_status  ON owned_consoles (status);\n" +
                                 "CREATE INDEX idx_owned_consoles_trade   ON owned_consoles (trade);\n"  +
                                 "CREATE INDEX idx_owned_consoles_boxed   ON owned_consoles (boxed);\n"  +
                                 "CREATE INDEX idx_owned_consoles_manuals ON owned_consoles (manuals);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -784,6 +854,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `companies` ADD COLUMN `founded` DATETIME NULL;\n"        +
                                 "ALTER TABLE `companies` ADD COLUMN `website` VARCHAR(255) NULL;\n"    +
                                 "ALTER TABLE `companies` ADD COLUMN `twitter` VARCHAR(45) NULL;\n"     +
@@ -795,6 +866,7 @@ namespace Marechai.Database
                                 "ALTER TABLE `companies` ADD COLUMN `province` VARCHAR(80) NULL;\n"    +
                                 "ALTER TABLE `companies` ADD COLUMN `postal_code` VARCHAR(25) NULL;\n" +
                                 "ALTER TABLE `companies` ADD COLUMN `country` SMALLINT(3) UNSIGNED ZEROFILL NULL;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -803,6 +875,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX `idx_companies_founded` ON `companies` (`founded`);\n"         +
                                 "CREATE INDEX `idx_companies_website` ON `companies` (`website`);\n"         +
                                 "CREATE INDEX `idx_companies_twitter` ON `companies` (`twitter`);\n"         +
@@ -814,6 +887,7 @@ namespace Marechai.Database
                                 "CREATE INDEX `idx_companies_province` ON `companies` (`province`);\n"       +
                                 "CREATE INDEX `idx_companies_postal_code` ON `companies` (`postal_code`);\n" +
                                 "CREATE INDEX `idx_companies_country` ON `companies` (`country`);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -822,9 +896,11 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `companies` ADD FOREIGN KEY `fk_companies_sold_to` (sold_to) REFERENCES `companies` (`id`);\n" +
                 "ALTER TABLE `companies` ADD FOREIGN KEY `fk_companies_country` (country) REFERENCES `iso3166_1_numeric` (`id`);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -940,6 +1016,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `processors` ADD COLUMN `company` INT NULL;\n"            +
                                 "ALTER TABLE `processors` ADD COLUMN `model_code` VARCHAR(45) NULL;\n" +
                                 "ALTER TABLE `processors` ADD COLUMN `introduced` DATETIME NULL;\n"    +
@@ -964,6 +1041,7 @@ namespace Marechai.Database
                                 "ALTER TABLE `processors` ADD COLUMN `L1_data` FLOAT NULL;\n"          +
                                 "ALTER TABLE `processors` ADD COLUMN `L2` FLOAT NULL;\n"               +
                                 "ALTER TABLE `processors` ADD COLUMN `L3` FLOAT NULL;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -972,6 +1050,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "CREATE INDEX `idx_processors_company` ON `processors` (`company`);\n"                   +
                 "CREATE INDEX `idx_processors_model_code` ON `processors` (`model_code`);\n"             +
@@ -997,6 +1076,7 @@ namespace Marechai.Database
                 "CREATE INDEX `idx_processors_L1_data` ON `processors` (`L1_data`);\n"                   +
                 "CREATE INDEX `idx_processors_L2` ON `processors` (`L2`);\n"                             +
                 "CREATE INDEX `idx_processors_L3` ON `processors` (`L3`);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1005,9 +1085,11 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `processors` ADD FOREIGN KEY `fk_processors_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;\n" +
                 "ALTER TABLE `processors` ADD FOREIGN KEY `fk_processors_instruction_set` (instruction_set) REFERENCES `instruction_sets` (`id`) ON UPDATE CASCADE;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1027,6 +1109,7 @@ namespace Marechai.Database
             IDbCommand     dbCmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `gpus` ADD COLUMN `company` INT NULL;\n"            +
                                 "ALTER TABLE `gpus` ADD COLUMN `model_code` VARCHAR(45) NULL;\n" +
                                 "ALTER TABLE `gpus` ADD COLUMN `introduced` DATETIME NULL;\n"    +
@@ -1035,6 +1118,7 @@ namespace Marechai.Database
                                 "ALTER TABLE `gpus` ADD COLUMN `process_nm` FLOAT NULL;\n"       +
                                 "ALTER TABLE `gpus` ADD COLUMN `die_size` FLOAT NULL;\n"         +
                                 "ALTER TABLE `gpus` ADD COLUMN `transistors` BIGINT NULL;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1043,6 +1127,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX `idx_gpus_company` ON `gpus` (`company`);\n"       +
                                 "CREATE INDEX `idx_gpus_model_code` ON `gpus` (`model_code`);\n" +
                                 "CREATE INDEX `idx_gpus_introduced` ON `gpus` (`introduced`);\n" +
@@ -1051,6 +1136,7 @@ namespace Marechai.Database
                                 "CREATE INDEX `idx_gpus_process_nm` ON `gpus` (`process_nm`);\n" +
                                 "CREATE INDEX `idx_gpus_die_size` ON `gpus` (`die_size`);\n"     +
                                 "CREATE INDEX `idx_gpus_transistors` ON `gpus` (`transistors`);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1059,8 +1145,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `gpus` ADD FOREIGN KEY `fk_gpus_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1080,9 +1168,11 @@ namespace Marechai.Database
             IDbCommand     dbCmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `computers` CHANGE COLUMN `gpu` `gpu` INT DEFAULT NULL;\n"   +
                                 "ALTER TABLE `computers` CHANGE COLUMN `cpu1` `cpu1` INT DEFAULT NULL;\n" +
                                 "ALTER TABLE `computers` CHANGE COLUMN `mhz1` `mhz1` INT DEFAULT NULL;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1091,9 +1181,11 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `consoles` CHANGE COLUMN `gpu` `gpu` INT DEFAULT NULL;\n"   +
                                 "ALTER TABLE `consoles` CHANGE COLUMN `cpu1` `cpu1` INT DEFAULT NULL;\n" +
                                 "ALTER TABLE `consoles` CHANGE COLUMN `mhz1` `mhz1` INT DEFAULT NULL;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1102,8 +1194,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = $"INSERT INTO `gpus` (`id`, `name`) VALUES ({DB_NONE}, 'DB_NONE');\n" +
                                 $"INSERT INTO `gpus` (`id`, `name`) VALUES ({DB_SOFTWARE}, 'DB_FRAMEBUFFER');";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1112,9 +1206,11 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = $"UPDATE `computers` SET `gpu` = {DB_NONE} WHERE `gpu` = 1;\n" +
                                 "UPDATE `computers` SET `gpu` = NULL WHERE `gpu` = 2;\n"       +
                                 $"UPDATE `computers` SET `gpu` = {DB_SOFTWARE} WHERE `gpu` = 3;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1123,9 +1219,11 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = $"UPDATE `consoles` SET `gpu` = {DB_NONE} WHERE `gpu` = 1;\n" +
                                 "UPDATE `consoles` SET `gpu` = NULL WHERE `gpu` = 2;\n"       +
                                 $"UPDATE `consoles` SET `gpu` = {DB_SOFTWARE} WHERE `gpu` = 3;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1134,8 +1232,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "DELETE FROM `gpus` WHERE `id` = 1;\n" + "DELETE FROM `gpus` WHERE `id` = 2;\n" +
                                 "DELETE FROM `gpus` WHERE `id` = 3;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1155,6 +1255,7 @@ namespace Marechai.Database
             IDbCommand     dbCmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `sound_synths` ADD COLUMN `company` INT NULL;\n"            +
                                 "ALTER TABLE `sound_synths` ADD COLUMN `model_code` VARCHAR(45) NULL;\n" +
                                 "ALTER TABLE `sound_synths` ADD COLUMN `introduced` DATETIME NULL;\n"    +
@@ -1164,6 +1265,7 @@ namespace Marechai.Database
                                 "ALTER TABLE `sound_synths` ADD COLUMN `square_wave` INT NULL;\n"        +
                                 "ALTER TABLE `sound_synths` ADD COLUMN `white_noise` INT NULL;\n"        +
                                 "ALTER TABLE `sound_synths` ADD COLUMN `type` INT NULL;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1172,6 +1274,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX `idx_sound_synths_company` ON `sound_synths` (`company`);\n"         +
                                 "CREATE INDEX `idx_sound_synths_model_code` ON `sound_synths` (`model_code`);\n"   +
                                 "CREATE INDEX `idx_sound_synths_introduced` ON `sound_synths` (`introduced`);\n"   +
@@ -1181,6 +1284,7 @@ namespace Marechai.Database
                                 "CREATE INDEX `idx_sound_synths_square_wave` ON `sound_synths` (`square_wave`);\n" +
                                 "CREATE INDEX `idx_sound_synths_white_noise` ON `sound_synths` (`white_noise`);\n" +
                                 "CREATE INDEX `idx_sound_synths_type` ON `sound_synths` (`type`);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1189,8 +1293,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `sound_synths` ADD FOREIGN KEY `fk_sound_synths_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1199,8 +1305,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `computers` DROP FOREIGN KEY `fk_computers_music_synth`;\n" +
                                 "ALTER TABLE `consoles` DROP FOREIGN KEY `fk_consoles_music_synth`;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1211,7 +1319,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from music_synths";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -1221,6 +1329,7 @@ namespace Marechai.Database
             Dictionary<int, int> conversionEquivalents = new Dictionary<int, int>();
 
             Console.WriteLine("Converting all items from `music_synths` to `sound_synths`");
+
             foreach(KeyValuePair<int, string> musicSynth in musicSynths)
             {
                 dbCmd                     = dbCon.CreateCommand();
@@ -1234,6 +1343,7 @@ namespace Marechai.Database
                 {
                     Console.WriteLine("Converting music synth `{0}` to sound synth `{1}`", musicSynth.Value,
                                       dataSet.Tables[0].Rows[0]["name"]);
+
                     conversionEquivalents.Add(musicSynth.Key, int.Parse(dataSet.Tables[0].Rows[0]["id"].ToString()));
                 }
                 else
@@ -1262,16 +1372,20 @@ namespace Marechai.Database
             dataSet                   = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
+
             foreach(DataRow dataRow in dataSet.Tables[0].Rows)
                 consoleIdAndMusicSynthId.Add(int.Parse(dataRow["id"].ToString()),
                                              int.Parse(dataRow["music_synth"].ToString()));
 
             trans = dbCon.BeginTransaction();
+
             foreach(KeyValuePair<int, int> keyValuePair in consoleIdAndMusicSynthId)
             {
                 conversionEquivalents.TryGetValue(keyValuePair.Value, out int newId);
+
                 Console.WriteLine("Converting music synth {0} to sound synth {1} for console {2}... ",
                                   keyValuePair.Value, newId, keyValuePair.Key);
+
                 dbCmd             = dbCon.CreateCommand();
                 dbCmd.Transaction = trans;
                 dbCmd.CommandText = $"UPDATE consoles SET music_synth = {newId} WHERE id = {keyValuePair.Key}";
@@ -1290,16 +1404,20 @@ namespace Marechai.Database
             dataSet                   = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
+
             foreach(DataRow dataRow in dataSet.Tables[0].Rows)
                 computerIdAndMusicSynthId.Add(int.Parse(dataRow["id"].ToString()),
                                               int.Parse(dataRow["music_synth"].ToString()));
 
             trans = dbCon.BeginTransaction();
+
             foreach(KeyValuePair<int, int> keyValuePair in computerIdAndMusicSynthId)
             {
                 conversionEquivalents.TryGetValue(keyValuePair.Value, out int newId);
+
                 Console.WriteLine("Converting music synth {0} to sound synth {1} for computer {2}... ",
                                   keyValuePair.Value, newId, keyValuePair.Key);
+
                 dbCmd             = dbCon.CreateCommand();
                 dbCmd.Transaction = trans;
                 dbCmd.CommandText = $"UPDATE computers SET music_synth = {newId} WHERE id = {keyValuePair.Key}";
@@ -1314,8 +1432,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `computers` ADD FOREIGN KEY `fk_computers_music_synth` (music_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1324,8 +1444,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `consoles` ADD FOREIGN KEY `fk_consoles_music_synth` (music_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1372,8 +1494,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 $"ALTER TABLE `machines` ADD COLUMN `type` INT NOT NULL DEFAULT '{(int)MachineType.Unknown}';";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1391,6 +1515,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `machines` DROP INDEX `idx_computers_company`, ADD INDEX `idx_machines_company` (`company`);\n"             +
                 "ALTER TABLE `machines` DROP INDEX `idx_computers_year`, ADD INDEX `idx_machines_year` (`year`);\n"                      +
@@ -1414,6 +1539,7 @@ namespace Marechai.Database
                 "ALTER TABLE `machines` DROP INDEX `idx_computers_disk2`, ADD INDEX `idx_machines_disk2` (`disk2`);\n"                   +
                 "ALTER TABLE `machines` DROP INDEX `idx_computers_cap1`, ADD INDEX `idx_machines_cap1` (`cap1`);\n"                      +
                 "ALTER TABLE `machines` DROP INDEX `idx_computers_cap2`, ADD INDEX `idx_machines_cap2` (`cap2`);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1422,6 +1548,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_company`;\n"     +
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_cpu1`;\n"        +
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_cpu2`;\n"        +
@@ -1433,6 +1560,7 @@ namespace Marechai.Database
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_hdd3`;\n"        +
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_music_synth`;\n" +
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_computers_sound_synth`;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1441,6 +1569,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;\n"            +
                 "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_cpu1` (cpu1) REFERENCES `processors` (`id`) ON UPDATE CASCADE;\n"                 +
@@ -1453,6 +1582,7 @@ namespace Marechai.Database
                 "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd3` (hdd3) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"               +
                 "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_music_synth` (music_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;\n" +
                 "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_sound_synth` (sound_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1471,7 +1601,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from consoles";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -1549,13 +1679,15 @@ namespace Marechai.Database
                 param2.Value = (int)dataRow["year"];
                 param3.Value = (string)dataRow["model"];
                 param4.Value = dataRow["cpu1"] == DBNull.Value ? (object)null : (int)dataRow["cpu1"];
-                param5.Value = dataRow["mhz1"] == DBNull.Value
-                                    ? (object)null
+
+                param5.Value = dataRow["mhz1"] == DBNull.Value ? (object)null
                                     : float.Parse(dataRow["mhz1"].ToString());
+
                 param6.Value = dataRow["cpu2"] == DBNull.Value ? (object)null : (int)dataRow["cpu2"];
-                param7.Value = dataRow["mhz2"] == DBNull.Value
-                                    ? (object)null
+
+                param7.Value = dataRow["mhz2"] == DBNull.Value ? (object)null
                                     : float.Parse(dataRow["mhz2"].ToString());
+
                 param8.Value  = (int)dataRow["ram"];
                 param9.Value  = (int)dataRow["rom"];
                 param10.Value = dataRow["gpu"] == DBNull.Value ? (object)null : (int)dataRow["gpu"];
@@ -1643,7 +1775,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from machines";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -1675,8 +1807,8 @@ namespace Marechai.Database
                 if(dataRow["cpu1"] != DBNull.Value)
                 {
                     param2.Value = (int)dataRow["cpu1"];
-                    param3.Value = dataRow["mhz1"] == DBNull.Value
-                                       ? (object)null
+
+                    param3.Value = dataRow["mhz1"] == DBNull.Value ? (object)null
                                        : float.Parse(dataRow["mhz1"].ToString());
 
                     trans             = dbCon.BeginTransaction();
@@ -1693,8 +1825,8 @@ namespace Marechai.Database
                 if(dataRow["cpu2"] != DBNull.Value)
                 {
                     param2.Value = (int)dataRow["cpu2"];
-                    param3.Value = dataRow["mhz2"] == DBNull.Value
-                                       ? (object)null
+
+                    param3.Value = dataRow["mhz2"] == DBNull.Value ? (object)null
                                        : float.Parse(dataRow["mhz2"].ToString());
 
                     trans             = dbCon.BeginTransaction();
@@ -1715,12 +1847,14 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_cpu1`;\n" +
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_cpu2`;\n" +
                                 "ALTER TABLE `machines` DROP COLUMN `cpu1`;\n"                  +
                                 "ALTER TABLE `machines` DROP COLUMN `cpu2`;\n"                  +
                                 "ALTER TABLE `machines` DROP COLUMN `mhz1`;\n"                  +
                                 "ALTER TABLE `machines` DROP COLUMN `mhz2`;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1750,7 +1884,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from machines";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -1796,8 +1930,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_gpu`;\n" +
                                 "ALTER TABLE `machines` DROP COLUMN `gpu`;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1835,8 +1971,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = $"UPDATE `machines` SET sound_synth = {DB_SOFTWARE} WHERE sound_synth = 27;\n" +
                                 $"UPDATE `machines` SET music_synth = {DB_SOFTWARE} WHERE music_synth = 27;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1846,7 +1984,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from machines";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -1871,7 +2009,8 @@ namespace Marechai.Database
                 dbcmd.Parameters.Add(param1);
                 dbcmd.Parameters.Add(param2);
 
-                if(dataRow["sound_synth"]      != DBNull.Value && (int)dataRow["sound_synth"] != 1 &&
+                if(dataRow["sound_synth"]      != DBNull.Value &&
+                   (int)dataRow["sound_synth"] != 1            &&
                    (int)dataRow["sound_synth"] != 2)
                 {
                     param2.Value = (int)dataRow["sound_synth"];
@@ -1887,7 +2026,8 @@ namespace Marechai.Database
                     trans.Commit();
                 }
 
-                if(dataRow["music_synth"]      != DBNull.Value && (int)dataRow["music_synth"] != 1 &&
+                if(dataRow["music_synth"]      != DBNull.Value &&
+                   (int)dataRow["music_synth"] != 1            &&
                    (int)dataRow["music_synth"] != 2)
                 {
                     param2.Value = (int)dataRow["music_synth"];
@@ -1910,12 +2050,14 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_sound_synth`;\n" +
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_music_synth`;\n" +
                                 "ALTER TABLE `machines` DROP COLUMN `sound_channels`;\n"               +
                                 "ALTER TABLE `machines` DROP COLUMN `music_channels`;\n"               +
                                 "ALTER TABLE `machines` DROP COLUMN `sound_synth`;\n"                  +
                                 "ALTER TABLE `machines` DROP COLUMN `music_synth`;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1924,8 +2066,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "DELETE FROM sound_synths WHERE id = 1;\n" +
                                 "DELETE FROM sound_synths WHERE id = 2;\n" + "DELETE FROM sound_synths WHERE id = 27;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -1955,7 +2099,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from machines";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -1984,7 +2128,8 @@ namespace Marechai.Database
                 dbcmd.Parameters.Add(param2);
                 dbcmd.Parameters.Add(param3);
 
-                if(dataRow["ram"] != DBNull.Value && (int)dataRow["ram"] > 0)
+                if(dataRow["ram"]      != DBNull.Value &&
+                   (int)dataRow["ram"] > 0)
                 {
                     param2.Value = MemoryUsage.Work;
                     param3.Value = (int)dataRow["ram"] * 1024;
@@ -2001,7 +2146,8 @@ namespace Marechai.Database
                     trans.Commit();
                 }
 
-                if(dataRow["rom"] != DBNull.Value && (int)dataRow["rom"] > 0)
+                if(dataRow["rom"]      != DBNull.Value &&
+                   (int)dataRow["rom"] > 0)
                 {
                     param2.Value = MemoryUsage.Firmware;
                     param3.Value = (int)dataRow["rom"] * 1024;
@@ -2018,7 +2164,8 @@ namespace Marechai.Database
                     trans.Commit();
                 }
 
-                if(dataRow["vram"] != DBNull.Value && (int)dataRow["vram"] > 0)
+                if(dataRow["vram"]      != DBNull.Value &&
+                   (int)dataRow["vram"] > 0)
                 {
                     param2.Value = MemoryUsage.Video;
                     param3.Value = (int)dataRow["vram"] * 1024;
@@ -2042,9 +2189,11 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` DROP COLUMN `ram`;\n" +
                                 "ALTER TABLE `machines` DROP COLUMN `rom`;\n" +
                                 "ALTER TABLE `machines` DROP COLUMN `vram`;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2083,36 +2232,44 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from machines";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
             foreach(DataRow dataRow in dataSet.Tables[0].Rows)
             {
-                if(dataRow["colors"]      == DBNull.Value || dataRow["res"] == DBNull.Value ||
+                if(dataRow["colors"]      == DBNull.Value ||
+                   dataRow["res"]         == DBNull.Value ||
                    (int)dataRow["colors"] == 0            ||
-                   (string)dataRow["res"] == "???") continue;
+                   (string)dataRow["res"] == "???")
+                    continue;
 
                 dbCmd = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter2 = dbCore.GetNewDataAdapter();
                 dbCmd.CommandText = $"SELECT * FROM gpus_by_machine WHERE machine = {(int)dataRow["id"]}";
-                DataSet dataSet2 = new DataSet();
+                var dataSet2 = new DataSet();
                 dataAdapter2.SelectCommand = dbCmd;
                 dataAdapter2.Fill(dataSet2);
 
-                if(dataSet2.Tables[0].Rows.Count == 0) continue;
+                if(dataSet2.Tables[0].Rows.Count == 0)
+                    continue;
 
                 int gpuId = (int)dataSet2.Tables[0].Rows[0]["gpu"];
 
                 string[] resPieces = ((string)dataRow["res"]).Split('x');
 
-                if(!int.TryParse(resPieces[0], out int width)) continue;
-                if(!int.TryParse(resPieces[1], out int height)) continue;
+                if(!int.TryParse(resPieces[0], out int width))
+                    continue;
+
+                if(!int.TryParse(resPieces[1], out int height))
+                    continue;
 
                 dbCmd        = dbCon.CreateCommand();
                 dataAdapter2 = dbCore.GetNewDataAdapter();
+
                 dbCmd.CommandText =
                     $"SELECT * FROM resolutions WHERE width = {width} AND height = {height} AND colors = {(int)dataRow["colors"]}";
+
                 dataSet2                   = new DataSet();
                 dataAdapter2.SelectCommand = dbCmd;
                 dataAdapter2.Fill(dataSet2);
@@ -2153,7 +2310,8 @@ namespace Marechai.Database
 
                     resId = (int)dbCore.LastInsertRowId;
                 }
-                else resId = (int)dataSet2.Tables[0].Rows[0]["id"];
+                else
+                    resId = (int)dataSet2.Tables[0].Rows[0]["id"];
 
                 dbcmd = dbCon.CreateCommand();
 
@@ -2184,8 +2342,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` DROP COLUMN `res`;\n" +
                                 "ALTER TABLE `machines` DROP COLUMN `colors`;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2215,7 +2375,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from machines";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -2248,9 +2408,14 @@ namespace Marechai.Database
                 dbcmd.Parameters.Add(param3);
                 dbcmd.Parameters.Add(param4);
 
-                foreach(string media in new[] {"hdd1", "hdd2", "hdd3", "disk1", "disk2"})
+                foreach(string media in new[]
                 {
-                    if(dataRow[media] == DBNull.Value || (int)dataRow[media] == 30) continue;
+                    "hdd1", "hdd2", "hdd3", "disk1", "disk2"
+                })
+                {
+                    if(dataRow[media]      == DBNull.Value ||
+                       (int)dataRow[media] == 30)
+                        continue;
 
                     param3.Value = StorageInterface.Unknown;
 
@@ -2258,101 +2423,130 @@ namespace Marechai.Database
                     {
                         case 1:
                             param2.Value = StorageType.CompactFloppy;
+
                             break;
                         case 3:
                         case 5:
                             param2.Value = StorageType.Microfloppy;
+
                             break;
                         case 4:
                             param2.Value = StorageType.Minifloppy;
+
                             break;
                         case 7:
                             param2.Value = StorageType.CompactDisc;
+
                             break;
                         case 8:
                             param2.Value = StorageType.CompactCassette;
+
                             break;
                         case 9:
                             param2.Value = StorageType.CompactFlash;
+
                             break;
                         case 11:
                             param2.Value = StorageType.Dvd;
+
                             break;
                         case 12:
                             param2.Value = StorageType.GDROM;
+
                             break;
                         case 13:
                             param2.Value = StorageType.ZIP100;
+
                             break;
                         case 14:
                             param2.Value = StorageType.LS120;
+
                             break;
                         case 15:
                             param2.Value = StorageType.MagnetoOptical;
+
                             break;
                         case 17:
                             param2.Value = StorageType.Microdrive;
+
                             break;
                         case 18:
                             param2.Value = StorageType.MMC;
+
                             break;
                         case 20:
                             param2.Value = StorageType.SecureDigital;
+
                             break;
                         case 21:
                             param2.Value = StorageType.SmartMedia;
+
                             break;
                         case 23:
                             param2.Value = StorageType.PunchedCard;
+
                             break;
                         case 24:
                             param2.Value = StorageType.HardDisk;
                             param3.Value = StorageInterface.ACSI;
+
                             break;
                         case 25:
                         case 29:
                             param2.Value = StorageType.HardDisk;
                             param3.Value = StorageInterface.ATA;
+
                             break;
                         case 26:
                             param2.Value = StorageType.HardDisk;
                             param3.Value = StorageInterface.ESDI;
+
                             break;
                         case 27:
                             param2.Value = StorageType.HardDisk;
                             param3.Value = StorageInterface.FireWire;
+
                             break;
                         case 28:
                             param2.Value = StorageType.CompactFloppy;
+
                             break;
                         case 32:
                         case 35:
                             param2.Value = StorageType.HardDisk;
                             param3.Value = StorageInterface.ST506;
+
                             break;
                         case 33:
                             param2.Value = StorageType.HardDisk;
                             param3.Value = StorageInterface.SASI;
+
                             break;
                         case 34:
                         case 41:
                             param2.Value = StorageType.HardDisk;
                             param3.Value = StorageInterface.SCSI;
+
                             break;
                         case 40:
                             param2.Value = StorageType.Floppy;
+
                             break;
                         case 43:
                             param2.Value = StorageType.Bluray;
+
                             break;
                         case 44:
                             param2.Value = StorageType.GOD;
+
                             break;
                         case 45:
                             param2.Value = StorageType.WOD;
+
                             break;
                         default:
                             param2.Value = StorageType.Unknown;
+
                             break;
                     }
 
@@ -2360,7 +2554,7 @@ namespace Marechai.Database
 
                     switch(media)
                     {
-                        case "disk1":
+                        case"disk1":
                             if(dataRow["cap1"] != DBNull.Value)
                                 if(int.TryParse((string)dataRow["cap1"], out int cap))
                                     param4.Value = cap == 0
@@ -2368,8 +2562,9 @@ namespace Marechai.Database
                                                        : (StorageType)param2.Value == StorageType.CompactCassette
                                                            ? cap
                                                            : cap * 1024;
+
                             break;
-                        case "disk2":
+                        case"disk2":
                             if(dataRow["cap2"] != DBNull.Value)
                                 if(int.TryParse((string)dataRow["cap2"], out int cap))
                                     param4.Value = cap == 0
@@ -2377,6 +2572,7 @@ namespace Marechai.Database
                                                        : (StorageType)param2.Value == StorageType.CompactCassette
                                                            ? cap
                                                            : cap * 1024;
+
                             break;
                     }
 
@@ -2399,6 +2595,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_disk1`;\n" +
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_disk2`;\n" +
                                 "ALTER TABLE `machines` DROP FOREIGN KEY `fk_machines_hdd1`;\n"  +
@@ -2411,6 +2608,7 @@ namespace Marechai.Database
                                 "ALTER TABLE `machines` DROP COLUMN `cap1`;\n"                   +
                                 "ALTER TABLE `machines` DROP COLUMN `disk2`;\n"                  +
                                 "ALTER TABLE `machines` DROP COLUMN `cap2`;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2439,8 +2637,10 @@ namespace Marechai.Database
             IDbCommand     dbCmd = dbCon.CreateCommand();
             IDbTransaction trans = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` ADD COLUMN `introduced` DATETIME NULL;\n" +
                                 "CREATE INDEX idx_machines_introduced ON machines (introduced);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2450,7 +2650,7 @@ namespace Marechai.Database
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from machines";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -2464,8 +2664,10 @@ namespace Marechai.Database
 
                 param1.DbType = DbType.DateTime;
 
-                if((int)dataRow["year"] > 0) param1.Value = new DateTime((int)dataRow["year"], 1, 1);
-                else param1.Value                         = null;
+                if((int)dataRow["year"] > 0)
+                    param1.Value = new DateTime((int)dataRow["year"], 1, 1);
+                else
+                    param1.Value = null;
 
                 string sql = $"UPDATE `machines` SET introduced = @introduced WHERE id = {(int)dataRow["id"]}";
 
@@ -2518,10 +2720,12 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "ALTER TABLE `machines` ADD COLUMN `family` INT DEFAULT NULL;\n"               +
                                 "ALTER TABLE `machines` CHANGE COLUMN `model` `name` VARCHAR(255) NOT NULL;\n" +
                                 "ALTER TABLE `machines` DROP INDEX `idx_machines_model`;\n"                    +
                                 "ALTER TABLE `machines` ADD COLUMN `model` VARCHAR(50) DEFAULT NULL;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2530,9 +2734,11 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText = "CREATE INDEX `idx_machines_family` ON `machines` (`family`);\n" +
                                 "CREATE INDEX `idx_machines_name` ON `machines` (`name`);\n"     +
                                 "CREATE INDEX `idx_machines_model` ON `machines` (`model`);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2541,8 +2747,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_family` (family) REFERENCES machine_families (`id`) ON UPDATE CASCADE";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2598,8 +2806,10 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE `companies` ADD FOREIGN KEY `fk_companies_country` (country) REFERENCES `iso3166_1_numeric` (`id`);";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2608,6 +2818,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
+
             dbCmd.CommandText =
                 "ALTER TABLE gpus_by_machine       ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
                 "ALTER TABLE memory_by_machine     ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
@@ -2615,6 +2826,7 @@ namespace Marechai.Database
                 "ALTER TABLE resolutions_by_gpu    ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
                 "ALTER TABLE sound_by_machine      ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;\n" +
                 "ALTER TABLE storage_by_machine    ADD id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT;";
+
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -2631,7 +2843,7 @@ namespace Marechai.Database
             IDbCommand     dbCmd       = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SHOW TABLES";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
@@ -2652,14 +2864,16 @@ namespace Marechai.Database
             IDbCommand     dbCmd            = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter      = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * FROM marechai_db";
-            DataSet dataSet = new DataSet();
+            var dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
 
             foreach(DataRow dataRow in dataSet.Tables[0].Rows)
             {
-                int newId                                     = int.Parse(dataRow["version"].ToString());
-                if(newId > currentDbVersion) currentDbVersion = newId;
+                int newId = int.Parse(dataRow["version"].ToString());
+
+                if(newId > currentDbVersion)
+                    currentDbVersion = newId;
             }
 
             return currentDbVersion;
@@ -2669,19 +2883,23 @@ namespace Marechai.Database
         {
             Console.WriteLine("Adding Entity Framework table...");
             IDbCommand dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText = "create table `__EFMigrationsHistory`\n"              +
                                 "(MigrationId    varchar(95) not null primary key,\n" +
                                 "ProductVersion varchar(32) not null);";
+
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
-            
+
             Console.WriteLine("Adding Entity Framework first migration...");
             dbCmd = dbCon.CreateCommand();
+
             dbCmd.CommandText = "INSERT INTO marechai.`__EFMigrationsHistory` (MigrationId, ProductVersion)" +
                                 " VALUES ('20180805214952_InitialMigration', '2.1.1-rtm-30846');";
+
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
-            
+
             Console.WriteLine("Setting new database version to 1984 (Entity Framework)...");
             dbCmd             = dbCon.CreateCommand();
             dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('1984')";

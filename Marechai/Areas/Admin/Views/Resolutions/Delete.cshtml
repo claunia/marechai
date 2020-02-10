@@ -34,9 +34,7 @@
 @{
     ViewData["Title"] = "Delete";
 }
-
 <h2>Delete</h2>
-
 <h3>Are you sure you want to delete this?</h3>
 <div>
     <h4>Resolution</h4>
@@ -79,15 +77,10 @@
             @Html.DisplayFor(model => model.Grayscale)
         </dd>
     </dl>
-
     <form asp-action="Delete">
-        <input type="hidden"
-               asp-for="Id" />
-        <input class="btn btn-danger"
-               type="submit"
-               value="Delete" />
-        <a asp-action="Index"
-           class="btn btn-secondary">
+        <input type="hidden" asp-for="Id" />
+        <input class="btn btn-danger" type="submit" value="Delete" />
+        <a asp-action="Index" class="btn btn-secondary">
             Back to List
         </a>
     </form>

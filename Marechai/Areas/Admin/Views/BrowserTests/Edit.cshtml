@@ -34,67 +34,48 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
 <h2>Edit</h2>
-
 <h4>Browser test</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
             </div>
-            <input type="hidden"
-                   asp-for="Id" />
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="UserAgent"
-                       class="control-label">
+                <label asp-for="UserAgent" class="control-label">
                 </label>
-                <input asp-for="UserAgent"
-                       class="form-control" />
-                <span asp-validation-for="UserAgent"
-                      class="text-danger">
+                <input asp-for="UserAgent" class="form-control" />
+                <span asp-validation-for="UserAgent" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Browser"
-                       class="control-label">
+                <label asp-for="Browser" class="control-label">
                 </label>
-                <input asp-for="Browser"
-                       class="form-control" />
-                <span asp-validation-for="Browser"
-                      class="text-danger">
+                <input asp-for="Browser" class="form-control" />
+                <span asp-validation-for="Browser" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Version"
-                       class="control-label">
+                <label asp-for="Version" class="control-label">
                 </label>
-                <input asp-for="Version"
-                       class="form-control" />
-                <span asp-validation-for="Version"
-                      class="text-danger">
+                <input asp-for="Version" class="form-control" />
+                <span asp-validation-for="Version" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Os"
-                       class="control-label">
+                <label asp-for="Os" class="control-label">
                 </label>
-                <input asp-for="Os"
-                       class="form-control" />
-                <span asp-validation-for="Os"
-                      class="text-danger">
+                <input asp-for="Os" class="form-control" />
+                <span asp-validation-for="Os" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Platform"
-                       class="control-label">
+                <label asp-for="Platform" class="control-label">
                 </label>
-                <input asp-for="Platform"
-                       class="form-control" />
-                <span asp-validation-for="Platform"
-                      class="text-danger">
+                <input asp-for="Platform" class="form-control" />
+                <span asp-validation-for="Platform" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
@@ -175,11 +156,8 @@
                 </div>
             </div>
             <div class="form-group">
-                <input class="btn btn-primary"
-                       type="submit"
-                       value="Save" />
-                <a asp-action="Index"
-                   class="btn btn-secondary">
+                <input class="btn btn-primary" type="submit" value="Save" />
+                <a asp-action="Index" class="btn btn-secondary">
                     Back to List
                 </a>
             </div>

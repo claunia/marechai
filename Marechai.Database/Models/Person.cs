@@ -15,11 +15,9 @@ namespace Marechai.Database.Models
         public string Surname { get; set; }
         [DisplayName("Country of birth")]
         public virtual Iso31661Numeric CountryOfBirth { get; set; }
-        [DisplayName("Birth date")]
-        [DataType(DataType.Date)]
+        [DisplayName("Birth date"), DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
-        [DisplayName("Date of death")]
-        [DataType(DataType.Date)]
+        [DisplayName("Date of death"), DataType(DataType.Date)]
         public DateTime? DeathDate { get; set; }
         [Url]
         public string Webpage { get; set; }
@@ -32,8 +30,7 @@ namespace Marechai.Database.Models
         [DisplayName("Name to be displayed")]
         public string DisplayName { get; set; }
 
-        [NotMapped]
-        [DisplayName("Name")]
+        [NotMapped, DisplayName("Name")]
         public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 
         public         short?                       CountryOfBirthId { get; set; }

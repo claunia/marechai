@@ -41,7 +41,7 @@ namespace Marechai.Controllers
 {
     public class HomeController : Controller
     {
-        readonly MarechaiContext         _context;
+        readonly MarechaiContext     _context;
         readonly IHostingEnvironment hostingEnvironment;
 
         public HomeController(IHostingEnvironment env, MarechaiContext context)
@@ -60,47 +60,56 @@ namespace Marechai.Controllers
             {
                 Machine machine = _context.Machines.Find(@new.AddedId);
 
-                if(machine is null) continue;
+                if(machine is null)
+                    continue;
 
                 switch(@new.Type)
                 {
                     case NewsType.NewComputerInDb:
                         news.Add(new NewsModel(@new.AddedId, "New computer in database", @new.Date, "Machine", "View",
                                                $"{machine.Company.Name} {machine.Name}"));
+
                         break;
                     case NewsType.NewConsoleInDb:
                         news.Add(new NewsModel(@new.AddedId, "New console in database", @new.Date, "Machine", "View",
                                                $"{machine.Company.Name} {machine.Name}"));
+
                         break;
 
                     case NewsType.NewComputerInCollection:
                         news.Add(new NewsModel(@new.AddedId, "New computer in collection", @new.Date, "Machine", "View",
                                                $"{machine.Company.Name} {machine.Name}"));
+
                         break;
 
                     case NewsType.NewConsoleInCollection:
                         news.Add(new NewsModel(@new.AddedId, "New console in collection", @new.Date, "Machine", "View",
                                                $"{machine.Company.Name} {machine.Name}"));
+
                         break;
 
                     case NewsType.UpdatedComputerInDb:
                         news.Add(new NewsModel(@new.AddedId, "Updated computer in database", @new.Date, "Machine",
                                                "View", $"{machine.Company.Name} {machine.Name}"));
+
                         break;
 
                     case NewsType.UpdatedConsoleInDb:
                         news.Add(new NewsModel(@new.AddedId, "Updated console in database", @new.Date, "Machine",
                                                "View", $"{machine.Company.Name} {machine.Name}"));
+
                         break;
 
                     case NewsType.UpdatedComputerInCollection:
                         news.Add(new NewsModel(@new.AddedId, "Updated computer in collection", @new.Date, "Machine",
                                                "View", $"{machine.Company.Name} {machine.Name}"));
+
                         break;
 
                     case NewsType.UpdatedConsoleInCollection:
                         news.Add(new NewsModel(@new.AddedId, "Updated console in collection", @new.Date, "Machine",
                                                "View", $"{machine.Company.Name} {machine.Name}"));
+
                         break;
 
                     case NewsType.NewMoneyDonation:
@@ -118,7 +127,9 @@ namespace Marechai.Controllers
 
         public IActionResult Contact() => View();
 
-        public IActionResult Error() =>
-            View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+        public IActionResult Error() => View(new ErrorViewModel
+        {
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        });
     }
 }

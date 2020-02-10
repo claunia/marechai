@@ -3,9 +3,7 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
 <h1>Edit</h1>
-
 <h4>Sound by machine</h4>
 <hr />
 <div class="row">
@@ -24,10 +22,9 @@
             </div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <input class="btn btn-primary" type="submit" value="Save" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
 </div>
-

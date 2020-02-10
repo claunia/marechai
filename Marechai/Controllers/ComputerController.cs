@@ -38,7 +38,7 @@ namespace Marechai.Controllers
 {
     public class ComputerController : Controller
     {
-        readonly MarechaiContext         _context;
+        readonly MarechaiContext     _context;
         readonly IHostingEnvironment hostingEnvironment;
 
         public ComputerController(IHostingEnvironment env, MarechaiContext context)
@@ -50,12 +50,14 @@ namespace Marechai.Controllers
         public IActionResult Index()
         {
             ViewBag.ItemCount = _context.Machines.Count(m => m.Type == MachineType.Computer);
-            ViewBag.MinYear = _context
-                             .Machines.Where(t => t.Type == MachineType.Computer &&
+
+            ViewBag.MinYear = _context.
+                              Machines.Where(t => t.Type == MachineType.Computer &&
                                                   t.Introduced.HasValue          &&
                                                   t.Introduced.Value.Year > 1000).Min(t => t.Introduced.Value.Year);
-            ViewBag.MaxYear = _context
-                             .Machines.Where(t => t.Type == MachineType.Computer &&
+
+            ViewBag.MaxYear = _context.
+                              Machines.Where(t => t.Type == MachineType.Computer &&
                                                   t.Introduced.HasValue          &&
                                                   t.Introduced.Value.Year > 1000).Max(t => t.Introduced.Value.Year);
 
@@ -65,16 +67,28 @@ namespace Marechai.Controllers
         public IActionResult ByLetter(char id)
         {
             // ToUpper()
-            if(id >= 'a' && id <= 'z') id -= (char)32;
+            if(id >= 'a' &&
+               id <= 'z')
+                id -= (char)32;
+
             // Check if not letter
-            if(id < 'A' || id > 'Z') id = '\0';
+            if(id < 'A' ||
+               id > 'Z')
+                id = '\0';
 
             ViewBag.Letter = id;
 
-            return View(id == '\0'
-                            ? _context.Machines.Where(m => m.Type == MachineType.Computer).ToArray()
-                            : _context.Machines.Where(m => m.Type == MachineType.Computer && m.Name.StartsWith(id))
-                                      .ToArray());
+            return View(id == '\0' ? _context.Machines.Where(m => m.Type == MachineType.Computer).ToArray() : _context.
+                                                                                                              Machines.
+                                                                                                              Where(m =>
+                                                                                                                        m.
+                                                                                                                            Type ==
+                                                                                                                        MachineType.
+                                                                                                                            Computer &&
+                                                                                                                        m.
+                                                                                                                            Name.
+                                                                                                                            StartsWith(id)).
+                                                                                                              ToArray());
         }
 
         public IActionResult ByYear(int id)

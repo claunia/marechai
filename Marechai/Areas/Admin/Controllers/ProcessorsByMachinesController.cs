@@ -30,8 +30,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Database.Models;
 using Marechai.Areas.Admin.Models;
+using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -40,41 +40,39 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class ProcessorsByMachinesController : Controller
     {
         readonly MarechaiContext _context;
 
-        public ProcessorsByMachinesController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public ProcessorsByMachinesController(MarechaiContext context) => _context = context;
 
         // GET: Admin/ProcessorsByMachines
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<ProcessorsByMachine, Processor> marechaiContext =
                 _context.ProcessorsByMachine.Include(p => p.Machine).Include(p => p.Processor);
-            return View(await marechaiContext.OrderBy(p => p.Machine.Name).ThenBy(p => p.Processor.Name)
-                                         .Select(p => new ProcessorsByMachineViewModel
-                                          {
-                                              Id        = p.Id,
-                                              Machine   = p.Machine.Name,
-                                              Processor = p.Processor.Name,
-                                              Speed     = p.Speed
-                                          }).ToListAsync());
+
+            return View(await marechaiContext.OrderBy(p => p.Machine.Name).ThenBy(p => p.Processor.Name).
+                                              Select(p => new ProcessorsByMachineViewModel
+                                              {
+                                                  Id    = p.Id, Machine = p.Machine.Name, Processor = p.Processor.Name,
+                                                  Speed = p.Speed
+                                              }).ToListAsync());
         }
 
         // GET: Admin/ProcessorsByMachines/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             ProcessorsByMachine processorsByMachine =
-                await _context.ProcessorsByMachine.Include(p => p.Machine).Include(p => p.Processor)
-                              .FirstOrDefaultAsync(m => m.Id == id);
-            if(processorsByMachine == null) return NotFound();
+                await _context.ProcessorsByMachine.Include(p => p.Machine).Include(p => p.Processor).
+                               FirstOrDefaultAsync(m => m.Id == id);
+
+            if(processorsByMachine == null)
+                return NotFound();
 
             return View(processorsByMachine);
         }
@@ -82,16 +80,16 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/ProcessorsByMachines/Create
         public IActionResult Create()
         {
-            ViewData["MachineId"]   = new SelectList(_context.Machines,   "Id", "Name");
+            ViewData["MachineId"]   = new SelectList(_context.Machines, "Id", "Name");
             ViewData["ProcessorId"] = new SelectList(_context.Processors, "Id", "Name");
+
             return View();
         }
 
         // POST: Admin/ProcessorsByMachines/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProcessorId,MachineId,Speed,Id")]
                                                 ProcessorsByMachine processorsByMachine)
         {
@@ -99,38 +97,46 @@ namespace Marechai.Areas.Admin.Controllers
             {
                 _context.Add(processorsByMachine);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", processorsByMachine.MachineId);
+
             ViewData["ProcessorId"] =
                 new SelectList(_context.Processors, "Id", "Name", processorsByMachine.ProcessorId);
+
             return View(processorsByMachine);
         }
 
         // GET: Admin/ProcessorsByMachines/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             ProcessorsByMachine processorsByMachine = await _context.ProcessorsByMachine.FindAsync(id);
-            if(processorsByMachine == null) return NotFound();
+
+            if(processorsByMachine == null)
+                return NotFound();
 
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", processorsByMachine.MachineId);
+
             ViewData["ProcessorId"] =
                 new SelectList(_context.Processors, "Id", "Name", processorsByMachine.ProcessorId);
+
             return View(processorsByMachine);
         }
 
         // POST: Admin/ProcessorsByMachines/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("ProcessorId,MachineId,Speed,Id")]
                                               ProcessorsByMachine processorsByMachine)
         {
-            if(id != processorsByMachine.Id) return NotFound();
+            if(id != processorsByMachine.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -141,7 +147,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!ProcessorsByMachineExists(processorsByMachine.Id)) return NotFound();
+                    if(!ProcessorsByMachineExists(processorsByMachine.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -150,39 +157,40 @@ namespace Marechai.Areas.Admin.Controllers
             }
 
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", processorsByMachine.MachineId);
+
             ViewData["ProcessorId"] =
                 new SelectList(_context.Processors, "Id", "Name", processorsByMachine.ProcessorId);
+
             return View(processorsByMachine);
         }
 
         // GET: Admin/ProcessorsByMachines/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             ProcessorsByMachine processorsByMachine =
-                await _context.ProcessorsByMachine.Include(p => p.Machine).Include(p => p.Processor)
-                              .FirstOrDefaultAsync(m => m.Id == id);
-            if(processorsByMachine == null) return NotFound();
+                await _context.ProcessorsByMachine.Include(p => p.Machine).Include(p => p.Processor).
+                               FirstOrDefaultAsync(m => m.Id == id);
+
+            if(processorsByMachine == null)
+                return NotFound();
 
             return View(processorsByMachine);
         }
 
         // POST: Admin/ProcessorsByMachines/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             ProcessorsByMachine processorsByMachine = await _context.ProcessorsByMachine.FindAsync(id);
             _context.ProcessorsByMachine.Remove(processorsByMachine);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool ProcessorsByMachineExists(long id)
-        {
-            return _context.ProcessorsByMachine.Any(e => e.Id == id);
-        }
+        bool ProcessorsByMachineExists(long id) => _context.ProcessorsByMachine.Any(e => e.Id == id);
     }
 }

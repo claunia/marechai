@@ -34,112 +34,79 @@
 @{
     ViewData["Title"] = "Create";
 }
-
 <h2>Create</h2>
-
 <h4>GPU</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
             </div>
             <div class="form-group">
-                <label asp-for="Company"
-                       class="control-label">
+                <label asp-for="Company" class="control-label">
                 </label>
-                <select asp-for="CompanyId"
-                        class="form-control"
-                        asp-items="ViewBag.CompanyId">
+                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId">
                 </select>
             </div>
             <div class="form-group">
-                <label asp-for="Name"
-                       class="control-label">
+                <label asp-for="Name" class="control-label">
                 </label>
-                <input asp-for="Name"
-                       class="form-control" />
-                <span asp-validation-for="Name"
-                      class="text-danger">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="ModelCode"
-                       class="control-label">
+                <label asp-for="ModelCode" class="control-label">
                 </label>
-                <input asp-for="ModelCode"
-                       class="form-control" />
-                <span asp-validation-for="ModelCode"
-                      class="text-danger">
+                <input asp-for="ModelCode" class="form-control" />
+                <span asp-validation-for="ModelCode" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Introduced"
-                       class="control-label">
+                <label asp-for="Introduced" class="control-label">
                 </label>
-                <input asp-for="Introduced"
-                       class="form-control" />
-                <span asp-validation-for="Introduced"
-                      class="text-danger">
+                <input asp-for="Introduced" class="form-control" />
+                <span asp-validation-for="Introduced" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Package"
-                       class="control-label">
+                <label asp-for="Package" class="control-label">
                 </label>
-                <input asp-for="Package"
-                       class="form-control" />
-                <span asp-validation-for="Package"
-                      class="text-danger">
+                <input asp-for="Package" class="form-control" />
+                <span asp-validation-for="Package" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Process"
-                       class="control-label">
+                <label asp-for="Process" class="control-label">
                 </label>
-                <input asp-for="Process"
-                       class="form-control" />
-                <span asp-validation-for="Process"
-                      class="text-danger">
+                <input asp-for="Process" class="form-control" />
+                <span asp-validation-for="Process" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="ProcessNm"
-                       class="control-label">
+                <label asp-for="ProcessNm" class="control-label">
                 </label>
-                <input asp-for="ProcessNm"
-                       class="form-control" />
-                <span asp-validation-for="ProcessNm"
-                      class="text-danger">
+                <input asp-for="ProcessNm" class="form-control" />
+                <span asp-validation-for="ProcessNm" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="DieSize"
-                       class="control-label">
+                <label asp-for="DieSize" class="control-label">
                 </label>
-                <input asp-for="DieSize"
-                       class="form-control" />
-                <span asp-validation-for="DieSize"
-                      class="text-danger">
+                <input asp-for="DieSize" class="form-control" />
+                <span asp-validation-for="DieSize" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Transistors"
-                       class="control-label">
+                <label asp-for="Transistors" class="control-label">
                 </label>
-                <input asp-for="Transistors"
-                       class="form-control" />
-                <span asp-validation-for="Transistors"
-                      class="text-danger">
+                <input asp-for="Transistors" class="form-control" />
+                <span asp-validation-for="Transistors" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <input class="btn btn-primary"
-                       type="submit"
-                       value="Create" />
-                <a asp-action="Index"
-                   class="btn btn-secondary">
+                <input class="btn btn-primary" type="submit" value="Create" />
+                <a asp-action="Index" class="btn btn-secondary">
                     Back to List
                 </a>
             </div>

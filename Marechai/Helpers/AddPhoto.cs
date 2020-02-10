@@ -22,13 +22,14 @@ namespace Marechai.Helpers
         {
             Image<Rgba32> image = Image.Load(tmpFile);
 
-            MachinePhoto photo = new MachinePhoto();
+            var photo = new MachinePhoto();
 
             foreach(ImageProperty prop in image.MetaData.Properties)
                 switch(prop.Name)
                 {
-                    case "aux:Lens":
+                    case"aux:Lens":
                         photo.Lens = prop.Value;
+
                         break;
                 }
 
@@ -38,33 +39,41 @@ namespace Marechai.Helpers
                     {
                         case ExifTag.Artist:
                             photo.Author = exif.Value as string;
+
                             break;
                         case ExifTag.Make:
                             photo.CameraManufacturer = exif.Value as string;
+
                             break;
                         case ExifTag.ColorSpace:
                             photo.ColorSpace = (ColorSpace)exif.Value;
+
                             break;
                         case ExifTag.UserComment:
                             photo.Comments = Encoding.ASCII.GetString(exif.Value as byte[]);
+
                             break;
                         case ExifTag.Contrast:
                             photo.Contrast = (Contrast)exif.Value;
+
                             break;
                         case ExifTag.DateTimeDigitized:
                             photo.CreationDate =
                                 DateTime.ParseExact(exif.Value.ToString(), "yyyy:MM:dd HH:mm:ss",
                                                     CultureInfo.InvariantCulture);
+
                             break;
                         case ExifTag.DigitalZoomRatio:
                             photo.DigitalZoomRatio = ((Rational)exif.Value).ToDouble();
+
                             break;
                         case ExifTag.ExifVersion:
                             photo.ExifVersion = Encoding.ASCII.GetString(exif.Value as byte[]);
+
                             break;
                         case ExifTag.ExposureTime:
                         {
-                            Rational rat = (Rational)exif.Value;
+                            var rat = (Rational)exif.Value;
                             photo.Exposure = rat.Denominator == 1 ? rat.Numerator.ToString() : rat.ToString();
 
                             break;
@@ -72,80 +81,102 @@ namespace Marechai.Helpers
 
                         case ExifTag.ExposureMode:
                             photo.ExposureMethod = (ExposureMode)exif.Value;
+
                             break;
                         case ExifTag.ExposureProgram:
                             photo.ExposureProgram = (ExposureProgram)exif.Value;
+
                             break;
                         case ExifTag.Flash:
                             photo.Flash = (Flash)exif.Value;
+
                             break;
                         case ExifTag.FNumber:
                             photo.Focal = ((Rational)exif.Value).ToDouble();
+
                             break;
                         case ExifTag.FocalLength:
                             photo.FocalLength = ((Rational)exif.Value).ToDouble();
+
                             break;
                         case ExifTag.FocalLengthIn35mmFilm:
                             photo.FocalLengthEquivalent = exif.Value as ushort?;
+
                             break;
                         case ExifTag.XResolution:
                             photo.HorizontalResolution = ((Rational)exif.Value).ToDouble();
+
                             break;
                         case ExifTag.ISOSpeedRatings:
                             photo.IsoRating = (ushort)exif.Value;
+
                             break;
                         case ExifTag.LensModel:
                             photo.Lens = exif.Value as string;
+
                             break;
                         case ExifTag.LightSource:
                             photo.LightSource = (LightSource)exif.Value;
+
                             break;
                         case ExifTag.MeteringMode:
                             photo.MeteringMode = (MeteringMode)exif.Value;
+
                             break;
                         case ExifTag.ResolutionUnit:
                             photo.ResolutionUnit = (ResolutionUnit)exif.Value;
+
                             break;
                         case ExifTag.Orientation:
                             photo.Orientation = (Orientation)exif.Value;
+
                             break;
                         case ExifTag.Saturation:
                             photo.Saturation = (Saturation)exif.Value;
+
                             break;
                         case ExifTag.SceneCaptureType:
                             photo.SceneCaptureType = (SceneCaptureType)exif.Value;
+
                             break;
                         case ExifTag.SensingMethod:
                             photo.SensingMethod = (SensingMethod)exif.Value;
+
                             break;
                         case ExifTag.Software:
                             photo.SoftwareUsed = exif.Value as string;
+
                             break;
                         case ExifTag.SubjectDistanceRange:
                             photo.SubjectDistanceRange = (SubjectDistanceRange)exif.Value;
+
                             break;
                         case ExifTag.YResolution:
                             photo.VerticalResolution = ((Rational)exif.Value).ToDouble();
+
                             break;
                         case ExifTag.WhiteBalance:
                             photo.WhiteBalance = (WhiteBalance)exif.Value;
+
                             break;
                         default:
                             image.MetaData.ExifProfile.RemoveValue(exif.Tag);
+
                             break;
                     }
 
-            if(!Directory.Exists(Path.Combine(webRootPath,          "assets", "photos")))
+            if(!Directory.Exists(Path.Combine(webRootPath, "assets", "photos")))
                 Directory.CreateDirectory(Path.Combine(webRootPath, "assets", "photos"));
-            if(!Directory.Exists(Path.Combine(webRootPath,          "assets", "photos", "machines")))
+
+            if(!Directory.Exists(Path.Combine(webRootPath, "assets", "photos", "machines")))
                 Directory.CreateDirectory(Path.Combine(webRootPath, "assets", "photos", "machines"));
-            if(!Directory.Exists(Path.Combine(webRootPath,          "assets", "photos", "machines", "thumbs")))
+
+            if(!Directory.Exists(Path.Combine(webRootPath, "assets", "photos", "machines", "thumbs")))
                 Directory.CreateDirectory(Path.Combine(webRootPath, "assets", "photos", "machines", "thumbs"));
 
             string outJpeg = Path.Combine(webRootPath, "assets", "photos", "machines", newId + ".jpg");
 
-            using(FileStream jpegStream =
-                new FileStream(outJpeg, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
+            using(var jpegStream = new FileStream(outJpeg, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
                 image.SaveAsJpeg(jpegStream);
 
             int imgMax = Math.Max(image.Width, image.Height);
@@ -154,25 +185,34 @@ namespace Marechai.Helpers
 
             image.Dispose();
 
-            SKBitmap skBitmap = SKBitmap.Decode(outJpeg);
+            var skBitmap = SKBitmap.Decode(outJpeg);
 
-            foreach(string format in new[] {"jpg", "webp"})
+            foreach(string format in new[]
             {
-                if(!Directory.Exists(Path.Combine(webRootPath,          "assets/photos/machines/thumbs", format)))
+                "jpg", "webp"
+            })
+            {
+                if(!Directory.Exists(Path.Combine(webRootPath, "assets/photos/machines/thumbs", format)))
                     Directory.CreateDirectory(Path.Combine(webRootPath, "assets/photos/machines/thumbs", format));
 
                 SKEncodedImageFormat skFormat;
+
                 switch(format)
                 {
-                    case "webp":
+                    case"webp":
                         skFormat = SKEncodedImageFormat.Webp;
+
                         break;
                     default:
                         skFormat = SKEncodedImageFormat.Jpeg;
+
                         break;
                 }
 
-                foreach(int multiplier in new[] {1, 2, 3})
+                foreach(int multiplier in new[]
+                {
+                    1, 2, 3
+                })
                 {
                     if(!Directory.Exists(Path.Combine(webRootPath, "assets/photos/machines/thumbs", format,
                                                       $"{multiplier}x")))
@@ -182,30 +222,35 @@ namespace Marechai.Helpers
                     string resized = Path.Combine(webRootPath, "assets/photos/machines/thumbs", format,
                                                   $"{multiplier}x", newId + $".{format}");
 
-                    if(File.Exists(resized)) continue;
+                    if(File.Exists(resized))
+                        continue;
 
                     float canvasMin = 256 * multiplier;
 
                     float scale = canvasMin / imgMax;
 
                     // Do not enlarge images
-                    if(scale > 1) scale = 1;
+                    if(scale > 1)
+                        scale = 1;
 
                     SKBitmap skResized = skBitmap.Resize(new SKImageInfo((int)(width * scale), (int)(height * scale)),
                                                          SKFilterQuality.High);
-                    SKImage    skImage = SKImage.FromBitmap(skResized);
-                    SKData     data    = skImage.Encode(skFormat, 100);
-                    FileStream outfs   = new FileStream(resized, FileMode.CreateNew);
+
+                    var    skImage = SKImage.FromBitmap(skResized);
+                    SKData data    = skImage.Encode(skFormat, 100);
+                    var    outfs   = new FileStream(resized, FileMode.CreateNew);
                     data.SaveTo(outfs);
                     outfs.Close();
                 }
             }
 
-            if(!Directory.Exists(Path.Combine(contentRootPath,          "originals", "photos")))
+            if(!Directory.Exists(Path.Combine(contentRootPath, "originals", "photos")))
                 Directory.CreateDirectory(Path.Combine(contentRootPath, "originals", "photos"));
-            if(!Directory.Exists(Path.Combine(contentRootPath,          "originals", "photos")))
+
+            if(!Directory.Exists(Path.Combine(contentRootPath, "originals", "photos")))
                 Directory.CreateDirectory(Path.Combine(contentRootPath, "originals", "photos"));
-            if(!Directory.Exists(Path.Combine(contentRootPath,          "originals", "photos", "machines")))
+
+            if(!Directory.Exists(Path.Combine(contentRootPath, "originals", "photos", "machines")))
                 Directory.CreateDirectory(Path.Combine(contentRootPath, "originals", "photos", "machines"));
 
             File.Move(tmpFile, Path.Combine(contentRootPath, "originals", "photos", "machines", newId + extension));
@@ -216,18 +261,22 @@ namespace Marechai.Helpers
         public static void ImportPhotos(MarechaiContext context)
         {
             if(!Directory.Exists("wwwroot/assets/photos/computers") &&
-               !Directory.Exists("wwwroot/assets/photos/consoles")) return;
+               !Directory.Exists("wwwroot/assets/photos/consoles"))
+                return;
 
             if(!(context.Users.FirstOrDefault() is ApplicationUser user))
             {
                 Console.WriteLine("Cannot import photos without an existing uberadmin, please create it before continuing...");
+
                 return;
             }
 
             License license = context.Licenses.FirstOrDefault(l => l.Name == "Fair use");
+
             if(license is null)
             {
                 Console.WriteLine("Cannot import photos without the \"Fair use\" license, please create it before continuing...");
+
                 return;
             }
 
@@ -239,6 +288,7 @@ namespace Marechai.Helpers
                 if(!int.TryParse(computerIdStr, out int computerId))
                 {
                     Console.WriteLine("{0} does not indicate a correct computer ID", computerIdStr);
+
                     continue;
                 }
 
@@ -247,30 +297,36 @@ namespace Marechai.Helpers
                 if(machine is null)
                 {
                     Console.WriteLine("Cannot find machine with ID {0}.", computerId);
+
                     continue;
                 }
 
                 foreach(string computerPhoto in Directory.EnumerateFiles(computer, "*", SearchOption.TopDirectoryOnly))
                 {
                     Console.WriteLine("Importing {0}...", computerPhoto);
-                    Guid newId = Guid.NewGuid();
+                    var newId = Guid.NewGuid();
 
                     IImageFormat imageinfo = Image.DetectFormat(computerPhoto);
 
                     string extension;
+
                     switch(imageinfo?.Name)
                     {
-                        case "JPEG":
+                        case"JPEG":
                             extension = ".jpg";
+
                             break;
-                        case "PNG":
+                        case"PNG":
                             extension = ".png";
+
                             break;
-                        case "GIF":
+                        case"GIF":
                             extension = ".gif";
+
                             break;
                         default:
                             Console.WriteLine("Unsupported file format for {0}", computerPhoto);
+
                             continue;
                     }
 
@@ -293,6 +349,7 @@ namespace Marechai.Helpers
                 if(!int.TryParse(consoleIdStr, out int consoleId))
                 {
                     Console.WriteLine("{0} does not indicate a correct console ID", consoleIdStr);
+
                     continue;
                 }
 
@@ -301,30 +358,36 @@ namespace Marechai.Helpers
                 if(machine is null)
                 {
                     Console.WriteLine("Cannot find machine with ID {0}.", consoleId + 356);
+
                     continue;
                 }
 
                 foreach(string consolePhoto in Directory.EnumerateFiles(console, "*", SearchOption.TopDirectoryOnly))
                 {
                     Console.WriteLine("Importing {0}...", consolePhoto);
-                    Guid newId = Guid.NewGuid();
+                    var newId = Guid.NewGuid();
 
                     IImageFormat imageinfo = Image.DetectFormat(consolePhoto);
 
                     string extension;
+
                     switch(imageinfo?.Name)
                     {
-                        case "JPEG":
+                        case"JPEG":
                             extension = ".jpg";
+
                             break;
-                        case "PNG":
+                        case"PNG":
                             extension = ".png";
+
                             break;
-                        case "GIF":
+                        case"GIF":
                             extension = ".gif";
+
                             break;
                         default:
                             Console.WriteLine("Unsupported file format for {0}", consolePhoto);
+
                             continue;
                     }
 

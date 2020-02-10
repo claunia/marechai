@@ -7,12 +7,11 @@ namespace Marechai.Database.Models
     {
         public int  CompanyId { get; set; }
         public long BookId    { get; set; }
-        [Column(TypeName = "char(3)")]
-        [Required]
+        [Column(TypeName = "char(3)"), Required]
         public string RoleId { get; set; }
 
         public virtual DocumentCompany Company { get; set; }
         public virtual Book            Book    { get; set; }
-        public virtual DocumentRole   Role    { get; set; }
+        public virtual DocumentRole    Role    { get; set; }
     }
 }

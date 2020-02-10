@@ -3,9 +3,7 @@
 @{
     ViewData["Title"] = "Index";
 }
-
 <h1>Owned machines</h1>
-
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
@@ -28,7 +26,8 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Machine)

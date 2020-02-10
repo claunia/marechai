@@ -30,8 +30,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Database.Models;
 using Marechai.Areas.Admin.Models;
+using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -40,43 +40,38 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class MemoryByMachinesController : Controller
     {
         readonly MarechaiContext _context;
 
-        public MemoryByMachinesController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public MemoryByMachinesController(MarechaiContext context) => _context = context;
 
         // GET: Admin/MemoryByMachines
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<MemoryByMachine, Machine> marechaiContext =
                 _context.MemoryByMachine.Include(m => m.Machine);
-            return View(await marechaiContext.OrderBy(m => m.Machine.Name).ThenBy(m => m.Usage).ThenBy(m => m.Size)
-                                         .ThenBy(m => m.Type)
-                                         .Select(m => new MemoryByMachineViewModel
-                                          {
-                                              Id      = m.Id,
-                                              Machine = m.Machine.Name,
-                                              Size    = m.Size,
-                                              Speed   = m.Speed,
-                                              Type    = m.Type,
-                                              Usage   = m.Usage
-                                          }).ToListAsync());
+
+            return View(await marechaiContext.OrderBy(m => m.Machine.Name).ThenBy(m => m.Usage).ThenBy(m => m.Size).
+                                              ThenBy(m => m.Type).Select(m => new MemoryByMachineViewModel
+                                              {
+                                                  Id   = m.Id, Machine = m.Machine.Name, Size = m.Size, Speed = m.Speed,
+                                                  Type = m.Type, Usage = m.Usage
+                                              }).ToListAsync());
         }
 
         // GET: Admin/MemoryByMachines/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             MemoryByMachine memoryByMachine =
                 await _context.MemoryByMachine.Include(m => m.Machine).FirstOrDefaultAsync(m => m.Id == id);
-            if(memoryByMachine == null) return NotFound();
+
+            if(memoryByMachine == null)
+                return NotFound();
 
             return View(memoryByMachine);
         }
@@ -85,14 +80,14 @@ namespace Marechai.Areas.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name");
+
             return View();
         }
 
         // POST: Admin/MemoryByMachines/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MachineId,Type,Usage,Size,Speed,Id")]
                                                 MemoryByMachine memoryByMachine)
         {
@@ -100,34 +95,40 @@ namespace Marechai.Areas.Admin.Controllers
             {
                 _context.Add(memoryByMachine);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", memoryByMachine.MachineId);
+
             return View(memoryByMachine);
         }
 
         // GET: Admin/MemoryByMachines/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             MemoryByMachine memoryByMachine = await _context.MemoryByMachine.FindAsync(id);
-            if(memoryByMachine == null) return NotFound();
+
+            if(memoryByMachine == null)
+                return NotFound();
 
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", memoryByMachine.MachineId);
+
             return View(memoryByMachine);
         }
 
         // POST: Admin/MemoryByMachines/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("MachineId,Type,Usage,Size,Speed,Id")]
                                               MemoryByMachine memoryByMachine)
         {
-            if(id != memoryByMachine.Id) return NotFound();
+            if(id != memoryByMachine.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -138,7 +139,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!MemoryByMachineExists(memoryByMachine.Id)) return NotFound();
+                    if(!MemoryByMachineExists(memoryByMachine.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -147,36 +149,36 @@ namespace Marechai.Areas.Admin.Controllers
             }
 
             ViewData["MachineId"] = new SelectList(_context.Machines, "Id", "Name", memoryByMachine.MachineId);
+
             return View(memoryByMachine);
         }
 
         // GET: Admin/MemoryByMachines/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             MemoryByMachine memoryByMachine =
                 await _context.MemoryByMachine.Include(m => m.Machine).FirstOrDefaultAsync(m => m.Id == id);
-            if(memoryByMachine == null) return NotFound();
+
+            if(memoryByMachine == null)
+                return NotFound();
 
             return View(memoryByMachine);
         }
 
         // POST: Admin/MemoryByMachines/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             MemoryByMachine memoryByMachine = await _context.MemoryByMachine.FindAsync(id);
             _context.MemoryByMachine.Remove(memoryByMachine);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool MemoryByMachineExists(long id)
-        {
-            return _context.MemoryByMachine.Any(e => e.Id == id);
-        }
+        bool MemoryByMachineExists(long id) => _context.MemoryByMachine.Any(e => e.Id == id);
     }
 }

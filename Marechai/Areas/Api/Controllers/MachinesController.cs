@@ -35,33 +35,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Marechai.Areas.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/[controller]"), ApiController]
     public class MachinesController : ControllerBase
     {
         readonly MarechaiContext _context;
 
-        public MachinesController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public MachinesController(MarechaiContext context) => _context = context;
 
         // GET: api/Machines
         [HttpGet]
-        public IEnumerable<Machine> GetMachines()
-        {
-            return _context.Machines;
-        }
+        public IEnumerable<Machine> GetMachines() => _context.Machines;
 
         // GET: api/Machines/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMachine([FromRoute] int id)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             Machine machine = await _context.Machines.FindAsync(id);
 
-            if(machine == null) return NotFound();
+            if(machine == null)
+                return NotFound();
 
             return Ok(machine);
         }

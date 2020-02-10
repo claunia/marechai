@@ -3,9 +3,7 @@
 @{
     ViewData["Title"] = "Details";
 }
-
 <h1>Details</h1>
-
 <div>
     <h4>Resolutions by screen</h4>
     <hr />
@@ -14,9 +12,14 @@
             @Html.DisplayNameFor(model => model.Screen)
         </dt>
         <dd class="col-sm-10">
-            @if(Model.Screen.NativeResolution != null) { @($"{Model.Screen.Diagonal}\" {Model.Screen.Type} with {Model.Screen.NativeResolution}") }
+            @if (Model.Screen.NativeResolution != null)
+            {
+                @($"{Model.Screen.Diagonal}\" {Model.Screen.Type} with {Model.Screen.NativeResolution}")
+            }
             else
-            { @($"{Model.Screen.Diagonal}\" {Model.Screen.Type}") }
+            {
+                @($"{Model.Screen.Diagonal}\" {Model.Screen.Type}")
+            }
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Resolution)
@@ -27,13 +30,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit"
-       asp-route-id="@Model.Id"
-       class="btn btn-primary">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
         Edit
     </a>
-    <a asp-action="Index"
-       class="btn btn-secondary">
+    <a asp-action="Index" class="btn btn-secondary">
         Back to List
     </a>
 </div>

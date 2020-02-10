@@ -16,8 +16,7 @@ namespace Marechai.Database.Models
         [DisplayName("Name to be displayed")]
         public string DisplayName { get; set; }
 
-        [NotMapped]
-        [DisplayName("Name")]
+        [NotMapped, DisplayName("Name")]
         public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 
         [DisplayName("Linked person")]

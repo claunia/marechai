@@ -34,47 +34,36 @@
 @{
     ViewData["Title"] = "Create";
 }
-
 <h1>Create</h1>
-
 <h4>Company description</h4>
 <hr />
 <div class="row">
     <div class="col-md-8">
         <form asp-action="Create">
             <div class="col-md-4">
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger">
+                <div asp-validation-summary="ModelOnly" class="text-danger">
                 </div>
                 <div class="form-group">
-                    <label asp-for="Company"
-                           class="control-label">
+                    <label asp-for="Company" class="control-label">
                     </label>
-                    <select asp-for="CompanyId"
-                            class="form-control"
-                            asp-items="ViewBag.CompanyId">
+                    <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId">
                     </select>
                 </div>
             </div>
             <div class="col-md-8">
                 <div class="form-group">
-                    <label asp-for="Text"
-                           class="control-label">
+                    <label asp-for="Text" class="control-label">
                     </label>
                     <textarea asp-for="Text"
                        class="form-control" cols="120" rows="20"></textarea>
-                    <span asp-validation-for="Text"
-                          class="text-danger">
+                    <span asp-validation-for="Text" class="text-danger">
                     </span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <input class="btn btn-primary"
-                           type="submit"
-                           value="Create" />
-                    <a asp-action="Index"
-                       class="btn btn-secondary">
+                    <input class="btn btn-primary" type="submit" value="Create" />
+                    <a asp-action="Index" class="btn btn-secondary">
                         Back to List
                     </a>
                 </div>

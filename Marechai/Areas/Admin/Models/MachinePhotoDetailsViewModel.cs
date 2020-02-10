@@ -59,8 +59,7 @@ namespace Marechai.Areas.Admin.Models
         public string SoftwareUsed { get; set; }
         [DisplayName("Subject distance range")]
         public SubjectDistanceRange? SubjectDistanceRange { get; set; }
-        [Timestamp]
-        [DisplayName("Uploaded on")]
+        [Timestamp, DisplayName("Uploaded on")]
         public DateTime UploadDate { get; set; }
         [DisplayName("Vertical resolution")]
         public double? VerticalResolution { get; set; }

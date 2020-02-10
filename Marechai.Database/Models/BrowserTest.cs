@@ -35,22 +35,15 @@ namespace Marechai.Database.Models
 {
     public class BrowserTest : BaseModel<int>
     {
-        [DisplayName("User agent")]
-        [Required]
-        [StringLength(128)]
+        [DisplayName("User agent"), Required, StringLength(128)]
         public string UserAgent { get; set; }
-        [Required]
-        [StringLength(64)]
+        [Required, StringLength(64)]
         public string Browser { get; set; }
-        [Required]
-        [StringLength(16)]
+        [Required, StringLength(16)]
         public string Version { get; set; }
-        [DisplayName("Operating system")]
-        [Required]
-        [StringLength(32)]
+        [DisplayName("Operating system"), Required, StringLength(32)]
         public string Os { get; set; }
-        [Required]
-        [StringLength(8)]
+        [Required, StringLength(8)]
         public string Platform { get; set; }
         [DisplayName("GIF87")]
         public bool Gif87 { get; set; }

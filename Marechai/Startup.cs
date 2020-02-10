@@ -41,10 +41,7 @@ namespace Marechai
     // DO NOT MAKE STATIC
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         IConfiguration Configuration { get; }
 
@@ -57,10 +54,10 @@ namespace Marechai
                 options.CheckConsentNeeded    = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-            services.AddDbContext<MarechaiContext>(options => options
-                                                         .UseLazyLoadingProxies()
-                                                         .UseMySql("server=localhost;port=3306;user=marechai;password=marechaipass;database=marechai;TreatTinyAsBoolean=false"));
+            #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http: //go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+            services.AddDbContext<MarechaiContext>(options => options.
+                                                              UseLazyLoadingProxies().
+                                                              UseMySql("server=localhost;port=3306;user=marechai;password=marechaipass;database=marechai;TreatTinyAsBoolean=false"));
 
             services.AddMvc();
         }
@@ -68,8 +65,10 @@ namespace Marechai
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if(env.IsDevelopment()) app.UseDeveloperExceptionPage();
-            else app.UseExceptionHandler("/Home/Error");
+            if(env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+            else
+                app.UseExceptionHandler("/Home/Error");
 
             app.UseStaticFiles();
             app.UseAuthentication();
@@ -77,8 +76,8 @@ namespace Marechai
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute("areas", "{area:exists}/{controller=Home}/{action=Index}/{id?}")
-                      .MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                routes.MapRoute("areas", "{area:exists}/{controller=Home}/{action=Index}/{id?}").
+                       MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

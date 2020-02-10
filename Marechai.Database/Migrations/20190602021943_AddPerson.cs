@@ -8,28 +8,22 @@ namespace Marechai.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable("People",
-                                         table => new
-                                         {
-                                             Id = table.Column<int>()
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             Name             = table.Column<string>(),
-                                             Surname          = table.Column<string>(),
-                                             BirthDate        = table.Column<DateTime>(),
-                                             DeathDate        = table.Column<DateTime>(nullable: true),
-                                             Webpage          = table.Column<string>(nullable: true),
-                                             Twitter          = table.Column<string>(nullable: true),
-                                             Facebook         = table.Column<string>(nullable: true),
-                                             Photo            = table.Column<Guid>(),
-                                             CountryOfBirthId = table.Column<short>(nullable: true)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_People", x => x.Id);
-                                             table.ForeignKey("FK_People_iso3166_1_numeric_CountryOfBirthId",
-                                                              x => x.CountryOfBirthId, "iso3166_1_numeric", "id",
-                                                              onDelete: ReferentialAction.Restrict);
-                                         });
+            migrationBuilder.CreateTable("People", table => new
+            {
+                Id = table.Column<int>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                Name      = table.Column<string>(), Surname = table.Column<string>(),
+                BirthDate = table.Column<DateTime>(),
+                DeathDate = table.Column<DateTime>(nullable: true), Webpage = table.Column<string>(nullable: true),
+                Twitter   = table.Column<string>(nullable: true), Facebook  = table.Column<string>(nullable: true),
+                Photo     = table.Column<Guid>(), CountryOfBirthId          = table.Column<short>(nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_People", x => x.Id);
+
+                table.ForeignKey("FK_People_iso3166_1_numeric_CountryOfBirthId", x => x.CountryOfBirthId,
+                                 "iso3166_1_numeric", "id", onDelete: ReferentialAction.Restrict);
+            });
 
             migrationBuilder.CreateIndex("IX_People_BirthDate", "People", "BirthDate");
 
@@ -50,9 +44,6 @@ namespace Marechai.Database.Migrations
             migrationBuilder.CreateIndex("IX_People_Webpage", "People", "Webpage");
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable("People");
-        }
+        protected override void Down(MigrationBuilder migrationBuilder) => migrationBuilder.DropTable("People");
     }
 }

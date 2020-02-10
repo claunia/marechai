@@ -37,16 +37,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class NewsController : Controller
     {
         readonly MarechaiContext _context;
 
-        public NewsController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public NewsController(MarechaiContext context) => _context = context;
 
         // GET: Admin/News
         public async Task<IActionResult> Index() =>
@@ -55,29 +51,28 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/News/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             News news = await _context.News.FirstOrDefaultAsync(m => m.Id == id);
-            if(news == null) return NotFound();
+
+            if(news == null)
+                return NotFound();
 
             return View(news);
         }
 
         // POST: Admin/News/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             News news = await _context.News.FindAsync(id);
             _context.News.Remove(news);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool NewsExists(int id)
-        {
-            return _context.News.Any(e => e.Id == id);
-        }
+        bool NewsExists(int id) => _context.News.Any(e => e.Id == id);
     }
 }

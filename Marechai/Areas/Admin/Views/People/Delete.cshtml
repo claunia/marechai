@@ -3,9 +3,7 @@
 @{
     ViewData["Title"] = "Delete";
 }
-
 <h1>Delete</h1>
-
 <h3>Are you sure you want to delete this?</h3>
 <div>
     <h4>Person</h4>
@@ -63,7 +61,7 @@
             @Html.DisplayNameFor(model => model.Twitter)
         </dt>
         <dd class="col-sm-10">
-            @if(Model.Twitter != null)
+            @if (Model.Twitter != null)
             {
                 <a href="https://twitter.com/@Html.DisplayFor(model => model.Twitter)">@Html.DisplayFor(model => model.Twitter)</a>
             }
@@ -72,21 +70,16 @@
             @Html.DisplayNameFor(model => model.Facebook)
         </dt>
         <dd class="col-sm-10">
-            @if(Model.Facebook != null)
+            @if (Model.Facebook != null)
             {
                 <a href="https://www.facebook.com/@Html.DisplayFor(model => model.Facebook)">@Html.DisplayFor(model => model.Facebook)</a>
             }
         </dd>
     </dl>
-
     <form asp-action="Delete">
-        <input type="hidden"
-               asp-for="Id" />
-        <input class="btn btn-danger"
-               type="submit"
-               value="Delete" />
-        <a asp-action="Index"
-           class="btn btn-secondary">
+        <input type="hidden" asp-for="Id" />
+        <input class="btn btn-danger" type="submit" value="Delete" />
+        <a asp-action="Index" class="btn btn-secondary">
             Back to List
         </a>
     </form>

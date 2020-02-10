@@ -8,183 +8,155 @@ namespace Marechai.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable("OwnedMachines",
-                                         table => new
-                                         {
-                                             Id =
-                                                 table.Column<long>()
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             AcquisitionDate = table.Column<DateTime>(),
-                                             LostDate        = table.Column<DateTime>(nullable: true),
-                                             Status          = table.Column<int>(),
-                                             LastStatusDate  = table.Column<DateTime>(nullable: true),
-                                             Trade           = table.Column<bool>(),
-                                             Boxed           = table.Column<bool>(),
-                                             Manuals         = table.Column<bool>(),
-                                             SerialNumber    = table.Column<string>(nullable: true),
-                                             SerialNumberVisible =
-                                                 table.Column<bool>(nullable: false, defaultValue: true),
-                                             MachineId = table.Column<int>(),
-                                             UserId    = table.Column<string>(nullable: true)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_OwnedMachines", x => x.Id);
-                                             table.ForeignKey("FK_OwnedMachines_machines_MachineId", x => x.MachineId,
-                                                              "machines", "id", onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("FK_OwnedMachines_AspNetUsers_UserId", x => x.UserId,
-                                                              "AspNetUsers", "Id", onDelete: ReferentialAction.Cascade);
-                                         });
+            migrationBuilder.CreateTable("OwnedMachines", table => new
+            {
+                Id = table.Column<long>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                AcquisitionDate     = table.Column<DateTime>(), LostDate  = table.Column<DateTime>(nullable: true),
+                Status              = table.Column<int>(), LastStatusDate = table.Column<DateTime>(nullable: true),
+                Trade               = table.Column<bool>(), Boxed         = table.Column<bool>(),
+                Manuals             = table.Column<bool>(),
+                SerialNumber        = table.Column<string>(nullable: true),
+                SerialNumberVisible = table.Column<bool>(nullable: false, defaultValue: true),
+                MachineId           = table.Column<int>(), UserId = table.Column<string>(nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_OwnedMachines", x => x.Id);
 
-            migrationBuilder.CreateTable("GpusByOwnedMachine",
-                                         table => new
-                                         {
-                                             Id = table.Column<long>()
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             GpuId          = table.Column<int>(),
-                                             OwnedMachineId = table.Column<long>()
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_GpusByOwnedMachine", x => x.Id);
-                                             table.ForeignKey("FK_GpusByOwnedMachine_gpus_GpuId", x => x.GpuId, "gpus",
-                                                              "id", onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("FK_GpusByOwnedMachine_OwnedMachines_OwnedMachineId",
-                                                              x => x.OwnedMachineId, "OwnedMachines", "Id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("FK_OwnedMachines_machines_MachineId", x => x.MachineId, "machines", "id",
+                                 onDelete: ReferentialAction.Cascade);
 
-            migrationBuilder.CreateTable("MemoryByOwnedMachine",
-                                         table => new
-                                         {
-                                             Id = table.Column<long>()
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             OwnedMachineId = table.Column<long>(),
-                                             Type           = table.Column<int>(),
-                                             Usage          = table.Column<int>(),
-                                             Size           = table.Column<long>(),
-                                             Speed          = table.Column<double>()
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_MemoryByOwnedMachine", x => x.Id);
-                                             table.ForeignKey("FK_MemoryByOwnedMachine_OwnedMachines_OwnedMachineId",
-                                                              x => x.OwnedMachineId, "OwnedMachines", "Id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("FK_OwnedMachines_AspNetUsers_UserId", x => x.UserId, "AspNetUsers", "Id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable("OwnedMachinePhotos",
-                                         table => new
-                                         {
-                                             Id                    = table.Column<Guid>(),
-                                             Author                = table.Column<string>(nullable: true),
-                                             CameraManufacturer    = table.Column<string>(nullable: true),
-                                             CameraModel           = table.Column<string>(nullable: true),
-                                             ColorSpace            = table.Column<ushort>(nullable: true),
-                                             Comments              = table.Column<string>(nullable: true),
-                                             Contrast              = table.Column<ushort>(nullable: true),
-                                             CreationDate          = table.Column<DateTime>(nullable: true),
-                                             DigitalZoomRatio      = table.Column<double>(nullable: true),
-                                             ExifVersion           = table.Column<string>(nullable: true),
-                                             Exposure              = table.Column<string>(nullable: true),
-                                             ExposureMethod        = table.Column<ushort>(nullable: true),
-                                             ExposureProgram       = table.Column<ushort>(nullable: true),
-                                             Flash                 = table.Column<ushort>(nullable: true),
-                                             Focal                 = table.Column<double>(nullable: true),
-                                             FocalLength           = table.Column<double>(nullable: true),
-                                             FocalLengthEquivalent = table.Column<ushort>(nullable: true),
-                                             HorizontalResolution  = table.Column<double>(nullable: true),
-                                             IsoRating             = table.Column<ushort>(nullable: true),
-                                             Lens                  = table.Column<string>(nullable: true),
-                                             LightSource           = table.Column<ushort>(nullable: true),
-                                             MeteringMode          = table.Column<ushort>(nullable: true),
-                                             ResolutionUnit        = table.Column<ushort>(nullable: true),
-                                             Orientation           = table.Column<ushort>(nullable: true),
-                                             Saturation            = table.Column<ushort>(nullable: true),
-                                             SceneCaptureType      = table.Column<ushort>(nullable: true),
-                                             SensingMethod         = table.Column<ushort>(nullable: true),
-                                             Sharpness             = table.Column<ushort>(nullable: true),
-                                             SoftwareUsed          = table.Column<string>(nullable: true),
-                                             SubjectDistanceRange  = table.Column<ushort>(nullable: true),
-                                             UploadDate =
-                                                 table.Column<DateTime>()
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.ComputedColumn),
-                                             VerticalResolution = table.Column<double>(nullable: true),
-                                             WhiteBalance       = table.Column<ushort>(nullable: true),
-                                             UserId             = table.Column<string>(nullable: true),
-                                             LicenseId          = table.Column<int>(),
-                                             OwnedMachineId     = table.Column<long>()
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_OwnedMachinePhotos", x => x.Id);
-                                             table.ForeignKey("FK_OwnedMachinePhotos_Licenses_LicenseId",
-                                                              x => x.LicenseId, "Licenses", "Id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("FK_OwnedMachinePhotos_OwnedMachines_OwnedMachineId",
-                                                              x => x.OwnedMachineId, "OwnedMachines", "Id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("FK_OwnedMachinePhotos_AspNetUsers_UserId", x => x.UserId,
-                                                              "AspNetUsers", "Id", onDelete: ReferentialAction.Cascade);
-                                         });
+            migrationBuilder.CreateTable("GpusByOwnedMachine", table => new
+            {
+                Id = table.Column<long>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                GpuId = table.Column<int>(), OwnedMachineId = table.Column<long>()
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_GpusByOwnedMachine", x => x.Id);
 
-            migrationBuilder.CreateTable("ProcessorsByOwnedMachine",
-                                         table => new
-                                         {
-                                             Id = table.Column<long>()
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             ProcessorId    = table.Column<int>(),
-                                             OwnedMachineId = table.Column<long>(),
-                                             Speed          = table.Column<float>()
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_ProcessorsByOwnedMachine", x => x.Id);
-                                             table
-                                                .ForeignKey("FK_ProcessorsByOwnedMachine_OwnedMachines_OwnedMachineId",
-                                                            x => x.OwnedMachineId, "OwnedMachines", "Id",
-                                                            onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("FK_ProcessorsByOwnedMachine_processors_ProcessorId",
-                                                              x => x.ProcessorId, "processors", "id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("FK_GpusByOwnedMachine_gpus_GpuId", x => x.GpuId, "gpus", "id",
+                                 onDelete: ReferentialAction.Cascade);
 
-            migrationBuilder.CreateTable("SoundByOwnedMachine",
-                                         table => new
-                                         {
-                                             Id = table.Column<long>()
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             SoundSynthId   = table.Column<int>(),
-                                             OwnedMachineId = table.Column<long>()
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_SoundByOwnedMachine", x => x.Id);
-                                             table.ForeignKey("FK_SoundByOwnedMachine_OwnedMachines_OwnedMachineId",
-                                                              x => x.OwnedMachineId, "OwnedMachines", "Id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("FK_SoundByOwnedMachine_sound_synths_SoundSynthId",
-                                                              x => x.SoundSynthId, "sound_synths", "id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("FK_GpusByOwnedMachine_OwnedMachines_OwnedMachineId", x => x.OwnedMachineId,
+                                 "OwnedMachines", "Id", onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable("StorageByOwnedMachine",
-                                         table => new
-                                         {
-                                             Id = table.Column<long>()
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             OwnedMachineId = table.Column<long>(),
-                                             Type           = table.Column<int>(),
-                                             Interface      = table.Column<int>(),
-                                             Capacity       = table.Column<long>()
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_StorageByOwnedMachine", x => x.Id);
-                                             table.ForeignKey("FK_StorageByOwnedMachine_OwnedMachines_OwnedMachineId",
-                                                              x => x.OwnedMachineId, "OwnedMachines", "Id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                         });
+            migrationBuilder.CreateTable("MemoryByOwnedMachine", table => new
+            {
+                Id = table.Column<long>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                OwnedMachineId = table.Column<long>(), Type  = table.Column<int>(), Usage = table.Column<int>(),
+                Size           = table.Column<long>(), Speed = table.Column<double>()
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_MemoryByOwnedMachine", x => x.Id);
+
+                table.ForeignKey("FK_MemoryByOwnedMachine_OwnedMachines_OwnedMachineId", x => x.OwnedMachineId,
+                                 "OwnedMachines", "Id", onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("OwnedMachinePhotos", table => new
+            {
+                Id                    = table.Column<Guid>(), Author = table.Column<string>(nullable: true),
+                CameraManufacturer    = table.Column<string>(nullable: true),
+                CameraModel           = table.Column<string>(nullable: true),
+                ColorSpace            = table.Column<ushort>(nullable: true),
+                Comments              = table.Column<string>(nullable: true),
+                Contrast              = table.Column<ushort>(nullable: true),
+                CreationDate          = table.Column<DateTime>(nullable: true),
+                DigitalZoomRatio      = table.Column<double>(nullable: true),
+                ExifVersion           = table.Column<string>(nullable: true),
+                Exposure              = table.Column<string>(nullable: true),
+                ExposureMethod        = table.Column<ushort>(nullable: true),
+                ExposureProgram       = table.Column<ushort>(nullable: true),
+                Flash                 = table.Column<ushort>(nullable: true),
+                Focal                 = table.Column<double>(nullable: true),
+                FocalLength           = table.Column<double>(nullable: true),
+                FocalLengthEquivalent = table.Column<ushort>(nullable: true),
+                HorizontalResolution  = table.Column<double>(nullable: true),
+                IsoRating             = table.Column<ushort>(nullable: true),
+                Lens                  = table.Column<string>(nullable: true),
+                LightSource           = table.Column<ushort>(nullable: true),
+                MeteringMode          = table.Column<ushort>(nullable: true),
+                ResolutionUnit        = table.Column<ushort>(nullable: true),
+                Orientation           = table.Column<ushort>(nullable: true),
+                Saturation            = table.Column<ushort>(nullable: true),
+                SceneCaptureType      = table.Column<ushort>(nullable: true),
+                SensingMethod         = table.Column<ushort>(nullable: true),
+                Sharpness             = table.Column<ushort>(nullable: true),
+                SoftwareUsed          = table.Column<string>(nullable: true),
+                SubjectDistanceRange  = table.Column<ushort>(nullable: true),
+                UploadDate = table.Column<DateTime>().
+                                   Annotation("MySql:ValueGenerationStrategy",
+                                              MySqlValueGenerationStrategy.ComputedColumn),
+                VerticalResolution = table.Column<double>(nullable: true),
+                WhiteBalance       = table.Column<ushort>(nullable: true),
+                UserId             = table.Column<string>(nullable: true),
+                LicenseId          = table.Column<int>(), OwnedMachineId = table.Column<long>()
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_OwnedMachinePhotos", x => x.Id);
+
+                table.ForeignKey("FK_OwnedMachinePhotos_Licenses_LicenseId", x => x.LicenseId, "Licenses", "Id",
+                                 onDelete: ReferentialAction.Cascade);
+
+                table.ForeignKey("FK_OwnedMachinePhotos_OwnedMachines_OwnedMachineId", x => x.OwnedMachineId,
+                                 "OwnedMachines", "Id", onDelete: ReferentialAction.Cascade);
+
+                table.ForeignKey("FK_OwnedMachinePhotos_AspNetUsers_UserId", x => x.UserId, "AspNetUsers", "Id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("ProcessorsByOwnedMachine", table => new
+            {
+                Id = table.Column<long>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                ProcessorId = table.Column<int>(), OwnedMachineId = table.Column<long>(), Speed = table.Column<float>()
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_ProcessorsByOwnedMachine", x => x.Id);
+
+                table.ForeignKey("FK_ProcessorsByOwnedMachine_OwnedMachines_OwnedMachineId", x => x.OwnedMachineId,
+                                 "OwnedMachines", "Id", onDelete: ReferentialAction.Cascade);
+
+                table.ForeignKey("FK_ProcessorsByOwnedMachine_processors_ProcessorId", x => x.ProcessorId, "processors",
+                                 "id", onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("SoundByOwnedMachine", table => new
+            {
+                Id = table.Column<long>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                SoundSynthId = table.Column<int>(), OwnedMachineId = table.Column<long>()
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_SoundByOwnedMachine", x => x.Id);
+
+                table.ForeignKey("FK_SoundByOwnedMachine_OwnedMachines_OwnedMachineId", x => x.OwnedMachineId,
+                                 "OwnedMachines", "Id", onDelete: ReferentialAction.Cascade);
+
+                table.ForeignKey("FK_SoundByOwnedMachine_sound_synths_SoundSynthId", x => x.SoundSynthId,
+                                 "sound_synths", "id", onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("StorageByOwnedMachine", table => new
+            {
+                Id = table.Column<long>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                OwnedMachineId = table.Column<long>(), Type = table.Column<int>(), Interface = table.Column<int>(),
+                Capacity       = table.Column<long>()
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_StorageByOwnedMachine", x => x.Id);
+
+                table.ForeignKey("FK_StorageByOwnedMachine_OwnedMachines_OwnedMachineId", x => x.OwnedMachineId,
+                                 "OwnedMachines", "Id", onDelete: ReferentialAction.Cascade);
+            });
 
             migrationBuilder.CreateIndex("IX_GpusByOwnedMachine_GpuId", "GpusByOwnedMachine", "GpuId");
 
@@ -357,91 +329,46 @@ SELECT a.date, a.status, a.trade, a.boxed, a.manuals, a.db_id + 356, @userId FRO
 
             migrationBuilder.DropTable("OwnedMachines");
 
-            migrationBuilder.CreateTable("owned_computers",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)")
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             boxed =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             cap1 =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             cap2 =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             cpu1 =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             cpu2 =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             date =
-                                                 table.Column<string>("varchar(20)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             db_id =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             disk1 =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             disk2 =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             manuals =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             mhz1 =
-                                                 table.Column<decimal>("decimal(10,0)", nullable: false,
-                                                                       defaultValueSql: "'0'"),
-                                             mhz2 =
-                                                 table.Column<decimal>("decimal(10,0)", nullable: false,
-                                                                       defaultValueSql: "'0'"),
-                                             ram =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             rigid =
-                                                 table.Column<string>("varchar(64)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             status =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             trade = table.Column<int>("int(11)", nullable: false,
-                                                                       defaultValueSql: "'0'"),
-                                             vram = table.Column<int>("int(11)", nullable: false,
-                                                                      defaultValueSql: "'0'")
-                                         },
-                                         constraints: table => { table.PrimaryKey("PK_owned_computers", x => x.id); });
+            migrationBuilder.CreateTable("owned_computers", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                boxed   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                cap1    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                cap2    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                cpu1    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                cpu2    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                date    = table.Column<string>("varchar(20)", nullable: false, defaultValueSql: "''"),
+                db_id   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                disk1   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                disk2   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                manuals = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                mhz1    = table.Column<decimal>("decimal(10,0)", nullable: false, defaultValueSql: "'0'"),
+                mhz2    = table.Column<decimal>("decimal(10,0)", nullable: false, defaultValueSql: "'0'"),
+                ram     = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                rigid   = table.Column<string>("varchar(64)", nullable: false, defaultValueSql: "''"),
+                status  = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                trade   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                vram    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_owned_computers", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("owned_consoles",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)")
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             boxed =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             date =
-                                                 table.Column<string>("char(20)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             db_id =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             manuals =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             status =
-                                                 table.Column<int>("int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             trade = table.Column<int>("int(11)", nullable: false,
-                                                                       defaultValueSql: "'0'")
-                                         },
-                                         constraints: table => { table.PrimaryKey("PK_owned_consoles", x => x.id); });
+            migrationBuilder.CreateTable("owned_consoles", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                boxed   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                date    = table.Column<string>("char(20)", nullable: false, defaultValueSql: "''"),
+                db_id   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                manuals = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                status  = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                trade   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_owned_consoles", x => x.id);
+            });
 
             migrationBuilder.CreateIndex("idx_owned_computers_boxed", "owned_computers", "boxed");
 

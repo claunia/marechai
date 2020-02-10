@@ -31,16 +31,11 @@
 
     ViewData["Title"] = "Home Page";
 }
-@using System.IO
-@using News = Marechai.Database.Models.News
 @model List<NewsModel>
-
 <h2>News</h2>
-
-@foreach(NewsModel news in Model)
+@foreach (var news in Model)
 {
-    <table border="0"
-           width="100%">
+    <table border="0" width="100%">
         <tr>
             <td colspan="2">
                 <b>@news.Timestamp</b>
@@ -51,16 +46,14 @@
                 @news.Text
             </td>
         </tr>
-    <tr>
-        <td>@* TODO: Image *@</td>
-        <td>
-            <a asp-action="@news.Action"
-                               asp-route-id="@news.AffectedId"
-                               asp-controller="@news.Controller">
-                                @news.ItemName
-                            </a>
-        </td>
-    </tr>
+        <tr>
+            <td>@* TODO: Image *@</td>
+            <td>
+                <a asp-action="@news.Action" asp-route-id="@news.AffectedId" asp-controller="@news.Controller">
+                    @news.ItemName
+                </a>
+            </td>
+        </tr>
     </table>
     <br />
 }

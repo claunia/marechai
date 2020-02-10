@@ -37,29 +37,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class ResolutionsController : Controller
     {
         readonly MarechaiContext _context;
 
-        public ResolutionsController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public ResolutionsController(MarechaiContext context) => _context = context;
 
         // GET: Admin/Resolutions
         public async Task<IActionResult> Index() =>
-            View(await _context.Resolutions.OrderBy(r => r.Chars).ThenBy(r => r.Width).ThenBy(r => r.Height)
-                               .ThenBy(r => r.Colors).ThenBy(r => r.Grayscale).ToListAsync());
+            View(await _context.Resolutions.OrderBy(r => r.Chars).ThenBy(r => r.Width).ThenBy(r => r.Height).
+                                ThenBy(r => r.Colors).ThenBy(r => r.Grayscale).ToListAsync());
 
         // GET: Admin/Resolutions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             Resolution resolution = await _context.Resolutions.FirstOrDefaultAsync(m => m.Id == id);
-            if(resolution == null) return NotFound();
+
+            if(resolution == null)
+                return NotFound();
 
             return View(resolution);
         }
@@ -70,8 +69,7 @@ namespace Marechai.Areas.Admin.Controllers
         // POST: Admin/Resolutions/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Width,Height,Colors,Palette,Chars,Grayscale")]
                                                 Resolution resolution)
         {
@@ -79,6 +77,7 @@ namespace Marechai.Areas.Admin.Controllers
             {
                 _context.Add(resolution);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -88,10 +87,13 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/Resolutions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             Resolution resolution = await _context.Resolutions.FindAsync(id);
-            if(resolution == null) return NotFound();
+
+            if(resolution == null)
+                return NotFound();
 
             return View(resolution);
         }
@@ -99,12 +101,12 @@ namespace Marechai.Areas.Admin.Controllers
         // POST: Admin/Resolutions/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Width,Height,Colors,Palette,Chars,Grayscale")]
                                               Resolution resolution)
         {
-            if(id != resolution.Id) return NotFound();
+            if(id != resolution.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -115,7 +117,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!ResolutionExists(resolution.Id)) return NotFound();
+                    if(!ResolutionExists(resolution.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -129,29 +132,28 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/Resolutions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             Resolution resolution = await _context.Resolutions.FirstOrDefaultAsync(m => m.Id == id);
-            if(resolution == null) return NotFound();
+
+            if(resolution == null)
+                return NotFound();
 
             return View(resolution);
         }
 
         // POST: Admin/Resolutions/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Resolution resolution = await _context.Resolutions.FindAsync(id);
             _context.Resolutions.Remove(resolution);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool ResolutionExists(int id)
-        {
-            return _context.Resolutions.Any(e => e.Id == id);
-        }
+        bool ResolutionExists(int id) => _context.Resolutions.Any(e => e.Id == id);
     }
 }

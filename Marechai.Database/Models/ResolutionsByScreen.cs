@@ -28,7 +28,6 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Marechai.Database.Models
@@ -40,7 +39,7 @@ namespace Marechai.Database.Models
         [Remote("VerifyUnique", "ResolutionsByScreen", "Admin", AdditionalFields = nameof(ScreenId))]
         public int ResolutionId { get; set; }
 
-        public virtual Screen Screen { get;         set; }
+        public virtual Screen     Screen     { get; set; }
         public virtual Resolution Resolution { get; set; }
     }
 }

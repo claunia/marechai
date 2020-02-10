@@ -30,8 +30,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Database.Models;
 using Marechai.Areas.Admin.Models;
+using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -40,42 +40,37 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class CompaniesController : Controller
     {
         readonly MarechaiContext _context;
 
-        public CompaniesController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public CompaniesController(MarechaiContext context) => _context = context;
 
         // GET: Admin/Companies
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<Company, Company> marechaiContext =
                 _context.Companies.Include(c => c.Country).Include(c => c.SoldTo);
+
             return View(marechaiContext.OrderBy(c => c.Name).Select(c => new CompanyViewModel
             {
-                Id      = c.Id,
-                Name    = c.Name,
-                Founded = c.Founded,
-                Status  = c.Status,
-                Country = c.Country.Name,
-                Sold    = c.Sold,
-                SoldTo  = c.SoldTo.Name
+                Id      = c.Id, Name           = c.Name, Founded = c.Founded, Status = c.Status,
+                Country = c.Country.Name, Sold = c.Sold, SoldTo  = c.SoldTo.Name
             }));
         }
 
         // GET: Admin/Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
-            Company company = await _context.Companies.Include(c => c.Country).Include(c => c.SoldTo)
-                                            .FirstOrDefaultAsync(m => m.Id == id);
-            if(company == null) return NotFound();
+            Company company = await _context.Companies.Include(c => c.Country).Include(c => c.SoldTo).
+                                             FirstOrDefaultAsync(m => m.Id == id);
+
+            if(company == null)
+                return NotFound();
 
             return View(company);
         }
@@ -84,60 +79,67 @@ namespace Marechai.Areas.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["CountryId"] = new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name");
-            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name),       "Id", "Name");
+            ViewData["SoldToId"]  = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name");
+
             return View();
         }
 
         // POST: Admin/Companies/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind(
-                "Id,Name,Founded,Website,Twitter,Facebook,Sold,SoldToId,Address,City,Province,PostalCode,CountryId,Status")]
+            [Bind("Id,Name,Founded,Website,Twitter,Facebook,Sold,SoldToId,Address,City,Province,PostalCode,CountryId,Status")]
             Company company)
         {
             if(ModelState.IsValid)
             {
                 _context.Add(company);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["CountryId"] =
                 new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+
             ViewData["SoldToId"] =
                 new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", company.SoldToId);
+
             return View(company);
         }
 
         // GET: Admin/Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             Company company = await _context.Companies.FindAsync(id);
-            if(company == null) return NotFound();
+
+            if(company == null)
+                return NotFound();
 
             ViewData["CountryId"] =
                 new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+
             ViewData["SoldToId"] =
                 new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", company.SoldToId);
+
             return View(company);
         }
 
         // POST: Admin/Companies/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
-            int id, [Bind(
-                "Id,Name,Founded,Website,Twitter,Facebook,Sold,SoldToId,Address,City,Province,PostalCode,CountryId,Status")]
+            int id,
+            [Bind("Id,Name,Founded,Website,Twitter,Facebook,Sold,SoldToId,Address,City,Province,PostalCode,CountryId,Status")]
             Company company)
         {
-            if(id != company.Id) return NotFound();
+            if(id != company.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -148,7 +150,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!CompanyExists(company.Id)) return NotFound();
+                    if(!CompanyExists(company.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -158,38 +161,39 @@ namespace Marechai.Areas.Admin.Controllers
 
             ViewData["CountryId"] =
                 new SelectList(_context.Iso31661Numeric.OrderBy(c => c.Name), "Id", "Name", company.CountryId);
+
             ViewData["SoldToId"] =
                 new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", company.SoldToId);
+
             return View(company);
         }
 
         // GET: Admin/Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
-            Company company = await _context.Companies.Include(c => c.Country).Include(c => c.SoldTo)
-                                            .FirstOrDefaultAsync(m => m.Id == id);
-            if(company == null) return NotFound();
+            Company company = await _context.Companies.Include(c => c.Country).Include(c => c.SoldTo).
+                                             FirstOrDefaultAsync(m => m.Id == id);
+
+            if(company == null)
+                return NotFound();
 
             return View(company);
         }
 
         // POST: Admin/Companies/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Company company = await _context.Companies.FindAsync(id);
             _context.Companies.Remove(company);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool CompanyExists(int id)
-        {
-            return _context.Companies.Any(e => e.Id == id);
-        }
+        bool CompanyExists(int id) => _context.Companies.Any(e => e.Id == id);
     }
 }

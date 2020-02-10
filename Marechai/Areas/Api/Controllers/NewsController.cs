@@ -35,33 +35,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Marechai.Areas.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/[controller]"), ApiController]
     public class NewsController : ControllerBase
     {
         readonly MarechaiContext _context;
 
-        public NewsController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public NewsController(MarechaiContext context) => _context = context;
 
         // GET: api/News
         [HttpGet]
-        public IEnumerable<News> GetNews()
-        {
-            return _context.News;
-        }
+        public IEnumerable<News> GetNews() => _context.News;
 
         // GET: api/News/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetNews([FromRoute] int id)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             News news = await _context.News.FindAsync(id);
 
-            if(news == null) return NotFound();
+            if(news == null)
+                return NotFound();
 
             return Ok(news);
         }

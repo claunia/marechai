@@ -9,8 +9,8 @@ namespace Marechai.Database.Migrations
             migrationBuilder.AlterColumn<string>("Text", "CompanyDescriptions", nullable: true,
                                                  oldClrType: typeof(string), oldNullable: true);
 
-            migrationBuilder.CreateIndex("IX_CompanyDescriptions_Text", "CompanyDescriptions", "Text")
-                            .Annotation("MySql:FullTextIndex", true);
+            migrationBuilder.CreateIndex("IX_CompanyDescriptions_Text", "CompanyDescriptions", "Text").
+                             Annotation("MySql:FullTextIndex", true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

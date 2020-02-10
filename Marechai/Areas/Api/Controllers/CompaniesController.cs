@@ -35,33 +35,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Marechai.Areas.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/[controller]"), ApiController]
     public class CompaniesController : ControllerBase
     {
         readonly MarechaiContext _context;
 
-        public CompaniesController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public CompaniesController(MarechaiContext context) => _context = context;
 
         // GET: api/Companies
         [HttpGet]
-        public IEnumerable<Company> GetCompanies()
-        {
-            return _context.Companies;
-        }
+        public IEnumerable<Company> GetCompanies() => _context.Companies;
 
         // GET: api/Companies/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCompany([FromRoute] int id)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             Company company = await _context.Companies.FindAsync(id);
 
-            if(company == null) return NotFound();
+            if(company == null)
+                return NotFound();
 
             return Ok(company);
         }

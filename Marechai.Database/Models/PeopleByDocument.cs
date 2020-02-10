@@ -7,8 +7,7 @@ namespace Marechai.Database.Models
     {
         public int  PersonId   { get; set; }
         public long DocumentId { get; set; }
-        [Column(TypeName = "char(3)")]
-        [Required]
+        [Column(TypeName = "char(3)"), Required]
         public string RoleId { get; set; }
 
         public virtual DocumentPerson Person   { get; set; }

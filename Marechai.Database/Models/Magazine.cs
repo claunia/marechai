@@ -8,8 +8,7 @@ namespace Marechai.Database.Models
     {
         [StringLength(8, MinimumLength = 8)]
         public string Issn { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? FirstPublication { get; set; }
 
         public virtual Iso31661Numeric                  Country   { get; set; }

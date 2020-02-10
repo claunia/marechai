@@ -39,8 +39,7 @@ namespace Marechai.Areas.Admin.Models
     public class GpuViewModel : BaseViewModel<int>
     {
         public string Company;
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Introduced;
         [DisplayName("Model code")]
         public string ModelCode;

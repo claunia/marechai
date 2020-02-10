@@ -34,47 +34,33 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
 <h2>Edit</h2>
-
 <h4>Machine family</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
             </div>
-            <input type="hidden"
-                   asp-for="Id" />
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="CompanyId"
-                       class="control-label">
+                <label asp-for="CompanyId" class="control-label">
                 </label>
-                <select asp-for="CompanyId"
-                        class="form-control"
-                        asp-items="ViewBag.CompanyId">
+                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId">
                 </select>
-                <span asp-validation-for="CompanyId"
-                      class="text-danger">
+                <span asp-validation-for="CompanyId" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Name"
-                       class="control-label">
+                <label asp-for="Name" class="control-label">
                 </label>
-                <input asp-for="Name"
-                       class="form-control" />
-                <span asp-validation-for="Name"
-                      class="text-danger">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <input class="btn btn-primary"
-                       type="submit"
-                       value="Save" />
-                <a asp-action="Index"
-                   class="btn btn-secondary">
+                <input class="btn btn-primary" type="submit" value="Save" />
+                <a asp-action="Index" class="btn btn-secondary">
                     Back to List
                 </a>
             </div>

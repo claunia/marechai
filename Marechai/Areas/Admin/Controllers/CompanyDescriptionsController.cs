@@ -30,8 +30,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Database.Models;
 using Marechai.Areas.Admin.Models;
+using Marechai.Database.Models;
 using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,11 +41,10 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class CompanyDescriptionsController : Controller
     {
-        readonly MarechaiContext      _context;
+        readonly MarechaiContext  _context;
         readonly MarkdownPipeline pipeline;
 
         public CompanyDescriptionsController(MarechaiContext context)
@@ -59,22 +58,24 @@ namespace Marechai.Areas.Admin.Controllers
         {
             IIncludableQueryable<CompanyDescription, Company> marechaiContext =
                 _context.CompanyDescriptions.Include(c => c.Company);
-            return View(await marechaiContext.OrderBy(c => c.Company.Name)
-                                         .Select(c => new CompanyDescriptionViewModel
-                                          {
-                                              Id = c.Id, Company = c.Company.Name
-                                          }).ToListAsync());
+
+            return View(await marechaiContext.OrderBy(c => c.Company.Name).Select(c => new CompanyDescriptionViewModel
+            {
+                Id = c.Id, Company = c.Company.Name
+            }).ToListAsync());
         }
 
         // GET: CompanyDescription/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
-            CompanyDescription companyDescription = await _context.CompanyDescriptions
-                                                                  .Include(c => c.Company)
-                                                                  .FirstOrDefaultAsync(m => m.Id == id);
-            if(companyDescription == null) return NotFound();
+            CompanyDescription companyDescription =
+                await _context.CompanyDescriptions.Include(c => c.Company).FirstOrDefaultAsync(m => m.Id == id);
+
+            if(companyDescription == null)
+                return NotFound();
 
             return View(companyDescription);
         }
@@ -83,14 +84,14 @@ namespace Marechai.Areas.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name");
+
             return View();
         }
 
         // POST: CompanyDescription/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CompanyId,Text")] CompanyDescription companyDescription)
         {
             if(ModelState.IsValid)
@@ -98,35 +99,41 @@ namespace Marechai.Areas.Admin.Controllers
                 companyDescription.Html = Markdown.ToHtml(companyDescription.Text, pipeline);
                 _context.Add(companyDescription);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name",
                                                    companyDescription.CompanyId);
+
             return View(companyDescription);
         }
 
         // GET: CompanyDescription/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             CompanyDescription companyDescription = await _context.CompanyDescriptions.FindAsync(id);
-            if(companyDescription == null) return NotFound();
+
+            if(companyDescription == null)
+                return NotFound();
 
             ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name",
                                                    companyDescription.CompanyId);
+
             return View(companyDescription);
         }
 
         // POST: CompanyDescription/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,Text")] CompanyDescription companyDescription)
         {
-            if(id != companyDescription.Id) return NotFound();
+            if(id != companyDescription.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -138,7 +145,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!CompanyDescriptionExists(companyDescription.Id)) return NotFound();
+                    if(!CompanyDescriptionExists(companyDescription.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -148,37 +156,36 @@ namespace Marechai.Areas.Admin.Controllers
 
             ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name",
                                                    companyDescription.CompanyId);
+
             return View(companyDescription);
         }
 
         // GET: CompanyDescription/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
-            CompanyDescription companyDescription = await _context.CompanyDescriptions
-                                                                  .Include(c => c.Company)
-                                                                  .FirstOrDefaultAsync(m => m.Id == id);
-            if(companyDescription == null) return NotFound();
+            CompanyDescription companyDescription =
+                await _context.CompanyDescriptions.Include(c => c.Company).FirstOrDefaultAsync(m => m.Id == id);
+
+            if(companyDescription == null)
+                return NotFound();
 
             return View(companyDescription);
         }
 
         // POST: CompanyDescription/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             CompanyDescription companyDescription = await _context.CompanyDescriptions.FindAsync(id);
             _context.CompanyDescriptions.Remove(companyDescription);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool CompanyDescriptionExists(int id)
-        {
-            return _context.CompanyDescriptions.Any(e => e.Id == id);
-        }
+        bool CompanyDescriptionExists(int id) => _context.CompanyDescriptions.Any(e => e.Id == id);
     }
 }

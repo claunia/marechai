@@ -9,11 +9,9 @@ namespace Marechai.Areas.Admin.Models
     public class CompanyViewModel : BaseViewModel<int>
     {
         public string Name { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true), DataType(DataType.Date)]
         public DateTime? Founded { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Sold { get; set; }
         [DisplayName("Sold to")]
         public string SoldTo { get;  set; }
@@ -21,17 +19,15 @@ namespace Marechai.Areas.Admin.Models
         [Required]
         public CompanyStatus Status { get; set; }
 
-        [DisplayName("Sold")]
-        [NotMapped]
-        public string SoldView =>
-            Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
-                ? Sold is null
-                      ? "Unknown"
-                      : Sold.Value.ToShortDateString()
-                : Sold is null
-                    ? SoldTo is null
-                          ? ""
-                          : "Unknown"
-                    : Sold.Value.ToShortDateString();
+        [DisplayName("Sold"), NotMapped]
+        public string SoldView => Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
+                                      ? Sold is null
+                                            ? "Unknown"
+                                            : Sold.Value.ToShortDateString()
+                                      : Sold is null
+                                          ? SoldTo is null
+                                                ? ""
+                                                : "Unknown"
+                                          : Sold.Value.ToShortDateString();
     }
 }

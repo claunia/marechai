@@ -3,47 +3,33 @@
 @{
     ViewData["Title"] = "Create";
 }
-
 <h1>Create</h1>
-
 <h4>Screens by machine</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
             </div>
             <div class="form-group">
-                <label asp-for="Screen"
-                       class="control-label">
+                <label asp-for="Screen" class="control-label">
                 </label>
-                <select asp-for="ScreenId"
-                        class="form-control"
-                        asp-items="ViewBag.ScreenId">
+                <select asp-for="ScreenId" class="form-control" asp-items="ViewBag.ScreenId">
                 </select>
-                <span asp-validation-for="ScreenId"
-                      class="text-danger">
+                <span asp-validation-for="ScreenId" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Machine"
-                       class="control-label">
+                <label asp-for="Machine" class="control-label">
                 </label>
-                <select asp-for="MachineId"
-                        class="form-control"
-                        asp-items="ViewBag.MachineId">
+                <select asp-for="MachineId" class="form-control" asp-items="ViewBag.MachineId">
                 </select>
-                <span asp-validation-for="MachineId"
-                      class="text-danger">
+                <span asp-validation-for="MachineId" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <input class="btn btn-primary"
-                       type="submit"
-                       value="Create" />
-                <a asp-action="Index"
-                   class="btn btn-secondary">
+                <input class="btn btn-primary" type="submit" value="Create" />
+                <a asp-action="Index" class="btn btn-secondary">
                     Back to List
                 </a>
             </div>

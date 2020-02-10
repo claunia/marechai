@@ -30,8 +30,8 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Database.Models;
 using Marechai.Areas.Admin.Models;
+using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -40,39 +40,37 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class GpusController : Controller
     {
         readonly MarechaiContext _context;
 
-        public GpusController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public GpusController(MarechaiContext context) => _context = context;
 
         // GET: Admin/Gpus
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<Gpu, Company> marechaiContext = _context.Gpus.Include(g => g.Company);
-            return View(await marechaiContext.OrderBy(g => g.Company.Name).ThenBy(g => g.Name).ThenBy(g => g.Introduced)
-                                         .Select(g => new GpuViewModel
-                                          {
-                                              Id         = g.Id,
-                                              Company    = g.Company.Name,
-                                              Introduced = g.Introduced,
-                                              ModelCode  = g.ModelCode,
-                                              Name       = g.Name
-                                          }).ToListAsync());
+
+            return View(await marechaiContext.OrderBy(g => g.Company.Name).ThenBy(g => g.Name).
+                                              ThenBy(g => g.Introduced).Select(g => new GpuViewModel
+                                              {
+                                                  Id         = g.Id, Company = g.Company.Name,
+                                                  Introduced = g.Introduced,
+                                                  ModelCode  = g.ModelCode, Name = g.Name
+                                              }).ToListAsync());
         }
 
         // GET: Admin/Gpus/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             Gpu gpu = await _context.Gpus.Include(g => g.Company).FirstOrDefaultAsync(m => m.Id == id);
-            if(gpu == null) return NotFound();
+
+            if(gpu == null)
+                return NotFound();
 
             return View(gpu);
         }
@@ -81,14 +79,14 @@ namespace Marechai.Areas.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["CompanyId"] = new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name");
+
             return View();
         }
 
         // POST: Admin/Gpus/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             [Bind("Id,Name,CompanyId,ModelCode,Introduced,Package,Process,ProcessNm,DieSize,Transistors")]
             Gpu gpu)
@@ -97,37 +95,43 @@ namespace Marechai.Areas.Admin.Controllers
             {
                 _context.Add(gpu);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["CompanyId"] =
                 new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", gpu.CompanyId);
+
             return View(gpu);
         }
 
         // GET: Admin/Gpus/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             Gpu gpu = await _context.Gpus.FindAsync(id);
-            if(gpu == null) return NotFound();
+
+            if(gpu == null)
+                return NotFound();
 
             ViewData["CompanyId"] =
                 new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", gpu.CompanyId);
+
             return View(gpu);
         }
 
         // POST: Admin/Gpus/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id, [Bind("Id,Name,CompanyId,ModelCode,Introduced,Package,Process,ProcessNm,DieSize,Transistors")]
             Gpu gpu)
         {
-            if(id != gpu.Id) return NotFound();
+            if(id != gpu.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -138,7 +142,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!GpuExists(gpu.Id)) return NotFound();
+                    if(!GpuExists(gpu.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -148,35 +153,35 @@ namespace Marechai.Areas.Admin.Controllers
 
             ViewData["CompanyId"] =
                 new SelectList(_context.Companies.OrderBy(c => c.Name), "Id", "Name", gpu.CompanyId);
+
             return View(gpu);
         }
 
         // GET: Admin/Gpus/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             Gpu gpu = await _context.Gpus.Include(g => g.Company).FirstOrDefaultAsync(m => m.Id == id);
-            if(gpu == null) return NotFound();
+
+            if(gpu == null)
+                return NotFound();
 
             return View(gpu);
         }
 
         // POST: Admin/Gpus/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Gpu gpu = await _context.Gpus.FindAsync(id);
             _context.Gpus.Remove(gpu);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool GpuExists(int id)
-        {
-            return _context.Gpus.Any(e => e.Id == id);
-        }
+        bool GpuExists(int id) => _context.Gpus.Any(e => e.Id == id);
     }
 }

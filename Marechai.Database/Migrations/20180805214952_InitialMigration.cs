@@ -38,603 +38,473 @@ namespace Marechai.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable("admins",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             user =
-                                                 table.Column<string>("char(50)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             password = table.Column<string>("char(50)", nullable: false,
-                                                                             defaultValueSql: "''")
-                                         }, constraints: table => { table.PrimaryKey("PK_admins", x => x.id); });
+            migrationBuilder.CreateTable("admins", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                user     = table.Column<string>("char(50)", nullable: false, defaultValueSql: "''"),
+                password = table.Column<string>("char(50)", nullable: false, defaultValueSql: "''")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_admins", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("browser_tests",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             user_agent =
-                                                 table.Column<string>("varchar(128)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             browser =
-                                                 table.Column<string>("varchar(64)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             version =
-                                                 table.Column<string>("varchar(16)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             os =
-                                                 table.Column<string>("varchar(32)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             platform =
-                                                 table.Column<string>("varchar(8)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             gif87 =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             gif89 =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             jpeg =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             png =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             pngt =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             agif =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             table =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             colors =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             js =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             frames =
-                                                 table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                     defaultValueSql: "'0'"),
-                                             flash = table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                         defaultValueSql: "'0'")
-                                         }, constraints: table => { table.PrimaryKey("PK_browser_tests", x => x.id); });
+            migrationBuilder.CreateTable("browser_tests", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                user_agent = table.Column<string>("varchar(128)", nullable: false, defaultValueSql: "''"),
+                browser    = table.Column<string>("varchar(64)", nullable: false, defaultValueSql: "''"),
+                version    = table.Column<string>("varchar(16)", nullable: false, defaultValueSql: "''"),
+                os         = table.Column<string>("varchar(32)", nullable: false, defaultValueSql: "''"),
+                platform   = table.Column<string>("varchar(8)", nullable: false, defaultValueSql: "''"),
+                gif87      = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                gif89      = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                jpeg       = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                png        = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                pngt       = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                agif       = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                table      = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                colors     = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                js         = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                frames     = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'"),
+                flash      = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_browser_tests", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("marechai_db",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             version = table.Column<int>("int(11)", nullable: false),
-                                             updated = table.Column<DateTimeOffset?>("timestamp", nullable: true,
-                                                                              defaultValueSql: "CURRENT_TIMESTAMP")
-                                         }, constraints: table => { table.PrimaryKey("PK_marechai_db", x => x.id); });
+            migrationBuilder.CreateTable("marechai_db", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                version = table.Column<int>("int(11)"),
+                updated = table.Column<DateTimeOffset?>("timestamp", nullable: true,
+                                                        defaultValueSql: "CURRENT_TIMESTAMP")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_marechai_db", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("forbidden",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             browser =
-                                                 table.Column<string>("char(128)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             date =
-                                                 table.Column<string>("char(20)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             ip = table.Column<string>("char(16)", nullable: false,
-                                                                       defaultValueSql: "''"),
-                                             referer = table.Column<string>("char(255)", nullable: false,
-                                                                            defaultValueSql: "''")
-                                         }, constraints: table => { table.PrimaryKey("PK_forbidden", x => x.id); });
+            migrationBuilder.CreateTable("forbidden", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                browser = table.Column<string>("char(128)", nullable: false, defaultValueSql: "''"),
+                date    = table.Column<string>("char(20)", nullable: false, defaultValueSql: "''"),
+                ip      = table.Column<string>("char(16)", nullable: false, defaultValueSql: "''"),
+                referer = table.Column<string>("char(255)", nullable: false, defaultValueSql: "''")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_forbidden", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("instruction_set_extensions",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             extension = table.Column<string>("varchar(45)", nullable: false)
-                                         },
-                                         constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_instruction_set_extensions", x => x.id);
-                                         });
+            migrationBuilder.CreateTable("instruction_set_extensions", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                extension = table.Column<string>("varchar(45)")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_instruction_set_extensions", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("instruction_sets",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             instruction_set = table.Column<string>("varchar(45)", nullable: false)
-                                         },
-                                         constraints: table => { table.PrimaryKey("PK_instruction_sets", x => x.id); });
+            migrationBuilder.CreateTable("instruction_sets", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                instruction_set = table.Column<string>("varchar(45)")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_instruction_sets", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("iso3166_1_numeric",
-                                         table => new
-                                         {
-                                             id = table.Column<short>("smallint(3)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             name = table.Column<string>("varchar(64)", nullable: false)
-                                         },
-                                         constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_iso3166_1_numeric", x => x.id);
-                                         });
+            migrationBuilder.CreateTable("iso3166_1_numeric", table => new
+            {
+                id = table.Column<short>("smallint(3)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                name = table.Column<string>("varchar(64)")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_iso3166_1_numeric", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("log",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             browser =
-                                                 table.Column<string>("char(128)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             ip =
-                                                 table.Column<string>("char(16)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             date =
-                                                 table.Column<string>("char(20)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             referer = table.Column<string>("char(255)", nullable: false,
-                                                                            defaultValueSql: "''")
-                                         }, constraints: table => { table.PrimaryKey("PK_log", x => x.id); });
+            migrationBuilder.CreateTable("log", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                browser = table.Column<string>("char(128)", nullable: false, defaultValueSql: "''"),
+                ip      = table.Column<string>("char(16)", nullable: false, defaultValueSql: "''"),
+                date    = table.Column<string>("char(20)", nullable: false, defaultValueSql: "''"),
+                referer = table.Column<string>("char(255)", nullable: false, defaultValueSql: "''")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_log", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("money_donations",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             donator =
-                                                 table.Column<string>("char(128)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             quantity = table.Column<decimal>("decimal(11,2)", nullable: false,
-                                                                              defaultValueSql: "'0.00'")
-                                         },
-                                         constraints: table => { table.PrimaryKey("PK_money_donations", x => x.id); });
+            migrationBuilder.CreateTable("money_donations", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                donator  = table.Column<string>("char(128)", nullable: false, defaultValueSql: "''"),
+                quantity = table.Column<decimal>("decimal(11,2)", nullable: false, defaultValueSql: "'0.00'")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_money_donations", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("news",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             date =
-                                                 table.Column<string>("char(20)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             type =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             added_id = table.Column<int>("int(11)", nullable: false,
-                                                                          defaultValueSql: "'0'")
-                                         }, constraints: table => { table.PrimaryKey("PK_news", x => x.id); });
+            migrationBuilder.CreateTable("news", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                date     = table.Column<string>("char(20)", nullable: false, defaultValueSql: "''"),
+                type     = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                added_id = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_news", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("owned_computers",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             db_id =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             date =
-                                                 table.Column<string>("varchar(20)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             status =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             trade =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             boxed =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             manuals =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             cpu1 =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             mhz1 =
-                                                 table.Column<decimal>("decimal(10,0)", nullable: false,
-                                                                       defaultValueSql: "'0'"),
-                                             cpu2 =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             mhz2 =
-                                                 table.Column<decimal>("decimal(10,0)", nullable: false,
-                                                                       defaultValueSql: "'0'"),
-                                             ram =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             vram =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             rigid =
-                                                 table.Column<string>("varchar(64)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             disk1 =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             cap1 =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             disk2 =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             cap2 = table.Column<int>("int(11)", nullable: false,
-                                                                      defaultValueSql: "'0'")
-                                         },
-                                         constraints: table => { table.PrimaryKey("PK_owned_computers", x => x.id); });
+            migrationBuilder.CreateTable("owned_computers", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                db_id   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                date    = table.Column<string>("varchar(20)", nullable: false, defaultValueSql: "''"),
+                status  = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                trade   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                boxed   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                manuals = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                cpu1    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                mhz1    = table.Column<decimal>("decimal(10,0)", nullable: false, defaultValueSql: "'0'"),
+                cpu2    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                mhz2    = table.Column<decimal>("decimal(10,0)", nullable: false, defaultValueSql: "'0'"),
+                ram     = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                vram    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                rigid   = table.Column<string>("varchar(64)", nullable: false, defaultValueSql: "''"),
+                disk1   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                cap1    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                disk2   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                cap2    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_owned_computers", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("owned_consoles",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             db_id =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             date =
-                                                 table.Column<string>("char(20)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             status =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             trade =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             boxed =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             manuals = table.Column<int>("int(11)", nullable: false,
-                                                                         defaultValueSql: "'0'")
-                                         }, constraints: table => { table.PrimaryKey("PK_owned_consoles", x => x.id); });
+            migrationBuilder.CreateTable("owned_consoles", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                db_id   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                date    = table.Column<string>("char(20)", nullable: false, defaultValueSql: "''"),
+                status  = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                trade   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                boxed   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                manuals = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_owned_consoles", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("resolutions",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             width =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             height =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             colors  = table.Column<long>("bigint(20)", nullable: true),
-                                             palette = table.Column<long>("bigint(20)", nullable: true),
-                                             chars = table.Column<sbyte>("tinyint(1)", nullable: false,
-                                                                         defaultValueSql: "'0'")
-                                         }, constraints: table => { table.PrimaryKey("PK_resolutions", x => x.id); });
+            migrationBuilder.CreateTable("resolutions", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                width   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                height  = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                colors  = table.Column<long>("bigint(20)", nullable: true),
+                palette = table.Column<long>("bigint(20)", nullable: true),
+                chars   = table.Column<sbyte>("tinyint(1)", nullable: false, defaultValueSql: "'0'")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_resolutions", x => x.id);
+            });
 
-            migrationBuilder.CreateTable("companies",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             name =
-                                                 table.Column<string>("varchar(128)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             founded     = table.Column<DateTime>("datetime", nullable: true),
-                                             website     = table.Column<string>("varchar(255)", nullable: true),
-                                             twitter     = table.Column<string>("varchar(45)",  nullable: true),
-                                             facebook    = table.Column<string>("varchar(45)",  nullable: true),
-                                             sold        = table.Column<DateTime>("datetime", nullable: true),
-                                             sold_to     = table.Column<int>("int(11)", nullable: true),
-                                             address     = table.Column<string>("varchar(80)", nullable: true),
-                                             city        = table.Column<string>("varchar(80)", nullable: true),
-                                             province    = table.Column<string>("varchar(80)", nullable: true),
-                                             postal_code = table.Column<string>("varchar(25)", nullable: true),
-                                             country     = table.Column<short>("smallint(3)", nullable: true),
-                                             status      = table.Column<int>("int(11)", nullable: false)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_companies", x => x.id);
-                                             table.ForeignKey("fk_companies_country", x => x.country,
-                                                              "iso3166_1_numeric", "id",
-                                                              onDelete: ReferentialAction.Restrict);
-                                             table.ForeignKey("fk_companies_sold_to", x => x.sold_to, "companies", "id",
-                                                              onDelete: ReferentialAction.Restrict);
-                                         });
+            migrationBuilder.CreateTable("companies", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                name        = table.Column<string>("varchar(128)", nullable: false, defaultValueSql: "''"),
+                founded     = table.Column<DateTime>("datetime", nullable: true),
+                website     = table.Column<string>("varchar(255)", nullable: true),
+                twitter     = table.Column<string>("varchar(45)", nullable: true),
+                facebook    = table.Column<string>("varchar(45)", nullable: true),
+                sold        = table.Column<DateTime>("datetime", nullable: true),
+                sold_to     = table.Column<int>("int(11)", nullable: true),
+                address     = table.Column<string>("varchar(80)", nullable: true),
+                city        = table.Column<string>("varchar(80)", nullable: true),
+                province    = table.Column<string>("varchar(80)", nullable: true),
+                postal_code = table.Column<string>("varchar(25)", nullable: true),
+                country     = table.Column<short>("smallint(3)", nullable: true), status = table.Column<int>("int(11)")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_companies", x => x.id);
 
-            migrationBuilder.CreateTable("company_descriptions",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             company_id = table.Column<int>("int(11)", nullable: false),
-                                             text       = table.Column<string>("text", nullable: true)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_company_descriptions", x => x.id);
-                                             table.ForeignKey("fk_company_id", x => x.id, "companies", "id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("fk_companies_country", x => x.country, "iso3166_1_numeric", "id",
+                                 onDelete: ReferentialAction.Restrict);
 
-            migrationBuilder.CreateTable("company_logos",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             company_id = table.Column<int>("int(11)", nullable: false),
-                                             year       = table.Column<int>("int(4)",  nullable: true),
-                                             logo_guid  = table.Column<string>("char(36)", nullable: false)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_company_logos",
-                                                              x => new {x.id, x.company_id, x.logo_guid});
-                                             table.ForeignKey("fk_company_logos_company1", x => x.company_id,
-                                                              "companies", "id", onDelete: ReferentialAction.Restrict);
-                                         });
+                table.ForeignKey("fk_companies_sold_to", x => x.sold_to, "companies", "id",
+                                 onDelete: ReferentialAction.Restrict);
+            });
 
-            migrationBuilder.CreateTable("gpus",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             name =
-                                                 table.Column<string>("char(128)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             company     = table.Column<int>("int(11)", nullable: true),
-                                             model_code  = table.Column<string>("varchar(45)", nullable: true),
-                                             introduced  = table.Column<DateTime>("datetime", nullable: true),
-                                             package     = table.Column<string>("varchar(45)", nullable: true),
-                                             process     = table.Column<string>("varchar(45)", nullable: true),
-                                             process_nm  = table.Column<float>(nullable: true),
-                                             die_size    = table.Column<float>(nullable: true),
-                                             transistors = table.Column<long>("bigint(20)", nullable: true)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_gpus", x => x.id);
-                                             table.ForeignKey("fk_gpus_company", x => x.company, "companies", "id",
-                                                              onDelete: ReferentialAction.Restrict);
-                                         });
+            migrationBuilder.CreateTable("company_descriptions", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                company_id = table.Column<int>("int(11)"), text = table.Column<string>("text", nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_company_descriptions", x => x.id);
+                table.ForeignKey("fk_company_id", x => x.id, "companies", "id", onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable("machine_families",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             company = table.Column<int>("int(11)", nullable: false),
-                                             name    = table.Column<string>("varchar(255)", nullable: false)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_machine_families", x => x.id);
-                                             table.ForeignKey("fk_machine_families_company", x => x.company,
-                                                              "companies", "id", onDelete: ReferentialAction.Cascade);
-                                         });
+            migrationBuilder.CreateTable("company_logos", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                company_id = table.Column<int>("int(11)"), year = table.Column<int>("int(4)", nullable: true),
+                logo_guid  = table.Column<string>("char(36)")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_company_logos", x => new
+                {
+                    x.id, x.company_id, x.logo_guid
+                });
 
-            migrationBuilder.CreateTable("processors",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             name =
-                                                 table.Column<string>("char(50)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             company          = table.Column<int>("int(11)", nullable: true),
-                                             model_code       = table.Column<string>("varchar(45)", nullable: true),
-                                             introduced       = table.Column<DateTime>("datetime", nullable: true),
-                                             instruction_set  = table.Column<int>("int(11)", nullable: true),
-                                             speed            = table.Column<double>(nullable: true),
-                                             package          = table.Column<string>("varchar(45)", nullable: true),
-                                             GPRs             = table.Column<int>("int(11)", nullable: true),
-                                             GPR_size         = table.Column<int>("int(11)", nullable: true),
-                                             FPRs             = table.Column<int>("int(11)", nullable: true),
-                                             FPR_size         = table.Column<int>("int(11)", nullable: true),
-                                             cores            = table.Column<int>("int(11)", nullable: true),
-                                             threads_per_core = table.Column<int>("int(11)", nullable: true),
-                                             process          = table.Column<string>("varchar(45)", nullable: true),
-                                             process_nm       = table.Column<float>(nullable: true),
-                                             die_size         = table.Column<float>(nullable: true),
-                                             transistors      = table.Column<long>("bigint(20)", nullable: true),
-                                             data_bus         = table.Column<int>("int(11)", nullable: true),
-                                             addr_bus         = table.Column<int>("int(11)", nullable: true),
-                                             SIMD_registers   = table.Column<int>("int(11)", nullable: true),
-                                             SIMD_size        = table.Column<int>("int(11)", nullable: true),
-                                             L1_instruction   = table.Column<float>(nullable: true),
-                                             L1_data          = table.Column<float>(nullable: true),
-                                             L2               = table.Column<float>(nullable: true),
-                                             L3               = table.Column<float>(nullable: true)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_processors", x => x.id);
-                                             table.ForeignKey("fk_processors_company", x => x.company, "companies",
-                                                              "id", onDelete: ReferentialAction.Restrict);
-                                             table.ForeignKey("fk_processors_instruction_set", x => x.instruction_set,
-                                                              "instruction_sets", "id",
-                                                              onDelete: ReferentialAction.Restrict);
-                                         });
+                table.ForeignKey("fk_company_logos_company1", x => x.company_id, "companies", "id",
+                                 onDelete: ReferentialAction.Restrict);
+            });
 
-            migrationBuilder.CreateTable("sound_synths",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             name =
-                                                 table.Column<string>("char(50)", nullable: false,
-                                                                      defaultValueSql: "''"),
-                                             company     = table.Column<int>("int(11)", nullable: true),
-                                             model_code  = table.Column<string>("varchar(45)", nullable: true),
-                                             introduced  = table.Column<DateTime>("datetime", nullable: true),
-                                             voices      = table.Column<int>("int(11)", nullable: true),
-                                             frequency   = table.Column<double>(nullable: true),
-                                             depth       = table.Column<int>("int(11)", nullable: true),
-                                             square_wave = table.Column<int>("int(11)", nullable: true),
-                                             white_noise = table.Column<int>("int(11)", nullable: true),
-                                             type        = table.Column<int>("int(11)", nullable: true)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_sound_synths", x => x.id);
-                                             table.ForeignKey("fk_sound_synths_company", x => x.company, "companies",
-                                                              "id", onDelete: ReferentialAction.Restrict);
-                                         });
+            migrationBuilder.CreateTable("gpus", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                name        = table.Column<string>("char(128)", nullable: false, defaultValueSql: "''"),
+                company     = table.Column<int>("int(11)", nullable: true),
+                model_code  = table.Column<string>("varchar(45)", nullable: true),
+                introduced  = table.Column<DateTime>("datetime", nullable: true),
+                package     = table.Column<string>("varchar(45)", nullable: true),
+                process     = table.Column<string>("varchar(45)", nullable: true),
+                process_nm  = table.Column<float>(nullable: true), die_size = table.Column<float>(nullable: true),
+                transistors = table.Column<long>("bigint(20)", nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_gpus", x => x.id);
 
-            migrationBuilder.CreateTable("resolutions_by_gpu",
-                                         table => new
-                                         {
-                                             gpu        = table.Column<int>("int(11)", nullable: false),
-                                             resolution = table.Column<int>("int(11)", nullable: false),
-                                             id = table.Column<long>("bigint(20)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_resolutions_by_gpu", x => x.id);
-                                             table.ForeignKey("fk_resolutions_by_gpu_gpu", x => x.gpu, "gpus", "id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("fk_resolutions_by_gpu_resolution", x => x.resolution,
-                                                              "resolutions", "id", onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("fk_gpus_company", x => x.company, "companies", "id",
+                                 onDelete: ReferentialAction.Restrict);
+            });
 
-            migrationBuilder.CreateTable("machines",
-                                         table => new
-                                         {
-                                             id =
-                                                 table.Column<int>("int(11)", nullable: false)
-                                                      .Annotation("MySql:ValueGenerationStrategy",
-                                                                  MySqlValueGenerationStrategy.IdentityColumn),
-                                             company =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             name = table.Column<string>("varchar(255)", nullable: false),
-                                             type =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             introduced = table.Column<DateTime>("datetime", nullable: true),
-                                             family     = table.Column<int>("int(11)", nullable: true),
-                                             model      = table.Column<string>("varchar(50)", nullable: true)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_machines", x => x.id);
-                                             table.ForeignKey("fk_machines_company", x => x.company, "companies", "id",
-                                                              onDelete: ReferentialAction.Restrict);
-                                             table.ForeignKey("fk_machines_family", x => x.family, "machine_families",
-                                                              "id", onDelete: ReferentialAction.Restrict);
-                                         });
+            migrationBuilder.CreateTable("machine_families", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                company = table.Column<int>("int(11)"), name = table.Column<string>("varchar(255)")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_machine_families", x => x.id);
 
-            migrationBuilder.CreateTable("instruction_set_extensions_by_processor",
-                                         table => new
-                                         {
-                                             id = table.Column<int>("int(11)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             processor_id = table.Column<int>("int(11)", nullable: false),
-                                             extension_id = table.Column<int>("int(11)", nullable: false)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_instruction_set_extensions_by_processor",
-                                                              x => new {x.id, x.processor_id, x.extension_id});
-                                             table.ForeignKey("fk_extension_extension_id", x => x.extension_id,
-                                                              "instruction_set_extensions", "id",
-                                                              onDelete: ReferentialAction.Restrict);
-                                             table.ForeignKey("fk_extension_processor_id", x => x.processor_id,
-                                                              "processors", "id", onDelete: ReferentialAction.Restrict);
-                                         });
+                table.ForeignKey("fk_machine_families_company", x => x.company, "companies", "id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateTable("gpus_by_machine",
-                                         table => new
-                                         {
-                                             gpu     = table.Column<int>("int(11)", nullable: false),
-                                             machine = table.Column<int>("int(11)", nullable: false),
-                                             id = table.Column<long>("bigint(20)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_gpus_by_machine", x => x.id);
-                                             table.ForeignKey("fk_gpus_by_machine_gpu", x => x.gpu, "gpus", "id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("fk_gpus_by_machine_machine", x => x.machine, "machines",
-                                                              "id", onDelete: ReferentialAction.Cascade);
-                                         });
+            migrationBuilder.CreateTable("processors", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                name             = table.Column<string>("char(50)", nullable: false, defaultValueSql: "''"),
+                company          = table.Column<int>("int(11)", nullable: true),
+                model_code       = table.Column<string>("varchar(45)", nullable: true),
+                introduced       = table.Column<DateTime>("datetime", nullable: true),
+                instruction_set  = table.Column<int>("int(11)", nullable: true),
+                speed            = table.Column<double>(nullable: true),
+                package          = table.Column<string>("varchar(45)", nullable: true),
+                GPRs             = table.Column<int>("int(11)", nullable: true),
+                GPR_size         = table.Column<int>("int(11)", nullable: true),
+                FPRs             = table.Column<int>("int(11)", nullable: true),
+                FPR_size         = table.Column<int>("int(11)", nullable: true),
+                cores            = table.Column<int>("int(11)", nullable: true),
+                threads_per_core = table.Column<int>("int(11)", nullable: true),
+                process          = table.Column<string>("varchar(45)", nullable: true),
+                process_nm       = table.Column<float>(nullable: true), die_size = table.Column<float>(nullable: true),
+                transistors      = table.Column<long>("bigint(20)", nullable: true),
+                data_bus         = table.Column<int>("int(11)", nullable: true),
+                addr_bus         = table.Column<int>("int(11)", nullable: true),
+                SIMD_registers   = table.Column<int>("int(11)", nullable: true),
+                SIMD_size        = table.Column<int>("int(11)", nullable: true),
+                L1_instruction   = table.Column<float>(nullable: true), L1_data = table.Column<float>(nullable: true),
+                L2               = table.Column<float>(nullable: true), L3      = table.Column<float>(nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_processors", x => x.id);
 
-            migrationBuilder.CreateTable("memory_by_machine",
-                                         table => new
-                                         {
-                                             machine = table.Column<int>("int(11)", nullable: false),
-                                             type =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             usage =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             size  = table.Column<long>("bigint(20)", nullable: true),
-                                             speed = table.Column<double>(nullable: true),
-                                             id = table.Column<long>("bigint(20)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_memory_by_machine", x => x.id);
-                                             table.ForeignKey("fk_memory_by_machine_machine", x => x.machine,
-                                                              "machines", "id", onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("fk_processors_company", x => x.company, "companies", "id",
+                                 onDelete: ReferentialAction.Restrict);
 
-            migrationBuilder.CreateTable("processors_by_machine",
-                                         table => new
-                                         {
-                                             processor = table.Column<int>("int(11)", nullable: false),
-                                             machine   = table.Column<int>("int(11)", nullable: false),
-                                             speed     = table.Column<float>(nullable: true),
-                                             id = table.Column<long>("bigint(20)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_processors_by_machine", x => x.id);
-                                             table.ForeignKey("fk_processors_by_machine_machine", x => x.machine,
-                                                              "machines", "id", onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("fk_processors_by_machine_processor", x => x.processor,
-                                                              "processors", "id", onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("fk_processors_instruction_set", x => x.instruction_set, "instruction_sets", "id",
+                                 onDelete: ReferentialAction.Restrict);
+            });
 
-            migrationBuilder.CreateTable("sound_by_machine",
-                                         table => new
-                                         {
-                                             sound_synth = table.Column<int>("int(11)", nullable: false),
-                                             machine     = table.Column<int>("int(11)", nullable: false),
-                                             id = table.Column<long>("bigint(20)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_sound_by_machine", x => x.id);
-                                             table.ForeignKey("fk_sound_by_machine_machine", x => x.machine, "machines",
-                                                              "id", onDelete: ReferentialAction.Cascade);
-                                             table.ForeignKey("fk_sound_by_machine_sound_synth", x => x.sound_synth,
-                                                              "sound_synths", "id",
-                                                              onDelete: ReferentialAction.Cascade);
-                                         });
+            migrationBuilder.CreateTable("sound_synths", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                name        = table.Column<string>("char(50)", nullable: false, defaultValueSql: "''"),
+                company     = table.Column<int>("int(11)", nullable: true),
+                model_code  = table.Column<string>("varchar(45)", nullable: true),
+                introduced  = table.Column<DateTime>("datetime", nullable: true),
+                voices      = table.Column<int>("int(11)", nullable: true),
+                frequency   = table.Column<double>(nullable: true),
+                depth       = table.Column<int>("int(11)", nullable: true),
+                square_wave = table.Column<int>("int(11)", nullable: true),
+                white_noise = table.Column<int>("int(11)", nullable: true),
+                type        = table.Column<int>("int(11)", nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_sound_synths", x => x.id);
 
-            migrationBuilder.CreateTable("storage_by_machine",
-                                         table => new
-                                         {
-                                             machine = table.Column<int>("int(11)", nullable: false),
-                                             type =
-                                                 table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
-                                             @interface =
-                                                 table.Column<int>(name: "interface", type: "int(11)", nullable: false,
-                                                                   defaultValueSql: "'0'"),
-                                             capacity = table.Column<long>("bigint(20)", nullable: true),
-                                             id = table.Column<long>("bigint(20)", nullable: false)
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn)
-                                         }, constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_storage_by_machine", x => x.id);
-                                             table.ForeignKey("fk_storage_by_machine_machine", x => x.machine,
-                                                              "machines", "id", onDelete: ReferentialAction.Cascade);
-                                         });
+                table.ForeignKey("fk_sound_synths_company", x => x.company, "companies", "id",
+                                 onDelete: ReferentialAction.Restrict);
+            });
+
+            migrationBuilder.CreateTable("resolutions_by_gpu", table => new
+            {
+                gpu = table.Column<int>("int(11)"), resolution = table.Column<int>("int(11)"),
+                id = table.Column<long>("bigint(20)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_resolutions_by_gpu", x => x.id);
+
+                table.ForeignKey("fk_resolutions_by_gpu_gpu", x => x.gpu, "gpus", "id",
+                                 onDelete: ReferentialAction.Cascade);
+
+                table.ForeignKey("fk_resolutions_by_gpu_resolution", x => x.resolution, "resolutions", "id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("machines", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                company    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                name       = table.Column<string>("varchar(255)"),
+                type       = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                introduced = table.Column<DateTime>("datetime", nullable: true),
+                family     = table.Column<int>("int(11)", nullable: true),
+                model      = table.Column<string>("varchar(50)", nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_machines", x => x.id);
+
+                table.ForeignKey("fk_machines_company", x => x.company, "companies", "id",
+                                 onDelete: ReferentialAction.Restrict);
+
+                table.ForeignKey("fk_machines_family", x => x.family, "machine_families", "id",
+                                 onDelete: ReferentialAction.Restrict);
+            });
+
+            migrationBuilder.CreateTable("instruction_set_extensions_by_processor", table => new
+            {
+                id = table.Column<int>("int(11)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                processor_id = table.Column<int>("int(11)"), extension_id = table.Column<int>("int(11)")
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_instruction_set_extensions_by_processor", x => new
+                {
+                    x.id, x.processor_id, x.extension_id
+                });
+
+                table.ForeignKey("fk_extension_extension_id", x => x.extension_id, "instruction_set_extensions", "id",
+                                 onDelete: ReferentialAction.Restrict);
+
+                table.ForeignKey("fk_extension_processor_id", x => x.processor_id, "processors", "id",
+                                 onDelete: ReferentialAction.Restrict);
+            });
+
+            migrationBuilder.CreateTable("gpus_by_machine", table => new
+            {
+                gpu = table.Column<int>("int(11)"), machine = table.Column<int>("int(11)"),
+                id = table.Column<long>("bigint(20)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_gpus_by_machine", x => x.id);
+
+                table.ForeignKey("fk_gpus_by_machine_gpu", x => x.gpu, "gpus", "id",
+                                 onDelete: ReferentialAction.Cascade);
+
+                table.ForeignKey("fk_gpus_by_machine_machine", x => x.machine, "machines", "id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("memory_by_machine", table => new
+            {
+                machine = table.Column<int>("int(11)"),
+                type    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                usage   = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                size    = table.Column<long>("bigint(20)", nullable: true),
+                speed   = table.Column<double>(nullable: true),
+                id = table.Column<long>("bigint(20)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_memory_by_machine", x => x.id);
+
+                table.ForeignKey("fk_memory_by_machine_machine", x => x.machine, "machines", "id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("processors_by_machine", table => new
+            {
+                processor = table.Column<int>("int(11)"), machine = table.Column<int>("int(11)"),
+                speed     = table.Column<float>(nullable: true),
+                id = table.Column<long>("bigint(20)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_processors_by_machine", x => x.id);
+
+                table.ForeignKey("fk_processors_by_machine_machine", x => x.machine, "machines", "id",
+                                 onDelete: ReferentialAction.Cascade);
+
+                table.ForeignKey("fk_processors_by_machine_processor", x => x.processor, "processors", "id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("sound_by_machine", table => new
+            {
+                sound_synth = table.Column<int>("int(11)"), machine = table.Column<int>("int(11)"),
+                id = table.Column<long>("bigint(20)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_sound_by_machine", x => x.id);
+
+                table.ForeignKey("fk_sound_by_machine_machine", x => x.machine, "machines", "id",
+                                 onDelete: ReferentialAction.Cascade);
+
+                table.ForeignKey("fk_sound_by_machine_sound_synth", x => x.sound_synth, "sound_synths", "id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
+
+            migrationBuilder.CreateTable("storage_by_machine", table => new
+            {
+                machine = table.Column<int>("int(11)"),
+                type    = table.Column<int>("int(11)", nullable: false, defaultValueSql: "'0'"),
+                @interface = table.Column<int>(name: "interface", type: "int(11)", nullable: false,
+                                               defaultValueSql: "'0'"),
+                capacity = table.Column<long>("bigint(20)", nullable: true),
+                id = table.Column<long>("bigint(20)").
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_storage_by_machine", x => x.id);
+
+                table.ForeignKey("fk_storage_by_machine_machine", x => x.machine, "machines", "id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
 
             migrationBuilder.CreateIndex("idx_admins_user", "admins", "user");
 
@@ -876,13 +746,20 @@ namespace Marechai.Database.Migrations
 
             migrationBuilder.CreateIndex("idx_resolutions_width", "resolutions", "width");
 
-            migrationBuilder.CreateIndex("idx_resolutions_resolution", "resolutions", new[] {"width", "height"});
+            migrationBuilder.CreateIndex("idx_resolutions_resolution", "resolutions", new[]
+            {
+                "width", "height"
+            });
 
-            migrationBuilder.CreateIndex("idx_resolutions_resolution_with_color", "resolutions",
-                                         new[] {"width", "height", "colors"});
+            migrationBuilder.CreateIndex("idx_resolutions_resolution_with_color", "resolutions", new[]
+            {
+                "width", "height", "colors"
+            });
 
-            migrationBuilder.CreateIndex("idx_resolutions_resolution_with_color_and_palette", "resolutions",
-                                         new[] {"width", "height", "colors", "palette"});
+            migrationBuilder.CreateIndex("idx_resolutions_resolution_with_color_and_palette", "resolutions", new[]
+            {
+                "width", "height", "colors", "palette"
+            });
 
             migrationBuilder.CreateIndex("idx_resolutions_by_gpu_gpu", "resolutions_by_gpu", "gpu");
 

@@ -38,16 +38,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class InstructionSetExtensionsController : Controller
     {
         readonly MarechaiContext _context;
 
-        public InstructionSetExtensionsController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public InstructionSetExtensionsController(MarechaiContext context) => _context = context;
 
         // GET: Admin/InstructionSetExtensions
         public async Task<IActionResult> Index() =>
@@ -56,15 +52,18 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/InstructionSetExtensions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             InstructionSetExtension instructionSetExtension =
                 await _context.InstructionSetExtensions.FirstOrDefaultAsync(m => m.Id == id);
-            if(instructionSetExtension == null) return NotFound();
 
-            ViewBag.Processors = _context.InstructionSetExtensionsByProcessor.Where(e => e.ExtensionId == id)
-                                         .Join(_context.Processors, p => p.ProcessorId, i => i.Id, (p, i) => i)
-                                         .Select(p => p.Name);
+            if(instructionSetExtension == null)
+                return NotFound();
+
+            ViewBag.Processors = _context.InstructionSetExtensionsByProcessor.Where(e => e.ExtensionId == id).
+                                          Join(_context.Processors, p => p.ProcessorId, i => i.Id, (p, i) => i).
+                                          Select(p => p.Name);
 
             return View(instructionSetExtension);
         }
@@ -75,14 +74,14 @@ namespace Marechai.Areas.Admin.Controllers
         // POST: Admin/InstructionSetExtensions/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Extension")] InstructionSetExtension instructionSetExtension)
         {
             if(ModelState.IsValid)
             {
                 _context.Add(instructionSetExtension);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -92,10 +91,13 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/InstructionSetExtensions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             InstructionSetExtension instructionSetExtension = await _context.InstructionSetExtensions.FindAsync(id);
-            if(instructionSetExtension == null) return NotFound();
+
+            if(instructionSetExtension == null)
+                return NotFound();
 
             return View(instructionSetExtension);
         }
@@ -103,12 +105,12 @@ namespace Marechai.Areas.Admin.Controllers
         // POST: Admin/InstructionSetExtensions/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id, [Bind("Id,Extension")] InstructionSetExtension instructionSetExtension)
         {
-            if(id != instructionSetExtension.Id) return NotFound();
+            if(id != instructionSetExtension.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -119,7 +121,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!InstructionSetExtensionExists(instructionSetExtension.Id)) return NotFound();
+                    if(!InstructionSetExtensionExists(instructionSetExtension.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -133,37 +136,35 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/InstructionSetExtensions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             InstructionSetExtension instructionSetExtension =
                 await _context.InstructionSetExtensions.FirstOrDefaultAsync(m => m.Id == id);
-            if(instructionSetExtension == null) return NotFound();
+
+            if(instructionSetExtension == null)
+                return NotFound();
 
             return View(instructionSetExtension);
         }
 
         // POST: Admin/InstructionSetExtensions/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             InstructionSetExtension instructionSetExtension = await _context.InstructionSetExtensions.FindAsync(id);
             _context.InstructionSetExtensions.Remove(instructionSetExtension);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool InstructionSetExtensionExists(int id)
-        {
-            return _context.InstructionSetExtensions.Any(e => e.Id == id);
-        }
+        bool InstructionSetExtensionExists(int id) => _context.InstructionSetExtensions.Any(e => e.Id == id);
 
         [AcceptVerbs("Get", "Post")]
         public IActionResult VerifyUnique(string extension) =>
             _context.InstructionSetExtensions.Any(i => string.Equals(i.Extension, extension,
                                                                      StringComparison.InvariantCultureIgnoreCase))
-                ? Json("Instruction set extension already exists.")
-                : Json(true);
+                ? Json("Instruction set extension already exists.") : Json(true);
     }
 }

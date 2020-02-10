@@ -7,8 +7,7 @@ namespace Marechai.Areas.Admin.Models
 {
     public class OwnedMachineViewModel : BaseViewModel<long>
     {
-        [DataType(DataType.Date)]
-        [DisplayName("Acquired")]
+        [DataType(DataType.Date), DisplayName("Acquired")]
         public DateTime AcquisitionDate { get; set; }
         public StatusType Status  { get;       set; }
         public string     Machine { get;       set; }

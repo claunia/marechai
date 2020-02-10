@@ -28,8 +28,8 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using Marechai.Database.Models;
 using Marechai.Areas.Identity;
+using Marechai.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -39,13 +39,9 @@ namespace Marechai.Areas.Identity
 {
     public class IdentityHostingStartup : IHostingStartup
     {
-        public void Configure(IWebHostBuilder builder)
+        public void Configure(IWebHostBuilder builder) => builder.ConfigureServices((context, services) =>
         {
-            builder.ConfigureServices((context, services) =>
-            {
-                services.AddDefaultIdentity<ApplicationUser>()
-                        .AddEntityFrameworkStores<MarechaiContext>();
-            });
-        }
+            services.AddDefaultIdentity<ApplicationUser>().AddEntityFrameworkStores<MarechaiContext>();
+        });
     }
 }

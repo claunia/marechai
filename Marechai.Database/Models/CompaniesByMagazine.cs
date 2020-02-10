@@ -7,8 +7,7 @@ namespace Marechai.Database.Models
     {
         public int  CompanyId  { get; set; }
         public long MagazineId { get; set; }
-        [Column(TypeName = "char(3)")]
-        [Required]
+        [Column(TypeName = "char(3)"), Required]
         public string RoleId { get; set; }
 
         public virtual DocumentCompany Company  { get; set; }

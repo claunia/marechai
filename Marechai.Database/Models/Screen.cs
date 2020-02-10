@@ -7,19 +7,15 @@ namespace Marechai.Database.Models
 {
     public class Screen : BaseModel<int>
     {
-        [Range(1, 131072)]
-        [DisplayName("Width (mm)")]
+        [Range(1, 131072), DisplayName("Width (mm)")]
         public double? Width { get; set; }
-        [Range(1, 131072)]
-        [DisplayName("Height (mm)")]
+        [Range(1, 131072), DisplayName("Height (mm)")]
         public double? Height { get; set; }
-        [Required]
-        [DisplayName("Diagonal (inches)")]
+        [Required, DisplayName("Diagonal (inches)")]
         public double Diagonal { get; set; }
         [DisplayName("Native resolution")]
         public virtual Resolution NativeResolution { get; set; }
-        [Range(2, 281474976710656)]
-        [DisplayName("Effective colors")]
+        [Range(2, 281474976710656), DisplayName("Effective colors")]
         public long? EffectiveColors { get; set; }
         [Required]
         public string Type { get; set; }
@@ -32,9 +28,11 @@ namespace Marechai.Database.Models
         {
             get
             {
-                if(Width != null && Height != null) return $"{Width}x{Height} mm";
+                if(Width  != null &&
+                   Height != null)
+                    return$"{Width}x{Height} mm";
 
-                return "Unknown";
+                return"Unknown";
             }
         }
 

@@ -41,9 +41,7 @@ namespace Marechai.Database
         /// <summary>Last inserted row's ID</summary>
         long LastInsertRowId { get; }
 
-        /// <summary>
-        ///     Opens an existing database
-        /// </summary>
+        /// <summary>Opens an existing database</summary>
         /// <param name="server">Server</param>
         /// <param name="user">User</param>
         /// <param name="database">Database name</param>
@@ -52,14 +50,10 @@ namespace Marechai.Database
         /// <returns><c>true</c> if database opened correctly, <c>false</c> otherwise</returns>
         bool OpenDb(string server, string user, string database, string password, ushort port);
 
-        /// <summary>
-        ///     Closes the database
-        /// </summary>
+        /// <summary>Closes the database</summary>
         void CloseDb();
 
-        /// <summary>
-        ///     Gets a data adapter for the opened database
-        /// </summary>
+        /// <summary>Gets a data adapter for the opened database</summary>
         /// <returns>Data adapter</returns>
         IDbDataAdapter GetNewDataAdapter();
 

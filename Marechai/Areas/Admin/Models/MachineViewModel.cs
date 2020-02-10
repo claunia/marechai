@@ -10,8 +10,7 @@ namespace Marechai.Areas.Admin.Models
         [StringLength(255)]
         public string Name { get;      set; }
         public MachineType Type { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
         public string Family { get;        set; }
         [StringLength(50)]

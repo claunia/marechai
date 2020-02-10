@@ -1,15 +1,11 @@
-@using Marechai.Database.Models
 @model IEnumerable<Marechai.Database.Models.Screen>
 
 @{
     ViewData["Title"] = "Index";
 }
-
 <h1>Screens</h1>
-
 <p>
-    <a asp-action="Create"
-       class="btn btn-primary">
+    <a asp-action="Create" class="btn btn-primary">
         Create New
     </a>
 </p>
@@ -32,7 +28,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(Screen item in Model)
+    @foreach (var item in Model)
     {
         <tr>
             <td>
@@ -48,19 +44,13 @@
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
             <td>
-                <a asp-action="Details"
-                   asp-route-id="@item.Id"
-                   class="btn btn-primary">
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">
                     Details
                 </a>
-                <a asp-action="Edit"
-                   asp-route-id="@item.Id"
-                   class="btn btn-secondary">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">
                     Edit
                 </a>
-                <a asp-action="Delete"
-                   asp-route-id="@item.Id"
-                   class="btn btn-danger">
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
                     Delete
                 </a>
             </td>

@@ -11,8 +11,7 @@ namespace Marechai.Database.Models
         [Required]
         public string Caption { get;       set; }
         public string NativeCaption { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Published { get; set; }
         [StringLength(18)]
         public string ProductCode { get; set; }

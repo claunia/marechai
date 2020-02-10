@@ -36,12 +36,12 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string BrowserTests = V21.BrowserTests;
 
-        public static readonly string MarechaiDb = "CREATE TABLE `marechai_db` (\n"                      +
-                                               "`id` int(11) NOT NULL AUTO_INCREMENT,\n"         +
-                                               "`version` int(11) NOT NULL,\n"                   +
-                                               "`updated` datetime DEFAULT CURRENT_TIMESTAMP,\n" +
-                                               "PRIMARY KEY (`id`));\n"                          +
-                                               "INSERT INTO marechai_db (version) VALUES ('22');";
+        public static readonly string MarechaiDb = "CREATE TABLE `marechai_db` (\n"                  +
+                                                   "`id` int(11) NOT NULL AUTO_INCREMENT,\n"         +
+                                                   "`version` int(11) NOT NULL,\n"                   +
+                                                   "`updated` datetime DEFAULT CURRENT_TIMESTAMP,\n" +
+                                                   "PRIMARY KEY (`id`));\n"                          +
+                                                   "INSERT INTO marechai_db (version) VALUES ('22');";
 
         public static readonly string Companies = V21.Companies;
 

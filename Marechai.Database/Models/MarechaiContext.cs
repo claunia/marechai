@@ -43,7 +43,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
         public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
         public virtual DbSet<BrowserTest>                         BrowserTests                        { get; set; }
-        public virtual DbSet<MarechaiDb>                              MarechaiDb                              { get; set; }
+        public virtual DbSet<MarechaiDb>                          MarechaiDb                          { get; set; }
         public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
         public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
         public virtual DbSet<CompaniesByMagazine>                 CompaniesByMagazines                { get; set; }
@@ -99,9 +99,10 @@ namespace Marechai.Database.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if(optionsBuilder.IsConfigured) return;
+            if(optionsBuilder.IsConfigured)
+                return;
 
-            #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+            #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http: //go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
             optionsBuilder.UseMySql("server=localhost;port=3306;user=marechai;password=marechaipass;database=marechai");
             optionsBuilder.UseLazyLoadingProxies();
         }
@@ -128,11 +129,11 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => e.Edition);
 
-                entity.HasOne(d => d.Previous).WithOne(d => d.Next).HasForeignKey<Book>(d => d.PreviousId)
-                      .OnDelete(DeleteBehavior.ClientSetNull);
+                entity.HasOne(d => d.Previous).WithOne(d => d.Next).HasForeignKey<Book>(d => d.PreviousId).
+                       OnDelete(DeleteBehavior.ClientSetNull);
 
-                entity.HasOne(d => d.Source).WithMany(d => d.Derivates).HasForeignKey(d => d.SourceId)
-                      .OnDelete(DeleteBehavior.ClientSetNull);
+                entity.HasOne(d => d.Source).WithMany(d => d.Derivates).HasForeignKey(d => d.SourceId).
+                       OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.Country).WithMany(p => p.Books).HasForeignKey(d => d.CountryId);
             });
@@ -175,51 +176,51 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Agif).HasColumnName("agif").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Agif).HasColumnName("agif").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Browser).IsRequired().HasColumnName("browser").HasColumnType("varchar(64)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Browser).IsRequired().HasColumnName("browser").HasColumnType("varchar(64)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Colors).HasColumnName("colors").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Colors).HasColumnName("colors").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Flash).HasColumnName("flash").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Flash).HasColumnName("flash").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Frames).HasColumnName("frames").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Frames).HasColumnName("frames").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Gif87).HasColumnName("gif87").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Gif87).HasColumnName("gif87").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Gif89).HasColumnName("gif89").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Gif89).HasColumnName("gif89").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Jpeg).HasColumnName("jpeg").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Jpeg).HasColumnName("jpeg").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Js).HasColumnName("js").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Os).IsRequired().HasColumnName("os").HasColumnType("varchar(32)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Os).IsRequired().HasColumnName("os").HasColumnType("varchar(32)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Platform).IsRequired().HasColumnName("platform").HasColumnType("varchar(8)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Platform).IsRequired().HasColumnName("platform").HasColumnType("varchar(8)").
+                       HasDefaultValueSql("''");
 
                 entity.Property(e => e.Png).HasColumnName("png").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Pngt).HasColumnName("pngt").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Pngt).HasColumnName("pngt").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.Table).HasColumnName("table").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Table).HasColumnName("table").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.UserAgent).IsRequired().HasColumnName("user_agent").HasColumnType("varchar(128)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.UserAgent).IsRequired().HasColumnName("user_agent").
+                       HasColumnType("varchar(128)").HasDefaultValueSql("''");
 
-                entity.Property(e => e.Version).IsRequired().HasColumnName("version").HasColumnType("varchar(16)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Version).IsRequired().HasColumnName("version").HasColumnType("varchar(16)").
+                       HasDefaultValueSql("''");
             });
 
             modelBuilder.Entity<MarechaiDb>(entity =>
@@ -228,8 +229,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Updated).HasColumnName("updated").HasColumnType("datetime")
-                      .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(e => e.Updated).HasColumnName("updated").HasColumnType("datetime").
+                       HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.Property(e => e.Version).HasColumnName("version").HasColumnType("int(11)");
             });
@@ -315,8 +316,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Founded).HasColumnName("founded").HasColumnType("datetime");
 
-                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("varchar(128)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("varchar(128)").
+                       HasDefaultValueSql("''");
 
                 entity.Property(e => e.PostalCode).HasColumnName("postal_code").HasColumnType("varchar(25)");
 
@@ -332,21 +333,24 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Website).HasColumnName("website").HasColumnType("varchar(255)");
 
-                entity.HasOne(d => d.Country).WithMany(p => p.Companies).HasForeignKey(d => d.CountryId)
-                      .HasConstraintName("fk_companies_country");
+                entity.HasOne(d => d.Country).WithMany(p => p.Companies).HasForeignKey(d => d.CountryId).
+                       HasConstraintName("fk_companies_country");
 
-                entity.HasOne(d => d.SoldTo).WithMany(p => p.InverseSoldToNavigation).HasForeignKey(d => d.SoldToId)
-                      .HasConstraintName("fk_companies_sold_to");
+                entity.HasOne(d => d.SoldTo).WithMany(p => p.InverseSoldToNavigation).HasForeignKey(d => d.SoldToId).
+                       HasConstraintName("fk_companies_sold_to");
 
-                entity.HasOne(d => d.DocumentCompany).WithOne(p => p.Company)
-                      .HasForeignKey<DocumentCompany>(d => d.CompanyId).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(d => d.DocumentCompany).WithOne(p => p.Company).
+                       HasForeignKey<DocumentCompany>(d => d.CompanyId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<CompanyDescription>().HasIndex(e => e.Text).ForMySqlIsFullText();
 
             modelBuilder.Entity<CompanyLogo>(entity =>
             {
-                entity.HasKey(e => new {e.Id, e.CompanyId, LogoGuid = e.Guid});
+                entity.HasKey(e => new
+                {
+                    e.Id, e.CompanyId, LogoGuid = e.Guid
+                });
 
                 entity.ToTable("company_logos");
 
@@ -364,8 +368,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Year).HasColumnName("year").HasColumnType("int(4)");
 
-                entity.HasOne(d => d.Company).WithMany(p => p.Logos).HasForeignKey(d => d.CompanyId)
-                      .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_company_logos_company1");
+                entity.HasOne(d => d.Company).WithMany(p => p.Logos).HasForeignKey(d => d.CompanyId).
+                       OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_company_logos_company1");
             });
 
             modelBuilder.Entity<Document>(entity =>
@@ -402,8 +406,8 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => e.DisplayName);
 
-                entity.HasOne(d => d.Person).WithOne(p => p.DocumentPerson)
-                      .HasForeignKey<Person>(d => d.DocumentPersonId).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(d => d.Person).WithOne(p => p.DocumentPerson).
+                       HasForeignKey<Person>(d => d.DocumentPersonId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<DocumentRole>(entity =>
@@ -451,17 +455,17 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Browser).IsRequired().HasColumnName("browser").HasColumnType("char(128)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Browser).IsRequired().HasColumnName("browser").HasColumnType("char(128)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("char(20)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("char(20)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Ip).IsRequired().HasColumnName("ip").HasColumnType("char(16)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Ip).IsRequired().HasColumnName("ip").HasColumnType("char(16)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Referer).IsRequired().HasColumnName("referer").HasColumnType("char(255)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Referer).IsRequired().HasColumnName("referer").HasColumnType("char(255)").
+                       HasDefaultValueSql("''");
             });
 
             modelBuilder.Entity<Gpu>(entity =>
@@ -496,8 +500,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.ModelCode).HasColumnName("model_code").HasColumnType("varchar(45)");
 
-                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("char(128)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("char(128)").
+                       HasDefaultValueSql("''");
 
                 entity.Property(e => e.Package).HasColumnName("package").HasColumnType("varchar(45)");
 
@@ -507,8 +511,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Transistors).HasColumnName("transistors").HasColumnType("bigint(20)");
 
-                entity.HasOne(d => d.Company).WithMany(p => p.Gpus).HasForeignKey(d => d.CompanyId)
-                      .HasConstraintName("fk_gpus_company");
+                entity.HasOne(d => d.Company).WithMany(p => p.Gpus).HasForeignKey(d => d.CompanyId).
+                       HasConstraintName("fk_gpus_company");
             });
 
             modelBuilder.Entity<GpusByMachine>(entity =>
@@ -525,11 +529,11 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.MachineId).HasColumnName("machine").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.Gpu).WithMany(p => p.GpusByMachine).HasForeignKey(d => d.GpuId)
-                      .HasConstraintName("fk_gpus_by_machine_gpu");
+                entity.HasOne(d => d.Gpu).WithMany(p => p.GpusByMachine).HasForeignKey(d => d.GpuId).
+                       HasConstraintName("fk_gpus_by_machine_gpu");
 
-                entity.HasOne(d => d.Machine).WithMany(p => p.Gpus).HasForeignKey(d => d.MachineId)
-                      .HasConstraintName("fk_gpus_by_machine_machine");
+                entity.HasOne(d => d.Machine).WithMany(p => p.Gpus).HasForeignKey(d => d.MachineId).
+                       HasConstraintName("fk_gpus_by_machine_machine");
             });
 
             modelBuilder.Entity<GpusByOwnedMachine>(entity =>
@@ -552,7 +556,10 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<InstructionSetExtensionsByProcessor>(entity =>
             {
-                entity.HasKey(e => new {e.Id, e.ProcessorId, e.ExtensionId});
+                entity.HasKey(e => new
+                {
+                    e.Id, e.ProcessorId, e.ExtensionId
+                });
 
                 entity.ToTable("instruction_set_extensions_by_processor");
 
@@ -566,13 +573,13 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.ExtensionId).HasColumnName("extension_id").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.Extension).WithMany(p => p.InstructionSetExtensionsByProcessor)
-                      .HasForeignKey(d => d.ExtensionId).OnDelete(DeleteBehavior.ClientSetNull)
-                      .HasConstraintName("fk_extension_extension_id");
+                entity.HasOne(d => d.Extension).WithMany(p => p.InstructionSetExtensionsByProcessor).
+                       HasForeignKey(d => d.ExtensionId).OnDelete(DeleteBehavior.ClientSetNull).
+                       HasConstraintName("fk_extension_extension_id");
 
-                entity.HasOne(d => d.Processor).WithMany(p => p.InstructionSetExtensions)
-                      .HasForeignKey(d => d.ProcessorId).OnDelete(DeleteBehavior.ClientSetNull)
-                      .HasConstraintName("fk_extension_processor_id");
+                entity.HasOne(d => d.Processor).WithMany(p => p.InstructionSetExtensions).
+                       HasForeignKey(d => d.ProcessorId).OnDelete(DeleteBehavior.ClientSetNull).
+                       HasConstraintName("fk_extension_processor_id");
             });
 
             modelBuilder.Entity<InstructionSet>(entity =>
@@ -632,17 +639,17 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Browser).IsRequired().HasColumnName("browser").HasColumnType("char(128)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Browser).IsRequired().HasColumnName("browser").HasColumnType("char(128)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("char(20)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("char(20)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Ip).IsRequired().HasColumnName("ip").HasColumnType("char(16)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Ip).IsRequired().HasColumnName("ip").HasColumnType("char(16)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Referer).IsRequired().HasColumnName("referer").HasColumnType("char(255)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Referer).IsRequired().HasColumnName("referer").HasColumnType("char(255)").
+                       HasDefaultValueSql("''");
             });
 
             modelBuilder.Entity<MachineFamily>(entity =>
@@ -659,8 +666,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("varchar(255)");
 
-                entity.HasOne(d => d.Company).WithMany(p => p.MachineFamilies).HasForeignKey(d => d.CompanyId)
-                      .HasConstraintName("fk_machine_families_company");
+                entity.HasOne(d => d.Company).WithMany(p => p.MachineFamilies).HasForeignKey(d => d.CompanyId).
+                       HasConstraintName("fk_machine_families_company");
             });
 
             modelBuilder.Entity<Machine>(entity =>
@@ -681,8 +688,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.CompanyId).HasColumnName("company").HasColumnType("int(11)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.CompanyId).HasColumnName("company").HasColumnType("int(11)").
+                       HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.FamilyId).HasColumnName("family").HasColumnType("int(11)");
 
@@ -694,11 +701,11 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
 
-                entity.HasOne(d => d.Company).WithMany(p => p.Machines).HasForeignKey(d => d.CompanyId)
-                      .OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_machines_company");
+                entity.HasOne(d => d.Company).WithMany(p => p.Machines).HasForeignKey(d => d.CompanyId).
+                       OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("fk_machines_company");
 
-                entity.HasOne(d => d.Family).WithMany(p => p.Machines).HasForeignKey(d => d.FamilyId)
-                      .HasConstraintName("fk_machines_family");
+                entity.HasOne(d => d.Family).WithMany(p => p.Machines).HasForeignKey(d => d.FamilyId).
+                       HasConstraintName("fk_machines_family");
             });
 
             modelBuilder.Entity<OwnedMachine>(entity =>
@@ -954,8 +961,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Usage).HasColumnName("usage").HasColumnType("int(11)").HasDefaultValueSql("'0'");
 
-                entity.HasOne(d => d.Machine).WithMany(p => p.Memory).HasForeignKey(d => d.MachineId)
-                      .HasConstraintName("fk_memory_by_machine_machine");
+                entity.HasOne(d => d.Machine).WithMany(p => p.Memory).HasForeignKey(d => d.MachineId).
+                       HasConstraintName("fk_memory_by_machine_machine");
             });
 
             modelBuilder.Entity<MemoryByOwnedMachine>(entity =>
@@ -983,11 +990,11 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Donator).IsRequired().HasColumnName("donator").HasColumnType("char(128)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Donator).IsRequired().HasColumnName("donator").HasColumnType("char(128)").
+                       HasDefaultValueSql("''");
 
-                entity.Property(e => e.Quantity).HasColumnName("quantity").HasColumnType("decimal(11,2)")
-                      .HasDefaultValueSql("'0.00'");
+                entity.Property(e => e.Quantity).HasColumnName("quantity").HasColumnType("decimal(11,2)").
+                       HasDefaultValueSql("'0.00'");
             });
 
             modelBuilder.Entity<News>(entity =>
@@ -1002,8 +1009,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.AddedId).HasColumnName("added_id").HasColumnType("int(11)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.AddedId).HasColumnName("added_id").HasColumnType("int(11)").
+                       HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("datetime");
 
@@ -1086,8 +1093,8 @@ namespace Marechai.Database.Models
 
                 entity.HasOne(d => d.CountryOfBirth).WithMany(p => p.People).HasForeignKey(d => d.CountryOfBirthId);
 
-                entity.HasOne(d => d.DocumentPerson).WithOne(p => p.Person)
-                      .HasForeignKey<DocumentPerson>(d => d.PersonId).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(d => d.DocumentPerson).WithOne(p => p.Person).
+                       HasForeignKey<DocumentPerson>(d => d.PersonId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Processor>(entity =>
@@ -1174,8 +1181,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.ModelCode).HasColumnName("model_code").HasColumnType("varchar(45)");
 
-                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("char(50)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("char(50)").
+                       HasDefaultValueSql("''");
 
                 entity.Property(e => e.Package).HasColumnName("package").HasColumnType("varchar(45)");
 
@@ -1193,11 +1200,11 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Transistors).HasColumnName("transistors").HasColumnType("bigint(20)");
 
-                entity.HasOne(d => d.Company).WithMany(p => p.Processors).HasForeignKey(d => d.CompanyId)
-                      .HasConstraintName("fk_processors_company");
+                entity.HasOne(d => d.Company).WithMany(p => p.Processors).HasForeignKey(d => d.CompanyId).
+                       HasConstraintName("fk_processors_company");
 
-                entity.HasOne(d => d.InstructionSet).WithMany(p => p.Processors).HasForeignKey(d => d.InstructionSetId)
-                      .HasConstraintName("fk_processors_instruction_set");
+                entity.HasOne(d => d.InstructionSet).WithMany(p => p.Processors).HasForeignKey(d => d.InstructionSetId).
+                       HasConstraintName("fk_processors_instruction_set");
             });
 
             modelBuilder.Entity<ProcessorsByMachine>(entity =>
@@ -1218,11 +1225,11 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Speed).HasColumnName("speed");
 
-                entity.HasOne(d => d.Machine).WithMany(p => p.Processors).HasForeignKey(d => d.MachineId)
-                      .HasConstraintName("fk_processors_by_machine_machine");
+                entity.HasOne(d => d.Machine).WithMany(p => p.Processors).HasForeignKey(d => d.MachineId).
+                       HasConstraintName("fk_processors_by_machine_machine");
 
-                entity.HasOne(d => d.Processor).WithMany(p => p.ProcessorsByMachine).HasForeignKey(d => d.ProcessorId)
-                      .HasConstraintName("fk_processors_by_machine_processor");
+                entity.HasOne(d => d.Processor).WithMany(p => p.ProcessorsByMachine).HasForeignKey(d => d.ProcessorId).
+                       HasConstraintName("fk_processors_by_machine_processor");
             });
 
             modelBuilder.Entity<ProcessorsByOwnedMachine>(entity =>
@@ -1248,23 +1255,30 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => e.Width).HasName("idx_resolutions_width");
 
-                entity.HasIndex(e => new {e.Width, e.Height}).HasName("idx_resolutions_resolution");
+                entity.HasIndex(e => new
+                {
+                    e.Width, e.Height
+                }).HasName("idx_resolutions_resolution");
 
-                entity.HasIndex(e => new {e.Width, e.Height, e.Colors})
-                      .HasName("idx_resolutions_resolution_with_color");
+                entity.HasIndex(e => new
+                {
+                    e.Width, e.Height, e.Colors
+                }).HasName("idx_resolutions_resolution_with_color");
 
-                entity.HasIndex(e => new {e.Width, e.Height, e.Colors, e.Palette})
-                      .HasName("idx_resolutions_resolution_with_color_and_palette");
+                entity.HasIndex(e => new
+                {
+                    e.Width, e.Height, e.Colors, e.Palette
+                }).HasName("idx_resolutions_resolution_with_color_and_palette");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-                entity.Property(e => e.Chars).HasColumnName("chars").HasColumnType("tinyint(1)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Chars).HasColumnName("chars").HasColumnType("tinyint(1)").
+                       HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Colors).HasColumnName("colors").HasColumnType("bigint(20)");
 
-                entity.Property(e => e.Height).HasColumnName("height").HasColumnType("int(11)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Height).HasColumnName("height").HasColumnType("int(11)").
+                       HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Palette).HasColumnName("palette").HasColumnType("bigint(20)");
 
@@ -1285,11 +1299,11 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.ResolutionId).HasColumnName("resolution").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.Gpu).WithMany(p => p.ResolutionsByGpu).HasForeignKey(d => d.GpuId)
-                      .HasConstraintName("fk_resolutions_by_gpu_gpu");
+                entity.HasOne(d => d.Gpu).WithMany(p => p.ResolutionsByGpu).HasForeignKey(d => d.GpuId).
+                       HasConstraintName("fk_resolutions_by_gpu_gpu");
 
-                entity.HasOne(d => d.Resolution).WithMany(p => p.ResolutionsByGpu).HasForeignKey(d => d.ResolutionId)
-                      .HasConstraintName("fk_resolutions_by_gpu_resolution");
+                entity.HasOne(d => d.Resolution).WithMany(p => p.ResolutionsByGpu).HasForeignKey(d => d.ResolutionId).
+                       HasConstraintName("fk_resolutions_by_gpu_resolution");
             });
 
             modelBuilder.Entity<ResolutionsByScreen>(entity =>
@@ -1335,11 +1349,11 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.SoundSynthId).HasColumnName("sound_synth").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.Machine).WithMany(p => p.Sound).HasForeignKey(d => d.MachineId)
-                      .HasConstraintName("fk_sound_by_machine_machine");
+                entity.HasOne(d => d.Machine).WithMany(p => p.Sound).HasForeignKey(d => d.MachineId).
+                       HasConstraintName("fk_sound_by_machine_machine");
 
-                entity.HasOne(d => d.SoundSynth).WithMany(p => p.SoundByMachine).HasForeignKey(d => d.SoundSynthId)
-                      .HasConstraintName("fk_sound_by_machine_sound_synth");
+                entity.HasOne(d => d.SoundSynth).WithMany(p => p.SoundByMachine).HasForeignKey(d => d.SoundSynthId).
+                       HasConstraintName("fk_sound_by_machine_sound_synth");
             });
 
             modelBuilder.Entity<SoundByOwnedMachine>(entity =>
@@ -1387,8 +1401,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.ModelCode).HasColumnName("model_code").HasColumnType("varchar(45)");
 
-                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("char(50)")
-                      .HasDefaultValueSql("''");
+                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("char(50)").
+                       HasDefaultValueSql("''");
 
                 entity.Property(e => e.SquareWave).HasColumnName("square_wave").HasColumnType("int(11)");
 
@@ -1398,8 +1412,8 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.WhiteNoise).HasColumnName("white_noise").HasColumnType("int(11)");
 
-                entity.HasOne(d => d.Company).WithMany(p => p.SoundSynths).HasForeignKey(d => d.CompanyId)
-                      .HasConstraintName("fk_sound_synths_company");
+                entity.HasOne(d => d.Company).WithMany(p => p.SoundSynths).HasForeignKey(d => d.CompanyId).
+                       HasConstraintName("fk_sound_synths_company");
             });
 
             modelBuilder.Entity<StorageByMachine>(entity =>
@@ -1418,15 +1432,15 @@ namespace Marechai.Database.Models
 
                 entity.Property(e => e.Capacity).HasColumnName("capacity").HasColumnType("bigint(20)");
 
-                entity.Property(e => e.Interface).HasColumnName("interface").HasColumnType("int(11)")
-                      .HasDefaultValueSql("'0'");
+                entity.Property(e => e.Interface).HasColumnName("interface").HasColumnType("int(11)").
+                       HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.MachineId).HasColumnName("machine").HasColumnType("int(11)");
 
                 entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
 
-                entity.HasOne(d => d.Machine).WithMany(p => p.Storage).HasForeignKey(d => d.MachineId)
-                      .HasConstraintName("fk_storage_by_machine_machine");
+                entity.HasOne(d => d.Machine).WithMany(p => p.Storage).HasForeignKey(d => d.MachineId).
+                       HasConstraintName("fk_storage_by_machine_machine");
             });
 
             modelBuilder.Entity<StorageByOwnedMachine>(entity =>

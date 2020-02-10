@@ -8,7 +8,7 @@
 // --[ Description ] ----------------------------------------------------------
 //
 //     Describes general purpose processors or application specific coprocessors
-//     that are not strictly for graphic or sound generation. 
+//     that are not strictly for graphic or sound generation.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -45,15 +45,12 @@ namespace Marechai.Database.Models
             ProcessorsByMachine      = new HashSet<ProcessorsByMachine>();
         }
 
-        [Required]
-        [StringLength(50)]
+        [Required, StringLength(50)]
         public string Name { get;    set; }
         public int? CompanyId { get; set; }
-        [DisplayName("Model code")]
-        [StringLength(45)]
+        [DisplayName("Model code"), StringLength(45)]
         public string ModelCode { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
         [DisplayName("Instruction set")]
         public int? InstructionSetId { get; set; }

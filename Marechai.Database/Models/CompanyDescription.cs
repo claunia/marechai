@@ -36,11 +36,9 @@ namespace Marechai.Database.Models
     public class CompanyDescription : BaseModel<int>
     {
         public int CompanyId { get; set; }
-        [MaxLength(262144, ErrorMessage = "Description is too long")]
-        [Required]
+        [MaxLength(262144, ErrorMessage = "Description is too long"), Required]
         public string Text { get; set; }
-        [MaxLength(262144, ErrorMessage = "Description is too long")]
-        [DisplayName("HTML")]
+        [MaxLength(262144, ErrorMessage = "Description is too long"), DisplayName("HTML")]
         public string Html { get; set; }
 
         public virtual Company Company { get; set; }

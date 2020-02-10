@@ -29,15 +29,12 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 }
-@using Marechai.Database.Models
 @model IEnumerable<Marechai.Database.Models.News>
 
 @{
     ViewData["Title"] = "News (Admin)";
 }
-
 <h2>News</h2>
-
 <table class="table">
     <thead>
     <tr>
@@ -54,7 +51,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(News item in Model)
+    @foreach (var item in Model)
     {
         <tr>
             <td>
@@ -67,9 +64,7 @@
                 @Html.DisplayFor(modelItem => item.AddedId)
             </td>
             <td>
-                <a asp-action="Delete"
-                   asp-route-id="@item.Id"
-                   class="btn btn-danger">
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
                     Delete
                 </a>
             </td>

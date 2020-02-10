@@ -34,9 +34,7 @@
 @{
     ViewData["Title"] = "Details";
 }
-
 <h2>Details</h2>
-
 <div>
     <h4>Sound synthetizer</h4>
     <hr />
@@ -104,13 +102,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit"
-       asp-route-id="@Model.Id"
-       class="btn btn-primary">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
         Edit
     </a>
-    <a asp-action="Index"
-       class="btn btn-secondary">
+    <a asp-action="Index" class="btn btn-secondary">
         Back to List
     </a>
 </div>

@@ -45,15 +45,12 @@ namespace Marechai.Database.Models
             ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
         }
 
-        [Required]
-        [StringLength(128)]
+        [Required, StringLength(128)]
         public string Name { get;    set; }
         public int? CompanyId { get; set; }
-        [DisplayName("Model code")]
-        [StringLength(45)]
+        [DisplayName("Model code"), StringLength(45)]
         public string ModelCode { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
         [StringLength(45)]
         public string Package { get; set; }

@@ -7,30 +7,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class LicensesController : Controller
     {
         readonly MarechaiContext _context;
 
-        public LicensesController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public LicensesController(MarechaiContext context) => _context = context;
 
         // GET: Licenses
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Licenses.OrderBy(l => l.Name).ToListAsync());
-        }
+        public async Task<IActionResult> Index() => View(await _context.Licenses.OrderBy(l => l.Name).ToListAsync());
 
         // GET: Licenses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             License license = await _context.Licenses.FirstOrDefaultAsync(m => m.Id == id);
-            if(license == null) return NotFound();
+
+            if(license == null)
+                return NotFound();
 
             return View(license);
         }
@@ -39,10 +35,9 @@ namespace Marechai
         public IActionResult Create() => View();
 
         // POST: Licenses/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,SPDX,FsfApproved,OsiApproved,Link,Text,Id")]
                                                 License license)
         {
@@ -50,6 +45,7 @@ namespace Marechai
             {
                 _context.Add(license);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -59,23 +55,26 @@ namespace Marechai
         // GET: Licenses/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             License license = await _context.Licenses.FindAsync(id);
-            if(license == null) return NotFound();
+
+            if(license == null)
+                return NotFound();
 
             return View(license);
         }
 
         // POST: Licenses/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Name,SPDX,FsfApproved,OsiApproved,Link,Text,Id")]
                                               License license)
         {
-            if(id != license.Id) return NotFound();
+            if(id != license.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -86,7 +85,8 @@ namespace Marechai
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!LicenseExists(license.Id)) return NotFound();
+                    if(!LicenseExists(license.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -100,29 +100,28 @@ namespace Marechai
         // GET: Licenses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             License license = await _context.Licenses.FirstOrDefaultAsync(m => m.Id == id);
-            if(license == null) return NotFound();
+
+            if(license == null)
+                return NotFound();
 
             return View(license);
         }
 
         // POST: Licenses/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             License license = await _context.Licenses.FindAsync(id);
             _context.Licenses.Remove(license);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool LicenseExists(int id)
-        {
-            return _context.Licenses.Any(e => e.Id == id);
-        }
+        bool LicenseExists(int id) => _context.Licenses.Any(e => e.Id == id);
     }
 }

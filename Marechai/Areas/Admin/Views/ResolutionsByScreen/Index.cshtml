@@ -1,15 +1,11 @@
-@using Marechai.Database.Models
 @model IEnumerable<Marechai.Database.Models.ResolutionsByScreen>
 
 @{
     ViewData["Title"] = "Index";
 }
-
 <h1>Resolutions by screen</h1>
-
 <p>
-    <a asp-action="Create"
-       class="btn btn-primary">
+    <a asp-action="Create" class="btn btn-primary">
         Create New
     </a>
 </p>
@@ -26,31 +22,30 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(ResolutionsByScreen item in Model)
+    @foreach (var item in Model)
     {
         <tr>
             <td>
-                @if(item.Screen.NativeResolution != null) { @($"{item.Screen.Diagonal}\" {item.Screen.Type} with {item.Screen.NativeResolution}") }
+                @if (item.Screen.NativeResolution != null)
+                {
+                    @($"{item.Screen.Diagonal}\" {item.Screen.Type} with {item.Screen.NativeResolution}")
+                }
                 else
-                { @($"{item.Screen.Diagonal}\" {item.Screen.Type}") }
+                {
+                    @($"{item.Screen.Diagonal}\" {item.Screen.Type}")
+                }
             </td>
             <td>
                 @item.Resolution.ToString()
             </td>
             <td>
-                <a asp-action="Details"
-                   asp-route-id="@item.Id"
-                   class="btn btn-primary">
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">
                     Details
                 </a>
-                <a asp-action="Edit"
-                   asp-route-id="@item.Id"
-                   class="btn btn-secondary">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">
                     Edit
                 </a>
-                <a asp-action="Delete"
-                   asp-route-id="@item.Id"
-                   class="btn btn-danger">
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
                     Delete
                 </a>
             </td>

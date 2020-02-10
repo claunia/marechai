@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Marechai.Database.Models;
 using Marechai.Areas.Admin.Models;
+using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +17,10 @@ using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class CompanyLogosController : Controller
     {
-        readonly MarechaiContext         _context;
+        readonly MarechaiContext     _context;
         readonly IHostingEnvironment hostingEnvironment;
 
         public CompanyLogosController(MarechaiContext context, IHostingEnvironment env)
@@ -34,21 +33,25 @@ namespace Marechai.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<CompanyLogo, Company> marechaiContext = _context.CompanyLogos.Include(c => c.Company);
-            return View(await marechaiContext.OrderBy(l => l.Company.Name).ThenBy(l => l.Year)
-                                         .Select(l => new CompanyLogoViewModel
-                                          {
-                                              Company = l.Company.Name, Id = l.Id, Year = l.Year
-                                          }).ToListAsync());
+
+            return View(await marechaiContext.OrderBy(l => l.Company.Name).ThenBy(l => l.Year).
+                                              Select(l => new CompanyLogoViewModel
+                                              {
+                                                  Company = l.Company.Name, Id = l.Id, Year = l.Year
+                                              }).ToListAsync());
         }
 
         // GET: CompanyLogos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
-            CompanyLogo companyLogo = await _context.CompanyLogos
-                                                    .Include(c => c.Company).FirstOrDefaultAsync(m => m.Id == id);
-            if(companyLogo == null) return NotFound();
+            CompanyLogo companyLogo =
+                await _context.CompanyLogos.Include(c => c.Company).FirstOrDefaultAsync(m => m.Id == id);
+
+            if(companyLogo == null)
+                return NotFound();
 
             return View(companyLogo);
         }
@@ -57,10 +60,11 @@ namespace Marechai.Areas.Admin.Controllers
         // TODO: Upload
         public IActionResult Create()
         {
-            ViewData["CompanyId"] =
-                new
-                    SelectList(_context.Companies.Select(c => new CompanyViewModel {Name = c.Name, Id = c.Id}).OrderBy(c => c.Name),
-                               "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(_context.Companies.Select(c => new CompanyViewModel
+            {
+                Name = c.Name, Id = c.Id
+            }).OrderBy(c => c.Name), "Id", "Name");
+
             return View();
         }
 
@@ -68,20 +72,20 @@ namespace Marechai.Areas.Admin.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         // TODO: Upload
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CompanyId,Year,SvgLogo")] CompanyLogo companyLogo)
         {
             if(!ModelState.IsValid)
             {
-                ViewData["CompanyId"] =
-                    new
-                        SelectList(_context.Companies.Select(c => new CompanyViewModel {Name = c.Name, Id = c.Id}).OrderBy(c => c.Name),
-                                   "Id", "Name", companyLogo.CompanyId);
+                ViewData["CompanyId"] = new SelectList(_context.Companies.Select(c => new CompanyViewModel
+                {
+                    Name = c.Name, Id = c.Id
+                }).OrderBy(c => c.Name), "Id", "Name", companyLogo.CompanyId);
+
                 return View(companyLogo);
             }
 
-            using(MemoryStream svgMs = new MemoryStream())
+            using(var svgMs = new MemoryStream())
             {
                 await companyLogo.SvgLogo.CopyToAsync(svgMs);
 
@@ -89,9 +93,9 @@ namespace Marechai.Areas.Admin.Controllers
 
                 try
                 {
-                    StreamReader sr     = new StreamReader(svgMs, Encoding.UTF8);
-                    string       svgStr = await sr.ReadToEndAsync();
-                    XmlDocument  xml    = new XmlDocument();
+                    var    sr     = new StreamReader(svgMs, Encoding.UTF8);
+                    string svgStr = await sr.ReadToEndAsync();
+                    var    xml    = new XmlDocument();
                     xml.LoadXml(svgStr);
                 }
                 catch(XmlException)
@@ -99,10 +103,11 @@ namespace Marechai.Areas.Admin.Controllers
                     companyLogo.SvgLogo      = null;
                     companyLogo.ErrorMessage = "Not a valid SVG file.";
 
-                    ViewData["CompanyId"] =
-                        new
-                            SelectList(_context.Companies.Select(c => new CompanyViewModel {Name = c.Name, Id = c.Id}).OrderBy(c => c.Name),
-                                       "Id", "Name", companyLogo.CompanyId);
+                    ViewData["CompanyId"] = new SelectList(_context.Companies.Select(c => new CompanyViewModel
+                    {
+                        Name = c.Name, Id = c.Id
+                    }).OrderBy(c => c.Name), "Id", "Name", companyLogo.CompanyId);
+
                     return View(companyLogo);
                 }
 
@@ -111,19 +116,21 @@ namespace Marechai.Areas.Admin.Controllers
 
                 string vectorial = Path.Combine(hostingEnvironment.WebRootPath, "assets/logos",
                                                 companyLogo.Guid + ".svg");
+
                 if(System.IO.File.Exists(vectorial))
                 {
                     companyLogo.SvgLogo      = null;
                     companyLogo.ErrorMessage = "GUID clash, please retry and report to the administrator.";
 
-                    ViewData["CompanyId"] =
-                        new
-                            SelectList(_context.Companies.Select(c => new CompanyViewModel {Name = c.Name, Id = c.Id}).OrderBy(c => c.Name),
-                                       "Id", "Name", companyLogo.CompanyId);
+                    ViewData["CompanyId"] = new SelectList(_context.Companies.Select(c => new CompanyViewModel
+                    {
+                        Name = c.Name, Id = c.Id
+                    }).OrderBy(c => c.Name), "Id", "Name", companyLogo.CompanyId);
+
                     return View(companyLogo);
                 }
 
-                FileStream outSvg = new FileStream(vectorial, FileMode.CreateNew);
+                var outSvg = new FileStream(vectorial, FileMode.CreateNew);
                 await svgMs.CopyToAsync(outSvg);
                 svgMs.Position = 0;
 
@@ -131,28 +138,39 @@ namespace Marechai.Areas.Admin.Controllers
 
                 try
                 {
-                    foreach(string format in new[] {"png", "webp"})
+                    foreach(string format in new[]
                     {
-                        if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format))) ;
+                        "png", "webp"
+                    })
+                    {
+                        if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format)))
+                            ;
+
                         Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format));
 
                         SKEncodedImageFormat skFormat;
+
                         switch(format)
                         {
-                            case "webp":
+                            case"webp":
                                 skFormat = SKEncodedImageFormat.Webp;
+
                                 break;
                             default:
                                 skFormat = SKEncodedImageFormat.Png;
+
                                 break;
                         }
 
-                        foreach(int multiplier in new[] {1, 2, 3})
+                        foreach(int multiplier in new[]
+                        {
+                            1, 2, 3
+                        })
                         {
                             if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format,
                                                               $"{multiplier}x")))
-                            Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos",
-                                                                   format, $"{multiplier}x"));
+                                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos",
+                                                                       format, $"{multiplier}x"));
 
                             string rendered = Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format,
                                                            $"{multiplier}x", companyLogo.Guid + $".{format}");
@@ -163,29 +181,34 @@ namespace Marechai.Areas.Admin.Controllers
                                 companyLogo.ErrorMessage = "GUID clash, please retry and report to the administrator.";
 
                                 ViewData["CompanyId"] =
-                                    new
-                                        SelectList(_context.Companies.Select(c => new CompanyViewModel {Name = c.Name, Id = c.Id}).OrderBy(c => c.Name),
-                                                   "Id", "Name", companyLogo.CompanyId);
+                                    new SelectList(_context.Companies.Select(c => new CompanyViewModel
+                                    {
+                                        Name = c.Name, Id = c.Id
+                                    }).OrderBy(c => c.Name), "Id", "Name", companyLogo.CompanyId);
+
                                 return View(companyLogo);
                             }
 
                             Console.WriteLine("Rendering {0}", rendered);
+
                             if(svg == null)
                             {
                                 svg = new SKSvg();
                                 svg.Load(svgMs);
                             }
 
-                            SKRect   svgSize = svg.Picture.CullRect;
-                            SKMatrix matrix  = SKMatrix.MakeScale(multiplier, multiplier);
-                            SKBitmap bitmap = new SKBitmap((int)(svgSize.Width  * multiplier),
-                                                           (int)(svgSize.Height * multiplier));
-                            SKCanvas canvas = new SKCanvas(bitmap);
+                            SKRect svgSize = svg.Picture.CullRect;
+                            var    matrix  = SKMatrix.MakeScale(multiplier, multiplier);
+
+                            var bitmap = new SKBitmap((int)(svgSize.Width  * multiplier),
+                                                      (int)(svgSize.Height * multiplier));
+
+                            var canvas = new SKCanvas(bitmap);
                             canvas.DrawPicture(svg.Picture, ref matrix);
                             canvas.Flush();
-                            SKImage    image = SKImage.FromBitmap(bitmap);
-                            SKData     data  = image.Encode(skFormat, 100);
-                            FileStream outfs = new FileStream(rendered, FileMode.CreateNew);
+                            var    image = SKImage.FromBitmap(bitmap);
+                            SKData data  = image.Encode(skFormat, 100);
+                            var    outfs = new FileStream(rendered, FileMode.CreateNew);
                             data.SaveTo(outfs);
                             outfs.Close();
 
@@ -193,30 +216,40 @@ namespace Marechai.Areas.Admin.Controllers
                         }
                     }
 
-                    foreach(string format in new[] {"png", "webp"})
+                    foreach(string format in new[]
+                    {
+                        "png", "webp"
+                    })
                     {
                         if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos/thumbs",
                                                           format)))
-                        Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos/thumbs",
-                                                               format));
+                            Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath,
+                                                                   "assets/logos/thumbs", format));
 
                         SKEncodedImageFormat skFormat;
+
                         switch(format)
                         {
-                            case "webp":
+                            case"webp":
                                 skFormat = SKEncodedImageFormat.Webp;
+
                                 break;
                             default:
                                 skFormat = SKEncodedImageFormat.Png;
+
                                 break;
                         }
 
-                        foreach(int multiplier in new[] {1, 2, 3})
+                        foreach(int multiplier in new[]
+                        {
+                            1, 2, 3
+                        })
                         {
                             if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos/thumbs",
                                                               format, $"{multiplier}x")))
-                            Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath,
-                                                                   "assets/logos/thumbs", format, $"{multiplier}x"));
+                                Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath,
+                                                                       "assets/logos/thumbs", format,
+                                                                       $"{multiplier}x"));
 
                             string rendered = Path.Combine(hostingEnvironment.WebRootPath, "assets/logos/thumbs",
                                                            format, $"{multiplier}x", companyLogo.Guid + $".{format}");
@@ -227,32 +260,37 @@ namespace Marechai.Areas.Admin.Controllers
                                 companyLogo.ErrorMessage = "GUID clash, please retry and report to the administrator.";
 
                                 ViewData["CompanyId"] =
-                                    new
-                                        SelectList(_context.Companies.Select(c => new CompanyViewModel {Name = c.Name, Id = c.Id}).OrderBy(c => c.Name),
-                                                   "Id", "Name", companyLogo.CompanyId);
+                                    new SelectList(_context.Companies.Select(c => new CompanyViewModel
+                                    {
+                                        Name = c.Name, Id = c.Id
+                                    }).OrderBy(c => c.Name), "Id", "Name", companyLogo.CompanyId);
+
                                 return View(companyLogo);
                             }
 
                             Console.WriteLine("Rendering {0}", rendered);
+
                             if(svg == null)
                             {
                                 svg = new SKSvg();
                                 svg.Load(svgMs);
                             }
 
-                            SKRect   svgSize   = svg.Picture.CullRect;
-                            float    svgMax    = Math.Max(svgSize.Width, svgSize.Height);
-                            float    canvasMin = 32        * multiplier;
-                            float    scale     = canvasMin / svgMax;
-                            SKMatrix matrix    = SKMatrix.MakeScale(scale, scale);
-                            SKBitmap bitmap =
+                            SKRect svgSize   = svg.Picture.CullRect;
+                            float  svgMax    = Math.Max(svgSize.Width, svgSize.Height);
+                            float  canvasMin = 32        * multiplier;
+                            float  scale     = canvasMin / svgMax;
+                            var    matrix    = SKMatrix.MakeScale(scale, scale);
+
+                            var bitmap =
                                 new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
-                            SKCanvas canvas = new SKCanvas(bitmap);
+
+                            var canvas = new SKCanvas(bitmap);
                             canvas.DrawPicture(svg.Picture, ref matrix);
                             canvas.Flush();
-                            SKImage    image = SKImage.FromBitmap(bitmap);
-                            SKData     data  = image.Encode(skFormat, 100);
-                            FileStream outfs = new FileStream(rendered, FileMode.CreateNew);
+                            var    image = SKImage.FromBitmap(bitmap);
+                            SKData data  = image.Encode(skFormat, 100);
+                            var    outfs = new FileStream(rendered, FileMode.CreateNew);
                             data.SaveTo(outfs);
                             outfs.Close();
 
@@ -263,36 +301,42 @@ namespace Marechai.Areas.Admin.Controllers
                 catch(IOException e)
                 {
                     Console.WriteLine(e);
+
                     throw;
                 }
             }
 
             _context.Add(companyLogo);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
         // GET: CompanyLogos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             CompanyLogo companyLogo = await _context.CompanyLogos.FirstOrDefaultAsync(c => c.Id == id);
-            if(companyLogo == null) return NotFound();
+
+            if(companyLogo == null)
+                return NotFound();
 
             ViewData["CompanyId"] =
                 new SelectList(_context.Companies.OrderBy(l => l.Name), "Id", "Name", companyLogo.CompanyId);
+
             return View(companyLogo);
         }
 
         // POST: CompanyLogos/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,Year,Guid")] CompanyLogo companyLogo)
         {
-            if(id != companyLogo.Id) return NotFound();
+            if(id != companyLogo.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -303,7 +347,8 @@ namespace Marechai.Areas.Admin.Controllers
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!CompanyLogoExists(companyLogo.Id)) return NotFound();
+                    if(!CompanyLogoExists(companyLogo.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -313,38 +358,40 @@ namespace Marechai.Areas.Admin.Controllers
 
             ViewData["CompanyId"] =
                 new SelectList(_context.Companies.OrderBy(l => l.Name), "Id", "Name", companyLogo.CompanyId);
+
             return View(companyLogo);
         }
 
         // GET: CompanyLogos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
-            CompanyLogo companyLogo = await _context.CompanyLogos
-                                                    .Include(c => c.Company).FirstOrDefaultAsync(m => m.Id == id);
-            if(companyLogo == null) return NotFound();
+            CompanyLogo companyLogo =
+                await _context.CompanyLogos.Include(c => c.Company).FirstOrDefaultAsync(m => m.Id == id);
+
+            if(companyLogo == null)
+                return NotFound();
 
             return View(companyLogo);
         }
 
         // POST: CompanyLogos/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             CompanyLogo companyLogo = await _context.CompanyLogos.FirstOrDefaultAsync(m => m.Id == id);
-            if(companyLogo == null) return NotFound();
+
+            if(companyLogo == null)
+                return NotFound();
 
             _context.CompanyLogos.Remove(companyLogo);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool CompanyLogoExists(int id)
-        {
-            return _context.CompanyLogos.Any(e => e.Id == id);
-        }
+        bool CompanyLogoExists(int id) => _context.CompanyLogos.Any(e => e.Id == id);
     }
 }

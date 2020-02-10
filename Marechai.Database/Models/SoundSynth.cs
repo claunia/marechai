@@ -38,34 +38,24 @@ namespace Marechai.Database.Models
 {
     public class SoundSynth : BaseModel<int>
     {
-        public SoundSynth()
-        {
-            SoundByMachine = new HashSet<SoundByMachine>();
-        }
+        public SoundSynth() => SoundByMachine = new HashSet<SoundByMachine>();
 
-        [Required]
-        [StringLength(50)]
+        [Required, StringLength(50)]
         public string Name { get;    set; }
         public int? CompanyId { get; set; }
-        [DisplayName("Model code")]
-        [StringLength(45)]
+        [DisplayName("Model code"), StringLength(45)]
         public string ModelCode { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
-        [DisplayName("PCM voices")]
-        [Range(1, int.MaxValue)]
+        [DisplayName("PCM voices"), Range(1, int.MaxValue)]
         public int? Voices { get; set; }
         [DisplayName("Sample rate (Hz)")]
         public double? Frequency { get; set; }
-        [DisplayName("Sample resolution")]
-        [Range(1, int.MaxValue)]
+        [DisplayName("Sample resolution"), Range(1, int.MaxValue)]
         public int? Depth { get; set; }
-        [DisplayName("Square wave channels")]
-        [Range(1, int.MaxValue)]
+        [DisplayName("Square wave channels"), Range(1, int.MaxValue)]
         public int? SquareWave { get; set; }
-        [DisplayName("White noise channels")]
-        [Range(1, int.MaxValue)]
+        [DisplayName("White noise channels"), Range(1, int.MaxValue)]
         public int? WhiteNoise { get; set; }
         public int? Type { get;       set; }
 

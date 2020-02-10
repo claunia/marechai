@@ -5,9 +5,7 @@ namespace Marechai.Database.Models
 {
     public class DocumentRole
     {
-        [Column(TypeName = "char(3)")]
-        [Key]
-        [Required]
+        [Column(TypeName = "char(3)"), Key, Required]
         public string Id { get;      set; }
         public string Name    { get; set; }
         public bool   Enabled { get; set; }

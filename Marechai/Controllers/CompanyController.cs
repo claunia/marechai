@@ -39,7 +39,7 @@ namespace Marechai.Controllers
 {
     public class CompanyController : Controller
     {
-        readonly MarechaiContext         _context;
+        readonly MarechaiContext     _context;
         readonly IHostingEnvironment hostingEnvironment;
 
         public CompanyController(IHostingEnvironment env, MarechaiContext context)
@@ -51,18 +51,24 @@ namespace Marechai.Controllers
         public IActionResult ByLetter(char id)
         {
             // ToUpper()
-            if(id >= 'a' && id <= 'z') id -= (char)32;
+            if(id >= 'a' &&
+               id <= 'z')
+                id -= (char)32;
+
             // Check if not letter
-            if(id < 'A' || id > 'Z') id = '\0';
+            if(id < 'A' ||
+               id > 'Z')
+                id = '\0';
 
             ViewBag.Letter = id;
 
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
 
-            if(id == '\0') return RedirectToAction(nameof(Index));
+            if(id == '\0')
+                return RedirectToAction(nameof(Index));
 
-            return View(_context.Companies.Include(c => c.Logos).Where(c => c.Name.StartsWith(id)).OrderBy(c => c.Name)
-                                .Select(c => new CompanyViewModel
+            return View(_context.Companies.Include(c => c.Logos).Where(c => c.Name.StartsWith(id)).OrderBy(c => c.Name).
+                                 Select(c => new CompanyViewModel
                                  {
                                      Id       = c.Id,
                                      LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
@@ -75,7 +81,8 @@ namespace Marechai.Controllers
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
             Company company = _context.Companies.FirstOrDefault(c => c.Id == id);
 
-            if(company == null) return Index();
+            if(company == null)
+                return Index();
 
             ViewBag.CompanyDescription = company.Description?.Html ?? company.Description?.Text;
 
@@ -86,11 +93,13 @@ namespace Marechai.Controllers
         {
             ViewBag.Iso3166 = _context.Iso31661Numeric.FirstOrDefault(i => i.Id == id);
 
-            if(ViewBag.Iso3166 is null) RedirectToAction(nameof(Index));
+            if(ViewBag.Iso3166 is null)
+                RedirectToAction(nameof(Index));
 
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            return View(_context.Companies.Include(c => c.Logos).Where(c => c.CountryId == id).OrderBy(c => c.Name)
-                                .Select(c => new CompanyViewModel
+
+            return View(_context.Companies.Include(c => c.Logos).Where(c => c.CountryId == id).OrderBy(c => c.Name).
+                                 Select(c => new CompanyViewModel
                                  {
                                      Id       = c.Id,
                                      LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
@@ -104,14 +113,7 @@ namespace Marechai.Controllers
 
             return View(_context.Companies.Include(c => c.Logos).OrderBy(c => c.Name).Select(c => new CompanyViewModel
             {
-                Id = c.Id,
-                LastLogo = c
-                          .Logos
-                          .OrderByDescending(l =>
-                                                 l.Year)
-                          .FirstOrDefault()
-                          .Guid,
-                Name = c.Name
+                Id = c.Id, LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid, Name = c.Name
             }).ToList());
         }
     }

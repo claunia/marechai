@@ -42,8 +42,7 @@ namespace Marechai.Areas.Admin.Models
         public string Company { get; set; }
         [DisplayName("Model code")]
         public string ModelCode { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
         [DisplayName("Instruction set")]
         public string InstructionSet { get; set; }

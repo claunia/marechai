@@ -37,15 +37,10 @@ namespace Marechai.Database.Models
 {
     public class InstructionSetExtension : BaseModel<int>
     {
-        public InstructionSetExtension()
-        {
+        public InstructionSetExtension() =>
             InstructionSetExtensionsByProcessor = new HashSet<InstructionSetExtensionsByProcessor>();
-        }
 
-        [DisplayName("Name")]
-        [Required]
-        [StringLength(45)]
-        [Remote("VerifyUnique", "InstructionSetExtensions", "Admin")]
+        [DisplayName("Name"), Required, StringLength(45), Remote("VerifyUnique", "InstructionSetExtensions", "Admin")]
         public string Extension { get; set; }
 
         public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor

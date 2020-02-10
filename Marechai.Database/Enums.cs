@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 using System.ComponentModel.DataAnnotations;
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
@@ -36,27 +37,18 @@ namespace Marechai.Database
 {
     public enum NewsType
     {
-        NewComputerInDb             = 1,
-        NewConsoleInDb              = 2,
-        NewComputerInCollection     = 3,
-        NewConsoleInCollection      = 4,
-        UpdatedComputerInDb         = 5,
-        UpdatedConsoleInDb          = 6,
-        UpdatedComputerInCollection = 7,
-        UpdatedConsoleInCollection  = 8,
-        NewMoneyDonation            = 9
+        NewComputerInDb             = 1, NewConsoleInDb             = 2, NewComputerInCollection = 3,
+        NewConsoleInCollection      = 4, UpdatedComputerInDb        = 5, UpdatedConsoleInDb      = 6,
+        UpdatedComputerInCollection = 7, UpdatedConsoleInCollection = 8, NewMoneyDonation        = 9
     }
 
     public enum StatusType
     {
         [Display(Name = "Unknown")]
-        Unknown    = 0,
-        [Display(Name = "Tested good")]
-        TestedGood = 1,
-        [Display(Name = "Not tested")]
-        NotTested  = 2,
-        [Display(Name = "Tested bad")]
-        TestedBad  = 3
+        Unknown = 0, [Display(Name = "Tested good")]
+        TestedGood = 1, [Display(Name = "Not tested")]
+        NotTested = 2, [Display(Name = "Tested bad")]
+        TestedBad = 3
     }
 
     public enum CompanyStatus
@@ -243,22 +235,15 @@ namespace Marechai.Database
         /// <summary>Pioneer LaserDisc</summary>
         LD = 21,
         /// <summary>Pioneer LaserDisc data</summary>
-        LDROM = 22,
-        LDROM2 = 23,
-        LVROM  = 24,
-        MegaLD = 254,
+        LDROM = 22, LDROM2 = 23, LVROM = 24, MegaLD = 254,
         /// <summary>Sony Hi-MD</summary>
         HiMD = 26,
         /// <summary>Sony MiniDisc</summary>
-        MD = 27,
-        MDData  = 28,
-        MDData2 = 29,
+        MD = 27, MDData = 28, MDData2 = 29,
         /// <summary>5.25", Phase-Change, 1834348 sectors, 8192 bytes/sector, Ultra Density Optical, ECMA-350, ISO 17345</summary>
         UDO = 30,
         /// <summary>5.25", Phase-Change, 3669724 sectors, 8192 bytes/sector, Ultra Density Optical 2, ECMA-380, ISO 11976</summary>
-        UDO2 = 31,
-        PlayStationMemoryCard  = 32,
-        PlayStationMemoryCard2 = 33,
+        UDO2 = 31, PlayStationMemoryCard = 32, PlayStationMemoryCard2 = 33,
         /// <summary>Sony PlayStation game CD</summary>
         PS1CD = 34,
         /// <summary>Sony PlayStation 2 game CD</summary>
@@ -286,8 +271,7 @@ namespace Marechai.Database
         /// <summary>Sega Saturn disc</summary>
         SATURNCD = 46,
         /// <summary>Sega/Yamaha Gigabyte Disc</summary>
-        GDROM = 47,
-        SegaCard = 48,
+        GDROM = 47, SegaCard = 48,
         /// <summary>PC-Engine / TurboGrafx cartridge</summary>
         HuCard = 49,
         /// <summary>PC-Engine / TurboGrafx CD</summary>
@@ -307,383 +291,212 @@ namespace Marechai.Database
         /// <summary>3.5" floppy</summary>
         Microfloppy = 57,
         /// <summary>5.25", DS, ?D, ?? tracks, ?? spt, 512 bytes/sector, GCR, opposite side heads, aka Twiggy</summary>
-        AppleFileWare = 58,
-        Bernoulli             = 59,
-        Bernoulli2            = 60,
-        Ditto                 = 61,
-        DittoMax              = 62,
-        Jaz                   = 63,
-        Jaz2                  = 64,
-        PocketZip             = 65,
-        REV120                = 66,
-        REV35                 = 67,
-        REV70                 = 68,
-        ZIP100                = 69,
-        ZIP250                = 70,
-        ZIP750                = 71,
-        CompactCassette       = 72,
-        Data8                 = 73,
-        MiniDV                = 74,
-        CFast                 = 75,
-        CompactFlash          = 76,
-        CompactFlashType2     = 77,
-        EZ135                 = 78,
-        EZ230                 = 79,
-        Quest                 = 80,
-        SparQ                 = 81,
-        SQ100                 = 82,
-        SQ200                 = 83,
-        SQ300                 = 84,
-        SQ310                 = 85,
-        SQ327                 = 86,
-        SQ400                 = 87,
-        SQ800                 = 88,
-        SQ1500                = 89,
-        SQ2000                = 90,
-        SyJet                 = 91,
-        FamicomGamePak        = 92,
-        GameBoyAdvanceGamePak = 93,
-        GameBoyGamePak        = 94,
-        GOD                   = 95,
-        N64DD                 = 96,
-        N64GamePak            = 97,
-        NESGamePak            = 98,
-        Nintendo3DSGameCard   = 99,
-        NintendoDiskCard      = 100,
-        NintendoDSGameCard    = 101,
-        NintendoDSiGameCard   = 102,
-        SNESGamePak           = 103,
-        SNESGamePakUS         = 104,
-        WOD                   = 105,
-        WUOD                  = 106,
-        SwitchGameCard        = 107,
-        MemoryStick           = 108,
-        MemoryStickDuo        = 109,
-        MemoryStickMicro      = 110,
-        MemoryStickPro        = 111,
-        MemoryStickProDuo     = 112,
-        microSD               = 113,
-        miniSD                = 114,
-        SecureDigital         = 115,
-        MMC                   = 116,
-        MMCmicro              = 117,
-        RSMMC                 = 118,
-        MMCplus               = 118,
-        MMCmobile             = 119,
-        eMMC                  = 120,
-        MO120                 = 121,
-        MO90                  = 122,
-        MO300                 = 123,
-        MO356                 = 124,
-        CompactFloppy         = 125,
-        DemiDiskette          = 126,
+        AppleFileWare = 58, Bernoulli = 59, Bernoulli2            = 60, Ditto              = 61,
+        DittoMax                      = 62, Jaz                   = 63, Jaz2               = 64,
+        PocketZip                     = 65, REV120                = 66, REV35              = 67,
+        REV70                         = 68, ZIP100                = 69, ZIP250             = 70,
+        ZIP750                        = 71, CompactCassette       = 72, Data8              = 73,
+        MiniDV                        = 74, CFast                 = 75, CompactFlash       = 76,
+        CompactFlashType2             = 77, EZ135                 = 78, EZ230              = 79,
+        Quest                         = 80, SparQ                 = 81, SQ100              = 82,
+        SQ200                         = 83, SQ300                 = 84, SQ310              = 85,
+        SQ327                         = 86, SQ400                 = 87, SQ800              = 88,
+        SQ1500                        = 89, SQ2000                = 90, SyJet              = 91,
+        FamicomGamePak                = 92, GameBoyAdvanceGamePak = 93, GameBoyGamePak     = 94,
+        GOD                           = 95, N64DD                 = 96, N64GamePak         = 97,
+        NESGamePak                    = 98, Nintendo3DSGameCard   = 99, NintendoDiskCard   = 100,
+        NintendoDSGameCard            = 101, NintendoDSiGameCard  = 102, SNESGamePak       = 103,
+        SNESGamePakUS                 = 104, WOD                  = 105, WUOD              = 106,
+        SwitchGameCard                = 107, MemoryStick          = 108, MemoryStickDuo    = 109,
+        MemoryStickMicro              = 110, MemoryStickPro       = 111, MemoryStickProDuo = 112,
+        microSD                       = 113, miniSD               = 114, SecureDigital     = 115,
+        MMC                           = 116, MMCmicro             = 117, RSMMC             = 118,
+        MMCplus                       = 118, MMCmobile            = 119, eMMC              = 120,
+        MO120                         = 121, MO90                 = 122, MO300             = 123,
+        MO356                         = 124, CompactFloppy        = 125, DemiDiskette      = 126,
         /// <summary>3.5", 652 tracks, 2 sides, 512 bytes/sector, Floptical, ECMA-207, ISO 14169</summary>
-        Floptical = 127,
-        HiFD         = 128,
-        QuickDisk    = 129,
-        UHD144       = 130,
-        VideoFloppy  = 131,
-        Wafer        = 132,
-        ZXMicrodrive = 133,
-        BeeCard      = 134,
-        Borsu        = 135,
-        DataStore    = 136,
-        MiniCard     = 137,
-        Orb          = 138,
-        Orb5         = 139,
-        SmartMedia   = 140,
-        xD           = 141,
-        XQD          = 142,
-        DataPlay     = 143,
-        LS120        = 144,
-        LS240        = 145,
-        FD32MB       = 146,
-        RDX          = 147,
-        PunchedCard  = 148
+        Floptical = 127, HiFD = 128, QuickDisk = 129, UHD144       = 130,
+        VideoFloppy           = 131, Wafer     = 132, ZXMicrodrive = 133,
+        BeeCard               = 134, Borsu     = 135, DataStore    = 136,
+        MiniCard              = 137, Orb       = 138, Orb5         = 139,
+        SmartMedia            = 140, xD        = 141, XQD          = 142,
+        DataPlay              = 143, LS120     = 144, LS240        = 145,
+        FD32MB                = 146, RDX       = 147, PunchedCard  = 148
     }
 
     public enum StorageInterface
     {
-        Unknown     = 0,
-        ACSI        = 1,
-        ATA         = 2,
-        XTA         = 3,
-        ESDI        = 4,
-        SCSI        = 5,
-        USB         = 6,
-        FireWire    = 7,
-        SASI        = 8,
-        ST506       = 9,
-        IPI         = 10,
-        SMD         = 11,
-        SATA        = 12,
-        SSA         = 13,
-        DSSI        = 14,
-        HIPPI       = 15,
-        SAS         = 16,
-        FC          = 17,
-        PCIe        = 18,
-        M2          = 19,
-        SataExpress = 20
+        Unknown = 0, ACSI     = 1, ATA          = 2,
+        XTA     = 3, ESDI     = 4, SCSI         = 5,
+        USB     = 6, FireWire = 7, SASI         = 8,
+        ST506   = 9, IPI      = 10, SMD         = 11,
+        SATA    = 12, SSA     = 13, DSSI        = 14,
+        HIPPI   = 15, SAS     = 16, FC          = 17,
+        PCIe    = 18, M2      = 19, SataExpress = 20
     }
 
     public enum ColorSpace : ushort
     {
         [Display(Name = "sRGB")]
-        Srgb = 1,
-        [Display(Name = "Adobe RGB")]
-        AdobeRgb = 2,
-        [Display(Name = "Wide Gamut RGB")]
-        WideGamutRgb = 4093,
-        [Display(Name = "ICC Profile")]
-        IccProfile = 65534,
-        [Display(Name = "Uncalibrated")]
+        Srgb = 1, [Display(Name = "Adobe RGB")]
+        AdobeRgb = 2, [Display(Name = "Wide Gamut RGB")]
+        WideGamutRgb = 4093, [Display(Name = "ICC Profile")]
+        IccProfile = 65534, [Display(Name = "Uncalibrated")]
         Uncalibreated = 65535
     }
 
     public enum Contrast : ushort
     {
-        Normal = 0,
-        Low    = 1,
-        Hig    = 2
+        Normal = 0, Low = 1, Hig = 2
     }
 
     public enum ExposureMode : ushort
     {
-        Auto   = 0,
-        Manual = 1,
-        [Display(Name = "Auto bracket")]
+        Auto = 0, Manual = 1, [Display(Name = "Auto bracket")]
         AutoBracket = 2
     }
 
     public enum ExposureProgram : ushort
     {
         [Display(Name = "Not Defined")]
-        Undefined = 0,
-        [Display(Name = "Manual")]
-        Manual = 1,
-        [Display(Name = "Program AE")]
-        ProgramAe = 2,
-        [Display(Name = "Aperture-priority AE")]
-        ApAe = 3,
-        [Display(Name = "Shutter speed priority AE")]
-        ShutterAe = 4,
-        [Display(Name = "Creative (Slow speed)")]
-        Creative = 5,
-        [Display(Name = "Action (High speed)")]
-        Action = 6,
-        [Display(Name = "Portrait")]
-        Portrait = 7,
-        [Display(Name = "Landscape")]
-        Landscape = 8,
-        [Display(Name = "Bulb")]
+        Undefined = 0, [Display(Name = "Manual")]
+        Manual = 1, [Display(Name = "Program AE")]
+        ProgramAe = 2, [Display(Name = "Aperture-priority AE")]
+        ApAe = 3, [Display(Name = "Shutter speed priority AE")]
+        ShutterAe = 4, [Display(Name = "Creative (Slow speed)")]
+        Creative = 5, [Display(Name = "Action (High speed)")]
+        Action = 6, [Display(Name = "Portrait")]
+        Portrait = 7, [Display(Name = "Landscape")]
+        Landscape = 8, [Display(Name = "Bulb")]
         Bulb = 9
     }
 
     public enum Flash : ushort
     {
         [Display(Name = "No Flash")]
-        None = 0,
-        [Display(Name = "Fired")]
-        Fired = 1,
-        [Display(Name = "Fired, Return not detected")]
-        FiredNoReturn = 5,
-        [Display(Name = "Fired, Return detected")]
-        FiredReturn = 7,
-        [Display(Name = "On, Did not fire")]
-        OnDidNotFire = 8,
-        [Display(Name = "On, Fired")]
-        OnFired = 9,
-        [Display(Name = "On, Return not detected")]
-        OnNoReturn = 13,
-        [Display(Name = "On, Return detected")]
-        OnReturn = 15,
-        [Display(Name = "Off, Did not fire")]
-        OffDidNotFire = 16,
-        [Display(Name = "Off, Did not fire, Return not detected")]
-        OffDidNotFireNoReturn = 20,
-        [Display(Name = "Auto, Did not fire")]
-        AutoDidNotFire = 24,
-        [Display(Name = "Auto, Fired")]
-        AutoFired = 25,
-        [Display(Name = "Auto, Fired, Return not detected")]
-        AutoFiredNoReturn = 29,
-        [Display(Name = "Auto, Fired, Return detected")]
-        AutoFiredReturn = 31,
-        [Display(Name = "No flash function")]
-        NoFlash = 32,
-        [Display(Name = "Off, No flash function")]
-        OffNoFlash = 48,
-        [Display(Name = "Fired, Red-eye reduction")]
-        FiredRedEye = 65,
-        [Display(Name = "Fired, Red-eye reduction, Return not detected")]
-        FiredRedEyeNoReturn = 69,
-        [Display(Name = "Fired, Red-eye reduction, Return detected")]
-        FiredRedEyeReturn = 71,
-        [Display(Name = "On, Red-eye reduction")]
-        OnRedEye = 73,
-        [Display(Name = "On, Red-eye reduction, Return not detected")]
-        OnRedEyeNoReturn = 77,
-        [Display(Name = "On, Red-eye reduction, Return detected")]
-        OnRedEyeReturn = 79,
-        [Display(Name = "Off, Red-eye reduction")]
-        OffRedEye = 80,
-        [Display(Name = "Auto, Did not fire, Red-eye reduction")]
-        AutoNotFireRedEye = 88,
-        [Display(Name = "Auto, Fired, Red-eye reduction")]
-        AutoFiredRedEye = 89,
-        [Display(Name = "Auto, Fired, Red-eye reduction, Return not detected")]
-        AutoFiredRedEyeNoReturn = 93,
-        [Display(Name = "Auto, Fired, Red-eye reduction, Return detected")]
+        None = 0, [Display(Name = "Fired")]
+        Fired = 1, [Display(Name = "Fired, Return not detected")]
+        FiredNoReturn = 5, [Display(Name = "Fired, Return detected")]
+        FiredReturn = 7, [Display(Name = "On, Did not fire")]
+        OnDidNotFire = 8, [Display(Name = "On, Fired")]
+        OnFired = 9, [Display(Name = "On, Return not detected")]
+        OnNoReturn = 13, [Display(Name = "On, Return detected")]
+        OnReturn = 15, [Display(Name = "Off, Did not fire")]
+        OffDidNotFire = 16, [Display(Name = "Off, Did not fire, Return not detected")]
+        OffDidNotFireNoReturn = 20, [Display(Name = "Auto, Did not fire")]
+        AutoDidNotFire = 24, [Display(Name = "Auto, Fired")]
+        AutoFired = 25, [Display(Name = "Auto, Fired, Return not detected")]
+        AutoFiredNoReturn = 29, [Display(Name = "Auto, Fired, Return detected")]
+        AutoFiredReturn = 31, [Display(Name = "No flash function")]
+        NoFlash = 32, [Display(Name = "Off, No flash function")]
+        OffNoFlash = 48, [Display(Name = "Fired, Red-eye reduction")]
+        FiredRedEye = 65, [Display(Name = "Fired, Red-eye reduction, Return not detected")]
+        FiredRedEyeNoReturn = 69, [Display(Name = "Fired, Red-eye reduction, Return detected")]
+        FiredRedEyeReturn = 71, [Display(Name = "On, Red-eye reduction")]
+        OnRedEye = 73, [Display(Name = "On, Red-eye reduction, Return not detected")]
+        OnRedEyeNoReturn = 77, [Display(Name = "On, Red-eye reduction, Return detected")]
+        OnRedEyeReturn = 79, [Display(Name = "Off, Red-eye reduction")]
+        OffRedEye = 80, [Display(Name = "Auto, Did not fire, Red-eye reduction")]
+        AutoNotFireRedEye = 88, [Display(Name = "Auto, Fired, Red-eye reduction")]
+        AutoFiredRedEye = 89, [Display(Name = "Auto, Fired, Red-eye reduction, Return not detected")]
+        AutoFiredRedEyeNoReturn = 93, [Display(Name = "Auto, Fired, Red-eye reduction, Return detected")]
         AutoFiredRedEyeReturn = 95
     }
 
     public enum LightSource : ushort
     {
         [Display(Name = "Unknown")]
-        Unknown = 0,
-        [Display(Name = "Daylight")]
-        Daylight = 1,
-        [Display(Name = "Fluorescent")]
-        Fluorescent = 2,
-        [Display(Name = "Tungsten (Incandescent)")]
-        Incandescent = 3,
-        [Display(Name = "Flash")]
-        Flash = 4,
-        [Display(Name = "Fine Weather")]
-        FineWeather = 9,
-        [Display(Name = "Cloudy")]
-        Cloudy = 10,
-        [Display(Name = "Shade")]
-        Shade = 11,
-        [Display(Name = "Daylight Fluorescent")]
-        DaylightFluorescent = 12,
-        [Display(Name = "Day White Fluorescent")]
-        DayWhiteFluorescent = 13,
-        [Display(Name = "Cool White Fluorescent")]
-        CoolWhiteFluorescent = 14,
-        [Display(Name = "White Fluorescent")]
-        WhiteFluorescent = 15,
-        [Display(Name = "Warm White Fluorescent")]
-        WarmWhiteFluorescent = 16,
-        [Display(Name = "Standard Light A")]
-        StandardLightA = 17,
-        [Display(Name = "Standard Light B")]
-        StandardLightB = 18,
-        [Display(Name = "Standard Light C")]
-        StandardLightC = 19,
-        [Display(Name = "D55")]
-        D55 = 20,
-        [Display(Name = "D65")]
-        D65 = 21,
-        [Display(Name = "D75")]
-        D75 = 22,
-        [Display(Name = "D50")]
-        D50 = 23,
-        [Display(Name = "ISO Studio Tungsten")]
-        ISOStudioTungsten = 24,
-        [Display(Name = "Other")]
+        Unknown = 0, [Display(Name = "Daylight")]
+        Daylight = 1, [Display(Name = "Fluorescent")]
+        Fluorescent = 2, [Display(Name = "Tungsten (Incandescent)")]
+        Incandescent = 3, [Display(Name = "Flash")]
+        Flash = 4, [Display(Name = "Fine Weather")]
+        FineWeather = 9, [Display(Name = "Cloudy")]
+        Cloudy = 10, [Display(Name = "Shade")]
+        Shade = 11, [Display(Name = "Daylight Fluorescent")]
+        DaylightFluorescent = 12, [Display(Name = "Day White Fluorescent")]
+        DayWhiteFluorescent = 13, [Display(Name = "Cool White Fluorescent")]
+        CoolWhiteFluorescent = 14, [Display(Name = "White Fluorescent")]
+        WhiteFluorescent = 15, [Display(Name = "Warm White Fluorescent")]
+        WarmWhiteFluorescent = 16, [Display(Name = "Standard Light A")]
+        StandardLightA = 17, [Display(Name = "Standard Light B")]
+        StandardLightB = 18, [Display(Name = "Standard Light C")]
+        StandardLightC = 19, [Display(Name = "D55")]
+        D55 = 20, [Display(Name = "D65")]
+        D65 = 21, [Display(Name = "D75")]
+        D75 = 22, [Display(Name = "D50")]
+        D50 = 23, [Display(Name = "ISO Studio Tungsten")]
+        ISOStudioTungsten = 24, [Display(Name = "Other")]
         Other = 255
     }
 
     public enum MeteringMode : ushort
     {
         [Display(Name = "Unknown")]
-        Unknown = 0,
-        [Display(Name = "Average")]
-        Average = 1,
-        [Display(Name = "Center-weighted average")]
-        CenterWeightedAverage = 2,
-        [Display(Name = "Spot")]
-        Spot = 3,
-        [Display(Name = "Multi-spot")]
-        MultiSpot = 4,
-        [Display(Name = "Multi-segment")]
-        MultiSegment = 5,
-        [Display(Name = "Partial")]
-        Partial = 6,
-        [Display(Name = "Other")]
+        Unknown = 0, [Display(Name = "Average")]
+        Average = 1, [Display(Name = "Center-weighted average")]
+        CenterWeightedAverage = 2, [Display(Name = "Spot")]
+        Spot = 3, [Display(Name = "Multi-spot")]
+        MultiSpot = 4, [Display(Name = "Multi-segment")]
+        MultiSegment = 5, [Display(Name = "Partial")]
+        Partial = 6, [Display(Name = "Other")]
         Other = 255
     }
 
     public enum Orientation : ushort
     {
         [Display(Name = "Horizontal (normal)")]
-        Horizontal = 1,
-        [Display(Name = "Mirror horizontal")]
-        MirrorHorizontal = 2,
-        [Display(Name = "Rotate 180")]
-        Rotate180 = 3,
-        [Display(Name = "Mirror vertical")]
-        MirrorVertical = 4,
-        [Display(Name = "Mirror horizontal and rotate 270 CW")]
-        MirrorHorizontalAndRotate270CW = 5,
-        [Display(Name = "Rotate 90 CW")]
-        Rotate90CW = 6,
-        [Display(Name = "Mirror horizontal and rotate 90 CW")]
-        MirrorHorizontalAndRotate90CW = 7,
-        [Display(Name = "Rotate 270 CW")]
+        Horizontal = 1, [Display(Name = "Mirror horizontal")]
+        MirrorHorizontal = 2, [Display(Name = "Rotate 180")]
+        Rotate180 = 3, [Display(Name = "Mirror vertical")]
+        MirrorVertical = 4, [Display(Name = "Mirror horizontal and rotate 270 CW")]
+        MirrorHorizontalAndRotate270CW = 5, [Display(Name = "Rotate 90 CW")]
+        Rotate90CW = 6, [Display(Name = "Mirror horizontal and rotate 90 CW")]
+        MirrorHorizontalAndRotate90CW = 7, [Display(Name = "Rotate 270 CW")]
         Rotate270CW = 8
     }
 
     public enum ResolutionUnit : ushort
     {
-        None        = 1,
-        Inches      = 2,
-        Centimeters = 3
+        None = 1, Inches = 2, Centimeters = 3
     }
 
     public enum Saturation : ushort
     {
-        Normal = 0,
-        Low    = 1,
-        Hig    = 2
+        Normal = 0, Low = 1, Hig = 2
     }
 
     public enum SceneCaptureType : ushort
     {
-        Standard  = 0,
-        Landscape = 1,
-        Portrait  = 2,
-        Night     = 3
+        Standard = 0, Landscape = 1, Portrait = 2,
+        Night    = 3
     }
 
     public enum SensingMethod : ushort
     {
         [Display(Name = "Not defined")]
-        Undefined = 1,
-        [Display(Name = "One-chip color area")]
-        OneChipColorArea = 2,
-        [Display(Name = "Two-chip color area")]
-        TwoChipColorArea = 3,
-        [Display(Name = "Three-chip color area")]
-        ThreeChipColorArea = 4,
-        [Display(Name = "Color sequential area")]
-        ColorSequentialArea = 5,
-        [Display(Name = "Trilinear")]
-        Trilinear = 7,
-        [Display(Name = "Color sequential linear")]
+        Undefined = 1, [Display(Name = "One-chip color area")]
+        OneChipColorArea = 2, [Display(Name = "Two-chip color area")]
+        TwoChipColorArea = 3, [Display(Name = "Three-chip color area")]
+        ThreeChipColorArea = 4, [Display(Name = "Color sequential area")]
+        ColorSequentialArea = 5, [Display(Name = "Trilinear")]
+        Trilinear = 7, [Display(Name = "Color sequential linear")]
         ColorSequentialLinear = 8
     }
 
     public enum SubjectDistanceRange : ushort
     {
-        Unknown = 0,
-        Macro   = 1,
-        Close   = 2,
+        Unknown = 0, Macro = 1, Close = 2,
         Distant = 3
     }
 
     public enum WhiteBalance : ushort
     {
-        Auto   = 0,
-        Manual = 1
+        Auto = 0, Manual = 1
     }
 
     public enum Sharpness : ushort
     {
-        Normal = 0,
-        Low    = 1,
-        Hig    = 2
+        Normal = 0, Low = 1, Hig = 2
     }
 }

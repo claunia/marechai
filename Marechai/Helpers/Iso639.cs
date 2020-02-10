@@ -13,7 +13,8 @@ namespace Marechai.Helpers
         // Data files can be found in https://iso639-3.sil.org/code_tables/download_tables
         internal static void Import(MarechaiContext context)
         {
-            if(!Directory.Exists("iso639")) return;
+            if(!Directory.Exists("iso639"))
+                return;
 
             IEnumerable<string> files    = Directory.EnumerateFiles("iso639", "iso-639-3_*.tab");
             long                added    = 0;
@@ -22,9 +23,10 @@ namespace Marechai.Helpers
             foreach(string file in files)
             {
                 Console.WriteLine("Importing ISO-639 codes from {0}", file);
-                using(FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None))
+
+                using(var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    using(StreamReader sr = new StreamReader(fs, Encoding.UTF8))
+                    using(var sr = new StreamReader(fs, Encoding.UTF8))
                     {
                         string   line;
                         string[] pieces;
@@ -34,17 +36,24 @@ namespace Marechai.Helpers
                         if(line is null)
                         {
                             Console.WriteLine("Invalid data, not proceeding");
+
                             continue;
                         }
 
                         pieces = line.Split('\t');
 
-                        if(pieces.Length != 8          || pieces[0] != "Id" || pieces[1] != "Part2B" ||
-                           pieces[2]     != "Part2T"   ||
-                           pieces[3]     != "Part1"    || pieces[4] != "Scope" || pieces[5] != "Language_Type" ||
-                           pieces[6]     != "Ref_Name" || pieces[7] != "Comment")
+                        if(pieces.Length != 8               ||
+                           pieces[0]     != "Id"            ||
+                           pieces[1]     != "Part2B"        ||
+                           pieces[2]     != "Part2T"        ||
+                           pieces[3]     != "Part1"         ||
+                           pieces[4]     != "Scope"         ||
+                           pieces[5]     != "Language_Type" ||
+                           pieces[6]     != "Ref_Name"      ||
+                           pieces[7]     != "Comment")
                         {
                             Console.WriteLine("Invalid data, not proceeding");
+
                             continue;
                         }
 
@@ -58,6 +67,7 @@ namespace Marechai.Helpers
                             {
                                 Console.WriteLine("Invalid data, continuing with next line");
                                 line = sr.ReadLine();
+
                                 continue;
                             }
 
@@ -65,29 +75,29 @@ namespace Marechai.Helpers
                                 if(pieces[p] == "")
                                     pieces[p] = null;
 
-                            Marechai.Database.Models.Iso639 lang = context.Iso639.FirstOrDefault(i => i.Id == pieces[0]);
+                            Database.Models.Iso639 lang = context.Iso639.FirstOrDefault(i => i.Id == pieces[0]);
 
                             if(lang is null)
                             {
-                                context.Iso639.Add(new Marechai.Database.Models.Iso639
+                                context.Iso639.Add(new Database.Models.Iso639
                                 {
-                                    Id            = pieces[0],
-                                    Part2B        = pieces[1],
-                                    Part2T        = pieces[2],
-                                    Part1         = pieces[3],
-                                    Scope         = pieces[4],
-                                    Type          = pieces[5],
-                                    ReferenceName = pieces[6],
-                                    Comment       = pieces[7]
+                                    Id      = pieces[0], Part2B = pieces[1], Part2T = pieces[2],
+                                    Part1   = pieces[3],
+                                    Scope   = pieces[4], Type = pieces[5], ReferenceName = pieces[6],
+                                    Comment = pieces[7]
                                 });
+
                                 line = sr.ReadLine();
                                 added++;
+
                                 continue;
                             }
 
-                            if(pieces[1] != lang.Part2B        || pieces[2] != lang.Part2T ||
+                            if(pieces[1] != lang.Part2B        ||
+                               pieces[2] != lang.Part2T        ||
                                pieces[3] != lang.Part1         ||
-                               pieces[4] != lang.Scope         || pieces[5] != lang.Type ||
+                               pieces[4] != lang.Scope         ||
+                               pieces[5] != lang.Type          ||
                                pieces[6] != lang.ReferenceName ||
                                pieces[7] != lang.Comment)
                             {
@@ -108,7 +118,7 @@ namespace Marechai.Helpers
                 }
             }
 
-            Console.WriteLine("{0} language codes added",    added);
+            Console.WriteLine("{0} language codes added", added);
             Console.WriteLine("{0} language codes modified", modified);
         }
     }

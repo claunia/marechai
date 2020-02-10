@@ -49,13 +49,11 @@ namespace Marechai.Database.Models
 
         [Required]
         public int CompanyId { get; set; }
-        [Required]
-        [StringLength(255)]
+        [Required, StringLength(255)]
         public string Name { get; set; }
         [Required]
         public MachineType Type { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Introduced { get; set; }
         public int? FamilyId { get;        set; }
         [StringLength(50)]
@@ -74,8 +72,7 @@ namespace Marechai.Database.Models
         public virtual ICollection<BooksByMachine>      Books      { get; set; }
         public virtual ICollection<MagazinesByMachine>  Magazines  { get; set; }
 
-        [NotMapped]
-        [DisplayName("Introduced")]
+        [NotMapped, DisplayName("Introduced")]
         public string IntroducedView =>
             Introduced == DateTime.MinValue ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
     }

@@ -8,66 +8,36 @@ namespace Marechai.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "PeopleByCompany",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    PersonId = table.Column<int>(nullable: false),
-                    CompanyId = table.Column<int>(nullable: false),
-                    Position = table.Column<string>(nullable: true),
-                    Start = table.Column<DateTime>(nullable: true),
-                    End = table.Column<DateTime>(nullable: true),
-                    Ongoing = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PeopleByCompany", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PeopleByCompany_companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "companies",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PeopleByCompany_People_PersonId",
-                        column: x => x.PersonId,
-                        principalTable: "People",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.CreateTable("PeopleByCompany", table => new
+            {
+                Id = table.Column<long>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                PersonId = table.Column<int>(), CompanyId                  = table.Column<int>(),
+                Position = table.Column<string>(nullable: true), Start     = table.Column<DateTime>(nullable: true),
+                End      = table.Column<DateTime>(nullable: true), Ongoing = table.Column<bool>()
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_PeopleByCompany", x => x.Id);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_PeopleByCompany_CompanyId",
-                table: "PeopleByCompany",
-                column: "CompanyId");
+                table.ForeignKey("FK_PeopleByCompany_companies_CompanyId", x => x.CompanyId, "companies", "id",
+                                 onDelete: ReferentialAction.Cascade);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_PeopleByCompany_End",
-                table: "PeopleByCompany",
-                column: "End");
+                table.ForeignKey("FK_PeopleByCompany_People_PersonId", x => x.PersonId, "People", "Id",
+                                 onDelete: ReferentialAction.Cascade);
+            });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_PeopleByCompany_PersonId",
-                table: "PeopleByCompany",
-                column: "PersonId");
+            migrationBuilder.CreateIndex("IX_PeopleByCompany_CompanyId", "PeopleByCompany", "CompanyId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_PeopleByCompany_Position",
-                table: "PeopleByCompany",
-                column: "Position");
+            migrationBuilder.CreateIndex("IX_PeopleByCompany_End", "PeopleByCompany", "End");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_PeopleByCompany_Start",
-                table: "PeopleByCompany",
-                column: "Start");
+            migrationBuilder.CreateIndex("IX_PeopleByCompany_PersonId", "PeopleByCompany", "PersonId");
+
+            migrationBuilder.CreateIndex("IX_PeopleByCompany_Position", "PeopleByCompany", "Position");
+
+            migrationBuilder.CreateIndex("IX_PeopleByCompany_Start", "PeopleByCompany", "Start");
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "PeopleByCompany");
-        }
+        protected override void Down(MigrationBuilder migrationBuilder) =>
+            migrationBuilder.DropTable("PeopleByCompany");
     }
 }

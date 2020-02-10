@@ -3,76 +3,56 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
 <h1>Edit</h1>
-
 <h4>License</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger">
+            <div asp-validation-summary="ModelOnly" class="text-danger">
             </div>
             <div class="form-group">
-                <label asp-for="Name"
-                       class="control-label">
+                <label asp-for="Name" class="control-label">
                 </label>
-                <input asp-for="Name"
-                       class="form-control" />
-                <span asp-validation-for="Name"
-                      class="text-danger">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="SPDX"
-                       class="control-label">
+                <label asp-for="SPDX" class="control-label">
                 </label>
-                <input asp-for="SPDX"
-                       class="form-control" />
-                <span asp-validation-for="SPDX"
-                      class="text-danger">
+                <input asp-for="SPDX" class="form-control" />
+                <span asp-validation-for="SPDX" class="text-danger">
                 </span>
             </div>
             <div class="form-check form-group">
                 <label class="form-check-label">
-                    <input class="form-check-input"
-                           asp-for="FsfApproved" /> @Html.DisplayNameFor(model => model.FsfApproved)
+                    <input class="form-check-input" asp-for="FsfApproved" /> @Html.DisplayNameFor(model => model.FsfApproved)
                 </label>
             </div>
             <div class="form-check form-group">
                 <label class="form-check-label">
-                    <input class="form-check-input"
-                           asp-for="OsiApproved" /> @Html.DisplayNameFor(model => model.OsiApproved)
+                    <input class="form-check-input" asp-for="OsiApproved" /> @Html.DisplayNameFor(model => model.OsiApproved)
                 </label>
             </div>
             <div class="form-group">
-                <label asp-for="Link"
-                       class="control-label">
+                <label asp-for="Link" class="control-label">
                 </label>
-                <input asp-for="Link"
-                       class="form-control" />
-                <span asp-validation-for="Link"
-                      class="text-danger">
+                <input asp-for="Link" class="form-control" />
+                <span asp-validation-for="Link" class="text-danger">
                 </span>
             </div>
             <div class="form-group">
-                <label asp-for="Text"
-                       class="control-label">
+                <label asp-for="Text" class="control-label">
                 </label>
                 <textarea asp-for="Text" class="form-control"></textarea>
-                <span asp-validation-for="Text"
-                      class="text-danger">
+                <span asp-validation-for="Text" class="text-danger">
                 </span>
             </div>
-            <input type="hidden"
-                   asp-for="Id" />
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <input class="btn btn-primary"
-                       type="submit"
-                       value="Save" />
-                <a asp-action="Index"
-                   class="btn btn-secondary">
+                <input class="btn btn-primary" type="submit" value="Save" />
+                <a asp-action="Index" class="btn btn-secondary">
                     Back to List
                 </a>
             </div>

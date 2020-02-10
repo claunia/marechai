@@ -9,19 +9,15 @@ namespace Marechai.Database.Migrations
         {
             migrationBuilder.AddColumn<int>("DocumentCompanyId", "companies", nullable: true);
 
-            migrationBuilder.CreateTable("DocumentCompanies",
-                                         table => new
-                                         {
-                                             Id = table.Column<int>()
-                                                       .Annotation("MySql:ValueGenerationStrategy",
-                                                                   MySqlValueGenerationStrategy.IdentityColumn),
-                                             Name      = table.Column<string>(),
-                                             CompanyId = table.Column<int>(nullable: true)
-                                         },
-                                         constraints: table =>
-                                         {
-                                             table.PrimaryKey("PK_DocumentCompanies", x => x.Id);
-                                         });
+            migrationBuilder.CreateTable("DocumentCompanies", table => new
+            {
+                Id = table.Column<int>().
+                           Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                Name = table.Column<string>(), CompanyId = table.Column<int>(nullable: true)
+            }, constraints: table =>
+            {
+                table.PrimaryKey("PK_DocumentCompanies", x => x.Id);
+            });
 
             migrationBuilder.CreateIndex("IX_companies_DocumentCompanyId", "companies", "DocumentCompanyId",
                                          unique: true);

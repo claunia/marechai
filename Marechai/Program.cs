@@ -30,9 +30,9 @@
 
 using System;
 using System.Linq;
+using DiscImageChef.Interop;
 using Marechai.Database;
 using Marechai.Database.Models;
-using DiscImageChef.Interop;
 using Marechai.Helpers;
 using Markdig;
 using Microsoft.AspNetCore;
@@ -82,8 +82,8 @@ namespace Marechai
                           "\u001b[32m                    XMMMW:    .:xKNMMMMMMN0d,    lMMMMMd                  \u001b[31m"                                                                                                                                       +
                           @"        _______\/////////___\///////////_________\/////////___\///______________\///__"                                                                                                                                              +
                           "\n\u001b[0m"                                                                                                                                                                                                                          +
-                          "\u001b[32m                    :MMMMMK; cWMNkl:;;;:lxKMXc .0MMMMMO                   \u001b[37;1m          MARECHAI\u001b[0m\n"                                                                                                                                                         +
-                          "\u001b[32m                   ..KMMMMMMNo,.             ,OMMMMMMW:,.                 \u001b[37;1m          Master repository of computing history artifacts information\u001b[0m\n"                                                                          +
+                          "\u001b[32m                    :MMMMMK; cWMNkl:;;;:lxKMXc .0MMMMMO                   \u001b[37;1m          MARECHAI\u001b[0m\n"                                                                                                        +
+                          "\u001b[32m                   ..KMMMMMMNo,.             ,OMMMMMMW:,.                 \u001b[37;1m          Master repository of computing history artifacts information\u001b[0m\n"                                                    +
                           "\u001b[32m            .;d0NMMMMMMMMMMMMMMW0d:'    .;lOWMMMMMMMMMMMMMXkl.            \u001b[37;1m          Version \u001b[0m\u001b[33m{0}\u001b[37;1m-\u001b[0m\u001b[31m{1}\u001b[0m\n"                                               +
                           "\u001b[32m          :KMMMMMMMMMMMMMMMMMMMMMMMMc  WMMMMMMMMMMMMMMMMMMMMMMWk'\u001b[0m\n"                                                                                                                                               +
                           "\u001b[32m        ;NMMMMWX0kkkkO0XMMMMMMMMMMM0'  dNMMMMMMMMMMW0xl:;,;:oOWMMX;       \u001b[37;1m          Running under \u001b[35;1m{2}\u001b[37;1m, \u001b[35m{3}-bit\u001b[37;1m in \u001b[35m{4}-bit\u001b[37;1m mode.\u001b[0m\n" +
@@ -103,12 +103,12 @@ namespace Marechai
                           "\u001b[32m               .......,cd0WMMNk:           c0MMMMMWKkolc:clodc'\u001b[0m\n"                                                                                                                                                 +
                           "\u001b[32m                 .';loddol:'.                 ':oxkkOkkxoc,.\u001b[0m\n"                                                                                                                                                    +
                           "\u001b[0m\n", Version.GetVersion(),
-                          #if DEBUG
+                      #if DEBUG
                           "DEBUG"
-                          #else
+                      #else
                           "RELEASE"
-                          #endif
-                        , DetectOS.GetPlatformName(DetectOS.GetRealPlatformID()),
+                      #endif
+                          , DetectOS.GetPlatformName(DetectOS.GetRealPlatformID()),
                           Environment.Is64BitOperatingSystem ? 64 : 32, Environment.Is64BitProcess ? 64 : 32,
                           DetectOS.IsMono ? "Mono" : ".NET Core",
                           DetectOS.IsMono ? Version.GetMonoVersion() : Version.GetNetCoreVersion());
@@ -127,6 +127,7 @@ namespace Marechai
             Console.WriteLine("\u001b[31;1mRendering new country flags...\u001b[0m");
             SvgRender.RenderCountries();
             DateTime end = DateTime.Now;
+
             Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                               (end - start).TotalSeconds);
 
@@ -135,6 +136,7 @@ namespace Marechai
             using(IServiceScope scope = host.Services.CreateScope())
             {
                 IServiceProvider services = scope.ServiceProvider;
+
                 try
                 {
                     start = DateTime.Now;
@@ -142,6 +144,7 @@ namespace Marechai
                     MarechaiContext context = services.GetRequiredService<MarechaiContext>();
                     context.Database.Migrate();
                     end = DateTime.Now;
+
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);
 
@@ -149,6 +152,7 @@ namespace Marechai
                     Console.WriteLine("\u001b[31;1mImporting company logos...\u001b[0m");
                     SvgRender.ImportCompanyLogos(context);
                     end = DateTime.Now;
+
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);
 
@@ -166,47 +170,58 @@ namespace Marechai
                     context.SaveChanges();
 
                     end = DateTime.Now;
+
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);
 
                     start = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mImporting photos...\u001b[0m");
 
-                    try { Photos.ImportPhotos(context); }
+                    try
+                    {
+                        Photos.ImportPhotos(context);
+                    }
                     catch(Exception e)
                     {
                         Console.WriteLine("Exception {0} importing photos, saving changes and continuing...", e);
+
                         throw;
                     }
 
                     context.SaveChanges();
 
                     end = DateTime.Now;
+
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);
 
                     start = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mImporting ISO-639 codes...\u001b[0m");
 
-                    try { Iso639.Import(context); }
+                    try
+                    {
+                        Iso639.Import(context);
+                    }
                     catch(Exception e)
                     {
                         Console.WriteLine("Exception {0} importing ISO-639 codes, saving changes and continuing...", e);
+
                         throw;
                     }
 
                     context.SaveChanges();
 
                     end = DateTime.Now;
+
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
                                       (end - start).TotalSeconds);
                 }
                 catch(Exception ex)
                 {
                     Console.WriteLine("\u001b[31;1mCould not open database...\u001b[0m");
-                    #if DEBUG
+                #if DEBUG
                     Console.WriteLine("\u001b[31;1mException: {0}\u001b[0m", ex.Message);
-                    #endif
+                #endif
                     return;
                 }
             }

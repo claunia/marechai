@@ -15,9 +15,7 @@ namespace Marechai.Areas.Admin.Models
         public DateTime UploadDate { get; set; }
         [DisplayName("Uploaded by")]
         public string UploadUser { get; set; }
-        [NotMapped]
-        [Required(ErrorMessage = "Image file required")]
-        [DisplayName("Upload photo:")]
+        [NotMapped, Required(ErrorMessage = "Image file required"), DisplayName("Upload photo:")]
         public IFormFile Photo { get;     set; }
         public int    MachineId    { get; set; }
         public int    LicenseId    { get; set; }

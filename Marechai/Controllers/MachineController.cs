@@ -37,7 +37,7 @@ namespace Marechai.Controllers
 {
     public class MachineController : Controller
     {
-        readonly MarechaiContext         _context;
+        readonly MarechaiContext     _context;
         readonly IHostingEnvironment hostingEnvironment;
 
         public MachineController(IHostingEnvironment env, MarechaiContext context)

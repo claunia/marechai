@@ -36,16 +36,11 @@ namespace Marechai.Database.Models
 {
     public class Resolution : BaseModel<int>
     {
-        public Resolution()
-        {
-            ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
-        }
+        public Resolution() => ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
 
-        [Required]
-        [Range(1, 131072)]
+        [Required, Range(1, 131072)]
         public int Width { get; set; }
-        [Required]
-        [Range(1, 131072)]
+        [Required, Range(1, 131072)]
         public int Height { get; set; }
         [Range(2, 281474976710656)]
         public long? Colors { get; set; }
@@ -66,27 +61,27 @@ namespace Marechai.Database.Models
         {
             if(Chars)
             {
-                if(Colors == null) return $"{Width}x{Height} characters";
+                if(Colors == null)
+                    return$"{Width}x{Height} characters";
 
-                if(Palette != null && Colors != Palette)
-                    return Grayscale
-                               ? $"{Width}x{Height} characters at {Colors} grays from a palette of {Palette}"
+                if(Palette != null &&
+                   Colors  != Palette)
+                    return Grayscale ? $"{Width}x{Height} characters at {Colors} grays from a palette of {Palette}"
                                : $"{Width}x{Height} characters at {Colors} colors from a palette of {Palette}";
 
-                return Colors == 2 && Grayscale
-                           ? $"{Width}x{Height} black and white characters"
+                return Colors == 2 && Grayscale ? $"{Width}x{Height} black and white characters"
                            : $"{Width}x{Height} characters at {Colors} colors";
             }
 
-            if(Colors == null) return $"{Width}x{Height} pixels";
+            if(Colors == null)
+                return$"{Width}x{Height} pixels";
 
-            if(Palette != null && Colors != Palette)
-                return Grayscale
-                           ? $"{Width}x{Height} pixels at {Colors} grays from a palette of {Palette}"
+            if(Palette != null &&
+               Colors  != Palette)
+                return Grayscale ? $"{Width}x{Height} pixels at {Colors} grays from a palette of {Palette}"
                            : $"{Width}x{Height} pixels at {Colors} colors from a palette of {Palette}";
 
-            return Colors == 2 && Grayscale
-                       ? $"{Width}x{Height} black and white pixels"
+            return Colors == 2 && Grayscale ? $"{Width}x{Height} black and white pixels"
                        : $"{Width}x{Height} pixels at {Colors} colors";
         }
     }

@@ -52,18 +52,15 @@ namespace Marechai.Database.Models
 
         [Required]
         public string Name { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true), DataType(DataType.Date)]
         public DateTime? Founded { get; set; }
-        [Url]
-        [StringLength(255)]
+        [Url, StringLength(255)]
         public string Website { get; set; }
         [StringLength(45)]
         public string Twitter { get; set; }
         [StringLength(45)]
         public string Facebook { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}")]
-        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Sold { get; set; }
         public int? SoldToId { get;  set; }
         [StringLength(80)]
@@ -72,8 +69,7 @@ namespace Marechai.Database.Models
         public string City { get; set; }
         [StringLength(80)]
         public string Province { get; set; }
-        [StringLength(25)]
-        [DisplayName("Postal code")]
+        [StringLength(25), DisplayName("Postal code")]
         public string PostalCode { get; set; }
         public short? CountryId { get;  set; }
         [Required]
@@ -96,18 +92,16 @@ namespace Marechai.Database.Models
             Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
         public virtual DocumentCompany DocumentCompany { get; set; }
 
-        [DisplayName("Sold")]
-        [NotMapped]
-        public string SoldView =>
-            Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
-                ? Sold is null
-                      ? "Unknown"
-                      : Sold.Value.ToShortDateString()
-                : Sold is null
-                    ? SoldToId is null
-                          ? ""
-                          : "Unknown"
-                    : Sold.Value.ToShortDateString();
+        [DisplayName("Sold"), NotMapped]
+        public string SoldView => Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
+                                      ? Sold is null
+                                            ? "Unknown"
+                                            : Sold.Value.ToShortDateString()
+                                      : Sold is null
+                                          ? SoldToId is null
+                                                ? ""
+                                                : "Unknown"
+                                          : Sold.Value.ToShortDateString();
 
         [NotMapped]
         public CompanyDescription Description => Descriptions?.FirstOrDefault();

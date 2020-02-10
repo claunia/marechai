@@ -31,26 +31,23 @@
 
     ViewData["Title"] = "Consoles";
 }
-@using Machine = Marechai.Database.Models.Machine
 @model Marechai.Database.Models.Machine[]
-
 <p>Search results:</p>
 <p align="center">
-    @if(ViewBag.Letter != '\0')
+    @if (ViewBag.Letter != '\0')
     {
         <b>@ViewBag.Letter</b>
         <br />
     }
 
-    @if(Model.Any())
+    @if (Model.Any())
     {
         <p>
-            @Model.Count() computers found in the database.<br />
-            @foreach(Machine console in Model)
+            @Model.Count() computers found in the database.
+            <br />
+            @foreach (var console in Model)
             {
-                <a asp-controller="Machine"
-                   asp-action="View"
-                   asp-route-id="@console.Id">
+                <a asp-controller="Machine" asp-action="View" asp-route-id="@console.Id">
                     @console.Company.Name @console.Name</a>
                 <br />
             }

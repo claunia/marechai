@@ -31,9 +31,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Areas.Admin.Models;
 using Marechai.Database;
 using Marechai.Database.Models;
-using Marechai.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -42,43 +42,39 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Marechai.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize]
+    [Area("Admin"), Authorize]
     public class MachinesController : Controller
     {
         readonly MarechaiContext _context;
 
-        public MachinesController(MarechaiContext context)
-        {
-            _context = context;
-        }
+        public MachinesController(MarechaiContext context) => _context = context;
 
         // GET: Admin/Machines
         public async Task<IActionResult> Index()
         {
             IIncludableQueryable<Machine, MachineFamily> marechaiContext =
                 _context.Machines.Include(m => m.Company).Include(m => m.Family);
-            return View(await marechaiContext.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).ThenBy(m => m.Family.Name)
-                                         .Select(m => new MachineViewModel
-                                          {
-                                              Id         = m.Id,
-                                              Company    = m.Company.Name,
-                                              Name       = m.Name,
-                                              Model      = m.Model,
-                                              Introduced = m.Introduced,
-                                              Type       = m.Type,
-                                              Family     = m.Family.Name
-                                          }).ToListAsync());
+
+            return View(await marechaiContext.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).
+                                              ThenBy(m => m.Family.Name).Select(m => new MachineViewModel
+                                              {
+                                                  Id         = m.Id, Company = m.Company.Name, Name = m.Name,
+                                                  Model      = m.Model,
+                                                  Introduced = m.Introduced, Type = m.Type, Family = m.Family.Name
+                                              }).ToListAsync());
         }
 
         // GET: Admin/Machines/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
-            Machine machine = await _context.Machines.Include(m => m.Company).Include(m => m.Family)
-                                            .FirstOrDefaultAsync(m => m.Id == id);
-            if(machine == null) return NotFound();
+            Machine machine = await _context.Machines.Include(m => m.Company).Include(m => m.Family).
+                                             FirstOrDefaultAsync(m => m.Id == id);
+
+            if(machine == null)
+                return NotFound();
 
             return View(machine);
         }
@@ -86,16 +82,16 @@ namespace Marechai.Areas.Admin.Controllers
         // GET: Admin/Machines/Create
         public IActionResult Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies,       "Id", "Name");
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             ViewData["FamilyId"]  = new SelectList(_context.MachineFamilies, "Id", "Name");
+
             return View();
         }
 
         // POST: Admin/Machines/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CompanyId,Name,Type,Introduced,FamilyId,Model")]
                                                 Machine machine)
         {
@@ -104,50 +100,62 @@ namespace Marechai.Areas.Admin.Controllers
                 _context.Add(machine);
                 await _context.SaveChangesAsync();
 
-                NewsType newsType = new NewsType();
+                var newsType = new NewsType();
+
                 switch(machine.Type)
                 {
                     case MachineType.Computer:
                         newsType = NewsType.NewComputerInDb;
+
                         break;
                     case MachineType.Console:
                         newsType = NewsType.NewConsoleInDb;
+
                         break;
                 }
 
-                _context.News.Add(new News {AddedId = machine.Id, Date = DateTime.UtcNow, Type = newsType});
+                _context.News.Add(new News
+                {
+                    AddedId = machine.Id, Date = DateTime.UtcNow, Type = newsType
+                });
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies,       "Id", "Name", machine.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", machine.CompanyId);
             ViewData["FamilyId"]  = new SelectList(_context.MachineFamilies, "Id", "Name", machine.FamilyId);
+
             return View(machine);
         }
 
         // GET: Admin/Machines/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
             Machine machine = await _context.Machines.FindAsync(id);
-            if(machine == null) return NotFound();
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies,       "Id", "Name", machine.CompanyId);
+            if(machine == null)
+                return NotFound();
+
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", machine.CompanyId);
             ViewData["FamilyId"]  = new SelectList(_context.MachineFamilies, "Id", "Name", machine.FamilyId);
+
             return View(machine);
         }
 
         // POST: Admin/Machines/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,Name,Type,Introduced,FamilyId,Model")]
                                               Machine machine)
         {
-            if(id != machine.Id) return NotFound();
+            if(id != machine.Id)
+                return NotFound();
 
             if(ModelState.IsValid)
             {
@@ -156,23 +164,31 @@ namespace Marechai.Areas.Admin.Controllers
                     _context.Update(machine);
                     await _context.SaveChangesAsync();
 
-                    NewsType newsType = new NewsType();
+                    var newsType = new NewsType();
+
                     switch(machine.Type)
                     {
                         case MachineType.Computer:
                             newsType = NewsType.UpdatedComputerInDb;
+
                             break;
                         case MachineType.Console:
                             newsType = NewsType.UpdatedConsoleInDb;
+
                             break;
                     }
 
-                    _context.News.Add(new News {AddedId = machine.Id, Date = DateTime.UtcNow, Type = newsType});
+                    _context.News.Add(new News
+                    {
+                        AddedId = machine.Id, Date = DateTime.UtcNow, Type = newsType
+                    });
+
                     await _context.SaveChangesAsync();
                 }
                 catch(DbUpdateConcurrencyException)
                 {
-                    if(!MachineExists(machine.Id)) return NotFound();
+                    if(!MachineExists(machine.Id))
+                        return NotFound();
 
                     throw;
                 }
@@ -180,38 +196,38 @@ namespace Marechai.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["CompanyId"] = new SelectList(_context.Companies,       "Id", "Name", machine.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", machine.CompanyId);
             ViewData["FamilyId"]  = new SelectList(_context.MachineFamilies, "Id", "Name", machine.FamilyId);
+
             return View(machine);
         }
 
         // GET: Admin/Machines/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if(id == null) return NotFound();
+            if(id == null)
+                return NotFound();
 
-            Machine machine = await _context.Machines.Include(m => m.Company).Include(m => m.Family)
-                                            .FirstOrDefaultAsync(m => m.Id == id);
-            if(machine == null) return NotFound();
+            Machine machine = await _context.Machines.Include(m => m.Company).Include(m => m.Family).
+                                             FirstOrDefaultAsync(m => m.Id == id);
+
+            if(machine == null)
+                return NotFound();
 
             return View(machine);
         }
 
         // POST: Admin/Machines/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Machine machine = await _context.Machines.FindAsync(id);
             _context.Machines.Remove(machine);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        bool MachineExists(int id)
-        {
-            return _context.Machines.Any(e => e.Id == id);
-        }
+        bool MachineExists(int id) => _context.Machines.Any(e => e.Id == id);
     }
 }

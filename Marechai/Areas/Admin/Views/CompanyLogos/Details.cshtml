@@ -3,16 +3,12 @@
 @{
     ViewData["Title"] = "Details";
 }
-
 <h1>Details</h1>
 <div>
-    <a asp-action="Edit"
-       asp-route-id="@Model.Id"
-       class="btn btn-primary">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
         Edit
     </a>
-    <a asp-action="Index"
-       class="btn btn-secondary">
+    <a asp-action="Index" class="btn btn-secondary">
         Back to List
     </a>
 </div>

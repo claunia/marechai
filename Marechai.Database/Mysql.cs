@@ -50,17 +50,18 @@ namespace Marechai.Database
                 command.CommandText = "SELECT LAST_INSERT_ID()";
                 IDataReader reader = command.ExecuteReader();
 
-                if(reader == null || !reader.Read()) return 0;
+                if(reader == null ||
+                   !reader.Read())
+                    return 0;
 
                 long id = reader.GetInt64(0);
                 reader.Close();
+
                 return id;
             }
         }
 
-        /// <summary>
-        ///     Opens an existing database
-        /// </summary>
+        /// <summary>Opens an existing database</summary>
         /// <param name="server">Server</param>
         /// <param name="user">User</param>
         /// <param name="database">Database name</param>
@@ -81,9 +82,11 @@ namespace Marechai.Database
 
                 bool res = Operations.UpdateDatabase();
 
-                if(res) return true;
+                if(res)
+                    return true;
 
                 connection = null;
+
                 return false;
             }
             catch(MySqlException ex)
@@ -91,31 +94,26 @@ namespace Marechai.Database
                 Console.WriteLine("Error opening database.");
                 Console.WriteLine(ex);
                 connection = null;
+
                 return false;
             }
         }
 
-        /// <summary>
-        ///     Closes the database
-        /// </summary>
+        /// <summary>Closes the database</summary>
         public void CloseDb()
         {
             connection?.Close();
             connection = null;
         }
 
-        /// <summary>
-        ///     Gets a data adapter for the opened database
-        /// </summary>
+        /// <summary>Gets a data adapter for the opened database</summary>
         /// <returns>Data adapter</returns>
-        public IDbDataAdapter GetNewDataAdapter()
-        {
-            return new MySqlDataAdapter();
-        }
+        public IDbDataAdapter GetNewDataAdapter() => new MySqlDataAdapter();
 
         public bool TableExists(string tableName)
         {
             MySqlCommand cmd = connection.CreateCommand();
+
             cmd.CommandText =
                 $"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{connection.Database}' AND table_name = '{tableName}'";
 
@@ -125,12 +123,10 @@ namespace Marechai.Database
 
             int count = reader.GetInt32(0);
             reader.Close();
+
             return count > 0;
         }
 
-        ~Mysql()
-        {
-            CloseDb();
-        }
+        ~Mysql() => CloseDb();
     }
 }
