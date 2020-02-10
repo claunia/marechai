@@ -30,12 +30,12 @@
 
 using System.Linq;
 using Marechai.Database.Models;
-using cicm_web.Models;
+using Marechai.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace cicm_web.Controllers
+namespace Marechai.Controllers
 {
     public class CompanyController : Controller
     {

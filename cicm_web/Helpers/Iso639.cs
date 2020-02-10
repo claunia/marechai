@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Marechai.Database.Models;
 
-namespace cicm_web.Helpers
+namespace Marechai.Helpers
 {
     public static class Iso639
     {

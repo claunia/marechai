@@ -1,6 +1,6 @@
 using System;
 
-namespace cicm_web.Models
+namespace Marechai.Models
 {
     public class NewsModel
     {

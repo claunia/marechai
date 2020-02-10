@@ -36,7 +36,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace cicm_web
+namespace Marechai
 {
     // DO NOT MAKE STATIC
     public class Startup

@@ -33,11 +33,11 @@ using System.Diagnostics;
 using System.Linq;
 using Marechai.Database;
 using Marechai.Database.Models;
-using cicm_web.Models;
+using Marechai.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
-namespace cicm_web.Controllers
+namespace Marechai.Controllers
 {
     public class HomeController : Controller
     {

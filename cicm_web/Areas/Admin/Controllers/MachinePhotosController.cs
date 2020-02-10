@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Database.Models;
-using cicm_web.Areas.Admin.Models;
-using cicm_web.Helpers;
+using Marechai.Areas.Admin.Models;
+using Marechai.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 
-namespace cicm_web.Areas.Admin.Controllers
+namespace Marechai.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]

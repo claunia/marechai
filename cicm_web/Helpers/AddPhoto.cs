@@ -13,7 +13,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Primitives;
 using SkiaSharp;
 
-namespace cicm_web.Helpers
+namespace Marechai.Helpers
 {
     public class Photos
     {

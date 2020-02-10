@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Marechai.Database.Models;
-using cicm_web.Areas.Admin.Models;
+using Marechai.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using SkiaSharp;
 using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
 
-namespace cicm_web.Areas.Admin.Controllers
+namespace Marechai.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]

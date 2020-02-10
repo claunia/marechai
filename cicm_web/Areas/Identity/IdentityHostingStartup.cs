@@ -29,13 +29,13 @@
 *******************************************************************************/
 
 using Marechai.Database.Models;
-using cicm_web.Areas.Identity;
+using Marechai.Areas.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: HostingStartup(typeof(IdentityHostingStartup))]
 
-namespace cicm_web.Areas.Identity
+namespace Marechai.Areas.Identity
 {
     public class IdentityHostingStartup : IHostingStartup
     {

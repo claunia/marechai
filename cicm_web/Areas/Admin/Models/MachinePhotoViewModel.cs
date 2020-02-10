@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Http;
 
-namespace cicm_web.Areas.Admin.Models
+namespace Marechai.Areas.Admin.Models
 {
     public class MachinePhotoViewModel : BaseViewModel<Guid>
     {

@@ -1,14 +1,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Database.Models;
-using cicm_web.Areas.Admin.Models;
+using Marechai.Areas.Admin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace cicm_web.Areas.Admin.Controllers
+namespace Marechai.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]

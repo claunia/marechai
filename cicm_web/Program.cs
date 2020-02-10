@@ -32,17 +32,17 @@ using System;
 using System.Linq;
 using Marechai.Database;
 using Marechai.Database.Models;
-using cicm_web.Helpers;
 using DiscImageChef.Interop;
+using Marechai.Helpers;
 using Markdig;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Iso639 = cicm_web.Helpers.Iso639;
+using Iso639 = Marechai.Helpers.Iso639;
 using Version = DiscImageChef.Interop.Version;
 
-namespace cicm_web
+namespace Marechai
 {
     public static class Program
     {

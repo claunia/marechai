@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace cicm_web.Areas.Admin.Controllers
+namespace Marechai.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]

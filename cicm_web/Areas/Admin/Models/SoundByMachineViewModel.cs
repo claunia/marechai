@@ -30,7 +30,7 @@
 
 using System.ComponentModel;
 
-namespace cicm_web.Areas.Admin.Models
+namespace Marechai.Areas.Admin.Models
 {
     public class SoundByMachineViewModel : BaseViewModel<long>
     {

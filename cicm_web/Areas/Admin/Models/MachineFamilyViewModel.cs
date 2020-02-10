@@ -1,4 +1,4 @@
-namespace cicm_web.Areas.Admin.Models
+namespace Marechai.Areas.Admin.Models
 {
     public class MachineFamilyViewModel : BaseViewModel<int>
     {

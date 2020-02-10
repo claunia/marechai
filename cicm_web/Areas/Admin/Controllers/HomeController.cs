@@ -30,7 +30,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace cicm_web.Areas.Admin.Controllers
+namespace Marechai.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class HomeController : Controller

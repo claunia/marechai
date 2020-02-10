@@ -34,7 +34,7 @@ using Marechai.Database.Models;
 using SkiaSharp;
 using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
 
-namespace cicm_web.Helpers
+namespace Marechai.Helpers
 {
     public static class SvgRender
     {

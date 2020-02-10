@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace cicm_web.Areas.Api.Controllers
+namespace Marechai.Areas.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

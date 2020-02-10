@@ -34,7 +34,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace cicm_web.Areas.Admin.Models
+namespace Marechai.Areas.Admin.Models
 {
     public class ProcessorViewModel : BaseViewModel<int>
     {

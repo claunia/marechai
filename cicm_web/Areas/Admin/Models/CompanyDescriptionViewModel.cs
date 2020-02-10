@@ -28,7 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-namespace cicm_web.Areas.Admin.Models
+namespace Marechai.Areas.Admin.Models
 {
     public class CompanyDescriptionViewModel : BaseViewModel<int>
     {

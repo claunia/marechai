@@ -34,7 +34,7 @@ using Marechai.Database.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
-namespace cicm_web.Controllers
+namespace Marechai.Controllers
 {
     public class ComputerController : Controller
     {

@@ -28,7 +28,7 @@
 // Copyright © 2003-2018 Natalia Portillo
 *******************************************************************************/
 
-namespace cicm_web.Models
+namespace Marechai.Models
 {
     public class ErrorViewModel
     {
