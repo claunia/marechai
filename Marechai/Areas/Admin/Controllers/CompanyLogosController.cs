@@ -65,7 +65,7 @@ namespace Marechai.Areas.Admin.Controllers
         }
 
         // POST: CompanyLogos/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         // TODO: Upload
         [HttpPost]
@@ -94,7 +94,7 @@ namespace Marechai.Areas.Admin.Controllers
                     XmlDocument  xml    = new XmlDocument();
                     xml.LoadXml(svgStr);
                 }
-                catch(XmlException e)
+                catch(XmlException)
                 {
                     companyLogo.SvgLogo      = null;
                     companyLogo.ErrorMessage = "Not a valid SVG file.";
@@ -150,7 +150,7 @@ namespace Marechai.Areas.Admin.Controllers
                         foreach(int multiplier in new[] {1, 2, 3})
                         {
                             if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format,
-                                                              $"{multiplier}x"))) ;
+                                                              $"{multiplier}x")))
                             Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos",
                                                                    format, $"{multiplier}x"));
 
@@ -196,7 +196,7 @@ namespace Marechai.Areas.Admin.Controllers
                     foreach(string format in new[] {"png", "webp"})
                     {
                         if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos/thumbs",
-                                                          format))) ;
+                                                          format)))
                         Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos/thumbs",
                                                                format));
 
@@ -214,7 +214,7 @@ namespace Marechai.Areas.Admin.Controllers
                         foreach(int multiplier in new[] {1, 2, 3})
                         {
                             if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos/thumbs",
-                                                              format, $"{multiplier}x"))) ;
+                                                              format, $"{multiplier}x")))
                             Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath,
                                                                    "assets/logos/thumbs", format, $"{multiplier}x"));
 
@@ -286,7 +286,7 @@ namespace Marechai.Areas.Admin.Controllers
         }
 
         // POST: CompanyLogos/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]

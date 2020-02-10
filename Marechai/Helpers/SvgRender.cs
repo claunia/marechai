@@ -51,7 +51,7 @@ namespace Marechai.Helpers
 
                 foreach(string format in new[] {"png", "webp"})
                 {
-                    if(!Directory.Exists(Path.Combine("wwwroot/assets/flags/countries", format))) ;
+                    if(!Directory.Exists(Path.Combine("wwwroot/assets/flags/countries", format)))
                     Directory.CreateDirectory(Path.Combine("wwwroot/assets/flags/countries", format));
 
                     SKEncodedImageFormat skFormat;
@@ -68,7 +68,7 @@ namespace Marechai.Helpers
                     foreach(int multiplier in new[] {1, 2, 3})
                     {
                         if(!Directory.Exists(Path.Combine("wwwroot/assets/flags/countries", format, $"{multiplier}x"))
-                        ) ;
+                        )
                         Directory.CreateDirectory(Path.Combine("wwwroot/assets/flags/countries", format,
                                                                $"{multiplier}x"));
 
