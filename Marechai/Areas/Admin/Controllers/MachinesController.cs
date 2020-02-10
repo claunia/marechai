@@ -25,7 +25,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2003-2018 Natalia Portillo
+// Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
 using System;
@@ -92,7 +92,7 @@ namespace Marechai.Areas.Admin.Controllers
         }
 
         // POST: Admin/Machines/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -140,7 +140,7 @@ namespace Marechai.Areas.Admin.Controllers
         }
 
         // POST: Admin/Machines/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]

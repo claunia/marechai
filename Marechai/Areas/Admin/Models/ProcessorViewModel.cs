@@ -8,7 +8,7 @@
 // --[ Description ] ----------------------------------------------------------
 //
 //     Describes general purpose processors or application specific coprocessors
-//     that are not strictly for graphic or sound generation. 
+//     that are not strictly for graphic or sound generation.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -26,7 +26,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2003-2018 Natalia Portillo
+// Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
 using System;
