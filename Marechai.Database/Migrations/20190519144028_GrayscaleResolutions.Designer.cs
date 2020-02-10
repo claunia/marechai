@@ -147,7 +147,7 @@ namespace Marechai.Database.Migrations
                     b.ToTable("browser_tests");
                 });
 
-            modelBuilder.Entity("Marechai.Database.Models.CicmDb", b =>
+            modelBuilder.Entity("Marechai.Database.Models.MarechaiDb", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -166,7 +166,7 @@ namespace Marechai.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("cicm_db");
+                    b.ToTable("marechai_db");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.Company", b =>

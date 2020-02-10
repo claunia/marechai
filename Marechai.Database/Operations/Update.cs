@@ -45,14 +45,14 @@ namespace Marechai.Database
         /// <returns><c>true</c> if updated correctly, <c>false</c> otherwise</returns>
         public bool UpdateDatabase()
         {
-            bool dbV2             = !dbCore.TableExists("cicm_db");
+            bool dbV2             = !dbCore.TableExists("marechai_db");
             int  currentDbVersion = 2;
 
             if(!dbV2)
             {
                 IDbCommand     dbCmd       = dbCon.CreateCommand();
                 IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
-                dbCmd.CommandText = "SELECT * FROM cicm_db";
+                dbCmd.CommandText = "SELECT * FROM marechai_db";
                 DataSet dataSet = new DataSet();
                 dataAdapter.SelectCommand = dbCmd;
                 dataAdapter.Fill(dataSet);
@@ -201,7 +201,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Creating versioning table");
             IDbCommand dbCmd = dbCon.CreateCommand();
-            dbCmd.CommandText = @"CREATE TABLE `cicm_db` (
+            dbCmd.CommandText = @"CREATE TABLE `marechai_db` (
                                              `id` INT NOT NULL AUTO_INCREMENT,
                                              `version` INT NOT NULL,
                                              `updated` DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -460,7 +460,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
-            dbCmd.CommandText = @"INSERT INTO cicm_db (version) VALUES ('3')";
+            dbCmd.CommandText = @"INSERT INTO marechai_db (version) VALUES ('3')";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -482,7 +482,7 @@ namespace Marechai.Database
                 dbCmd.Transaction = trans;
                 dbCmd.CommandText = "ALTER TABLE `admins` ROW_FORMAT = DYNAMIC;\n"          +
                                     "ALTER TABLE `browser_tests` ROW_FORMAT = DYNAMIC;\n"   +
-                                    "ALTER TABLE `cicm_db` ROW_FORMAT = DYNAMIC;\n"         +
+                                    "ALTER TABLE `marechai_db` ROW_FORMAT = DYNAMIC;\n"         +
                                     "ALTER TABLE `companies` ROW_FORMAT = DYNAMIC;\n"       +
                                     "ALTER TABLE `computers` ROW_FORMAT = DYNAMIC;\n"       +
                                     "ALTER TABLE `consoles` ROW_FORMAT = DYNAMIC;\n"        +
@@ -729,7 +729,7 @@ namespace Marechai.Database
             dbCmd             = dbCon.CreateCommand();
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('4')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('4')";
             dbCmd.ExecuteNonQuery();
             trans.Commit();
             dbCmd.Dispose();
@@ -753,7 +753,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 5...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('5')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('5')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -831,7 +831,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 6...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('6')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('6')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -860,7 +860,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 7...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('7')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('7')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -880,7 +880,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 8...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('8')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('8')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -900,7 +900,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 9...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('9')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('9')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -1014,7 +1014,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 10...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('10')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('10')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -1067,7 +1067,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 11...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('11')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('11')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -1142,7 +1142,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 12...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('12')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('12')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -1341,7 +1341,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 13...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('13')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('13')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -1620,7 +1620,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 14...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('14')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('14')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -1727,7 +1727,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 15...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('15')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('15')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -1804,7 +1804,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 16...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('16')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('16')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -1932,7 +1932,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 17...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('17')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('17')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -2051,7 +2051,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 18...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('18')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('18')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -2192,7 +2192,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 19...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('19')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('19')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -2426,7 +2426,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 20...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('20')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('20')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -2496,7 +2496,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 21...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('21')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('21')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -2549,7 +2549,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 22...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('22')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('22')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -2621,7 +2621,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Setting new database version to 23...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('23')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('23')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }
@@ -2651,7 +2651,7 @@ namespace Marechai.Database
             int            currentDbVersion = 2;
             IDbCommand     dbCmd            = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter      = dbCore.GetNewDataAdapter();
-            dbCmd.CommandText = "SELECT * FROM cicm_db";
+            dbCmd.CommandText = "SELECT * FROM marechai_db";
             DataSet dataSet = new DataSet();
             dataAdapter.SelectCommand = dbCmd;
             dataAdapter.Fill(dataSet);
@@ -2684,7 +2684,7 @@ namespace Marechai.Database
             
             Console.WriteLine("Setting new database version to 1984 (Entity Framework)...");
             dbCmd             = dbCon.CreateCommand();
-            dbCmd.CommandText = "INSERT INTO cicm_db (version) VALUES ('1984')";
+            dbCmd.CommandText = "INSERT INTO marechai_db (version) VALUES ('1984')";
             dbCmd.ExecuteNonQuery();
             dbCmd.Dispose();
         }

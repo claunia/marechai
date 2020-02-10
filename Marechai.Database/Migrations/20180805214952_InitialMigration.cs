@@ -107,7 +107,7 @@ namespace Marechai.Database.Migrations
                                                                          defaultValueSql: "'0'")
                                          }, constraints: table => { table.PrimaryKey("PK_browser_tests", x => x.id); });
 
-            migrationBuilder.CreateTable("cicm_db",
+            migrationBuilder.CreateTable("marechai_db",
                                          table => new
                                          {
                                              id = table.Column<int>("int(11)", nullable: false)
@@ -116,7 +116,7 @@ namespace Marechai.Database.Migrations
                                              version = table.Column<int>("int(11)", nullable: false),
                                              updated = table.Column<DateTimeOffset?>("timestamp", nullable: true,
                                                                               defaultValueSql: "CURRENT_TIMESTAMP")
-                                         }, constraints: table => { table.PrimaryKey("PK_cicm_db", x => x.id); });
+                                         }, constraints: table => { table.PrimaryKey("PK_marechai_db", x => x.id); });
 
             migrationBuilder.CreateTable("forbidden",
                                          table => new
@@ -927,7 +927,7 @@ namespace Marechai.Database.Migrations
 
             migrationBuilder.DropTable("browser_tests");
 
-            migrationBuilder.DropTable("cicm_db");
+            migrationBuilder.DropTable("marechai_db");
 
             migrationBuilder.DropTable("company_descriptions");
 

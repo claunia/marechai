@@ -60,13 +60,13 @@ namespace Marechai.Database.Schemas.Sql
                                                        PRIMARY KEY (`id`)
                                                        );";
 
-        public static readonly string CicmDb = @"CREATE TABLE `cicm_db` (
+        public static readonly string MarechaiDb = @"CREATE TABLE `marechai_db` (
                                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                                 `version` int(11) NOT NULL,
                                                 `updated` datetime DEFAULT CURRENT_TIMESTAMP,
                                                  PRIMARY KEY (`id`)
                                                  );
-                                                 INSERT INTO cicm_db (version) VALUES ('3');";
+                                                 INSERT INTO marechai_db (version) VALUES ('3');";
 
         public static readonly string Companies = @"CREATE TABLE IF NOT EXISTS `companies` (
                                                    `id` int(11) NOT NULL AUTO_INCREMENT,

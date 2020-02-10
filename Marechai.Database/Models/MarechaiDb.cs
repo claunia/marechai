@@ -2,7 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : CicmDb.cs
+// Filename       : MarechaiDb.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -32,7 +32,7 @@ using System;
 
 namespace Marechai.Database.Models
 {
-    public class CicmDb
+    public class MarechaiDb
     {
         public int Id { get; set; }
         public int Version { get; set; }

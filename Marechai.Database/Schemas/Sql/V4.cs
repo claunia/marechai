@@ -42,13 +42,13 @@ namespace Marechai.Database.Schemas.Sql
             "CREATE INDEX idx_browser_tests_os ON browser_tests (os);\n"                 +
             "CREATE INDEX idx_browser_tests_platform ON browser_tests (platform);";
 
-        public static readonly string CicmDb = @"CREATE TABLE `cicm_db` (
+        public static readonly string MarechaiDb = @"CREATE TABLE `marechai_db` (
                                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                                 `version` int(11) NOT NULL,
                                                 `updated` datetime DEFAULT CURRENT_TIMESTAMP,
                                                  PRIMARY KEY (`id`)
                                                  );
-                                                 INSERT INTO cicm_db (version) VALUES ('4');";
+                                                 INSERT INTO marechai_db (version) VALUES ('4');";
 
         public static readonly string Companies =
             V3.Companies + "\n" + "CREATE INDEX idx_companies_name ON companies (name);";

@@ -43,7 +43,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
         public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
         public virtual DbSet<BrowserTest>                         BrowserTests                        { get; set; }
-        public virtual DbSet<CicmDb>                              CicmDb                              { get; set; }
+        public virtual DbSet<MarechaiDb>                              MarechaiDb                              { get; set; }
         public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
         public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
         public virtual DbSet<CompaniesByMagazine>                 CompaniesByMagazines                { get; set; }
@@ -222,9 +222,9 @@ namespace Marechai.Database.Models
                       .HasDefaultValueSql("''");
             });
 
-            modelBuilder.Entity<CicmDb>(entity =>
+            modelBuilder.Entity<MarechaiDb>(entity =>
             {
-                entity.ToTable("cicm_db");
+                entity.ToTable("marechai_db");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
