@@ -1,13 +1,13 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : HomeController.cs
+// Filename       : Register.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Home controller
+//     Register services for injection
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,32 +28,15 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.Diagnostics;
-using Marechai.Database.Models;
-using Marechai.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Marechai.Controllers
+namespace Marechai.Services
 {
-    public class HomeController : Controller
+    public static class Register
     {
-        readonly MarechaiContext     _context;
-        readonly IWebHostEnvironment hostingEnvironment;
+        internal static void RegisterServices(IServiceCollection services) =>
 
-        public HomeController(IWebHostEnvironment env, MarechaiContext context)
-        {
-            hostingEnvironment = env;
-            _context           = context;
-        }
-
-        public IActionResult About() => View();
-
-        public IActionResult Contact() => View();
-
-        public IActionResult Error() => View(new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-        });
+            // TODO: User reflection
+            services.AddScoped<NewsService>();
     }
 }

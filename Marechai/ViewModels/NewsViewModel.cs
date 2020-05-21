@@ -1,13 +1,13 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : HomeController.cs
+// Filename       : NewsViewModel.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Home controller
+//     News view model
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,32 +28,25 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.Diagnostics;
-using Marechai.Database.Models;
-using Marechai.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using System;
 
-namespace Marechai.Controllers
+namespace Marechai.ViewModels
 {
-    public class HomeController : Controller
+    public sealed class NewsViewModel
     {
-        readonly MarechaiContext     _context;
-        readonly IWebHostEnvironment hostingEnvironment;
-
-        public HomeController(IWebHostEnvironment env, MarechaiContext context)
+        public NewsViewModel(int affectedId, string text, DateTime timestamp, string controller, string itemName)
         {
-            hostingEnvironment = env;
-            _context           = context;
+            AffectedId = affectedId;
+            Text       = text;
+            Timestamp  = timestamp;
+            Controller = controller;
+            ItemName   = itemName;
         }
 
-        public IActionResult About() => View();
-
-        public IActionResult Contact() => View();
-
-        public IActionResult Error() => View(new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-        });
+        public int      AffectedId { get; }
+        public string   Controller { get; }
+        public string   ItemName   { get; }
+        public string   Text       { get; }
+        public DateTime Timestamp  { get; }
     }
 }

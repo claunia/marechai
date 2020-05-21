@@ -1,12 +1,39 @@
 ﻿@page "/"
-<h1>Hello, world!</h1>
-Welcome to your new app.
+@using Marechai.ViewModels
 @inherits OwningComponentBase<NewsService>
+
+<h2>News</h2>
+@foreach (var news in _news)
+{
+    <table border="0" width="100%">
+        <tr>
+            <td colspan="2">
+                <b>@news.Timestamp</b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @news.Text
+            </td>
+        </tr>
+        <tr>
+            <td>@* TODO: Image *@</td>
+            <td>
+                <a href="/@news.Controller/@news.AffectedId">
+                    @news.ItemName
+                </a>
+            </td>
+        </tr>
+    </table>
+    <br />
+}
 
 @code
 {
-    protected override async Task OnInitializedAsync()
+    List<NewsViewModel> _news;
+
+    protected override void OnInitialized()
     {
-        var foo = @Service.GetNews();
+        _news = @Service.GetNews();
     }
 }

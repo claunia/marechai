@@ -30,6 +30,7 @@
 
 using Marechai.Areas.Identity;
 using Marechai.Database.Models;
+using Marechai.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -65,7 +66,7 @@ namespace Marechai
             services.
                 AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 
-            //services.AddSingleton<CompaniesService>();
+            Register.RegisterServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
