@@ -311,12 +311,12 @@
         {
             <div class="card-header" id="headingComputers">
                 <h5 class="mb-0">
-                    <button aria-controls="collapseComputers" aria-expanded="false" class="btn btn-info" data-target="#collapseComputers" data-toggle="collapse">
+                    <button aria-controls="collapseComputers" aria-expanded="false" class="btn btn-info" data-target="#collapseComputers" data-toggle="collapse" @onclick="@CollapseComputers">
                         @((MarkupString)string.Format(@L["<ok>{0}</ok> computers known."], _computers.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>","</span>"))
                     </button>
                 </h5>
             </div>
-            <div aria-labelledby="headingComputers" class="collapse" data-parent="#itemsAccordion" id="collapseComputers">
+            <div aria-labelledby="headingComputers" class="@(ComputersCollapsed ? "collapse" : "")" data-parent="#itemsAccordion" id="collapseComputers">
                 <div class="card-body">
                     @foreach (var computer in _computers)
                     {
@@ -341,12 +341,12 @@
         {
             <div class="card-header" id="headingConsoles">
                 <h5 class="mb-0">
-                    <button aria-controls="collapseConsoles" aria-expanded="false" class="btn btn-info" data-target="#collapseConsoles" data-toggle="collapse">
+                    <button aria-controls="collapseConsoles" aria-expanded="false" class="btn btn-info" data-target="#collapseConsoles" data-toggle="collapse" @onclick="@CollapseConsoles">
                         @((MarkupString)string.Format(@L["<ok>{0}</ok> videogame consoles known."], _consoles.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>","</span>"))
                     </button>
                 </h5>
             </div>
-            <div aria-labelledby="headingConsoles" class="collapse" data-parent="#itemsAccordion" id="collapseConsoles">
+            <div aria-labelledby="headingConsoles" class="@(ConsolesCollapsed ? "collapse" : "")"  data-parent="#itemsAccordion" id="collapseConsoles">
                 <div class="card-body">
                     @foreach (var console in _consoles)
                     {
@@ -390,6 +390,9 @@
     string _description;
     Company _soldTo;
 
+    public bool ComputersCollapsed { get; set; } = true;
+    public bool ConsolesCollapsed { get; set; } = true;
+
     protected override async Task OnInitializedAsync()
     {
         if(Id <= 0)
@@ -408,5 +411,21 @@
         _soldTo = await Service.GetSoldToAsync(_company.SoldToId);
 
         _loaded = true;
+    }
+
+    private void CollapseComputers()
+    {
+        if (_computers.Count == 0)
+            return;
+
+        ComputersCollapsed = !ComputersCollapsed;
+    }
+
+    private void CollapseConsoles()
+    {
+        if (_consoles.Count == 0)
+            return;
+
+        ConsolesCollapsed = !ConsolesCollapsed;
     }
 }
