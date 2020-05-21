@@ -28,10 +28,12 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using Marechai.Areas.Identity;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,40 +51,52 @@ namespace Marechai
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded    = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-
-            #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http: //go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
             services.AddDbContext<MarechaiContext>(options => options.
                                                               UseLazyLoadingProxies().
-                                                              UseMySql("server=localhost;port=3306;user=marechai;password=marechaipass;database=marechai;TreatTinyAsBoolean=false"));
+                                                              UseMySql(Configuration.
+                                                                           GetConnectionString("DefaultConnection")));
+
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).
+                     AddEntityFrameworkStores<MarechaiContext>();
+
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
+
+            services.
+                AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
+            //services.AddSingleton<CompaniesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if(env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+            }
             else
-                app.UseExceptionHandler("/Home/Error");
+            {
+                app.UseExceptionHandler("/Error");
+
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseStaticFiles();
             app.UseAuthentication();
-            app.UseCookiePolicy();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute("areas", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+                endpoints.MapBlazorHub();
+                endpoints.MapFallbackToPage("/_Host");
             });
         }
     }
