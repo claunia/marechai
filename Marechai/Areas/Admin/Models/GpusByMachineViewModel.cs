@@ -35,7 +35,7 @@ namespace Marechai.Areas.Admin.Models
     public class GpusByMachineViewModel : BaseViewModel<long>
     {
         [DisplayName("GPU")]
-        public string Gpu;
-        public string Machine;
+        public string Gpu { get;     set; }
+        public string Machine { get; set; }
     }
 }

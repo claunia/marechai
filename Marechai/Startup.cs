@@ -35,6 +35,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Marechai
 {
@@ -54,30 +55,34 @@ namespace Marechai
                 options.CheckConsentNeeded    = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+
             #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http: //go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
             services.AddDbContext<MarechaiContext>(options => options.
                                                               UseLazyLoadingProxies().
                                                               UseMySql("server=localhost;port=3306;user=marechai;password=marechaipass;database=marechai;TreatTinyAsBoolean=false"));
-
-            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if(env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else
                 app.UseExceptionHandler("/Home/Error");
 
+            app.UseRouting();
+
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseCookiePolicy();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute("areas", "{area:exists}/{controller=Home}/{action=Index}/{id?}").
-                       MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("areas", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

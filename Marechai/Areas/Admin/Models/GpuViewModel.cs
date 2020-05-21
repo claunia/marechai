@@ -41,9 +41,9 @@ namespace Marechai.Areas.Admin.Models
         public string Company;
         [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
         public DateTime? Introduced;
-        [DisplayName("Model code")]
-        public string ModelCode;
         public string Name;
+        [DisplayName("Model code")]
+        public string ModelCode { get; set; }
 
         [NotMapped]
         public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";

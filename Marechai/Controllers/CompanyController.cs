@@ -40,9 +40,9 @@ namespace Marechai.Controllers
     public class CompanyController : Controller
     {
         readonly MarechaiContext     _context;
-        readonly IHostingEnvironment hostingEnvironment;
+        readonly IWebHostEnvironment hostingEnvironment;
 
-        public CompanyController(IHostingEnvironment env, MarechaiContext context)
+        public CompanyController(IWebHostEnvironment env, MarechaiContext context)
         {
             hostingEnvironment = env;
             _context           = context;
@@ -70,9 +70,8 @@ namespace Marechai.Controllers
             return View(_context.Companies.Include(c => c.Logos).Where(c => c.Name.StartsWith(id)).OrderBy(c => c.Name).
                                  Select(c => new CompanyViewModel
                                  {
-                                     Id       = c.Id,
-                                     LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
-                                     Name     = c.Name
+                                     Id = c.Id, LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
+                                     Name = c.Name
                                  }).ToList());
         }
 
@@ -101,9 +100,8 @@ namespace Marechai.Controllers
             return View(_context.Companies.Include(c => c.Logos).Where(c => c.CountryId == id).OrderBy(c => c.Name).
                                  Select(c => new CompanyViewModel
                                  {
-                                     Id       = c.Id,
-                                     LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
-                                     Name     = c.Name
+                                     Id = c.Id, LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
+                                     Name = c.Name
                                  }).ToList());
         }
 

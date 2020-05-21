@@ -39,9 +39,9 @@ namespace Marechai.Controllers
     public class ComputerController : Controller
     {
         readonly MarechaiContext     _context;
-        readonly IHostingEnvironment hostingEnvironment;
+        readonly IWebHostEnvironment hostingEnvironment;
 
-        public ComputerController(IHostingEnvironment env, MarechaiContext context)
+        public ComputerController(IWebHostEnvironment env, MarechaiContext context)
         {
             hostingEnvironment = env;
             _context           = context;
@@ -52,13 +52,11 @@ namespace Marechai.Controllers
             ViewBag.ItemCount = _context.Machines.Count(m => m.Type == MachineType.Computer);
 
             ViewBag.MinYear = _context.
-                              Machines.Where(t => t.Type == MachineType.Computer &&
-                                                  t.Introduced.HasValue          &&
+                              Machines.Where(t => t.Type == MachineType.Computer && t.Introduced.HasValue &&
                                                   t.Introduced.Value.Year > 1000).Min(t => t.Introduced.Value.Year);
 
             ViewBag.MaxYear = _context.
-                              Machines.Where(t => t.Type == MachineType.Computer &&
-                                                  t.Introduced.HasValue          &&
+                              Machines.Where(t => t.Type == MachineType.Computer && t.Introduced.HasValue &&
                                                   t.Introduced.Value.Year > 1000).Max(t => t.Introduced.Value.Year);
 
             return View();
@@ -95,8 +93,7 @@ namespace Marechai.Controllers
         {
             ViewBag.Year = id;
 
-            return View(_context.Machines.Where(t => t.Type == MachineType.Computer &&
-                                                     t.Introduced.HasValue          &&
+            return View(_context.Machines.Where(t => t.Type == MachineType.Computer && t.Introduced.HasValue &&
                                                      t.Introduced.Value.Year == id).ToArray());
         }
     }

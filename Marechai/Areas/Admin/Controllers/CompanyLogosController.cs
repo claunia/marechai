@@ -21,9 +21,9 @@ namespace Marechai.Areas.Admin.Controllers
     public class CompanyLogosController : Controller
     {
         readonly MarechaiContext     _context;
-        readonly IHostingEnvironment hostingEnvironment;
+        readonly IWebHostEnvironment hostingEnvironment;
 
-        public CompanyLogosController(MarechaiContext context, IHostingEnvironment env)
+        public CompanyLogosController(MarechaiContext context, IWebHostEnvironment env)
         {
             _context           = context;
             hostingEnvironment = env;
@@ -144,7 +144,8 @@ namespace Marechai.Areas.Admin.Controllers
                     })
                     {
                         if(!Directory.Exists(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format)))
-                            Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos", format));
+                            Directory.CreateDirectory(Path.Combine(hostingEnvironment.WebRootPath, "assets/logos",
+                                                                   format));
 
                         SKEncodedImageFormat skFormat;
 
@@ -280,8 +281,7 @@ namespace Marechai.Areas.Admin.Controllers
                             float  scale     = canvasMin / svgMax;
                             var    matrix    = SKMatrix.MakeScale(scale, scale);
 
-                            var bitmap =
-                                new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
+                            var bitmap = new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
 
                             var canvas = new SKCanvas(bitmap);
                             canvas.DrawPicture(svg.Picture, ref matrix);

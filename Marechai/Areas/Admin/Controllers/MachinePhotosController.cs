@@ -20,10 +20,10 @@ namespace Marechai.Areas.Admin.Controllers
     public class MachinePhotosController : Controller
     {
         readonly MarechaiContext              _context;
-        readonly IHostingEnvironment          hostingEnvironment;
+        readonly IWebHostEnvironment          hostingEnvironment;
         readonly UserManager<ApplicationUser> userManager;
 
-        public MachinePhotosController(MarechaiContext context, IHostingEnvironment hostingEnvironment,
+        public MachinePhotosController(MarechaiContext context, IWebHostEnvironment hostingEnvironment,
                                        UserManager<ApplicationUser> userManager)
         {
             _context                = context;
@@ -56,29 +56,19 @@ namespace Marechai.Areas.Admin.Controllers
             MachinePhotoDetailsViewModel machinePhoto =
                 await _context.MachinePhotos.Select(m => new MachinePhotoDetailsViewModel
                 {
-                    Id                   = m.Id, CameraManufacturer = m.CameraManufacturer,
-                    CameraModel          = m.CameraModel,
-                    ColorSpace           = m.ColorSpace, Comments = m.Comments,
-                    Contrast             = m.Contrast,
-                    CreationDate         = m.CreationDate, DigitalZoomRatio = m.DigitalZoomRatio,
-                    ExifVersion          = m.ExifVersion,
-                    Exposure             = m.Exposure, ExposureProgram          = m.ExposureProgram,
-                    Flash                = m.Flash, Focal                       = m.Focal,
-                    FocalLength          = m.FocalLength, FocalLengthEquivalent = m.FocalLengthEquivalent,
-                    HorizontalResolution = m.HorizontalResolution, IsoRating    = m.IsoRating,
-                    Lens                 = m.Lens,
-                    LightSource          = m.LightSource, MeteringMode = m.MeteringMode,
-                    ResolutionUnit       = m.ResolutionUnit,
-                    Orientation          = m.Orientation, Saturation = m.Saturation,
-                    SceneCaptureType     = m.SceneCaptureType,
-                    SensingMethod        = m.SensingMethod, Sharpness = m.Sharpness,
-                    SoftwareUsed         = m.SoftwareUsed,
+                    Id = m.Id, CameraManufacturer = m.CameraManufacturer, CameraModel = m.CameraModel,
+                    ColorSpace = m.ColorSpace, Comments = m.Comments, Contrast = m.Contrast,
+                    CreationDate = m.CreationDate, DigitalZoomRatio = m.DigitalZoomRatio, ExifVersion = m.ExifVersion,
+                    Exposure = m.Exposure, ExposureProgram = m.ExposureProgram, Flash = m.Flash, Focal = m.Focal,
+                    FocalLength = m.FocalLength, FocalLengthEquivalent = m.FocalLengthEquivalent,
+                    HorizontalResolution = m.HorizontalResolution, IsoRating = m.IsoRating, Lens = m.Lens,
+                    LightSource = m.LightSource, MeteringMode = m.MeteringMode, ResolutionUnit = m.ResolutionUnit,
+                    Orientation = m.Orientation, Saturation = m.Saturation, SceneCaptureType = m.SceneCaptureType,
+                    SensingMethod = m.SensingMethod, Sharpness = m.Sharpness, SoftwareUsed = m.SoftwareUsed,
                     SubjectDistanceRange = m.SubjectDistanceRange, UploadDate = m.UploadDate,
-                    VerticalResolution   = m.VerticalResolution, WhiteBalance = m.WhiteBalance,
-                    License              = m.License.Name,
-                    UploadUser           = m.User.UserName,
-                    Machine              = $"{m.Machine.Company.Name} {m.Machine.Name}",
-                    MachineId            = m.Machine.Id, Source = m.Source
+                    VerticalResolution = m.VerticalResolution, WhiteBalance = m.WhiteBalance, License = m.License.Name,
+                    UploadUser = m.User.UserName, Machine = $"{m.Machine.Company.Name} {m.Machine.Name}",
+                    MachineId = m.Machine.Id, Source = m.Source
                 }).FirstOrDefaultAsync(m => m.Id == id);
 
             if(machinePhoto == null)
@@ -233,10 +223,9 @@ namespace Marechai.Areas.Admin.Controllers
                 await _context.MachinePhotos.Include(m => m.Machine).Include(m => m.Machine.Company).
                                Include(m => m.User).Select(p => new MachinePhotoViewModel
                                {
-                                   Id         = p.Id, Author = p.Author,
-                                   License    = p.License.Name,
+                                   Id         = p.Id, Author = p.Author, License = p.License.Name,
                                    Machine    = $"{p.Machine.Company.Name} {p.Machine.Name}", UploadDate = p.UploadDate,
-                                   UploadUser = p.User.UserName, LicenseId                               = p.License.Id
+                                   UploadUser = p.User.UserName, LicenseId = p.License.Id
                                }).OrderBy(p => p.Machine).ThenBy(p => p.UploadUser).ThenBy(p => p.UploadDate).
                                FirstOrDefaultAsync(m => m.Id == id);
 

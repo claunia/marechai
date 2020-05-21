@@ -42,9 +42,9 @@ namespace Marechai.Controllers
     public class HomeController : Controller
     {
         readonly MarechaiContext     _context;
-        readonly IHostingEnvironment hostingEnvironment;
+        readonly IWebHostEnvironment hostingEnvironment;
 
-        public HomeController(IHostingEnvironment env, MarechaiContext context)
+        public HomeController(IWebHostEnvironment env, MarechaiContext context)
         {
             hostingEnvironment = env;
             _context           = context;
@@ -56,7 +56,7 @@ namespace Marechai.Controllers
 
             List<NewsModel> news = new List<NewsModel>();
 
-            foreach(News @new in _context.News.OrderByDescending(t => t.Date).Take(10))
+            foreach(News @new in _context.News.OrderByDescending(t => t.Date).Take(10).ToList())
             {
                 Machine machine = _context.Machines.Find(@new.AddedId);
 
