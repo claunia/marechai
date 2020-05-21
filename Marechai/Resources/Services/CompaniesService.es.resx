@@ -126,4 +126,120 @@
     <value>{0} compañías en la base de datos.</value>
     <comment>How many companies are in the database, {0} is a number</comment>
   </data>
+  <data name="Company not found." xml:space="preserve">
+    <value>Compañía no encontrada</value>
+    <comment>Cannot find the requested company id</comment>
+  </data>
+  <data name="Founded" xml:space="preserve">
+    <value>Fundación</value>
+    <comment>Date of company foundation</comment>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>País</value>
+    <comment>Country where the company was established</comment>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Estado</value>
+    <comment>Company status</comment>
+  </data>
+  <data name="Current company status is unknown." xml:space="preserve">
+    <value>Estado actual desconocido.</value>
+    <comment>Current status unknown.</comment>
+  </data>
+  <data name="Company is active." xml:space="preserve">
+    <value>Activa</value>
+    <comment>Company is active</comment>
+  </data>
+  <data name="Company sold to {0} on {1}." xml:space="preserve">
+    <value>Vendida a {0} el {1}.</value>
+    <comment>Sold to, {0} buyer company name, {1} date</comment>
+  </data>
+  <data name="Company sold on {0} to an unknown company." xml:space="preserve">
+    <value>Vendida el {0} a una compañía desconocida.</value>
+    <comment>Sold to an unknown company, {0} date</comment>
+  </data>
+  <data name="Company sold to {0} on an unknown date." xml:space="preserve">
+    <value>Vendida a {0} en una fecha desconocida.</value>
+    <comment>Sold to on an unknown date, {0} buyer company name.</comment>
+  </data>
+  <data name="Company was sold to an unknown company on an unknown date." xml:space="preserve">
+    <value>Vendida a una compañía desconocida en una fecha desconocida.</value>
+    <comment>Sold, unknown company or date</comment>
+  </data>
+  <data name="Company merged on {0} to form {1}." xml:space="preserve">
+    <value>Fusionada el {0} para formar {1}.</value>
+    <comment>Merged, {0} date, {1} resulting company</comment>
+  </data>
+  <data name="Company merged on {0} to form an unknown company." xml:space="preserve">
+    <value>Fusionada el {0} para formar una compañía desconocida.</value>
+    <comment>Merged, unknown resulting company, {0} date</comment>
+  </data>
+  <data name="Company merged on an unknown date to form {0}." xml:space="preserve">
+    <value>Fusionada para format {0} en una fecha desconocida.</value>
+    <comment>Merged, {0} resulting company, date unknown</comment>
+  </data>
+  <data name="Company merged to form an unknown company on an unknown date." xml:space="preserve">
+    <value>Fusionada en una fecha desconocida para format una compañía desconocida.</value>
+    <comment>Merged, unknown resulting company or date</comment>
+  </data>
+  <data name="Company declared bankruptcy on {0}." xml:space="preserve">
+    <value>Declaró bancarrota el {0}.</value>
+    <comment>Declared bankruptcy, {0} date</comment>
+  </data>
+  <data name="Company declared bankruptcy on an unknown date." xml:space="preserve">
+    <value>Declaró bancarrota en una fecha desconocida.</value>
+    <comment>Declared bankruptcy, unknown date</comment>
+  </data>
+  <data name="Company ceased operations on {0}." xml:space="preserve">
+    <value>Cesó las operaciones el {0}.</value>
+    <comment>Ceased operations, {0} date</comment>
+  </data>
+  <data name="Company ceased operations on an unknown date." xml:space="preserve">
+    <value>Cesó las operaciones en una fecha desconocida.</value>
+    <comment>Ceased operations, unknown date</comment>
+  </data>
+  <data name="Company renamed to {0} on {1}." xml:space="preserve">
+    <value>Cambió el nombre a {0} el {1}.</value>
+    <comment>Renamed, {0} new name, {1} date</comment>
+  </data>
+  <data name="Company was renamed on {0} to an unknown name." xml:space="preserve">
+    <value>Cambió el nombre en {0} a uno desconocido..</value>
+    <comment>Renamed, {0} date, unknown new name</comment>
+  </data>
+  <data name="Company renamed to {0} on an unknown date." xml:space="preserve">
+    <value>Cambió el nombre a {0} en una fecha desconocida.</value>
+    <comment>Renamed, {0} new name, unknown date</comment>
+  </data>
+  <data name="Company renamed to an unknown name on an unknown date." xml:space="preserve">
+    <value>Cambió el nombre a uno desconocido en una fecha desconocida.</value>
+    <comment>Renamed, unknown date, unknown new name</comment>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Dirección</value>
+    <comment>Postal address</comment>
+  </data>
+  <data name="Links" xml:space="preserve">
+    <value>Enlaces</value>
+    <comment>Web links</comment>
+  </data>
+  <data name="Website" xml:space="preserve">
+    <value>Página web</value>
+    <comment>Main web link</comment>
+  </data>
+  <data name="&lt;ok&gt;{0}&lt;/ok&gt; computers known." xml:space="preserve">
+    <value>&lt;ok&gt;{0}&lt;/ok&gt; ordenadores conocidos.</value>
+    <comment>Known computers, {0} number. Do not translate &lt;ok&gt; neither &lt;/ok&gt; and keep number in between.</comment>
+  </data>
+  <data name="&lt;ok&gt;{0}&lt;/ok&gt; videogame consoles known." xml:space="preserve">
+    <value>&lt;ok&gt;{0}&lt;/ok&gt; videoconsolas conocidas.</value>
+    <comment>Known video game consoles, {0} number. Do not translate &lt;ok&gt; neither &lt;/ok&gt; and keep number in between.</comment>
+  </data>
+  <data name="&lt;red&gt;No&lt;/red&gt; computers known." xml:space="preserve">
+    <value>&lt;red&gt;Ningún&lt;/red&gt; ordenador conocido.</value>
+    <comment>There are no known computers. Do not translate &lt;red&gt; neither &lt;/red&gt; and keep negation in between.</comment>
+  </data>
+  <data name="&lt;red&gt;No&lt;/red&gt; videogame consoles known." xml:space="preserve">
+    <value>&lt;red&gt;Ninguna&lt;/red&gt; videoconsola conocida.</value>
+    <comment>There are no known computers. Do not translate &lt;red&gt; neither &lt;/red&gt; and keep negation in between.</comment>
+  </data>
 </root>

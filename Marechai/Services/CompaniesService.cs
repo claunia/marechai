@@ -59,5 +59,26 @@ namespace Marechai.Services
                                                                                   FirstOrDefault().Guid,
                                                                        Name = c.Name
                                                                    }).ToListAsync();
+
+        public Task<Company> GetCompanyAsync(int id) => _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
+
+        public async Task<List<Machine>> GetMachinesAsync(int id) =>
+            await _context.Machines.Where(m => m.CompanyId == id).OrderBy(m => m.Name).Select(m => new Machine
+            {
+                Id = m.Id, Name = m.Name, Type = m.Type
+            }).ToListAsync();
+
+        public async Task<string> GetDescriptionAsync(int id)
+        {
+            CompanyDescription description =
+                await _context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id);
+
+            return description?.Html ?? description?.Text;
+        }
+
+        public async Task<Company> GetSoldToAsync(int? id) => await _context.Companies.Select(c => new Company
+        {
+            Id = c.Id, Name = c.Name
+        }).FirstOrDefaultAsync(c => c.Id == id);
     }
 }

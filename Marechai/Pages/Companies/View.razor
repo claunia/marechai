@@ -1,0 +1,412 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : ByLetter.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Lists computers by company
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/companies/{Id:int}"
+@using Marechai.Database.Models
+@using Marechai.Database
+
+@inherits OwningComponentBase<CompaniesService>
+@inject IStringLocalizer<CompaniesService> L
+@inject IWebHostEnvironment Host
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+@if (_company is null)
+{
+    <p align="center">@L["Company not found."]</p>
+
+    return;
+}
+
+<div class="container-fluid">
+<p align=center>
+    @if (_company.LastLogo != null &&
+         File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _company.LastLogo.Guid + ".svg")))
+    {
+        <picture>
+            <source type="image/svg+xml" srcset="/assets/logos/@(_company.LastLogo.Guid).svg">
+            <source type="image/webp" srcset="/assets/logos/webp/1x/@(_company.LastLogo.Guid).webp,
+/assets/logos/webp/2x/@(_company.LastLogo.Guid).webp 2x,
+/assets/logos/webp/3x/@(_company.LastLogo.Guid).webp 3x">
+            <img srcset="/assets/logos/png/1x/@(_company.LastLogo.Guid).png,
+                         /assets/logos/png/2x/@(_company.LastLogo.Guid).png 2x,
+                         /assets/logos/png/3x/@(_company.LastLogo.Guid).png 3x" src="/assets/logos/png/1x@(_company.LastLogo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+        </picture>
+    }
+</p>
+<div class="row">
+@{
+    _carrouselActive = "active";
+}
+@if (_company.Logos != null &&
+     _company.Logos.Count > 1)
+{
+    // TODO: Carousel
+    <div class="col-3">
+        <div class="carousel slide" data-ride="carousel" id="logosCarousel">
+            <div class="carousel-inner">
+                @foreach (var logo in _company.Logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
+                {
+                    <div class="carousel-item @_carrouselActive">
+                        <picture>
+                            <source type="image/svg+xml" srcset="/assets/logos/@(logo.Guid).svg">
+                            <source type="image/webp" srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
+    /assets/logos/webp/1x/@(logo.Guid).webp 2x,
+    /assets/logos/webp/1x/@(logo.Guid).webp 3x">
+                            <img class="d-block w-100" srcset="/assets/logos/png/1x/@(logo.Guid).png,
+                             /assets/logos/png/1x/@(logo.Guid).png 2x,
+                             /assets/logos/png/1x/@(logo.Guid).webp 3x" src="/assets/logos/png/1x@(logo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </picture>
+                    </div>
+
+                    _carrouselActive = null;
+                }
+            </div>
+            <a class="carousel-control-prev" data-slide="prev" href="#logosCarousel" role="button">
+                <span aria-hidden="true" class="carousel-control-prev-icon">
+                </span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" data-slide="next" href="#logosCarousel" role="button">
+                <span aria-hidden="true" class="carousel-control-next-icon">
+                </span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+}
+<div class="col-md">
+    <table>
+        <tr>
+            <th colspan="2">
+                <b>@_company.Name</b>
+            </th>
+        </tr>
+        @if (_company.Founded.HasValue)
+        {
+            <tr>
+                <th>@L["Founded"]</th>
+                <td>@_company.Founded.Value.ToLongDateString().</td>
+            </tr>
+        }
+        <tr>
+            <th>@L["Country"]</th>
+            <td>
+                <a href="/companies/country/@_company.Country.Id">
+                    @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", _company.Country.Id + ".svg")))
+                    {
+                        <picture>
+                            <source type="image/svg+xml" srcset="/assets/flags/countries/@(_company.Country.Id).svg">
+                            <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(_company.Country.Id).webp,
+        /assets/flags/countries/webp/1x/@(_company.Country.Id).webp 2x,
+        /assets/flags/countries/webp/1x/@(_company.Country.Id).webp 3x">
+                            <img srcset="/assets/flags/countries/png/1x/@(_company.Country.Id).png,
+                                 /assets/flags/countries/png/1x/@(_company.Country.Id).png 2x,
+                                 /assets/flags/countries/png/1x/@(_company.Country.Id).webp 3x" src="/assets/flags/countries/png/1x@(_company.Country.Id).png" alt="" height="32" />
+                        </picture>
+                    }
+                    @L[_company.Country.Name]
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Status"]</th>
+            @switch (_company.Status)
+            {
+                case CompanyStatus.Unknown:
+                    <td>@L["Current company status is unknown."]</td>
+                    break;
+                case CompanyStatus.Active:
+                    <td>@L["Company is active."]</td>
+                    break;
+                case CompanyStatus.Sold:
+                    if (_company.Sold != null)
+                    {
+                        if (_soldTo != null)
+                        {
+                            <td>
+                                <a href="/companies/@_soldTo.Id">
+                                    @string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, _company.Sold.Value.ToLongDateString())</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@string.Format(L["Company sold on {0} to an unknown company."], _company.Sold.Value.ToLongDateString())</td>
+                        }
+                    }
+                    else
+                    {
+                        if (_soldTo != null)
+                        {
+                            <td>
+                                <a href="/companies/@_soldTo.Id">
+                                    @string.Format(L["Company sold to {0} on an unknown date."], _soldTo.Name)</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@L["Company was sold to an unknown company on an unknown date."]</td>
+                        }
+                    }
+                    break;
+                case CompanyStatus.Merged:
+                    if (_company.Sold != null)
+                    {
+                        if (_soldTo != null)
+                        {
+                            <td>
+                                <a href="/companies/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."], _company.Sold.Value.ToLongDateString(), _soldTo.Name)</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@string.Format(L["Company merged on {0} to form an unknown company."], _company.Sold.Value.ToLongDateString())</td>
+                        }
+                    }
+                    else
+                    {
+                        if (_soldTo != null)
+                        {
+                            <td>
+                                <a href="/companies/@_soldTo.Id">@string.Format(L["Company merged on an unknown date to form {0}."], _soldTo.Name)</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@L["Company merged to form an unknown company on an unknown date."]</td>
+                        }
+                    }
+                    break;
+                case CompanyStatus.Bankrupt:
+                    if (_company.Sold != null)
+                    {
+                        <td>@string.Format(L["Company declared bankruptcy on {0}."], _company.Sold.Value.ToLongDateString())</td>
+                    }
+                    else
+                    {
+                        <td>@L["Company declared bankruptcy on an unknown date."]</td>
+                    }
+                    break;
+                case CompanyStatus.Defunct:
+                    if (_company.Sold != null)
+                    {
+                        <td>@string.Format(L["Company ceased operations on {0}."], _company.Sold.Value.ToLongDateString())</td>
+                    }
+                    else
+                    {
+                        <td>@L["Company ceased operations on an unknown date."]</td>
+                    }
+                    break;
+                case CompanyStatus.Renamed:
+                    if (_company.Sold != null)
+                    {
+                        if (_soldTo != null)
+                        {
+                            <td>
+                                <a href="/companies/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.Sold.Value.ToLongDateString())</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@string.Format(L["Company was renamed on {0} to an unknown name."], _company.Sold.Value.ToLongDateString())</td>
+                        }
+                    }
+                    else
+                    {
+                        if (_soldTo != null)
+                        {
+                            <td>
+                                <a href="/companies/@_soldTo.Id">
+                                    @string.Format(L["Company renamed to {0} on an unknown date."], _soldTo.Name)</a> 
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@L["Company renamed to an unknown name on an unknown date."]</td>
+                        }
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        </tr>
+        <tr>
+            <th>@L["Address"]</th>
+            <td>
+                @_company.Address<br>
+                @if (_company.City != _company.Province)
+                {
+                    @_company.City<br>
+                }
+                @_company.PostalCode @_company.Province</td>
+        </tr>
+        @if (!string.IsNullOrEmpty(_company.Website) ||
+             !string.IsNullOrEmpty(_company.Twitter) ||
+             !string.IsNullOrEmpty(_company.Facebook))
+        {
+            <tr>
+                <th>@L["Links"]</th>
+                <td>
+                    @if (!string.IsNullOrEmpty(_company.Website))
+                    {
+                        <a href="@_company.Website">@L["Website"]</a>
+                        <br />
+                    }
+                    @if (!string.IsNullOrEmpty(_company.Twitter))
+                    {
+                        <a href="https://www.twitter.com/@_company.Twitter">Twitter</a>
+                        <br />
+                    }
+                    @if (!string.IsNullOrEmpty(_company.Facebook))
+                    {
+                        <a href="https://www.facebook.com/@_company.Facebook">Facebook</a>
+                        <br />
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+</div>
+@{ 
+    // TODO: Accordion
+}
+<div class="row" id="itemsAccordion">
+    <div class="card">
+        @if (_computers.Count > 0)
+        {
+            <div class="card-header" id="headingComputers">
+                <h5 class="mb-0">
+                    <button aria-controls="collapseComputers" aria-expanded="false" class="btn btn-info" data-target="#collapseComputers" data-toggle="collapse">
+                        @((MarkupString)string.Format(@L["<ok>{0}</ok> computers known."], _computers.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>","</span>"))
+                    </button>
+                </h5>
+            </div>
+            <div aria-labelledby="headingComputers" class="collapse" data-parent="#itemsAccordion" id="collapseComputers">
+                <div class="card-body">
+                    @foreach (var computer in _computers)
+                    {
+                        <a href="/machines/@computer.Id">
+                            @computer.Name</a>
+                        <br />
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card-header" id="headingComputers">
+                <h5 class="mb-0">
+                    <button class="btn btn-info">
+                        @((MarkupString)L["<red>No</red> computers known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>","</span>"))
+                    </button>
+                </h5>
+            </div>
+        }
+        @if (_consoles.Count > 0)
+        {
+            <div class="card-header" id="headingConsoles">
+                <h5 class="mb-0">
+                    <button aria-controls="collapseConsoles" aria-expanded="false" class="btn btn-info" data-target="#collapseConsoles" data-toggle="collapse">
+                        @((MarkupString)string.Format(@L["<ok>{0}</ok> videogame consoles known."], _consoles.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>","</span>"))
+                    </button>
+                </h5>
+            </div>
+            <div aria-labelledby="headingConsoles" class="collapse" data-parent="#itemsAccordion" id="collapseConsoles">
+                <div class="card-body">
+                    @foreach (var console in _consoles)
+                    {
+                        <a href="/machines/@console.Id">
+                            @console.Name</a>
+                        <br />
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card-header" id="headingComputers">
+                <h5 class="mb-0">
+                    <button class="btn btn-info">
+                        @((MarkupString)L["<red>No</red> videogame consoles known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>","</span>"))
+                    </button>
+                </h5>
+            </div>
+        }
+    </div>
+</div>
+@if (_description != null)
+{
+    <div class="container-fluid row">
+        @((MarkupString)_description)
+    </div>
+}
+</div>
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+
+    bool _loaded;
+    Company _company;
+    string _carrouselActive;
+    List<Machine> _computers;
+    List<Machine> _consoles;
+    string _description;
+    Company _soldTo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(Id <= 0)
+        {
+            _loaded = true;
+            return;
+        }
+
+        _company = await Service.GetCompanyAsync(Id);
+        var machines = await Service.GetMachinesAsync(Id);
+
+        _computers = machines.Where(m => m.Type == MachineType.Computer).ToList();
+        _consoles = machines.Where(m => m.Type == MachineType.Console).ToList();
+
+        _description = await Service.GetDescriptionAsync(Id);
+        _soldTo = await Service.GetSoldToAsync(_company.SoldToId);
+
+        _loaded = true;
+    }
+}

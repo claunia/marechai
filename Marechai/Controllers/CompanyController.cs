@@ -75,19 +75,6 @@ namespace Marechai.Controllers
                                  }).ToList());
         }
 
-        public IActionResult View(int id)
-        {
-            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-            Company company = _context.Companies.FirstOrDefault(c => c.Id == id);
-
-            if(company == null)
-                return Index();
-
-            ViewBag.CompanyDescription = company.Description?.Html ?? company.Description?.Text;
-
-            return View(company);
-        }
-
         public IActionResult ByCountry(short id)
         {
             ViewBag.Iso3166 = _context.Iso31661Numeric.FirstOrDefault(i => i.Id == id);
