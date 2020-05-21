@@ -142,4 +142,8 @@
     <value>Acerca de</value>
     <comment>About</comment>
   </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contacto</value>
+    <comment>Contact</comment>
+  </data>
 </root>
