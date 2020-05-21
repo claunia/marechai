@@ -28,15 +28,20 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using Marechai.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 namespace Marechai.Services
 {
     public static class Register
     {
-        internal static void RegisterServices(IServiceCollection services) =>
+        internal static void RegisterServices(IServiceCollection services)
+        {
+            services.AddSingleton<StringLocalizer<NavMenu>>();
 
-            // TODO: User reflection
+            // TODO: Use reflection
             services.AddScoped<NewsService>();
+        }
     }
 }

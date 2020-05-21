@@ -33,14 +33,20 @@ using System.Linq;
 using Marechai.Database;
 using Marechai.Database.Models;
 using Marechai.ViewModels;
+using Microsoft.Extensions.Localization;
 
 namespace Marechai.Services
 {
     public class NewsService
     {
-        readonly MarechaiContext _context;
+        readonly MarechaiContext               _context;
+        readonly IStringLocalizer<NewsService> _l;
 
-        public NewsService(MarechaiContext context) => _context = context;
+        public NewsService(MarechaiContext context, IStringLocalizer<NewsService> localizer)
+        {
+            _context = context;
+            _l       = localizer;
+        }
 
         public List<NewsViewModel> GetNews()
         {
@@ -56,49 +62,49 @@ namespace Marechai.Services
                 switch(@new.Type)
                 {
                     case NewsType.NewComputerInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, "New computer in database", @new.Date, "Machine",
+                        news.Add(new NewsViewModel(@new.AddedId, _l["New computer in database"], @new.Date, "Machine",
                                                    $"{machine.Company.Name} {machine.Name}"));
 
                         break;
                     case NewsType.NewConsoleInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, "New console in database", @new.Date, "Machine",
+                        news.Add(new NewsViewModel(@new.AddedId, _l["New console in database"], @new.Date, "Machine",
                                                    $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.NewComputerInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, "New computer in collection", @new.Date, "Machine",
+                        news.Add(new NewsViewModel(@new.AddedId, _l["New computer in collection"], @new.Date, "Machine",
                                                    $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.NewConsoleInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, "New console in collection", @new.Date, "Machine",
+                        news.Add(new NewsViewModel(@new.AddedId, _l["New console in collection"], @new.Date, "Machine",
                                                    $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.UpdatedComputerInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, "Updated computer in database", @new.Date, "Machine",
-                                                   $"{machine.Company.Name} {machine.Name}"));
+                        news.Add(new NewsViewModel(@new.AddedId, _l["Updated computer in database"], @new.Date,
+                                                   "Machine", $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.UpdatedConsoleInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, "Updated console in database", @new.Date, "Machine",
-                                                   $"{machine.Company.Name} {machine.Name}"));
+                        news.Add(new NewsViewModel(@new.AddedId, _l["Updated console in database"], @new.Date,
+                                                   "Machine", $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.UpdatedComputerInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, "Updated computer in collection", @new.Date, "Machine",
-                                                   $"{machine.Company.Name} {machine.Name}"));
+                        news.Add(new NewsViewModel(@new.AddedId, _l["Updated computer in collection"], @new.Date,
+                                                   "Machine", $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.UpdatedConsoleInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, "Updated console in collection", @new.Date, "Machine",
-                                                   $"{machine.Company.Name} {machine.Name}"));
+                        news.Add(new NewsViewModel(@new.AddedId, _l["Updated console in collection"], @new.Date,
+                                                   "Machine", $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 

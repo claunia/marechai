@@ -28,6 +28,7 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System.Globalization;
 using Marechai.Areas.Identity;
 using Marechai.Database.Models;
 using Marechai.Services;
@@ -35,6 +36,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +47,11 @@ namespace Marechai
     // DO NOT MAKE STATIC
     public class Startup
     {
+        readonly CultureInfo[] supportedCultures =
+        {
+            new CultureInfo("en-US"), new CultureInfo("es")
+        };
+
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         IConfiguration Configuration { get; }
@@ -66,6 +73,8 @@ namespace Marechai
             services.
                 AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
             Register.RegisterServices(services);
         }
 
@@ -84,6 +93,17 @@ namespace Marechai
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("en-US"),
+
+                // Formatting numbers, dates, etc.
+                SupportedCultures = supportedCultures,
+
+                // UI strings that we have localized.
+                SupportedUICultures = supportedCultures
+            });
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

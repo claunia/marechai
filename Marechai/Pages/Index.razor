@@ -1,8 +1,8 @@
 ﻿@page "/"
-@using Marechai.ViewModels
 @inherits OwningComponentBase<NewsService>
+@inject IStringLocalizer<NewsService> L
 
-<h2>News</h2>
+<h2>@L["News"]</h2>
 @foreach (var news in _news)
 {
     <table border="0" width="100%">
