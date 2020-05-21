@@ -150,4 +150,12 @@
     <value>Compañías</value>
     <comment>Companies</comment>
   </data>
+  <data name="Computers" xml:space="preserve">
+    <value>Ordenadores</value>
+    <comment>Computers</comment>
+  </data>
+  <data name="Consoles" xml:space="preserve">
+    <value>Consolas</value>
+    <comment>Videogame consoles</comment>
+  </data>
 </root>
