@@ -75,23 +75,6 @@ namespace Marechai.Controllers
                                  }).ToList());
         }
 
-        public IActionResult ByCountry(short id)
-        {
-            ViewBag.Iso3166 = _context.Iso31661Numeric.FirstOrDefault(i => i.Id == id);
-
-            if(ViewBag.Iso3166 is null)
-                RedirectToAction(nameof(Index));
-
-            ViewBag.WebRootPath = hostingEnvironment.WebRootPath;
-
-            return View(_context.Companies.Include(c => c.Logos).Where(c => c.CountryId == id).OrderBy(c => c.Name).
-                                 Select(c => new CompanyViewModel
-                                 {
-                                     Id = c.Id, LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
-                                     Name = c.Name
-                                 }).ToList());
-        }
-
         public IActionResult Index()
         {
             ViewBag.WebRootPath = hostingEnvironment.WebRootPath;

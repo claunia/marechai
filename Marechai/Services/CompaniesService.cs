@@ -80,5 +80,28 @@ namespace Marechai.Services
         {
             Id = c.Id, Name = c.Name
         }).FirstOrDefaultAsync(c => c.Id == id);
+
+        public async Task<string> GetCountryNameAsync(int id) =>
+            (await _context.Iso31661Numeric.FirstOrDefaultAsync(c => c.Id == id))?.Name;
+
+        public Task<List<CompanyViewModel>> GetCompaniesByCountryAsync(int countryId) => _context.
+                                                                                         Companies.
+                                                                                         Include(c => c.Logos).
+                                                                                         Where(c => c.CountryId ==
+                                                                                                    countryId).
+                                                                                         OrderBy(c => c.Name).
+                                                                                         Select(c =>
+                                                                                                    new CompanyViewModel
+                                                                                                    {
+                                                                                                        Id = c.Id,
+                                                                                                        LastLogo = c.
+                                                                                                                   Logos.
+                                                                                                                   OrderByDescending(l =>
+                                                                                                                                         l.
+                                                                                                                                             Year).
+                                                                                                                   FirstOrDefault().
+                                                                                                                   Guid,
+                                                                                                        Name = c.Name
+                                                                                                    }).ToListAsync();
     }
 }

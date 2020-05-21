@@ -242,4 +242,12 @@
     <value>&lt;red&gt;Ninguna&lt;/red&gt; videoconsola conocida.</value>
     <comment>There are no known computers. Do not translate &lt;red&gt; neither &lt;/red&gt; and keep negation in between.</comment>
   </data>
+  <data name="There are no companies in the database." xml:space="preserve">
+    <value>No hay compañías en la base de datos.</value>
+    <comment>No companies in the database</comment>
+  </data>
+  <data name="Companies founded in {0}." xml:space="preserve">
+    <value>Compañías fundadas en {0}.</value>
+    <comment>Companies founded in, {0} country name</comment>
+  </data>
 </root>

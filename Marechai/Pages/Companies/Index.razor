@@ -8,7 +8,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Lists all companies
+//     Lists all companies or companies by country
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -31,6 +31,7 @@
 }
 
 @page "/companies"
+@page "/companies/country/{CountryId:int}"
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
 @inject IWebHostEnvironment Host
@@ -43,6 +44,24 @@
 }
 
 <p align="center">
+    @if (CountryId.HasValue)
+    {
+        <b>@string.Format(L["Companies founded in {0}."], L[_countryName])</b>
+        if (File.Exists(System.IO.Path.Combine(Host.WebRootPath, "assets/flags/countries", CountryId + ".svg")))
+        {
+            <picture>
+                <source type="image/svg+xml" srcset="/assets/flags/countries/@(CountryId).svg">
+                <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(CountryId).webp,
+            /assets/flags/countries/webp/1x/@(CountryId).webp 2x,
+            /assets/flags/countries/webp/1x/@(CountryId).webp 3x">
+                <img srcset="/assets/flags/countries/png/1x/@(CountryId).png,
+                                     /assets/flags/countries/png/1x/@(CountryId).png 2x,
+                                     /assets/flags/countries/png/1x/@(CountryId).webp 3x" src="/assets/flags/countries/png/1x@(CountryId).png" alt="" height="32" />
+            </picture>
+        }
+        <br />
+    }
+
     @if (_companies.Any())
     {
         <p>
@@ -72,15 +91,32 @@
     }
     else
     {
-        <p>There are no companies in the database.</p>
+        <p>@L["There are no companies in the database."]</p>
     }
 </p>
 
 @code
 {
+    [Parameter]
+    public int? CountryId{get;set;}
+
     List<CompanyViewModel> _companies;
+    string _countryName;
+
     protected override async Task OnInitializedAsync()
     {
-        _companies = await Service.GetCompaniesAsync();
+        if (CountryId.HasValue)
+        {
+            _countryName = await Service.GetCountryNameAsync(CountryId.Value);
+
+            if (_countryName != null)
+            {
+                _companies = await Service.GetCompaniesByCountryAsync(CountryId.Value);                
+            }
+            else
+                CountryId = null;
+        }
+
+        _companies ??= await Service.GetCompaniesAsync();
     }
 }
