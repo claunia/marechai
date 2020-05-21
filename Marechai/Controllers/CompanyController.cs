@@ -30,7 +30,7 @@
 
 using System.Linq;
 using Marechai.Database.Models;
-using Marechai.Models;
+using Marechai.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
