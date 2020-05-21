@@ -30,7 +30,7 @@
 *******************************************************************************/
 }
 
-@page "/companies/{Id:int}"
+@page "/company/{Id:int}"
 @using Marechai.Database.Models
 @using Marechai.Database
 
@@ -159,7 +159,7 @@
                         if (_soldTo != null)
                         {
                             <td>
-                                <a href="/companies/@_soldTo.Id">
+                                <a href="/company/@_soldTo.Id">
                                     @string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, _company.Sold.Value.ToLongDateString())</a>
                             </td>
                         }
@@ -173,7 +173,7 @@
                         if (_soldTo != null)
                         {
                             <td>
-                                <a href="/companies/@_soldTo.Id">
+                                <a href="/company/@_soldTo.Id">
                                     @string.Format(L["Company sold to {0} on an unknown date."], _soldTo.Name)</a>
                             </td>
                         }
@@ -189,7 +189,7 @@
                         if (_soldTo != null)
                         {
                             <td>
-                                <a href="/companies/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."], _company.Sold.Value.ToLongDateString(), _soldTo.Name)</a>
+                                <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."], _company.Sold.Value.ToLongDateString(), _soldTo.Name)</a>
                             </td>
                         }
                         else
@@ -202,7 +202,7 @@
                         if (_soldTo != null)
                         {
                             <td>
-                                <a href="/companies/@_soldTo.Id">@string.Format(L["Company merged on an unknown date to form {0}."], _soldTo.Name)</a>
+                                <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on an unknown date to form {0}."], _soldTo.Name)</a>
                             </td>
                         }
                         else
@@ -237,7 +237,7 @@
                         if (_soldTo != null)
                         {
                             <td>
-                                <a href="/companies/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.Sold.Value.ToLongDateString())</a>
+                                <a href="/company/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.Sold.Value.ToLongDateString())</a>
                             </td>
                         }
                         else
@@ -250,7 +250,7 @@
                         if (_soldTo != null)
                         {
                             <td>
-                                <a href="/companies/@_soldTo.Id">
+                                <a href="/company/@_soldTo.Id">
                                     @string.Format(L["Company renamed to {0} on an unknown date."], _soldTo.Name)</a> 
                             </td>
                         }

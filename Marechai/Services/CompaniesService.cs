@@ -103,5 +103,22 @@ namespace Marechai.Services
                                                                                                                    Guid,
                                                                                                         Name = c.Name
                                                                                                     }).ToListAsync();
+
+        public Task<List<CompanyViewModel>> GetCompaniesByLetterAsync(char id) => _context.
+                                                                                  Companies.Include(c => c.Logos).
+                                                                                  Where(c => EF.Functions.Like(c.Name,
+                                                                                                               $"{id}%")).
+                                                                                  OrderBy(c => c.Name).
+                                                                                  Select(c => new CompanyViewModel
+                                                                                  {
+                                                                                      Id = c.Id,
+                                                                                      LastLogo = c.
+                                                                                                 Logos.
+                                                                                                 OrderByDescending(l =>
+                                                                                                                       l.
+                                                                                                                           Year).
+                                                                                                 FirstOrDefault().Guid,
+                                                                                      Name = c.Name
+                                                                                  }).ToListAsync();
     }
 }

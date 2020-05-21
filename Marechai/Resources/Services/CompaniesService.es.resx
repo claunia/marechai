@@ -250,4 +250,8 @@
     <value>Compañías fundadas en {0}.</value>
     <comment>Companies founded in, {0} country name</comment>
   </data>
+  <data name="Companies which name starts with {0}." xml:space="preserve">
+    <value>Compañías cuyo nombre empieza por {0}.</value>
+    <comment>Companies with {0}, a single character, as the start of the name</comment>
+  </data>
 </root>

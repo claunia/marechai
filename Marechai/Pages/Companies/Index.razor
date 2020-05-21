@@ -32,6 +32,7 @@
 
 @page "/companies"
 @page "/companies/country/{CountryId:int}"
+@page "/companies/{StartingCharacter}"
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
 @inject IWebHostEnvironment Host
@@ -59,6 +60,12 @@
                                      /assets/flags/countries/png/1x/@(CountryId).webp 3x" src="/assets/flags/countries/png/1x@(CountryId).png" alt="" height="32" />
             </picture>
         }
+        <br />
+    }
+
+    @if (_character.HasValue)
+    {
+        <b>@string.Format(L["Companies which name starts with {0}."], _character)</b>
         <br />
     }
 
@@ -98,20 +105,46 @@
 @code
 {
     [Parameter]
-    public int? CountryId{get;set;}
+    public int? CountryId { get; set; }
+
+    [Parameter]
+    public string StartingCharacter { get; set; }
 
     List<CompanyViewModel> _companies;
     string _countryName;
+    char? _character;
 
     protected override async Task OnInitializedAsync()
     {
-        if (CountryId.HasValue)
+        _character = null;
+        if (!string.IsNullOrWhiteSpace(StartingCharacter) &&
+            StartingCharacter.Length == 1)
+        {
+            _character = StartingCharacter[0];
+
+            // ToUpper()
+            if (_character >= 'a' &&
+                _character <= 'z')
+                _character -= (char)32;
+
+
+            // Check if not letter or number
+            if (_character < '0' ||
+                (_character > '9' && _character < 'A') ||
+                _character > 'Z')
+                _character = null;
+        }
+
+        if (_character.HasValue)
+            _companies = await Service.GetCompaniesByLetterAsync(_character.Value);
+
+        if (CountryId.HasValue && _companies is null)
         {
             _countryName = await Service.GetCountryNameAsync(CountryId.Value);
 
             if (_countryName != null)
             {
-                _companies = await Service.GetCompaniesByCountryAsync(CountryId.Value);                
+                _companies = await Service.GetCompaniesByCountryAsync(CountryId.Value);
             }
             else
                 CountryId = null;
