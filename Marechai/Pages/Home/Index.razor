@@ -1,9 +1,9 @@
 ﻿@{
-    /******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Index.cshtml
+// Filename       : Index.razor
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
@@ -28,12 +28,13 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
-
-    ViewData["Title"] = "Home Page";
 }
-@model List<NewsModel>
-<h2>News</h2>
-@foreach (var news in Model)
+@page "/"
+@inherits OwningComponentBase<NewsService>
+@inject IStringLocalizer<NewsService> L
+
+<h2>@L["News"]</h2>
+@foreach (var news in _news)
 {
     <table border="0" width="100%">
         <tr>
@@ -49,11 +50,21 @@
         <tr>
             <td>@* TODO: Image *@</td>
             <td>
-                <a asp-action="@news.Action" asp-route-id="@news.AffectedId" asp-controller="@news.Controller">
+                <a href="/@news.Controller/@news.AffectedId">
                     @news.ItemName
                 </a>
             </td>
         </tr>
     </table>
     <br />
+}
+
+@code
+{
+    List<NewsViewModel> _news;
+
+    protected override void OnInitialized()
+    {
+        _news = @Service.GetNews();
+    }
 }

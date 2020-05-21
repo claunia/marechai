@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>3.0.99.933</Version>
+    <Version>3.0.99.934</Version>
     <Company>Canary Islands Computer Museum</Company>
     <Copyright>Copyright © 2003-2020 Natalia Portillo</Copyright>
     <Product>Canary Islands Computer Museum Website</Product>
@@ -55,7 +55,7 @@
     <Content Include="Areas\Identity\Pages\Account\LogOut.cshtml" />
     <Content Include="Areas\Identity\Pages\Shared\_LoginPartial.cshtml" />
     <Content Include="Pages\Error.razor" />
-    <Content Include="Pages\Index.razor" />
+    <Content Include="Pages\Home\Index.razor" />
     <Content Include="Pages\_Host.cshtml" />
     <Content Include="Shared\LoginDisplay.razor" />
     <Content Include="Shared\MainLayout.razor" />
