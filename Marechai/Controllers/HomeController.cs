@@ -47,8 +47,6 @@ namespace Marechai.Controllers
             _context           = context;
         }
 
-        public IActionResult About() => View();
-
         public IActionResult Contact() => View();
 
         public IActionResult Error() => View(new ErrorViewModel
