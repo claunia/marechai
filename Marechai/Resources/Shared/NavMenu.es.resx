@@ -126,17 +126,17 @@
     <value>¡Hola {0}!</value>
     <comment>Salutes logged-in user</comment>
   </data>
-  <data name="Logout" xml:space="preserve">
+  <data name="Log out" xml:space="preserve">
     <value>Cerrar sesión</value>
-    <comment>Logout</comment>
+    <comment>Log out</comment>
   </data>
   <data name="Register" xml:space="preserve">
     <value>Registrarse</value>
     <comment>Register</comment>
   </data>
-  <data name="Login" xml:space="preserve">
+  <data name="Log in" xml:space="preserve">
     <value>Iniciar sesión</value>
-    <comment>Login</comment>
+    <comment>Log in</comment>
   </data>
   <data name="About" xml:space="preserve">
     <value>Acerca de</value>
