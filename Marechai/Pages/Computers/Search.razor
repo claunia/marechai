@@ -1,0 +1,124 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Search.razor
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Computers search
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/computers/all"
+@page "/computers/year/{Year:int}"
+@page "/computers/{StartingCharacter}"
+@inherits OwningComponentBase<ComputersService>
+@inject IStringLocalizer<ComputersService> L
+
+@if (_computers is null)
+{
+    @L["Loading..."]
+}
+
+<p>@L["Search results:"]</p>
+<p align="center">
+    @if (_character.HasValue)
+    {
+        <b>@string.Format(L["Computers starting with {0}"], _character)</b>
+        <br />
+    }
+    else if (Year.HasValue)
+    {
+        <b>@string.Format(L["Computers introduced in {0}"], Year)</b>
+        <br />
+    }
+
+    @if (_computers?.Count > 0)
+    {
+        <p>
+            @string.Format(L["{0} computers found in the database."], _computers.Count)
+            <br />
+            @foreach (var computer in _computers)
+            {
+                <a href="/machine/@computer.Id">
+                    @computer.CompanyName @computer.Name</a>
+                <br />
+            }
+        </p>
+    }
+    else
+    {
+        @if (_character.HasValue)
+        {
+            <p>@L["There are no computers found in the database that start with this letter."]</p>
+        }
+        else if (Year.HasValue)
+        {
+            <p>@L["There are no computers found introduced this year."]</p>
+        }
+    }
+</p>
+
+@code
+{
+    [Parameter]
+    public int? Year { get; set; }
+
+    [Parameter]
+    public string StartingCharacter { get; set; }
+
+    List<MachineViewModel> _computers;
+    char? _character;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _character = null;
+        if (!string.IsNullOrWhiteSpace(StartingCharacter) &&
+            StartingCharacter.Length == 1)
+        {
+            _character = StartingCharacter[0];
+
+    // ToUpper()
+            if (_character >= 'a' &&
+                _character <= 'z')
+                _character -= (char)32;
+
+
+    // Check if not letter or number
+            if (_character < '0' ||
+                (_character > '9' && _character < 'A') ||
+                _character > 'Z')
+                _character = null;
+        }
+
+        if (_character.HasValue)
+            _computers = await Service.GetComputersByLetterAsync(_character.Value);
+
+        if (Year.HasValue &&
+            _computers is null)
+            _computers = await Service.GetComputersByYearAsync(Year.Value);
+
+        _computers ??= await Service.GetComputersAsync();
+    }
+}

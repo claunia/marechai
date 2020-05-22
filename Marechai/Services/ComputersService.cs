@@ -28,10 +28,12 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Database;
 using Marechai.Database.Models;
+using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
@@ -62,5 +64,29 @@ namespace Marechai.Services
                                                                       t.Introduced.HasValue          &&
                                                                       t.Introduced.Value.Year > 1000).
                                                   MaxAsync(t => t.Introduced.Value.Year);
+
+        public async Task<List<MachineViewModel>> GetComputersByLetterAsync(char c) =>
+            await _context.Machines.Include(m => m.Company).
+                           Where(m => m.Type == MachineType.Computer && EF.Functions.Like(m.Name, $"{c}%")).
+                           OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new MachineViewModel
+                           {
+                               Id = m.Id, Name = m.Name, CompanyName = m.Company.Name
+                           }).ToListAsync();
+
+        public async Task<List<MachineViewModel>> GetComputersByYearAsync(int year) =>
+            await _context.Machines.Include(m => m.Company).
+                           Where(m => m.Type                  == MachineType.Computer && m.Introduced != null &&
+                                      m.Introduced.Value.Year == year).OrderBy(m => m.Company.Name).ThenBy(m => m.Name).
+                           Select(m => new MachineViewModel
+                           {
+                               Id = m.Id, Name = m.Name, CompanyName = m.Company.Name
+                           }).ToListAsync();
+
+        public async Task<List<MachineViewModel>> GetComputersAsync() =>
+            await _context.Machines.Include(m => m.Company).Where(m => m.Type == MachineType.Computer).
+                           OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new MachineViewModel
+                           {
+                               Id = m.Id, Name = m.Name, CompanyName = m.Company.Name
+                           }).ToListAsync();
     }
 }

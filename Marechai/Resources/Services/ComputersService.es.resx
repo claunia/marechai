@@ -154,4 +154,28 @@
     <value>Búsqueda por año</value>
     <comment>Search by year</comment>
   </data>
+  <data name="Search results:" xml:space="preserve">
+    <value>Resultados:</value>
+    <comment>Search results</comment>
+  </data>
+  <data name="Computers starting with {0}" xml:space="preserve">
+    <value>Ordenadores cuyo nombre comienza por {0}</value>
+    <comment>Computers starting with {0}, a letter</comment>
+  </data>
+  <data name="Computers introduced in {0}" xml:space="preserve">
+    <value>Ordenadores introducidos en {0}</value>
+    <comment>Computers introduced in, {0} is a year</comment>
+  </data>
+  <data name="{0} computers found in the database." xml:space="preserve">
+    <value>{0} ordenadores en la base de datos</value>
+    <comment>Computers found by search, {0} is number</comment>
+  </data>
+  <data name="There are no computers found in the database that start with this letter." xml:space="preserve">
+    <value>No se encontraron ordenadores en la base de datos cuyo nombre comience por esa letra.</value>
+    <comment>No computers in DB with that letter</comment>
+  </data>
+  <data name="There are no computers found introduced this year." xml:space="preserve">
+    <value>No se encontraron ordenadores en la base de datos introducidos en ese año.</value>
+    <comment>No computers in DB from that year</comment>
+  </data>
 </root>
