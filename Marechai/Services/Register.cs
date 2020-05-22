@@ -43,6 +43,7 @@ namespace Marechai.Services
             // TODO: Use reflection
             services.AddScoped<NewsService>();
             services.AddScoped<CompaniesService>();
+            services.AddScoped<ComputersService>();
         }
     }
 }

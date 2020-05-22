@@ -1,0 +1,261 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Index.razor
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Computers index
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/computers"
+@inherits OwningComponentBase<ComputersService>
+@inject IStringLocalizer<ComputersService> L
+
+@if (!_loaded)
+{
+    @L["Loading..."]
+}
+
+<p>
+    @L["Here you can consult our database."]
+    <br />
+    @L["In this database you can find technical information as well as computers history, catalogued by companies, alfabetically and by release date."]
+    <br />
+    @string.Format(L["{0} computers actually catalogued in the database."], _computers)
+</p>
+<p>
+    <br>
+    <br>
+    @L["Search by companies"]
+    <br>
+    <a href="/companies/Q">
+        Q
+    </a>
+    <a href="/companies/W">
+        W
+    </a>
+    <a href="/companies/E">
+        E
+    </a>
+    <a href="/companies/R">
+        R
+    </a>
+    <a href="/companies/T">
+        T
+    </a>
+    <a href="/companies/Y">
+        Y
+    </a>
+    <a href="/companies/U">
+        U
+    </a>
+    <a href="/companies/I">
+        I
+    </a>
+    <a href="/companies/O">
+        O
+    </a>
+    <a href="/companies/P">
+        P
+    </a>
+    <br>
+    <a href="/companies/A">
+        A
+    </a>
+    <a href="/companies/S">
+        S
+    </a>
+    <a href="/companies/D">
+        D
+    </a>
+    <a href="/companies/F">
+        F
+    </a>
+    <a href="/companies/G">
+        G
+    </a>
+    <a href="/companies/H">
+        H
+    </a>
+    <a href="/companies/J">
+        J
+    </a>
+    <a href="/companies/K">
+        K
+    </a>
+    <a href="/companies/L">
+        L
+    </a>
+    <br>
+    <a href="/companies/Z">
+        Z
+    </a>
+    <a href="/companies/X">
+        X
+    </a>
+    <a href="/companies/C">
+        C
+    </a>
+    <a href="/companies/V">
+        V
+    </a>
+    <a href="/companies/B">
+        B
+    </a>
+    <a href="/companies/N">
+        N
+    </a>
+    <a href="/companies/M">
+        M
+    </a>
+    <br>
+    <a href="/companies">
+        @L["All companies"]
+    </a>
+</p>
+<p>
+    @L["Alphabetically search"]
+    <br>
+    <a href="/computers/Q">
+        Q
+    </a>
+    <a href="/computers/W">
+        W
+    </a>
+    <a href="/computers/E">
+        E
+    </a>
+    <a href="/computers/R">
+        R
+    </a>
+    <a href="/computers/T">
+        T
+    </a>
+    <a href="/computers/Y">
+        Y
+    </a>
+    <a href="/computers/U">
+        U
+    </a>
+    <a href="/computers/I">
+        I
+    </a>
+    <a href="/computers/O">
+        O
+    </a>
+    <a href="/computers/P">
+        P
+    </a>
+    <br>
+    <a href="/computers/A">
+        A
+    </a>
+    <a href="/computers/S">
+        S
+    </a>
+    <a href="/computers/D">
+        D
+    </a>
+    <a href="/computers/F">
+        F
+    </a>
+    <a href="/computers/G">
+        G
+    </a>
+    <a href="/computers/H">
+        H
+    </a>
+    <a href="/computers/J">
+        J
+    </a>
+    <a href="/computers/K">
+        K
+    </a>
+    <a href="/computers/L">
+        L
+    </a>
+    <br>
+    <a href="/computers/Z">
+        Z
+    </a>
+    <a href="/computers/X">
+        X
+    </a>
+    <a href="/computers/C">
+        C
+    </a>
+    <a href="/computers/V">
+        V
+    </a>
+    <a href="/computers/B">
+        B
+    </a>
+    <a href="/computers/N">
+        N
+    </a>
+    <a href="/computers/M">
+        M
+    </a>
+    <br>
+    <a href="/computers">
+        @L["All computers"]
+    </a>
+</p>
+<p>
+    @L["Search by year"]
+    <br>
+    @{ var counter = 0; }
+    @for (int i = _minYear; i <= _maxYear; i++)
+    {
+        {
+            counter++;
+        }
+        <a href="/computers/year/@i">
+            @i
+        </a>
+        if (counter % 8 == 0)
+        {
+            <br />
+        }
+    }
+</p>
+
+@code
+{
+    bool _loaded;
+    int _computers;
+    int _minYear;
+    int _maxYear;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _computers = await Service.GetComputersCountAsync();
+        _minYear = await Service.GetMinimumYearAsync();
+        _maxYear = await Service.GetMaximumYearAsync();
+
+        _loaded = true;
+    }
+}

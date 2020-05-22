@@ -47,21 +47,6 @@ namespace Marechai.Controllers
             _context           = context;
         }
 
-        public IActionResult Index()
-        {
-            ViewBag.ItemCount = _context.Machines.Count(m => m.Type == MachineType.Computer);
-
-            ViewBag.MinYear = _context.
-                              Machines.Where(t => t.Type == MachineType.Computer && t.Introduced.HasValue &&
-                                                  t.Introduced.Value.Year > 1000).Min(t => t.Introduced.Value.Year);
-
-            ViewBag.MaxYear = _context.
-                              Machines.Where(t => t.Type == MachineType.Computer && t.Introduced.HasValue &&
-                                                  t.Introduced.Value.Year > 1000).Max(t => t.Introduced.Value.Year);
-
-            return View();
-        }
-
         public IActionResult ByLetter(char id)
         {
             // ToUpper()
