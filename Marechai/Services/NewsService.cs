@@ -62,49 +62,49 @@ namespace Marechai.Services
                 switch(@new.Type)
                 {
                     case NewsType.NewComputerInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["New computer in database"], @new.Date, "Machine",
+                        news.Add(new NewsViewModel(@new.AddedId, _l["New computer in database"], @new.Date, "machine",
                                                    $"{machine.Company.Name} {machine.Name}"));
 
                         break;
                     case NewsType.NewConsoleInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["New console in database"], @new.Date, "Machine",
+                        news.Add(new NewsViewModel(@new.AddedId, _l["New console in database"], @new.Date, "machine",
                                                    $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.NewComputerInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["New computer in collection"], @new.Date, "Machine",
+                        news.Add(new NewsViewModel(@new.AddedId, _l["New computer in collection"], @new.Date, "machine",
                                                    $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.NewConsoleInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["New console in collection"], @new.Date, "Machine",
+                        news.Add(new NewsViewModel(@new.AddedId, _l["New console in collection"], @new.Date, "machine",
                                                    $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.UpdatedComputerInDb:
                         news.Add(new NewsViewModel(@new.AddedId, _l["Updated computer in database"], @new.Date,
-                                                   "Machine", $"{machine.Company.Name} {machine.Name}"));
+                                                   "machine", $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.UpdatedConsoleInDb:
                         news.Add(new NewsViewModel(@new.AddedId, _l["Updated console in database"], @new.Date,
-                                                   "Machine", $"{machine.Company.Name} {machine.Name}"));
+                                                   "machine", $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.UpdatedComputerInCollection:
                         news.Add(new NewsViewModel(@new.AddedId, _l["Updated computer in collection"], @new.Date,
-                                                   "Machine", $"{machine.Company.Name} {machine.Name}"));
+                                                   "machine", $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 
                     case NewsType.UpdatedConsoleInCollection:
                         news.Add(new NewsViewModel(@new.AddedId, _l["Updated console in collection"], @new.Date,
-                                                   "Machine", $"{machine.Company.Name} {machine.Name}"));
+                                                   "machine", $"{machine.Company.Name} {machine.Name}"));
 
                         break;
 

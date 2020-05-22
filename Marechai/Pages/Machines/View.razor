@@ -1,5 +1,5 @@
-﻿@{
-    /******************************************************************************
+@{
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -28,43 +28,62 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
-    // TODO: Resolutions
-    ViewData["Title"] = "Computer";
+// TODO: Resolutions
 }
-@using System.IO
+
+@page "/machine/{Id:int}"
+@using Marechai.Database.Models
 @using Marechai.Database
-@model Marechai.Database.Models.Machine
+
+@inherits OwningComponentBase<MachinesService>
+@inject IStringLocalizer<MachinesService> L
+@inject IWebHostEnvironment Host
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+@if (_machine is null)
+{
+    <p align="center">@L["Machine not found in database"]</p>
+
+    return;
+}
+
 <p align="center">
-    @if (Model.Company.LastLogo != null &&
-         File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/logos", Model.Company.LastLogo.Guid + ".svg")))
+    @if (_machine.Company.LastLogo != null &&
+         File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _machine.Company.LastLogo.Guid + ".svg")))
     {
         <picture>
-            <source type="image/svg+xml" srcset="/assets/logos/@(Model.Company.LastLogo.Guid).svg">
-            <source type="image/webp" srcset="/assets/logos/webp/1x/@(Model.Company.LastLogo.Guid).webp,
-    /assets/logos/webp/2x/@(Model.Company.LastLogo.Guid).webp 2x,
-    /assets/logos/webp/3x/@(Model.Company.LastLogo.Guid).webp 3x">
-            <img srcset="/assets/logos/png/1x/@(Model.Company.LastLogo.Guid).png,
-                             /assets/logos/png/2x/@(Model.Company.LastLogo.Guid).png 2x,
-                             /assets/logos/png/3x/@(Model.Company.LastLogo.Guid).png 3x" src="/assets/logos/png/1x/@(Model.Company.LastLogo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+            <source type="image/svg+xml" srcset="/assets/logos/@(_machine.Company.LastLogo.Guid).svg">
+            <source type="image/webp" srcset="/assets/logos/webp/1x/@(_machine.Company.LastLogo.Guid).webp,
+    /assets/logos/webp/2x/@(_machine.Company.LastLogo.Guid).webp 2x,
+    /assets/logos/webp/3x/@(_machine.Company.LastLogo.Guid).webp 3x">
+            <img srcset="/assets/logos/png/1x/@(_machine.Company.LastLogo.Guid).png,
+                             /assets/logos/png/2x/@(_machine.Company.LastLogo.Guid).png 2x,
+                             /assets/logos/png/3x/@(_machine.Company.LastLogo.Guid).png 3x" src="/assets/logos/png/1x/@(_machine.Company.LastLogo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
         </picture>
     }
 </p>
 @{ var counter = 0; }
 
-@if (Model.Introduced.HasValue &&
-     Model.Introduced.Value.Year == 1000)
+@if (_machine.Introduced.HasValue &&
+     _machine.Introduced.Value.Year == 1000)
 {
     <b>
         <div style="text-align: center;">PROTOTYPE</div>
     </b>
 }
 <b>
-    <a asp-controller="Company" asp-action="View" asp-route-id="@Model.Company.Id">
-        @Model.Company.Name</a> @Model.Name</b>
+    <a asp-controller="Company" asp-action="View" asp-route-id="@_machine.Company.Id">
+        @_machine.Company.Name</a> @_machine.Name</b>
 <table width="100%">
 
-@if (Model.Introduced.HasValue &&
-     Model.Introduced.Value.Year != 1000)
+@if (_machine.Introduced.HasValue &&
+     _machine.Introduced.Value.Year != 1000)
 {
     <tr>
         <th scope=row width="37%">
@@ -73,12 +92,12 @@
             </div>
         </th>
         <td width="63%">
-            <a asp-controller="Computer" asp-action="ByYear" asp-route-id="@Model.Introduced.Value.Year">
-                @Model.Introduced.Value.ToLongDateString()</a>
+            <a asp-controller="Computer" asp-action="ByYear" asp-route-id="@_machine.Introduced.Value.Year">
+                @_machine.Introduced.Value.ToLongDateString()</a>
         </td>
     </tr>
 }
-@if (Model.Family != null)
+@if (_machine.Family != null)
 {
     <tr>
         <th scope=row width="37%">
@@ -87,12 +106,12 @@
             </div>
         </th>
         <td width="63%">
-            <a asp-controller="Computer" asp-action="ByFamily" asp-route-id="@Model.Family.Id">
-                @Model.Family.Name</a>
+            <a asp-controller="Computer" asp-action="ByFamily" asp-route-id="@_machine.Family.Id">
+                @_machine.Family.Name</a>
         </td>
     </tr>
 }
-@if (Model.Model != null)
+@if (_machine.Model != null)
 {
     <tr>
         <th scope=row width="37%">
@@ -101,11 +120,11 @@
             </div>
         </th>
         <td width="63%">
-            @Model.Model
+            @_machine.Model
         </td>
     </tr>
 }
-@if (Model.Processors.Count > 0)
+@if (_machine.Processors.Count > 0)
 {
     <tr>
     <th scope=row>
@@ -116,7 +135,7 @@
     <td>
     <table>
     @{ counter = 0; }
-    @foreach (var processorByMachine in Model.Processors)
+    @foreach (var processorByMachine in _machine.Processors)
     {
         <tr>
         <td>
@@ -233,7 +252,7 @@
         {
             <tr>
                 <td>
-                    <abbr title="Simultanoeus multithreading">SMT</abbr>
+                    <abbr title="Simultaneous multithreading">SMT</abbr>
                 </td>
                 <td>
                     @processorByMachine.Processor.ThreadsPerCore threads
@@ -374,8 +393,8 @@
     </td>
     </tr>
 }
-@if (Model.Memory != null &&
-     Model.Memory.Count > 0)
+@if (_machine.Memory != null &&
+     _machine.Memory.Count > 0)
 {
     <tr>
         <th scope=row>
@@ -385,7 +404,7 @@
         </th>
         <td>
             <table>
-                @foreach (var memory in Model.Memory)
+                @foreach (var memory in _machine.Memory)
                 {
                     string memValue;
                     if (memory.Size > 1073741824)
@@ -439,7 +458,7 @@
         </td>
     </tr>
 }
-@if (Model.Gpus.Count > 0)
+@if (_machine.Gpus.Count > 0)
 {
     <tr>
         <th scope=row>
@@ -450,7 +469,7 @@
         <td>
             <table>
                 @{ counter = 0; }
-                @foreach (var gpuByMachine in Model.Gpus)
+                @foreach (var gpuByMachine in _machine.Gpus)
                 {
                     if (gpuByMachine.Gpu.Id == -2)
                     {
@@ -555,7 +574,7 @@
         </td>
     </tr>
 }
-@if (Model.Sound.Count > 0)
+@if (_machine.Sound.Count > 0)
 {
     <tr>
         <th scope=row>
@@ -566,7 +585,7 @@
         <td>
             <table>
                 @{ counter = 0; }
-                @foreach (var soundByMachine in Model.Sound)
+                @foreach (var soundByMachine in _machine.Sound)
                 {
                     <tr>
                         @if (soundByMachine.SoundSynth.Id == -2)
@@ -700,7 +719,7 @@
         </td>
     </tr>
 }
-@if (Model.Storage.Count > 0)
+@if (_machine.Storage.Count > 0)
 {
     <tr>
         <th scope=row>
@@ -710,7 +729,7 @@
         </th>
         <td>
             <table>
-                @foreach (var storage in Model.Storage)
+                @foreach (var storage in _machine.Storage)
                 {
                     string capString = null;
 
@@ -782,7 +801,23 @@
     </tr>
 }
 </table>
-@if (File.Exists(System.IO.Path.Combine(ViewBag.WebRootPath, "assets/photos/computers", Model.Id + ".jpg")))
+@if (File.Exists(Path.Combine(Host.WebRootPath, "assets/photos/computers", _machine.Id + ".jpg")))
 {
-    <img src="@System.IO.Path.Combine("/assets/photos/computers", Model.Id + ".jpg")" alt="">
+    <img src="@Path.Combine("/assets/photos/computers", _machine.Id + ".jpg")" alt="">
+}
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+
+    Machine _machine;
+    bool _loaded;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _machine = await Service.GetMachine(Id);
+
+        _loaded = true;
+    }
 }
