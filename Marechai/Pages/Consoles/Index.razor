@@ -8,7 +8,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Computers index
+//     Consoles index
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,9 +30,9 @@
 *******************************************************************************/
 }
 
-@page "/computers"
-@inherits OwningComponentBase<ComputersService>
-@inject IStringLocalizer<ComputersService> L
+@page "/consoles"
+@inherits OwningComponentBase<ConsolesService>
+@inject IStringLocalizer<ConsolesService> L
 
 @if (!_loaded)
 {
@@ -42,9 +42,9 @@
 <p>
     @L["Here you can consult our database."]
     <br />
-    @L["In this database you can find technical information as well as computers history, catalogued by companies, alphabetically and by release date."]
+    @L["In this database you can find technical information as well as videogame consoles history, catalogued by companies, alphabetically and by release date."]
     <br />
-    @string.Format(L["{0} computers actually catalogued in the database."], _computers)
+    @string.Format(L["{0} videogame consoles actually catalogued in the database."], _consoles)
 </p>
 <p>
     <br>
@@ -139,89 +139,89 @@
 <p>
     @L["Alphabetically search"]
     <br>
-    <a href="/computers/Q">
+    <a href="/consoles/Q">
         Q
     </a>
-    <a href="/computers/W">
+    <a href="/consoles/W">
         W
     </a>
-    <a href="/computers/E">
+    <a href="/consoles/E">
         E
     </a>
-    <a href="/computers/R">
+    <a href="/consoles/R">
         R
     </a>
-    <a href="/computers/T">
+    <a href="/consoles/T">
         T
     </a>
-    <a href="/computers/Y">
+    <a href="/consoles/Y">
         Y
     </a>
-    <a href="/computers/U">
+    <a href="/consoles/U">
         U
     </a>
-    <a href="/computers/I">
+    <a href="/consoles/I">
         I
     </a>
-    <a href="/computers/O">
+    <a href="/consoles/O">
         O
     </a>
-    <a href="/computers/P">
+    <a href="/consoles/P">
         P
     </a>
     <br>
-    <a href="/computers/A">
+    <a href="/consoles/A">
         A
     </a>
-    <a href="/computers/S">
+    <a href="/consoles/S">
         S
     </a>
-    <a href="/computers/D">
+    <a href="/consoles/D">
         D
     </a>
-    <a href="/computers/F">
+    <a href="/consoles/F">
         F
     </a>
-    <a href="/computers/G">
+    <a href="/consoles/G">
         G
     </a>
-    <a href="/computers/H">
+    <a href="/consoles/H">
         H
     </a>
-    <a href="/computers/J">
+    <a href="/consoles/J">
         J
     </a>
-    <a href="/computers/K">
+    <a href="/consoles/K">
         K
     </a>
-    <a href="/computers/L">
+    <a href="/consoles/L">
         L
     </a>
     <br>
-    <a href="/computers/Z">
+    <a href="/consoles/Z">
         Z
     </a>
-    <a href="/computers/X">
+    <a href="/consoles/X">
         X
     </a>
-    <a href="/computers/C">
+    <a href="/consoles/C">
         C
     </a>
-    <a href="/computers/V">
+    <a href="/consoles/V">
         V
     </a>
-    <a href="/computers/B">
+    <a href="/consoles/B">
         B
     </a>
-    <a href="/computers/N">
+    <a href="/consoles/N">
         N
     </a>
-    <a href="/computers/M">
+    <a href="/consoles/M">
         M
     </a>
     <br>
-    <a href="/computers/all">
-        @L["All computers"]
+    <a href="/consoles/all">
+        @L["All videogame consoles"]
     </a>
 </p>
 <p>
@@ -233,7 +233,7 @@
         {
             counter++;
         }
-        <a href="/computers/year/@i">
+        <a href="/consoles/year/@i">
             @i
         </a>
         if (counter % 8 == 0)
@@ -246,13 +246,13 @@
 @code
 {
     bool _loaded;
-    int _computers;
+    int _consoles;
     int _minYear;
     int _maxYear;
 
     protected override async Task OnInitializedAsync()
     {
-        _computers = await Service.GetComputersCountAsync();
+        _consoles = await Service.GetConsolesCountAsync();
         _minYear = await Service.GetMinimumYearAsync();
         _maxYear = await Service.GetMaximumYearAsync();
 

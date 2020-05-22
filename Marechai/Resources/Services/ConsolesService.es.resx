@@ -126,13 +126,13 @@
     <value>Aquí puedes consultar nuestra base de datos.</value>
     <comment>Introduction to search</comment>
   </data>
-  <data name="In this database you can find technical information as well as computers history, catalogued by companies, alphabetically and by release date." xml:space="preserve">
-    <value>En esta base de datos puedes encontrar información técnica así como historia de los ordenadores, catalogados por compañía, alfabéticamente y por fecha de introducción.</value>
+  <data name="In this database you can find technical information as well as videogame consoles history, catalogued by companies, alphabetically and by release date." xml:space="preserve">
+    <value>En esta base de datos puedes encontrar información técnica así como historia de los videoconsolas, catalogados por compañía, alfabéticamente y por fecha de introducción.</value>
     <comment>Introduction to database</comment>
   </data>
-  <data name="{0} computers actually catalogued in the database." xml:space="preserve">
-    <value>{0} ordenadores catalogados en la base de datos</value>
-    <comment>computers in database, {0} number</comment>
+  <data name="{0} videogame consoles actually catalogued in the database." xml:space="preserve">
+    <value>{0} videoconsolas catalogados en la base de datos</value>
+    <comment>Consoles in database, {0} number</comment>
   </data>
   <data name="Search by companies" xml:space="preserve">
     <value>Buscar por compañías</value>
@@ -146,9 +146,9 @@
     <value>Búsqueda alfabética</value>
     <comment>Search alphabetically</comment>
   </data>
-  <data name="All computers" xml:space="preserve">
-    <value>Todos los ordenadores</value>
-    <comment>All computers</comment>
+  <data name="All videogame consoles" xml:space="preserve">
+    <value>Todas las videoconsolas</value>
+    <comment>All consoles</comment>
   </data>
   <data name="Search by year" xml:space="preserve">
     <value>Búsqueda por año</value>
@@ -158,24 +158,24 @@
     <value>Resultados:</value>
     <comment>Search results</comment>
   </data>
-  <data name="Computers starting with {0}" xml:space="preserve">
-    <value>Ordenadores cuyo nombre comienza por {0}</value>
-    <comment>Computers starting with {0}, a letter</comment>
+  <data name="Videogame consoles starting with {0}" xml:space="preserve">
+    <value>Videoconsolas cuyo nombre comienza por {0}</value>
+    <comment>Consoles starting with {0}, a letter</comment>
   </data>
-  <data name="Computers introduced in {0}" xml:space="preserve">
-    <value>Ordenadores introducidos en {0}</value>
-    <comment>Computers introduced in, {0} is a year</comment>
+  <data name="Videogame consoles introduced in {0}" xml:space="preserve">
+    <value>Videoconsolas introducidas en {0}</value>
+    <comment>Consoles introduced in, {0} is a year</comment>
   </data>
-  <data name="{0} computers found in the database." xml:space="preserve">
-    <value>{0} ordenadores en la base de datos</value>
-    <comment>Computers found by search, {0} is number</comment>
+  <data name="{0} videogame consoles found in the database." xml:space="preserve">
+    <value>{0} videoconsolas en la base de datos</value>
+    <comment>Consoles found by search, {0} is number</comment>
   </data>
-  <data name="There are no computers found in the database that start with this letter." xml:space="preserve">
-    <value>No se encontraron ordenadores en la base de datos cuyo nombre comience por esa letra.</value>
-    <comment>No computers in DB with that letter</comment>
+  <data name="There are no videogame consoles found in the database that start with this letter." xml:space="preserve">
+    <value>No se encontraron videoconsolas en la base de datos cuyo nombre comience por esa letra.</value>
+    <comment>No consoles in DB with that letter</comment>
   </data>
-  <data name="There are no computers found introduced this year." xml:space="preserve">
-    <value>No se encontraron ordenadores en la base de datos introducidos en ese año.</value>
-    <comment>No computers in DB from that year</comment>
+  <data name="There are no videogame consoles found introduced this year." xml:space="preserve">
+    <value>No se encontraron videoconsolas en la base de datos introducidos en ese año.</value>
+    <comment>No consoles in DB from that year</comment>
   </data>
 </root>

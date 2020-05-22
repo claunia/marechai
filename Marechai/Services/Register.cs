@@ -44,6 +44,7 @@ namespace Marechai.Services
             services.AddScoped<NewsService>();
             services.AddScoped<CompaniesService>();
             services.AddScoped<ComputersService>();
+            services.AddScoped<ConsolesService>();
         }
     }
 }
