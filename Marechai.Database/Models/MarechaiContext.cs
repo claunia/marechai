@@ -1463,9 +1463,6 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.FsfApproved);
                 entity.HasIndex(e => e.OsiApproved);
             });
-
-            Seeders.License.Seed(modelBuilder);
-            Seeders.DocumentRoles.Seed(modelBuilder);
         }
     }
 }

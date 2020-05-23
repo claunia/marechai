@@ -34,6 +34,7 @@ using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using Marechai.Areas.Identity;
 using Marechai.Database.Models;
+using Marechai.Database.Seeders;
 using Marechai.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -62,10 +63,8 @@ namespace Marechai
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-               .AddBlazorise( options => options.ChangeTextOnKeyPress = true)
-               .AddBootstrapProviders()
-               .AddFontAwesomeIcons();
+            services.AddBlazorise(options => options.ChangeTextOnKeyPress = true).AddBootstrapProviders().
+                     AddFontAwesomeIcons();
 
             services.AddDbContext<MarechaiContext>(options => options.
                                                               UseLazyLoadingProxies().
@@ -87,7 +86,7 @@ namespace Marechai
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MarechaiContext context)
         {
             if(env.IsDevelopment())
             {
@@ -118,12 +117,12 @@ namespace Marechai
 
             app.UseRouting();
 
-            app.ApplicationServices
-               .UseBootstrapProviders()
-               .UseFontAwesomeIcons();
+            app.ApplicationServices.UseBootstrapProviders().UseFontAwesomeIcons();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            All.Seed(context);
 
             app.UseEndpoints(endpoints =>
             {
