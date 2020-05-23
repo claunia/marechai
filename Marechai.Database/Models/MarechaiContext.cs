@@ -33,7 +33,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Database.Models
 {
-    public class MarechaiContext : IdentityDbContext
+    public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public MarechaiContext() { }
 
