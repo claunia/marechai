@@ -8,8 +8,7 @@ namespace Marechai.Database.Seeders
 {
     public static class Roles
     {
-        public static void Seed(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager,
-                                IConfiguration configuration)
+        public static void Seed(RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
         {
             var roles = configuration.GetSection("MarechaiRoles").GetChildren().Select(x => new
             {
