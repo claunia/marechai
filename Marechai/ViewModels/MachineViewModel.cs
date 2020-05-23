@@ -17,7 +17,7 @@ namespace Marechai.ViewModels
         public List<GpuViewModel>        Gpus              { get; set; }
         public List<MemoryViewModel>     Memory            { get; set; }
         public List<ProcessorViewModel>  Processors        { get; set; }
-        public List<SoundSynthViewModel> SoundSynthetizers { get; set; }
+        public List<SoundSynthViewModel> SoundSynthesizers { get; set; }
         public List<StorageViewModel>    Storage           { get; set; }
     }
 }

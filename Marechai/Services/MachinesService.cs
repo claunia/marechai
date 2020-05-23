@@ -94,7 +94,7 @@ namespace Marechai.Services
                                                         Select(e => e.Extension.Extension).ToList()
                                               }).ToListAsync();
 
-            model.SoundSynthetizers =
+            model.SoundSynthesizers =
                 await _context.SoundByMachine.Where(s => s.MachineId == machine.Id).Select(s => s.SoundSynth).
                                Select(s => new SoundSynthViewModel
                                {

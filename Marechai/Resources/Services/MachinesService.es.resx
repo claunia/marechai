@@ -354,9 +354,9 @@
     <value>Esta máquina dibuja los píxeles directamente del software a una región de memoria que es convertida a una señal analógica sin ninguna unidad de proceso de gráficos.</value>
     <comment>Description of what a framebuffer is</comment>
   </data>
-  <data name="Sound synthetizers" xml:space="preserve">
+  <data name="Sound synthesizers" xml:space="preserve">
     <value>Sintetizadores de sonido</value>
-    <comment>Sound synthetizers</comment>
+    <comment>Sound synthesizers</comment>
   </data>
   <data name="Software" xml:space="preserve">
     <value>Software</value>

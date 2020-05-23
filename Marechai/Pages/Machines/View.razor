@@ -611,18 +611,18 @@
         </td>
     </tr>
 }
-@if (_machine.SoundSynthetizers.Count > 0)
+@if (_machine.SoundSynthesizers.Count > 0)
 {
     <tr>
         <th scope=row>
             <div align=right>
-                @L["Sound synthetizers"]
+                @L["Sound synthesizers"]
             </div>
         </th>
         <td>
             <table>
                 @{ counter = 0; }
-                @foreach (var sound in _machine.SoundSynthetizers)
+                @foreach (var sound in _machine.SoundSynthesizers)
                 {
                     <tr>
                         @if (sound.Id == -2)

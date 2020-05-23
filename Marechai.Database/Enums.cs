@@ -169,7 +169,7 @@ namespace Marechai.Database
         Work = 3,
         /// <summary>Memory used by the graphics processing units</summary>
         Video = 4,
-        /// <summary>Memory used by the sound synthetizers</summary>
+        /// <summary>Memory used by the sound synthesizers</summary>
         Sound = 5,
         /// <summary>Memory used to store wave tables</summary>
         Wavetable = 6,
@@ -181,7 +181,7 @@ namespace Marechai.Database
         Configuration = 9,
         /// <summary>
         ///     Memory accessible directly to any of the processors in the machine, including graphics processors and sound
-        ///     synthetizers
+        ///     synthesizers
         /// </summary>
         Unified = 10
     }
