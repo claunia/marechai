@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+    <comment>Message that appears while data is being loaded from database</comment>
+  </data>
+  <data name="Machine not found in database" xml:space="preserve">
+    <value>Máquina no encontrada en la base de datos</value>
+    <comment>Not found</comment>
+  </data>
+  <data name="+info" xml:space="preserve">
+    <value>+info</value>
+    <comment>Abbreviation of information</comment>
+  </data>
+  <data name="PROTOTYPE" xml:space="preserve">
+    <value>PROTOTIPO</value>
+    <comment>Caps or other way of denoting importance</comment>
+  </data>
+  <data name="Introduction date" xml:space="preserve">
+    <value>Fecha de introducción</value>
+    <comment>Date</comment>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Familia</value>
+    <comment>Set of variations of the same machine</comment>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Modelo</value>
+    <comment>Model</comment>
+  </data>
+  <data name="Processors" xml:space="preserve">
+    <value>Procesadores</value>
+    <comment>General purpose processors or coprocessors, including math ones, not including graphical or sound oriented ones</comment>
+  </data>
+  <data name="{0} @ {1}MHz ({2} bits)" xml:space="preserve">
+    <value>{0} a {1}Mhz ({2} bits)</value>
+    <comment>{0} name, {1} speed in megahertz, {2} general purpose registers size in bits</comment>
+  </data>
+  <data name="{0} @ {1}MHz" xml:space="preserve">
+    <value>{0} a {1}MHz</value>
+    <comment>AAAA</comment>
+  </data>
+  <data name="Manufacturer" xml:space="preserve">
+    <value>Fabricante</value>
+    <comment>Manufacturer</comment>
+  </data>
+  <data name="Instruction set" xml:space="preserve">
+    <value>Arquitectura</value>
+    <comment>Instruction set, aka, architecture</comment>
+  </data>
+  <data name="Nominal speed" xml:space="preserve">
+    <value>Velocidad nominal</value>
+    <comment>Nominal speed</comment>
+  </data>
+  <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits." xml:space="preserve">
+    <value>{0} registros de propósito general de {1} bits que pueden ser usados como registros de coma flotante de {2} bits y como registros SIMD de {3} bits.</value>
+    <comment>{0} general purpose registers, {1} {2} and {3} their size in bits.</comment>
+  </data>
+  <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits." xml:space="preserve">
+    <value>{0} registros de propósito general de {1} bits que pueden ser usados como registros de coma flotante de {2} bits.</value>
+    <comment>{0} general purpose registers, {1} and {2} their size in bits.</comment>
+  </data>
+  <data name="{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits." xml:space="preserve">
+    <value>{0} registros de propósito general de {1} bits que pueden ser usados como registros SIMD de {2} bits.</value>
+    <comment>{0} general purpose registers, {1} and {2} their size in bits.</comment>
+  </data>
+  <data name="{0} general purpose registers of {1} bits." xml:space="preserve">
+    <value>{0} registros de propósito general de {1} bits.</value>
+    <comment>{0} general purpose registers, {1} their size in bits.</comment>
+  </data>
+  <data name="{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits." xml:space="preserve">
+    <value>{0} registros de coma flotante de {1} bits que pueden ser usados como registros SIMD de {2} bits.</value>
+    <comment>{0} floating point registers, {1} and {2} their size in bits.</comment>
+  </data>
+  <data name="{0} floating point registers of {1} bits." xml:space="preserve">
+    <value>{0} registros de coma flotante de {1} bits.</value>
+    <comment>{0} general purpose registers, {1} their size in bits.</comment>
+  </data>
+  <data name="Single instruction, multiple data" xml:space="preserve">
+    <value>Instrucción sencilla, múltiples datos</value>
+    <comment>Definition of SIMD</comment>
+  </data>
+  <data name="{0} SIMD registers of {1} bits." xml:space="preserve">
+    <value>{0} registros SIMD de {1} bits.</value>
+    <comment>{0} SIMD registers, {1} their size in bits.</comment>
+  </data>
+  <data name="Multi-core" xml:space="preserve">
+    <value>Multi-núcleo</value>
+    <comment>Multi core</comment>
+  </data>
+  <data name="{0} cores." xml:space="preserve">
+    <value>{0} núcleos.</value>
+    <comment>{0} is number of cores</comment>
+  </data>
+  <data name="Simultaneous multithreading" xml:space="preserve">
+    <value>Multi-hilo simultáneo</value>
+    <comment>Definition of SMT</comment>
+  </data>
+  <data name="{0} threads per core." xml:space="preserve">
+    <value>{0} hilos por núcleo.</value>
+    <comment>{0} is number of threads per core</comment>
+  </data>
+  <data name="{0} threads." xml:space="preserve">
+    <value>{0} hilos.</value>
+    <comment>{0} is number of threads per core</comment>
+  </data>
+  <data name="Bus" xml:space="preserve">
+    <value>Bus</value>
+    <comment>Computer bus</comment>
+  </data>
+  <data name="{0}-bit data." xml:space="preserve">
+    <value>{0} bits de datos.</value>
+    <comment>{0} is number of bits in data bus</comment>
+  </data>
+  <data name="{0}-bit address." xml:space="preserve">
+    <value>{0} bits de direcciones.</value>
+    <comment>{0} is number of bits in address bus</comment>
+  </data>
+  <data name="Cache" xml:space="preserve">
+    <value>Caché</value>
+    <comment>Cache</comment>
+  </data>
+  <data name="{0}KiB combined instruction-data L1" xml:space="preserve">
+    <value>{0} KiB de L1 combinada de instrucciones y datos</value>
+    <comment>{0} is number of kibibytes in combined instruction and data L1 cache</comment>
+  </data>
+  <data name="{0}KiB instruction L1" xml:space="preserve">
+    <value>{0} KiB de L1 de instrucciones</value>
+    <comment>{0} is number of kibibytes in L1 instruction cache</comment>
+  </data>
+  <data name="{0}KiB data L1" xml:space="preserve">
+    <value>{0} KiB de L1 de datos</value>
+    <comment>{0} is number of kibibytes in L1 data cache</comment>
+  </data>
+  <data name="{0}KiB L2" xml:space="preserve">
+    <value>{0} KiB de L2</value>
+    <comment>{0} is number of kibibytes in L2 cache</comment>
+  </data>
+  <data name="{0}KiB L3" xml:space="preserve">
+    <value>{0} KiB de L3</value>
+    <comment>{0} is number of kibibytes in L3 cache</comment>
+  </data>
+  <data name="Package" xml:space="preserve">
+    <value>Empaquetado</value>
+    <comment>Chip package</comment>
+  </data>
+  <data name="Manufacturing process" xml:space="preserve">
+    <value>Proceso de fabricación</value>
+    <comment>Chip manufacturing process</comment>
+  </data>
+  <data name="{0} @ {1}µm" xml:space="preserve">
+    <value>{0} en {1}µm</value>
+    <comment>{0} is manufacturing process and {1} is micrometers</comment>
+  </data>
+  <data name="{0} @ {1}nm" xml:space="preserve">
+    <value>{0} en {1}nm</value>
+    <comment>{0} is manufacturing process and {1} is nanometers</comment>
+  </data>
+  <data name="{0}µm" xml:space="preserve">
+    <value>{0}µm</value>
+    <comment>{0} is micrometers</comment>
+  </data>
+  <data name="{0}nm" xml:space="preserve">
+    <value>{0}nm</value>
+    <comment>{0} is nanometers</comment>
+  </data>
+  <data name="Die size" xml:space="preserve">
+    <value>Área</value>
+    <comment>Die area size</comment>
+  </data>
+  <data name="{0} mm²" xml:space="preserve">
+    <value>{0} mm²</value>
+    <comment>{0} is squared milimeters</comment>
+  </data>
+  <data name="Transistors" xml:space="preserve">
+    <value>Transitores</value>
+    <comment>Transistors of chip</comment>
+  </data>
+  <data name="Memory" xml:space="preserve">
+    <value>Memoria</value>
+    <comment>Memory</comment>
+  </data>
+  <data name="{0} GiB" xml:space="preserve">
+    <value>{0} GiB</value>
+    <comment>gibibytes</comment>
+  </data>
+  <data name="{0} MiB" xml:space="preserve">
+    <value>{0} MiB</value>
+    <comment>mebibytes</comment>
+  </data>
+  <data name="{0} KiB" xml:space="preserve">
+    <value>{0} KiB</value>
+    <comment>kibibytes</comment>
+  </data>
+  <data name="{0} bytes" xml:space="preserve">
+    <value>{0} bytes</value>
+    <comment>bytes</comment>
+  </data>
+  <data name="Unknown size" xml:space="preserve">
+    <value>Tamaño desconocido</value>
+    <comment>Unknown size</comment>
+  </data>
+  <data name="{0} GHz" xml:space="preserve">
+    <value>{0} GHz</value>
+    <comment>gigahertz</comment>
+  </data>
+  <data name="{0} MHz" xml:space="preserve">
+    <value>{0} MHz</value>
+    <comment>megahertz</comment>
+  </data>
+  <data name="{0} KHz" xml:space="preserve">
+    <value>{0} KHz</value>
+    <comment>kilohertz</comment>
+  </data>
+  <data name="{0} Hz" xml:space="preserve">
+    <value>{0} Hz</value>
+    <comment>hertz</comment>
+  </data>
+  <data name="unknown speed" xml:space="preserve">
+    <value>velocidad desconocida</value>
+    <comment>unknown speed</comment>
+  </data>
+  <data name="{0} of {1} memory ({2} at {3})" xml:space="preserve">
+    <value>{0} de memoria de {1} ({2} a {3})</value>
+    <comment>{0} size with above prefix, {1} usage, {2} type, {3} speed with above prefix</comment>
+  </data>
+  <data name="Graphics processing units" xml:space="preserve">
+    <value>Unidades de proceso de gráficos</value>
+    <comment>Chips that generate graphical output on a screen</comment>
+  </data>
+  <data name="Framebuffer" xml:space="preserve">
+    <value>Framebuffer</value>
+    <comment>Buffer or memory that directly stores the frame</comment>
+  </data>
+  <data name="This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit." xml:space="preserve">
+    <value>Esta máquina dibuja los píxeles directamente del software a una región de memoria que es convertida a una señal analógica sin ninguna unidad de proceso de gráficos.</value>
+    <comment>Description of what a framebuffer is</comment>
+  </data>
+  <data name="Sound synthetizers" xml:space="preserve">
+    <value>Sintetizadores de sonido</value>
+    <comment>Sound synthetizers</comment>
+  </data>
+  <data name="Software" xml:space="preserve">
+    <value>Software</value>
+    <comment>Means that the software directly sends signals to a dac</comment>
+  </data>
+  <data name="This machine directly sends data to a DAC or similar connected to the audio output." xml:space="preserve">
+    <value>Esta máquina envía señales desde el software directamente a un conversor digital a analógico conectado a la salida de sonido.</value>
+    <comment>Description of how software audio works</comment>
+  </data>
+  <data name="Generators" xml:space="preserve">
+    <value>Generadores</value>
+    <comment>Sound waves generatos</comment>
+  </data>
+  <data name="{0} voices" xml:space="preserve">
+    <value>{0} voces</value>
+    <comment>Number of pulsed, modulated, or wave-tabled simultaneous voices</comment>
+  </data>
+  <data name="{0} square wave" xml:space="preserve">
+    <value>{0} de onda cuadrada</value>
+    <comment>{0} is number of square wave generators</comment>
+  </data>
+  <data name="{0} white noise" xml:space="preserve">
+    <value>{0} de ruido blanco</value>
+    <comment>{0} is number of white noise generators</comment>
+  </data>
+  <data name="Sample rate" xml:space="preserve">
+    <value>Muestreo</value>
+    <comment>Sample rate</comment>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Almacenamiento</value>
+    <comment>Storage</comment>
+  </data>
+  <data name="{0} bits at {1} KHz" xml:space="preserve">
+    <value>{0} bits a {1} KHz</value>
+    <comment>{0} number of bits of sampling rate at {1} kilohertz</comment>
+  </data>
+  <data name="{0} bits at {1} Hz" xml:space="preserve">
+    <value>{0} bits a {1} Hz</value>
+    <comment>{0} number of bits of sampling rate at {1} hertz</comment>
+  </data>
+  <data name="{0} bits" xml:space="preserve">
+    <value>{0} bits</value>
+    <comment>{0} is number of bits</comment>
+  </data>
+  <data name="Synthesizer type" xml:space="preserve">
+    <value>Tipo de síntesis</value>
+    <comment>Synthesis type</comment>
+  </data>
+  <data name="{0} bps" xml:space="preserve">
+    <value>{0} bps</value>
+    <comment>bits per second</comment>
+  </data>
+  <data name="Available {0} interface." xml:space="preserve">
+    <value>Interfaz {0} disponible.</value>
+    <comment>{0} is interface name</comment>
+  </data>
+  <data name="{0} connected thru a {1} interface with a nominal capacity of {2}" xml:space="preserve">
+    <value>{0} conectado por una interfaz {1} con una capacidad norminal de {2}</value>
+    <comment>{0} is storage type, {1} is interface name, {2} is nominal capacity number formatted with above bytes or bps prefixes</comment>
+  </data>
+  <data name="{0} connected thru a {1} interface" xml:space="preserve">
+    <value>{0} conectado por una interfaz {1}</value>
+    <comment>{0} is storage type, {1} is interface name</comment>
+  </data>
+  <data name="{0} with a nominal capacity of {1}" xml:space="preserve">
+    <value>{0} con una capacidad norminal de {1}</value>
+    <comment>{0} is storage type, {1} is nominal capacity number formatted with above bytes or bps prefixes</comment>
+  </data>
+</root>

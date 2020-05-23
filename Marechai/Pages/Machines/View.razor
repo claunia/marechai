@@ -32,7 +32,6 @@
 }
 
 @page "/machine/{Id:int}"
-
 @using Marechai.Database
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
@@ -73,7 +72,7 @@
      _machine.Introduced.Value.Year == 1000)
 {
     <b>
-        <div style="text-align: center;">PROTOTYPE</div>
+        <div style="text-align: center;">@L["PROTOTYPE"]</div>
     </b>
 }
 <b>
@@ -87,7 +86,7 @@
     <tr>
         <th scope=row width="37%">
             <div align=right>
-                Introduction date
+                @L["Introduction date"]
             </div>
         </th>
         <td width="63%">
@@ -101,7 +100,7 @@
     <tr>
         <th scope=row width="37%">
             <div align=right>
-                Family
+                @L["Family"]
             </div>
         </th>
         <td width="63%">
@@ -115,7 +114,7 @@
     <tr>
         <th scope=row width="37%">
             <div align=right>
-                Model
+                @L["Model"]
             </div>
         </th>
         <td width="63%">
@@ -128,7 +127,7 @@
     <tr>
     <th scope=row>
         <div align=right>
-            Processors
+            @L["Processors"]
         </div>
     </th>
     <td>
@@ -140,14 +139,14 @@
         <td>
         @if (processor.Speed > 0)
         {
-            @(processor.GprSize > 0 ? $"{processor.Name} @ {processor.Speed}Mhz ({processor.GprSize} bits)" : $"{processor.Name} @ {processor.Speed}Mhz")
+            @(processor.GprSize > 0 ? string.Format(L["{0} @ {1}MHz ({2} bits)"], processor.Name, processor.Speed, processor.GprSize) : string.Format(L["{0} @ {1}MHz"], processor.Name, processor.Speed))
         }
         else
         {
             @($"{processor.Name}")
         }
         <a aria-controls="@($"cpuInfo{counter}")" aria-expanded="false" class="btn btn-link" data-toggle="collapse" href="@($"#cpuInfo{counter}")">
-            +info
+            @L["+info"]
         </a>
         <div class="collapse" id="@($"cpuInfo{counter}")">
         <div class="card card-body">
@@ -156,12 +155,12 @@
              processor.ModelCode != processor.Name)
         {
             <tr>
-                <td>Model</td>
+                <td>@L["Model"]</td>
                 <td>@processor.ModelCode</td>
             </tr>
         }
         <tr>
-            <td>Manufacturer</td>
+            <td>@L["Manufacturer"]</td>
             <td>
                 <a href="/processors/company/@processor.CompanyId">
                     @processor.CompanyName</a>
@@ -170,22 +169,22 @@
         @if (processor.Introduced != null)
         {
             <tr>
-                <td>Introduction date</td>
+                <td>@L["Introduction date"]</td>
                 <td>@($"{processor.Introduced:yyyy}")</td>
             </tr>
         }
         @if (processor.InstructionSet != null)
         {
             <tr>
-                <td>Instruction set</td>
+                <td>@L["Instruction set"]</td>
                 <td>@processor.InstructionSet</td>
             </tr>
         }
         @if (processor.Speed > 0)
         {
             <tr>
-                <td>Nominal speed</td>
-                <td>@processor.Speed MHz</td>
+                <td>@L["Nominal speed"]</td>
+                <td>@string.Format(L["{0} MHz"], processor.Speed)</td>
             </tr>
         }
         @if (processor.Gprs > 0 ||
@@ -200,16 +199,30 @@
                         {
                             <tr>
                                 <td>
-                                    @processor.Gprs general purpose registers of @processor.GprSize bits
                                     @if (processor.FprSize > 0 &&
-                                         processor.Fprs == 0)
-                                    {
-                                        @($", that can be used as floating point registers of {processor.FprSize}")
-                                    }
-                                    @if (processor.SimdSize > 0 &&
+                                         processor.Fprs == 0 &&
+                                         processor.SimdSize > 0 &&
                                          processor.SimdRegisters == 0)
                                     {
-                                        @($", that can be used as SIMD registers of {processor.FprSize}")
+                                        @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits."],
+                                                        processor.Gprs, processor.GprSize, processor.FprSize, processor.SimdSize))
+                                    }
+                                    else if (processor.FprSize > 0 &&
+                                         processor.Fprs == 0)
+                                    {
+                                        @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits."],
+                                                        processor.Gprs, processor.GprSize, processor.FprSize))
+                                    }
+                                    else if (processor.FprSize == 0 &&
+                                             processor.SimdSize > 0 &&
+                                             processor.SimdRegisters == 0)
+                                    {
+                                        @(string.Format(L["{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits."],
+                                                        processor.Gprs, processor.GprSize, processor.SimdSize))
+                                    }
+                                    else
+                                    {
+                                        @(string.Format(L["{0} general purpose registers of {1} bits."], processor.Gprs, processor.GprSize))
                                     }
                                 </td>
                             </tr>
@@ -218,11 +231,16 @@
                         {
                             <tr>
                                 <td>
-                                    @processor.Fprs floating-point registers of @processor.FprSize bits
                                     @if (processor.SimdSize > 0 &&
                                          processor.SimdRegisters == 0)
                                     {
-                                        @($", that can be used as SIMD registers of {processor.FprSize}")
+                                        @(string.Format(L["{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits."],
+                                                        processor.Fprs, processor.FprSize, processor.SimdSize))
+                                    }
+                                    else
+                                    {
+                                        @(string.Format(L["{0} floating point registers of {1} bits."],
+                                                        processor.Fprs, processor.FprSize))
                                     }
                                 </td>
                             </tr>
@@ -231,8 +249,9 @@
                         {
                             <tr>
                                 <td>
-                                    @processor.SimdRegisters
-                                    <abbr title="Single instruction, multiple data">SIMD</abbr>registers of @processor.SimdSize bits
+                                    <abbr title="@L["Single instruction, multiple data"]">
+                                        @string.Format(L["{0} SIMD registers of {1} bits."], processor.SimdRegisters, processor.SimdSize)
+                                    </abbr>
                                 </td>
                             </tr>
                         }
@@ -243,22 +262,18 @@
         @if (processor.Cores > 1)
         {
             <tr>
-                <td>Multi-core</td>
-                <td>@processor.Cores cores</td>
+                <td>@L["Multi-core"]</td>
+                <td>@string.Format(L["{0} cores."], processor.Cores)</td>
             </tr>
         }
         @if (processor.ThreadsPerCore > 1)
         {
             <tr>
                 <td>
-                    <abbr title="Simultaneous multithreading">SMT</abbr>
+                    <abbr title="@L["Simultaneous multithreading"]">SMT</abbr>
                 </td>
                 <td>
-                    @processor.ThreadsPerCore threads
-                    @if (processor.Cores > 1)
-                    {
-                        @(" per core")
-                    }
+                    @string.Format(processor.Cores > 1 ? L["{0} threads per core."] : L["{0} threads."], processor.ThreadsPerCore)
                 </td>
             </tr>
         }
@@ -266,14 +281,14 @@
              processor.AddrBus > 0)
         {
             <tr>
-                <td>Bus</td>
+                <td>@L["Bus"]</td>
                 <td>
                     <table>
                         @if (processor.DataBus > 0)
                         {
                             <tr>
                                 <td>
-                                    @processor.DataBus-bit data
+                                    @string.Format(L["{0}-bit data."], processor.DataBus)
                                 </td>
                             </tr>
                         }
@@ -281,7 +296,7 @@
                         {
                             <tr>
                                 <td>
-                                    @processor.AddrBus-bit address
+                                    @string.Format(L["{0}-bit address."], processor.AddrBus)
                                 </td>
                             </tr>
                         }
@@ -296,14 +311,14 @@
              processor.L2 > 0)
         {
             <tr>
-                <td>Cache</td>
+                <td>@L["Cache"]</td>
                 <td>
                     <table>
                         @if (processor.L1Instruction > 0)
                         {
                             <tr>
                                 <td>
-                                    @(processor.L1Data < 0 ? $"{processor.L1Instruction}KiB combined instruction-data L1" : $"{processor.L1Instruction}KiB instruction L1")
+                                    @string.Format(processor.L1Data < 0 ? L["{0}KiB combined instruction-data L1"] : L["{0}KiB instruction L1"], processor.L1Instruction)
                                 </td>
                             </tr>
                         }
@@ -311,7 +326,7 @@
                         {
                             <tr>
                                 <td>
-                                    @($"{processor.L1Data}KiB data L1")
+                                    @string.Format(L["{0}KiB data L1"], processor.L1Data)
                                 </td>
                             </tr>
                         }
@@ -319,7 +334,7 @@
                         {
                             <tr>
                                 <td>
-                                    @($"{processor.L2}KiB L2")
+                                    @string.Format(L["{0}KiB L2"], processor.L2)
                                 </td>
                             </tr>
                         }
@@ -327,7 +342,7 @@
                         {
                             <tr>
                                 <td>
-                                    @($"{processor.L3}KiB L3")
+                                    @string.Format(L["{0}KiB L3"], processor.L3)
                                 </td>
                             </tr>
                         }
@@ -338,7 +353,7 @@
         @if (processor.Package != null)
         {
             <tr>
-                <td>Package</td>
+                <td>@L["Package"]</td>
                 <td>@processor.Package</td>
             </tr>
         }
@@ -346,18 +361,30 @@
              processor.ProcessNm > 0)
         {
             <tr>
-                <td>Manufacturing process</td>
+                <td>@L["Manufacturing process"]</td>
                 <td>
                     @if (processor.Process != null &&
                          processor.ProcessNm > 0)
                     {
-                        @processor.Process
-                        @("@")
-                        @(processor.ProcessNm > 100 ? $"{processor.ProcessNm / 100}µm" : $"{processor.ProcessNm}nm")
+                        if (processor.ProcessNm > 100)
+                        {
+                            @(string.Format(L["{0} @ {1}µm"], processor.Process, processor.ProcessNm / 100))
+                        }
+                        else
+                        {
+                            @(string.Format(L["{0} @ {1}nm"], processor.Process, processor.ProcessNm))
+                        }
                     }
                     else if (processor.ProcessNm > 0)
                     {
-                        @(processor.ProcessNm > 100 ? $"{processor.ProcessNm / 100}µm" : $"{processor.ProcessNm}nm")
+                        if (processor.ProcessNm > 100)
+                        {
+                            @(string.Format(L["{0}µm"], processor.ProcessNm / 100))
+                        }
+                        else
+                        {
+                            @(string.Format(L["{0}nm"], processor.ProcessNm))
+                        }
                     }
                     else
                     {
@@ -369,14 +396,14 @@
         @if (processor.DieSize > 0)
         {
             <tr>
-                <td>Die size</td>
-                <td>@processor.DieSize mm&sup2;</td>
+                <td>@L["Die size"]</td>
+                <td>@string.Format(L["{0} mm&sup2;"], processor.DieSize)</td>
             </tr>
         }
         @if (processor.Transistors > 0)
         {
             <tr>
-                <td>Transistors</td>
+                <td>@L["Transistors"]</td>
                 <td>@processor.Transistors</td>
             </tr>
         }
@@ -398,7 +425,7 @@
     <tr>
         <th scope=row>
             <div align=right>
-                Memory
+                @L["Memory"]
             </div>
         </th>
         <td>
@@ -408,49 +435,49 @@
                     string memValue;
                     if (memory.Size > 1073741824)
                     {
-                        memValue = $"{memory.Size / 1073741824} GiB";
+                        memValue = string.Format(L["{0} GiB"], memory.Size / 1073741824);
                     }
                     else if (memory.Size > 1048576)
                     {
-                        memValue = $"{memory.Size / 1048576} MiB";
+                        memValue = string.Format(L["{0} MiB"], memory.Size / 1048576);
                     }
                     else if (memory.Size > 1024)
                     {
-                        memValue = $"{memory.Size / 1024} KiB";
+                        memValue = string.Format(L["{0} KiB"], memory.Size / 1024);
                     }
                     else if (memory.Size > 0)
                     {
-                        memValue = $"{memory.Size} bytes";
+                        memValue = string.Format(L["{0} bytes"], memory.Size);
                     }
                     else
                     {
-                        memValue = "Unknown size";
+                        memValue = L["Unknown size"];
                     }
 
                     string speedValue;
                     if (memory.Speed > 1000000000)
                     {
-                        speedValue = $"{memory.Speed / 1000000000} GHz";
+                        speedValue = string.Format(L["{0} GHz"], memory.Speed / 1000000000);
                     }
                     else if (memory.Speed > 1000000)
                     {
-                        speedValue = $"{memory.Speed / 1000000} MHz";
+                        speedValue = string.Format(L["{0} MHz"], memory.Speed / 1000000);
                     }
                     else if (memory.Speed > 1000)
                     {
-                        speedValue = $"{memory.Speed / 1000} KHz";
+                        speedValue = string.Format(L["{0} KHz"], memory.Speed / 1000);
                     }
                     else if (memory.Speed > 0)
                     {
-                        speedValue = $"{memory.Speed} Hz";
+                        speedValue = string.Format(L["{0} Hz"], memory.Speed);
                     }
                     else
                     {
-                        speedValue = "unknown speed";
+                        speedValue = L["unknown speed"];
                     }
 
                     <tr>
-                        <td>@memValue of @memory.Usage memory (@memory.Type at @speedValue)</td>
+                        <td>@string.Format(L["{0} of {1} memory ({2} at {3})"], memValue, memory.Usage, memory.Type, speedValue)</td>
                     </tr>
                 }
             </table>
@@ -462,7 +489,7 @@
     <tr>
         <th scope=row>
             <div align=right>
-                Graphics processing units
+                @L["Graphics processing units"]
             </div>
         </th>
         <td>
@@ -473,14 +500,13 @@
                     if (gpu.Id == -2)
                     {
                         <td>
-                            Framebuffer
+                            @L["Framebuffer"]
                             <a aria-controls="@($"gpuInfo{counter}")" aria-expanded="false" class="btn btn-link" data-toggle="collapse" href="@($"#gpuInfo{counter}")">
-                                +info
+                                @L["+info"]
                             </a>
                             <div class="collapse" id="@($"gpuInfo{counter}")">
                                 <div class="card card-body">
-                                    This computer directly draws pixels from software to a memory region that's converted to video output by a
-                                    <abbr title="Digital to Analog Converter">DAC</abbr> or similar without using any specific graphics processing unit.
+                                    @L["This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit."]
                                 </div>
                             </div>
                         </td>
@@ -490,7 +516,7 @@
                         <td>
                             @($"{gpu.Name}")
                             <a aria-controls="@($"gpuInfo{counter}")" aria-expanded="false" class="btn btn-link" data-toggle="collapse" href="@($"#gpuInfo{counter}")">
-                                +info
+                                @L["+info"]
                             </a>
                             <div class="collapse" id="@($"gpuInfo{counter}")">
                                 <div class="card card-body">
@@ -499,12 +525,12 @@
                                              gpu.ModelCode != gpu.Name)
                                         {
                                             <tr>
-                                                <td>Model</td>
+                                                <td>@L["Model"]</td>
                                                 <td>@gpu.ModelCode</td>
                                             </tr>
                                         }
                                         <tr>
-                                            <td>Manufacturer</td>
+                                            <td>@L["Manufacturer"]</td>
                                             <td>
                                                 <a href="/gpus/company/@gpu.CompanyId">
                                                     @gpu.Company</a>
@@ -513,14 +539,14 @@
                                         @if (gpu.Introduced != null)
                                         {
                                             <tr>
-                                                <td>Introduction date</td>
+                                                <td>@L["Introduction date"]</td>
                                                 <td>@($"{gpu.Introduced:yyyy}")</td>
                                             </tr>
                                         }
                                         @if (gpu.Package != null)
                                         {
                                             <tr>
-                                                <td>Package</td>
+                                                <td>@L["Package"]</td>
                                                 <td>@gpu.Package</td>
                                             </tr>
                                         }
@@ -528,18 +554,30 @@
                                              gpu.ProcessNm > 0)
                                         {
                                             <tr>
-                                                <td>Manufacturing process</td>
+                                                <td>@L["Manufacturing process"]</td>
                                                 <td>
                                                     @if (gpu.Process != null &&
                                                          gpu.ProcessNm > 0)
                                                     {
-                                                        @gpu.Process
-                                                        @("@")
-                                                        @(gpu.ProcessNm > 100 ? $"{gpu.ProcessNm / 100}µm" : $"{gpu.ProcessNm}nm")
+                                                        if (gpu.ProcessNm > 100)
+                                                        {
+                                                            @(string.Format(L["{0} @ {1}µm"], gpu.Process, gpu.ProcessNm / 100))
+                                                        }
+                                                        else
+                                                        {
+                                                            @(string.Format(L["{0} @ {1}nm"], gpu.Process, gpu.ProcessNm))
+                                                        }
                                                     }
                                                     else if (gpu.ProcessNm > 0)
                                                     {
-                                                        @(gpu.ProcessNm > 100 ? $"{gpu.ProcessNm / 100}µm" : $"{gpu.ProcessNm}nm")
+                                                        if (gpu.ProcessNm > 100)
+                                                        {
+                                                            @(string.Format(L["{0}µm"], gpu.ProcessNm / 100))
+                                                        }
+                                                        else
+                                                        {
+                                                            @(string.Format(L["{0}nm"], gpu.ProcessNm))
+                                                        }
                                                     }
                                                     else
                                                     {
@@ -551,14 +589,14 @@
                                         @if (gpu.DieSize > 0)
                                         {
                                             <tr>
-                                                <td>Die size</td>
-                                                <td>@gpu.DieSize mm&sup2;</td>
+                                                <td>@L["Die size"]</td>
+                                                <td>@string.Format(L["{0} mm&sup2;"], gpu.DieSize)</td>
                                             </tr>
                                         }
                                         @if (gpu.Transistors > 0)
                                         {
                                             <tr>
-                                                <td>Transistors</td>
+                                                <td>@L["Transistors"]</td>
                                                 <td>@gpu.Transistors</td>
                                             </tr>
                                         }
@@ -578,7 +616,7 @@
     <tr>
         <th scope=row>
             <div align=right>
-                Sound synthetizers
+                @L["Sound synthetizers"]
             </div>
         </th>
         <td>
@@ -590,14 +628,13 @@
                         @if (sound.Id == -2)
                         {
                             <td>
-                                Software
+                                @L["Software"]
                                 <a aria-controls="@($"synthInfo{counter}")" aria-expanded="false" class="btn btn-link" data-toggle="collapse" href="@($"#synthInfo{counter}")">
-                                    +info
+                                    @L["+info"]
                                 </a>
                                 <div class="collapse" id="@($"synthInfo{counter}")">
                                     <div class="card card-body">
-                                        This computer directly sends data to a
-                                        <abbr title="Digital to Analog Converter">DAC</abbr> or similar connected to the audio output.
+                                        @L["This machine directly sends data to a DAC or similar connected to the audio output."]
                                     </div>
                                 </div>
                             </td>
@@ -607,7 +644,7 @@
                             <td>
                                 @($"{sound.Name}")
                                 <a aria-controls="@($"synthInfo{counter}")" aria-expanded="false" class="btn btn-link" data-toggle="collapse" href="@($"#synthInfo{counter}")">
-                                    +info
+                                    @L["+info"]
                                 </a>
                                 <div class="collapse" id="@($"synthInfo{counter}")">
                                     <div class="card card-body">
@@ -616,14 +653,14 @@
                                                  sound.ModelCode != sound.Name)
                                             {
                                                 <tr>
-                                                    <td>Model</td>
+                                                    <td>@L["Model"]</td>
                                                     <td>@sound.ModelCode</td>
                                                 </tr>
                                             }
                                             @if (sound.CompanyId != null)
                                             {
                                                 <tr>
-                                                    <td>Manufacturer</td>
+                                                    <td>@L["Manufacturer"]</td>
                                                     <td>
                                                         <a href="/soundsynths/company/@sound.CompanyId">
                                                             @sound.CompanyName</a>
@@ -633,7 +670,7 @@
                                             @if (sound.Introduced != null)
                                             {
                                                 <tr>
-                                                    <td>Introduction date</td>
+                                                    <td>@L["Introduction date"]</td>
                                                     <td>@($"{sound.Introduced:yyyy}")</td>
                                                 </tr>
                                             }
@@ -642,25 +679,25 @@
                                                  sound.WhiteNoise != 0)
                                             {
                                                 <tr>
-                                                    <td>Generators</td>
+                                                    <td>@L["Generators"]</td>
                                                     <td>
                                                         <table>
                                                             @if (sound.Voices != 0)
                                                             {
                                                                 <tr>
-                                                                    <td>@sound.Voices voices</td>
+                                                                    <td>@string.Format(L["{0} voices"], sound.Voices)</td>
                                                                 </tr>
                                                             }
                                                             @if (sound.SquareWave != 0)
                                                             {
                                                                 <tr>
-                                                                    <td>@sound.SquareWave square wave</td>
+                                                                    <td>@string.Format(L["{0} square wave"], sound.SquareWave)</td>
                                                                 </tr>
                                                             }
                                                             @if (sound.WhiteNoise != 0)
                                                             {
                                                                 <tr>
-                                                                    <td>@sound.WhiteNoise white noise</td>
+                                                                    <td>@string.Format(L["{0} white noise"], sound.WhiteNoise)</td>
                                                                 </tr>
                                                             }
                                                         </table>
@@ -671,26 +708,44 @@
                                                  sound.Frequency > 0)
                                             {
                                                 <tr>
-                                                    <td>Sample rate</td>
+                                                    <td>@L["Sample rate"]</td>
                                                     <td>
                                                         <table>
                                                             @if (sound.Depth != 0 &&
                                                                  sound.Frequency > 0)
                                                             {
                                                                 <tr>
-                                                                    <td>@sound.Depth bits at @(sound.Frequency > 1000 ? $"{sound.Frequency / 1000}KHz" : $"{sound.Frequency}Hz")</td>
+                                                                    <td>
+                                                                        @if (sound.Frequency > 1000)
+                                                                        {
+                                                                            @string.Format(L["{0} bits at {1} KHz"], sound.Depth, sound.Frequency / 1000)
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @string.Format(L["{0} bits at {1} Hz"], sound.Depth, sound.Frequency)
+                                                                        }
+                                                                    </td>
                                                                 </tr>
                                                             }
                                                             else if (sound.Depth != 0)
                                                             {
                                                                 <tr>
-                                                                    <td>@sound.Depth bits</td>
+                                                                    <td>@string.Format(L["{0} bits"], sound.Depth)</td>
                                                                 </tr>
                                                             }
                                                             else
                                                             {
                                                                 <tr>
-                                                                    <td>@(sound.Frequency > 1000 ? $"{sound.Frequency / 1000}KHz" : $"{sound.Frequency}Hz")</td>
+                                                                    <td>
+                                                                        @if (sound.Frequency > 1000)
+                                                                        {
+                                                                            @string.Format(L["{0} KHz"], sound.Frequency / 1000)
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @string.Format(L["{0} Hz"], sound.Frequency)
+                                                                        }
+                                                                    </td>
                                                                 </tr>
                                                             }
                                                         </table>
@@ -700,7 +755,7 @@
                                             @if (sound.Type != 0)
                                             {
                                                 <tr>
-                                                    <td>Synthetizer type</td>
+                                                    <td>@L["Synthesizer type"]</td>
                                                     <td>
                                                         @sound.Type
                                                     </td>
@@ -723,7 +778,7 @@
     <tr>
         <th scope=row>
             <div align=right>
-                Storage
+                @L["Storage"]
             </div>
         </th>
         <td>
@@ -736,25 +791,25 @@
                     {
                         if (storage.Type == StorageType.CompactCassette)
                         {
-                            capString = $"{storage.Capacity} bps";
+                            capString = string.Format(L["{0} bps"], storage.Capacity);
                         }
                         else
                         {
                             if (storage.Capacity > 1073741824)
                             {
-                                capString = $"{storage.Capacity / 1073741824} GiB";
+                                capString = string.Format(L["{0} GiB"], storage.Capacity / 1073741824);
                             }
                             else if (storage.Capacity > 1048576)
                             {
-                                capString = $"{storage.Capacity / 1048576} MiB";
+                                capString = string.Format(L["{0} MiB"], storage.Capacity / 1048576);
                             }
                             else if (storage.Capacity > 1024)
                             {
-                                capString = $"{storage.Capacity / 1024} KiB";
+                                capString = string.Format(L["{0} KiB"], storage.Capacity / 1024);
                             }
                             else if (storage.Capacity > 0)
                             {
-                                capString = $"{storage.Capacity} bytes";
+                                capString = string.Format(L["{0} bytes"], storage.Capacity);
                             }
                             else
                             {
@@ -768,17 +823,17 @@
                         {
                             if (storage.Type == StorageType.Empty)
                             {
-                                <td>Available @storage.Interface interface.</td>
+                                <td>@string.Format(L["Available {0} interface."], storage.Interface)</td>
                             }
                             else
                             {
                                 if (capString != null)
                                 {
-                                    <td>@storage.Type connected thru a @storage.Interface interface with a nominal capacity of @capString</td>
+                                    <td>@string.Format(L["{0} connected thru a {1} interface with a nominal capacity of {2}"], storage.Type, storage.Interface, capString)</td>
                                 }
                                 else
                                 {
-                                    <td>@storage.Type connected thru a @storage.Interface interface</td>
+                                    <td>@string.Format(L["{0} connected thru a {1} interface"], storage.Type, storage.Interface)</td>
                                 }
                             }
                         }
@@ -786,7 +841,7 @@
                         {
                             if (capString != null)
                             {
-                                <td>@storage.Type with a nominal capacity of @capString</td>
+                                <td>@string.Format(L["{0} with a nominal capacity of {1}"], storage.Type, capString)</td>
                             }
                             else
                             {
