@@ -690,27 +690,27 @@
                                                     <td>@($"{sound.Introduced:yyyy}")</td>
                                                 </tr>
                                             }
-                                            @if (sound.Voices != 0 ||
-                                                 sound.SquareWave != 0 ||
-                                                 sound.WhiteNoise != 0)
+                                            @if (sound.Voices != null ||
+                                                 sound.SquareWave != null ||
+                                                 sound.WhiteNoise != null)
                                             {
                                                 <tr>
                                                     <td>@L["Generators"]</td>
                                                     <td>
                                                         <table>
-                                                            @if (sound.Voices != 0)
+                                                            @if (sound.Voices != null)
                                                             {
                                                                 <tr>
                                                                     <td>@string.Format(L["{0} voices"], sound.Voices)</td>
                                                                 </tr>
                                                             }
-                                                            @if (sound.SquareWave != 0)
+                                                            @if (sound.SquareWave != null)
                                                             {
                                                                 <tr>
                                                                     <td>@string.Format(L["{0} square wave"], sound.SquareWave)</td>
                                                                 </tr>
                                                             }
-                                                            @if (sound.WhiteNoise != 0)
+                                                            @if (sound.WhiteNoise != null)
                                                             {
                                                                 <tr>
                                                                     <td>@string.Format(L["{0} white noise"], sound.WhiteNoise)</td>
@@ -720,15 +720,15 @@
                                                     </td>
                                                 </tr>
                                             }
-                                            @if (sound.Depth != 0 ||
-                                                 sound.Frequency > 0)
+                                            @if (sound.Depth != null ||
+                                                 sound.Frequency != null)
                                             {
                                                 <tr>
                                                     <td>@L["Sample rate"]</td>
                                                     <td>
                                                         <table>
-                                                            @if (sound.Depth != 0 &&
-                                                                 sound.Frequency > 0)
+                                                            @if (sound.Depth != null &&
+                                                                 sound.Frequency != null)
                                                             {
                                                                 <tr>
                                                                     <td>
@@ -743,7 +743,7 @@
                                                                     </td>
                                                                 </tr>
                                                             }
-                                                            else if (sound.Depth != 0)
+                                                            else if (sound.Depth != null)
                                                             {
                                                                 <tr>
                                                                     <td>@string.Format(L["{0} bits"], sound.Depth)</td>
@@ -768,7 +768,7 @@
                                                     </td>
                                                 </tr>
                                             }
-                                            @if (sound.Type != 0)
+                                            @if (sound.Type != null)
                                             {
                                                 <tr>
                                                     <td>@L["Synthesizer type"]</td>
@@ -803,7 +803,7 @@
                 {
                     string capString = null;
 
-                    if (storage.Capacity != 0)
+                    if (storage.Capacity != null)
                     {
                         if (storage.Type == StorageType.CompactCassette)
                         {
