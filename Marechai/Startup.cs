@@ -72,7 +72,7 @@ namespace Marechai
                                                                            GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).
-                     AddEntityFrameworkStores<MarechaiContext>();
+                     AddRoles<ApplicationRole>().AddEntityFrameworkStores<MarechaiContext>();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
@@ -86,7 +86,8 @@ namespace Marechai
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MarechaiContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MarechaiContext context,
+                              UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
             if(env.IsDevelopment())
             {
@@ -122,7 +123,7 @@ namespace Marechai
             app.UseAuthentication();
             app.UseAuthorization();
 
-            All.Seed(context);
+            All.Seed(context, userManager, roleManager, Configuration);
 
             app.UseEndpoints(endpoints =>
             {
