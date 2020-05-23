@@ -39,7 +39,7 @@ namespace Marechai.Database.Seeders
                 IdentityResult result = roleManager.CreateAsync(newRole).Result;
 
                 Console.WriteLine(result.Succeeded ? "New role {0} added successfully" : "Failed to add new role {0}",
-                                  role.Description);
+                                  role.Name);
             }
         }
     }
