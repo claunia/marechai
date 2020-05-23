@@ -29,6 +29,9 @@
 *******************************************************************************/
 
 using System.Globalization;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 using Marechai.Areas.Identity;
 using Marechai.Database.Models;
 using Marechai.Services;
@@ -59,6 +62,11 @@ namespace Marechai
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services
+               .AddBlazorise( options => options.ChangeTextOnKeyPress = true)
+               .AddBootstrapProviders()
+               .AddFontAwesomeIcons();
+
             services.AddDbContext<MarechaiContext>(options => options.
                                                               UseLazyLoadingProxies().
                                                               UseMySql(Configuration.
@@ -109,6 +117,10 @@ namespace Marechai
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.ApplicationServices
+               .UseBootstrapProviders()
+               .UseFontAwesomeIcons();
 
             app.UseAuthentication();
             app.UseAuthorization();

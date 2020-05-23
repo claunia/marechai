@@ -170,6 +170,10 @@
     <value>Velocidad nominal</value>
     <comment>Nominal speed</comment>
   </data>
+  <data name="Registers" xml:space="preserve">
+    <value>Registros</value>
+    <comment>Registers</comment>
+  </data>
   <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits." xml:space="preserve">
     <value>{0} registros de propósito general de {1} bits que pueden ser usados como registros de coma flotante de {2} bits y como registros SIMD de {3} bits.</value>
     <comment>{0} general purpose registers, {1} {2} and {3} their size in bits.</comment>
