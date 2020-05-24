@@ -13,6 +13,22 @@ namespace Marechai.Services
         public LicensesService(MarechaiContext context) => _context = context;
 
         public async Task<List<License>> GetAsync() =>
-            await _context.Licenses.OrderBy(l => l.Name).Select(l => new License(){FsfApproved = l.FsfApproved, Id= l.Id, Link = l.Link, Name = l.Name, OsiApproved = l.OsiApproved, SPDX = l.SPDX}).ToListAsync();
+            await _context.Licenses.OrderBy(l => l.Name).Select(l => new License
+            {
+                FsfApproved = l.FsfApproved, Id   = l.Id, Link = l.Link, Name = l.Name,
+                OsiApproved = l.OsiApproved, SPDX = l.SPDX
+            }).ToListAsync();
+
+        public async Task DeleteAsync(int id)
+        {
+            License item = await _context.Licenses.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.Licenses.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
