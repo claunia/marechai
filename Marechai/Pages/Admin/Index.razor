@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -34,7 +34,12 @@
 @inherits OwningComponentBase<AdminService>
 @inject IStringLocalizer<AdminService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
-
 <h3>@L["Administration area"]</h3>
-
 <p>@L["Welcome to the administration area. Act with care!"]</p>
+<ul>
+    <authorizeview Roles="UberAdmin">
+        <li>
+            <a href="/admin/browser_tests">@L["Browser tests"]</a>
+        </li>
+    </authorizeview>
+</ul>

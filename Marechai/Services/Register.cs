@@ -47,6 +47,7 @@ namespace Marechai.Services
             services.AddScoped<ConsolesService>();
             services.AddScoped<MachinesService>();
             services.AddScoped<AdminService>();
+            services.AddScoped<BrowserTestsService>();
         }
     }
 }

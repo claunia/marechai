@@ -1,0 +1,163 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : BrowserTests.razor
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     List of browser tests
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/browser_tests"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<BrowserTestsService>
+@inject IStringLocalizer<BrowserTestsService> L
+@attribute [Authorize(Roles = "UberAdmin")]
+<h3>@L["Browser tests"]</h3>
+@if (_tests is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @L["Browser"]
+        </th>
+        <th>
+            @L["Version"]
+        </th>
+        <th>
+            @L["Operating system"]
+        </th>
+        <th>
+            @L["Platform"]
+        </th>
+        <th>
+            @L["User agent"]
+        </th>
+        <th>
+            @L["GIF87"]
+        </th>
+        <th>
+            @L["GIF89"]
+        </th>
+        <th>
+            @L["JPEG"]
+        </th>
+        <th>
+            @L["PNG"]
+        </th>
+        <th>
+            @L["Transparent PNG"]
+        </th>
+        <th>
+            @L["Animated GIF"]
+        </th>
+        <th>
+            @L["Table"]
+        </th>
+        <th>
+            @L["Colors"]
+        </th>
+        <th>
+            @L["JavaScript"]
+        </th>
+        <th>
+            @L["Frames"]
+        </th>
+        <th>
+            @L["Flash"]
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _tests)
+    {
+        <tr>
+            <td>
+                @item.Browser
+            </td>
+            <td>
+                @item.Version
+            </td>
+            <td>
+                @item.Os
+            </td>
+            <td>
+                @item.Platform
+            </td>
+            <td>
+                @item.UserAgent
+            </td>
+            <td>
+                @item.Gif87
+            </td>
+            <td>
+                @item.Gif89
+            </td>
+            <td>
+                @item.Jpeg
+            </td>
+            <td>
+                @item.Png
+            </td>
+            <td>
+                @item.Pngt
+            </td>
+            <td>
+                @item.Agif
+            </td>
+            <td>
+                @item.Table
+            </td>
+            <td>
+                @item.Colors
+            </td>
+            <td>
+                @item.Js
+            </td>
+            <td>
+                @item.Frames
+            </td>
+            <td>
+                @item.Flash
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code
+{
+    List<BrowserTest> _tests;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _tests = await Service.GetAsync();
+    }
+}

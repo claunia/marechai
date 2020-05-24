@@ -122,16 +122,72 @@
     <value>Cargando...</value>
     <comment>Loading message</comment>
   </data>
-  <data name="Administration area" xml:space="preserve">
-    <value>Área de administración</value>
-    <comment>Administration area</comment>
-  </data>
-  <data name="Welcome to the administration area. Act with care!" xml:space="preserve">
-    <value>Bienvenido/a al área de administración. ¡Actúa con cuidado!</value>
-    <comment>Welcome message.</comment>
-  </data>
   <data name="Browser tests" xml:space="preserve">
     <value>Pruebas de navegadores</value>
     <comment>Browser tests.</comment>
+  </data>
+  <data name="Browser" xml:space="preserve">
+    <value>Navegador</value>
+    <comment>Browser.</comment>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Versión</value>
+    <comment>Version.</comment>
+  </data>
+  <data name="Operating system" xml:space="preserve">
+    <value>Sistema operativo</value>
+    <comment>Operating system.</comment>
+  </data>
+  <data name="Platform" xml:space="preserve">
+    <value>Plataforma</value>
+    <comment>Platform.</comment>
+  </data>
+  <data name="User agent" xml:space="preserve">
+    <value>Identificator</value>
+    <comment>User agent.</comment>
+  </data>
+  <data name="GIF87" xml:space="preserve">
+    <value>GIF87</value>
+    <comment>GIF87.</comment>
+  </data>
+  <data name="GIF89" xml:space="preserve">
+    <value>GIF89</value>
+    <comment>GIF89.</comment>
+  </data>
+  <data name="JPEG" xml:space="preserve">
+    <value>JPEG</value>
+    <comment>JPEG.</comment>
+  </data>
+  <data name="PNG" xml:space="preserve">
+    <value>PNG</value>
+    <comment>PNG.</comment>
+  </data>
+  <data name="Transparent PNG" xml:space="preserve">
+    <value>PNG transparente</value>
+    <comment>Transparent PNG.</comment>
+  </data>
+  <data name="Animated GIF" xml:space="preserve">
+    <value>GIF animado</value>
+    <comment>Animated GIF.</comment>
+  </data>
+  <data name="Table" xml:space="preserve">
+    <value>Tabla</value>
+    <comment>Table.</comment>
+  </data>
+  <data name="Colors" xml:space="preserve">
+    <value>Colores</value>
+    <comment>Colors.</comment>
+  </data>
+  <data name="JavaScript" xml:space="preserve">
+    <value>JavaScript</value>
+    <comment>JavaScript.</comment>
+  </data>
+  <data name="Frames" xml:space="preserve">
+    <value>Marcos</value>
+    <comment>Frames.</comment>
+  </data>
+  <data name="Flash" xml:space="preserve">
+    <value>Flash</value>
+    <comment>Flash.</comment>
   </data>
 </root>
