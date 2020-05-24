@@ -430,4 +430,20 @@
     <value>{0} con una capacidad norminal de {1}</value>
     <comment>{0} is storage type, {1} is nominal capacity number formatted with above bytes or bps prefixes</comment>
   </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+    <comment>Type</comment>
+  </data>
+  <data name="Introduced" xml:space="preserve">
+    <value>Introducida en</value>
+    <comment>Introduced</comment>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+    <comment>Name</comment>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Compañía</value>
+    <comment>Company</comment>
+  </data>
 </root>

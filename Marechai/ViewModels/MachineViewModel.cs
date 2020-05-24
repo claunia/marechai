@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Marechai.Database;
 
 namespace Marechai.ViewModels
 {
@@ -18,5 +19,10 @@ namespace Marechai.ViewModels
         public List<ProcessorViewModel>  Processors        { get; set; }
         public List<SoundSynthViewModel> SoundSynthesizers { get; set; }
         public List<StorageViewModel>    Storage           { get; set; }
+        public string                    Company           { get; set; }
+        public MachineType               Type              { get; set; }
+        public string                    Family            { get; set; }
+        public string IntroducedView =>
+            Introduced?.Year == 1000 ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
     }
 }

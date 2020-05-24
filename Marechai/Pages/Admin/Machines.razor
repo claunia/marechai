@@ -1,0 +1,119 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Machines.razor
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     List of machines
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/machines"
+@inherits OwningComponentBase<MachinesService>
+@inject IStringLocalizer<MachinesService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Machines"]</h3>
+@if (_machines is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <span class="btn btn-primary">
+        @L["Create new"]
+    </span>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @L["Company"]
+        </th>
+        <th>
+            @L["Family"]
+        </th>
+        <th>
+            @L["Name"]
+        </th>
+        <th>
+            @L["Model"]
+        </th>
+        <th>
+            @L["Introduced"]
+        </th>
+        <th>
+            @L["Type"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _machines)
+    {
+        <tr>
+            <td>
+                @item.Company
+            </td>
+            <td>
+                @item.Family
+            </td>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.Model
+            </td>
+            <td>
+                @item.IntroducedView
+            </td>
+            <td>
+                @item.Type
+            </td>
+            <td>
+                <span class="btn btn-primary">
+                    @L["Details"]
+                </span>
+                <span class="btn btn-secondary">
+                    @L["Edit"]
+                </span>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code
+{
+    List<MachineViewModel> _machines;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _machines = await Service.GetAsync();
+    }
+}

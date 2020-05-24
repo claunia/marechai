@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Database.Models;
 using Marechai.ViewModels;
@@ -17,6 +18,14 @@ namespace Marechai.Services
             _context = context;
             _l       = localizer;
         }
+
+        public async Task<List<MachineViewModel>> GetAsync() =>
+            await _context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).ThenBy(m => m.Family.Name).
+                           Select(m => new MachineViewModel
+                           {
+                               Id         = m.Id, Company      = m.Company.Name, Name = m.Name, Model = m.Model,
+                               Introduced = m.Introduced, Type = m.Type, Family       = m.Family.Name
+                           }).ToListAsync();
 
         public async Task<MachineViewModel> GetMachine(int id)
         {

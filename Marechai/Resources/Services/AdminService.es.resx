@@ -182,4 +182,8 @@
     <value>Familias de máquinas</value>
     <comment>Machine families.</comment>
   </data>
+  <data name="Machines" xml:space="preserve">
+    <value>Máquinas</value>
+    <comment>Machines.</comment>
+  </data>
 </root>
