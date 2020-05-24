@@ -162,4 +162,16 @@
     <value>Eliminar</value>
     <comment>Delete</comment>
   </data>
+  <data name="Delete screen" xml:space="preserve">
+    <value>Eliminar pantalla</value>
+    <comment>Delete screen</comment>
+  </data>
+  <data name="Are you sure you want to delete screen of {0}&quot; size with a resolution of {1} and type {2}?" xml:space="preserve">
+    <value>¿Está seguro de que desea borrar la pantalla de {0}&quot; de tamaño con una resolución de {1} y tipo {2}?</value>
+    <comment>{0} size in inches, {1} resolution, {2} type</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel</comment>
+  </data>
 </root>
