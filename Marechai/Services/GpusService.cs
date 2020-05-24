@@ -13,12 +13,22 @@ namespace Marechai.Services
 
         public GpusService(MarechaiContext context) => _context = context;
 
-        public async Task<List<GpuViewModel>> GetAsync() => await _context.Gpus.Include(g => g.Company).OrderBy(g => g.Company.Name).ThenBy(g => g.Name).
-                                                                           ThenBy(g => g.Introduced).Select(g => new GpuViewModel
-                                                                           {
-                                                                               Id         = g.Id, Company = g.Company.Name,
-                                                                               Introduced = g.Introduced,
-                                                                               ModelCode  = g.ModelCode, Name = g.Name
-                                                                           }).ToListAsync();
+        public async Task<List<GpuViewModel>> GetAsync() =>
+            await _context.Gpus.OrderBy(g => g.Company.Name).ThenBy(g => g.Name).ThenBy(g => g.Introduced).
+                           Select(g => new GpuViewModel
+                           {
+                               Id = g.Id, Company = g.Company.Name, Introduced = g.Introduced, ModelCode = g.ModelCode,
+                               Name = g.Name
+                           }).ToListAsync();
+
+        public async Task<List<GpuViewModel>> GetByMachineAsync(int machineId) =>
+            await _context.GpusByMachine.Where(g => g.MachineId == machineId).Select(g => g.Gpu).
+                           OrderBy(g => g.Company.Name).ThenBy(g => g.Name).Select(g => new GpuViewModel
+                           {
+                               Id          = g.Id, Name = g.Name, Company = g.Company.Name, CompanyId = g.Company.Id,
+                               ModelCode   = g.ModelCode, Introduced = g.Introduced, Package = g.Package,
+                               Process     = g.Process, ProcessNm = g.ProcessNm, DieSize = g.DieSize,
+                               Transistors = g.Transistors
+                           }).ToListAsync();
     }
 }

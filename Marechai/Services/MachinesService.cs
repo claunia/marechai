@@ -11,16 +11,19 @@ namespace Marechai.Services
     public class MachinesService
     {
         readonly MarechaiContext                   _context;
+        readonly GpusService                       _gpusService;
         readonly IStringLocalizer<MachinesService> _l;
         readonly ProcessorsService                 _processorsService;
-        readonly SoundSynthsService _soundSynthsService;
+        readonly SoundSynthsService                _soundSynthsService;
 
         public MachinesService(MarechaiContext context, IStringLocalizer<MachinesService> localizer,
-                               ProcessorsService processorsService, SoundSynthsService soundSynthsService)
+                               GpusService gpusService, ProcessorsService processorsService,
+                               SoundSynthsService soundSynthsService)
         {
-            _context           = context;
-            _l                 = localizer;
-            _processorsService = processorsService;
+            _context            = context;
+            _l                  = localizer;
+            _gpusService        = gpusService;
+            _processorsService  = processorsService;
             _soundSynthsService = soundSynthsService;
         }
 
@@ -70,14 +73,7 @@ namespace Marechai.Services
                 model.FamilyId   = family.Id;
             }
 
-            model.Gpus = await _context.GpusByMachine.Where(g => g.MachineId == machine.Id).Select(g => g.Gpu).
-                                        Select(g => new GpuViewModel
-                                        {
-                                            Id         = g.Id, Name = g.Name, Company = g.Company.Name,
-                                            CompanyId  = g.Company.Id, ModelCode = g.ModelCode,
-                                            Introduced = g.Introduced, Package = g.Package, Process = g.Process,
-                                            ProcessNm  = g.ProcessNm, DieSize = g.DieSize, Transistors = g.Transistors
-                                        }).ToListAsync();
+            model.Gpus = await _gpusService.GetByMachineAsync(machine.Id);
 
             model.Memory = await _context.MemoryByMachine.Where(m => m.MachineId == machine.Id).
                                           Select(m => new MemoryViewModel
