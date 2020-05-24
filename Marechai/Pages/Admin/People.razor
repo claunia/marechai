@@ -1,0 +1,131 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : People.razor
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     List of people
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/people"
+@inherits OwningComponentBase<PeopleService>
+@inject IStringLocalizer<PeopleService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["People"]</h3>
+@if (_people is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <span class="btn btn-primary">
+        @L["Create new"]
+    </span>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @L["Known name"]
+        </th>
+        <th>
+            @L["Country of birth"]
+        </th>
+        <th>
+            @L["Birth date"]
+        </th>
+        <th>
+            @L["Date of death"]
+        </th>
+        <th>
+            @L["Webpage"]
+        </th>
+        <th>
+            @L["Twitter"]
+        </th>
+        <th>
+            @L["Facebook"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _people)
+    {
+        <tr>
+            <td>
+                @item.FullName
+            </td>
+            <td>
+                @item.CountryOfBirth
+            </td>
+            <td>
+                @($"{item.BirthDate:d}")
+            </td>
+            <td>
+                @($"{item.DeathDate:d}")
+            </td>
+            <td>
+                @item.Webpage
+            </td>
+            <td>
+                @if (item.Twitter != null)
+                {
+                    <a href="https://twitter.com/@item.Twitter">@item.Twitter</a>
+                }
+            </td>
+            <td>
+                @if (item.Facebook != null)
+                {
+                    <a href="https://www.facebook.com/@item.Facebook">@item.Facebook</a>
+                }
+            </td>
+            <td>
+                <span class="btn btn-primary">
+                    @L["Details"]
+                </span>
+                <span class="btn btn-secondary">
+                    @L["Edit"]
+                </span>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code
+{
+    List<PersonViewModel> _people;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _people = await Service.GetAsync();
+    }
+}
