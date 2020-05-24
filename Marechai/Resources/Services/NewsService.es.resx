@@ -170,4 +170,16 @@
     <value>ID afectado</value>
     <comment>Affected ID</comment>
   </data>
+  <data name="Delete news" xml:space="preserve">
+    <value>Borrar noticia</value>
+    <comment>Delete news (singular)</comment>
+  </data>
+  <data name="Are you sure you want to delete the news type {0} from {1} that affect artifact ID {2}?" xml:space="preserve">
+    <value>¿Está seguro de que desea borrar la noticia tipo {0} del {1} que afecta al artefacto ID {2}?</value>
+    <comment>{0} news type, {1} date, {2} affected id number</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel delete</comment>
+  </data>
 </root>

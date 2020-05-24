@@ -81,15 +81,15 @@
     <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
-            <ModalTitle>Delete news</ModalTitle>
+            <ModalTitle>@L["Delete news"]</ModalTitle>
             <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(@L["Are you sure you want to delete the news type {0} from {1} that affect artifact ID {2}?"], _currentNews?.Type, _currentNews?.Timestamp, _currentNews?.AffectedId)</Text>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">Close</Button>
-            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">Delete</Button>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
