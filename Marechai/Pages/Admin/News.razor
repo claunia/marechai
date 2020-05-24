@@ -1,14 +1,14 @@
-﻿@{
-    /******************************************************************************
+@{
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Index.cshtml
+// Filename       : News.razor
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Admin view index
+//     List of news
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,46 +29,63 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 }
-@model IEnumerable<Marechai.Database.Models.News>
 
-@{
-    ViewData["Title"] = "News (Admin)";
+@page "/admin/news"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<NewsService>
+@inject IStringLocalizer<NewsService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["News"]</h3>
+@if (_news is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
 }
-<h2>News</h2>
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Date)
+            @L["Date"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Type)
+            @L["Type"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.AddedId)
+            @L["Affected ID"]
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in _news)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                @item.Timestamp
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Type)
+                @item.Type
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AddedId)
+                @item.AffectedId
             </td>
             <td>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
-                    Delete
-                </a>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
             </td>
         </tr>
     }
     </tbody>
 </table>
+
+@code
+{
+    List<NewsViewModel> _news;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _news = await Service.GetAsync();
+    }
+}

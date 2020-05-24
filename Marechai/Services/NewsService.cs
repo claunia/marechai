@@ -30,9 +30,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Marechai.Database;
 using Marechai.Database.Models;
 using Marechai.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
 namespace Marechai.Services
@@ -47,6 +49,12 @@ namespace Marechai.Services
             _context = context;
             _l       = localizer;
         }
+
+        public async Task<List<NewsViewModel>> GetAsync() => await _context.News.OrderByDescending(n => n.Date).
+                                                                            Select(n => new NewsViewModel
+                                                                            {
+                                                                                Id = n.Id, Timestamp = n.Date, Type = n.Type, AffectedId = n.AddedId
+                                                                            }).ToListAsync();
 
         public List<NewsViewModel> GetNews()
         {

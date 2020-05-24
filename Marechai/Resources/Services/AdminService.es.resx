@@ -190,4 +190,8 @@
     <value>Gente</value>
     <comment>People.</comment>
   </data>
+  <data name="News" xml:space="preserve">
+    <value>Noticias</value>
+    <comment>News.</comment>
+  </data>
 </root>
