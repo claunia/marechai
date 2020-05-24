@@ -158,4 +158,16 @@
     <value>Eliminar</value>
     <comment>Delete</comment>
   </data>
+  <data name="Delete GPU" xml:space="preserve">
+    <value>Eliminar gráfica</value>
+    <comment>Delete GPU, abbreviated</comment>
+  </data>
+  <data name="Are you sure you want to delete {0} {1}?" xml:space="preserve">
+    <value>¿Está seguro de que desea borrar la gráfica {0}?</value>
+    <comment>{0} company name, {1} gpu name</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel</comment>
+  </data>
 </root>

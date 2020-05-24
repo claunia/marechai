@@ -30,5 +30,17 @@ namespace Marechai.Services
                                Process     = g.Process, ProcessNm = g.ProcessNm, DieSize = g.DieSize,
                                Transistors = g.Transistors
                            }).ToListAsync();
+
+        public async Task DeleteAsync(int id)
+        {
+            Gpu item = await _context.Gpus.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.Gpus.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
