@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.ViewModels
 {
@@ -15,5 +16,8 @@ namespace Marechai.ViewModels
         public int?      SquareWave  { get; set; }
         public int?      WhiteNoise  { get; set; }
         public int?      Type        { get; set; }
+
+        [NotMapped]
+        public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
     }
 }

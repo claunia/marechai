@@ -13,13 +13,15 @@ namespace Marechai.Services
         readonly MarechaiContext                   _context;
         readonly IStringLocalizer<MachinesService> _l;
         readonly ProcessorsService                 _processorsService;
+        readonly SoundSynthsService _soundSynthsService;
 
         public MachinesService(MarechaiContext context, IStringLocalizer<MachinesService> localizer,
-                               ProcessorsService processorsService)
+                               ProcessorsService processorsService, SoundSynthsService soundSynthsService)
         {
             _context           = context;
             _l                 = localizer;
             _processorsService = processorsService;
+            _soundSynthsService = soundSynthsService;
         }
 
         public async Task<List<MachineViewModel>> GetAsync() =>
@@ -85,15 +87,7 @@ namespace Marechai.Services
 
             model.Processors = await _processorsService.GetByMachineAsync(machine.Id);
 
-            model.SoundSynthesizers =
-                await _context.SoundByMachine.Where(s => s.MachineId == machine.Id).Select(s => s.SoundSynth).
-                               Select(s => new SoundSynthViewModel
-                               {
-                                   Id = s.Id, Name = s.Name, CompanyId = s.Company.Id, CompanyName = s.Company.Name,
-                                   ModelCode = s.ModelCode, Introduced = s.Introduced, Voices = s.Voices,
-                                   Frequency = s.Frequency, Depth = s.Depth, SquareWave = s.SquareWave,
-                                   WhiteNoise = s.WhiteNoise, Type = s.Type
-                               }).ToListAsync();
+            model.SoundSynthesizers = await _soundSynthsService.GetByMachineAsync(machine.Id);
 
             model.Storage = await _context.StorageByMachine.Where(s => s.MachineId == machine.Id).
                                            Select(s => new StorageViewModel
