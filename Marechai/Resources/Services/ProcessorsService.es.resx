@@ -162,4 +162,16 @@
     <value>Eliminar</value>
     <comment>Delete</comment>
   </data>
+  <data name="Delete processor" xml:space="preserve">
+    <value>Eliminar procesador</value>
+    <comment>Delete processor</comment>
+  </data>
+  <data name="Are you sure you want to delete {0}?" xml:space="preserve">
+    <value>¿Está seguro de que desea borrar {0}?</value>
+    <comment>{0} processor name</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel</comment>
+  </data>
 </root>
