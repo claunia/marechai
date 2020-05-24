@@ -1,4 +1,4 @@
-namespace Marechai.Areas.Admin.Models
+﻿namespace Marechai.Areas.Admin.Models
 {
     public class BaseViewModel<TKey>
     {

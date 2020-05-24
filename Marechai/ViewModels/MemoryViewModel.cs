@@ -1,4 +1,4 @@
-using Marechai.Database;
+﻿using Marechai.Database;
 
 namespace Marechai.ViewModels
 {
