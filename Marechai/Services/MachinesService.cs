@@ -93,5 +93,17 @@ namespace Marechai.Services
 
             return model;
         }
+
+        public async Task DeleteAsync(int id)
+        {
+            Machine item = await _context.Machines.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.Machines.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
