@@ -33,5 +33,17 @@ namespace Marechai.Services
                                Frequency  = s.Frequency, Depth = s.Depth, SquareWave = s.SquareWave,
                                WhiteNoise = s.WhiteNoise, Type = s.Type
                            }).ToListAsync();
+
+        public async Task DeleteAsync(int id)
+        {
+            SoundSynth item = await _context.SoundSynths.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.SoundSynths.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -162,4 +162,16 @@
     <value>Eliminar</value>
     <comment>Delete</comment>
   </data>
+  <data name="Delete sound synthesizer" xml:space="preserve">
+    <value>Eliminar sintetizador de sonido</value>
+    <comment>Delete sound synthesizer</comment>
+  </data>
+  <data name="Are you sure you want to delete {0} {1}?" xml:space="preserve">
+    <value>¿Está seguro de que desea borrar {0} {1}?</value>
+    <comment>{0} company name, {1} synth name</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel</comment>
+  </data>
 </root>
