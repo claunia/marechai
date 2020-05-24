@@ -52,6 +52,7 @@ namespace Marechai.Services
             services.AddScoped<DocumentPeopleService>();
             services.AddScoped<GpusService>();
             services.AddScoped<InstructionSetExtensionsService>();
+            services.AddScoped<InstructionSetsService>();
         }
     }
 }

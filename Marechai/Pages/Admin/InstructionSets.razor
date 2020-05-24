@@ -1,14 +1,14 @@
-﻿@{
-    /******************************************************************************
+@{
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Index.cshtml
+// Filename       : InstructionSets.razor
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Admin view index
+//     List of instruction sets
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,45 +29,62 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 }
-@model IEnumerable<Marechai.Database.Models.InstructionSet>
 
-@{
-    ViewData["Title"] = "Instruction sets (Admin)";
+@page "/admin/instruction_sets"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<InstructionSetsService>
+@inject IStringLocalizer<InstructionSetsService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Instruction sets"]</h3>
+@if (_instructionSets is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
 }
-<h2>Instruction sets</h2>
 <p>
-    <a asp-action="Create" class="btn btn-primary">
-        Create new
-    </a>
+    <span class="btn btn-primary">
+        @L["Create new"]
+    </span>
 </p>
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @L["Name"]
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in _instructionSets)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @item.Name
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">
-                    Details
-                </a>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">
-                    Edit
-                </a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
-                    Delete
-                </a>
+                <span class="btn btn-primary">
+                    @L["Details"]
+                </span>
+                <span class="btn btn-secondary">
+                    @L["Edit"]
+                </span>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
             </td>
         </tr>
     }
     </tbody>
 </table>
+
+@code
+{
+    List<InstructionSet> _instructionSets;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _instructionSets = await Service.GetAsync();
+    }
+}
