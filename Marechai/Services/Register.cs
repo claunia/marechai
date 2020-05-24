@@ -53,6 +53,7 @@ namespace Marechai.Services
             services.AddScoped<GpusService>();
             services.AddScoped<InstructionSetExtensionsService>();
             services.AddScoped<InstructionSetsService>();
+            services.AddScoped<LicensesService>();
         }
     }
 }
