@@ -21,5 +21,17 @@ namespace Marechai.Services
                                                                                   Company   = d.Company.Name,
                                                                                   CompanyId = d.CompanyId
                                                                               }).ToListAsync();
+
+        public async Task DeleteAsync(int id)
+        {
+            DocumentCompany item = await _context.DocumentCompanies.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.DocumentCompanies.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

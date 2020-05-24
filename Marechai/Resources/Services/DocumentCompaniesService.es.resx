@@ -150,4 +150,16 @@
     <value>Eliminar</value>
     <comment>Delete</comment>
   </data>
+  <data name="Delete company" xml:space="preserve">
+    <value>Eliminar compañía</value>
+    <comment>Delete company</comment>
+  </data>
+  <data name="Are you sure you want to delete the company {0}?" xml:space="preserve">
+    <value>¿Está seguro de que desea borrar la compañía {0}?</value>
+    <comment>{0} company name</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel</comment>
+  </data>
 </root>
