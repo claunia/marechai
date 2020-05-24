@@ -22,5 +22,17 @@ namespace Marechai.Services
                                Twitter = p.Twitter, Facebook = p.Facebook, Photo = p.Photo, Alias = p.Alias,
                                DisplayName = p.DisplayName
                            }).ToListAsync();
+
+        public async Task DeleteAsync(int id)
+        {
+            Person item = await _context.People.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.People.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
