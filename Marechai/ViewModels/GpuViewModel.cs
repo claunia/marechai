@@ -14,5 +14,7 @@ namespace Marechai.ViewModels
         public float?    ProcessNm   { get; set; }
         public float?    DieSize     { get; set; }
         public long?     Transistors { get; set; }
+
+        public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
     }
 }

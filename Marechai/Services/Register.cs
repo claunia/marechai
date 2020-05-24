@@ -50,6 +50,7 @@ namespace Marechai.Services
             services.AddScoped<BrowserTestsService>();
             services.AddScoped<DocumentCompaniesService>();
             services.AddScoped<DocumentPeopleService>();
+            services.AddScoped<GpusService>();
         }
     }
 }

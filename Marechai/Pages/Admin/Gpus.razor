@@ -1,14 +1,14 @@
-﻿@{
-    /******************************************************************************
+@{
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Index.cshtml
+// Filename       : DocumentPeople.razor
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Admin view index
+//     List of graphics processing units
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,63 +29,79 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 }
-@model IEnumerable<Marechai.Areas.Admin.Models.GpuViewModel>
 
-@{
-    ViewData["Title"] = "GPUs (Admin)";
+@page "/admin/gpus"
+@inherits OwningComponentBase<GpusService>
+@inject IStringLocalizer<GpusService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Graphics Processing Units"]</h3>
+@if (_gpus is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
 }
-<h2>GPUs</h2>
 <p>
-    <a asp-action="Create" class="btn btn-primary">
-        Create New
-    </a>
+    <span class="btn btn-primary">
+        @L["Create New"]
+    </span>
 </p>
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Company)
+            @L["Company"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @L["Name"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ModelCode)
+            @L["Model code"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Introduced)
+            @L["Introduced"]
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in _gpus)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company)
+                @item.Company
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @item.Name
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ModelCode)
+                @item.ModelCode
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IntroducedView)
+                @item.IntroducedView
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">
-                    Details
-                </a>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">
-                    Edit
-                </a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
-                    Delete
-                </a>
+                <span class="btn btn-primary">
+                    @L["Details"]
+                </span>
+                <span class="btn btn-secondary">
+                    @L["Edit"]
+                </span>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
             </td>
         </tr>
     }
     </tbody>
 </table>
+
+@code
+{
+    List<GpuViewModel> _gpus;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _gpus = await Service.GetAsync();
+    }
+}

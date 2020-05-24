@@ -36,19 +36,36 @@
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Administration area"]</h3>
 <p>@L["Welcome to the administration area. Act with care!"]</p>
-<ul>
-    <AuthorizeView Roles="UberAdmin">
+<div class="content">
+    <h3>@L["Database administrative pages"]</h3>
+    <ul>
+        <AuthorizeView Roles="UberAdmin">
+            <li>
+                <a href="/admin/browser_tests">@L["Browser tests"]</a>
+            </li>
+        </AuthorizeView>
         <li>
-            <a href="/admin/browser_tests">@L["Browser tests"]</a>
+            <a href="/admin/companies">@L["Companies"]</a>
         </li>
-    </AuthorizeView>
-    <li>
-        <a href="/admin/companies">@L["Companies"]</a>
-    </li>
-    <li>
-        <a href="/admin/document_companies">@L["Document companies"]</a>
-    </li>
-    <li>
-        <a href="/admin/document_people">@L["Document people"]</a>
-    </li>
-</ul>
+        <li>
+            <a href="/admin/gpus">@L["Graphics Processing Units"]</a>
+        </li>
+    </ul>
+</div>
+<div class="content">
+    <h3>@L["Administrative pages for documents"]</h3>
+    <ul>
+        <li>
+            <a href="/admin/document_companies">@L["Document companies"]</a>
+        </li>
+        <li>
+            <a href="/admin/document_people">@L["Document people"]</a>
+        </li>
+    </ul>
+</div>
+<div class="content">
+    <h3>@L["Administrative pages for owned machines"]</h3>
+</div>
+<div class="content">
+    <h3>@L["User administrative pages"]</h3>
+</div>
