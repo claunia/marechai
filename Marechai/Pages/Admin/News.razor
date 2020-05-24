@@ -31,7 +31,6 @@
 }
 
 @page "/admin/news"
-@using Marechai.Database.Models
 @inherits OwningComponentBase<NewsService>
 @inject IStringLocalizer<NewsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
@@ -71,21 +70,26 @@
                 @item.AffectedId
             </td>
             <td>
-                <span class="btn btn-danger">
-                    @L["Delete"]
-                </span>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
             </td>
         </tr>
     }
     </tbody>
 </table>
 
-@code
-{
-    List<NewsViewModel> _news;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _news = await Service.GetAsync();
-    }
-}
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>Delete news</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete the news type {0} from {1} that affect artifact ID {2}?"], _currentNews?.Type, _currentNews?.Timestamp, _currentNews?.AffectedId)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">Close</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">Delete</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>

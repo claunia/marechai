@@ -28,8 +28,10 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Database;
 using Marechai.Database.Models;
@@ -125,6 +127,18 @@ namespace Marechai.Services
             }
 
             return news;
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            News item = await _context.News.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.News.Remove(item);
+
+            await _context.SaveChangesAsync();
         }
     }
 }
