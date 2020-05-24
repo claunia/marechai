@@ -1,14 +1,14 @@
-﻿@{
-    /******************************************************************************
+@{
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Index.cshtml
+// Filename       : MachineFamilies.razor
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Admin view index
+//     List of machine families
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,51 +29,68 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 }
-@model IEnumerable<Marechai.Areas.Admin.Models.MachineFamilyViewModel>
 
-@{
-    ViewData["Title"] = "Machine families (Admin)";
+@page "/admin/machine_families"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<MachineFamiliesService>
+@inject IStringLocalizer<MachineFamiliesService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Machine families"]</h3>
+@if (_machineFamilies is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
 }
-<h2>Machine families</h2>
 <p>
-    <a asp-action="Create" class="btn btn-primary">
-        Create new
-    </a>
+    <span class="btn btn-primary">
+        @L["Create new"]
+    </span>
 </p>
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Company)
+            @L["Company"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @L["Name"]
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in _machineFamilies)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company)
+                @item.Company
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @item.Name
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">
-                    Details
-                </a>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">
-                    Edit
-                </a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
-                    Delete
-                </a>
+                <span class="btn btn-primary">
+                    @L["Details"]
+                </span>
+                <span class="btn btn-secondary">
+                    @L["Edit"]
+                </span>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
             </td>
         </tr>
     }
     </tbody>
 </table>
+
+@code
+{
+    List<MachineFamilyViewModel> _machineFamilies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _machineFamilies = await Service.GetAsync();
+    }
+}

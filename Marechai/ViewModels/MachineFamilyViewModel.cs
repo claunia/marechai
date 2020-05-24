@@ -1,4 +1,4 @@
-﻿namespace Marechai.Areas.Admin.Models
+﻿namespace Marechai.ViewModels
 {
     public class MachineFamilyViewModel : BaseViewModel<int>
     {
