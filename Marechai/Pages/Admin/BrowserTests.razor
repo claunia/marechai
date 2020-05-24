@@ -31,7 +31,6 @@
 }
 
 @page "/admin/browser_tests"
-@using Marechai.Database.Models
 @inherits OwningComponentBase<BrowserTestsService>
 @inject IStringLocalizer<BrowserTestsService> L
 @attribute [Authorize(Roles = "UberAdmin")]
@@ -151,13 +150,3 @@
     }
     </tbody>
 </table>
-
-@code
-{
-    List<BrowserTest> _tests;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _tests = await Service.GetAsync();
-    }
-}
