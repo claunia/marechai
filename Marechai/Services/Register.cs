@@ -56,6 +56,7 @@ namespace Marechai.Services
             services.AddScoped<LicensesService>();
             services.AddScoped<MachineFamiliesService>();
             services.AddScoped<PeopleService>();
+            services.AddScoped<ProcessorsService>();
         }
     }
 }

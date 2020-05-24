@@ -12,11 +12,14 @@ namespace Marechai.Services
     {
         readonly MarechaiContext                   _context;
         readonly IStringLocalizer<MachinesService> _l;
+        readonly ProcessorsService                 _processorsService;
 
-        public MachinesService(MarechaiContext context, IStringLocalizer<MachinesService> localizer)
+        public MachinesService(MarechaiContext context, IStringLocalizer<MachinesService> localizer,
+                               ProcessorsService processorsService)
         {
-            _context = context;
-            _l       = localizer;
+            _context           = context;
+            _l                 = localizer;
+            _processorsService = processorsService;
         }
 
         public async Task<List<MachineViewModel>> GetAsync() =>
@@ -80,28 +83,7 @@ namespace Marechai.Services
                                               Type = m.Type, Usage = m.Usage, Size = m.Size, Speed = m.Speed
                                           }).ToListAsync();
 
-            model.Processors = await _context.ProcessorsByMachine.Where(p => p.MachineId == machine.Id).
-                                              Select(p => new ProcessorViewModel
-                                              {
-                                                  Name = p.Processor.Name, CompanyName = p.Processor.Company.Name,
-                                                  CompanyId = p.Processor.Company.Id, ModelCode = p.Processor.ModelCode,
-                                                  Introduced = p.Processor.Introduced, Speed = p.Speed,
-                                                  Package = p.Processor.Package, Gprs = p.Processor.Gprs,
-                                                  GprSize = p.Processor.GprSize, Fprs = p.Processor.Fprs,
-                                                  FprSize = p.Processor.FprSize, Cores = p.Processor.Cores,
-                                                  ThreadsPerCore = p.Processor.ThreadsPerCore,
-                                                  Process = p.Processor.Process, ProcessNm = p.Processor.ProcessNm,
-                                                  DieSize = p.Processor.DieSize, Transistors = p.Processor.Transistors,
-                                                  DataBus = p.Processor.DataBus, AddrBus = p.Processor.AddrBus,
-                                                  SimdRegisters = p.Processor.SimdRegisters,
-                                                  SimdSize = p.Processor.SimdSize,
-                                                  L1Instruction = p.Processor.L1Instruction,
-                                                  L1Data = p.Processor.L1Data, L2 = p.Processor.L2, L3 = p.Processor.L3,
-                                                  InstructionSet = p.Processor.InstructionSet.Name,
-                                                  InstructionSetExtensions =
-                                                      p.Processor.InstructionSetExtensions.
-                                                        Select(e => e.Extension.Extension).ToList()
-                                              }).ToListAsync();
+            model.Processors = await _processorsService.GetByMachineAsync(machine.Id);
 
             model.SoundSynthesizers =
                 await _context.SoundByMachine.Where(s => s.MachineId == machine.Id).Select(s => s.SoundSynth).

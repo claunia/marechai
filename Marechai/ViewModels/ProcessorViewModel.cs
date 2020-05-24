@@ -32,5 +32,7 @@ namespace Marechai.ViewModels
         public string       InstructionSet           { get; set; }
         public List<string> InstructionSetExtensions { get; set; }
         public int?         CompanyId                { get; set; }
+
+        public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
     }
 }
