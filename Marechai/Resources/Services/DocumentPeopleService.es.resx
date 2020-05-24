@@ -118,32 +118,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-    <comment>Loading message</comment>
-  </data>
-  <data name="Administration area" xml:space="preserve">
-    <value>Área de administración</value>
-    <comment>Administration area</comment>
-  </data>
-  <data name="Welcome to the administration area. Act with care!" xml:space="preserve">
-    <value>Bienvenido/a al área de administración. ¡Actúa con cuidado!</value>
-    <comment>Welcome message.</comment>
-  </data>
-  <data name="Browser tests" xml:space="preserve">
-    <value>Pruebas de navegadores</value>
-    <comment>Browser tests.</comment>
-  </data>
-  <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-    <comment>Companies.</comment>
-  </data>
-  <data name="Document companies" xml:space="preserve">
-    <value>Compañías de documentos</value>
-    <comment>Document companies.</comment>
-  </data>
   <data name="Document people" xml:space="preserve">
     <value>Personas de documentos</value>
-    <comment>Document people.</comment>
+    <comment>Document people</comment>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+    <comment>Message that appears while data is being loaded from database</comment>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+    <comment>Name</comment>
+  </data>
+  <data name="Linked person" xml:space="preserve">
+    <value>Persona vinculada</value>
+    <comment>Linked person</comment>
+  </data>
+  <data name="Create new" xml:space="preserve">
+    <value>Crear nueva</value>
+    <comment>Create new document company</comment>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+    <comment>Details</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+    <comment>Edit</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>Delete</comment>
   </data>
 </root>

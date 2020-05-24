@@ -3,12 +3,12 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Index.razor
+// Filename       : DocumentPeople.razor
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Index of administration area
+//     List of document people
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,25 +30,68 @@
 *******************************************************************************/
 }
 
-@page "/admin"
-@inherits OwningComponentBase<AdminService>
-@inject IStringLocalizer<AdminService> L
+@page "/admin/document_people"
+@inherits OwningComponentBase<DocumentPeopleService>
+@inject IStringLocalizer<DocumentPeopleService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
-<h3>@L["Administration area"]</h3>
-<p>@L["Welcome to the administration area. Act with care!"]</p>
-<ul>
-    <AuthorizeView Roles="UberAdmin">
-        <li>
-            <a href="/admin/browser_tests">@L["Browser tests"]</a>
-        </li>
-    </AuthorizeView>
-    <li>
-        <a href="/admin/companies">@L["Companies"]</a>
-    </li>
-    <li>
-        <a href="/admin/document_companies">@L["Document companies"]</a>
-    </li>
-    <li>
-        <a href="/admin/document_people">@L["Document people"]</a>
-    </li>
-</ul>
+<h3>@L["Document companies"]</h3>
+@if (_people is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <span class="btn btn-primary">
+        @L["Create New"]
+    </span>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @L["Name"]
+        </th>
+        <th>
+            @L["Linked person"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _people)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                <a href="/admin/people/details/@item.PersonId">
+                    @item.Person
+                </a>
+            </td>
+            <td>
+                <span class="btn btn-primary">
+                    @L["Details"]
+                </span>
+                <span class="btn btn-secondary">
+                    @L["Edit"]
+                </span>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code
+{
+    List<DocumentPersonViewModel> _people;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _people = await Service.GetAsync();
+    }
+}
