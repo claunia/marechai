@@ -49,18 +49,18 @@ namespace Marechai.Services
             _l       = localizer;
         }
 
-        public Task<List<CompanyViewModel>> GetCompaniesAsync() => _context.
-                                                                   Companies.Include(c => c.Logos).OrderBy(c => c.Name).
-                                                                   Select(c => new CompanyViewModel
-                                                                   {
-                                                                       Id = c.Id,
-                                                                       LastLogo = c.
-                                                                                  Logos.OrderByDescending(l => l.Year).
-                                                                                  FirstOrDefault().Guid,
-                                                                       Name    = c.Name, Founded        = c.Founded,
-                                                                       Sold    = c.Sold, SoldTo         = c.SoldTo.Name,
-                                                                       Country = c.Country.Name, Status = c.Status
-                                                                   }).ToListAsync();
+        public Task<List<CompanyViewModel>> GetAsync() => _context.
+                                                          Companies.Include(c => c.Logos).OrderBy(c => c.Name).
+                                                          Select(c => new CompanyViewModel
+                                                          {
+                                                              Id = c.Id,
+                                                              LastLogo = c.
+                                                                         Logos.OrderByDescending(l => l.Year).
+                                                                         FirstOrDefault().Guid,
+                                                              Name   = c.Name, Founded = c.Founded, Sold = c.Sold,
+                                                              SoldTo = c.SoldTo.Name, Country = c.Country.Name,
+                                                              Status = c.Status
+                                                          }).ToListAsync();
 
         public Task<Company> GetCompanyAsync(int id) => _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
 
@@ -122,5 +122,17 @@ namespace Marechai.Services
                                                                                                  FirstOrDefault().Guid,
                                                                                       Name = c.Name
                                                                                   }).ToListAsync();
+
+        public async Task DeleteAsync(int id)
+        {
+            Company item = await _context.Companies.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.Companies.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -150,6 +150,6 @@
                 CountryId = null;
         }
 
-        _companies ??= await Service.GetCompaniesAsync();
+        _companies ??= await Service.GetAsync();
     }
 }

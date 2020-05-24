@@ -94,21 +94,26 @@
                 <span class="btn btn-secondary">
                     @L["Edit"]
                 </span>
-                <span class="btn btn-danger">
-                    @L["Delete"]
-                </span>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
             </td>
         </tr>
     }
     </tbody>
 </table>
 
-@code
-{
-    List<CompanyViewModel> _companies;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _companies = await Service.GetCompaniesAsync();
-    }
-}
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete company"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete the company {0}?"], _currentCompany?.Name)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
