@@ -47,6 +47,6 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _screen = null;
 
-        protected override async Task OnInitializedAsync() => _screens = await Service.GetAsync();
+        protected override void OnInitialized() => _screens = Service.Get();
     }
 }
