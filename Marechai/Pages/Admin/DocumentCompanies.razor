@@ -1,0 +1,97 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : DocumentCompanies.razor
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     List of document companies
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/document_companies"
+@inherits OwningComponentBase<DocumentCompaniesService>
+@inject IStringLocalizer<DocumentCompaniesService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Document companies"]</h3>
+@if (_companies is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <span class="btn btn-primary">
+        @L["Create New"]
+    </span>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @L["Name"]
+        </th>
+        <th>
+            @L["Linked company"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _companies)
+    {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                <a href="/admin/companies/details/@item.CompanyId">
+                    item.Company
+                </a>
+            </td>
+            <td>
+                <span class="btn btn-primary">
+                    @L["Details"]
+                </span>
+                <span class="btn btn-secondary">
+                    @L["Edit"]
+                </span>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code
+{
+    List<DocumentCompanyViewModel> _companies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _companies = await Service.GetAsync();
+    }
+}

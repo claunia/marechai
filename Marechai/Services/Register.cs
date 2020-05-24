@@ -48,6 +48,7 @@ namespace Marechai.Services
             services.AddScoped<MachinesService>();
             services.AddScoped<AdminService>();
             services.AddScoped<BrowserTestsService>();
+            services.AddScoped<DocumentCompaniesService>();
         }
     }
 }

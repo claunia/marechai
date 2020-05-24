@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Marechai.Areas.Admin.Models
+namespace Marechai.ViewModels
 {
     public class DocumentCompanyViewModel : BaseViewModel<int>
     {

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Marechai.Areas.Admin.Models;
 using Marechai.Database.Models;
+using Marechai.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
