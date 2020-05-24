@@ -2,9 +2,8 @@
 
 namespace Marechai.ViewModels
 {
-    public class SoundSynthViewModel
+    public class SoundSynthViewModel : BaseViewModel<int>
     {
-        public int       Id          { get; set; }
         public string    Name        { get; set; }
         public string    CompanyName { get; set; }
         public int?      CompanyId   { get; set; }

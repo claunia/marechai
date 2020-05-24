@@ -3,9 +3,8 @@ using Marechai.Database;
 
 namespace Marechai.ViewModels
 {
-    public class CompanyViewModel
+    public class CompanyViewModel : BaseViewModel<int>
     {
-        public int    Id       { get; set; }
         public Guid?  LastLogo { get; set; }
         public string Name     { get; set; }
 

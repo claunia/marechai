@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Marechai.ViewModels
 {
-    public class ProcessorViewModel
+    public class ProcessorViewModel : BaseViewModel<int>
     {
         public string       Name                     { get; set; }
         public string       CompanyName              { get; set; }
