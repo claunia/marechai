@@ -76,7 +76,7 @@
             <br />
             @foreach (var company in _companies)
             {
-                <a href="/companies/@company.Id">
+                <a href="/company/@company.Id">
                     @if (company.LastLogo != null &&
                          File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
                     {
