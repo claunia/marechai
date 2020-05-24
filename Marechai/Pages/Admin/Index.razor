@@ -1,13 +1,14 @@
-﻿/******************************************************************************
+@{
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Register.cs
+// Filename       : Index.razor
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Register services for injection
+//     Index of administration area
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -27,26 +28,13 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
-
-using Marechai.Shared;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
-
-namespace Marechai.Services
-{
-    public static class Register
-    {
-        internal static void RegisterServices(IServiceCollection services)
-        {
-            services.AddSingleton<StringLocalizer<NavMenu>>();
-
-            // TODO: Use reflection
-            services.AddScoped<NewsService>();
-            services.AddScoped<CompaniesService>();
-            services.AddScoped<ComputersService>();
-            services.AddScoped<ConsolesService>();
-            services.AddScoped<MachinesService>();
-            services.AddScoped<AdminService>();
-        }
-    }
 }
+
+@page "/admin"
+@inherits OwningComponentBase<AdminService>
+@inject IStringLocalizer<AdminService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+
+<h3>@L["Administration area"]</h3>
+
+<p>@L["Welcome to the administration area. Act with care!"]</p>

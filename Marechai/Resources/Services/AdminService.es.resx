@@ -118,48 +118,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-    <comment>News</comment>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+    <comment>Loading message</comment>
   </data>
-  <data name="Hello {0}!" xml:space="preserve">
-    <value>¡Hola {0}!</value>
-    <comment>Salutes logged-in user</comment>
-  </data>
-  <data name="Log out" xml:space="preserve">
-    <value>Cerrar sesión</value>
-    <comment>Log out</comment>
-  </data>
-  <data name="Register" xml:space="preserve">
-    <value>Registrarse</value>
-    <comment>Register</comment>
-  </data>
-  <data name="Log in" xml:space="preserve">
-    <value>Iniciar sesión</value>
-    <comment>Log in</comment>
-  </data>
-  <data name="About" xml:space="preserve">
-    <value>Acerca de</value>
-    <comment>About</comment>
-  </data>
-  <data name="Contact" xml:space="preserve">
-    <value>Contacto</value>
-    <comment>Contact</comment>
-  </data>
-  <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-    <comment>Companies</comment>
-  </data>
-  <data name="Computers" xml:space="preserve">
-    <value>Ordenadores</value>
-    <comment>Computers</comment>
-  </data>
-  <data name="Consoles" xml:space="preserve">
-    <value>Consolas</value>
-    <comment>Videogame consoles</comment>
-  </data>
-  <data name="Admin area" xml:space="preserve">
-    <value>Administración</value>
+  <data name="Administration area" xml:space="preserve">
+    <value>Área de administración</value>
     <comment>Administration area</comment>
+  </data>
+  <data name="Welcome to the administration area. Act with care!" xml:space="preserve">
+    <value>Bienvenido/a al área de administración. ¡Actúa con cuidado!</value>
+    <comment>Welcome message.</comment>
   </data>
 </root>

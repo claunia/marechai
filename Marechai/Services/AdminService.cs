@@ -1,13 +1,13 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Register.cs
+// Filename       : AdminService.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Register services for injection
+//     Administration service
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -28,25 +28,7 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using Marechai.Shared;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
-
 namespace Marechai.Services
 {
-    public static class Register
-    {
-        internal static void RegisterServices(IServiceCollection services)
-        {
-            services.AddSingleton<StringLocalizer<NavMenu>>();
-
-            // TODO: Use reflection
-            services.AddScoped<NewsService>();
-            services.AddScoped<CompaniesService>();
-            services.AddScoped<ComputersService>();
-            services.AddScoped<ConsolesService>();
-            services.AddScoped<MachinesService>();
-            services.AddScoped<AdminService>();
-        }
-    }
+    public class AdminService { }
 }

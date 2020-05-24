@@ -29,17 +29,24 @@
                 <span class="fa fa-gamepad" aria-hidden="true"></span>&nbsp;@L["Consoles"]
             </NavLink>
         </li>
+        <AuthorizeView Roles="UberAdmin, Admin">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="admin">
+                    <span class="fa fa-tools" aria-hidden="true"></span>&nbsp;@L["Admin area"]
+                </NavLink>
+            </li>
+        </AuthorizeView>
     </ul>
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
+    private bool _collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        _collapseNavMenu = !_collapseNavMenu;
     }
 
 }
