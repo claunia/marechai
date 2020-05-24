@@ -1,4 +1,4 @@
-/******************************************************************************
+﻿/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -48,7 +48,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace Marechai
 {
-    // DO NOT MAKE STATIC
     public class Startup
     {
         readonly CultureInfo[] supportedCultures =
@@ -58,9 +57,10 @@ namespace Marechai
 
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
-        IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddBlazorise(options => options.ChangeTextOnKeyPress = true).AddBootstrapProviders().
@@ -78,7 +78,8 @@ namespace Marechai
             services.AddServerSideBlazor();
 
             services.
-                AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+                AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>
+                >();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
 

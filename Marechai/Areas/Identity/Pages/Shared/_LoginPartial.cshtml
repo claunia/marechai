@@ -1,30 +1,26 @@
-﻿@using Marechai.Shared
-@using Microsoft.AspNetCore.Identity
-@using Microsoft.Extensions.Localization
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-@inject StringLocalizer<NavMenu> L
+﻿@using Marechai.Database.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@string.Format(L["Hello {0}!"], User.Identity.Name)</a>
+            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link text-dark" title="Manage">Hello @User.Identity.Name!</a>
         </li>
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">@L["Log out"]</button>
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" class="form-inline" method="post">
+                <button class="btn btn-link nav-link text-dark" type="submit">Logout</button>
             </form>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">@L["Register"]</a>
+            <a asp-area="Identity" asp-page="/Account/Register" class="nav-link text-dark">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">@L["Log in"]</a>
+            <a asp-area="Identity" asp-page="/Account/Login" class="nav-link text-dark">Login</a>
         </li>
     }
 </ul>
