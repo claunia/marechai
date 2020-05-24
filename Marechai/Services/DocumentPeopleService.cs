@@ -23,5 +23,17 @@ namespace Marechai.Services
                                                                                  Person   = d.Person.FullName,
                                                                                  PersonId = d.PersonId
                                                                              }).ToListAsync();
+
+        public async Task DeleteAsync(int id)
+        {
+            DocumentPerson item = await _context.DocumentPeople.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.DocumentPeople.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
