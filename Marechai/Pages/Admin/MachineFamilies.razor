@@ -31,7 +31,6 @@
 }
 
 @page "/admin/machine_families"
-@using Marechai.Database.Models
 @inherits OwningComponentBase<MachineFamiliesService>
 @inject IStringLocalizer<MachineFamiliesService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
@@ -76,21 +75,26 @@
                 <span class="btn btn-secondary">
                     @L["Edit"]
                 </span>
-                <span class="btn btn-danger">
-                    @L["Delete"]
-                </span>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
             </td>
         </tr>
     }
     </tbody>
 </table>
 
-@code
-{
-    List<MachineFamilyViewModel> _machineFamilies;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _machineFamilies = await Service.GetAsync();
-    }
-}
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete machine family"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete {0} {1}?"], _machineFamily?.Company, _machineFamily?.Name)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>

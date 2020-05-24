@@ -19,5 +19,17 @@ namespace Marechai.Services
                            {
                                Id = m.Id, Company = m.Company.Name, Name = m.Name
                            }).ToListAsync();
+
+        public async Task DeleteAsync(int id)
+        {
+            MachineFamily item = await _context.MachineFamilies.FindAsync(id);
+
+            if(item is null)
+                return;
+
+            _context.MachineFamilies.Remove(item);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
