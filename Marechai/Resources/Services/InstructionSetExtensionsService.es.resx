@@ -118,56 +118,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-    <comment>Loading message</comment>
-  </data>
-  <data name="Administration area" xml:space="preserve">
-    <value>Área de administración</value>
-    <comment>Administration area</comment>
-  </data>
-  <data name="Welcome to the administration area. Act with care!" xml:space="preserve">
-    <value>Bienvenido/a al área de administración. ¡Actúa con cuidado!</value>
-    <comment>Welcome message.</comment>
-  </data>
-  <data name="Browser tests" xml:space="preserve">
-    <value>Pruebas de navegadores</value>
-    <comment>Browser tests.</comment>
-  </data>
-  <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-    <comment>Companies.</comment>
-  </data>
-  <data name="Document companies" xml:space="preserve">
-    <value>Compañías de documentos</value>
-    <comment>Document companies.</comment>
-  </data>
-  <data name="Document people" xml:space="preserve">
-    <value>Personas de documentos</value>
-    <comment>Document people.</comment>
-  </data>
-  <data name="Graphics Processing Units" xml:space="preserve">
-    <value>Unidades de proceso de gráficos</value>
-    <comment>Graphics Processing Units.</comment>
-  </data>
-  <data name="Database administrative pages" xml:space="preserve">
-    <value>Páginas de administración de la base de datos</value>
-    <comment>Database administrative pages.</comment>
-  </data>
-  <data name="Administrative pages for documents" xml:space="preserve">
-    <value>Páginas de administración de documentos</value>
-    <comment>Administrative pages for documents.</comment>
-  </data>
-  <data name="Administrative pages for owned machines" xml:space="preserve">
-    <value>Páginas de administración para máquinas en propiedad</value>
-    <comment>Administrative pages for owned machines.</comment>
-  </data>
-  <data name="User administrative pages" xml:space="preserve">
-    <value>Páginas de administración de usuarios</value>
-    <comment>User administrative pages.</comment>
-  </data>
   <data name="Instruction set extensions" xml:space="preserve">
     <value>Extensiones de arquitectura</value>
-    <comment>Instruction set extensions.</comment>
+    <comment>Instruction set extensions</comment>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+    <comment>Message that appears while data is being loaded from database</comment>
+  </data>
+  <data name="Extension" xml:space="preserve">
+    <value>Extensión</value>
+    <comment>Extension</comment>
+  </data>
+  <data name="Create new" xml:space="preserve">
+    <value>Crear nueva</value>
+    <comment>Create new</comment>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+    <comment>Details</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+    <comment>Edit</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>Delete</comment>
   </data>
 </root>
