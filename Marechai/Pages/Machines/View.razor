@@ -876,29 +876,6 @@
     <img src="@Path.Combine("/assets/photos/computers", _machine.Id + ".jpg")" alt="">
 }
 
-@code
-{
-    [Parameter]
-    public int Id { get; set; }
-
-    MachineViewModel _machine;
-    bool _loaded;
-    bool[] _processorVisible;
-    bool[] _gpuVisible;
-    bool[] _soundVisible;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _machine = await Service.GetMachine(Id);
-
-        _processorVisible = new bool[_machine.Processors.Count];
-        _gpuVisible = new bool[_machine.Gpus.Count];
-        _soundVisible = new bool[_machine.SoundSynthesizers.Count];
-
-        _loaded = true;
-    }
-}
-
 <style>
 .card {
     border: none;

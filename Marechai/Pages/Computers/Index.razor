@@ -242,20 +242,3 @@
         }
     }
 </p>
-
-@code
-{
-    bool _loaded;
-    int _computers;
-    int _minYear;
-    int _maxYear;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _computers = await Service.GetComputersCountAsync();
-        _minYear = await Service.GetMinimumYearAsync();
-        _maxYear = await Service.GetMaximumYearAsync();
-
-        _loaded = true;
-    }
-}

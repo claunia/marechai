@@ -58,13 +58,3 @@
     </table>
     <br />
 }
-
-@code
-{
-    List<NewsViewModel> _news;
-
-    protected override void OnInitialized()
-    {
-        _news = @Service.GetNews();
-    }
-}

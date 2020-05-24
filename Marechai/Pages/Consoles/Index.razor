@@ -242,20 +242,3 @@
         }
     }
 </p>
-
-@code
-{
-    bool _loaded;
-    int _consoles;
-    int _minYear;
-    int _maxYear;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _consoles = await Service.GetConsolesCountAsync();
-        _minYear = await Service.GetMinimumYearAsync();
-        _maxYear = await Service.GetMaximumYearAsync();
-
-        _loaded = true;
-    }
-}
