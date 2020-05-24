@@ -37,9 +37,12 @@
 <h3>@L["Administration area"]</h3>
 <p>@L["Welcome to the administration area. Act with care!"]</p>
 <ul>
-    <authorizeview Roles="UberAdmin">
+    <AuthorizeView Roles="UberAdmin">
         <li>
             <a href="/admin/browser_tests">@L["Browser tests"]</a>
         </li>
-    </authorizeview>
+    </AuthorizeView>
+    <li>
+        <a href="/admin/companies">@L["Companies"]</a>
+    </li>
 </ul>

@@ -57,7 +57,9 @@ namespace Marechai.Services
                                                                        LastLogo = c.
                                                                                   Logos.OrderByDescending(l => l.Year).
                                                                                   FirstOrDefault().Guid,
-                                                                       Name = c.Name
+                                                                       Name    = c.Name, Founded        = c.Founded,
+                                                                       Sold    = c.Sold, SoldTo         = c.SoldTo.Name,
+                                                                       Country = c.Country.Name, Status = c.Status
                                                                    }).ToListAsync();
 
         public Task<Company> GetCompanyAsync(int id) => _context.Companies.FirstOrDefaultAsync(c => c.Id == id);

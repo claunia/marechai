@@ -118,6 +118,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Companies" xml:space="preserve">
+    <value>Compañías</value>
+    <comment>Companies</comment>
+  </data>
   <data name="Loading..." xml:space="preserve">
     <value>Cargando...</value>
     <comment>Message that appears while data is being loaded from database</comment>
@@ -253,5 +257,25 @@
   <data name="Companies which name starts with {0}." xml:space="preserve">
     <value>Compañías cuyo nombre empieza por {0}.</value>
     <comment>Companies with {0}, a single character, as the start of the name</comment>
+  </data>
+  <data name="Sold" xml:space="preserve">
+    <value>Vendida</value>
+    <comment>Sold</comment>
+  </data>
+  <data name="Sold to" xml:space="preserve">
+    <value>Vendida a</value>
+    <comment>Sold to</comment>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+    <comment>Details</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+    <comment>Edit</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>Delete</comment>
   </data>
 </root>

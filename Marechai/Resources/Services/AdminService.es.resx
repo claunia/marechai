@@ -134,4 +134,8 @@
     <value>Pruebas de navegadores</value>
     <comment>Browser tests.</comment>
   </data>
+  <data name="Companies" xml:space="preserve">
+    <value>Compañías</value>
+    <comment>Companies.</comment>
+  </data>
 </root>

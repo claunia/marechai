@@ -1,14 +1,14 @@
-﻿@{
+@{
     /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Index.cshtml
+// Filename       : Companies.razor
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Admin view index
+//     List of companies
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -29,75 +29,86 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 }
-@model IEnumerable<Marechai.Areas.Admin.Models.CompanyViewModel>
 
-@{
-    ViewData["Title"] = "Companies (Admin)";
+@page "/admin/companies"
+@inherits OwningComponentBase<CompaniesService>
+@inject IStringLocalizer<CompaniesService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Companies"]</h3>
+@if (_companies is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
 }
-<h2>Companies</h2>
-<p>
-    <a asp-action="Create" class="btn btn-primary">
-        Create New
-    </a>
-</p>
 <table class="table table-striped">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @L["Name"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Founded)
+            @L["Founded"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Status)
+            @L["Status"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Country)
+            @L["Country"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SoldView)
+            @L["Sold"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SoldTo)
+            @L["Sold to"]
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in _companies)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @item.Name
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Founded)
+                @($"{item.Founded:d}")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                @item.Status
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Country)
+                @item.Country
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SoldView)
+                @item.SoldView
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SoldTo)
+                @item.SoldTo
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">
-                    Details
-                </a>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">
-                    Edit
-                </a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">
-                    Delete
-                </a>
+                <span class="btn btn-primary">
+                    @L["Details"]
+                </span>
+                <span class="btn btn-secondary">
+                    @L["Edit"]
+                </span>
+                <span class="btn btn-danger">
+                    @L["Delete"]
+                </span>
             </td>
         </tr>
     }
     </tbody>
 </table>
+
+@code
+{
+    List<CompanyViewModel> _companies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _companies = await Service.GetCompaniesAsync();
+    }
+}
