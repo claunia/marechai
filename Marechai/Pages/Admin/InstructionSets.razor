@@ -31,7 +31,6 @@
 }
 
 @page "/admin/instruction_sets"
-@using Marechai.Database.Models
 @inherits OwningComponentBase<InstructionSetsService>
 @inject IStringLocalizer<InstructionSetsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
@@ -70,21 +69,26 @@
                 <span class="btn btn-secondary">
                     @L["Edit"]
                 </span>
-                <span class="btn btn-danger">
-                    @L["Delete"]
-                </span>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
             </td>
         </tr>
     }
     </tbody>
 </table>
 
-@code
-{
-    List<InstructionSet> _instructionSets;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _instructionSets = await Service.GetAsync();
-    }
-}
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete instruction set"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete {0}?"], _instructionSet?.Name)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
