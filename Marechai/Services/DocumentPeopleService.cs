@@ -24,6 +24,8 @@ namespace Marechai.Services
                                                                                  PersonId = d.PersonId
                                                                              }).ToListAsync();
 
+        public async Task<DocumentPerson> GetAsync(int id) => await _context.DocumentPeople.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             DocumentPerson item = await _context.DocumentPeople.FindAsync(id);

@@ -162,4 +162,24 @@
     <value>Cancelar</value>
     <comment>Cancel</comment>
   </data>
+  <data name="Document person details" xml:space="preserve">
+    <value>Detalles de persona de documentos</value>
+    <comment>Document person details</comment>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+    <comment>Back to list</comment>
+  </data>
+  <data name="Surname" xml:space="preserve">
+    <value>Apellido</value>
+    <comment>Surname</comment>
+  </data>
+  <data name="Display name" xml:space="preserve">
+    <value>Nombre para mostrar</value>
+    <comment>Display name</comment>
+  </data>
+  <data name="Alias" xml:space="preserve">
+    <value>Alias</value>
+    <comment>Alias</comment>
+  </data>
 </root>

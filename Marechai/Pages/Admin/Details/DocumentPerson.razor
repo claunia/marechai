@@ -1,0 +1,93 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/document_people/details/{Id:int}"
+@inherits OwningComponentBase<DocumentPeopleService>
+@inject IStringLocalizer<DocumentPeopleService> L
+@inject PeopleService PeopleService
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Document person details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    @if (_editable || _model.Name != null)
+    {
+        <Field>
+            <FieldLabel>@L["Name"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name" />
+        </Field>
+    }
+    @if (_editable || _model.Surname != null)
+    {
+        <Field>
+            <FieldLabel>@L["Surname"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Surname" />
+        </Field>
+    }
+    @if (_editable || _model.Alias != null)
+    {
+        <Field>
+            <FieldLabel>@L["Alias"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Alias" />
+        </Field>
+    }
+    @if (_editable || _model.DisplayName != null)
+    {
+        <Field>
+            <FieldLabel>@L["Display name"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.DisplayName" />
+        </Field>
+    }
+    @if (_editable || _model.PersonId != null)
+    {
+        <Field>
+            <FieldLabel>@L["Linked person"]</FieldLabel>
+            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.PersonId">
+                @foreach (var person in _people)
+                {
+                    <SelectItem TValue="int?" Value="@person.Id">@person.DisplayName</SelectItem>
+                }
+            </Select>
+        </Field>
+    }
+</div>
+<div>
+    <span class="btn btn-primary">@L["Edit"]</span>
+    <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
+</div>
