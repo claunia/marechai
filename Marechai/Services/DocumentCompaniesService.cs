@@ -22,6 +22,8 @@ namespace Marechai.Services
                                                                                   CompanyId = d.CompanyId
                                                                               }).ToListAsync();
 
+        public async Task<DocumentCompany> GetAsync(int id) => await _context.DocumentCompanies.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             DocumentCompany item = await _context.DocumentCompanies.FindAsync(id);
