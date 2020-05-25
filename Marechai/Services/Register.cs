@@ -59,6 +59,7 @@ namespace Marechai.Services
             services.AddScoped<ProcessorsService>();
             services.AddScoped<ScreensService>();
             services.AddScoped<SoundSynthsService>();
+            services.AddScoped<Iso31661NumericService>();
         }
     }
 }

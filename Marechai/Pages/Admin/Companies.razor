@@ -33,6 +33,7 @@
 @page "/admin/companies"
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
+
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Companies"]</h3>
 @if (_companies is null)
@@ -88,9 +89,7 @@
                 @item.SoldTo
             </td>
             <td>
-                <span class="btn btn-primary">
-                    @L["Details"]
-                </span>
+                <a class="btn btn-primary" href="/admin/companies/details/@item.Id">@L["Details"]</a>
                 <span class="btn btn-secondary">
                     @L["Edit"]
                 </span>

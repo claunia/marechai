@@ -62,7 +62,7 @@ namespace Marechai.Services
                                                               Status = c.Status
                                                           }).ToListAsync();
 
-        public Task<Company> GetCompanyAsync(int id) => _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
+        public Task<Company> GetAsync(int id) => _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
 
         public async Task<List<Machine>> GetMachinesAsync(int id) =>
             await _context.Machines.Where(m => m.CompanyId == id).OrderBy(m => m.Name).Select(m => new Machine

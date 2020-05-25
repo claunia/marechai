@@ -32,7 +32,7 @@ namespace Marechai.Pages.Companies
                 return;
             }
 
-            _company = await Service.GetCompanyAsync(Id);
+            _company = await Service.GetAsync(Id);
             List<Machine> machines = await Service.GetMachinesAsync(Id);
 
             _computers = machines.Where(m => m.Type == MachineType.Computer).ToList();
