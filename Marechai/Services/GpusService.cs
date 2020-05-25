@@ -31,6 +31,8 @@ namespace Marechai.Services
                                Transistors = g.Transistors
                            }).ToListAsync();
 
+        public async Task<Gpu> GetAsync(int id) => await _context.Gpus.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             Gpu item = await _context.Gpus.FindAsync(id);

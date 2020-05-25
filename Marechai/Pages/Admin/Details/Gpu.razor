@@ -1,0 +1,121 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/gpus/details/{Id:int}"
+@inherits OwningComponentBase<GpusService>
+@inject IStringLocalizer<GpusService> L
+@inject CompaniesService CompaniesService
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Graphical processing unit details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+<p align="center">@L["Loading..."]</p>
+   
+    return;
+}
+
+<div>
+    @if (_editable || _model.CompanyId != null)
+    {
+        <Field>
+            <FieldLabel>@L["Company"]</FieldLabel>
+            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.CompanyId">
+                @foreach (var company in _companies)
+                {
+                    <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+                }
+            </Select>
+        </Field>
+    }
+    @if (_editable || _model.Name != null)
+    {
+        <Field>
+            <FieldLabel>@L["Name"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name" />
+        </Field>
+    }
+    @if (_editable || _model.ModelCode != null)
+    {
+        <Field>
+            <FieldLabel>@L["Model code"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.ModelCode" />
+        </Field>
+    }
+    @if (_editable || _model.Introduced != null)
+    {
+        <Field>
+            <FieldLabel>@L["Introduced"]</FieldLabel>
+            <DateEdit TValue="DateTime?" ReadOnly="!_editable" @bind-Date="@_model.Introduced" />
+        </Field>
+    }
+    @if (_editable || _model.Package != null)
+    {
+        <Field>
+            <FieldLabel>@L["Package"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Package" />
+        </Field>
+    }
+    @if (_editable || _model.Process != null)
+    {
+        <Field>
+            <FieldLabel>@L["Process"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Process" />
+        </Field>
+    }
+    @if (_editable || _model.ProcessNm != null)
+    {
+        <Field>
+            <FieldLabel>@L["Process size in nm"]</FieldLabel>
+            <NumericEdit TValue="float?" Decimals="2" ReadOnly="!_editable" @bind-Text="@_model.ProcessNm" />
+        </Field>
+    }
+    @if (_editable || _model.DieSize != null)
+    {
+        <Field>
+            <FieldLabel>@L["Die size"]</FieldLabel>
+            <NumericEdit TValue="float?" Decimals="2" ReadOnly="!_editable" @bind-Text="@_model.DieSize" />
+        </Field>
+    }
+    @if (_editable || _model.Transistors != null)
+    {
+        <Field>
+            <FieldLabel>@L["Transistors"]</FieldLabel>
+            <NumericEdit TValue="long?" Decimals="0" ReadOnly="!_editable" @bind-Text="@_model.Transistors" />
+        </Field>
+    }
+</div>
+<div>
+    <span class="btn btn-primary">@L["Edit"]</span>
+    <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
+</div>
