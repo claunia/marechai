@@ -1,5 +1,5 @@
-﻿@{
-    /******************************************************************************
+@{
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -29,43 +29,28 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 }
-@model Marechai.Database.Models.InstructionSetExtension
 
-@{
-    ViewData["Title"] = "Details";
+@page "/admin/instruction_set_extensions/details/{Id:int}"
+@inherits OwningComponentBase<InstructionSetExtensionsService>
+@inject IStringLocalizer<InstructionSetExtensionsService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Instruction set extension details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
 }
-<h2>Details</h2>
+
 <div>
-    <h4>Instruction set extension</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Extension)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Extension)
-        </dd>
-    </dl>
-    @if (ViewBag.Processors != null)
-    {
-        <dl class="dl-horizontal">
-            <dt>
-                Processors
-            </dt>
-            <dd>
-                @foreach (string processor in ViewBag.Processors)
-                {
-                    @processor<br />
-                }
-            </dd>
-        </dl>
-    }
+    <Field>
+        <FieldLabel>@L["Extension"]</FieldLabel>
+        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Extension"/>
+    </Field>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
-        Edit
-    </a>
-    <a asp-action="Index" class="btn btn-secondary">
-        Back to List
-    </a>
+    <span class="btn btn-primary">@L["Edit"]</span>
+    <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

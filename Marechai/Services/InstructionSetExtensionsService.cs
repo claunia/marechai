@@ -15,6 +15,9 @@ namespace Marechai.Services
         public async Task<List<InstructionSetExtension>> GetAsync() =>
             await _context.InstructionSetExtensions.OrderBy(e => e.Extension).ToListAsync();
 
+        public async Task<InstructionSetExtension> GetAsync(int id) =>
+            await _context.InstructionSetExtensions.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             InstructionSetExtension item = await _context.InstructionSetExtensions.FindAsync(id);
