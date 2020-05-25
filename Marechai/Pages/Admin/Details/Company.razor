@@ -31,6 +31,7 @@
 }
 
 @page "/admin/companies/details/{Id:int}"
+@using Marechai.Database
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
 @inject Iso31661NumericService CountriesService
@@ -52,7 +53,12 @@
     </Field>
     <Field>
         <FieldLabel>@L["Status"]</FieldLabel>
-        <TextEdit ReadOnly="!_editable" @bind-Text="@CompanyStatus"/>
+        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@Status">
+            @foreach (int status in Enum.GetValues(typeof(CompanyStatus)))
+            {
+                <SelectItem TValue="int" Value="@status">@(((CompanyStatus)status).ToString())</SelectItem>
+            }
+        </Select>
     </Field>
     @if(_editable || _model.Founded.HasValue)
     {
@@ -110,23 +116,16 @@
             <TextEdit ReadOnly="!_editable" @bind-Text="@_model.PostalCode" />
         </Field>
     }
-    @if (_editable)
+    @if (_editable || _model.CountryId != null)
     {
         <Field>
             <FieldLabel>@L["Country"]</FieldLabel>
-            <Select ReadOnly="!_editable" TValue="short?" @bind-SelectedValue="@_model.CountryId">
+            <Select Disabled="!_editable" TValue="short?" @bind-SelectedValue="@_model.CountryId">
                 @foreach (var country in _countries)
                 {
-                    <SelectItem Value="@country.Id">@country.Name</SelectItem>
+                    <SelectItem TValue="short?" Value="@country.Id">@country.Name</SelectItem>
                 }
             </Select>
-        </Field>
-    }
-    else if (_model.CountryId != null)
-    {
-        <Field>
-            <FieldLabel>@L["Country"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Country.Name" />
         </Field>
     }
     @if (_editable || _model.Sold != null)
@@ -136,23 +135,16 @@
             <DateEdit ReadOnly="!_editable" TValue="DateTime?" @bind-Date="@_model.Sold" />
         </Field>
     }
-    @if (_editable)
+    @if (_editable || _model.SoldToId != null)
     {
         <Field>
             <FieldLabel>@L["Sold to"]</FieldLabel>
-            <Select ReadOnly="!_editable" TValue="int?" @bind-SelectedValue="@_model.SoldToId">
+            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.SoldToId">
                 @foreach (var company in _companies)
                 {
-                    <SelectItem Value="@company.Id">@company.Name</SelectItem>
+                    <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
                 }
             </Select>
-        </Field>
-    }
-    else if (_model.SoldToId != null)
-    {
-        <Field>
-            <FieldLabel>@L["Sold to"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.SoldTo.Name" />
         </Field>
     }
 </div>

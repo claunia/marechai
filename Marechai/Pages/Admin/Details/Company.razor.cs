@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.Database;
@@ -18,16 +17,10 @@ namespace Marechai.Pages.Admin.Details
         [Parameter]
         public int Id { get; set; }
 
-        public string CompanyStatus
+        int Status
         {
-            get => _model.Status.ToString();
-            set
-            {
-                if(!Enum.TryParse(value, true, out CompanyStatus parsed))
-                    return;
-
-                _model.Status = parsed;
-            }
+            get => (int)_model.Status;
+            set => _model.Status = (CompanyStatus)value;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
