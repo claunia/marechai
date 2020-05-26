@@ -1,0 +1,79 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/licenses/details/{Id:int}"
+@inherits OwningComponentBase<LicensesService>
+@inject IStringLocalizer<LicensesService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["License details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Name"]</FieldLabel>
+        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+    </Field>
+    <Field>
+        <FieldLabel>@L["SPDX identifier"]</FieldLabel>
+        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.SPDX"/>
+    </Field>
+    <Field>
+        <FieldLabel>@L["FSF approved"]</FieldLabel>
+        <Check TValue="bool" Disabled="!_editable" @bind-Checked="@_model.FsfApproved"/>
+    </Field>
+    <Field>
+        <FieldLabel>@L["OSI approved"]</FieldLabel>
+        <Check TValue="bool" Disabled="!_editable" @bind-Checked="@_model.OsiApproved"/>
+    </Field>
+    <Field>
+        <FieldLabel>@L["License text link"]</FieldLabel>
+        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Link"/>
+    </Field>
+    @if (_editable || _model.Text != null)
+    {
+        <Field>
+            <FieldLabel>@L["License text"]</FieldLabel>
+            <MemoEdit Rows="200" Plaintext="true" ReadOnly="!_editable" @bind-Text="@_model.Text" />
+        </Field>
+    }
+</div>
+<div>
+    <span class="btn btn-primary">@L["Edit"]</span>
+    <a href="/admin/licenses" class="btn btn-secondary">@L["Back to list"]</a>
+</div>

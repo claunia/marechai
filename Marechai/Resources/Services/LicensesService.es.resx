@@ -174,4 +174,32 @@
     <value>Cancelar</value>
     <comment>Cancel</comment>
   </data>
+  <data name="License details" xml:space="preserve">
+    <value>Detalles de licencia</value>
+    <comment>License details</comment>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+    <comment>Back to list</comment>
+  </data>
+  <data name="SPDX identifier" xml:space="preserve">
+    <value>Identificator SPDX</value>
+    <comment>SPDX identifier</comment>
+  </data>
+  <data name="FSF approved" xml:space="preserve">
+    <value>Aprobada por la FSF</value>
+    <comment>FSF approved</comment>
+  </data>
+  <data name="OSI approved" xml:space="preserve">
+    <value>Aprobada por la OSI</value>
+    <comment>OSI approved</comment>
+  </data>
+  <data name="License text link" xml:space="preserve">
+    <value>Enlace al texto de la licencia</value>
+    <comment>License text link</comment>
+  </data>
+  <data name="License text" xml:space="preserve">
+    <value>Texto de la licencia</value>
+    <comment>License text</comment>
+  </data>
 </root>

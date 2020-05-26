@@ -19,6 +19,8 @@ namespace Marechai.Services
                 OsiApproved = l.OsiApproved, SPDX = l.SPDX
             }).ToListAsync();
 
+        public async Task<License> GetAsync(int id) => await _context.Licenses.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             License item = await _context.Licenses.FindAsync(id);
