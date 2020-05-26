@@ -174,4 +174,32 @@
     <value>Cancelar</value>
     <comment>Cancel</comment>
   </data>
+  <data name="Sound synthesizer details" xml:space="preserve">
+    <value>Detalles de sintetizador de sonido</value>
+    <comment>Sound synthesizer details</comment>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+    <comment>Back to list</comment>
+  </data>
+  <data name="Digitized voices" xml:space="preserve">
+    <value>Voces digitalizadas</value>
+    <comment>Digitized voices</comment>
+  </data>
+  <data name="Sample rate (Hz)" xml:space="preserve">
+    <value>Frecuencia de muestreo (Hz)</value>
+    <comment>Sample rate (Hz)</comment>
+  </data>
+  <data name="Sample resolution (bits)" xml:space="preserve">
+    <value>Resolución de muestreo (bits)</value>
+    <comment>Sample resolution (bits)</comment>
+  </data>
+  <data name="Square wave channels" xml:space="preserve">
+    <value>Canales de onda cuadrada</value>
+    <comment>Square wave channels</comment>
+  </data>
+  <data name="White noise channels" xml:space="preserve">
+    <value>Canales de ruido blanco</value>
+    <comment>White noise channels</comment>
+  </data>
 </root>

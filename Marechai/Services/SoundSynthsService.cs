@@ -34,6 +34,8 @@ namespace Marechai.Services
                                WhiteNoise = s.WhiteNoise, Type = s.Type
                            }).ToListAsync();
 
+        public async Task<SoundSynth> GetAsync(int id) => await _context.SoundSynths.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             SoundSynth item = await _context.SoundSynths.FindAsync(id);
