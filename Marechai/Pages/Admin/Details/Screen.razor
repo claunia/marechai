@@ -1,0 +1,94 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/screens/details/{Id:int}"
+@inherits OwningComponentBase<ScreensService>
+@inject IStringLocalizer<ScreensService> L
+@inject ResolutionsService ResolutionsService
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Screen details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    @if (_editable || _model.Width.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Width (mm)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="double?" Decimals="2" @bind-Value="@_model.Width"/>
+        </Field>
+    }
+    @if (_editable || _model.Height.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Height (mm)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="double?" Decimals="0" @bind-Value="@_model.Height"/>
+        </Field>
+    }
+    <Field>
+        <FieldLabel>@L["Diagonal (inches)"]</FieldLabel>
+        <NumericEdit Disabled="!_editable" TValue="double" Decimals="2" @bind-Value="@_model.Diagonal"/>
+    </Field>
+    @if (_editable || _model.EffectiveColors.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Effective colors"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="long?" Decimals="0" @bind-Value="@_model.EffectiveColors"/>
+        </Field>
+    }
+    @if (_editable || _model.Type != null)
+    {
+        <Field>
+            <FieldLabel>@L["Type"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Type" />
+        </Field>
+    }
+    <Field>
+        <FieldLabel>@L["Native resolution"]</FieldLabel>
+        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@_model.NativeResolutionId">
+            @foreach (var resolution in _resolutions)
+            {
+                <SelectItem TValue="int" Value="@resolution.Id">@resolution.ToString()</SelectItem>
+            }
+        </Select>
+    </Field>
+</div>
+<div>
+    <span class="btn btn-primary">@L["Edit"]</span>
+    <a href="/admin/screens" class="btn btn-secondary">@L["Back to list"]</a>
+</div>

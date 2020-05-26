@@ -15,6 +15,8 @@ namespace Marechai.Services
                                               ThenBy(s => s.EffectiveColors).ThenBy(s => s.NativeResolution.ToString()).
                                               ThenBy(s => s.Type).ThenBy(s => s.Size).ToList();
 
+        public async Task<Screen> GetAsync(int id) => await _context.Screens.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             Screen item = await _context.Screens.FindAsync(id);
