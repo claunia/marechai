@@ -109,6 +109,9 @@
     <Content Update="Pages\Admin\Details\Machine.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="Pages\Admin\Details\Person.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Delete.cshtml" />

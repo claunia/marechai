@@ -23,6 +23,8 @@ namespace Marechai.Services
                                DisplayName = p.DisplayName
                            }).ToListAsync();
 
+        public async Task<Person> GetAsync(int id) => await _context.People.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             Person item = await _context.People.FindAsync(id);
