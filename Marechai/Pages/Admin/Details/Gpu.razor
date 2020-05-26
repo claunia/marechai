@@ -96,14 +96,14 @@
     @if (_editable || _model.ProcessNm != null)
     {
         <Field>
-            <FieldLabel>@L["Process size in nm"]</FieldLabel>
+            <FieldLabel>@L["Process (nm)"]</FieldLabel>
             <NumericEdit TValue="float?" Decimals="2" ReadOnly="!_editable" @bind-Text="@_model.ProcessNm" />
         </Field>
     }
     @if (_editable || _model.DieSize != null)
     {
         <Field>
-            <FieldLabel>@L["Die size"]</FieldLabel>
+            <FieldLabel>@L["Die size (mm²)"]</FieldLabel>
             <NumericEdit TValue="float?" Decimals="2" ReadOnly="!_editable" @bind-Text="@_model.DieSize" />
         </Field>
     }

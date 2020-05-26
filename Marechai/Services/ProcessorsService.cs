@@ -42,6 +42,8 @@ namespace Marechai.Services
                     p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
             }).ToListAsync();
 
+        public async Task<Processor> GetAsync(int id) => await _context.Processors.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             Processor item = await _context.Processors.FindAsync(id);

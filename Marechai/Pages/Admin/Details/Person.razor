@@ -88,13 +88,13 @@
     }
     <Field>
         <FieldLabel>@L["Birth date"]</FieldLabel>
-        <DateEdit Value="DateTime" ReadOnly="!_editable" @bind-Text="@_model.BirthDate" />
+        <DateEdit TValue="DateTime" ReadOnly="!_editable" @bind-Text="@_model.BirthDate" />
     </Field>
     @if (_editable || _model.DeathDate != null)
     {
         <Field>
             <FieldLabel>@L["Date of death"]</FieldLabel>
-        <DateEdit Value="DateTime?" ReadOnly="!_editable" @bind-Text="@_model.DeathDate" />
+        <DateEdit TValue="DateTime?" ReadOnly="!_editable" @bind-Text="@_model.DeathDate" />
         </Field>
     }
     @if (_editable || _model.Webpage != null)

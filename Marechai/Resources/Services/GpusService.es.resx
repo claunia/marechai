@@ -186,13 +186,13 @@
     <value>Proceso</value>
     <comment>Process</comment>
   </data>
-  <data name="Process size in nm" xml:space="preserve">
+  <data name="Process (nm)" xml:space="preserve">
     <value>Tamaño en nm del proceso</value>
     <comment>Process size in nm</comment>
   </data>
-  <data name="Die size" xml:space="preserve">
-    <value>Área del chip</value>
-    <comment>Die size</comment>
+  <data name="Die size (mm²)" xml:space="preserve">
+    <value>Área del chip (mm²)</value>
+    <comment>Die size (mm²)</comment>
   </data>
   <data name="Transistors" xml:space="preserve">
     <value>Transistores</value>

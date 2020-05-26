@@ -174,4 +174,96 @@
     <value>Cancelar</value>
     <comment>Cancel</comment>
   </data>
+  <data name="Processor details" xml:space="preserve">
+    <value>Detalles de procesador</value>
+    <comment>Processor details</comment>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+    <comment>Back to list</comment>
+  </data>
+  <data name="PROTOTYPE" xml:space="preserve">
+    <value>PROTOTIPO</value>
+    <comment>PROTOTYPE</comment>
+  </data>
+  <data name="Nominal speed (MHz)" xml:space="preserve">
+    <value>Velocidad nominal (MHz)</value>
+    <comment>Nominal speed (MHz)</comment>
+  </data>
+  <data name="Package" xml:space="preserve">
+    <value>Empaquetado</value>
+    <comment>Package</comment>
+  </data>
+  <data name="General Purpose Registers" xml:space="preserve">
+    <value>Registros de propósito general</value>
+    <comment>General Purpose Registers</comment>
+  </data>
+  <data name="General Purpose Register size" xml:space="preserve">
+    <value>Tamaño de los registros de propósito general</value>
+    <comment>General Purpose Register size</comment>
+  </data>
+  <data name="Floating Point Registers" xml:space="preserve">
+    <value>Registros de coma flotante</value>
+    <comment>Floating Point Registers</comment>
+  </data>
+  <data name="Floating Point Register size" xml:space="preserve">
+    <value>Tamaño de los registros de coma flotante</value>
+    <comment>Floating Point Register size</comment>
+  </data>
+  <data name="SIMD Registers" xml:space="preserve">
+    <value>Registros SIMD</value>
+    <comment>SIMD Registers</comment>
+  </data>
+  <data name="SIMD Register size" xml:space="preserve">
+    <value>Tamaño de los registros SIMD</value>
+    <comment>SIMD Register size</comment>
+  </data>
+  <data name="Cores" xml:space="preserve">
+    <value>Núcleos</value>
+    <comment>Cores</comment>
+  </data>
+  <data name="Threads per core" xml:space="preserve">
+    <value>Hilos por núcleo</value>
+    <comment>Threads per core</comment>
+  </data>
+  <data name="Process" xml:space="preserve">
+    <value>Proceso</value>
+    <comment>Process</comment>
+  </data>
+  <data name="Process (nm)" xml:space="preserve">
+    <value>Tamaño del proceso en nm</value>
+    <comment>Process (nm)</comment>
+  </data>
+  <data name="Die size (mm²)" xml:space="preserve">
+    <value>Area del chip (mm²)</value>
+    <comment>Die size (mm²)</comment>
+  </data>
+  <data name="Transistors" xml:space="preserve">
+    <value>Transistores</value>
+    <comment>Transistors</comment>
+  </data>
+  <data name="Data bus size" xml:space="preserve">
+    <value>Tamaño del bus de datos</value>
+    <comment>Data bus size</comment>
+  </data>
+  <data name="Address bus size" xml:space="preserve">
+    <value>Tamaño del bus de direcciones</value>
+    <comment>Address bus size</comment>
+  </data>
+  <data name="L1 instruction cache (KiB)" xml:space="preserve">
+    <value>Caché L1 de instrucciones (KiB)</value>
+    <comment>L1 instruction cache (KiB)</comment>
+  </data>
+  <data name="L1 data cache (KiB)" xml:space="preserve">
+    <value>Caché L1 de datos (KiB)</value>
+    <comment>L1 data cache (KiB)</comment>
+  </data>
+  <data name="L2 cache (KiB)" xml:space="preserve">
+    <value>Caché L2 (KiB)</value>
+    <comment>L2 cache (KiB)</comment>
+  </data>
+  <data name="L3 cache (KiB)" xml:space="preserve">
+    <value>Caché L3 (KiB)</value>
+    <comment>L3 cache (KiB)</comment>
+  </data>
 </root>

@@ -1,0 +1,243 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/processors/details/{Id:int}"
+@inherits OwningComponentBase<ProcessorsService>
+@inject IStringLocalizer<ProcessorsService> L
+@inject CompaniesService CompaniesService
+@inject InstructionSetsService InstructionSetsService
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Processor details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Name"]</FieldLabel>
+        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+    </Field>
+    @if (_editable || _model.CompanyId != null)
+    {
+        <Field>
+            <FieldLabel>@L["Company"]</FieldLabel>
+            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.CompanyId">
+                @foreach (var company in _companies)
+                {
+                    <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+                }
+            </Select>
+        </Field>
+    }
+    @if (_editable || _model.ModelCode != null)
+    {
+        <Field>
+            <FieldLabel>@L["Model code"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.ModelCode"/>
+        </Field>
+    }
+    @if(_editable || _model.Introduced.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Introduced"]</FieldLabel>
+            @if(_model.Introduced?.Year == 1000)
+            {
+                <TextEdit ReadOnly="true">@L["PROTOTYPE"]</TextEdit>
+            }
+            else
+            {
+                <DateEdit ReadOnly="!_editable" TValue="DateTime?" @bind-Date="@_model.Introduced"/>
+            }
+        </Field>
+    }
+    @if (_editable || _model.InstructionSetId.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Instruction set"]</FieldLabel>
+            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.InstructionSetId">
+                @foreach (var instructionSet in _instructionSets)
+                {
+                    <SelectItem TValue="int?" Value="@instructionSet.Id">@instructionSet.Name</SelectItem>
+                }
+            </Select>
+        </Field>
+    }
+    @if (_editable || _model.Speed.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Nominal speed (MHz)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="double?" Decimals="3" @bind-Value="@_model.Speed"/>
+        </Field>
+    }
+    @if (_editable || _model.Package != null)
+    {
+        <Field>
+            <FieldLabel>@L["Package"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Package"/>
+        </Field>
+    }
+    @if (_editable || _model.Gprs.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["General Purpose Registers"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.Gprs"/>
+        </Field>
+    }
+    @if (_editable || _model.GprSize.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["General Purpose Register size"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.GprSize"/>
+        </Field>
+    }
+    @if (_editable || _model.Fprs.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Floating Point Registers"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.Fprs"/>
+        </Field>
+    }
+    @if (_editable || _model.FprSize.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Floating Point Register size"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.FprSize"/>
+        </Field>
+    }
+    @if (_editable || _model.SimdRegisters.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["SIMD Registers"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.SimdRegisters"/>
+        </Field>
+    }
+    @if (_editable || _model.SimdSize.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["SIMD Register size"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.SimdSize"/>
+        </Field>
+    }
+    @if (_editable || _model.Cores.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Cores"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.Cores"/>
+        </Field>
+    }
+    @if (_editable || _model.ThreadsPerCore.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Threads per core"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.ThreadsPerCore"/>
+        </Field>
+    }
+    @if (_editable || _model.Process != null)
+    {
+        <Field>
+            <FieldLabel>@L["Process"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Process"/>
+        </Field>
+    }
+    @if (_editable || _model.ProcessNm.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Process (nm)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="float?" Decimals="2" @bind-Value="@_model.ProcessNm"/>
+        </Field>
+    }
+    @if (_editable || _model.DieSize.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Die size (mm²)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="float?" Decimals="2" @bind-Value="@_model.DieSize"/>
+        </Field>
+    }
+    @if (_editable || _model.Transistors.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Transistors"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="long?" Decimals="0" @bind-Value="@_model.Transistors"/>
+        </Field>
+    }
+    @if (_editable || _model.DataBus.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Data bus size"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.DataBus"/>
+        </Field>
+    }
+    @if (_editable || _model.AddrBus.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Address bus size"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.AddrBus"/>
+        </Field>
+    }
+    @if (_editable || _model.L1Instruction.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["L1 instruction cache (KiB)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="float?" Decimals="3" @bind-Value="@_model.L1Instruction"/>
+        </Field>
+    }
+    @if (_editable || _model.L1Data.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["L1 data cache (KiB)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="float?" Decimals="3" @bind-Value="@_model.L1Data"/>
+        </Field>
+    }
+    @if (_editable || _model.L2.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["L2 cache (KiB)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="float?" Decimals="3" @bind-Value="@_model.L2"/>
+        </Field>
+    }
+    @if (_editable || _model.L3.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["L3 cache (KiB)"]</FieldLabel>
+            <NumericEdit Disabled="!_editable" TValue="float?" Decimals="3" @bind-Value="@_model.L3"/>
+        </Field>
+    }
+</div>
+<div>
+    <span class="btn btn-primary">@L["Edit"]</span>
+    <a href="/admin/processors" class="btn btn-secondary">@L["Back to list"]</a>
+</div>
