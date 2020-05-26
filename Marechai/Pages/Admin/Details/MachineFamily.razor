@@ -1,5 +1,5 @@
-﻿@{
-    /******************************************************************************
+@{
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -29,31 +29,38 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 }
-@model Marechai.Database.Models.MachineFamily
 
-@{
-    ViewData["Title"] = "Details";
+@page "/admin/machine_families/details/{Id:int}"
+@inherits OwningComponentBase<MachineFamiliesService>
+@inject IStringLocalizer<MachineFamiliesService> L
+@inject CompaniesService CompaniesService
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Machine family details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
 }
-<h2>Details</h2>
+
 <div>
-    <h4>Machine family</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Company)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Company.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-    </dl>
+    <Field>
+        <FieldLabel>@L["Company"]</FieldLabel>
+        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@_model.CompanyId">
+            @foreach (var company in _companies)
+            {
+                <SelectItem TValue="int" Value="@company.Id">@company.Name</SelectItem>
+            }
+        </Select>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Name"]</FieldLabel>
+        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+    </Field>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    <span class="btn btn-primary">@L["Edit"]</span>
+    <a href="/admin/machine_families" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

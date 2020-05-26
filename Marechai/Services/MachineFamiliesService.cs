@@ -20,6 +20,8 @@ namespace Marechai.Services
                                Id = m.Id, Company = m.Company.Name, Name = m.Name
                            }).ToListAsync();
 
+        public async Task<MachineFamily> GetAsync(int id) => await _context.MachineFamilies.FindAsync(id);
+
         public async Task DeleteAsync(int id)
         {
             MachineFamily item = await _context.MachineFamilies.FindAsync(id);

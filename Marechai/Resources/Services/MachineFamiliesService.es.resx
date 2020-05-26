@@ -162,4 +162,12 @@
     <value>Cancelar</value>
     <comment>Cancel</comment>
   </data>
+  <data name="Machine family details" xml:space="preserve">
+    <value>Detalles de familia de máquinas</value>
+    <comment>Machine family details</comment>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+    <comment>Back to list</comment>
+  </data>
 </root>
