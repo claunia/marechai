@@ -35,6 +35,8 @@ namespace Marechai.Services
                                Introduced = m.Introduced, Type = m.Type, Family       = m.Family.Name
                            }).ToListAsync();
 
+        public async Task<Machine> GetAsync(int id) => await _context.Machines.FindAsync(id);
+
         public async Task<MachineViewModel> GetMachine(int id)
         {
             Machine machine = await _context.Machines.FindAsync(id);

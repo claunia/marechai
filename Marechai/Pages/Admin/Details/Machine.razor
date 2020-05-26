@@ -1,0 +1,110 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/machines/details/{Id:int}"
+@using Marechai.Database
+@inherits OwningComponentBase<MachinesService>
+@inject IStringLocalizer<MachinesService> L
+@inject CompaniesService CompaniesService
+@inject MachineFamiliesService MachineFamiliesService
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Machine details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Company"]</FieldLabel>
+        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@_model.CompanyId">
+            @foreach (var company in _companies)
+            {
+                <SelectItem TValue="int" Value="@company.Id">@company.Name</SelectItem>
+            }
+        </Select>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Name"]</FieldLabel>
+        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Type"]</FieldLabel>
+        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@Type">
+            @foreach (int type in Enum.GetValues(typeof(MachineType)))
+            {
+                <SelectItem TValue="int" Value="@type">@(((MachineType)type).ToString())</SelectItem>
+            }
+        </Select>
+    </Field>
+    @if (_editable || _model.Model != null)
+    {
+        <Field>
+            <FieldLabel>@L["Model"]</FieldLabel>
+            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Model"/>
+        </Field>
+    }
+    @if(_editable || _model.Introduced.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Introduced"]</FieldLabel>
+            @if(_model.Introduced?.Year == 1000)
+            {
+                <TextEdit ReadOnly="true">@L["PROTOTYPE"]</TextEdit>
+            }
+            else
+            {
+                <DateEdit ReadOnly="!_editable" TValue="DateTime?" @bind-Date="@_model.Introduced"/>
+            }
+        </Field>
+    }
+    @if (_editable || _model.FamilyId.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Family"]</FieldLabel>
+            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.FamilyId">
+                @foreach (MachineFamilyViewModel family in _families)
+                {
+                    <SelectItem TValue="int?" Value="@family.Id">@family.Name</SelectItem>
+                }
+            </Select>
+        </Field>
+    }
+</div>
+<div>
+    <span class="btn btn-primary">@L["Edit"]</span>
+    <a href="/admin/machines" class="btn btn-secondary">@L["Back to list"]</a>
+</div>

@@ -446,6 +446,22 @@
     <value>Compañía</value>
     <comment>Company</comment>
   </data>
+  <data name="Machines" xml:space="preserve">
+    <value>Máquinas</value>
+    <comment>Machines</comment>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+    <comment>Detailes</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+    <comment>Edit</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>Delete</comment>
+  </data>
   <data name="Delete machine" xml:space="preserve">
     <value>Eliminar máquina</value>
     <comment>Delete machine</comment>
@@ -457,5 +473,21 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
     <comment>Cancel</comment>
+  </data>
+  <data name="Machine details" xml:space="preserve">
+    <value>Detalles de máquina</value>
+    <comment>Machine details</comment>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+    <comment>Back to list</comment>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Modelo</value>
+    <comment>Model</comment>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Familia</value>
+    <comment>Family</comment>
   </data>
 </root>
