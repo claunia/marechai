@@ -10,6 +10,7 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class DocumentPerson
     {
+        bool                    _creating;
         bool                    _editing;
         bool                    _loaded;
         DocumentPersonViewModel _model;
@@ -30,14 +31,19 @@ namespace Marechai.Pages.Admin.Details
 
             _loaded = true;
 
-            if(Id <= 0)
+            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
+                                          StartsWith("admin/document_people/create", StringComparison.InvariantCulture);
+
+            if(Id <= 0 &&
+               !_creating)
                 return;
 
             _people = await PeopleService.GetAsync();
-            _model  = await Service.GetAsync(Id);
+            _model  = _creating ? new DocumentPersonViewModel() : await Service.GetAsync(Id);
 
-            _editing = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                         StartsWith("admin/document_people/edit/", StringComparison.InvariantCulture);
+            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
+                                                      StartsWith("admin/document_people/edit/",
+                                                                 StringComparison.InvariantCulture);
 
             if(_editing)
                 SetCheckboxes();
@@ -64,7 +70,15 @@ namespace Marechai.Pages.Admin.Details
         async void OnCancelClicked()
         {
             _editing = false;
-            _model   = await Service.GetAsync(Id);
+
+            if(_creating)
+            {
+                NavigationManager.ToBaseRelativePath("admin/document_people");
+
+                return;
+            }
+
+            _model = await Service.GetAsync(Id);
             SetCheckboxes();
             StateHasChanged();
         }
@@ -112,9 +126,14 @@ namespace Marechai.Pages.Admin.Details
                _unknownDisplayName)
                 return;
 
-            _editing = false;
-            await Service.UpdateAsync(_model);
-            _model = await Service.GetAsync(Id);
+            if(_creating)
+                Id = await Service.CreateAsync(_model);
+            else
+                await Service.UpdateAsync(_model);
+
+            _editing  = false;
+            _creating = false;
+            _model    = await Service.GetAsync(Id);
             SetCheckboxes();
             StateHasChanged();
         }
