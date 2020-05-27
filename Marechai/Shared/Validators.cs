@@ -99,5 +99,14 @@ namespace Marechai.Shared
 
             e.Status = ValidationStatus.Error;
         }
+
+        public static void ValidateDate(ValidatorEventArgs e)
+        {
+            if(!(e.Value is DateTime item) ||
+               item.Date >= DateTime.UtcNow.Date)
+                e.Status = ValidationStatus.Error;
+            else
+                e.Status = ValidationStatus.Success;
+        }
     }
 }

@@ -57,12 +57,50 @@ namespace Marechai.Services
                                                               LastLogo = c.
                                                                          Logos.OrderByDescending(l => l.Year).
                                                                          FirstOrDefault().Guid,
-                                                              Name   = c.Name, Founded = c.Founded, Sold = c.Sold,
-                                                              SoldTo = c.SoldTo.Name, Country = c.Country.Name,
-                                                              Status = c.Status
+                                                              Name = c.Name, Founded = c.Founded, Sold = c.Sold,
+                                                              SoldToId = c.SoldToId, CountryId = c.CountryId,
+                                                              Status = c.Status, Website = c.Website,
+                                                              Twitter = c.Twitter, Facebook = c.Facebook,
+                                                              Address = c.Address, City = c.City, Province = c.Province,
+                                                              PostalCode = c.PostalCode, Country = c.Country.Name
                                                           }).ToListAsync();
 
-        public Task<Company> GetAsync(int id) => _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
+        public Task<CompanyViewModel> GetAsync(int id) => _context.Companies.Where(c => c.Id == id).
+                                                                   Select(c => new CompanyViewModel
+                                                                   {
+                                                                       Id = c.Id, Name = c.Name, Founded = c.Founded,
+                                                                       Sold = c.Sold, SoldToId = c.SoldToId,
+                                                                       CountryId = c.CountryId, Status = c.Status,
+                                                                       Website = c.Website, Twitter = c.Twitter,
+                                                                       Facebook = c.Facebook, Address = c.Address,
+                                                                       City = c.City, Province = c.Province,
+                                                                       PostalCode = c.PostalCode,
+                                                                       Country = c.Country.Name
+                                                                   }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(CompanyViewModel viewModel)
+        {
+            Company model = await _context.Companies.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.Name       = viewModel.Name;
+            model.Founded    = viewModel.Founded;
+            model.Sold       = viewModel.Sold;
+            model.SoldToId   = viewModel.SoldToId;
+            model.CountryId  = viewModel.CountryId;
+            model.Status     = viewModel.Status;
+            model.Website    = viewModel.Website;
+            model.Twitter    = viewModel.Twitter;
+            model.Facebook   = viewModel.Facebook;
+            model.Address    = viewModel.Address;
+            model.City       = viewModel.City;
+            model.Province   = viewModel.Province;
+            model.PostalCode = viewModel.PostalCode;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task<List<Machine>> GetMachinesAsync(int id) =>
             await _context.Machines.Where(m => m.CompanyId == id).OrderBy(m => m.Name).Select(m => new Machine

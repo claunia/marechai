@@ -31,10 +31,12 @@
 }
 
 @page "/admin/companies/details/{Id:int}"
+@page "/admin/companies/edit/{Id:int}"
 @using Marechai.Database
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
 @inject Iso31661NumericService CountriesService
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Company details"]</h3>
 <hr />
@@ -49,106 +51,264 @@
 <div>
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
-        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+        <Validation Validator="@ValidateName">
+            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Name">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
     </Field>
     <Field>
         <FieldLabel>@L["Status"]</FieldLabel>
-        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@Status">
+        <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@Status">
             @foreach (int status in Enum.GetValues(typeof(CompanyStatus)))
             {
                 <SelectItem TValue="int" Value="@status">@(((CompanyStatus)status).ToString())</SelectItem>
             }
         </Select>
     </Field>
-    @if(_editable || _model.Founded.HasValue)
+    @if (_editing || _model.Founded != null)
     {
         <Field>
             <FieldLabel>@L["Founded"]</FieldLabel>
-            <DateEdit ReadOnly="!_editable" TValue="DateTime?" @bind-Date="@_model.Founded"/>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownFounded">@L["Unknown (foundation date)"]</Check>
+            }
+            @if (!_editing || !_unknownFounded)
+            {
+                <Validation Validator="@ValidateFounded">
+                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Text="@_model.Founded" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid foundation date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Website != null)
+    @if (_editing || _model.Website != null)
     {
         <Field>
             <FieldLabel>@L["Website"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Website" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownWebsite">@L["Unknown (website)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownWebsite)
+            {
+                <Validation Validator="@ValidateWebsite">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Website">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid website."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Twitter != null)
+    @if (_editing || _model.Twitter != null)
     {
         <Field>
             <FieldLabel>@L["Twitter"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Twitter" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownTwitter">@L["Unknown (twitter)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownTwitter)
+            {
+                <Validation Validator="@ValidateTwitter">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Twitter">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid Twitter handle."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Facebook != null)
+    @if (_editing || _model.Facebook != null)
     {
         <Field>
-            <FieldLabel>@L["Facebook"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Facebook" />
+            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Facebook" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownFacebook">@L["Unknown (facebook)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownFacebook)
+            {
+                <Validation Validator="@ValidateFacebook">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Facebook">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid Facebook user name."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Address != null)
+    @if (_editing || _model.Address != null)
     {
         <Field>
             <FieldLabel>@L["Address"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Address" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownAddress">@L["Unknown (address)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownAddress)
+            {
+                <Validation Validator="@ValidateAddress">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Address">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid address."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.City != null)
+    @if (_editing || _model.Address != null)
     {
         <Field>
             <FieldLabel>@L["City"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.City" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownCity">@L["Unknown (city)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownCity)
+            {
+                <Validation Validator="@ValidateCity">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.City">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid city."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Province != null)
+    @if (_editing || _model.Province != null)
     {
         <Field>
             <FieldLabel>@L["Province"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Province" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownProvince">@L["Unknown (province)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownProvince)
+            {
+                <Validation Validator="@ValidateProvince">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Province">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid province."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.PostalCode != null)
+    @if (_editing || _model.Address != null)
     {
         <Field>
             <FieldLabel>@L["Postal code"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.PostalCode" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownPostalCode">@L["Unknown (postal code)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownPostalCode)
+            {
+                <Validation Validator="@ValidatePostalCode">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.PostalCode">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid postal code."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.CountryId != null)
+    @if (_editing || _model.CountryId != null)
     {
         <Field>
             <FieldLabel>@L["Country"]</FieldLabel>
-            <Select Disabled="!_editable" TValue="short?" @bind-SelectedValue="@_model.CountryId">
-                @foreach (var country in _countries)
-                {
-                    <SelectItem TValue="short?" Value="@country.Id">@country.Name</SelectItem>
-                }
-            </Select>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownCountry">@L["Unknown (country)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownCountry)
+            {
+                <Select Disabled="!_editing" TValue="short?" @bind-SelectedValue="@_model.CountryId">
+                    @foreach (var country in _countries)
+                    {
+                        <SelectItem TValue="short?" Value="@country.Id">@country.Name</SelectItem>
+                    }
+                </Select>
+            }
         </Field>
     }
-    @if (_editable || _model.Sold != null)
+    @if (((int)_model.Status) > 1)
     {
-        <Field>
-            <FieldLabel>@L["Sold"]</FieldLabel>
-            <DateEdit ReadOnly="!_editable" TValue="DateTime?" @bind-Date="@_model.Sold" />
-        </Field>
-    }
-    @if (_editable || _model.SoldToId != null)
-    {
-        <Field>
-            <FieldLabel>@L["Sold to"]</FieldLabel>
-            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.SoldToId">
-                @foreach (var company in _companies)
+        @if (_editing || _model.Sold != null)
+        {
+            <Field>
+                <FieldLabel>@L["Sold"]</FieldLabel>
+                @if (_editing)
                 {
-                    <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+                    <Check TValue="bool" @ bind-Checked="@_unknownSold">@L["Unknown (sold/merged/bankrupt date)"]</Check>
                 }
-            </Select>
-        </Field>
+                @if (!_editing ||
+                     !_unknownSold)
+                {
+                    <Validation Validator="@ValidateSold">
+                        <DateEdit TValue="DateTime?" ReadOnly="!_editing" @ bind-Text="@_model.Sold">
+                            <Feedback>
+                                <ValidationError>@L["Please enter a valid sold/merge/bankruptcy date."]</ValidationError>
+                            </Feedback>
+                        </DateEdit>
+                    </Validation>
+                }
+            </Field>
+        }
+        @if (_editing || _model.SoldToId != null)
+        {
+            <Field>
+                <FieldLabel>@L["Sold to"]</FieldLabel>
+                @if (_editing)
+                {
+                    <Check TValue="bool" @ bind-Checked="@_unknownSoldTo">@L["Unknown (sold to)"]</Check>
+                }
+                @if (!_editing ||
+                     !_unknownSoldTo)
+                {
+                    <Select Disabled="!_editing" TValue="int?" @ bind-SelectedValue="@_model.SoldToId">
+                        @foreach (var company in _companies)
+                        {
+                            <SelectItem TValue="short?" Value="@company.Id">@company.Name</SelectItem>
+                        }
+                    </Select>
+                }
+            </Field>
+        }
     }
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
     <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

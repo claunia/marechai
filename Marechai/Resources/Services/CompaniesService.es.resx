@@ -314,4 +314,92 @@
     <value>Volver a la lista</value>
     <comment>Back to list</comment>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Save</comment>
+  </data>
+  <data name="Unknown (country)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a country</comment>
+  </data>
+  <data name="Unknown (foundation date)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to the foundation date</comment>
+  </data>
+  <data name="Unknown (website)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a website</comment>
+  </data>
+  <data name="Unknown (twitter)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a twitter handle</comment>
+  </data>
+  <data name="Unknown (facebook)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a facebook username</comment>
+  </data>
+  <data name="Unknown (address)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a postal address</comment>
+  </data>
+  <data name="Unknown (city)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a city</comment>
+  </data>
+  <data name="Unknown (province)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a province</comment>
+  </data>
+  <data name="Unknown (postal code)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a postal code</comment>
+  </data>
+  <data name="Unknown (sold/merged/bankrupt date)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to the date when the company was sold, merged, bankrupted, or renamed</comment>
+  </data>
+  <data name="Unknown (sold to)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to another company name</comment>
+  </data>
+  <data name="Please enter a valid name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido.</value>
+    <comment>Please enter a valid name.</comment>
+  </data>
+  <data name="Please enter a valid foundation date." xml:space="preserve">
+    <value>Por favor introduce una fecha de fundación válida.</value>
+    <comment>Please enter a valid foundation date.</comment>
+  </data>
+  <data name="Please enter a valid website." xml:space="preserve">
+    <value>Por favor introduce una página web válida.</value>
+    <comment>Please enter a valid website.</comment>
+  </data>
+  <data name="Please enter a valid Twitter handle." xml:space="preserve">
+    <value>Por favor introduce un indicador de Twitter válido.</value>
+    <comment>Please enter a valid Twitter handle.</comment>
+  </data>
+  <data name="Please enter a valid Facebook user name." xml:space="preserve">
+    <value>Por favor introduce un nombre de usuario de Facebook válido.</value>
+    <comment>Please enter a valid Facebook user name.</comment>
+  </data>
+  <data name="Please enter a valid address." xml:space="preserve">
+    <value>Por favor introduce una dirección válida.</value>
+    <comment>Please enter a valid address.</comment>
+  </data>
+  <data name="Please enter a valid city." xml:space="preserve">
+    <value>Por favor introduce una ciudad válida.</value>
+    <comment>Please enter a valid city.</comment>
+  </data>
+  <data name="Please enter a valid province." xml:space="preserve">
+    <value>Por favor introduce una provincia válida.</value>
+    <comment>Please enter a valid province.</comment>
+  </data>
+  <data name="Please enter a valid postal code." xml:space="preserve">
+    <value>Por favor introduce un código postal válido.</value>
+    <comment>Please enter a valid postal code.</comment>
+  </data>
+  <data name="Please enter a valid sold/merge/bankruptcy date." xml:space="preserve">
+    <value>Por favor introduce una fecha de venta, fusión, bancarrota o renombre válida.</value>
+    <comment>Please enter a valid sold/merge/bankruptcy date.</comment>
+  </data>
 </root>
