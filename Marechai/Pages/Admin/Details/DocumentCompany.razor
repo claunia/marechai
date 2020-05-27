@@ -31,9 +31,11 @@
 }
 
 @page "/admin/document_companies/details/{Id:int}"
+@page "/admin/document_companies/edit/{Id:int}"
 @inherits OwningComponentBase<DocumentCompaniesService>
 @inject IStringLocalizer<DocumentCompaniesService> L
 @inject CompaniesService CompaniesService
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Document company details"]</h3>
 <hr />
@@ -48,22 +50,44 @@
 <div>
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
-        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+        <Validation Validator="@ValidateName">
+            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Name">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
     </Field>
-    @if (_editable || _model.CompanyId != null)
+    @if (_editing || _model.CompanyId != null)
     {
         <Field>
             <FieldLabel>@L["Linked company"]</FieldLabel>
-            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.CompanyId">
-                @foreach (var company in _companies)
-                {
-                    <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-                }
-            </Select>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_noLinkedCompany">@L["None (linked company)"]</Check>
+            }
+            @if (!_editing ||
+                 !_noLinkedCompany)
+            {
+                <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.CompanyId">
+                    @foreach (var company in _companies)
+                    {
+                        <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+                    }
+                </Select>
+            }
         </Field>
     }
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
-    <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/document_people" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

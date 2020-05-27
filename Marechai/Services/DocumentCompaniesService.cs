@@ -22,7 +22,24 @@ namespace Marechai.Services
                                                                                   CompanyId = d.CompanyId
                                                                               }).ToListAsync();
 
-        public async Task<DocumentCompany> GetAsync(int id) => await _context.DocumentCompanies.FindAsync(id);
+        public async Task<DocumentCompanyViewModel> GetAsync(int id) =>
+            await _context.DocumentCompanies.Where(d => d.Id == id).Select(d => new DocumentCompanyViewModel
+            {
+                Id = d.Id, Name = d.Name, CompanyId = d.CompanyId
+            }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(DocumentCompanyViewModel viewModel)
+        {
+            DocumentCompany model = await _context.DocumentCompanies.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.CompanyId = viewModel.CompanyId;
+            model.Name      = viewModel.Name;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task DeleteAsync(int id)
         {
