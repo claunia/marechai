@@ -166,4 +166,20 @@
     <value>Volver a la lista</value>
     <comment>Back to list</comment>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Save</comment>
+  </data>
+  <data name="Please enter a valid instruction set name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido para la arquitectura.</value>
+    <comment>Please enter a valid instruction set name.</comment>
+  </data>
+  <data name="Instruction set name cannot contain more than 45 characters." xml:space="preserve">
+    <value>El nombre de la arquitectura no puede contener más de 45 caracteres.</value>
+    <comment>Instruction set name cannot contain more than 45 characters.</comment>
+  </data>
+  <data name="Instruction set name must be unique." xml:space="preserve">
+    <value>El nombre de la arquitectura debe ser único.</value>
+    <comment>Instruction set name must be unique.</comment>
+  </data>
 </root>

@@ -31,9 +31,11 @@
 }
 
 @page "/admin/instruction_sets/details/{Id:int}"
+@page "/admin/instruction_sets/edit/{Id:int}"
 @inherits OwningComponentBase<InstructionSetsService>
 @inject IStringLocalizer<InstructionSetsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
+@inject NavigationManager NavigationManager
 <h3>@L["Instruction set details"]</h3>
 <hr />
 
@@ -47,10 +49,24 @@
 <div>
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
-        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+        <Validation Validator="@ValidateName">
+            <TextEdit Disabled="!_editing" @bind-Text="@_model.Name">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid instruction set name."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
     </Field>
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
     <a href="/admin/instruction_sets" class="btn btn-secondary">@L["Back to list"]</a>
 </div>
