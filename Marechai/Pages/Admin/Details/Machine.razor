@@ -31,11 +31,13 @@
 }
 
 @page "/admin/machines/details/{Id:int}"
+@page "/admin/machines/edit/{Id:int}"
 @using Marechai.Database
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
 @inject CompaniesService CompaniesService
 @inject MachineFamiliesService MachineFamiliesService
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine details"]</h3>
 <hr />
@@ -50,7 +52,7 @@
 <div>
     <Field>
         <FieldLabel>@L["Company"]</FieldLabel>
-        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@_model.CompanyId">
+        <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@_model.CompanyId">
             @foreach (var company in _companies)
             {
                 <SelectItem TValue="int" Value="@company.Id">@company.Name</SelectItem>
@@ -59,52 +61,96 @@
     </Field>
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
-        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+        <Validation Validator="@ValidateName">
+            <TextEdit Disabled="!_editing" @bind-Text="@_model.Name">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
     </Field>
     <Field>
         <FieldLabel>@L["Type"]</FieldLabel>
-        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@Type">
+        <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@Type">
             @foreach (int type in Enum.GetValues(typeof(MachineType)))
             {
                 <SelectItem TValue="int" Value="@type">@(((MachineType)type).ToString())</SelectItem>
             }
         </Select>
     </Field>
-    @if (_editable || _model.Model != null)
+    @if (_editing || _model.Model != null)
     {
         <Field>
-            <FieldLabel>@L["Model"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Model"/>
+            <FieldLabel>@L["Model code"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownModel">@L["Unknown (model)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownModel)
+            {
+                <Validation Validator="@ValidateModel">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.Model">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid model."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if(_editable || _model.Introduced.HasValue)
+    @if (_editing || _model.Introduced.HasValue)
     {
         <Field>
             <FieldLabel>@L["Introduced"]</FieldLabel>
-            @if(_model.Introduced?.Year == 1000)
+            @if (_editing)
             {
-                <TextEdit ReadOnly="true">@L["PROTOTYPE"]</TextEdit>
+                <Check TValue="bool" Disabled="_prototype" @bind-Checked="@_unknownIntroduced">@L["Unknown (introduction date)"]</Check>
+                <Check TValue="bool" Disabled="_unknownIntroduced" @bind-Checked="@_prototype">@L["Prototype"]</Check>
             }
-            else
+            @if (!_editing ||
+                 (!_prototype && !_unknownIntroduced))
             {
-                <DateEdit ReadOnly="!_editable" TValue="DateTime?" @bind-Date="@_model.Introduced"/>
+                <Validation Validator="@ValidateIntroduced">
+                    <DateEdit Disabled="!_editing" TValue="DateTime?" @bind-Date="@_model.Introduced">
+                        <Feedback>
+                            <ValidationError>@L["Please enter an introduction date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
             }
-        </Field>
+            </Field>
     }
-    @if (_editable || _model.FamilyId.HasValue)
+    @if (_editing || _model.FamilyId != null)
     {
         <Field>
             <FieldLabel>@L["Family"]</FieldLabel>
-            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.FamilyId">
-                @foreach (MachineFamilyViewModel family in _families)
-                {
-                    <SelectItem TValue="int?" Value="@family.Id">@family.Name</SelectItem>
-                }
-            </Select>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_noFamily">@L["No family"]</Check>
+            }
+            @if (!_editing ||
+                 !_noFamily)
+            {
+                <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.FamilyId">
+                    @foreach (MachineFamilyViewModel family in _families)
+                    {
+                        <SelectItem TValue="int?" Value="@family.Id">@family.Name</SelectItem>
+                    }
+                </Select>
+            }
         </Field>
     }
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
     <a href="/admin/machines" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

@@ -35,7 +35,31 @@ namespace Marechai.Services
                                Introduced = m.Introduced, Type = m.Type, Family       = m.Family.Name
                            }).ToListAsync();
 
-        public async Task<Machine> GetAsync(int id) => await _context.Machines.FindAsync(id);
+        public async Task<MachineViewModel> GetAsync(int id) => await _context.Machines.Where(m => m.Id == id).
+                                                                               Select(m => new MachineViewModel
+                                                                               {
+                                                                                   Id = m.Id, CompanyId = m.CompanyId,
+                                                                                   Name = m.Name, Model = m.Model,
+                                                                                   Introduced = m.Introduced,
+                                                                                   Type = m.Type, FamilyId = m.FamilyId
+                                                                               }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(MachineViewModel viewModel)
+        {
+            Machine model = await _context.Machines.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.CompanyId  = viewModel.CompanyId;
+            model.Name       = viewModel.Name;
+            model.Model      = viewModel.Model;
+            model.Introduced = viewModel.Introduced;
+            model.Type       = viewModel.Type;
+            model.FamilyId   = viewModel.FamilyId;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task<MachineViewModel> GetMachine(int id)
         {

@@ -482,12 +482,40 @@
     <value>Volver a la lista</value>
     <comment>Back to list</comment>
   </data>
-  <data name="Model" xml:space="preserve">
-    <value>Modelo</value>
-    <comment>Model</comment>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Save</comment>
   </data>
-  <data name="Family" xml:space="preserve">
-    <value>Familia</value>
-    <comment>Family</comment>
+  <data name="Unknown (model)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a model</comment>
+  </data>
+  <data name="Unknown (introduction date)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to an introduction date</comment>
+  </data>
+  <data name="None (family)" xml:space="preserve">
+    <value>Ninguna</value>
+    <comment>None, referring to a machine family</comment>
+  </data>
+  <data name="Please enter a valid name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido.</value>
+    <comment>Please enter a valid name.</comment>
+  </data>
+  <data name="Please enter a valid model." xml:space="preserve">
+    <value>Por favor introduce un modelo válido.</value>
+    <comment>Please enter a valid model.</comment>
+  </data>
+  <data name="Please enter an introduction date." xml:space="preserve">
+    <value>Por favor introduce una fecha válida.</value>
+    <comment>Please enter an introduction date.</comment>
+  </data>
+  <data name="Name must contain less than 255 characters." xml:space="preserve">
+    <value>El nombre debe contener menos de 255 caracteres.</value>
+    <comment>Name must contain less than 255 characters.</comment>
+  </data>
+  <data name="Model must contain less than 50 characters." xml:space="preserve">
+    <value>El modelo debe contener menos de 50 caracteres.</value>
+    <comment>Model must contain less than 50 characters.</comment>
   </data>
 </root>
