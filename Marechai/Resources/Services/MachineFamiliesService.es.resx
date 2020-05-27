@@ -170,4 +170,20 @@
     <value>Volver a la lista</value>
     <comment>Back to list</comment>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Save</comment>
+  </data>
+  <data name="Please enter a valid name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido.</value>
+    <comment>Please enter a valid name.</comment>
+  </data>
+  <data name="Must not contain &quot;family&quot; or &quot;series&quot;. Different regional names should be separated with /. Different numbers should be separated with comma." xml:space="preserve">
+    <value>No debe contener &quot;familia&quot; or &quot;serie/quot;. Diferentes nombres regionales deben separarse con /. Diferentes números deben separarse con coma.</value>
+    <comment>Must not contain &quot;family&quot; or &quot;series&quot;. Different regional names should be separated with /. Different numbers should be separated with comma.</comment>
+  </data>
+  <data name="Family name must contain less than 255 characters." xml:space="preserve">
+    <value>El nombre de la familia debe contener menos de 255 caracteres.</value>
+    <comment>Family name must contain less than 255 characters.</comment>
+  </data>
 </root>

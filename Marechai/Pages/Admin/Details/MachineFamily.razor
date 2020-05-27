@@ -31,9 +31,11 @@
 }
 
 @page "/admin/machine_families/details/{Id:int}"
+@page "/admin/machine_families/edit/{Id:int}"
 @inherits OwningComponentBase<MachineFamiliesService>
 @inject IStringLocalizer<MachineFamiliesService> L
 @inject CompaniesService CompaniesService
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine family details"]</h3>
 <hr />
@@ -48,7 +50,7 @@
 <div>
     <Field>
         <FieldLabel>@L["Company"]</FieldLabel>
-        <Select Disabled="!_editable" TValue="int" @bind-SelectedValue="@_model.CompanyId">
+        <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@_model.CompanyId">
             @foreach (var company in _companies)
             {
                 <SelectItem TValue="int" Value="@company.Id">@company.Name</SelectItem>
@@ -57,10 +59,28 @@
     </Field>
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
-        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name"/>
+        <Validation Validator="@ValidateName">
+            <TextEdit Disabled="!_editing" @bind-Text="@_model.Name">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
+        @if (_editing)
+        {
+            <FieldHelp>@L["Must not contain \"family\" or \"series\". Different regional names should be separated with /. Different numbers should be separated with comma."]</FieldHelp>
+        }
     </Field>
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
     <a href="/admin/machine_families" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

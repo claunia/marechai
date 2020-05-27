@@ -20,7 +20,24 @@ namespace Marechai.Services
                                Id = m.Id, Company = m.Company.Name, Name = m.Name
                            }).ToListAsync();
 
-        public async Task<MachineFamily> GetAsync(int id) => await _context.MachineFamilies.FindAsync(id);
+        public async Task<MachineFamilyViewModel> GetAsync(int id) =>
+            await _context.MachineFamilies.Where(f => f.Id == id).Select(m => new MachineFamilyViewModel
+            {
+                Id = m.Id, CompanyId = m.CompanyId, Name = m.Name
+            }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(MachineFamilyViewModel viewModel)
+        {
+            MachineFamily model = await _context.MachineFamilies.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.Name      = viewModel.Name;
+            model.CompanyId = viewModel.CompanyId;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task DeleteAsync(int id)
         {
