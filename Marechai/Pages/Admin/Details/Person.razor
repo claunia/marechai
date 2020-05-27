@@ -31,9 +31,11 @@
 }
 
 @page "/admin/people/details/{Id:int}"
+@page "/admin/people/edit/{Id:int}"
 @inherits OwningComponentBase<PeopleService>
 @inject IStringLocalizer<PeopleService> L
 @inject Iso31661NumericService CountriesService
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Person details"]</h3>
 <hr />
@@ -46,80 +48,213 @@
 }
 
 <div>
-    @if (_editable || _model.Name != null)
+    @if (_editing || _model.Name != null)
     {
         <Field>
             <FieldLabel>@L["Name"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownName">@L["Unknown (name)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownName)
+            {
+                <Validation Validator="@ValidateName">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Name">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Surname != null)
+    @if (_editing || _model.Surname != null)
     {
         <Field>
             <FieldLabel>@L["Surname"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Surname" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSurname">@L["Unknown (surname)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSurname)
+            {
+                <Validation Validator="@ValidateSurname">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Surname">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid surname."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Alias != null)
+    @if (_editing || _model.Alias != null)
     {
         <Field>
             <FieldLabel>@L["Alias"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Alias" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownAlias">@L["Unknown (alias)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownAlias)
+            {
+                <Validation Validator="@ValidateAlias">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Alias">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid alias."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.DisplayName != null)
+    @if (_editing || _model.DisplayName != null)
     {
         <Field>
             <FieldLabel>@L["Display name"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.DisplayName" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownDisplayName">@L["Unknown (display name)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownDisplayName)
+            {
+                <Validation Validator="@ValidateDisplayName">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.DisplayName">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid display name."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.CountryOfBirthId != null)
+    @if (_editing || _model.CountryOfBirthId != null)
     {
         <Field>
             <FieldLabel>@L["Country of birth"]</FieldLabel>
-            <Select Disabled="!_editable" TValue="short?" @bind-SelectedValue="@_model.CountryOfBirthId">
-                @foreach (var country in _countries)
-                {
-                    <SelectItem TValue="short?" Value="@country.Id">@country.Name</SelectItem>
-                }
-            </Select>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownCountry">@L["Unknown (country of birth)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownCountry)
+            {
+                <Select Disabled="!_editing" TValue="short?" @bind-SelectedValue="@_model.CountryOfBirthId">
+                    @foreach (var country in _countries)
+                    {
+                        <SelectItem TValue="short?" Value="@country.Id">@country.Name</SelectItem>
+                    }
+                </Select>
+            }
         </Field>
     }
     <Field>
         <FieldLabel>@L["Birth date"]</FieldLabel>
-        <DateEdit TValue="DateTime" ReadOnly="!_editable" @bind-Text="@_model.BirthDate" />
+        <Validation Validator="@ValidateBirthDate">
+            <DateEdit TValue="DateTime" ReadOnly="!_editing" @bind-Text="@_model.BirthDate" >
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid birth date."]</ValidationError>
+                </Feedback>
+            </DateEdit>
+        </Validation>
     </Field>
-    @if (_editable || _model.DeathDate != null)
+    @if (_editing || _model.DeathDate != null)
     {
         <Field>
             <FieldLabel>@L["Date of death"]</FieldLabel>
-        <DateEdit TValue="DateTime?" ReadOnly="!_editable" @bind-Text="@_model.DeathDate" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownDeathDate">@L["Unknown (death date)"]</Check>
+            }
+            @if (!_editing || !_unknownDeathDate)
+            {
+                <Validation Validator="@ValidateDeathDate">
+                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Text="@_model.DeathDate" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid death date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Webpage != null)
+    @if (_editing || _model.Webpage != null)
     {
         <Field>
             <FieldLabel>@L["Webpage"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Webpage" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownWebpage">@L["Unknown (webpage)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownWebpage)
+            {
+                <Validation Validator="@ValidateWebpage">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Webpage">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid webpage."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Twitter != null)
+    @if (_editing || _model.Twitter != null)
     {
         <Field>
             <FieldLabel>@L["Twitter"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Twitter" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownTwitter">@L["Unknown (twitter)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownTwitter)
+            {
+                <Validation Validator="@ValidateTwitter">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Twitter">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid Twitter handle."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Facebook != null)
+    @if (_editing || _model.Facebook != null)
     {
         <Field>
-            <FieldLabel>@L["Facebook"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Facebook" />
+            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Facebook" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownFacebook">@L["Unknown (facebook)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownFacebook)
+            {
+                <Validation Validator="@ValidateFacebook">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Facebook">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid Facebook user name."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
     <a href="/admin/people" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

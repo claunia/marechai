@@ -188,7 +188,7 @@
   </data>
   <data name="Surname" xml:space="preserve">
     <value>Apellido</value>
-    <comment>Surnam</comment>
+    <comment>Surname</comment>
   </data>
   <data name="Alias" xml:space="preserve">
     <value>Alias</value>
@@ -205,5 +205,133 @@
   <data name="Back to list" xml:space="preserve">
     <value>Volver a la lista</value>
     <comment>Back to list</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Save</comment>
+  </data>
+  <data name="Unknown (name)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a name</comment>
+  </data>
+  <data name="Unknown (surname)" xml:space="preserve">
+    <value>Desconocidos</value>
+    <comment>Unknown, referring to one or more surnames</comment>
+  </data>
+  <data name="Unknown (alias)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to an alias</comment>
+  </data>
+  <data name="Unknown (display name)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a display name</comment>
+  </data>
+  <data name="Unknown (country of birth)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a country</comment>
+  </data>
+  <data name="Unknown (death date)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to the death date</comment>
+  </data>
+  <data name="Unknown (webpage)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a webpage</comment>
+  </data>
+  <data name="Unknown (twitter)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a twitter handle</comment>
+  </data>
+  <data name="Unknown (facebook)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a facebook username</comment>
+  </data>
+  <data name="Please enter a valid name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido.</value>
+    <comment>Please enter a valid name.</comment>
+  </data>
+  <data name="Please enter a valid surname." xml:space="preserve">
+    <value>Por favor introduce un apellido (o varios) válido.</value>
+    <comment>Please enter a valid surname.</comment>
+  </data>
+  <data name="Please enter a valid alias." xml:space="preserve">
+    <value>Por favor introduce un alias válido.</value>
+    <comment>Please enter a valid alias.</comment>
+  </data>
+  <data name="Please enter a valid display name." xml:space="preserve">
+    <value>Por favor introduce un nombre para mostrar válido.</value>
+    <comment>Please enter a valid display name.</comment>
+  </data>
+  <data name="Please enter a valid birth date." xml:space="preserve">
+    <value>Por favor introduce una fecha de nacimiento válida.</value>
+    <comment>Please enter a valid birth date.</comment>
+  </data>
+  <data name="Please enter a valid death date." xml:space="preserve">
+    <value>Por favor introduce una fecha de fallecimiento válida.</value>
+    <comment>Please enter a valid death date.</comment>
+  </data>
+  <data name="Please enter a valid webpage." xml:space="preserve">
+    <value>Por favor introduce una página web válida.</value>
+    <comment>Please enter a valid webpage.</comment>
+  </data>
+  <data name="Please enter a valid Twitter handle." xml:space="preserve">
+    <value>Por favor introduce un identificador de Twitter válido.</value>
+    <comment>Please enter a valid Twitter handle.</comment>
+  </data>
+  <data name="Please enter a valid Facebook user name." xml:space="preserve">
+    <value>Por favor introduce un nombre de usuario de Facebook válido.</value>
+    <comment>Please enter a valid Facebook user name.</comment>
+  </data>
+  <data name="Name must be smaller than 256 characters." xml:space="preserve">
+    <value>El nombre debe contener menos de 256 caracteres.</value>
+    <comment>Name must be smaller than 256 characters.</comment>
+  </data>
+  <data name="Both name and surname must be known and filled, or both unknown." xml:space="preserve">
+    <value>Tanto el nombre como el/los apellido(s) deben rellenarse, or ser desconocidos.</value>
+    <comment>Both name and surname must be known and filled, or both unknown.</comment>
+  </data>
+  <data name="Surname must be smaller than 256 characters." xml:space="preserve">
+    <value>El/los apellido(s) deben contener menos de 256 caracteres.</value>
+    <comment>Surname must be smaller than 256 characters.</comment>
+  </data>
+  <data name="Alias must be smaller than 256 characters." xml:space="preserve">
+    <value>El alias debe contener menos de 256 caracteres.</value>
+    <comment>Alias must be smaller than 256 characters.</comment>
+  </data>
+  <data name="Display name must be smaller than 256 characters." xml:space="preserve">
+    <value>El nombre para mostrar debe contener menos de 256 caracteres.</value>
+    <comment>Display name must be smaller than 256 characters.</comment>
+  </data>
+  <data name="Birth date must be before today." xml:space="preserve">
+    <value>La fecha de nacimiento debe ser anterior a hoy.</value>
+    <comment>Birth date must be before today.</comment>
+  </data>
+  <data name="Birth date must be before death date." xml:space="preserve">
+    <value>La fecha de nacimiento debe ser anterior a la de fallecimiento</value>
+    <comment>Birth date must be before death date.</comment>
+  </data>
+  <data name="Death date must be before today." xml:space="preserve">
+    <value>La fecha de fallecimiento debe ser anterior a hoy.</value>
+    <comment>Death date must be before today.</comment>
+  </data>
+  <data name="Death date must be after birth date." xml:space="preserve">
+    <value>La fecha de fallecimiento debe ser posterior a la de nacimiento.</value>
+    <comment>Death date must be after birth date.</comment>
+  </data>
+  <data name="Webpage must be smaller than 255 characters." xml:space="preserve">
+    <value>La página web debe contener menos de 255 caracteres.</value>
+    <comment>Webpage must be smaller than 255 characters.</comment>
+  </data>
+  <data name="Twitter handle must be smaller than 255 characters." xml:space="preserve">
+    <value>El identificador de Twitter debe contener menos de 255 caracteres.</value>
+    <comment>Twitter handle must be smaller than 255 characters.</comment>
+  </data>
+  <data name="Invalid Twitter handle." xml:space="preserve">
+    <value>Identificador de Twitter inválido.</value>
+    <comment>Invalid Twitter handle.</comment>
+  </data>
+  <data name="Facebook username must be smaller than 256 characters." xml:space="preserve">
+    <value>El nombre de usuario de Facebook debe contener menos de 256 caracteres.</value>
+    <comment>Facebook username must be smaller than 256 characters.</comment>
   </data>
 </root>
