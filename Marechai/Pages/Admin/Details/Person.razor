@@ -227,7 +227,7 @@
     @if (_editing || _model.Facebook != null)
     {
         <Field>
-            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Facebook" />
+            <FieldLabel>@L["Facebook"]</FieldLabel>
             @if (_editing)
             {
                 <Check TValue="bool" @bind-Checked="@_unknownFacebook">@L["Unknown (facebook)"]</Check>

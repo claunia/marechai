@@ -32,6 +32,7 @@
 
 @page "/admin/companies/details/{Id:int}"
 @page "/admin/companies/edit/{Id:int}"
+@page "/admin/companies/create"
 @using Marechai.Database
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
@@ -133,7 +134,7 @@
     @if (_editing || _model.Facebook != null)
     {
         <Field>
-            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Facebook" />
+            <FieldLabel>@L["Facebook"]</FieldLabel>
             @if (_editing)
             {
                 <Check TValue="bool" @bind-Checked="@_unknownFacebook">@L["Unknown (facebook)"]</Check>
@@ -172,7 +173,7 @@
             }
         </Field>
     }
-    @if (_editing || _model.Address != null)
+    @if (_editing || _model.City != null)
     {
         <Field>
             <FieldLabel>@L["City"]</FieldLabel>
@@ -214,7 +215,7 @@
             }
         </Field>
     }
-    @if (_editing || _model.Address != null)
+    @if (_editing || _model.PostalCode != null)
     {
         <Field>
             <FieldLabel>@L["Postal code"]</FieldLabel>
@@ -263,13 +264,13 @@
                 <FieldLabel>@L["Sold"]</FieldLabel>
                 @if (_editing)
                 {
-                    <Check TValue="bool" @ bind-Checked="@_unknownSold">@L["Unknown (sold/merged/bankrupt date)"]</Check>
+                    <Check TValue="bool" @bind-Checked="@_unknownSold">@L["Unknown (sold/merged/bankrupt date)"]</Check>
                 }
                 @if (!_editing ||
                      !_unknownSold)
                 {
                     <Validation Validator="@ValidateSold">
-                        <DateEdit TValue="DateTime?" ReadOnly="!_editing" @ bind-Text="@_model.Sold">
+                        <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Text="@_model.Sold">
                             <Feedback>
                                 <ValidationError>@L["Please enter a valid sold/merge/bankruptcy date."]</ValidationError>
                             </Feedback>
@@ -284,15 +285,15 @@
                 <FieldLabel>@L["Sold to"]</FieldLabel>
                 @if (_editing)
                 {
-                    <Check TValue="bool" @ bind-Checked="@_unknownSoldTo">@L["Unknown (sold to)"]</Check>
+                    <Check TValue="bool" @bind-Checked="@_unknownSoldTo">@L["Unknown (sold to)"]</Check>
                 }
                 @if (!_editing ||
                      !_unknownSoldTo)
                 {
-                    <Select Disabled="!_editing" TValue="int?" @ bind-SelectedValue="@_model.SoldToId">
+                    <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.SoldToId">
                         @foreach (var company in _companies)
                         {
-                            <SelectItem TValue="short?" Value="@company.Id">@company.Name</SelectItem>
+                            <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
                         }
                     </Select>
                 }
