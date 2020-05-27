@@ -105,28 +105,33 @@ namespace Marechai.Pages.Admin.Details
                 return;
 
             if(_unknownDisplayName)
-                _model.Alias = null;
-            else if(string.IsNullOrWhiteSpace(_model.Alias))
+                _model.DisplayName = null;
+            else if(string.IsNullOrWhiteSpace(_model.DisplayName))
                 return;
 
             if(_unknownFacebook)
-                _model.Alias = null;
-            else if(string.IsNullOrWhiteSpace(_model.Alias))
+                _model.Facebook = null;
+            else if(string.IsNullOrWhiteSpace(_model.Facebook))
                 return;
 
             if(_unknownName)
-                _model.Alias = null;
-            else if(string.IsNullOrWhiteSpace(_model.Alias))
+                _model.Name = null;
+            else if(string.IsNullOrWhiteSpace(_model.Name))
                 return;
 
             if(_unknownSurname)
-                _model.Alias = null;
-            else if(string.IsNullOrWhiteSpace(_model.Alias))
+                _model.Surname = null;
+            else if(string.IsNullOrWhiteSpace(_model.Surname))
+                return;
+
+            if(_unknownTwitter)
+                _model.Twitter = null;
+            else if(string.IsNullOrWhiteSpace(_model.Twitter))
                 return;
 
             if(_unknownWebpage)
-                _model.Alias = null;
-            else if(string.IsNullOrWhiteSpace(_model.Alias))
+                _model.Webpage = null;
+            else if(string.IsNullOrWhiteSpace(_model.Webpage))
                 return;
 
             if((_unknownName  && !_unknownSurname) ||
