@@ -95,12 +95,11 @@ namespace Marechai.Pages.Admin.Details
             StateHasChanged();
         }
 
-        void ValidateDoubleBiggerThanZero(ValidatorEventArgs e) =>
-            Validators.ValidateDoubleBiggerThanZero(e, 1, 131072);
+        void ValidateDoubleBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateDouble(e, 1, 131072);
 
-        void ValidateLongBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateLongBiggerThanZero(e, 2);
+        void ValidateLongBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateLong(e, 2);
 
         void ValidateType(ValidatorEventArgs e) =>
-            Validators.ValidateStringWithMaxLength(e, L["Screen type cannot be bigger than 256 characters."], 256);
+            Validators.ValidateString(e, L["Screen type cannot be bigger than 256 characters."], 256);
     }
 }

@@ -42,7 +42,53 @@ namespace Marechai.Services
                     p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
             }).ToListAsync();
 
-        public async Task<Processor> GetAsync(int id) => await _context.Processors.FindAsync(id);
+        public async Task<ProcessorViewModel> GetAsync(int id) =>
+            await _context.Processors.Where(p => p.Id == id).Select(p => new ProcessorViewModel
+            {
+                Name = p.Name, CompanyName = p.Company.Name, CompanyId = p.Company.Id, ModelCode = p.ModelCode,
+                Introduced = p.Introduced, Speed = p.Speed, Package = p.Package, Gprs = p.Gprs,
+                GprSize = p.GprSize, Fprs = p.Fprs, FprSize = p.FprSize, Cores = p.Cores,
+                ThreadsPerCore = p.ThreadsPerCore, Process = p.Process, ProcessNm = p.ProcessNm, DieSize = p.DieSize,
+                Transistors = p.Transistors, DataBus = p.DataBus, AddrBus = p.AddrBus, SimdRegisters = p.SimdRegisters,
+                SimdSize = p.SimdSize, L1Instruction = p.L1Instruction, L1Data = p.L1Data, L2 = p.L2,
+                L3 = p.L3, InstructionSet = p.InstructionSet.Name, InstructionSetId = p.InstructionSetId
+            }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(ProcessorViewModel viewModel)
+        {
+            Processor model = await _context.Processors.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.AddrBus          = viewModel.AddrBus;
+            model.CompanyId        = viewModel.CompanyId;
+            model.Cores            = viewModel.Cores;
+            model.DataBus          = viewModel.DataBus;
+            model.DieSize          = viewModel.DieSize;
+            model.Fprs             = viewModel.Fprs;
+            model.FprSize          = viewModel.FprSize;
+            model.Gprs             = viewModel.Gprs;
+            model.GprSize          = viewModel.GprSize;
+            model.InstructionSetId = viewModel.InstructionSetId;
+            model.Introduced       = viewModel.Introduced;
+            model.L1Data           = viewModel.L1Data;
+            model.L1Instruction    = viewModel.L1Instruction;
+            model.L2               = viewModel.L2;
+            model.L3               = viewModel.L3;
+            model.ModelCode        = viewModel.ModelCode;
+            model.Name             = viewModel.Name;
+            model.Package          = viewModel.Package;
+            model.Process          = viewModel.Process;
+            model.ProcessNm        = viewModel.ProcessNm;
+            model.SimdRegisters    = viewModel.SimdRegisters;
+            model.SimdSize         = viewModel.SimdSize;
+            model.Speed            = viewModel.Speed;
+            model.ThreadsPerCore   = viewModel.ThreadsPerCore;
+            model.Transistors      = viewModel.Transistors;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task DeleteAsync(int id)
         {

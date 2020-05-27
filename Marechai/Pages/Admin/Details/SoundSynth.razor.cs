@@ -135,15 +135,15 @@ namespace Marechai.Pages.Admin.Details
         }
 
         void ValidateModelCode(ValidatorEventArgs e) =>
-            Validators.ValidateStringWithMaxLength(e, L["Model code must be 45 characters or less."], 45);
+            Validators.ValidateString(e, L["Model code must be 45 characters or less."], 45);
 
         void ValidateIntroduced(ValidatorEventArgs e) => Validators.ValidateIntroducedDate(e);
 
-        void ValidateIntegerBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateIntegerBiggerThanZero(e);
+        void ValidateIntegerBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateInteger(e);
 
-        void ValidateDoubleBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateDoubleBiggerThanZero(e);
+        void ValidateDoubleBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateDouble(e);
 
         void ValidateName(ValidatorEventArgs e) =>
-            Validators.ValidateStringWithMaxLength(e, L["Name must be 50 characters or less."], 50);
+            Validators.ValidateString(e, L["Name must be 50 characters or less."], 50);
     }
 }
