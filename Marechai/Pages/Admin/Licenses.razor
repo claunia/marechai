@@ -46,7 +46,7 @@
         @L["Create new"]
     </span>
 </p>
-<table class="table">
+<table class="table table-striped">
     <thead>
     <tr>
         <th>
@@ -93,7 +93,7 @@
             </td>
             <td>
                 <a class="btn btn-primary" href="/admin/licenses/details/@item.Id">@L["Details"]</a>
-                <a class="btn btn-primary" href="/admin/licenses/edit/@item.Id">@L["Edit"]</a>
+                <a class="btn btn-secondary" href="/admin/licenses/edit/@item.Id">@L["Edit"]</a>
                 <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
             </td>
         </tr>
