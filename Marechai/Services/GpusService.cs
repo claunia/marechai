@@ -59,6 +59,21 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(GpuViewModel viewModel)
+        {
+            var model = new Gpu
+            {
+                Name       = viewModel.Name, CompanyId     = viewModel.CompanyId, ModelCode = viewModel.ModelCode,
+                Introduced = viewModel.Introduced, Package = viewModel.Package, Process     = viewModel.Process,
+                ProcessNm  = viewModel.ProcessNm, DieSize  = viewModel.DieSize, Transistors = viewModel.Transistors
+            };
+
+            await _context.Gpus.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             Gpu item = await _context.Gpus.FindAsync(id);
