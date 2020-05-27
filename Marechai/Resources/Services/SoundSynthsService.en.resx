@@ -118,168 +118,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-    <comment>Sound synthesizers</comment>
-  </data>
-  <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-    <comment>Message that appears while data is being loaded from database</comment>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Nombre</value>
-    <comment>Name</comment>
-  </data>
-  <data name="Company" xml:space="preserve">
-    <value>Compañía</value>
-    <comment>Company</comment>
-  </data>
-  <data name="Model code" xml:space="preserve">
-    <value>Modelo</value>
-    <comment>Model</comment>
-  </data>
-  <data name="Introduced" xml:space="preserve">
-    <value>Introducido el</value>
-    <comment>Introduced</comment>
-  </data>
-  <data name="Type" xml:space="preserve">
-    <value>Tipo</value>
-    <comment>Type</comment>
-  </data>
-  <data name="Create new" xml:space="preserve">
-    <value>Crear nuevo</value>
-    <comment>Create new</comment>
-  </data>
-  <data name="Details" xml:space="preserve">
-    <value>Detalles</value>
-    <comment>Details</comment>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Editar</value>
-    <comment>Edit</comment>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Eliminar</value>
-    <comment>Delete</comment>
-  </data>
-  <data name="Delete sound synthesizer" xml:space="preserve">
-    <value>Eliminar sintetizador de sonido</value>
-    <comment>Delete sound synthesizer</comment>
-  </data>
-  <data name="Are you sure you want to delete {0} {1}?" xml:space="preserve">
-    <value>¿Está seguro de que desea borrar {0} {1}?</value>
-    <comment>{0} company name, {1} synth name</comment>
-  </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Cancelar</value>
-    <comment>Cancel</comment>
-  </data>
-  <data name="Sound synthesizer details" xml:space="preserve">
-    <value>Detalles de sintetizador de sonido</value>
-    <comment>Sound synthesizer details</comment>
-  </data>
-  <data name="Back to list" xml:space="preserve">
-    <value>Volver a la lista</value>
-    <comment>Back to list</comment>
-  </data>
-  <data name="Digitized voices" xml:space="preserve">
-    <value>Voces digitalizadas</value>
-    <comment>Digitized voices</comment>
-  </data>
-  <data name="Sample rate (Hz)" xml:space="preserve">
-    <value>Frecuencia de muestreo (Hz)</value>
-    <comment>Sample rate (Hz)</comment>
-  </data>
-  <data name="Sample resolution (bits)" xml:space="preserve">
-    <value>Resolución de muestreo (bits)</value>
-    <comment>Sample resolution (bits)</comment>
-  </data>
-  <data name="Square wave channels" xml:space="preserve">
-    <value>Canales de onda cuadrada</value>
-    <comment>Square wave channels</comment>
-  </data>
-  <data name="White noise channels" xml:space="preserve">
-    <value>Canales de ruido blanco</value>
-    <comment>White noise channels</comment>
-  </data>
   <data name="Unknown (company)" xml:space="preserve">
-    <value>Desconocida</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to a company</comment>
   </data>
   <data name="Unknown (model code)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to a model code</comment>
   </data>
   <data name="Unknown (introduction date)" xml:space="preserve">
-    <value>Desconocida</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to an introduction date</comment>
   </data>
   <data name="Unknown (voices)" xml:space="preserve">
-    <value>Desconocidas</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to digitized voices</comment>
   </data>
   <data name="Unknown (sample rate)" xml:space="preserve">
-    <value>Desconocida</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to sample rate</comment>
   </data>
   <data name="Unknown (sample resolution)" xml:space="preserve">
-    <value>Desconocida</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to sample resolution</comment>
   </data>
   <data name="Unknown (square wave channels)" xml:space="preserve">
-    <value>Desconocidos</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to square wave channels</comment>
   </data>
   <data name="Unknown (white noise channels)" xml:space="preserve">
-    <value>Desconocidos</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to white noise channels</comment>
   </data>
   <data name="Unknown (type)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to sound synthesizer type</comment>
-  </data>
-  <data name="Please enter a valid model code." xml:space="preserve">
-    <value>Por favor introduce un modelo válido.</value>
-    <comment>Please enter a valid model code.</comment>
-  </data>
-  <data name="Prototype" xml:space="preserve">
-    <value>Prototipo</value>
-    <comment>Prototype</comment>
-  </data>
-  <data name="Please enter an introduction date." xml:space="preserve">
-    <value>Por favor introduce una fecha válida.</value>
-    <comment>Please enter an introduction date.</comment>
-  </data>
-  <data name="Please enter a valid number of voices." xml:space="preserve">
-    <value>Por favor introduce un número de voces válido.</value>
-    <comment>Please enter a valid number of voices.</comment>
-  </data>
-  <data name="Please enter a valid sample rate." xml:space="preserve">
-    <value>Por favor introduce una frequencia de muestreo válida.</value>
-    <comment>Please enter a valid sample rate.</comment>
-  </data>
-  <data name="Please enter a valid number of bits for sample resolution." xml:space="preserve">
-    <value>Por favor introduce un número de bits de resolución de muestreo válido.</value>
-    <comment>Please enter a valid number of bits for sample resolution.</comment>
-  </data>
-  <data name="Please enter a valid number of square wave channels." xml:space="preserve">
-    <value>Por favor introduce un número de canales de onda cuadrada válido.</value>
-    <comment>Please enter a valid number of square wave channels.</comment>
-  </data>
-  <data name="Please enter a valid number of white noise channels." xml:space="preserve">
-    <value>Por favor introduce un número de canales de rudio blanco válido.</value>
-    <comment>Please enter a valid number of white noise channels.</comment>
-  </data>
-  <data name="Please enter a valid sound synthesizer type." xml:space="preserve">
-    <value>Por favor introduce un tipo de sintetizador válido.</value>
-    <comment>Please enter a valid sound synthesizer type.</comment>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Guardar</value>
-    <comment>Save</comment>
-  </data>
-  <data name="Model code must be 45 characters or less." xml:space="preserve">
-    <value>El modelo debe contener 45 caracteres o menos.</value>
-    <comment>Model code must be 45 characters or less.</comment>
   </data>
 </root>

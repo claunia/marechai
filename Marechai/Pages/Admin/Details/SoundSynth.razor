@@ -31,9 +31,11 @@
 }
 
 @page "/admin/sound_synths/details/{Id:int}"
+@page "/admin/sound_synths/edit/{Id:int}"
 @inherits OwningComponentBase<SoundSynthsService>
 @inject IStringLocalizer<SoundSynthsService> L
 @inject CompaniesService CompaniesService
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Sound synthesizer details"]</h3>
 <hr />
@@ -46,80 +48,209 @@
 }
 
 <div>
-    @if (_editable || _model.CompanyId != null)
+    @if (_editing || _model.CompanyId != null)
     {
         <Field>
             <FieldLabel>@L["Company"]</FieldLabel>
-            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.CompanyId">
-                @foreach (var company in _companies)
-                {
-                    <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-                }
-            </Select>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownCompany">@L["Unknown (company)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownCompany)
+            {
+                <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.CompanyId">
+                    @foreach (var company in _companies)
+                    {
+                        <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+                    }
+                </Select>
+            }
         </Field>
     }
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
-        <TextEdit Disabled="!_editable" @bind-Text="@_model.Name"/>
+        <TextEdit Disabled="!_editing" @bind-Text="@_model.Name"/>
     </Field>
-    @if (_editable || _model.ModelCode != null)
+    @if (_editing || _model.ModelCode != null)
     {
         <Field>
             <FieldLabel>@L["Model code"]</FieldLabel>
-            <TextEdit Disabled="!_editable" @bind-Text="@_model.ModelCode"/>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownModelCode">@L["Unknown (model code)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownModelCode)
+            {
+                <Validation Validator="@ValidateModelCode">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.ModelCode">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid model code."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Introduced.HasValue)
+    @if (_editing || _model.Introduced.HasValue)
     {
         <Field>
             <FieldLabel>@L["Introduced"]</FieldLabel>
-            <DateEdit Disabled="!_editable" TValue="DateTime?" @bind-Date="@_model.Introduced"/>
-        </Field>
+            @if (_editing)
+            {
+                <Check TValue="bool" Disabled="_prototype" @bind-Checked="@_unknownIntroduced">@L["Unknown (introduction date)"]</Check>
+                <Check TValue="bool" Disabled="_unknownIntroduced" @bind-Checked="@_prototype">@L["Prototype"]</Check>
+            }
+            @if (!_editing ||
+                 (!_prototype && !_unknownIntroduced))
+            {
+                <Validation Validator="@ValidateIntroduced">
+                    <DateEdit Disabled="!_editing" TValue="DateTime?" @bind-Date="@_model.Introduced">
+                        <Feedback>
+                            <ValidationError>@L["Please enter an introduction date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
+            </Field>
     }
-    @if (_editable || _model.Voices.HasValue)
+    @if (_editing || _model.Voices.HasValue)
     {
         <Field>
             <FieldLabel>@L["Digitized voices"]</FieldLabel>
-            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.Voices"/>
-        </Field>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownVoices">@L["Unknown (voices)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownVoices)
+            {
+                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Voices" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid number of voices."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+            </Field>
     }
-    @if (_editable || _model.Frequency.HasValue)
+    @if (_editing || _model.Frequency.HasValue)
     {
         <Field>
             <FieldLabel>@L["Sample rate (Hz)"]</FieldLabel>
-            <NumericEdit Disabled="!_editable" TValue="double?" Decimals="0" @bind-Value="@_model.Frequency"/>
-        </Field>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSampleRate">@L["Unknown (sample rate)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSampleRate)
+            {
+                <Validation Validator="@ValidateNullableDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="0" @bind-Value="@_model.Frequency" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid sample rate."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+            </Field>
     }
-    @if (_editable || _model.Depth.HasValue)
+    @if (_editing || _model.Depth.HasValue)
     {
         <Field>
             <FieldLabel>@L["Sample resolution (bits)"]</FieldLabel>
-            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.Depth"/>
-        </Field>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSampleResolution">@L["Unknown (sample resolution)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSampleResolution)
+            {
+                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                  <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Depth" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid number of bits for sample resolution."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+            </Field>
     }
-    @if (_editable || _model.SquareWave.HasValue)
+    @if (_editing || _model.SquareWave.HasValue)
     {
         <Field>
             <FieldLabel>@L["Square wave channels"]</FieldLabel>
-            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.SquareWave"/>
-        </Field>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSquareWaveChannels">@L["Unknown (square wave channels)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSquareWaveChannels)
+            {
+                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.SquareWave" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid number of square wave channels."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+            </Field>
     }
-    @if (_editable || _model.WhiteNoise.HasValue)
+    @if (_editing || _model.WhiteNoise.HasValue)
     {
         <Field>
             <FieldLabel>@L["White noise channels"]</FieldLabel>
-            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.WhiteNoise"/>
-        </Field>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownWhiteNoiseChannels">@L["Unknown (white noise channels)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownWhiteNoiseChannels)
+            {
+                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.WhiteNoise" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid number of white noise channels."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+            </Field>
     }
-    @if (_editable || _model.Type.HasValue)
+    @if (_editing || _model.Type.HasValue)
     {
         <Field>
             <FieldLabel>@L["Type"]</FieldLabel>
-            <NumericEdit Disabled="!_editable" TValue="int?" Decimals="0" @bind-Value="@_model.Type"/>
-        </Field>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownType">@L["Unknown (type)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownType)
+            {
+                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Type" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid sound synthesizer type."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+            </Field>
     }
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
     <a href="/admin/sound_synths" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

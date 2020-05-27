@@ -88,9 +88,7 @@
             </td>
             <td>
                 <a class="btn btn-primary" href="/admin/sound_synths/details/@item.Id">@L["Details"]</a>
-                <span class="btn btn-secondary">
-                    @L["Edit"]
-                </span>
+                <a class="btn btn-secondary" href="/admin/sound_synths/edit/@item.Id">@L["Edit"]</a>
                 <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
             </td>
         </tr>
