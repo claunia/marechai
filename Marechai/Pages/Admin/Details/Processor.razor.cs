@@ -92,6 +92,7 @@ namespace Marechai.Pages.Admin.Details
             _unknownSpeed          = !_model.Speed.HasValue;
             _unknownThreadsPerCore = !_model.ThreadsPerCore.HasValue;
             _unknownTransistors    = !_model.Transistors.HasValue;
+            _prototype             = _model.Introduced?.Year == 1000;
         }
 
         void OnEditClicked()
