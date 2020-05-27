@@ -118,156 +118,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Graphics Processing Units" xml:space="preserve">
-    <value>Unidades de proceso de gráficos</value>
-    <comment>Graphics Processing Units.</comment>
-  </data>
-  <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-    <comment>Message that appears while data is being loaded from database</comment>
-  </data>
-  <data name="Company" xml:space="preserve">
-    <value>Compañía</value>
-    <comment>Company</comment>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Nombre</value>
-    <comment>Name</comment>
-  </data>
-  <data name="Model code" xml:space="preserve">
-    <value>Modelo</value>
-    <comment>Model code</comment>
-  </data>
-  <data name="Introduced" xml:space="preserve">
-    <value>Introducida en</value>
-    <comment>Introduced</comment>
-  </data>
-  <data name="Create new" xml:space="preserve">
-    <value>Crear nueva</value>
-    <comment>Create new document company</comment>
-  </data>
-  <data name="Details" xml:space="preserve">
-    <value>Detalles</value>
-    <comment>Details</comment>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Editar</value>
-    <comment>Edit</comment>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Eliminar</value>
-    <comment>Delete</comment>
-  </data>
-  <data name="Delete GPU" xml:space="preserve">
-    <value>Eliminar gráfica</value>
-    <comment>Delete GPU, abbreviated</comment>
-  </data>
-  <data name="Are you sure you want to delete {0} {1}?" xml:space="preserve">
-    <value>¿Está seguro de que desea borrar la gráfica {0}?</value>
-    <comment>{0} company name, {1} gpu name</comment>
-  </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Cancelar</value>
-    <comment>Cancel</comment>
-  </data>
-  <data name="Graphical processing unit details" xml:space="preserve">
-    <value>Detalles de unidad de proceso gráfico</value>
-    <comment>Graphical processing unit details</comment>
-  </data>
-  <data name="Back to list" xml:space="preserve">
-    <value>Volver a la lista</value>
-    <comment>Back to list</comment>
-  </data>
-  <data name="Package" xml:space="preserve">
-    <value>Empaquetado</value>
-    <comment>Package</comment>
-  </data>
-  <data name="Process" xml:space="preserve">
-    <value>Proceso</value>
-    <comment>Process</comment>
-  </data>
-  <data name="Process (nm)" xml:space="preserve">
-    <value>Tamaño en nm del proceso</value>
-    <comment>Process size in nm</comment>
-  </data>
-  <data name="Die size (mm²)" xml:space="preserve">
-    <value>Área del chip (mm²)</value>
-    <comment>Die size (mm²)</comment>
-  </data>
-  <data name="Transistors" xml:space="preserve">
-    <value>Transistores</value>
-    <comment>Transistors</comment>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Guardar</value>
-    <comment>Save</comment>
-  </data>
   <data name="Unknown (company)" xml:space="preserve">
-    <value>Desconocida</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to a company</comment>
   </data>
   <data name="Unknown (model code)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to a model code</comment>
   </data>
   <data name="Unknown (introduction date)" xml:space="preserve">
-    <value>Desconocida</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to an introduction date</comment>
   </data>
   <data name="Unknown (package)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to a chip package</comment>
   </data>
   <data name="Unknown (process)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to the chip process</comment>
   </data>
   <data name="Unknown (process size)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to the chip process size in nanometers</comment>
   </data>
   <data name="Unknown (die size)" xml:space="preserve">
-    <value>Desconocida</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to the die size in square millimeters</comment>
   </data>
   <data name="Unknown (transistors)" xml:space="preserve">
-    <value>Desconocidos</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to the number of transistors</comment>
-  </data>
-  <data name="Please enter a valid name." xml:space="preserve">
-    <value>Por favor introduce un nombre válido.</value>
-    <comment>Please enter a valid name.</comment>
-  </data>
-  <data name="Please enter a valid model code." xml:space="preserve">
-    <value>Por favor introduce un modelo válido.</value>
-    <comment>Please enter a valid model code.</comment>
-  </data>
-  <data name="Prototype" xml:space="preserve">
-    <value>Prototipo</value>
-    <comment>Prototype</comment>
-  </data>
-  <data name="Please enter an introduction date." xml:space="preserve">
-    <value>Por favor elige una fecha válida.</value>
-    <comment>Please enter an introduction date.</comment>
-  </data>
-  <data name="Please enter a valid package." xml:space="preserve">
-    <value>Por favor introduce un empaquetado válido.</value>
-    <comment>Please enter a valid package.</comment>
-  </data>
-  <data name="Please enter a valid process." xml:space="preserve">
-    <value>Por favor introduce un proceso válido.</value>
-    <comment>Please enter a valid process.</comment>
-  </data>
-  <data name="Please enter a valid process size in nanometers." xml:space="preserve">
-    <value>Por favor introduce un tamaño de proceso en nanómetros válido.</value>
-    <comment>Please enter a valid process size in nanometers.</comment>
-  </data>
-  <data name="Please enter a valid die size in square millimeters." xml:space="preserve">
-    <value>Por favor introduce un área del chip en milímetros cuadrados válida.</value>
-    <comment>Please enter a valid die size in square millimeters.</comment>
-  </data>
-  <data name="Please enter a valid number of transistors." xml:space="preserve">
-    <value>Por favor introduce un número válido de transistores.</value>
-    <comment>Please enter a valid number of transistors.</comment>
   </data>
 </root>

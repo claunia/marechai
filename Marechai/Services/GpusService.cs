@@ -31,7 +31,33 @@ namespace Marechai.Services
                                Transistors = g.Transistors
                            }).ToListAsync();
 
-        public async Task<Gpu> GetAsync(int id) => await _context.Gpus.FindAsync(id);
+        public async Task<GpuViewModel> GetAsync(int id) =>
+            await _context.Gpus.Where(g => g.Id == id).Select(g => new GpuViewModel
+            {
+                Id         = g.Id, Name             = g.Name, CompanyId  = g.Company.Id, ModelCode = g.ModelCode,
+                Introduced = g.Introduced, Package  = g.Package, Process = g.Process, ProcessNm    = g.ProcessNm,
+                DieSize    = g.DieSize, Transistors = g.Transistors
+            }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(GpuViewModel viewModel)
+        {
+            Gpu model = await _context.Gpus.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.Name        = viewModel.Name;
+            model.CompanyId   = viewModel.CompanyId;
+            model.ModelCode   = viewModel.ModelCode;
+            model.Introduced  = viewModel.Introduced;
+            model.Package     = viewModel.Package;
+            model.Process     = viewModel.Process;
+            model.ProcessNm   = viewModel.ProcessNm;
+            model.DieSize     = viewModel.DieSize;
+            model.Transistors = viewModel.Transistors;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task DeleteAsync(int id)
         {

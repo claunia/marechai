@@ -82,9 +82,7 @@
             </td>
             <td>
                 <a class="btn btn-primary" href="/admin/gpus/details/@item.Id">@L["Details"]</a>
-                <span class="btn btn-secondary">
-                    @L["Edit"]
-                </span>
+                <a class="btn btn-primary" href="/admin/gpus/edit/@item.Id">@L["Edit"]</a>
                 <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
             </td>
         </tr>
