@@ -41,6 +41,19 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(DocumentCompanyViewModel viewModel)
+        {
+            var model = new DocumentCompany
+            {
+                CompanyId = viewModel.CompanyId, Name = viewModel.Name
+            };
+
+            await _context.DocumentCompanies.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             DocumentCompany item = await _context.DocumentCompanies.FindAsync(id);

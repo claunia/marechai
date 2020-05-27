@@ -48,8 +48,7 @@ namespace Marechai.Pages.Admin.Details
             _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                           StartsWith("admin/companies/create", StringComparison.InvariantCulture);
 
-            if(Id <= 0 &&
-               !_creating)
+            if(Id <= 0 && !_creating)
                 return;
 
             _countries = await CountriesService.GetAsync();
