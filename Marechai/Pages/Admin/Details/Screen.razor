@@ -94,7 +94,7 @@
     <Field>
         <FieldLabel>@L["Diagonal (inches)"]</FieldLabel>
         <Validation Validator="@ValidateDoubleBiggerThanZero">
-            <NumericEdit Disabled="!_editing" TValue="long" Decimals="2" @bind-Value="@_model.Diagonal" >
+            <NumericEdit Disabled="!_editing" TValue="double" Decimals="2" @bind-Value="@_model.Diagonal" >
                 <Feedback>
                     <ValidationError>@L["Please enter a correct diagonal size in inches."]</ValidationError>
                 </Feedback>
