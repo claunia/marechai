@@ -118,128 +118,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Document people" xml:space="preserve">
-    <value>Personas de documentos</value>
-    <comment>Document people</comment>
-  </data>
-  <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-    <comment>Message that appears while data is being loaded from database</comment>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Nombre</value>
-    <comment>Name</comment>
-  </data>
-  <data name="Linked person" xml:space="preserve">
-    <value>Persona vinculada</value>
-    <comment>Linked person</comment>
-  </data>
-  <data name="Create new" xml:space="preserve">
-    <value>Crear nueva</value>
-    <comment>Create new document company</comment>
-  </data>
-  <data name="Details" xml:space="preserve">
-    <value>Detalles</value>
-    <comment>Details</comment>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Editar</value>
-    <comment>Edit</comment>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Eliminar</value>
-    <comment>Delete</comment>
-  </data>
-  <data name="Delete person" xml:space="preserve">
-    <value>Eliminar persona</value>
-    <comment>Delete person</comment>
-  </data>
-  <data name="Are you sure you want to delete {0}?" xml:space="preserve">
-    <value>¿Está seguro de que desea borrar a {0}?</value>
-    <comment>{0} person name</comment>
-  </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Cancelar</value>
-    <comment>Cancel</comment>
-  </data>
-  <data name="Document person details" xml:space="preserve">
-    <value>Detalles de persona de documentos</value>
-    <comment>Document person details</comment>
-  </data>
-  <data name="Back to list" xml:space="preserve">
-    <value>Volver a la lista</value>
-    <comment>Back to list</comment>
-  </data>
-  <data name="Surname" xml:space="preserve">
-    <value>Apellido</value>
-    <comment>Surname</comment>
-  </data>
-  <data name="Display name" xml:space="preserve">
-    <value>Nombre para mostrar</value>
-    <comment>Display name</comment>
-  </data>
-  <data name="Alias" xml:space="preserve">
-    <value>Alias</value>
-    <comment>Alias</comment>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Guardar</value>
-    <comment>Save</comment>
-  </data>
   <data name="Unknown (name)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to a name</comment>
   </data>
   <data name="Unknown (surname)" xml:space="preserve">
-    <value>Desconocidos</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to one or more surnames</comment>
   </data>
   <data name="Unknown (alias)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to an alias</comment>
   </data>
   <data name="Unknown (display name)" xml:space="preserve">
-    <value>Desconocido</value>
+    <value>Unknown</value>
     <comment>Unknown, referring to a display name</comment>
   </data>
   <data name="None (linked person)" xml:space="preserve">
-    <value>Ninguna</value>
+    <value>None</value>
     <comment>None, referring to a linked person</comment>
-  </data>
-  <data name="Please enter a valid name." xml:space="preserve">
-    <value>Por favor introduce un nombre válido.</value>
-    <comment>Please enter a valid name.</comment>
-  </data>
-  <data name="Please enter a valid surname." xml:space="preserve">
-    <value>Por favor introduce un apellido (o varios) válido.</value>
-    <comment>Please enter a valid surname.</comment>
-  </data>
-  <data name="Please enter a valid alias." xml:space="preserve">
-    <value>Por favor introduce un alias válido.</value>
-    <comment>Please enter a valid alias.</comment>
-  </data>
-  <data name="Please enter a valid display name." xml:space="preserve">
-    <value>Por favor introduce un nombre para mostrar válido.</value>
-    <comment>Please enter a valid display name.</comment>
-  </data>
-  <data name="Name must be smaller than 256 characters." xml:space="preserve">
-    <value>El nombre debe contener menos de 256 caracteres.</value>
-    <comment>Name must be smaller than 256 characters.</comment>
-  </data>
-  <data name="Both name and surname must be known and filled, or both unknown." xml:space="preserve">
-    <value>Tanto el nombre como el/los apellido(s) deben rellenarse, or ser desconocidos.</value>
-    <comment>Both name and surname must be known and filled, or both unknown.</comment>
-  </data>
-  <data name="Surname must be smaller than 256 characters." xml:space="preserve">
-    <value>El/los apellido(s) deben contener menos de 256 caracteres.</value>
-    <comment>Surname must be smaller than 256 characters.</comment>
-  </data>
-  <data name="Alias must be smaller than 256 characters." xml:space="preserve">
-    <value>El alias debe contener menos de 256 caracteres.</value>
-    <comment>Alias must be smaller than 256 characters.</comment>
-  </data>
-  <data name="Display name must be smaller than 256 characters." xml:space="preserve">
-    <value>El nombre para mostrar debe contener menos de 256 caracteres.</value>
-    <comment>Display name must be smaller than 256 characters.</comment>
   </data>
 </root>

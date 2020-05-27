@@ -31,9 +31,11 @@
 }
 
 @page "/admin/document_people/details/{Id:int}"
+@page "/admin/document_people/edit/{Id:int}"
 @inherits OwningComponentBase<DocumentPeopleService>
 @inject IStringLocalizer<DocumentPeopleService> L
 @inject PeopleService PeopleService
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Document person details"]</h3>
 <hr />
@@ -46,48 +48,120 @@
 }
 
 <div>
-    @if (_editable || _model.Name != null)
+    @if (_editing || _model.Name != null)
     {
         <Field>
             <FieldLabel>@L["Name"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Name" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownName">@L["Unknown (name)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownName)
+            {
+                <Validation Validator="@ValidateName">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Name">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Surname != null)
+    @if (_editing || _model.Surname != null)
     {
         <Field>
             <FieldLabel>@L["Surname"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Surname" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSurname">@L["Unknown (surname)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSurname)
+            {
+                <Validation Validator="@ValidateSurname">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Surname">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid surname."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.Alias != null)
+    @if (_editing || _model.Alias != null)
     {
         <Field>
             <FieldLabel>@L["Alias"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Alias" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownAlias">@L["Unknown (alias)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownAlias)
+            {
+                <Validation Validator="@ValidateAlias">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Alias">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid alias."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.DisplayName != null)
+    @if (_editing || _model.DisplayName != null)
     {
         <Field>
             <FieldLabel>@L["Display name"]</FieldLabel>
-            <TextEdit ReadOnly="!_editable" @bind-Text="@_model.DisplayName" />
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownDisplayName">@L["Unknown (display name)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownDisplayName)
+            {
+                <Validation Validator="@ValidateDisplayName">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.DisplayName">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid display name."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
         </Field>
     }
-    @if (_editable || _model.PersonId != null)
+    @if (_editing || _model.PersonId != null)
     {
         <Field>
             <FieldLabel>@L["Linked person"]</FieldLabel>
-            <Select Disabled="!_editable" TValue="int?" @bind-SelectedValue="@_model.PersonId">
-                @foreach (var person in _people)
-                {
-                    <SelectItem TValue="int?" Value="@person.Id">@person.DisplayName</SelectItem>
-                }
-            </Select>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_noLinkedPerson">@L["None (linked person)"]</Check>
+            }
+            @if (!_editing ||
+                 !_noLinkedPerson)
+            {
+                <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.PersonId">
+                    @foreach (var person in _people)
+                    {
+                        <SelectItem TValue="int?" Value="@person.Id">@person.DisplayName</SelectItem>
+                    }
+                </Select>
+            }
         </Field>
     }
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
-    <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/document_people" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

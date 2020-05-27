@@ -24,7 +24,28 @@ namespace Marechai.Services
                                                                                  PersonId = d.PersonId
                                                                              }).ToListAsync();
 
-        public async Task<DocumentPerson> GetAsync(int id) => await _context.DocumentPeople.FindAsync(id);
+        public async Task<DocumentPersonViewModel> GetAsync(int id) =>
+            await _context.DocumentPeople.Where(p => p.Id == id).Select(d => new DocumentPersonViewModel
+            {
+                Id          = d.Id, Alias             = d.Alias, Name = d.Name, Surname = d.Surname,
+                DisplayName = d.DisplayName, PersonId = d.PersonId
+            }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(DocumentPersonViewModel viewModel)
+        {
+            DocumentPerson model = await _context.DocumentPeople.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.Alias       = viewModel.Alias;
+            model.Name        = viewModel.Name;
+            model.Surname     = viewModel.Surname;
+            model.DisplayName = viewModel.DisplayName;
+            model.PersonId    = viewModel.PersonId;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task DeleteAsync(int id)
         {
