@@ -19,7 +19,29 @@ namespace Marechai.Services
                 OsiApproved = l.OsiApproved, SPDX = l.SPDX
             }).ToListAsync();
 
-        public async Task<License> GetAsync(int id) => await _context.Licenses.FindAsync(id);
+        public async Task<License> GetAsync(int id) =>
+            await _context.Licenses.Where(l => l.Id == id).Select(l => new License
+            {
+                FsfApproved = l.FsfApproved, Id   = l.Id, Link   = l.Link, Name = l.Name,
+                OsiApproved = l.OsiApproved, SPDX = l.SPDX, Text = l.Text
+            }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(License viewModel)
+        {
+            License model = await _context.Licenses.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.FsfApproved = viewModel.FsfApproved;
+            model.Link        = viewModel.Link;
+            model.Name        = viewModel.Name;
+            model.OsiApproved = viewModel.OsiApproved;
+            model.SPDX        = viewModel.SPDX;
+            model.Text        = viewModel.Text;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task DeleteAsync(int id)
         {

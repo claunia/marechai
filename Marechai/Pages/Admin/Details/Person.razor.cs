@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Database.Models;
 using Marechai.Shared;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
-using Match = System.Text.RegularExpressions.Match;
 
 namespace Marechai.Pages.Admin.Details
 {
     public partial class Person
     {
-        const string _webpageRegex =
-            @"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$";
         List<Iso31661Numeric> _countries;
         bool                  _editing;
         bool                  _loaded;
@@ -260,32 +256,8 @@ namespace Marechai.Pages.Admin.Details
             e.Status    = ValidationStatus.Error;
         }
 
-        void ValidateWebpage(ValidatorEventArgs e)
-        {
-            if(!(e.Value is string webpage))
-            {
-                e.Status = ValidationStatus.Error;
-
-                return;
-            }
-
-            if(webpage.Length < 1 ||
-               webpage.Length > 255)
-            {
-                e.ErrorText = L["Webpage must be smaller than 255 characters."];
-                e.Status    = ValidationStatus.Error;
-
-                return;
-            }
-
-            var   rx = new Regex(_webpageRegex);
-            Match m  = rx.Match(webpage);
-
-            if(m.Success)
-                return;
-
-            e.Status = ValidationStatus.Error;
-        }
+        void ValidateWebpage(ValidatorEventArgs e) =>
+            Validators.ValidateUrl(e, L["Webpage must be smaller than 255 characters."], 255);
 
         void ValidateTwitter(ValidatorEventArgs e)
         {
