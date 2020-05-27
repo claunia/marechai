@@ -31,9 +31,11 @@
 }
 
 @page "/admin/instruction_set_extensions/details/{Id:int}"
+@page "/admin/instruction_set_extensions/edit/{Id:int}"
 @inherits OwningComponentBase<InstructionSetExtensionsService>
 @inject IStringLocalizer<InstructionSetExtensionsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
+@inject NavigationManager NavigationManager
 <h3>@L["Instruction set extension details"]</h3>
 <hr />
 
@@ -47,10 +49,24 @@
 <div>
     <Field>
         <FieldLabel>@L["Extension"]</FieldLabel>
-        <TextEdit ReadOnly="!_editable" @bind-Text="@_model.Extension"/>
+        <Validation Validator="@ValidateName">
+            <TextEdit Disabled="!_editing" @bind-Text="@_model.Extension">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid extension name."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
     </Field>
 </div>
 <div>
-    <span class="btn btn-primary">@L["Edit"]</span>
-    <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/instruction_set_extensions" class="btn btn-secondary">@L["Back to list"]</a>
 </div>

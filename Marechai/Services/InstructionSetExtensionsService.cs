@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +14,28 @@ namespace Marechai.Services
         public InstructionSetExtensionsService(MarechaiContext context) => _context = context;
 
         public async Task<List<InstructionSetExtension>> GetAsync() =>
-            await _context.InstructionSetExtensions.OrderBy(e => e.Extension).ToListAsync();
+            await _context.InstructionSetExtensions.OrderBy(e => e.Extension).Select(e => new InstructionSetExtension
+            {
+                Extension = e.Extension, Id = e.Id
+            }).ToListAsync();
 
         public async Task<InstructionSetExtension> GetAsync(int id) =>
-            await _context.InstructionSetExtensions.FindAsync(id);
+            await _context.InstructionSetExtensions.Where(e => e.Id == id).Select(e => new InstructionSetExtension
+            {
+                Extension = e.Extension, Id = e.Id
+            }).FirstOrDefaultAsync();
+
+        public async Task UpdateAsync(InstructionSetExtension viewModel)
+        {
+            InstructionSetExtension model = await _context.InstructionSetExtensions.FindAsync(viewModel.Id);
+
+            if(model is null)
+                return;
+
+            model.Extension = viewModel.Extension;
+
+            await _context.SaveChangesAsync();
+        }
 
         public async Task DeleteAsync(int id)
         {
@@ -29,5 +48,9 @@ namespace Marechai.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public bool VerifyUnique(string extension) =>
+            !_context.InstructionSetExtensions.Any(i => string.Equals(i.Extension, extension,
+                                                                      StringComparison.InvariantCultureIgnoreCase));
     }
 }

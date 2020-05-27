@@ -166,4 +166,20 @@
     <value>Volver a la lista</value>
     <comment>Back to list</comment>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Save</comment>
+  </data>
+  <data name="Please enter a valid extension name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido para la extensión.</value>
+    <comment>Please enter a valid extension name.</comment>
+  </data>
+  <data name="Extension name cannot contain more than 45 characters." xml:space="preserve">
+    <value>El nombre de la extensión no puede contener más de 45 caracteres.</value>
+    <comment>Extension name cannot contain more than 45 characters.</comment>
+  </data>
+  <data name="Extension name must be unique." xml:space="preserve">
+    <value>El nombre de la extensión debe ser único.</value>
+    <comment>Extension name must be unique.</comment>
+  </data>
 </root>
