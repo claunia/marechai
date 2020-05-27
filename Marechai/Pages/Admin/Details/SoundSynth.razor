@@ -126,7 +126,7 @@
             @if (!_editing ||
                  !_unknownVoices)
             {
-                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Voices" >
                         <Feedback>
                             <ValidationError>@L["Please enter a valid number of voices."]</ValidationError>
@@ -147,7 +147,7 @@
             @if (!_editing ||
                  !_unknownSampleRate)
             {
-                <Validation Validator="@ValidateNullableDoubleBiggerThanZero">
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
                     <NumericEdit Disabled="!_editing" TValue="double?" Decimals="0" @bind-Value="@_model.Frequency" >
                         <Feedback>
                             <ValidationError>@L["Please enter a valid sample rate."]</ValidationError>
@@ -168,7 +168,7 @@
             @if (!_editing ||
                  !_unknownSampleResolution)
             {
-                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                <Validation Validator="@ValidateIntegerBiggerThanZero">
                   <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Depth" >
                         <Feedback>
                             <ValidationError>@L["Please enter a valid number of bits for sample resolution."]</ValidationError>
@@ -189,7 +189,7 @@
             @if (!_editing ||
                  !_unknownSquareWaveChannels)
             {
-                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.SquareWave" >
                         <Feedback>
                             <ValidationError>@L["Please enter a valid number of square wave channels."]</ValidationError>
@@ -210,7 +210,7 @@
             @if (!_editing ||
                  !_unknownWhiteNoiseChannels)
             {
-                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.WhiteNoise" >
                         <Feedback>
                             <ValidationError>@L["Please enter a valid number of white noise channels."]</ValidationError>
@@ -231,7 +231,7 @@
             @if (!_editing ||
                  !_unknownType)
             {
-                <Validation Validator="@ValidateNullableIntegerBiggerThanZero">
+                <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Type" >
                         <Feedback>
                             <ValidationError>@L["Please enter a valid sound synthesizer type."]</ValidationError>

@@ -28,19 +28,28 @@ namespace Marechai.Shared
                 e.Status = ValidationStatus.Success;
         }
 
-        public static void ValidateNullableDoubleBiggerThanZero(ValidatorEventArgs e)
+        public static void ValidateDoubleBiggerThanZero(ValidatorEventArgs e, double minValue = 0, double maxValue = double.MaxValue)
         {
             if(!(e.Value is double item) ||
-               item < 0)
+               item < minValue || item > maxValue)
                 e.Status = ValidationStatus.Error;
             else
                 e.Status = ValidationStatus.Success;
         }
 
-        public static void ValidateNullableIntegerBiggerThanZero(ValidatorEventArgs e)
+        public static void ValidateIntegerBiggerThanZero(ValidatorEventArgs e, int minValue = 0, int maxValue = int.MaxValue)
         {
             if(!(e.Value is int item) ||
-               item < 0)
+               item < minValue        || item > maxValue)
+                e.Status = ValidationStatus.Error;
+            else
+                e.Status = ValidationStatus.Success;
+        }
+
+        public static void ValidateLongBiggerThanZero(ValidatorEventArgs e, long minValue = 0, long maxValue = long.MaxValue)
+        {
+            if(!(e.Value is long item) ||
+               item < minValue        || item > maxValue)
                 e.Status = ValidationStatus.Error;
             else
                 e.Status = ValidationStatus.Success;

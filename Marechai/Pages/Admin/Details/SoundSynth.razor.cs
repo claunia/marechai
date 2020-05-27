@@ -139,10 +139,8 @@ namespace Marechai.Pages.Admin.Details
 
         void ValidateIntroduced(ValidatorEventArgs e) => Validators.ValidateIntroducedDate(e);
 
-        void ValidateNullableIntegerBiggerThanZero(ValidatorEventArgs e) =>
-            Validators.ValidateNullableIntegerBiggerThanZero(e);
+        void ValidateIntegerBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateIntegerBiggerThanZero(e);
 
-        void ValidateNullableDoubleBiggerThanZero(ValidatorEventArgs e) =>
-            Validators.ValidateNullableDoubleBiggerThanZero(e);
+        void ValidateDoubleBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateDoubleBiggerThanZero(e);
     }
 }
