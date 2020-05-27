@@ -68,14 +68,18 @@ namespace Marechai.Services
         public Task<CompanyViewModel> GetAsync(int id) => _context.Companies.Where(c => c.Id == id).
                                                                    Select(c => new CompanyViewModel
                                                                    {
-                                                                       Id = c.Id, Name = c.Name, Founded = c.Founded,
-                                                                       Sold = c.Sold, SoldToId = c.SoldToId,
-                                                                       CountryId = c.CountryId, Status = c.Status,
-                                                                       Website = c.Website, Twitter = c.Twitter,
-                                                                       Facebook = c.Facebook, Address = c.Address,
-                                                                       City = c.City, Province = c.Province,
+                                                                       Id = c.Id,
+                                                                       LastLogo = c.
+                                                                                  Logos.OrderByDescending(l => l.Year).
+                                                                                  FirstOrDefault().Guid,
+                                                                       Name       = c.Name, Founded     = c.Founded,
+                                                                       Sold       = c.Sold, SoldToId    = c.SoldToId,
+                                                                       CountryId  = c.CountryId, Status = c.Status,
+                                                                       Website    = c.Website, Twitter  = c.Twitter,
+                                                                       Facebook   = c.Facebook, Address = c.Address,
+                                                                       City       = c.City, Province    = c.Province,
                                                                        PostalCode = c.PostalCode,
-                                                                       Country = c.Country.Name
+                                                                       Country    = c.Country.Name
                                                                    }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(CompanyViewModel viewModel)
@@ -100,6 +104,23 @@ namespace Marechai.Services
             model.PostalCode = viewModel.PostalCode;
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> CreateAsync(CompanyViewModel viewModel)
+        {
+            var model = new Company
+            {
+                Name       = viewModel.Name, Founded       = viewModel.Founded, Sold     = viewModel.Sold,
+                SoldToId   = viewModel.SoldToId, CountryId = viewModel.CountryId, Status = viewModel.Status,
+                Website    = viewModel.Website, Twitter    = viewModel.Twitter, Facebook = viewModel.Facebook,
+                Address    = viewModel.Address, City       = viewModel.City, Province    = viewModel.Province,
+                PostalCode = viewModel.PostalCode
+            };
+
+            await _context.Companies.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
         }
 
         public async Task<List<Machine>> GetMachinesAsync(int id) =>

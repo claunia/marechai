@@ -36,6 +36,7 @@
 
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
+@inject CompanyLogosService CompanyLogosService 
 @inject IWebHostEnvironment Host
 
 @if (!_loaded)
@@ -55,16 +56,16 @@
 <div class="container-fluid">
 <p align=center>
     @if (_company.LastLogo != null &&
-         File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _company.LastLogo.Guid + ".svg")))
+         File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _company.LastLogo + ".svg")))
     {
         <picture>
-            <source type="image/svg+xml" srcset="/assets/logos/@(_company.LastLogo.Guid).svg">
-            <source type="image/webp" srcset="/assets/logos/webp/1x/@(_company.LastLogo.Guid).webp,
-/assets/logos/webp/2x/@(_company.LastLogo.Guid).webp 2x,
-/assets/logos/webp/3x/@(_company.LastLogo.Guid).webp 3x">
-            <img srcset="/assets/logos/png/1x/@(_company.LastLogo.Guid).png,
-                         /assets/logos/png/2x/@(_company.LastLogo.Guid).png 2x,
-                         /assets/logos/png/3x/@(_company.LastLogo.Guid).png 3x" src="/assets/logos/png/1x@(_company.LastLogo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+            <source type="image/svg+xml" srcset="/assets/logos/@(_company.LastLogo).svg">
+            <source type="image/webp" srcset="/assets/logos/webp/1x/@(_company.LastLogo).webp,
+/assets/logos/webp/2x/@(_company.LastLogo).webp 2x,
+/assets/logos/webp/3x/@(_company.LastLogo).webp 3x">
+            <img srcset="/assets/logos/png/1x/@(_company.LastLogo).png,
+                         /assets/logos/png/2x/@(_company.LastLogo).png 2x,
+                         /assets/logos/png/3x/@(_company.LastLogo).png 3x" src="/assets/logos/png/1x@(_company.LastLogo).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
         </picture>
     }
 </p>
@@ -72,14 +73,14 @@
 @{
     _carrouselActive = "active";
 }
-@if (_company.Logos != null &&
-     _company.Logos.Count > 1)
+@if (_logos != null &&
+     _logos.Count > 1)
 {
     // TODO: Carousel
     <div class="col-3">
         <div class="carousel slide" data-ride="carousel" id="logosCarousel">
             <div class="carousel-inner">
-                @foreach (var logo in _company.Logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
+                @foreach (var logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
                 {
                     <div class="carousel-item @_carrouselActive">
                         <picture>
@@ -126,20 +127,20 @@
         <tr>
             <th>@L["Country"]</th>
             <td>
-                <a href="/companies/country/@_company.Country.Id">
-                    @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", _company.Country.Id + ".svg")))
+                <a href="/companies/country/@_company.CountryId">
+                    @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", _company.CountryId + ".svg")))
                     {
                         <picture>
-                            <source type="image/svg+xml" srcset="/assets/flags/countries/@(_company.Country.Id).svg">
-                            <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(_company.Country.Id).webp,
-        /assets/flags/countries/webp/1x/@(_company.Country.Id).webp 2x,
-        /assets/flags/countries/webp/1x/@(_company.Country.Id).webp 3x">
-                            <img srcset="/assets/flags/countries/png/1x/@(_company.Country.Id).png,
-                                 /assets/flags/countries/png/1x/@(_company.Country.Id).png 2x,
-                                 /assets/flags/countries/png/1x/@(_company.Country.Id).webp 3x" src="/assets/flags/countries/png/1x@(_company.Country.Id).png" alt="" height="32" />
+                            <source type="image/svg+xml" srcset="/assets/flags/countries/@(_company.CountryId).svg">
+                            <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(_company.CountryId).webp,
+        /assets/flags/countries/webp/1x/@(_company.CountryId).webp 2x,
+        /assets/flags/countries/webp/1x/@(_company.CountryId).webp 3x">
+                            <img srcset="/assets/flags/countries/png/1x/@(_company.CountryId).png,
+                                 /assets/flags/countries/png/1x/@(_company.CountryId).png 2x,
+                                 /assets/flags/countries/png/1x/@(_company.CountryId).webp 3x" src="/assets/flags/countries/png/1x@(_company.CountryId).png" alt="" height="32" />
                         </picture>
                     }
-                    @L[_company.Country.Name]
+                    @L[_company.Country]
                 </a>
             </td>
         </tr>

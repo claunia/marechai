@@ -3,20 +3,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Database;
 using Marechai.Database.Models;
+using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Companies
 {
     public partial class View
     {
-        string        _carrouselActive;
-        Company       _company;
-        List<Machine> _computers;
-        List<Machine> _consoles;
-        string        _description;
-
-        bool    _loaded;
-        Company _soldTo;
+        string            _carrouselActive;
+        CompanyViewModel  _company;
+        List<Machine>     _computers;
+        List<Machine>     _consoles;
+        string            _description;
+        bool              _loaded;
+        List<CompanyLogo> _logos;
+        Company           _soldTo;
         [Parameter]
         public int Id { get; set; }
 
@@ -40,6 +41,7 @@ namespace Marechai.Pages.Companies
 
             _description = await Service.GetDescriptionAsync(Id);
             _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
+            _logos       = await CompanyLogosService.GetByCompany(Id);
 
             _loaded = true;
         }
