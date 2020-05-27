@@ -282,4 +282,12 @@
     <value>El modelo debe contener 45 caracteres o menos.</value>
     <comment>Model code must be 45 characters or less.</comment>
   </data>
+  <data name="Name must be 50 characters or less." xml:space="preserve">
+    <value>El nombre debe contener 50 caracteres o menos.</value>
+    <comment>Name must be 50 characters or less.</comment>
+  </data>
+  <data name="Please enter a valid name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido.</value>
+    <comment>Please enter a valid name.</comment>
+  </data>
 </root>

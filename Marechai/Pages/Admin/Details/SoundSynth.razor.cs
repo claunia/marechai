@@ -142,5 +142,8 @@ namespace Marechai.Pages.Admin.Details
         void ValidateIntegerBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateIntegerBiggerThanZero(e);
 
         void ValidateDoubleBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateDoubleBiggerThanZero(e);
+
+        void ValidateName(ValidatorEventArgs e) =>
+            Validators.ValidateStringWithMaxLength(e, L["Name must be 50 characters or less."], 50);
     }
 }

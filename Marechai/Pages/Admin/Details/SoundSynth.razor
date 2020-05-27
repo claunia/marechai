@@ -70,7 +70,13 @@
     }
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
-        <TextEdit Disabled="!_editing" @bind-Text="@_model.Name"/>
+        <Validation Validator="@ValidateName">
+            <TextEdit Disabled="!_editing" @bind-Text="@_model.Name">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
     </Field>
     @if (_editing || _model.ModelCode != null)
     {
