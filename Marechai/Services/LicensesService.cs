@@ -43,6 +43,20 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(License viewModel)
+        {
+            var model = new License
+            {
+                FsfApproved = viewModel.FsfApproved, Link = viewModel.Link, Name = viewModel.Name,
+                OsiApproved = viewModel.OsiApproved, SPDX = viewModel.SPDX, Text = viewModel.Text
+            };
+
+            await _context.Licenses.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             License item = await _context.Licenses.FindAsync(id);
