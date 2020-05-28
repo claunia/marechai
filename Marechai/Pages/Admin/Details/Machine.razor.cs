@@ -12,6 +12,7 @@ namespace Marechai.Pages.Admin.Details
     public partial class Machine
     {
         List<CompanyViewModel>       _companies;
+        bool                         _creating;
         bool                         _editing;
         List<MachineFamilyViewModel> _families;
         bool                         _loaded;
@@ -36,15 +37,20 @@ namespace Marechai.Pages.Admin.Details
 
             _loaded = true;
 
-            if(Id <= 0)
+            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
+                                          StartsWith("admin/machines/create", StringComparison.InvariantCulture);
+
+            if(Id <= 0 &&
+               !_creating)
                 return;
 
             _companies = await CompaniesService.GetAsync();
             _families  = await MachineFamiliesService.GetAsync();
-            _model     = await Service.GetAsync(Id);
+            _model     = _creating ? new MachineViewModel() : await Service.GetAsync(Id);
 
-            _editing = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                         StartsWith("admin/machines/edit/", StringComparison.InvariantCulture);
+            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
+                                                      StartsWith("admin/machines/edit/",
+                                                                 StringComparison.InvariantCulture);
 
             if(_editing)
                 SetCheckboxes();
@@ -70,7 +76,15 @@ namespace Marechai.Pages.Admin.Details
         async void OnCancelClicked()
         {
             _editing = false;
-            _model   = await Service.GetAsync(Id);
+
+            if(_creating)
+            {
+                NavigationManager.ToBaseRelativePath("admin/machines");
+
+                return;
+            }
+
+            _model = await Service.GetAsync(Id);
             SetCheckboxes();
             StateHasChanged();
         }
@@ -94,9 +108,14 @@ namespace Marechai.Pages.Admin.Details
             else if(string.IsNullOrWhiteSpace(_model.Model))
                 return;
 
-            _editing = false;
-            await Service.UpdateAsync(_model);
-            _model = await Service.GetAsync(Id);
+            if(_creating)
+                Id = await Service.CreateAsync(_model);
+            else
+                await Service.UpdateAsync(_model);
+
+            _editing  = false;
+            _creating = false;
+            _model    = await Service.GetAsync(Id);
             SetCheckboxes();
             StateHasChanged();
         }

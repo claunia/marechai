@@ -61,6 +61,20 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(MachineViewModel viewModel)
+        {
+            var model = new Machine
+            {
+                CompanyId  = viewModel.CompanyId, Name  = viewModel.Name, Model    = viewModel.Model,
+                Introduced = viewModel.Introduced, Type = viewModel.Type, FamilyId = viewModel.FamilyId
+            };
+
+            await _context.Machines.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task<MachineViewModel> GetMachine(int id)
         {
             Machine machine = await _context.Machines.FindAsync(id);

@@ -137,5 +137,6 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Licenses\Create.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Licenses\Edit.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachineFamilies\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Machines\Create.cshtml" />
   </ItemGroup>
 </Project>
