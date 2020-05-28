@@ -32,6 +32,7 @@
 
 @page "/admin/instruction_sets/details/{Id:int}"
 @page "/admin/instruction_sets/edit/{Id:int}"
+@page "/admin/instruction_sets/create"
 @inherits OwningComponentBase<InstructionSetsService>
 @inject IStringLocalizer<InstructionSetsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]

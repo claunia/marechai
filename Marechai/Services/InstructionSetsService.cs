@@ -37,6 +37,19 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(InstructionSet viewModel)
+        {
+            var model = new InstructionSet
+            {
+                Name = viewModel.Name
+            };
+
+            await _context.InstructionSets.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             InstructionSet item = await _context.InstructionSets.FindAsync(id);

@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>3.0.99.1245</Version>
+    <Version>3.0.99.1246</Version>
     <Company>Canary Islands Computer Museum</Company>
     <Copyright>Copyright © 2003-2020 Natalia Portillo</Copyright>
     <Product>Canary Islands Computer Museum Website</Product>
@@ -132,5 +132,7 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\DocumentCompanies\Create.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\DocumentPeople\Create.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Gpus\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensions\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSets\Create.cshtml" />
   </ItemGroup>
 </Project>
