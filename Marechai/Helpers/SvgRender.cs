@@ -95,20 +95,8 @@ namespace Marechai.Helpers
                             svg.Load(file);
                         }
 
-                        SKRect svgSize   = svg.Picture.CullRect;
-                        float  svgMax    = Math.Max(svgSize.Width, svgSize.Height);
-                        float  canvasMin = 32        * multiplier;
-                        float  scale     = canvasMin / svgMax;
-                        var    matrix    = SKMatrix.MakeScale(scale, scale);
-                        var    bitmap    = new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
-                        var    canvas    = new SKCanvas(bitmap);
-                        canvas.Clear();
-                        canvas.DrawPicture(svg.Picture, ref matrix);
-                        canvas.Flush();
-                        var    image = SKImage.FromBitmap(bitmap);
-                        SKData data  = image.Encode(skFormat, 100);
-                        var    outFs = new FileStream(rendered, FileMode.CreateNew);
-                        data.SaveTo(outFs);
+                        var outFs = new FileStream(rendered, FileMode.CreateNew);
+                        RenderSvg(svg, outFs, skFormat, 32, multiplier);
                         outFs.Close();
                     }
                 }
@@ -210,26 +198,98 @@ namespace Marechai.Helpers
                                 svg.Load(file);
                             }
 
-                            SKRect svgSize = svg.Picture.CullRect;
-                            float  svgMax = Math.Max(svgSize.Width, svgSize.Height);
-                            float  canvasMin = minSize * multiplier;
-                            float  scale = canvasMin / svgMax;
-                            var    matrix = SKMatrix.MakeScale(scale, scale);
-                            var    bitmap = new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
-                            var    canvas = new SKCanvas(bitmap);
-                            canvas.Clear();
-                            canvas.DrawPicture(svg.Picture, ref matrix);
-                            canvas.Flush();
-                            var    image = SKImage.FromBitmap(bitmap);
-                            SKData data  = image.Encode(skFormat, 100);
-                            var    outFs = new FileStream(rendered, FileMode.CreateNew);
-                            data.SaveTo(outFs);
+                            var outFs = new FileStream(rendered, FileMode.CreateNew);
+                            RenderSvg(svg, outFs, skFormat, minSize, multiplier);
                             outFs.Close();
                         }
                     }
                 }
 
                 File.Move(file, $"wwwroot/assets/logos/{guid}.svg");
+            }
+        }
+
+        public static void RenderSvg(SKSvg svg, Stream outStream, SKEncodedImageFormat skFormat, int minSize,
+                                     int multiplier)
+        {
+            SKRect svgSize   = svg.Picture.CullRect;
+            float  svgMax    = Math.Max(svgSize.Width, svgSize.Height);
+            float  canvasMin = minSize   * multiplier;
+            float  scale     = canvasMin / svgMax;
+            var    matrix    = SKMatrix.MakeScale(scale, scale);
+            var    bitmap    = new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
+            var    canvas    = new SKCanvas(bitmap);
+            canvas.Clear();
+            canvas.DrawPicture(svg.Picture, ref matrix);
+            canvas.Flush();
+            var    image = SKImage.FromBitmap(bitmap);
+            SKData data  = image.Encode(skFormat, 100);
+            data.SaveTo(outStream);
+        }
+
+        // TODO: Reduce code duplication
+        public static void RenderCompanyLogo(Guid guid, Stream svgStream, string wwwroot)
+        {
+            SKSvg svg = null;
+
+            foreach(int minSize in new[]
+            {
+                256, 32
+            })
+            {
+                foreach(string format in new[]
+                {
+                    "png", "webp"
+                })
+                {
+                    string outDir = minSize == 32 ? Path.Combine(wwwroot, "assets/logos/thumbs", format)
+                                        : Path.Combine(wwwroot, "assets/logos", format);
+
+                    if(!Directory.Exists(outDir))
+                        Directory.CreateDirectory(outDir);
+
+                    SKEncodedImageFormat skFormat;
+
+                    switch(format)
+                    {
+                        case"webp":
+                            skFormat = SKEncodedImageFormat.Webp;
+
+                            break;
+                        default:
+                            skFormat = SKEncodedImageFormat.Png;
+
+                            break;
+                    }
+
+                    foreach(int multiplier in new[]
+                    {
+                        1, 2, 3
+                    })
+                    {
+                        string outPath = Path.Combine(outDir, $"{multiplier}x");
+
+                        if(!Directory.Exists(outPath))
+                            Directory.CreateDirectory(outPath);
+
+                        string rendered = Path.Combine(outPath, $"{guid}.{format}");
+
+                        if(File.Exists(rendered))
+                            continue;
+
+                        Console.WriteLine("Rendering {0}", rendered);
+
+                        if(svg == null)
+                        {
+                            svg = new SKSvg();
+                            svg.Load(svgStream);
+                        }
+
+                        var outFs = new FileStream(rendered, FileMode.CreateNew);
+                        RenderSvg(svg, outFs, skFormat, minSize, multiplier);
+                        outFs.Close();
+                    }
+                }
             }
         }
     }

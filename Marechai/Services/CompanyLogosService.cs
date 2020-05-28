@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -83,6 +84,19 @@ namespace Marechai.Services
 
             logo.Year = year;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> CreateAsync(int companyId, Guid guid, int? year)
+        {
+            var logo = new CompanyLogo
+            {
+                Guid = guid, Year = year, CompanyId = companyId
+            };
+
+            await _context.CompanyLogos.AddAsync(logo);
+            await _context.SaveChangesAsync();
+
+            return logo.Id;
         }
     }
 }

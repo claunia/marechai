@@ -446,4 +446,56 @@
     <value>Por favor introduce un año válido.</value>
     <comment>Please enter a valid year.</comment>
   </data>
+  <data name="Are you sure you want to delete the company logo you selected?" xml:space="preserve">
+    <value>¿Estás seguro de que quieres borrar el logo de la compañía que has seleccionado?</value>
+    <comment>Are you sure you want to delete the company logo you selected?</comment>
+  </data>
+  <data name="Choose SVG (version 1.1 or lower) logo file" xml:space="preserve">
+    <value>Elige un archivo con el logo en format SVG (versión 1.1 o inferior)</value>
+    <comment>Choose SVG (version 1.1 or lower) logo file</comment>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Subir</value>
+    <comment>Upload</comment>
+  </data>
+  <data name="Uploading..." xml:space="preserve">
+    <value>Subiendo...</value>
+    <comment>Uploading...</comment>
+  </data>
+  <data name="SVG" xml:space="preserve">
+    <value>SVG</value>
+    <comment>SVG</comment>
+  </data>
+  <data name="PNG" xml:space="preserve">
+    <value>PNG</value>
+    <comment>PNG</comment>
+  </data>
+  <data name="WebP" xml:space="preserve">
+    <value>WebP</value>
+    <comment>WebP</comment>
+  </data>
+  <data name="May not show properly" xml:space="preserve">
+    <value>Puede que no se muestre correctamente</value>
+    <comment>May not show properly</comment>
+  </data>
+  <data name="The selected file is too big." xml:space="preserve">
+    <value>El archivo seleccionado es demasiado grande.</value>
+    <comment>The selected file is too big.</comment>
+  </data>
+  <data name="There was an error uploading the file." xml:space="preserve">
+    <value>Hubo un error subiendo el archivo.</value>
+    <comment>There was an error uploading the file.</comment>
+  </data>
+  <data name="The uploaded file is not a SVG file." xml:space="preserve">
+    <value>El archivo que has subido no es un archivo SVG.</value>
+    <comment>The uploaded file is not a SVG file.</comment>
+  </data>
+  <data name="The uploaded file could not be loaded. Is it a correct SVG file?" xml:space="preserve">
+    <value>No se pudo cargar el archivo que has subido. ¿Es un SVG correcto?</value>
+    <comment>The uploaded file could not be loaded. Is it a correct SVG file?</comment>
+  </data>
+  <data name="An error occuring rendering the uploaded file. Is it a correct SVG file?" xml:space="preserve">
+    <value>Ocurrió un error renderizando el archivo subido. ¿Es un SVG correcto?</value>
+    <comment>An error occuring rendering the uploaded file. Is it a correct SVG file?</comment>
+  </data>
 </root>

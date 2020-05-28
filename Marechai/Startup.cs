@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 using System.Globalization;
+using Blazor.FileReader;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -82,6 +83,8 @@ namespace Marechai
                 >();
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+            services.AddFileReaderService();
 
             Register.RegisterServices(services);
         }

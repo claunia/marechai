@@ -40,7 +40,10 @@
 @inject NavigationManager NavigationManager
 @inject CompanyLogosService CompanyLogosService
 @inject IWebHostEnvironment Host
+@inject IFileReaderService FileReaderService;
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
+
+
 <h3>@L["Company details"]</h3>
 <hr />
 
@@ -316,7 +319,7 @@
     <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
 @if (!_editing)
 {
-    <a class="btn btn-success">@L["Upload new logo"]</a>
+    <Button Color="Color.Success" Clicked="@ShowUploadModal">@L["Upload new logo"]</Button>
 }
 </div>
 @if (_logos.Count > 0)
@@ -385,7 +388,14 @@
             <CloseButton Clicked="@HideDeleteModal"/>
         </ModalHeader>
         <ModalBody>
-            <Text>@string.Format(@L["Are you sure you want to delete the company logo introduced in {0}?"], _currentLogo?.Year)</Text>
+            @if (_currentLogo?.Year != null)
+            {
+                <Text>@string.Format(L["Are you sure you want to delete the company logo introduced in {0}?"], _currentLogo?.Year)</Text>
+            }
+            else
+            {
+                <Text>@L["Are you sure you want to delete the company logo you selected?"]</Text>
+            }
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="@HideDeleteModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
@@ -433,6 +443,92 @@
             {
                 <Button Color="Color.Success" Clicked="@ConfirmLogoYear" Disabled="@_yearChangeInProgress">@L["Save"]</Button>
             }
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="_frmUpload" IsCentered="true" Closing="@UploadModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
+        <ModalHeader>
+            <ModalTitle>@L["Upload new logo"]</ModalTitle>
+            <CloseButton Clicked="@HideUploadModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                @if (!_uploaded)
+                {
+                    @if (!_uploading)
+                    {
+                        <FieldLabel>@L["Choose SVG (version 1.1 or lower) logo file"]</FieldLabel>
+                        <input type="file" @ref=_inputUpload Accept=".svg" /><br/>
+                        <Button Color="Color.Success" Clicked="@UploadFile" Disabled="@_uploading">@L["Upload"]</Button><br/>
+                    }
+                    else
+                    {
+                        @L["Uploading..."]
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: @(_progressValue)%;" aria-valuenow="@_progressValue" aria-valuemin="0" aria-valuemax="100">@($"{_progressValue:F2}")%</div>
+                        </div>
+                    }
+                    @if (_uploadError)
+                    {
+                        <span class="text-danger">@_uploadErrorMessage</span>
+                    }
+                }
+                else
+                {
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>@L["SVG"]</th>
+                                <th>@L["PNG"]</th>
+                                <th>@L["WebP"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <span class="text-warning">@L["May not show properly"]</span>
+                            </td>                                
+                            <td></td>                                
+                            <td>
+                                <span class="text-warning">@L["May not show properly"]</span>
+                            </td>                                
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="@_uploadedSvgData" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                            </td>                                
+                            <td>
+                                <img src="@_uploadedPngData" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                            </td>                                
+                            <td>
+                                <img src="@_uploadedWebpData" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                            </td>                                
+                        </tr>
+                        </tbody>
+                    </table>
+                    <Field>
+                        <FieldLabel>@L["Year logo came in use"]</FieldLabel>
+                        <Check TValue="bool" @bind-Checked="@_unknownLogoYear">@L["Unknown (logo year)"]</Check>
+                        @if (!_unknownLogoYear)
+                        {
+                            <Validation Validator="@ValidateLogoYear">
+                                <NumericEdit TValue="int?" Decimals="0" @bind-Value="@_currentLogoYear">
+                                    <Feedback>
+                                        <ValidationError>@L["Please enter a valid year."]</ValidationError>
+                                    </Feedback>
+                                </NumericEdit>
+                            </Validation>
+                        }
+                    </Field>
+                }
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideUploadModal" Disabled="_uploading || _savingLogo">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmUpload" Disabled="!_uploaded || _savingLogo">@L["Save"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>

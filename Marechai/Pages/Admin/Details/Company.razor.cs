@@ -1,18 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Blazor.FileReader;
 using Blazorise;
 using Marechai.Database;
 using Marechai.Database.Models;
+using Marechai.Helpers;
 using Marechai.Shared;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
+using SkiaSharp;
+using Svg.Skia;
 
 namespace Marechai.Pages.Admin.Details
 {
     public partial class Company
     {
+        const int              _maxUploadSize = 5 * 1048576;
         List<CompanyViewModel> _companies;
         List<Iso31661Numeric>  _countries;
         bool                   _creating;
@@ -22,23 +29,35 @@ namespace Marechai.Pages.Admin.Details
         bool                   _editing;
         Modal                  _frmDelete;
         Modal                  _frmLogoYear;
+        Modal                  _frmUpload;
+        ElementReference       _inputUpload;
         bool                   _loaded;
         List<CompanyLogo>      _logos;
         CompanyViewModel       _model;
-        bool                   _unknownAddress;
-        bool                   _unknownCity;
-        bool                   _unknownCountry;
-        bool                   _unknownFacebook;
-        bool                   _unknownFounded;
-        bool                   _unknownLogoYear;
-        bool                   _unknownPostalCode;
-        bool                   _unknownProvince;
-        bool                   _unknownSold;
-        bool                   _unknownSoldTo;
-        bool                   _unknownTwitter;
-        bool                   _unknownWebsite;
+        double                 _progressValue;
 
-        bool _yearChangeInProgress;
+        bool         _savingLogo;
+        bool         _unknownAddress;
+        bool         _unknownCity;
+        bool         _unknownCountry;
+        bool         _unknownFacebook;
+        bool         _unknownFounded;
+        bool         _unknownLogoYear;
+        bool         _unknownPostalCode;
+        bool         _unknownProvince;
+        bool         _unknownSold;
+        bool         _unknownSoldTo;
+        bool         _unknownTwitter;
+        bool         _unknownWebsite;
+        bool         _uploaded;
+        string       _uploadedPngData;
+        string       _uploadedSvgData;
+        string       _uploadedWebpData;
+        bool         _uploadError;
+        string       _uploadErrorMessage;
+        bool         _uploading;
+        MemoryStream _uploadMs;
+        bool         _yearChangeInProgress;
         [Parameter]
         public int Id { get; set; }
 
@@ -322,6 +341,217 @@ namespace Marechai.Pages.Admin.Details
                 e.Status = ValidationStatus.Error;
             else
                 e.Status = ValidationStatus.Success;
+        }
+
+        void ShowUploadModal()
+        {
+            _uploadError        = false;
+            _uploadErrorMessage = "";
+            _uploading          = false;
+            _uploadMs           = null;
+            _uploaded           = false;
+            _progressValue      = 0;
+            _uploadedSvgData    = "";
+            _uploadedPngData    = "";
+            _uploadedWebpData   = "";
+            _savingLogo = false;
+            _frmUpload.Show();
+        }
+
+        void HideUploadModal() => _frmUpload.Hide();
+
+        void UploadModalClosing(ModalClosingEventArgs e)
+        {
+            _uploadError        = false;
+            _uploadErrorMessage = "";
+            _uploading          = false;
+            _uploadMs           = null;
+            _uploaded           = false;
+            _progressValue      = 0;
+            _uploadedSvgData    = "";
+            _uploadedPngData    = "";
+            _uploadedWebpData   = "";
+            _savingLogo = false;
+        }
+
+        async Task UploadFile()
+        {
+            IFileReference file = (await FileReaderService.CreateReference(_inputUpload).EnumerateFilesAsync()).
+                FirstOrDefault();
+
+            if(file is null)
+                return;
+
+            IFileInfo fileInfo = await file.ReadFileInfoAsync();
+
+            if(fileInfo.Size > _maxUploadSize)
+            {
+                _uploadError        = true;
+                _uploadErrorMessage = L["The selected file is too big."];
+
+                return;
+            }
+
+            _uploading = true;
+
+            await using AsyncDisposableStream fs     = await file.OpenReadAsync();
+            byte[]                            buffer = new byte[20480];
+
+            try
+            {
+                double lastProgress = 0;
+                int    count;
+                _uploadMs = new MemoryStream();
+
+                while((count = await fs.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                {
+                    await _uploadMs.WriteAsync(buffer, 0, count);
+
+                    double progress = ((double)fs.Position * 100) / fs.Length;
+
+                    if(!(progress > lastProgress + 0.01))
+                        continue;
+
+                    _progressValue = progress;
+                    await InvokeAsync(StateHasChanged);
+                    await Task.Yield();
+                    lastProgress = progress;
+                }
+            }
+            catch(Exception)
+            {
+                _uploading          = false;
+                _uploadError        = true;
+                _uploadErrorMessage = L["There was an error uploading the file."];
+
+                return;
+            }
+
+            _uploading = false;
+            await InvokeAsync(StateHasChanged);
+            await Task.Yield();
+
+            bool validSvg = true;
+
+            buffer = new byte[6];
+
+            _uploadMs.Position = 0;
+            _uploadMs.Read(buffer, 0, 6);
+
+            if(!Encoding.UTF8.GetString(buffer).StartsWith("<?xml", StringComparison.InvariantCulture) &&
+               !Encoding.UTF8.GetString(buffer).StartsWith("<svg", StringComparison.InvariantCulture))
+                validSvg = false;
+
+            _uploadMs.Seek(-6, SeekOrigin.End);
+            _uploadMs.Read(buffer, 0, 6);
+
+            // LF
+            if(buffer[^1] == 0x0A)
+            {
+                _uploadMs.Seek(-7, SeekOrigin.End);
+                _uploadMs.Read(buffer, 0, 6);
+            }
+
+            // CR
+            if(buffer[^1] == 0x0D)
+            {
+                _uploadMs.Seek(-8, SeekOrigin.End);
+                _uploadMs.Read(buffer, 0, 6);
+            }
+
+            if(!Encoding.UTF8.GetString(buffer).StartsWith("</svg>", StringComparison.InvariantCulture))
+                validSvg = false;
+
+            if(!validSvg)
+            {
+                _uploadMs           = null;
+                _uploadError        = true;
+                _uploadErrorMessage = L["The uploaded file is not a SVG file."];
+
+                return;
+            }
+
+            _uploadMs.Position = 0;
+
+            var svg = new SKSvg();
+
+            try
+            {
+                svg.Load(_uploadMs);
+            }
+            catch(Exception)
+            {
+                _uploadMs           = null;
+                _uploadError        = true;
+                _uploadErrorMessage = L["The uploaded file could not be loaded. Is it a correct SVG file?"];
+
+                return;
+            }
+
+            var pngStream  = new MemoryStream();
+            var webpStream = new MemoryStream();
+
+            try
+            {
+                SvgRender.RenderSvg(svg, pngStream, SKEncodedImageFormat.Png, 256, 1);
+                SvgRender.RenderSvg(svg, webpStream, SKEncodedImageFormat.Webp, 256, 1);
+            }
+            catch(Exception)
+            {
+                _uploadMs           = null;
+                _uploadError        = true;
+                _uploadErrorMessage = L["An error occuring rendering the uploaded file. Is it a correct SVG file?"];
+
+                return;
+            }
+
+            _uploadMs.Position  = 0;
+            pngStream.Position  = 0;
+            webpStream.Position = 0;
+
+            _uploadedSvgData  = $"data:image/svg+xml;base64,{Convert.ToBase64String(_uploadMs.ToArray())}";
+            _uploadedPngData  = $"data:image/png;base64,{Convert.ToBase64String(pngStream.ToArray())}";
+            _uploadedWebpData = $"data:image/webp;base64,{Convert.ToBase64String(webpStream.ToArray())}";
+
+            _unknownLogoYear = true;
+            _uploaded        = true;
+        }
+
+        async Task ConfirmUpload()
+        {
+            _savingLogo        = true;
+            _uploadMs.Position = 0;
+            var guid = Guid.NewGuid();
+
+            try
+            {
+                SvgRender.RenderCompanyLogo(guid, _uploadMs, Host.WebRootPath);
+
+                var fs = new FileStream(Path.Combine(Host.WebRootPath, "assets/logos", $"{guid}.svg"), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                _uploadMs.Position = 0;
+                _uploadMs.WriteTo(fs);
+                fs.Close();
+            }
+            catch(Exception)
+            {
+                _savingLogo         = false;
+                _uploadError        = true;
+                _uploadErrorMessage = L["An error occuring rendering the uploaded file. Is it a correct SVG file?"];
+
+                return;
+            }
+
+            await CompanyLogosService.CreateAsync(Id, guid, _unknownLogoYear ? null : _currentLogoYear);
+
+            _logos = await CompanyLogosService.GetByCompany(Id);
+
+            _frmUpload.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
         }
     }
 }
