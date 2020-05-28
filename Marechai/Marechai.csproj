@@ -140,5 +140,6 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Machines\Create.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\People\Create.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\Processors\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Screens\Create.cshtml" />
   </ItemGroup>
 </Project>

@@ -52,6 +52,20 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(ScreenViewModel viewModel)
+        {
+            var model = new Screen
+            {
+                Diagonal = viewModel.Diagonal, EffectiveColors = viewModel.EffectiveColors, Height = viewModel.Height,
+                NativeResolutionId = viewModel.NativeResolutionId, Type = viewModel.Type, Width = viewModel.Width
+            };
+
+            await _context.Screens.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             Screen item = await _context.Screens.FindAsync(id);
