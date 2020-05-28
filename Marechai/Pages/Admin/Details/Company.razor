@@ -80,7 +80,7 @@
             @if (!_editing || !_unknownFounded)
             {
                 <Validation Validator="@ValidateFounded">
-                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Text="@_model.Founded" >
+                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.Founded" >
                         <Feedback>
                             <ValidationError>@L["Please enter a valid foundation date."]</ValidationError>
                         </Feedback>
@@ -270,7 +270,7 @@
                      !_unknownSold)
                 {
                     <Validation Validator="@ValidateSold">
-                        <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Text="@_model.Sold">
+                        <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.Sold">
                             <Feedback>
                                 <ValidationError>@L["Please enter a valid sold/merge/bankruptcy date."]</ValidationError>
                             </Feedback>

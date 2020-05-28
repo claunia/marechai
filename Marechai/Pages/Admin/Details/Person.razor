@@ -156,7 +156,7 @@
     <Field>
         <FieldLabel>@L["Birth date"]</FieldLabel>
         <Validation Validator="@ValidateBirthDate">
-            <DateEdit TValue="DateTime" ReadOnly="!_editing" @bind-Text="@_model.BirthDate" >
+            <DateEdit TValue="DateTime" ReadOnly="!_editing" @bind-Date="@_model.BirthDate" >
                 <Feedback>
                     <ValidationError>@L["Please enter a valid birth date."]</ValidationError>
                 </Feedback>
@@ -174,7 +174,7 @@
             @if (!_editing || !_unknownDeathDate)
             {
                 <Validation Validator="@ValidateDeathDate">
-                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Text="@_model.DeathDate" >
+                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.DeathDate" >
                         <Feedback>
                             <ValidationError>@L["Please enter a valid death date."]</ValidationError>
                         </Feedback>
