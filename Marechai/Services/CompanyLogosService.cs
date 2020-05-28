@@ -73,5 +73,16 @@ namespace Marechai.Services
             if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png")))
                 File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png"));
         }
+
+        public async Task ChangeYearAsync(int id, int? year)
+        {
+            CompanyLogo logo = await _context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
+
+            if(logo is null)
+                return;
+
+            logo.Year = year;
+            await _context.SaveChangesAsync();
+        }
     }
 }

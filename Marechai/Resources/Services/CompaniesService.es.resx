@@ -402,4 +402,48 @@
     <value>Por favor introduce una fecha de venta, fusión, bancarrota o renombre válida.</value>
     <comment>Please enter a valid sold/merge/bankruptcy date.</comment>
   </data>
+  <data name="Unknown (logo year)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a company logo year</comment>
+  </data>
+  <data name="Upload new logo" xml:space="preserve">
+    <value>Subir nuevo logo</value>
+    <comment>Upload new logo</comment>
+  </data>
+  <data name="Logos" xml:space="preserve">
+    <value>Logos</value>
+    <comment>Logos</comment>
+  </data>
+  <data name="Logo" xml:space="preserve">
+    <value>Logo</value>
+    <comment>Logo</comment>
+  </data>
+  <data name="Year logo came in use" xml:space="preserve">
+    <value>Año el logo empezó a usarse</value>
+    <comment>Year logo came in use</comment>
+  </data>
+  <data name="Cannot find logo file" xml:space="preserve">
+    <value>No se pudo encontrar el archivo del logo</value>
+    <comment>Cannot find logo file</comment>
+  </data>
+  <data name="Change year" xml:space="preserve">
+    <value>Cambiar año</value>
+    <comment>Change year</comment>
+  </data>
+  <data name="Delete logo" xml:space="preserve">
+    <value>Borrar logo</value>
+    <comment>Delete logo</comment>
+  </data>
+  <data name="Are you sure you want to delete the company logo introduced in {0}?" xml:space="preserve">
+    <value>¿Estás seguro de que quieres borrar el logo que la compañía empezó a utilizar en {0}?</value>
+    <comment>Are you sure you want to delete the company logo introduced in {0}?</comment>
+  </data>
+  <data name="Change logo year" xml:space="preserve">
+    <value>Cambiar año del logo</value>
+    <comment>Change logo year</comment>
+  </data>
+  <data name="Please enter a valid year." xml:space="preserve">
+    <value>Por favor introduce un año válido.</value>
+    <comment>Please enter a valid year.</comment>
+  </data>
 </root>

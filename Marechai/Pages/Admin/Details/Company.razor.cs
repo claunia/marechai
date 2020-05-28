@@ -17,9 +17,11 @@ namespace Marechai.Pages.Admin.Details
         List<Iso31661Numeric>  _countries;
         bool                   _creating;
         CompanyLogo            _currentLogo;
+        int?                   _currentLogoYear;
         bool                   _deleteInProgress;
         bool                   _editing;
         Modal                  _frmDelete;
+        Modal                  _frmLogoYear;
         bool                   _loaded;
         List<CompanyLogo>      _logos;
         CompanyViewModel       _model;
@@ -28,12 +30,15 @@ namespace Marechai.Pages.Admin.Details
         bool                   _unknownCountry;
         bool                   _unknownFacebook;
         bool                   _unknownFounded;
+        bool                   _unknownLogoYear;
         bool                   _unknownPostalCode;
         bool                   _unknownProvince;
         bool                   _unknownSold;
         bool                   _unknownSoldTo;
         bool                   _unknownTwitter;
         bool                   _unknownWebsite;
+
+        bool _yearChangeInProgress;
         [Parameter]
         public int Id { get; set; }
 
@@ -237,13 +242,13 @@ namespace Marechai.Pages.Admin.Details
         void ValidateFacebook(ValidatorEventArgs e) =>
             Validators.ValidateString(e, L["Facebook username must be smaller than 256 characters."], 256);
 
-        void ShowModal(int itemId)
+        void ShowDeleteModal(int itemId)
         {
             _currentLogo = _logos.FirstOrDefault(n => n.Id == itemId);
             _frmDelete.Show();
         }
 
-        void HideModal() => _frmDelete.Hide();
+        void HideDeleteModal() => _frmDelete.Hide();
 
         async void ConfirmDelete()
         {
@@ -268,6 +273,55 @@ namespace Marechai.Pages.Admin.Details
             StateHasChanged();
         }
 
-        void ModalClosing(ModalClosingEventArgs obj) => _currentLogo = null;
+        void DeleteModalClosing(ModalClosingEventArgs e) => _currentLogo = null;
+
+        void ShowLogoYearModal(int itemId)
+        {
+            _currentLogo     = _logos.FirstOrDefault(n => n.Id == itemId);
+            _currentLogoYear = _currentLogo?.Year;
+            _unknownLogoYear = _currentLogoYear is null;
+            _frmLogoYear.Show();
+        }
+
+        void HideLogoYearModal() => _frmLogoYear.Hide();
+
+        async void ConfirmLogoYear()
+        {
+            if(_currentLogo is null)
+                return;
+
+            _yearChangeInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompanyLogosService.ChangeYearAsync(_currentLogo.Id, _unknownLogoYear ? null : _currentLogoYear);
+            _logos = await CompanyLogosService.GetByCompany(Id);
+
+            _yearChangeInProgress = false;
+            _frmLogoYear.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void LogoYearModalClosing(ModalClosingEventArgs e)
+        {
+            _currentLogo     = null;
+            _currentLogoYear = null;
+        }
+
+        void ValidateLogoYear(ValidatorEventArgs e)
+        {
+            if(!(e.Value is int item) ||
+               item <= 1000           ||
+               item > DateTime.UtcNow.Year)
+                e.Status = ValidationStatus.Error;
+            else
+                e.Status = ValidationStatus.Success;
+        }
     }
 }

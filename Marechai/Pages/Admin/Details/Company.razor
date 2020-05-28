@@ -337,9 +337,10 @@
         <tbody>
         @foreach (var logo in _logos)
         {
+            bool logoFound = File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"));
             <tr>
                 <td>
-                    @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg")))
+                    @if (logoFound)
                     {
                         <picture>
                             <source type="image/svg+xml" srcset="/assets/logos/@(logo.Guid).svg">
@@ -364,8 +365,11 @@
                     }
                 </td>
                 <td>
-                    <a class="btn btn-primary">@L["Change year"]</a>
-                    <Button Color="Color.Danger" Clicked="() => {ShowModal(logo.Id);}">@L["Delete"]</Button>
+                    @if (logoFound)
+                    {
+                        <Button Color="Color.Success" Clicked="() => {ShowLogoYearModal(logo.Id);}">@L["Change year"]</Button>
+                    }
+                    <Button Color="Color.Danger" Clicked="() => {ShowDeleteModal(logo.Id);}">@L["Delete"]</Button>
                 </td>
             </tr>
         }
@@ -373,19 +377,62 @@
     </table>
 }
 
-<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@DeleteModalClosing"> 
     <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete logo"]</ModalTitle>
-            <CloseButton Clicked="@HideModal"/>
+            <CloseButton Clicked="@HideDeleteModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(@L["Are you sure you want to delete the company logo introduced in {0}?"], _currentLogo?.Year)</Text>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Primary" Clicked="@HideDeleteModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
             <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="_frmLogoYear" IsCentered="true" Closing="@LogoYearModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Change logo year"]</ModalTitle>
+            <CloseButton Clicked="@HideLogoYearModal"/>
+        </ModalHeader>
+        <ModalBody>
+            @if (_currentLogo != null)
+            {
+                <div class="text-center">
+                    <picture>
+                        <source type="image/svg+xml" srcset="/assets/logos/@(_currentLogo.Guid).svg">
+                        <source type="image/webp" srcset="/assets/logos/webp/1x/@(_currentLogo.Guid).webp, /assets/logos/webp/2x/@(_currentLogo.Guid).webp 2x, /assets/logos/webp/3x/@(_currentLogo.Guid).webp 3x">
+                        <img srcset="/assets/logos/png/1x/@(_currentLogo.Guid).png, /assets/logos/png/2x/@(_currentLogo.Guid).png 2x, /assets/logos/png/3x/@(_currentLogo.Guid).png 3x" src="/assets/logos/png/1x@(_currentLogo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                    </picture>
+                </div>
+                <Field>
+                    <FieldLabel>@L["Year logo came in use"]</FieldLabel>
+                    <Check TValue="bool" @bind-Checked="@_unknownLogoYear">@L["Unknown (logo year)"]</Check>
+                    @if (!_unknownLogoYear)
+                    {
+                        <Validation Validator="@ValidateLogoYear">
+                            <NumericEdit TValue="int?" Decimals="0" @bind-Value="@_currentLogoYear">
+                                <Feedback>
+                                    <ValidationError>@L["Please enter a valid year."]</ValidationError>
+                                </Feedback>
+                            </NumericEdit>
+                        </Validation>
+                    }
+                </Field>
+            }
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideLogoYearModal" Disabled="@_yearChangeInProgress">@L["Cancel"]</Button>
+            @if (_currentLogo != null)
+            {
+                <Button Color="Color.Success" Clicked="@ConfirmLogoYear" Disabled="@_yearChangeInProgress">@L["Save"]</Button>
+            }
         </ModalFooter>
     </ModalContent>
 </Modal>
