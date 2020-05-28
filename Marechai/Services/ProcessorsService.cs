@@ -90,6 +90,27 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(ProcessorViewModel viewModel)
+        {
+            var model = new Processor
+            {
+                AddrBus = viewModel.AddrBus, CompanyId = viewModel.CompanyId, Cores = viewModel.Cores,
+                DataBus = viewModel.DataBus, DieSize = viewModel.DieSize, Fprs = viewModel.Fprs,
+                FprSize = viewModel.FprSize, Gprs = viewModel.Gprs, GprSize = viewModel.GprSize,
+                InstructionSetId = viewModel.InstructionSetId, Introduced = viewModel.Introduced,
+                L1Data = viewModel.L1Data, L1Instruction = viewModel.L1Instruction, L2 = viewModel.L2,
+                L3 = viewModel.L3, ModelCode = viewModel.ModelCode, Name = viewModel.Name, Package = viewModel.Package,
+                Process = viewModel.Process, ProcessNm = viewModel.ProcessNm, SimdRegisters = viewModel.SimdRegisters,
+                SimdSize = viewModel.SimdSize, Speed = viewModel.Speed, ThreadsPerCore = viewModel.ThreadsPerCore,
+                Transistors = viewModel.Transistors
+            };
+
+            await _context.Processors.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             Processor item = await _context.Processors.FindAsync(id);
