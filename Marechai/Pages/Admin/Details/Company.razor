@@ -38,6 +38,8 @@
 @inject IStringLocalizer<CompaniesService> L
 @inject Iso31661NumericService CountriesService
 @inject NavigationManager NavigationManager
+@inject CompanyLogosService CompanyLogosService
+@inject IWebHostEnvironment Host
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Company details"]</h3>
 <hr />
@@ -312,4 +314,78 @@
         <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
     }
     <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
+@if (!_editing)
+{
+    <a class="btn btn-success">@L["Upload new logo"]</a>
+}
 </div>
+@if (_logos.Count > 0)
+{
+    <h4>@L["Logos"]</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @L["Logo"]
+                </th>
+                <th>
+                    @L["Year logo came in use"]
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var logo in _logos)
+        {
+            <tr>
+                <td>
+                    @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg")))
+                    {
+                        <picture>
+                            <source type="image/svg+xml" srcset="/assets/logos/@(logo.Guid).svg">
+                            <source type="image/webp" srcset="/assets/logos/webp/1x/@(logo.Guid).webp, /assets/logos/webp/2x/@(logo.Guid).webp 2x, /assets/logos/webp/3x/@(logo.Guid).webp 3x">
+                            <img srcset="/assets/logos/png/1x/@(logo.Guid).png, /assets/logos/png/2x/@(logo.Guid).png 2x, /assets/logos/png/3x/@(logo.Guid).png 3x"
+                                 src="/assets/logos/png/1x@(logo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </picture>
+                    }
+                    else
+                    {
+                        <strong>@L["Cannot find logo file"]</strong>
+                    }
+                </td>
+                <td>
+                    @if (logo.Year.HasValue)
+                    {
+                        @logo.Year
+                    }
+                    else
+                    {
+                        @L["Unknown (logo year)"]
+                    }
+                </td>
+                <td>
+                    <a class="btn btn-primary">@L["Change year"]</a>
+                    <Button Color="Color.Danger" Clicked="() => {ShowModal(logo.Id);}">@L["Delete"]</Button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete logo"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete the company logo introduced in {0}?"], _currentLogo?.Year)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>

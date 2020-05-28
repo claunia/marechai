@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Database;
@@ -15,8 +16,12 @@ namespace Marechai.Pages.Admin.Details
         List<CompanyViewModel> _companies;
         List<Iso31661Numeric>  _countries;
         bool                   _creating;
+        CompanyLogo            _currentLogo;
+        bool                   _deleteInProgress;
         bool                   _editing;
+        Modal                  _frmDelete;
         bool                   _loaded;
+        List<CompanyLogo>      _logos;
         CompanyViewModel       _model;
         bool                   _unknownAddress;
         bool                   _unknownCity;
@@ -48,12 +53,14 @@ namespace Marechai.Pages.Admin.Details
             _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                           StartsWith("admin/companies/create", StringComparison.InvariantCulture);
 
-            if(Id <= 0 && !_creating)
+            if(Id <= 0 &&
+               !_creating)
                 return;
 
             _countries = await CountriesService.GetAsync();
             _companies = await Service.GetAsync();
             _model     = _creating ? new CompanyViewModel() : await Service.GetAsync(Id);
+            _logos     = await CompanyLogosService.GetByCompany(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/companies/edit/",
@@ -229,5 +236,38 @@ namespace Marechai.Pages.Admin.Details
 
         void ValidateFacebook(ValidatorEventArgs e) =>
             Validators.ValidateString(e, L["Facebook username must be smaller than 256 characters."], 256);
+
+        void ShowModal(int itemId)
+        {
+            _currentLogo = _logos.FirstOrDefault(n => n.Id == itemId);
+            _frmDelete.Show();
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_currentLogo is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompanyLogosService.DeleteAsync(_currentLogo.Id);
+            _logos = await CompanyLogosService.GetByCompany(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ModalClosing(ModalClosingEventArgs obj) => _currentLogo = null;
     }
 }
