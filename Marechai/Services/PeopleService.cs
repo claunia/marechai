@@ -53,6 +53,22 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(PersonViewModel viewModel)
+        {
+            var model = new Person
+            {
+                Name      = viewModel.Name, Surname = viewModel.Surname, CountryOfBirthId = viewModel.CountryOfBirthId,
+                BirthDate = viewModel.BirthDate, DeathDate = viewModel.DeathDate, Webpage = viewModel.Webpage,
+                Twitter   = viewModel.Twitter, Facebook = viewModel.Facebook, Photo = viewModel.Photo,
+                Alias     = viewModel.Alias, DisplayName = viewModel.DisplayName
+            };
+
+            await _context.People.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             Person item = await _context.People.FindAsync(id);
