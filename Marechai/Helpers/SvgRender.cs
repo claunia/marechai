@@ -1,4 +1,4 @@
-/******************************************************************************
+﻿/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -48,7 +48,7 @@ namespace Marechai.Helpers
             {
                 SKSvg svg = null;
 
-                string flagname = Path.GetFileNameWithoutExtension(file);
+                string flagName = Path.GetFileNameWithoutExtension(file);
 
                 foreach(string format in new[]
                 {
@@ -82,7 +82,7 @@ namespace Marechai.Helpers
                                                                    $"{multiplier}x"));
 
                         string rendered = Path.Combine("wwwroot/assets/flags/countries", format, $"{multiplier}x",
-                                                       flagname + $".{format}");
+                                                       flagName + $".{format}");
 
                         if(File.Exists(rendered))
                             continue;
@@ -106,9 +106,9 @@ namespace Marechai.Helpers
                         canvas.Flush();
                         var    image = SKImage.FromBitmap(bitmap);
                         SKData data  = image.Encode(skFormat, 100);
-                        var    outfs = new FileStream(rendered, FileMode.CreateNew);
-                        data.SaveTo(outfs);
-                        outfs.Close();
+                        var    outFs = new FileStream(rendered, FileMode.CreateNew);
+                        data.SaveTo(outFs);
+                        outFs.Close();
                     }
                 }
             }
@@ -124,7 +124,7 @@ namespace Marechai.Helpers
             {
                 string filename = Path.GetFileNameWithoutExtension(file);
 
-                if(!filename.StartsWith("company_"))
+                if(!filename.StartsWith("company_", StringComparison.InvariantCulture))
                     continue;
 
                 string[] pieces = filename.Split('_');
@@ -152,6 +152,79 @@ namespace Marechai.Helpers
                 catch(Exception)
                 {
                     continue;
+                }
+
+                SKSvg svg = null;
+
+                foreach(int minSize in new[]
+                {
+                    256, 32
+                })
+                {
+                    foreach(string format in new[]
+                    {
+                        "png", "webp"
+                    })
+                    {
+                        string outDir = minSize == 32 ? Path.Combine("wwwroot/assets/logos/thumbs", format)
+                                            : Path.Combine("wwwroot/assets/logos", format);
+
+                        if(!Directory.Exists(outDir))
+                            Directory.CreateDirectory(outDir);
+
+                        SKEncodedImageFormat skFormat;
+
+                        switch(format)
+                        {
+                            case"webp":
+                                skFormat = SKEncodedImageFormat.Webp;
+
+                                break;
+                            default:
+                                skFormat = SKEncodedImageFormat.Png;
+
+                                break;
+                        }
+
+                        foreach(int multiplier in new[]
+                        {
+                            1, 2, 3
+                        })
+                        {
+                            string outPath = Path.Combine(outDir, $"{multiplier}x");
+
+                            if(!Directory.Exists(outPath))
+                                Directory.CreateDirectory(outPath);
+
+                            string rendered = Path.Combine(outPath, $"{guid}.{format}");
+
+                            if(File.Exists(rendered))
+                                continue;
+
+                            Console.WriteLine("Rendering {0}", rendered);
+
+                            if(svg == null)
+                            {
+                                svg = new SKSvg();
+                                svg.Load(file);
+                            }
+
+                            SKRect svgSize = svg.Picture.CullRect;
+                            float  svgMax = Math.Max(svgSize.Width, svgSize.Height);
+                            float  canvasMin = minSize * multiplier;
+                            float  scale = canvasMin / svgMax;
+                            var    matrix = SKMatrix.MakeScale(scale, scale);
+                            var    bitmap = new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
+                            var    canvas = new SKCanvas(bitmap);
+                            canvas.DrawPicture(svg.Picture, ref matrix);
+                            canvas.Flush();
+                            var    image = SKImage.FromBitmap(bitmap);
+                            SKData data  = image.Encode(skFormat, 100);
+                            var    outFs = new FileStream(rendered, FileMode.CreateNew);
+                            data.SaveTo(outFs);
+                            outFs.Close();
+                        }
+                    }
                 }
 
                 File.Move(file, $"wwwroot/assets/logos/{guid}.svg");
