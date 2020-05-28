@@ -11,6 +11,7 @@ namespace Marechai.Pages.Admin.Details
     public partial class MachineFamily
     {
         List<CompanyViewModel> _companies;
+        bool                   _creating;
         bool                   _editing;
         bool                   _loaded;
         MachineFamilyViewModel _model;
@@ -24,14 +25,20 @@ namespace Marechai.Pages.Admin.Details
 
             _loaded = true;
 
-            if(Id <= 0)
+            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
+                                          StartsWith("admin/machine_families/create",
+                                                     StringComparison.InvariantCulture);
+
+            if(Id <= 0 &&
+               !_creating)
                 return;
 
             _companies = await CompaniesService.GetAsync();
-            _model     = await Service.GetAsync(Id);
+            _model     = _creating ? new MachineFamilyViewModel() : await Service.GetAsync(Id);
 
-            _editing = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                         StartsWith("admin/machine_families/edit/", StringComparison.InvariantCulture);
+            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
+                                                      StartsWith("admin/machine_families/edit/",
+                                                                 StringComparison.InvariantCulture);
 
             StateHasChanged();
         }
@@ -45,7 +52,15 @@ namespace Marechai.Pages.Admin.Details
         async void OnCancelClicked()
         {
             _editing = false;
-            _model   = await Service.GetAsync(Id);
+
+            if(_creating)
+            {
+                NavigationManager.ToBaseRelativePath("admin/machine_families");
+
+                return;
+            }
+
+            _model = await Service.GetAsync(Id);
             StateHasChanged();
         }
 
@@ -55,9 +70,14 @@ namespace Marechai.Pages.Admin.Details
                _model.Name?.Length > 255)
                 return;
 
-            _editing = false;
-            await Service.UpdateAsync(_model);
-            _model = await Service.GetAsync(Id);
+            if(_creating)
+                Id = await Service.CreateAsync(_model);
+            else
+                await Service.UpdateAsync(_model);
+
+            _editing  = false;
+            _creating = false;
+            _model    = await Service.GetAsync(Id);
             StateHasChanged();
         }
 

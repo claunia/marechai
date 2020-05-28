@@ -39,6 +39,19 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(MachineFamilyViewModel viewModel)
+        {
+            var model = new MachineFamily
+            {
+                Name = viewModel.Name, CompanyId = viewModel.CompanyId
+            };
+
+            await _context.MachineFamilies.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             MachineFamily item = await _context.MachineFamilies.FindAsync(id);
