@@ -102,6 +102,7 @@ namespace Marechai.Helpers
                         var    matrix    = SKMatrix.MakeScale(scale, scale);
                         var    bitmap    = new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
                         var    canvas    = new SKCanvas(bitmap);
+                        canvas.Clear();
                         canvas.DrawPicture(svg.Picture, ref matrix);
                         canvas.Flush();
                         var    image = SKImage.FromBitmap(bitmap);
@@ -216,6 +217,7 @@ namespace Marechai.Helpers
                             var    matrix = SKMatrix.MakeScale(scale, scale);
                             var    bitmap = new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
                             var    canvas = new SKCanvas(bitmap);
+                            canvas.Clear();
                             canvas.DrawPicture(svg.Picture, ref matrix);
                             canvas.Flush();
                             var    image = SKImage.FromBitmap(bitmap);
