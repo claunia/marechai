@@ -71,6 +71,22 @@ namespace Marechai.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateAsync(SoundSynthViewModel viewModel)
+        {
+            var model = new SoundSynth
+            {
+                Depth      = viewModel.Depth, Frequency     = viewModel.Frequency, Introduced = viewModel.Introduced,
+                Name       = viewModel.Name, Type           = viewModel.Type, Voices          = viewModel.Voices,
+                CompanyId  = viewModel.CompanyId, ModelCode = viewModel.ModelCode, SquareWave = viewModel.SquareWave,
+                WhiteNoise = viewModel.WhiteNoise
+            };
+
+            await _context.SoundSynths.AddAsync(model);
+            await _context.SaveChangesAsync();
+
+            return model.Id;
+        }
+
         public async Task DeleteAsync(int id)
         {
             SoundSynth item = await _context.SoundSynths.FindAsync(id);
