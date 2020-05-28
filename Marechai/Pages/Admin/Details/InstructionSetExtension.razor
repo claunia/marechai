@@ -32,6 +32,7 @@
 
 @page "/admin/instruction_set_extensions/details/{Id:int}"
 @page "/admin/instruction_set_extensions/edit/{Id:int}"
+@page "/admin/instruction_set_extensions/create"
 @inherits OwningComponentBase<InstructionSetExtensionsService>
 @inject IStringLocalizer<InstructionSetExtensionsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
