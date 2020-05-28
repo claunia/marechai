@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using SkiaSharp;
-using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
+using Svg.Skia;
 
 namespace Marechai.Areas.Admin.Controllers
 {

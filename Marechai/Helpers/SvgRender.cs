@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -32,7 +32,7 @@ using System;
 using System.IO;
 using Marechai.Database.Models;
 using SkiaSharp;
-using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
+using Svg.Skia;
 
 namespace Marechai.Helpers
 {
