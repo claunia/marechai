@@ -21,29 +21,33 @@ namespace Marechai.Pages.Admin.Details
         double?                            _addingMemorySpeed;
         int                                _addingMemoryType;
         int                                _addingMemoryUsage;
-        bool    _addingStorage;
-        long?   _addingStorageSize;
-        int     _addingStorageType;
-        int     _addingStorageInterface;
         float?                             _addingProcessorSpeed;
+        bool                               _addingScreen;
+        int?                               _addingScreenId;
         bool                               _addingSound;
         int?                               _addingSoundId;
+        bool                               _addingStorage;
+        int                                _addingStorageInterface;
+        long?                              _addingStorageSize;
+        int                                _addingStorageType;
         List<CompanyViewModel>             _companies;
         List<ProcessorViewModel>           _cpus;
         bool                               _creating;
         ProcessorByMachineViewModel        _currentCpuByMachine;
         GpuByMachineViewModel              _currentGpuByMachine;
         MemoryByMachineViewModel           _currentMemoryByMachine;
-        SoundSynthByMachineViewModel _currentSoundByMachine;
-        StorageByMachineViewModel _currentStorageByMachine;
+        ScreenByMachineViewModel           _currentScreenByMachine;
+        SoundSynthByMachineViewModel       _currentSoundByMachine;
+        StorageByMachineViewModel          _currentStorageByMachine;
         bool                               _deleteInProgress;
         string                             _deleteText;
         string                             _deleteTitle;
         bool                               _deletingCpuByMachine;
         bool                               _deletingGpuByMachine;
-        bool _deletingMemoryByMachine;
-        bool _deletingStorageByMachine;
+        bool                               _deletingMemoryByMachine;
+        bool                               _deletingScreenByMachine;
         bool                               _deletingSoundByMachine;
+        bool                               _deletingStorageByMachine;
         bool                               _editing;
         List<MachineFamilyViewModel>       _families;
         Modal                              _frmDelete;
@@ -52,23 +56,26 @@ namespace Marechai.Pages.Admin.Details
         List<ProcessorByMachineViewModel>  _machineCpus;
         List<GpuByMachineViewModel>        _machineGpus;
         List<MemoryByMachineViewModel>     _machineMemories;
+        List<ScreenByMachineViewModel>     _machineScreens;
         List<SoundSynthByMachineViewModel> _machineSound;
-        List<StorageByMachineViewModel> _machineStorage;
+        List<StorageByMachineViewModel>    _machineStorage;
         MachineViewModel                   _model;
         bool                               _noFamily;
         bool                               _prototype;
         bool                               _savingCpu;
         bool                               _savingGpu;
         bool                               _savingMemory;
-        bool _savingSound;
-        bool _savingStorage;
+        bool                               _savingScreen;
+        bool                               _savingSound;
+        bool                               _savingStorage;
+        List<ScreenViewModel>              _screens;
         List<SoundSynthViewModel>          _soundSynths;
         bool                               _unknownIntroduced;
         bool                               _unknownMemorySize;
         bool                               _unknownMemorySpeed;
         bool                               _unknownModel;
         bool                               _unknownProcessorSpeed;
-        bool _unknownStorageSize;
+        bool                               _unknownStorageSize;
         [Parameter]
         public int Id { get; set; }
 
@@ -98,10 +105,12 @@ namespace Marechai.Pages.Admin.Details
             _machineGpus     = await GpusByMachineService.GetByMachine(Id);
             _machineCpus     = await ProcessorsByMachineService.GetByMachine(Id);
             _gpus            = await GpusService.GetAsync();
+            _screens         = await ScreensService.GetAsync();
             _cpus            = await ProcessorsService.GetAsync();
             _soundSynths     = await SoundSynthsService.GetAsync();
             _machineMemories = await MemoriesByMachineService.GetByMachine(Id);
-            _machineStorage = await StorageByMachineService.GetByMachine(Id);
+            _machineStorage  = await StorageByMachineService.GetByMachine(Id);
+            _machineScreens  = await ScreensByMachineService.GetByMachine(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/machines/edit/",
@@ -210,6 +219,8 @@ namespace Marechai.Pages.Admin.Details
                 await ConfirmDeleteMemoryByMachine();
             else if(_deletingStorageByMachine)
                 await ConfirmDeleteStorageByMachine();
+            else if(_deletingScreenByMachine)
+                await ConfirmDeleteScreenByMachine();
         }
 
         async Task ConfirmDeleteGpuByMachine()
@@ -237,13 +248,17 @@ namespace Marechai.Pages.Admin.Details
 
         void ModalClosing(ModalClosingEventArgs obj)
         {
-            _deleteInProgress       = false;
-            _deletingGpuByMachine   = false;
-            _currentGpuByMachine    = null;
-            _deletingSoundByMachine = false;
-            _currentSoundByMachine  = null;
-            _deletingCpuByMachine   = false;
-            _currentCpuByMachine    = null;
+            _deleteInProgress         = false;
+            _deletingGpuByMachine     = false;
+            _currentGpuByMachine      = null;
+            _deletingSoundByMachine   = false;
+            _currentSoundByMachine    = null;
+            _deletingCpuByMachine     = false;
+            _currentCpuByMachine      = null;
+            _deletingScreenByMachine  = false;
+            _currentScreenByMachine   = null;
+            _deletingMemoryByMachine  = false;
+            _deletingStorageByMachine = false;
         }
 
         void OnAddGpuClick()
@@ -574,7 +589,7 @@ namespace Marechai.Pages.Admin.Details
         {
             _currentStorageByMachine  = _machineStorage.FirstOrDefault(n => n.Id == itemId);
             _deletingStorageByMachine = true;
-            _deleteTitle             = L["Delete storage from this machine"];
+            _deleteTitle              = L["Delete storage from this machine"];
 
             _deleteText =
                 string.Format(L["Are you sure you want to delete the storage type {0} with interface {1} from this machine?"],
@@ -608,10 +623,10 @@ namespace Marechai.Pages.Admin.Details
 
         void OnAddStorageClick()
         {
-            _addingStorage       = true;
-            _savingStorage       = false;
-            _addingStorageSize   = 0;
-            _unknownStorageSize  = true;
+            _addingStorage      = true;
+            _savingStorage      = false;
+            _addingStorageSize  = 0;
+            _unknownStorageSize = true;
         }
 
         void CancelAddStorage()
@@ -630,8 +645,8 @@ namespace Marechai.Pages.Admin.Details
             await Task.Yield();
 
             await StorageByMachineService.CreateAsync(Id, (StorageType)_addingStorageType,
-                                                       (StorageInterface)_addingStorageInterface,
-                                                       _unknownStorageSize ? null : _addingStorageSize);
+                                                      (StorageInterface)_addingStorageInterface,
+                                                      _unknownStorageSize ? null : _addingStorageSize);
 
             _machineStorage = await StorageByMachineService.GetByMachine(Id);
 
@@ -655,6 +670,82 @@ namespace Marechai.Pages.Admin.Details
             }
 
             e.Status = item > 0 ? ValidationStatus.Success : ValidationStatus.Error;
+        }
+
+        void ShowScreenDeleteModal(long itemId)
+        {
+            _currentScreenByMachine  = _machineScreens.FirstOrDefault(n => n.Id == itemId);
+            _deletingScreenByMachine = true;
+            _deleteTitle             = L["Delete screen from this machine"];
+            _deleteText              = L["Are you sure you want to delete the selected screen from this machine?"];
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeleteScreenByMachine()
+        {
+            if(_currentScreenByMachine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await ScreensByMachineService.DeleteAsync(_currentScreenByMachine.Id);
+            _machineScreens = await ScreensByMachineService.GetByMachine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void OnAddScreenClick()
+        {
+            _addingScreen   = true;
+            _savingScreen   = false;
+            _addingScreenId = _screens.First(s => _machineScreens.All(m => m.ScreenId == s.Id)).Id;
+        }
+
+        void CancelAddScreen()
+        {
+            _addingScreen   = false;
+            _savingScreen   = false;
+            _addingScreenId = null;
+        }
+
+        async Task ConfirmAddScreen()
+        {
+            if(_addingScreenId is null ||
+               _addingScreenId <= 0)
+            {
+                CancelAddScreen();
+
+                return;
+            }
+
+            _savingScreen = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await ScreensByMachineService.CreateAsync(_addingScreenId.Value, Id);
+            _machineScreens = await ScreensByMachineService.GetByMachine(Id);
+
+            _addingScreen   = false;
+            _savingScreen   = false;
+            _addingScreenId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
         }
     }
 }

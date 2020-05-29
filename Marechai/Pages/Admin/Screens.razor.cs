@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Database.Models;
+using Marechai.ViewModels;
 
 namespace Marechai.Pages.Admin
 {
@@ -10,8 +11,8 @@ namespace Marechai.Pages.Admin
     {
         bool         _deleteInProgress;
         Modal        _frmDelete;
-        Screen       _screen;
-        List<Screen> _screens;
+        ScreenViewModel       _screen;
+        List<ScreenViewModel> _screens;
 
         void ShowModal(int itemId)
         {
@@ -33,7 +34,7 @@ namespace Marechai.Pages.Admin
             await Task.Yield();
 
             await Service.DeleteAsync(_screen.Id);
-            _screens = Service.Get();
+            _screens = await Service.GetAsync();
 
             _deleteInProgress = false;
             _frmDelete.Hide();
@@ -47,6 +48,6 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _screen = null;
 
-        protected override void OnInitialized() => _screens = Service.Get();
+        protected override async Task OnInitializedAsync() => _screens = await Service.GetAsync();
     }
 }

@@ -47,6 +47,8 @@
 @inject ProcessorsService ProcessorsService
 @inject MemoriesByMachineService MemoriesByMachineService
 @inject StorageByMachineService StorageByMachineService
+@inject ScreensByMachineService ScreensByMachineService
+@inject ScreensService ScreensService
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine details"]</h3>
 <hr />
@@ -546,6 +548,87 @@
                         </td>
                         <td>
                             <Button Color="Color.Danger" Clicked="() => {ShowStorageDeleteModal(item.Id);}" Disabled="@_addingStorage">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <hr />
+    <h3>@L["Screens attached"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddScreenClick" Disabled="_addingScreen">@L["Add new (screen by machine)"]</Button>
+    @if (_addingScreen)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Screens"]</FieldLabel>
+                <Select Disabled="_savingScreen" TValue="int?" @bind-SelectedValue="@_addingScreenId">
+                    @foreach (var screen in _screens)
+                    {
+                        if (_machineScreens.Any(s => s.ScreenId == screen.Id))
+                        {
+                            <SelectItem TValue="int?" Value="@screen.Id">@screen.Diagonal with a native resolution of @screen.NativeResolution</SelectItem>
+                        }
+                    }
+                </Select>
+                <Button Color="Color.Primary" Clicked="@CancelAddScreen" Disabled="@_savingScreen">@L["Cancel"]</Button>
+                <Button Color="Color.Success" Clicked="@ConfirmAddScreen" Disabled="@_savingScreen">@L["Add"]</Button>
+            </Field>
+        </div>
+    }
+    @if (_machineScreens?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Diagonal"]
+                    </th>
+                    <th>
+                        @L["Width"]
+                    </th>
+                    <th>
+                        @L["Height"]
+                    </th>
+                    <th>
+                        @L["Type"]
+                    </th>
+                    <th>
+                        @L["Effective colors"]
+                    </th>
+                    <th>
+                        @L["Native resolution"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _machineScreens)
+                {
+                    <tr>
+                        <td>
+                            @item.Screen.Diagonal
+                        </td>
+                        <td>
+                            @item.Screen.Width
+                        </td>
+                        <td>
+                            @item.Screen.Height
+                        </td>
+                        <td>
+                            @item.Screen.Type
+                        </td>
+                        <td>
+                            @item.Screen.EffectiveColors
+                        </td>
+                        <td>
+                            @item.Screen.NativeResolution
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowScreenDeleteModal(item.Id);}" Disabled="@_addingScreen">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
