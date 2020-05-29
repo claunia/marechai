@@ -12,30 +12,34 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Machine
     {
-        bool                   _addingGpu;
-        int?                   _addingGpuId;
-        List<CompanyViewModel> _companies;
-        bool                   _creating;
-        GpuByMachineViewModel  _currentGpuByMachine;
-
-        bool                         _deleteInProgress;
-        string                       _deleteText;
-        string                       _deleteTitle;
-        bool                         _deletingGpuByMachine;
-        bool                         _editing;
-        List<MachineFamilyViewModel> _families;
-        Modal                        _frmDelete;
-
-        List<GpuViewModel>          _gpus;
-        bool                        _loaded;
-        List<GpuByMachineViewModel> _machineGpus;
-        MachineViewModel            _model;
-        bool                        _noFamily;
-        bool                        _prototype;
-
-        bool _savingGpu;
-        bool _unknownIntroduced;
-        bool _unknownModel;
+        bool                               _addingGpu;
+        int?                               _addingGpuId;
+        bool                               _addingSound;
+        int?                               _addingSoundId;
+        List<CompanyViewModel>             _companies;
+        bool                               _creating;
+        GpuByMachineViewModel              _currentGpuByMachine;
+        SoundSynthByMachineViewModel       _currentSoundByMachine;
+        bool                               _deleteInProgress;
+        string                             _deleteText;
+        string                             _deleteTitle;
+        bool                               _deletingGpuByMachine;
+        bool                               _deletingSoundByMachine;
+        bool                               _editing;
+        List<MachineFamilyViewModel>       _families;
+        Modal                              _frmDelete;
+        List<GpuViewModel>                 _gpus;
+        bool                               _loaded;
+        List<GpuByMachineViewModel>        _machineGpus;
+        List<SoundSynthByMachineViewModel> _machineSound;
+        MachineViewModel                   _model;
+        bool                               _noFamily;
+        bool                               _prototype;
+        bool                               _savingGpu;
+        bool                               _savingSound;
+        List<SoundSynthViewModel>          _soundSynths;
+        bool                               _unknownIntroduced;
+        bool                               _unknownModel;
         [Parameter]
         public int Id { get; set; }
 
@@ -64,6 +68,7 @@ namespace Marechai.Pages.Admin.Details
             _model       = _creating ? new MachineViewModel() : await Service.GetAsync(Id);
             _machineGpus = await GpuByMachineService.GetByMachine(Id);
             _gpus        = await GpusService.GetAsync();
+            _soundSynths = await SoundSynthsService.GetAsync();
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/machines/edit/",
@@ -164,6 +169,8 @@ namespace Marechai.Pages.Admin.Details
         {
             if(_deletingGpuByMachine)
                 await ConfirmDeleteGpuByMachine();
+            else if(_deletingSoundByMachine)
+                await ConfirmDeleteSoundByMachine();
         }
 
         async Task ConfirmDeleteGpuByMachine()
@@ -191,9 +198,10 @@ namespace Marechai.Pages.Admin.Details
 
         void ModalClosing(ModalClosingEventArgs obj)
         {
-            _deleteInProgress     = false;
-            _deletingGpuByMachine = false;
-            _currentGpuByMachine  = null;
+            _deleteInProgress       = false;
+            _deletingGpuByMachine   = false;
+            _currentGpuByMachine    = null;
+            _deletingSoundByMachine = false;
         }
 
         async Task OnAddGpuClick()
@@ -230,6 +238,84 @@ namespace Marechai.Pages.Admin.Details
             _addingGpu   = false;
             _savingGpu   = false;
             _addingGpuId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowSoundDeleteModal(long itemId)
+        {
+            _currentSoundByMachine  = _machineSound.FirstOrDefault(n => n.Id == itemId);
+            _deletingSoundByMachine = true;
+            _deleteTitle            = L["Delete sound synthesizer from this machine"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the sound synthesizer {0} manufactured by {1} from this machine?"],
+                              _currentSoundByMachine?.Name, _currentSoundByMachine?.CompanyName);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeleteSoundByMachine()
+        {
+            if(_currentSoundByMachine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await SoundSynthsByMachineService.DeleteAsync(_currentSoundByMachine.Id);
+            _machineSound = await SoundSynthsByMachineService.GetByMachine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        async Task OnAddSoundClick()
+        {
+            _addingSound   = true;
+            _savingSound   = false;
+            _addingSoundId = null;
+        }
+
+        void CancelAddSound()
+        {
+            _addingSound   = false;
+            _savingSound   = false;
+            _addingSoundId = null;
+        }
+
+        async Task ConfirmAddSound()
+        {
+            if(_addingSoundId is null)
+            {
+                CancelAddSound();
+
+                return;
+            }
+
+            _savingSound = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await SoundSynthsByMachineService.CreateAsync(_addingSoundId.Value, Id);
+            _machineSound = await SoundSynthsByMachineService.GetByMachine(Id);
+
+            _addingSound   = false;
+            _savingSound   = false;
+            _addingSoundId = null;
 
             // Yield thread to let UI to update
             await Task.Yield();

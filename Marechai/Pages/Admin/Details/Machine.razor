@@ -41,6 +41,8 @@
 @inject NavigationManager NavigationManager
 @inject GpuByMachineService GpuByMachineService
 @inject GpusService GpusService
+@inject SoundSynthsByMachineService SoundSynthsByMachineService
+@inject SoundSynthsService SoundSynthsService
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine details"]</h3>
 <hr />
@@ -204,7 +206,61 @@
                             @item.Name
                         </td>
                         <td>
-                            <Button Color="Color.Danger" Clicked="() => {ShowGpuDeleteModal(item.Id);}" Disabled="@_addingGpu">@L["Delete"]</Button>
+                            <Button Color="Color.Danger" Clicked="() => {ShowSoundDeleteModal(item.Id);}" Disabled="@_addingGpu">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <hr />
+    <h3>@L["Sound synthesizers belonging to this machine"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddSoundClick" Disabled="_addingSound">@L["Add new (sound by machine)"]</Button>
+    @if (_addingSound)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Sound synthesizers"]</FieldLabel>
+                <Select Disabled="_savingSound" TValue="int?" @bind-SelectedValue="@_addingSoundId">
+                    @foreach (var soundSynth in _soundSynths)
+                    {
+                        <SelectItem TValue="int?" Value="@soundSynth.Id">@soundSynth.CompanyName - @soundSynth.Name</SelectItem>
+                    }
+                </Select>
+                <Button Color="Color.Primary" Clicked="@CancelAddSound" Disabled="@_savingSound">@L["Cancel"]</Button>
+                <Button Color="Color.Success" Clicked="@ConfirmAddSound" Disabled="@_savingSound">@L["Add"]</Button>
+            </Field>
+        </div>
+    }
+    @if (_machineSound?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Company"]
+                    </th>
+                    <th>
+                        @L["Name"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _machineSound)
+                {
+                    <tr>
+                        <td>
+                            @item.CompanyName
+                        </td>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowGpuDeleteModal(item.Id);}" Disabled="@_addingSound">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
