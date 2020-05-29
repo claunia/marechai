@@ -12,17 +12,23 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Machine
     {
+        bool                               _addingCpu;
+        int?                               _addingCpuId;
         bool                               _addingGpu;
         int?                               _addingGpuId;
+        float?                             _addingProcessorSpeed;
         bool                               _addingSound;
         int?                               _addingSoundId;
         List<CompanyViewModel>             _companies;
+        List<ProcessorViewModel>           _cpus;
         bool                               _creating;
+        ProcessorByMachineViewModel        _currentCpuByMachine;
         GpuByMachineViewModel              _currentGpuByMachine;
         SoundSynthByMachineViewModel       _currentSoundByMachine;
         bool                               _deleteInProgress;
         string                             _deleteText;
         string                             _deleteTitle;
+        bool                               _deletingCpuByMachine;
         bool                               _deletingGpuByMachine;
         bool                               _deletingSoundByMachine;
         bool                               _editing;
@@ -30,16 +36,19 @@ namespace Marechai.Pages.Admin.Details
         Modal                              _frmDelete;
         List<GpuViewModel>                 _gpus;
         bool                               _loaded;
+        List<ProcessorByMachineViewModel>  _machineCpus;
         List<GpuByMachineViewModel>        _machineGpus;
         List<SoundSynthByMachineViewModel> _machineSound;
         MachineViewModel                   _model;
         bool                               _noFamily;
         bool                               _prototype;
+        bool                               _savingCpu;
         bool                               _savingGpu;
         bool                               _savingSound;
         List<SoundSynthViewModel>          _soundSynths;
         bool                               _unknownIntroduced;
         bool                               _unknownModel;
+        bool                               _unknownProcessorSpeed;
         [Parameter]
         public int Id { get; set; }
 
@@ -67,7 +76,9 @@ namespace Marechai.Pages.Admin.Details
             _families    = await MachineFamiliesService.GetAsync();
             _model       = _creating ? new MachineViewModel() : await Service.GetAsync(Id);
             _machineGpus = await GpusByMachineService.GetByMachine(Id);
+            _machineCpus = await ProcessorsByMachineService.GetByMachine(Id);
             _gpus        = await GpusService.GetAsync();
+            _cpus        = await ProcessorsService.GetAsync();
             _soundSynths = await SoundSynthsService.GetAsync();
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
@@ -171,6 +182,8 @@ namespace Marechai.Pages.Admin.Details
                 await ConfirmDeleteGpuByMachine();
             else if(_deletingSoundByMachine)
                 await ConfirmDeleteSoundByMachine();
+            else if(_deletingCpuByMachine)
+                await ConfirmDeleteCpuByMachine();
         }
 
         async Task ConfirmDeleteGpuByMachine()
@@ -202,13 +215,16 @@ namespace Marechai.Pages.Admin.Details
             _deletingGpuByMachine   = false;
             _currentGpuByMachine    = null;
             _deletingSoundByMachine = false;
+            _currentSoundByMachine  = null;
+            _deletingCpuByMachine   = false;
+            _currentCpuByMachine    = null;
         }
 
         async Task OnAddGpuClick()
         {
             _addingGpu   = true;
             _savingGpu   = false;
-            _addingGpuId = null;
+            _addingGpuId = _gpus.First().Id;
         }
 
         void CancelAddGpu()
@@ -220,7 +236,8 @@ namespace Marechai.Pages.Admin.Details
 
         async Task ConfirmAddGpu()
         {
-            if(_addingGpuId is null)
+            if(_addingGpuId is null ||
+               _addingGpuId <= 0)
             {
                 CancelAddGpu();
 
@@ -286,7 +303,7 @@ namespace Marechai.Pages.Admin.Details
         {
             _addingSound   = true;
             _savingSound   = false;
-            _addingSoundId = null;
+            _addingSoundId = _soundSynths.First().Id;
         }
 
         void CancelAddSound()
@@ -298,7 +315,8 @@ namespace Marechai.Pages.Admin.Details
 
         async Task ConfirmAddSound()
         {
-            if(_addingSoundId is null)
+            if(_addingSoundId is null ||
+               _addingSoundId <= 0)
             {
                 CancelAddSound();
 
@@ -322,6 +340,106 @@ namespace Marechai.Pages.Admin.Details
 
             // Tell we finished loading
             StateHasChanged();
+        }
+
+        void ShowCpuDeleteModal(long itemId)
+        {
+            _currentCpuByMachine  = _machineCpus.FirstOrDefault(n => n.Id == itemId);
+            _deletingCpuByMachine = true;
+            _deleteTitle          = L["Delete processor from this machine"];
+
+            string speed;
+
+            speed = _currentCpuByMachine?.Speed == null ? L["Unknown (processor by machine speed)"]
+                        : string.Format(L["{0:F3} MHz"], _currentCpuByMachine?.Speed);
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the graphical processing unit {0} with speed {2} manufactured by {1} from this machine?"],
+                              _currentCpuByMachine?.Name, _currentCpuByMachine?.CompanyName, speed);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeleteCpuByMachine()
+        {
+            if(_currentCpuByMachine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await ProcessorsByMachineService.DeleteAsync(_currentCpuByMachine.Id);
+            _machineCpus = await ProcessorsByMachineService.GetByMachine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        async Task OnAddCpuClick()
+        {
+            _addingCpu             = true;
+            _savingCpu             = false;
+            _addingCpuId           = _cpus.First().Id;
+            _addingProcessorSpeed  = 0;
+            _unknownProcessorSpeed = true;
+        }
+
+        void CancelAddCpu()
+        {
+            _addingCpu   = false;
+            _savingCpu   = false;
+            _addingCpuId = null;
+        }
+
+        async Task ConfirmAddCpu()
+        {
+            if(_addingCpuId is null ||
+               _addingCpuId <= 0)
+            {
+                CancelAddCpu();
+
+                return;
+            }
+
+            _savingGpu = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await ProcessorsByMachineService.CreateAsync(_addingCpuId.Value, Id,
+                                                         _unknownProcessorSpeed ? null : _addingProcessorSpeed);
+
+            _machineCpus = await ProcessorsByMachineService.GetByMachine(Id);
+
+            _addingCpu   = false;
+            _savingCpu   = false;
+            _addingCpuId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ValidateProcessorSpeed(ValidatorEventArgs e)
+        {
+            if(!(e.Value is float item))
+            {
+                e.Status = ValidationStatus.Error;
+
+                return;
+            }
+
+            e.Status = item > 0 ? ValidationStatus.Success : ValidationStatus.Error;
         }
     }
 }

@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>3.0.99.1377</Version>
+    <Version>3.0.99.1385</Version>
     <Company>Canary Islands Computer Museum</Company>
     <Copyright>Copyright © 2003-2020 Natalia Portillo</Copyright>
     <Product>Canary Islands Computer Museum Website</Product>
@@ -154,5 +154,10 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Details.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Edit.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Index.cshtml" />
   </ItemGroup>
 </Project>

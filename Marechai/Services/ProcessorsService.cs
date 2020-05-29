@@ -22,7 +22,7 @@ namespace Marechai.Services
                 ThreadsPerCore = p.ThreadsPerCore, Process = p.Process, ProcessNm = p.ProcessNm, DieSize = p.DieSize,
                 Transistors = p.Transistors, DataBus = p.DataBus, AddrBus = p.AddrBus, SimdRegisters = p.SimdRegisters,
                 SimdSize = p.SimdSize, L1Instruction = p.L1Instruction, L1Data = p.L1Data, L2 = p.L2,
-                L3 = p.L3, InstructionSet = p.InstructionSet.Name,
+                L3 = p.L3, InstructionSet = p.InstructionSet.Name, Id = p.Id,
                 InstructionSetExtensions = p.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
             }).ToListAsync();
 
@@ -38,6 +38,7 @@ namespace Marechai.Services
                 DataBus = p.Processor.DataBus, AddrBus = p.Processor.AddrBus, SimdRegisters = p.Processor.SimdRegisters,
                 SimdSize = p.Processor.SimdSize, L1Instruction = p.Processor.L1Instruction, L1Data = p.Processor.L1Data,
                 L2 = p.Processor.L2, L3 = p.Processor.L3, InstructionSet = p.Processor.InstructionSet.Name,
+                Id = p.Processor.Id,
                 InstructionSetExtensions =
                     p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
             }).ToListAsync();
