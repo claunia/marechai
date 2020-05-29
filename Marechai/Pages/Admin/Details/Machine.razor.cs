@@ -12,10 +12,16 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Machine
     {
-        bool                               _addingCpu;
-        int?                               _addingCpuId;
-        bool                               _addingGpu;
-        int?                               _addingGpuId;
+        bool    _addingCpu;
+        int?    _addingCpuId;
+        bool    _addingGpu;
+        int?    _addingGpuId;
+        bool    _addingMemory;
+        long?   _addingMemorySize;
+        double? _addingMemorySpeed;
+
+        int                                _addingMemoryType;
+        int                                _addingMemoryUsage;
         float?                             _addingProcessorSpeed;
         bool                               _addingSound;
         int?                               _addingSoundId;
@@ -24,12 +30,14 @@ namespace Marechai.Pages.Admin.Details
         bool                               _creating;
         ProcessorByMachineViewModel        _currentCpuByMachine;
         GpuByMachineViewModel              _currentGpuByMachine;
+        MemoryByMachineViewModel           _currentMemoryByMachine;
         SoundSynthByMachineViewModel       _currentSoundByMachine;
         bool                               _deleteInProgress;
         string                             _deleteText;
         string                             _deleteTitle;
         bool                               _deletingCpuByMachine;
         bool                               _deletingGpuByMachine;
+        bool                               _deletingMemoryByMachine;
         bool                               _deletingSoundByMachine;
         bool                               _editing;
         List<MachineFamilyViewModel>       _families;
@@ -38,15 +46,19 @@ namespace Marechai.Pages.Admin.Details
         bool                               _loaded;
         List<ProcessorByMachineViewModel>  _machineCpus;
         List<GpuByMachineViewModel>        _machineGpus;
+        List<MemoryByMachineViewModel>     _machineMemories;
         List<SoundSynthByMachineViewModel> _machineSound;
         MachineViewModel                   _model;
         bool                               _noFamily;
         bool                               _prototype;
         bool                               _savingCpu;
         bool                               _savingGpu;
+        bool                               _savingMemory;
         bool                               _savingSound;
         List<SoundSynthViewModel>          _soundSynths;
         bool                               _unknownIntroduced;
+        bool                               _unknownMemorySize;
+        bool                               _unknownMemorySpeed;
         bool                               _unknownModel;
         bool                               _unknownProcessorSpeed;
         [Parameter]
@@ -72,14 +84,15 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _companies   = await CompaniesService.GetAsync();
-            _families    = await MachineFamiliesService.GetAsync();
-            _model       = _creating ? new MachineViewModel() : await Service.GetAsync(Id);
-            _machineGpus = await GpusByMachineService.GetByMachine(Id);
-            _machineCpus = await ProcessorsByMachineService.GetByMachine(Id);
-            _gpus        = await GpusService.GetAsync();
-            _cpus        = await ProcessorsService.GetAsync();
-            _soundSynths = await SoundSynthsService.GetAsync();
+            _companies       = await CompaniesService.GetAsync();
+            _families        = await MachineFamiliesService.GetAsync();
+            _model           = _creating ? new MachineViewModel() : await Service.GetAsync(Id);
+            _machineGpus     = await GpusByMachineService.GetByMachine(Id);
+            _machineCpus     = await ProcessorsByMachineService.GetByMachine(Id);
+            _gpus            = await GpusService.GetAsync();
+            _cpus            = await ProcessorsService.GetAsync();
+            _soundSynths     = await SoundSynthsService.GetAsync();
+            _machineMemories = await MemoriesByMachineService.GetByMachine(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/machines/edit/",
@@ -220,7 +233,7 @@ namespace Marechai.Pages.Admin.Details
             _currentCpuByMachine    = null;
         }
 
-        async Task OnAddGpuClick()
+        void OnAddGpuClick()
         {
             _addingGpu   = true;
             _savingGpu   = false;
@@ -299,7 +312,7 @@ namespace Marechai.Pages.Admin.Details
             StateHasChanged();
         }
 
-        async Task OnAddSoundClick()
+        void OnAddSoundClick()
         {
             _addingSound   = true;
             _savingSound   = false;
@@ -383,7 +396,7 @@ namespace Marechai.Pages.Admin.Details
             StateHasChanged();
         }
 
-        async Task OnAddCpuClick()
+        void OnAddCpuClick()
         {
             _addingCpu             = true;
             _savingCpu             = false;
@@ -433,6 +446,108 @@ namespace Marechai.Pages.Admin.Details
         void ValidateProcessorSpeed(ValidatorEventArgs e)
         {
             if(!(e.Value is float item))
+            {
+                e.Status = ValidationStatus.Error;
+
+                return;
+            }
+
+            e.Status = item > 0 ? ValidationStatus.Success : ValidationStatus.Error;
+        }
+
+        void ShowMemoryDeleteModal(long itemId)
+        {
+            _currentMemoryByMachine  = _machineMemories.FirstOrDefault(n => n.Id == itemId);
+            _deletingMemoryByMachine = true;
+            _deleteTitle             = L["Delete memory from this machine"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the memory type {0} with usage {1} from this machine?"],
+                              _currentMemoryByMachine?.Type, _currentMemoryByMachine?.Usage);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeleteMemoryByMachine()
+        {
+            if(_currentMemoryByMachine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await MemoriesByMachineService.DeleteAsync(_currentMemoryByMachine.Id);
+            _machineMemories = await MemoriesByMachineService.GetByMachine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void OnAddMemoryClick()
+        {
+            _addingMemory       = true;
+            _savingMemory       = false;
+            _addingMemorySpeed  = 0;
+            _unknownMemorySpeed = true;
+            _addingMemorySize   = 0;
+            _unknownMemorySize  = true;
+        }
+
+        void CancelAddMemory()
+        {
+            _addingMemory = false;
+            _savingMemory = false;
+        }
+
+        async Task ConfirmAddMemory()
+        {
+            // TODO: Validation
+
+            _savingMemory = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await MemoriesByMachineService.CreateAsync(Id, (MemoryType)_addingMemoryType,
+                                                       (MemoryUsage)_addingMemoryUsage,
+                                                       _unknownMemorySize ? null : _addingMemorySize,
+                                                       _unknownMemorySpeed ? null : _addingMemorySpeed);
+
+            _machineMemories = await MemoriesByMachineService.GetByMachine(Id);
+
+            _addingMemory = false;
+            _savingMemory = false;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ValidateMemorySpeed(ValidatorEventArgs e)
+        {
+            if(!(e.Value is double item))
+            {
+                e.Status = ValidationStatus.Error;
+
+                return;
+            }
+
+            e.Status = item > 0 ? ValidationStatus.Success : ValidationStatus.Error;
+        }
+
+        void ValidateMemorySize(ValidatorEventArgs e)
+        {
+            if(!(e.Value is long item))
             {
                 e.Status = ValidationStatus.Error;
 

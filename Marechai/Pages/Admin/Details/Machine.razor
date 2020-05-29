@@ -45,6 +45,7 @@
 @inject SoundSynthsService SoundSynthsService
 @inject ProcessorsByMachineService ProcessorsByMachineService
 @inject ProcessorsService ProcessorsService
+@inject MemoriesByMachineService MemoriesByMachineService
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine details"]</h3>
 <hr />
@@ -337,6 +338,123 @@
                         </td>
                         <td>
                             <Button Color="Color.Danger" Clicked="() => {ShowCpuDeleteModal(item.Id);}" Disabled="@_addingCpu">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <hr />
+    <h3>@L["Memory belonging to this machine"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddMemoryClick" Disabled="_addingMemory">@L["Add new (memory by machine)"]</Button>
+    @if (_addingMemory)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Memory type"]</FieldLabel>
+                <Select TValue="int" @bind-SelectedValue="@_addingMemoryType">
+                    @foreach (int type in Enum.GetValues(typeof(MemoryType)))
+                    {
+                        <SelectItem TValue="int" Value="@type">@(((MemoryType)type).ToString())</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>@L["Memory usage"]</FieldLabel>
+                <Select TValue="int" @bind-SelectedValue="@_addingMemoryUsage">
+                    @foreach (int usage in Enum.GetValues(typeof(MemoryUsage)))
+                    {
+                        <SelectItem TValue="int" Value="@usage">@(((MemoryUsage)usage).ToString())</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>@L["Nominal speed (MHz)"]</FieldLabel>
+                <Check TValue="bool" @bind-Checked="@_unknownMemorySpeed">@L["Unknown (memory by machine speed)"]</Check>
+                @if (!_unknownMemorySpeed)
+                {
+                    <Validation Validator="@ValidateMemorySpeed">
+                        <NumericEdit TValue="double?" Decimals="3" @bind-Value="@_addingMemorySpeed" >
+                            <Feedback>
+                                <ValidationError>@L["Please enter a valid speed for this memory."]</ValidationError>
+                            </Feedback>
+                        </NumericEdit>
+                    </Validation>
+                }
+            </Field>
+            <Field>
+                <FieldLabel>@L["Memory size (bytes)"]</FieldLabel>
+                <Check TValue="bool" @bind-Checked="@_unknownMemorySize">@L["Unknown (memory by machine size)"]</Check>
+                @if (!_unknownMemorySize)
+                {
+                    <Validation Validator="@ValidateMemorySize">
+                        <NumericEdit TValue="long?" Decimals="0" @bind-Value="@_addingMemorySize" >
+                            <Feedback>
+                                <ValidationError>@L["Please enter a valid size for this memory."]</ValidationError>
+                            </Feedback>
+                        </NumericEdit>
+                    </Validation>
+                }
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddMemory" Disabled="@_savingMemory">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddMemory" Disabled="@_savingMemory">@L["Add"]</Button>
+        </div>
+    }
+    @if (_machineMemories?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Type"]
+                    </th>
+                    <th>
+                        @L["Usage"]
+                    </th>
+                    <th>
+                        @L["Size"]
+                    </th>
+                    <th>
+                        @L["Speed"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _machineMemories)
+                {
+                    <tr>
+                        <td>
+                            @item.Type
+                        </td>
+                        <td>
+                            @item.Usage
+                        </td>
+                        <td>
+                            @if (item.Size.HasValue)
+                            {
+                                @string.Format(L["{0} bytes"], item.Size)
+                            }
+                            else
+                            {
+                                @L["Unknown (memory by machine speed)"]
+                            }
+                        </td>
+                        <td>
+                            @if (item.Speed.HasValue)
+                            {
+                                @string.Format(L["{0:F3} MHz"], item.Speed)
+                            }
+                            else
+                            {
+                                @L["Unknown (memory by machine speed)"]
+                            }
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowMemoryDeleteModal(item.Id);}" Disabled="@_addingMemory">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
