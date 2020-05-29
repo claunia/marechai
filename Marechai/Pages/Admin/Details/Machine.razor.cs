@@ -66,7 +66,7 @@ namespace Marechai.Pages.Admin.Details
             _companies   = await CompaniesService.GetAsync();
             _families    = await MachineFamiliesService.GetAsync();
             _model       = _creating ? new MachineViewModel() : await Service.GetAsync(Id);
-            _machineGpus = await GpuByMachineService.GetByMachine(Id);
+            _machineGpus = await GpusByMachineService.GetByMachine(Id);
             _gpus        = await GpusService.GetAsync();
             _soundSynths = await SoundSynthsService.GetAsync();
 
@@ -183,8 +183,8 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await GpuByMachineService.DeleteAsync(_currentGpuByMachine.Id);
-            _machineGpus = await GpuByMachineService.GetByMachine(Id);
+            await GpusByMachineService.DeleteAsync(_currentGpuByMachine.Id);
+            _machineGpus = await GpusByMachineService.GetByMachine(Id);
 
             _deleteInProgress = false;
             _frmDelete.Hide();
@@ -232,8 +232,8 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await GpuByMachineService.CreateAsync(_addingGpuId.Value, Id);
-            _machineGpus = await GpuByMachineService.GetByMachine(Id);
+            await GpusByMachineService.CreateAsync(_addingGpuId.Value, Id);
+            _machineGpus = await GpusByMachineService.GetByMachine(Id);
 
             _addingGpu   = false;
             _savingGpu   = false;

@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Services
 {
-    public class GpuByMachineService
+    public class GpusByMachineService
     {
         readonly MarechaiContext _context;
 
-        public GpuByMachineService(MarechaiContext context) => _context = context;
+        public GpusByMachineService(MarechaiContext context) => _context = context;
 
         public async Task<List<GpuByMachineViewModel>> GetByMachine(int machineId) =>
             await _context.GpusByMachine.Where(g => g.MachineId == machineId).Select(g => new GpuByMachineViewModel

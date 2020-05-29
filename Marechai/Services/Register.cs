@@ -62,7 +62,7 @@ namespace Marechai.Services
             services.AddScoped<Iso31661NumericService>();
             services.AddScoped<ResolutionsService>();
             services.AddScoped<CompanyLogosService>();
-            services.AddScoped<GpuByMachineService>();
+            services.AddScoped<GpusByMachineService>();
             services.AddScoped<SoundSynthsByMachineService>();
         }
     }
