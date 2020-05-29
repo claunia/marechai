@@ -130,4 +130,44 @@
     <value>None</value>
     <comment>None, referring to a machine family</comment>
   </data>
+  <data name="Unknown (memory by machine speed)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to the speed of memory in a machine</comment>
+  </data>
+  <data name="Unknown (processor by machine speed)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to the speed of a processor in a machine</comment>
+  </data>
+  <data name="Unknown (memory by machine size)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to the size of memory in a machine</comment>
+  </data>
+  <data name="Unknown or empty (storage by machine nominal capacity)" xml:space="preserve">
+    <value>Unknown or empty</value>
+    <comment>Unknown or empty, referring to an unknown nominal capacity or an empty interface in storage attached to a machine</comment>
+  </data>
+  <data name="Add new (gpu by machine)" xml:space="preserve">
+    <value>Add new</value>
+    <comment>Add new, referring to a graphical processing unit in a machine</comment>
+  </data>
+  <data name="Add new (sound by machine)" xml:space="preserve">
+    <value>Add new</value>
+    <comment>Add new, referring to a sound synthesizer in a machine</comment>
+  </data>
+  <data name="Add new (pocessor by machine)" xml:space="preserve">
+    <value>Add new</value>
+    <comment>Add new, referring to a processor in a machine</comment>
+  </data>
+  <data name="Add new (memory by machine)" xml:space="preserve">
+    <value>Add new</value>
+    <comment>Add new, referring to a memory in a machine</comment>
+  </data>
+  <data name="Add new (storage by machine)" xml:space="preserve">
+    <value>Add new</value>
+    <comment>Add new, referring to a storage in a machine</comment>
+  </data>
+  <data name="Add new (screen by machine)" xml:space="preserve">
+    <value>Add new</value>
+    <comment>Add new, referring to a screen attached to a machine</comment>
+  </data>
 </root>

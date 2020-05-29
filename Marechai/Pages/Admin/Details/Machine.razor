@@ -443,7 +443,7 @@
                             }
                             else
                             {
-                                @L["Unknown (memory by machine speed)"]
+                                @L["Unknown (memory by machine size)"]
                             }
                         </td>
                         <td>
@@ -492,7 +492,7 @@
             </Field>
             <Field>
                 <FieldLabel>@L["Nominal capacity (bytes)"]</FieldLabel>
-                <Check TValue="bool" @bind-Checked="@_unknownStorageSize">@L["Unknown (storage by machine nominal capacity)"]</Check>
+                <Check TValue="bool" @bind-Checked="@_unknownStorageSize">@L["Unknown or empty (storage by machine nominal capacity)"]</Check>
                 @if (!_unknownStorageSize)
                 {
                     <Validation Validator="@ValidateStorageSize">
@@ -543,7 +543,7 @@
                             }
                             else
                             {
-                                @L["Unknown (storage by machine nominal capacity)"]
+                                @L["Unknown or empty (storage by machine nominal capacity)"]
                             }
                         </td>
                         <td>
@@ -557,7 +557,7 @@
     }
 
     <hr />
-    <h3>@L["Screens attached"]</h3>
+    <h3>@L["Screens attached to this machine"]</h3>
     <Button Color="Color.Success" Clicked="OnAddScreenClick" Disabled="_addingScreen">@L["Add new (screen by machine)"]</Button>
     @if (_addingScreen)
     {
@@ -569,7 +569,7 @@
                     {
                         if (_machineScreens.Any(s => s.ScreenId == screen.Id))
                         {
-                            <SelectItem TValue="int?" Value="@screen.Id">@screen.Diagonal with a native resolution of @screen.NativeResolution</SelectItem>
+                            <SelectItem TValue="int?" Value="@screen.Id">@string.Format(L["{0}\" with a native resolution of {1}",screen.Diagonal, screen.NativeResolution)</SelectItem>
                         }
                     }
                 </Select>

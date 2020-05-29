@@ -518,4 +518,212 @@
     <value>El modelo debe contener menos de 50 caracteres.</value>
     <comment>Model must contain less than 50 characters.</comment>
   </data>
+  <data name="Unknown (memory by machine speed)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to the speed of memory in a machine</comment>
+  </data>
+  <data name="Unknown (processor by machine speed)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to the speed of a processor in a machine</comment>
+  </data>
+  <data name="Unknown (memory by machine size)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to the size of memory in a machine</comment>
+  </data>
+  <data name="Unknown or empty (storage by machine nominal capacity)" xml:space="preserve">
+    <value>Desconocida o vacía</value>
+    <comment>Unknown or empty, referring to an unknown nominal capacity or an empty interface in storage attached to a machine</comment>
+  </data>
+  <data name="Add new (gpu by machine)" xml:space="preserve">
+    <value>Añadir nueva</value>
+    <comment>Add new, referring to a graphical processing unit in a machine</comment>
+  </data>
+  <data name="Add new (sound by machine)" xml:space="preserve">
+    <value>Añadir nuevo</value>
+    <comment>Add new, referring to a sound synthesizer in a machine</comment>
+  </data>
+  <data name="Add new (pocessor by machine)" xml:space="preserve">
+    <value>Añadir nuevo</value>
+    <comment>Add new, referring to a processor in a machine</comment>
+  </data>
+  <data name="Add new (memory by machine)" xml:space="preserve">
+    <value>Añadir nueva</value>
+    <comment>Add new, referring to a memory in a machine</comment>
+  </data>
+  <data name="Add new (storage by machine)" xml:space="preserve">
+    <value>Añadir nuevo</value>
+    <comment>Add new, referring to a storage in a machine</comment>
+  </data>
+  <data name="Add new (screen by machine)" xml:space="preserve">
+    <value>Añadir nueva</value>
+    <comment>Add new, referring to a screen attached to a machine</comment>
+  </data>
+  <data name="Graphical processing units belonging to this machine" xml:space="preserve">
+    <value>Unidades de proceso gráfico pertenecientes a esta máquina</value>
+    <comment>Graphical processing units belonging to this machine</comment>
+  </data>
+  <data name="Graphical processing units" xml:space="preserve">
+    <value>Unidades de proceso gráfico</value>
+    <comment>Graphical processing units</comment>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Añadir</value>
+    <comment>Add</comment>
+  </data>
+  <data name="Sound synthesizers belonging to this machine" xml:space="preserve">
+    <value>Sintetizadores de sonido pertenecientes a esta máquina</value>
+    <comment>Sound synthesizers belonging to this machine</comment>
+  </data>
+  <data name="Processors belonging to this machine" xml:space="preserve">
+    <value>Procesadores pertenecientes a esta máquina</value>
+    <comment>Processors belonging to this machine</comment>
+  </data>
+  <data name="Nominal speed (MHz)" xml:space="preserve">
+    <value>Velocidad nominal (MHz)</value>
+    <comment>Nominal speed (MHz)</comment>
+  </data>
+  <data name="Please enter a valid speed for this processor." xml:space="preserve">
+    <value>Por favor introduce una velocidad válida para este procesador.</value>
+    <comment>Please enter a valid speed for this processor.</comment>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Velocidad</value>
+    <comment>Speed</comment>
+  </data>
+  <data name="{0:F3} MHz" xml:space="preserve">
+    <value>{0:F3} MHz</value>
+    <comment>{0:F3} MHz</comment>
+  </data>
+  <data name="Memory belonging to this machine" xml:space="preserve">
+    <value>Memoria perteneciente a esta máquina</value>
+    <comment>Memory belonging to this machine</comment>
+  </data>
+  <data name="Memory type" xml:space="preserve">
+    <value>Tipo de memoria</value>
+    <comment>Memory type</comment>
+  </data>
+  <data name="Memory usage" xml:space="preserve">
+    <value>Uso de la memoria</value>
+    <comment>Memory usage</comment>
+  </data>
+  <data name="Please enter a valid speed for this memory." xml:space="preserve">
+    <value>Por favor introduce una velocidad válida para esta memoria.</value>
+    <comment>Please enter a valid speed for this memory.</comment>
+  </data>
+  <data name="Memory size (bytes)" xml:space="preserve">
+    <value>Tamaño de memoria (bytes)</value>
+    <comment>Memory size (bytes)</comment>
+  </data>
+  <data name="Please enter a valid size for this memory." xml:space="preserve">
+    <value>Por favor introduce un tamaño válido para esta memoria.</value>
+    <comment>Please enter a valid size for this memory.</comment>
+  </data>
+  <data name="Usage" xml:space="preserve">
+    <value>Uso</value>
+    <comment>Usage</comment>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Tamaño</value>
+    <comment>Size</comment>
+  </data>
+  <data name="Storage belonging to this machine" xml:space="preserve">
+    <value>Almacenamiento perteneciente a esta máquina</value>
+    <comment>Storage belonging to this machine</comment>
+  </data>
+  <data name="Storage type" xml:space="preserve">
+    <value>Tipo de almacenamiento</value>
+    <comment>Storage type</comment>
+  </data>
+  <data name="Storage interface" xml:space="preserve">
+    <value>Interfaz del almacenamiento</value>
+    <comment>Storage interface</comment>
+  </data>
+  <data name="Nominal capacity (bytes)" xml:space="preserve">
+    <value>Capacidad nominal (bytes)</value>
+    <comment>Nominal capacity (bytes)</comment>
+  </data>
+  <data name="Please enter a valid size for this storage." xml:space="preserve">
+    <value>Por favor introduce un tamaño válido para este almacenamiento.</value>
+    <comment>Please enter a valid size for this storage.</comment>
+  </data>
+  <data name="Nominal capacity" xml:space="preserve">
+    <value>Capacidad nominal</value>
+    <comment>Nominal capacity</comment>
+  </data>
+  <data name="Screens attached to this machine" xml:space="preserve">
+    <value>Pantallas conectadas a esta máquina</value>
+    <comment>Screens attached to this machine</comment>
+  </data>
+  <data name="{0}&quot; with a native resolution of {1}" xml:space="preserve">
+    <value>{0}&quot; con una resolución nativa de {1}</value>
+    <comment>{0}&quot; with a native resolution of {1}</comment>
+  </data>
+  <data name="Diagonal" xml:space="preserve">
+    <value>Diagonal</value>
+    <comment>Diagonal</comment>
+  </data>
+  <data name="Width" xml:space="preserve">
+    <value>Ancho</value>
+    <comment>Width</comment>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>Alto</value>
+    <comment>Height</comment>
+  </data>
+  <data name="Effective colors" xml:space="preserve">
+    <value>Colores efectivos</value>
+    <comment>Effective colors</comment>
+  </data>
+  <data name="Native resolution" xml:space="preserve">
+    <value>Resolución nativa</value>
+    <comment>Native resolution</comment>
+  </data>
+  <data name="Delete graphical processing unit from this machine" xml:space="preserve">
+    <value>Eliminar unidad de proceso de gráfico de esta máquina</value>
+    <comment>Delete graphical processing unit from this machine</comment>
+  </data>
+  <data name="Are you sure you want to delete the graphical processing unit {0} manufactured by {1} from this machine?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la unidad de proceso de gráficos {0} fabricada por {1} de esta máquina?</value>
+    <comment>Are you sure you want to delete the graphical processing unit {0} manufactured by {1} from this machine?</comment>
+  </data>
+  <data name="Delete sound synthesizer from this machine" xml:space="preserve">
+    <value>Eliminar sintetizador de sonido de esta máquina</value>
+    <comment>Delete sound synthesizer from this machine</comment>
+  </data>
+  <data name="Are you sure you want to delete the sound synthesizer {0} manufactured by {1} from this machine?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar el sintetizador de sonido {0} fabricado por {1} de esta máquina?</value>
+    <comment>Are you sure you want to delete the sound synthesizer {0} manufactured by {1} from this machine?</comment>
+  </data>
+  <data name="Delete processor from this machine" xml:space="preserve">
+    <value>Eliminar procesador de esta máquina</value>
+    <comment>Delete processor from this machine</comment>
+  </data>
+  <data name="Are you sure you want to delete the processor {0} with speed {2} manufactured by {1} from this machine?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar el procesador {0} con velocidad {2} fabricado por {1} de esta máquina?</value>
+    <comment>Are you sure you want to delete the processor {0} with speed {2} manufactured by {1} from this machine?</comment>
+  </data>
+  <data name="Delete memory from this machine" xml:space="preserve">
+    <value>Eliminar memori de esta máquina</value>
+    <comment>Delete memory from this machine</comment>
+  </data>
+  <data name="Are you sure you want to delete the memory type {0} with usage {1} from this machine?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la memoria tipo {0} con uso {1} de esta máquina?</value>
+    <comment>Are you sure you want to delete the memory type {0} with usage {1} from this machine?</comment>
+  </data>
+  <data name="Delete storage from this machine" xml:space="preserve">
+    <value>Eliminar almacenamiento de esta máquina</value>
+    <comment>Delete storage from this machine</comment>
+  </data>
+  <data name="Are you sure you want to delete the storage type {0} with interface {1} from this machine?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar el almacenamiento tipo {0} con interfaz {1} de esta máquina?</value>
+    <comment>Are you sure you want to delete the storage type {0} with interface {1} from this machine?</comment>
+  </data>
+  <data name="Delete screen from this machine" xml:space="preserve">
+    <value>Eliminar pantalla de esta máquina</value>
+    <comment>Delete screen from this machine</comment>
+  </data>
+  <data name="Are you sure you want to delete the selected screen from this machine?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la pantalla seleccionada de esta máquina?</value>
+    <comment>Are you sure you want to delete the selected screen from this machine?</comment>
+  </data>
 </root>

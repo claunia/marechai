@@ -389,13 +389,11 @@ namespace Marechai.Pages.Admin.Details
             _deletingCpuByMachine = true;
             _deleteTitle          = L["Delete processor from this machine"];
 
-            string speed;
-
-            speed = _currentCpuByMachine?.Speed == null ? L["Unknown (processor by machine speed)"]
-                        : string.Format(L["{0:F3} MHz"], _currentCpuByMachine?.Speed);
+            string speed = _currentCpuByMachine?.Speed == null ? L["Unknown (processor by machine speed)"]
+                               : string.Format(L["{0:F3} MHz"], _currentCpuByMachine?.Speed);
 
             _deleteText =
-                string.Format(L["Are you sure you want to delete the graphical processing unit {0} with speed {2} manufactured by {1} from this machine?"],
+                string.Format(L["Are you sure you want to delete the processor {0} with speed {2} manufactured by {1} from this machine?"],
                               _currentCpuByMachine?.Name, _currentCpuByMachine?.CompanyName, speed);
 
             _frmDelete.Show();
