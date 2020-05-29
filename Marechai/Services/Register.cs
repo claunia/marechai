@@ -66,6 +66,7 @@ namespace Marechai.Services
             services.AddScoped<SoundSynthsByMachineService>();
             services.AddScoped<ProcessorsByMachineService>();
             services.AddScoped<MemoriesByMachineService>();
+            services.AddScoped<StorageByMachineService>();
         }
     }
 }

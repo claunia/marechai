@@ -12,16 +12,19 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Machine
     {
-        bool    _addingCpu;
-        int?    _addingCpuId;
-        bool    _addingGpu;
-        int?    _addingGpuId;
-        bool    _addingMemory;
-        long?   _addingMemorySize;
-        double? _addingMemorySpeed;
-
+        bool                               _addingCpu;
+        int?                               _addingCpuId;
+        bool                               _addingGpu;
+        int?                               _addingGpuId;
+        bool                               _addingMemory;
+        long?                              _addingMemorySize;
+        double?                            _addingMemorySpeed;
         int                                _addingMemoryType;
         int                                _addingMemoryUsage;
+        bool    _addingStorage;
+        long?   _addingStorageSize;
+        int     _addingStorageType;
+        int     _addingStorageInterface;
         float?                             _addingProcessorSpeed;
         bool                               _addingSound;
         int?                               _addingSoundId;
@@ -31,13 +34,15 @@ namespace Marechai.Pages.Admin.Details
         ProcessorByMachineViewModel        _currentCpuByMachine;
         GpuByMachineViewModel              _currentGpuByMachine;
         MemoryByMachineViewModel           _currentMemoryByMachine;
-        SoundSynthByMachineViewModel       _currentSoundByMachine;
+        SoundSynthByMachineViewModel _currentSoundByMachine;
+        StorageByMachineViewModel _currentStorageByMachine;
         bool                               _deleteInProgress;
         string                             _deleteText;
         string                             _deleteTitle;
         bool                               _deletingCpuByMachine;
         bool                               _deletingGpuByMachine;
-        bool                               _deletingMemoryByMachine;
+        bool _deletingMemoryByMachine;
+        bool _deletingStorageByMachine;
         bool                               _deletingSoundByMachine;
         bool                               _editing;
         List<MachineFamilyViewModel>       _families;
@@ -48,19 +53,22 @@ namespace Marechai.Pages.Admin.Details
         List<GpuByMachineViewModel>        _machineGpus;
         List<MemoryByMachineViewModel>     _machineMemories;
         List<SoundSynthByMachineViewModel> _machineSound;
+        List<StorageByMachineViewModel> _machineStorage;
         MachineViewModel                   _model;
         bool                               _noFamily;
         bool                               _prototype;
         bool                               _savingCpu;
         bool                               _savingGpu;
         bool                               _savingMemory;
-        bool                               _savingSound;
+        bool _savingSound;
+        bool _savingStorage;
         List<SoundSynthViewModel>          _soundSynths;
         bool                               _unknownIntroduced;
         bool                               _unknownMemorySize;
         bool                               _unknownMemorySpeed;
         bool                               _unknownModel;
         bool                               _unknownProcessorSpeed;
+        bool _unknownStorageSize;
         [Parameter]
         public int Id { get; set; }
 
@@ -93,6 +101,7 @@ namespace Marechai.Pages.Admin.Details
             _cpus            = await ProcessorsService.GetAsync();
             _soundSynths     = await SoundSynthsService.GetAsync();
             _machineMemories = await MemoriesByMachineService.GetByMachine(Id);
+            _machineStorage = await StorageByMachineService.GetByMachine(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/machines/edit/",
@@ -197,6 +206,10 @@ namespace Marechai.Pages.Admin.Details
                 await ConfirmDeleteSoundByMachine();
             else if(_deletingCpuByMachine)
                 await ConfirmDeleteCpuByMachine();
+            else if(_deletingMemoryByMachine)
+                await ConfirmDeleteMemoryByMachine();
+            else if(_deletingStorageByMachine)
+                await ConfirmDeleteStorageByMachine();
         }
 
         async Task ConfirmDeleteGpuByMachine()
@@ -546,6 +559,93 @@ namespace Marechai.Pages.Admin.Details
         }
 
         void ValidateMemorySize(ValidatorEventArgs e)
+        {
+            if(!(e.Value is long item))
+            {
+                e.Status = ValidationStatus.Error;
+
+                return;
+            }
+
+            e.Status = item > 0 ? ValidationStatus.Success : ValidationStatus.Error;
+        }
+
+        void ShowStorageDeleteModal(long itemId)
+        {
+            _currentStorageByMachine  = _machineStorage.FirstOrDefault(n => n.Id == itemId);
+            _deletingStorageByMachine = true;
+            _deleteTitle             = L["Delete storage from this machine"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the storage type {0} with interface {1} from this machine?"],
+                              _currentStorageByMachine?.Type, _currentStorageByMachine?.Interface);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeleteStorageByMachine()
+        {
+            if(_currentStorageByMachine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await StorageByMachineService.DeleteAsync(_currentStorageByMachine.Id);
+            _machineStorage = await StorageByMachineService.GetByMachine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void OnAddStorageClick()
+        {
+            _addingStorage       = true;
+            _savingStorage       = false;
+            _addingStorageSize   = 0;
+            _unknownStorageSize  = true;
+        }
+
+        void CancelAddStorage()
+        {
+            _addingStorage = false;
+            _savingStorage = false;
+        }
+
+        async Task ConfirmAddStorage()
+        {
+            // TODO: Validation
+
+            _savingStorage = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await StorageByMachineService.CreateAsync(Id, (StorageType)_addingStorageType,
+                                                       (StorageInterface)_addingStorageInterface,
+                                                       _unknownStorageSize ? null : _addingStorageSize);
+
+            _machineStorage = await StorageByMachineService.GetByMachine(Id);
+
+            _addingStorage = false;
+            _savingStorage = false;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ValidateStorageSize(ValidatorEventArgs e)
         {
             if(!(e.Value is long item))
             {

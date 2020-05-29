@@ -46,6 +46,7 @@
 @inject ProcessorsByMachineService ProcessorsByMachineService
 @inject ProcessorsService ProcessorsService
 @inject MemoriesByMachineService MemoriesByMachineService
+@inject StorageByMachineService StorageByMachineService
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine details"]</h3>
 <hr />
@@ -455,6 +456,96 @@
                         </td>
                         <td>
                             <Button Color="Color.Danger" Clicked="() => {ShowMemoryDeleteModal(item.Id);}" Disabled="@_addingMemory">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <hr />
+    <h3>@L["Storage belonging to this machine"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddStorageClick" Disabled="_addingStorage">@L["Add new (storage by machine)"]</Button>
+    @if (_addingStorage)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Storage type"]</FieldLabel>
+                <Select TValue="int" @bind-SelectedValue="@_addingStorageType">
+                    @foreach (int type in Enum.GetValues(typeof(StorageType)))
+                    {
+                        <SelectItem TValue="int" Value="@type">@(((StorageType)type).ToString())</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>@L["Storage interface"]</FieldLabel>
+                <Select TValue="int" @bind-SelectedValue="@_addingStorageInterface">
+                    @foreach (int usage in Enum.GetValues(typeof(StorageInterface)))
+                    {
+                        <SelectItem TValue="int" Value="@usage">@(((StorageInterface)usage).ToString())</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>@L["Nominal capacity (bytes)"]</FieldLabel>
+                <Check TValue="bool" @bind-Checked="@_unknownStorageSize">@L["Unknown (storage by machine nominal capacity)"]</Check>
+                @if (!_unknownStorageSize)
+                {
+                    <Validation Validator="@ValidateStorageSize">
+                        <NumericEdit TValue="long?" Decimals="0" @bind-Value="@_addingStorageSize" >
+                            <Feedback>
+                                <ValidationError>@L["Please enter a valid size for this storage."]</ValidationError>
+                            </Feedback>
+                        </NumericEdit>
+                    </Validation>
+                }
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddStorage" Disabled="@_savingStorage">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddStorage" Disabled="@_savingStorage">@L["Add"]</Button>
+        </div>
+    }
+    @if (_machineStorage?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Type"]
+                    </th>
+                    <th>
+                        @L["Interface"]
+                    </th>
+                    <th>
+                        @L["Nominal capacity"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _machineStorage)
+                {
+                    <tr>
+                        <td>
+                            @item.Type
+                        </td>
+                        <td>
+                            @item.Interface
+                        </td>
+                        <td>
+                            @if (item.Capacity.HasValue)
+                            {
+                                @string.Format(L["{0} bytes"], item.Capacity)
+                            }
+                            else
+                            {
+                                @L["Unknown (storage by machine nominal capacity)"]
+                            }
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowStorageDeleteModal(item.Id);}" Disabled="@_addingStorage">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
