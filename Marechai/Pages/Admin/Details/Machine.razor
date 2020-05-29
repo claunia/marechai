@@ -39,6 +39,8 @@
 @inject CompaniesService CompaniesService
 @inject MachineFamiliesService MachineFamiliesService
 @inject NavigationManager NavigationManager
+@inject GpuByMachineService GpuByMachineService
+@inject GpusService GpusService
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine details"]</h3>
 <hr />
@@ -155,3 +157,76 @@
     }
     <a href="/admin/machines" class="btn btn-secondary">@L["Back to list"]</a>
 </div>
+@if (!_editing)
+{
+    <hr />
+    <h3>@L["Graphical processing units belonging to this machine"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddGpuClick" Disabled="_addingGpu">@L["Add new (gpu by machine)"]</Button>
+    @if (_addingGpu)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Graphical processing units"]</FieldLabel>
+                <Select Disabled="_savingGpu" TValue="int?" @bind-SelectedValue="@_addingGpuId">
+                    @foreach (var gpu in _gpus)
+                    {
+                        <SelectItem TValue="int?" Value="@gpu.Id">@gpu.Company - @gpu.Name</SelectItem>
+                    }
+                </Select>
+                <Button Color="Color.Primary" Clicked="@CancelAddGpu" Disabled="@_savingGpu">@L["Cancel"]</Button>
+                <Button Color="Color.Success" Clicked="@ConfirmAddGpu" Disabled="@_savingGpu">@L["Add"]</Button>
+            </Field>
+        </div>
+    }
+    @if (_machineGpus?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Company"]
+                    </th>
+                    <th>
+                        @L["Name"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _machineGpus)
+                {
+                    <tr>
+                        <td>
+                            @item.CompanyName
+                        </td>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowGpuDeleteModal(item.Id);}" Disabled="@_addingGpu">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+        <ModalBackdrop />
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>@_deleteTitle</ModalTitle>
+                <CloseButton Clicked="@HideModal" />
+            </ModalHeader>
+            <ModalBody>
+                <Text>@_deleteText</Text>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
