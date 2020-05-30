@@ -206,4 +206,8 @@
     <value>Sintetizadores de sonido</value>
     <comment>Sound synthesizers.</comment>
   </data>
+  <data name="Resolutions" xml:space="preserve">
+    <value>Resoluciones</value>
+    <comment>Resolutions.</comment>
+  </data>
 </root>

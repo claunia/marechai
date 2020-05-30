@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Shared;
@@ -10,20 +11,30 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Gpu
     {
-        List<CompanyViewModel> _companies;
-        bool                   _creating;
-        bool                   _editing;
-        bool                   _loaded;
-        GpuViewModel           _model;
-        bool                   _prototype;
-        bool                   _unknownCompany;
-        bool                   _unknownDieSize;
-        bool                   _unknownIntroduced;
-        bool                   _unknownModelCode;
-        bool                   _unknownPackage;
-        bool                   _unknownProcess;
-        bool                   _unknownProcessNm;
-        bool                   _unknownTransistors;
+        bool                           _addingResolution;
+        int?                           _addingResolutionId;
+        List<CompanyViewModel>         _companies;
+        bool                           _creating;
+        ResolutionByGpuViewModel       _currentResolution;
+        bool                           _deleteInProgress;
+        string                         _deleteText;
+        string                         _deleteTitle;
+        bool                           _editing;
+        Modal                          _frmDelete;
+        List<ResolutionByGpuViewModel> _gpuResolutions;
+        bool                           _loaded;
+        GpuViewModel                   _model;
+        bool                           _prototype;
+        List<ResolutionViewModel>      _resolutions;
+        bool                           _savingResolution;
+        bool                           _unknownCompany;
+        bool                           _unknownDieSize;
+        bool                           _unknownIntroduced;
+        bool                           _unknownModelCode;
+        bool                           _unknownPackage;
+        bool                           _unknownProcess;
+        bool                           _unknownProcessNm;
+        bool                           _unknownTransistors;
         [Parameter]
         public int Id { get; set; }
 
@@ -41,8 +52,10 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _companies = await CompaniesService.GetAsync();
-            _model     = _creating ? new GpuViewModel() : await Service.GetAsync(Id);
+            _companies      = await CompaniesService.GetAsync();
+            _model          = _creating ? new GpuViewModel() : await Service.GetAsync(Id);
+            _resolutions    = await ResolutionsService.GetAsync();
+            _gpuResolutions = await ResolutionsByGpuService.GetByGpu(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/gpus/edit/", StringComparison.InvariantCulture);
@@ -162,5 +175,91 @@ namespace Marechai.Pages.Admin.Details
 
         void ValidateProcess(ValidatorEventArgs e) =>
             Validators.ValidateString(e, L["Process must be 45 characters or less."], 45);
+
+        void ShowResolutionDeleteModal(long itemId)
+        {
+            _currentResolution = _gpuResolutions.FirstOrDefault(n => n.Id == itemId);
+            _deleteTitle       = L["Delete resolution from this graphical processing unit"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the resolution {0} from this graphical processing unit?"],
+                              _currentResolution);
+
+            _frmDelete.Show();
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_currentResolution is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await ResolutionsByGpuService.DeleteAsync(_currentResolution.Id);
+            _gpuResolutions = await ResolutionsByGpuService.GetByGpu(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ModalClosing(ModalClosingEventArgs obj)
+        {
+            _deleteInProgress  = false;
+            _currentResolution = null;
+        }
+
+        void OnAddResolutionClick()
+        {
+            _addingResolution   = true;
+            _savingResolution   = false;
+            _addingResolutionId = _resolutions.First().Id;
+        }
+
+        void CancelAddResolution()
+        {
+            _addingResolution   = false;
+            _savingResolution   = false;
+            _addingResolutionId = null;
+        }
+
+        async Task ConfirmAddResolution()
+        {
+            if(_addingResolutionId is null ||
+               _addingResolutionId <= 0)
+            {
+                CancelAddResolution();
+
+                return;
+            }
+
+            _savingResolution = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await ResolutionsByGpuService.CreateAsync(_addingResolutionId.Value, Id);
+            _gpuResolutions = await ResolutionsByGpuService.GetByGpu(Id);
+
+            _addingResolution   = false;
+            _savingResolution   = false;
+            _addingResolutionId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
     }
 }

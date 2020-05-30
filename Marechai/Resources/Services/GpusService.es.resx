@@ -270,4 +270,52 @@
     <value>Por favor introduce un número válido de transistores.</value>
     <comment>Please enter a valid number of transistors.</comment>
   </data>
+  <data name="Add new (resolution by gpu)" xml:space="preserve">
+    <value>Añadir nueva</value>
+    <comment>Add new, referring to resolutions supported by this gpu</comment>
+  </data>
+  <data name="Resolutions supported by this graphical processing unit" xml:space="preserve">
+    <value>Prototipo</value>
+    <comment>Resolutions supported by this graphical processing unit</comment>
+  </data>
+  <data name="Resolutions" xml:space="preserve">
+    <value>Resoluciones</value>
+    <comment>Resolutions</comment>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Añadir</value>
+    <comment>Add</comment>
+  </data>
+  <data name="Width" xml:space="preserve">
+    <value>Ancho</value>
+    <comment>Width</comment>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>Alto</value>
+    <comment>Height</comment>
+  </data>
+  <data name="Colors" xml:space="preserve">
+    <value>Colores</value>
+    <comment>Colors</comment>
+  </data>
+  <data name="Palette" xml:space="preserve">
+    <value>Paleta</value>
+    <comment>Palette</comment>
+  </data>
+  <data name="Chars" xml:space="preserve">
+    <value>Caracteres</value>
+    <comment>Chars</comment>
+  </data>
+  <data name="Grayscale" xml:space="preserve">
+    <value>Escala de grises</value>
+    <comment>Grayscale</comment>
+  </data>
+  <data name="Delete resolution from this graphical processing unit" xml:space="preserve">
+    <value>Eliminar resolución de esta unidad de proceso de gráficos</value>
+    <comment>Delete resolution from this graphical processing unit</comment>
+  </data>
+  <data name="Are you sure you want to delete the resolution {0} from this graphical processing unit?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la resolución {0} de esta unidad de proceso de gráficos?</value>
+    <comment>Are you sure you want to delete the resolution {0} from this graphical processing unit?</comment>
+  </data>
 </root>

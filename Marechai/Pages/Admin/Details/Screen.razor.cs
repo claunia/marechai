@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Shared;
@@ -10,15 +11,24 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Screen
     {
-        bool                      _creating;
-        bool                      _editing;
-        bool                      _loaded;
-        ScreenViewModel           _model;
-        List<ResolutionViewModel> _resolutions;
-        bool                      _unknownColors;
-        bool                      _unknownHeight;
-        bool                      _unknownType;
-        bool                      _unknownWidth;
+        bool                              _addingResolution;
+        int?                              _addingResolutionId;
+        bool                              _creating;
+        ResolutionByScreenViewModel       _currentResolution;
+        bool                              _deleteInProgress;
+        string                            _deleteText;
+        string                            _deleteTitle;
+        bool                              _editing;
+        Modal                             _frmDelete;
+        bool                              _loaded;
+        ScreenViewModel                   _model;
+        List<ResolutionViewModel>         _resolutions;
+        bool                              _savingResolution;
+        List<ResolutionByScreenViewModel> _screenResolutions;
+        bool                              _unknownColors;
+        bool                              _unknownHeight;
+        bool                              _unknownType;
+        bool                              _unknownWidth;
         [Parameter]
         public int Id { get; set; }
 
@@ -36,8 +46,9 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _resolutions = await ResolutionsService.GetAsync();
-            _model       = _creating ? new ScreenViewModel() : await Service.GetAsync(Id);
+            _resolutions       = await ResolutionsService.GetAsync();
+            _model             = _creating ? new ScreenViewModel() : await Service.GetAsync(Id);
+            _screenResolutions = await ResolutionsByScreenService.GetByScreen(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/screens/edit/",
@@ -120,5 +131,90 @@ namespace Marechai.Pages.Admin.Details
 
         void ValidateType(ValidatorEventArgs e) =>
             Validators.ValidateString(e, L["Screen type cannot be bigger than 256 characters."], 256);
+
+        void ShowResolutionDeleteModal(long itemId)
+        {
+            _currentResolution = _screenResolutions.FirstOrDefault(n => n.Id == itemId);
+            _deleteTitle       = L["Delete resolution from this screen"];
+
+            _deleteText = string.Format(L["Are you sure you want to delete the resolution {0} from this screen?"],
+                                        _currentResolution);
+
+            _frmDelete.Show();
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_currentResolution is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await ResolutionsByScreenService.DeleteAsync(_currentResolution.Id);
+            _screenResolutions = await ResolutionsByScreenService.GetByScreen(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ModalClosing(ModalClosingEventArgs obj)
+        {
+            _deleteInProgress  = false;
+            _currentResolution = null;
+        }
+
+        void OnAddResolutionClick()
+        {
+            _addingResolution   = true;
+            _savingResolution   = false;
+            _addingResolutionId = _resolutions.First().Id;
+        }
+
+        void CancelAddResolution()
+        {
+            _addingResolution   = false;
+            _savingResolution   = false;
+            _addingResolutionId = null;
+        }
+
+        async Task ConfirmAddResolution()
+        {
+            if(_addingResolutionId is null ||
+               _addingResolutionId <= 0)
+            {
+                CancelAddResolution();
+
+                return;
+            }
+
+            _savingResolution = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await ResolutionsByScreenService.CreateAsync(_addingResolutionId.Value, Id);
+            _screenResolutions = await ResolutionsByScreenService.GetByScreen(Id);
+
+            _addingResolution   = false;
+            _savingResolution   = false;
+            _addingResolutionId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
     }
 }

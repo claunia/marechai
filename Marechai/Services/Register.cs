@@ -68,6 +68,9 @@ namespace Marechai.Services
             services.AddScoped<MemoriesByMachineService>();
             services.AddScoped<StorageByMachineService>();
             services.AddScoped<ScreensByMachineService>();
+            services.AddScoped<ResolutionsService>();
+            services.AddScoped<ResolutionsByScreenService>();
+            services.AddScoped<ResolutionsByGpuService>();
         }
     }
 }

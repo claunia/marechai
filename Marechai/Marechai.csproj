@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>3.0.99.1399</Version>
+    <Version>3.0.99.1404</Version>
     <Company>Canary Islands Computer Museum</Company>
     <Copyright>Copyright © 2003-2020 Natalia Portillo</Copyright>
     <Product>Canary Islands Computer Museum Website</Product>
@@ -122,6 +122,12 @@
     <Content Update="Pages\Admin\Details\SoundSynth.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="Pages\Admin\Resolutions.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+    <Content Update="Pages\Admin\Details\Resolution.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Delete.cshtml" />
@@ -179,5 +185,20 @@
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Details.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Edit.cshtml" />
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Index.cshtml" />
   </ItemGroup>
 </Project>

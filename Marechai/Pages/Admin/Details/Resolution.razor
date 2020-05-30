@@ -1,0 +1,131 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/resolutions/details/{Id:int}"
+@page "/admin/resolutions/edit/{Id:int}"
+@page "/admin/resolutions/create"
+@inherits OwningComponentBase<ResolutionsService>
+@inject IStringLocalizer<ResolutionsService> L
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Resolution details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Width (pixels or characters)"]</FieldLabel>
+        <Validation Validator="@ValidateIntegerBiggerThanZero">
+            <NumericEdit Disabled="!_editing" TValue="int" @bind-Value="@_model.Width" >
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid width in pixels or characters."]</ValidationError>
+                </Feedback>
+            </NumericEdit>
+        </Validation>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Height (pixels or characters)"]</FieldLabel>
+        <Validation Validator="@ValidateIntegerBiggerThanZero">
+            <NumericEdit Disabled="!_editing" TValue="int" @bind-Value="@_model.Height" >
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid height in pixels or characters."]</ValidationError>
+                </Feedback>
+            </NumericEdit>
+        </Validation>
+    </Field>
+    @if (_editing || _model.Colors.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Colors"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownColors">@L["Unknown (colors)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownColors)
+            {
+                <Validation Validator="@ValidateLongBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="long?" Decimals="0" @bind-Value="@_model.Colors" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid number of colors."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Palette.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Colors in palette"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownPalette">@L["Unknown (colors in palette)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownPalette)
+            {
+                <Validation Validator="@ValidateLongBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="long?" Decimals="0" @bind-Value="@_model.Palette" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid number of colors in palette."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    <Field>
+        <Check Disabled="!_editing" TValue="bool" @bind-Checked="@_model.Chars">@L["Resolution is character based (text only)."]</Check>
+    </Field>
+    <Field>
+        <Check Disabled="!_editing" TValue="bool" @bind-Checked="@_model.Grayscale">@L["Resolution only has gray colors."]</Check>
+    </Field>
+</div>
+<div>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/resolutions" class="btn btn-secondary">@L["Back to list"]</a>
+</div>

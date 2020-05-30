@@ -1,0 +1,118 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Resolutions.razor
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     List of resolutions
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/resolutions"
+@inherits OwningComponentBase<ResolutionsService>
+@inject IStringLocalizer<ResolutionsService> L
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Resolutions"]</h3>
+@if (_resolutions is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <a class="btn btn-primary" href="/admin/resolutions/create">@L["Create new"]</a>
+</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>
+            @L["Width"]
+        </th>
+        <th>
+            @L["Height"]
+        </th>
+        <th>
+            @L["Colors"]
+        </th>
+        <th>
+            @L["Palette"]
+        </th>
+        <th>
+            @L["Chars"]
+        </th>
+        <th>
+            @L["Grayscale"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _resolutions)
+    {
+        <tr>
+            <td>
+                @item.Width
+            </td>
+            <td>
+                @item.Height
+            </td>
+            <td>
+                @item.Colors
+            </td>
+            <td>
+                @item.Palette
+            </td>
+            <td>
+                @item.Chars
+            </td>
+            <td>
+                @item.Grayscale
+            </td>
+            <td>
+                <a class="btn btn-primary" href="/admin/resolutions/details/@item.Id">@L["Details"]</a>
+                <a class="btn btn-secondary" href="/admin/resolutions/edit/@item.Id">@L["Edit"]</a>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete resolution"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(L["Are you sure you want to delete resolution {0}?"], _resolution)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>

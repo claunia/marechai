@@ -118,24 +118,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Unknown (width)" xml:space="preserve">
+  <data name="Unknown (colors)" xml:space="preserve">
     <value>Unknown</value>
-    <comment>Unknown, referring to a screen width in millimeters</comment>
+    <comment>Unknown, referring to colors in resolution</comment>
   </data>
-  <data name="Unknown (height)" xml:space="preserve">
+  <data name="Unknown (colors in palette)" xml:space="preserve">
     <value>Unknown</value>
-    <comment>Unknown, referring to a screen height in millimeters</comment>
-  </data>
-  <data name="Unknown (effective colors)" xml:space="preserve">
-    <value>Unknown</value>
-    <comment>Unknown, referring to a screen effective colors</comment>
-  </data>
-  <data name="Unknown (type)" xml:space="preserve">
-    <value>Unknown</value>
-    <comment>Unknown, referring to a screen type</comment>
-  </data>
-  <data name="Add new (resolution by screen)" xml:space="preserve">
-    <value>Add new</value>
-    <comment>Add new, referring to resolutions supported by this screen</comment>
+    <comment>Unknown, referring to colors in palette resolution</comment>
   </data>
 </root>

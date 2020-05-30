@@ -37,6 +37,8 @@
 @inject IStringLocalizer<GpusService> L
 @inject CompaniesService CompaniesService
 @inject NavigationManager NavigationManager
+@inject ResolutionsService ResolutionsService
+@inject ResolutionsByGpuService ResolutionsByGpuService
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Graphical processing unit details"]</h3>
 <hr />
@@ -240,3 +242,103 @@
     }
     <a href="/admin/gpus" class="btn btn-secondary">@L["Back to list"]</a>
 </div>
+@if (!_editing)
+{
+    <hr />
+    <h3>@L["Resolutions supported by this graphical processing unit"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddResolutionClick" Disabled="_addingResolution">@L["Add new (resolution by gpu)"]</Button>
+    @if (_addingResolution)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Resolutions"]</FieldLabel>
+                <Select Disabled="_savingResolution" TValue="int?" @bind-SelectedValue="@_addingResolutionId">
+                    @foreach (var resolution in _resolutions)
+                    {
+                        @if (_gpuResolutions.All(r => r.ResolutionId != resolution.Id))
+                        {
+                            <SelectItem TValue="int?" Value="@resolution.Id">@resolution</SelectItem>
+                        }
+                    }
+                </Select>
+                <Button Color="Color.Primary" Clicked="@CancelAddResolution" Disabled="@_savingResolution">@L["Cancel"]</Button>
+                <Button Color="Color.Success" Clicked="@ConfirmAddResolution" Disabled="@_savingResolution">@L["Add"]</Button>
+            </Field>
+        </div>
+    }
+    @if (_gpuResolutions?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Width"]
+                    </th>
+                    <th>
+                        @L["Height"]
+                    </th>
+                    <th>
+                        @L["Colors"]
+                    </th>
+                    <th>
+                        @L["Palette"]
+                    </th>
+                    <th>
+                        @L["Chars"]
+                    </th>
+                    <th>
+                        @L["Grayscale"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _gpuResolutions)
+                {
+                    <tr>
+                        <td>
+                            @item.Resolution.Width
+                        </td>
+                        <td>
+                            @item.Resolution.Height
+                        </td>
+                        <td>
+                            @item.Resolution.Colors
+                        </td>
+                        <td>
+                            @item.Resolution.Palette
+                        </td>
+                        <td>
+                            @item.Resolution.Chars
+                        </td>
+                        <td>
+                            @item.Resolution.Grayscale
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowResolutionDeleteModal(item.Id);}" Disabled="@_addingResolution">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+        <ModalBackdrop />
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>@_deleteTitle</ModalTitle>
+                <CloseButton Clicked="@HideModal" />
+            </ModalHeader>
+            <ModalBody>
+                <Text>@_deleteText</Text>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}

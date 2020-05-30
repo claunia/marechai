@@ -150,4 +150,8 @@
     <value>Unknown</value>
     <comment>Unknown, referring to the number of transistors</comment>
   </data>
+  <data name="Add new (resolution by gpu)" xml:space="preserve">
+    <value>Add new</value>
+    <comment>Add new, referring to resolutions supported by this gpu</comment>
+  </data>
 </root>
