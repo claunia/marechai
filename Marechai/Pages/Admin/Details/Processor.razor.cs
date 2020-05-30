@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Shared;
@@ -10,37 +11,49 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Processor
     {
-        List<CompanyViewModel>               _companies;
-        bool                                 _creating;
-        bool                                 _editing;
-        List<Database.Models.InstructionSet> _instructionSets;
-        bool                                 _loaded;
-        ProcessorViewModel                   _model;
-        bool                                 _prototype;
-        bool                                 _unknownAddressBus;
-        bool                                 _unknownCompany;
-        bool                                 _unknownCores;
-        bool                                 _unknownDataBus;
-        bool                                 _unknownDieSize;
-        bool                                 _unknownFprs;
-        bool                                 _unknownFprSize;
-        bool                                 _unknownGprs;
-        bool                                 _unknownGprSize;
-        bool                                 _unknownInstructionSet;
-        bool                                 _unknownIntroduced;
-        bool                                 _unknownL1Data;
-        bool                                 _unknownL1Instruction;
-        bool                                 _unknownL2;
-        bool                                 _unknownL3;
-        bool                                 _unknownModelCode;
-        bool                                 _unknownPackage;
-        bool                                 _unknownProcess;
-        bool                                 _unknownProcessNm;
-        bool                                 _unknownSimdRegisters;
-        bool                                 _unknownSimdSize;
-        bool                                 _unknownSpeed;
-        bool                                 _unknownThreadsPerCore;
-        bool                                 _unknownTransistors;
+        bool                   _addingExtension;
+        int?                   _addingExtensionId;
+        List<CompanyViewModel> _companies;
+        bool                   _creating;
+
+        InstructionSetExtensionByProcessorViewModel   _currentInstructionByMachine;
+        bool                                          _deleteInProgress;
+        string                                        _deleteText;
+        string                                        _deleteTitle;
+        bool                                          _editing;
+        Modal                                         _frmDelete;
+        List<Database.Models.InstructionSetExtension> _instructionSetExtensions;
+        List<Database.Models.InstructionSet>          _instructionSets;
+        bool                                          _loaded;
+        ProcessorViewModel                            _model;
+
+        List<InstructionSetExtensionByProcessorViewModel> _processorExtensions;
+        bool                                              _prototype;
+        bool                                              _savingExtension;
+        bool                                              _unknownAddressBus;
+        bool                                              _unknownCompany;
+        bool                                              _unknownCores;
+        bool                                              _unknownDataBus;
+        bool                                              _unknownDieSize;
+        bool                                              _unknownFprs;
+        bool                                              _unknownFprSize;
+        bool                                              _unknownGprs;
+        bool                                              _unknownGprSize;
+        bool                                              _unknownInstructionSet;
+        bool                                              _unknownIntroduced;
+        bool                                              _unknownL1Data;
+        bool                                              _unknownL1Instruction;
+        bool                                              _unknownL2;
+        bool                                              _unknownL3;
+        bool                                              _unknownModelCode;
+        bool                                              _unknownPackage;
+        bool                                              _unknownProcess;
+        bool                                              _unknownProcessNm;
+        bool                                              _unknownSimdRegisters;
+        bool                                              _unknownSimdSize;
+        bool                                              _unknownSpeed;
+        bool                                              _unknownThreadsPerCore;
+        bool                                              _unknownTransistors;
         [Parameter]
         public int Id { get; set; }
 
@@ -58,9 +71,11 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _companies       = await CompaniesService.GetAsync();
-            _instructionSets = await InstructionSetsService.GetAsync();
-            _model           = _creating ? new ProcessorViewModel() : await Service.GetAsync(Id);
+            _companies                = await CompaniesService.GetAsync();
+            _instructionSets          = await InstructionSetsService.GetAsync();
+            _model                    = _creating ? new ProcessorViewModel() : await Service.GetAsync(Id);
+            _instructionSetExtensions = await InstructionSetExtensionsService.GetAsync();
+            _processorExtensions      = await InstructionSetExtensionsByProcessorService.GetByProcessor(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/processors/edit/",
@@ -285,5 +300,91 @@ namespace Marechai.Pages.Admin.Details
 
         void ValidateProcess(ValidatorEventArgs e) =>
             Validators.ValidateString(e, L["Process must be 45 characters or less."], 45);
+
+        void ShowExtensionDeleteModal(long itemId)
+        {
+            _currentInstructionByMachine = _processorExtensions.FirstOrDefault(n => n.Id == itemId);
+            _deleteTitle                 = L["Delete instruction set extension from this processor"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the instruction set extension {0} from this processor?"],
+                              _currentInstructionByMachine?.Extension);
+
+            _frmDelete.Show();
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_currentInstructionByMachine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await InstructionSetExtensionsByProcessorService.DeleteAsync(_currentInstructionByMachine.Id);
+            _processorExtensions = await InstructionSetExtensionsByProcessorService.GetByProcessor(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ModalClosing(ModalClosingEventArgs obj)
+        {
+            _deleteInProgress            = false;
+            _currentInstructionByMachine = null;
+        }
+
+        void OnAddExtensionClick()
+        {
+            _addingExtension   = true;
+            _savingExtension   = false;
+            _addingExtensionId = _instructionSetExtensions.First().Id;
+        }
+
+        void CancelAddExtension()
+        {
+            _addingExtension   = false;
+            _savingExtension   = false;
+            _addingExtensionId = null;
+        }
+
+        async Task ConfirmAddExtension()
+        {
+            if(_addingExtensionId is null ||
+               _addingExtensionId <= 0)
+            {
+                CancelAddExtension();
+
+                return;
+            }
+
+            _savingExtension = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await InstructionSetExtensionsByProcessorService.CreateAsync(Id, _addingExtensionId.Value);
+            _processorExtensions = await InstructionSetExtensionsByProcessorService.GetByProcessor(Id);
+
+            _addingExtension   = false;
+            _savingExtension   = false;
+            _addingExtensionId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
     }
 }

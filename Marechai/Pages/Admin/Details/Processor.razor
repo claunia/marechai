@@ -38,6 +38,8 @@
 @inject CompaniesService CompaniesService
 @inject InstructionSetsService InstructionSetsService
 @inject NavigationManager NavigationManager
+@inject InstructionSetExtensionsByProcessorService InstructionSetExtensionsByProcessorService
+@inject InstructionSetExtensionsService InstructionSetExtensionsService
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Processor details"]</h3>
 <hr />
@@ -584,3 +586,73 @@
     }
     <a href="/admin/processors" class="btn btn-secondary">@L["Back to list"]</a>
 </div>
+@if (!_editing)
+{
+    <hr />
+    <h3>@L["Instruction set extensions implemented by this processor"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddExtensionClick" Disabled="_addingExtension">@L["Add new (instruction set extension)"]</Button>
+    @if (_addingExtension)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Instruction set extensions"]</FieldLabel>
+                <Select Disabled="_savingExtension" TValue="int?" @bind-SelectedValue="@_addingExtensionId">
+                    @foreach (var extension in _instructionSetExtensions)
+                    {
+                        if (_processorExtensions.All(s => s.ExtensionId != extension.Id))
+                        {
+                            <SelectItem TValue="int?" Value="@extension.Id">@extension.Extension</SelectItem>
+                        }
+                    }
+                </Select>
+                <Button Color="Color.Primary" Clicked="@CancelAddExtension" Disabled="@_savingExtension">@L["Cancel"]</Button>
+                <Button Color="Color.Success" Clicked="@ConfirmAddExtension" Disabled="@_savingExtension">@L["Add"]</Button>
+            </Field>
+        </div>
+    }
+    @if (_processorExtensions?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Name"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _processorExtensions)
+                {
+                    <tr>
+                        <td>
+                            @item.Extension
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowExtensionDeleteModal(item.Id);}" Disabled="@_addingExtension">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+        <ModalBackdrop />
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>@_deleteTitle</ModalTitle>
+                <CloseButton Clicked="@HideModal" />
+            </ModalHeader>
+            <ModalBody>
+                <Text>@_deleteText</Text>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}

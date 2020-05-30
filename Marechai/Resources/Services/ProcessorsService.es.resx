@@ -374,10 +374,6 @@
     <value>Por favor introduce un modelo válido.</value>
     <comment>Please enter a valid model code.</comment>
   </data>
-  <data name="Prototype" xml:space="preserve">
-    <value>Prototipo</value>
-    <comment>Prototype</comment>
-  </data>
   <data name="Please enter an introduction date." xml:space="preserve">
     <value>Por favor elige una fecha válida.</value>
     <comment>Please enter an introduction date.</comment>
@@ -469,5 +465,25 @@
   <data name="Please enter a valid L3 cache size in kibibytes." xml:space="preserve">
     <value>Por favor introduce un tamaño válido de la caché L3 en kibibytes.</value>
     <comment>Please enter a valid L3 cache size in kibibytes.</comment>
+  </data>
+  <data name="Add new (instruction set extension)" xml:space="preserve">
+    <value>Añadir nueva</value>
+    <comment>Add new, referring to an instruction set extension for a processor</comment>
+  </data>
+  <data name="Delete instruction set extension from this processor" xml:space="preserve">
+    <value>Eliminar extensión de arquitectura de este procesador</value>
+    <comment>Delete instruction set extension from this processor</comment>
+  </data>
+  <data name="Are you sure you want to delete the instruction set extension {0} from this processor?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la extensión de arquitecture {0} de este procesador?</value>
+    <comment>Are you sure you want to delete the instruction set extension {0} from this processor?</comment>
+  </data>
+  <data name="Instruction set extensions implemented by this processor" xml:space="preserve">
+    <value>Extensiones de arquitectura implementadas por este procesador</value>
+    <comment>Instruction set extensions implemented by this processor</comment>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Añadir</value>
+    <comment>Add</comment>
   </data>
 </root>

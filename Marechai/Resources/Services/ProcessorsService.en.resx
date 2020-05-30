@@ -214,4 +214,8 @@
     <value>Unknown</value>
     <comment>Unknown, referring to the size of the L3 data cache</comment>
   </data>
+  <data name="Add new (instruction set extension)" xml:space="preserve">
+    <value>Add new</value>
+    <comment>Add new, referring to an instruction set extension for a processor</comment>
+  </data>
 </root>

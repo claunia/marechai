@@ -567,9 +567,9 @@
                 <Select Disabled="_savingScreen" TValue="int?" @bind-SelectedValue="@_addingScreenId">
                     @foreach (var screen in _screens)
                     {
-                        if (_machineScreens.Any(s => s.ScreenId == screen.Id))
+                        if (_machineScreens.All(s => s.ScreenId != screen.Id))
                         {
-                            <SelectItem TValue="int?" Value="@screen.Id">@string.Format(L["{0}\" with a native resolution of {1}",screen.Diagonal, screen.NativeResolution)</SelectItem>
+                            <SelectItem TValue="int?" Value="@screen.Id">@string.Format(L["{0}\" with a native resolution of {1}"],screen.Diagonal, screen.NativeResolution)</SelectItem>
                         }
                     }
                 </Select>
