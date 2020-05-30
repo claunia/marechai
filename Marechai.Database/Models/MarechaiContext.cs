@@ -103,7 +103,9 @@ namespace Marechai.Database.Models
                 return;
 
             #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http: //go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-            optionsBuilder.UseMySql("server=zeus.claunia.com;port=3306;user=marechai;password=marechaipass;database=marechai");
+            optionsBuilder.
+                UseMySql("server=zeus.claunia.com;port=3306;user=marechai;password=marechaipass;database=marechai");
+
             optionsBuilder.UseLazyLoadingProxies();
         }
 
@@ -735,6 +737,8 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<MachinePhoto>(entity =>
             {
+                entity.HasIndex(e => e.Aperture);
+
                 entity.HasIndex(e => e.Author);
 
                 entity.HasIndex(e => e.CameraManufacturer);
@@ -753,7 +757,7 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => e.ExifVersion);
 
-                entity.HasIndex(e => e.Exposure);
+                entity.HasIndex(e => e.ExposureTime);
 
                 entity.HasIndex(e => e.ExposureMethod);
 
@@ -808,6 +812,8 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<OwnedMachinePhoto>(entity =>
             {
+                entity.HasIndex(e => e.Aperture);
+
                 entity.HasIndex(e => e.Author);
 
                 entity.HasIndex(e => e.CameraManufacturer);
@@ -826,7 +832,7 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => e.ExifVersion);
 
-                entity.HasIndex(e => e.Exposure);
+                entity.HasIndex(e => e.ExposureTime);
 
                 entity.HasIndex(e => e.ExposureMethod);
 

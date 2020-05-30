@@ -6,7 +6,8 @@ namespace Marechai.Database.Models
 {
     public class BasePhoto : BaseModel<Guid>
     {
-        public string Author { get; set; }
+        public double? Aperture { get; set; }
+        public string  Author   { get; set; }
         [DisplayName("Camera manufacturer")]
         public string CameraManufacturer { get; set; }
         [DisplayName("Camera model")]
@@ -23,7 +24,7 @@ namespace Marechai.Database.Models
         [DisplayName("Exif version")]
         public string ExifVersion { get; set; }
         [DisplayName("Exposure time")]
-        public string Exposure { get; set; }
+        public double? ExposureTime { get; set; }
         [DisplayName("Exposure mode")]
         public ExposureMode? ExposureMethod { get; set; }
         [DisplayName("Exposure Program")]
@@ -64,6 +65,7 @@ namespace Marechai.Database.Models
         public double? VerticalResolution { get; set; }
         [DisplayName("White balance")]
         public WhiteBalance? WhiteBalance { get; set; }
+        public string OriginalExtension { get;   set; }
 
         public virtual ApplicationUser User { get; set; }
         [Required]

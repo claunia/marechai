@@ -846,6 +846,8 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
 
+                b.Property<double?>("Aperture").HasColumnType("double");
+
                 b.Property<string>("Author").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<string>("CameraManufacturer").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
@@ -864,11 +866,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("ExifVersion").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Exposure").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
                 b.Property<ushort?>("ExposureMethod").HasColumnType("smallint unsigned");
 
                 b.Property<ushort?>("ExposureProgram").HasColumnType("smallint unsigned");
+
+                b.Property<double?>("ExposureTime").HasColumnType("double");
 
                 b.Property<ushort?>("Flash").HasColumnType("smallint unsigned");
 
@@ -893,6 +895,8 @@ namespace Marechai.Database.Migrations
                 b.Property<ushort?>("MeteringMode").HasColumnType("smallint unsigned");
 
                 b.Property<ushort?>("Orientation").HasColumnType("smallint unsigned");
+
+                b.Property<string>("OriginalExtension").HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<ushort?>("ResolutionUnit").HasColumnType("smallint unsigned");
 
@@ -921,6 +925,8 @@ namespace Marechai.Database.Migrations
 
                 b.HasKey("Id");
 
+                b.HasIndex("Aperture");
+
                 b.HasIndex("Author");
 
                 b.HasIndex("CameraManufacturer");
@@ -939,11 +945,11 @@ namespace Marechai.Database.Migrations
 
                 b.HasIndex("ExifVersion");
 
-                b.HasIndex("Exposure");
-
                 b.HasIndex("ExposureMethod");
 
                 b.HasIndex("ExposureProgram");
+
+                b.HasIndex("ExposureTime");
 
                 b.HasIndex("Flash");
 
@@ -1272,6 +1278,8 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
 
+                b.Property<double?>("Aperture").HasColumnType("double");
+
                 b.Property<string>("Author").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<string>("CameraManufacturer").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
@@ -1290,11 +1298,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("ExifVersion").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Exposure").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
                 b.Property<ushort?>("ExposureMethod").HasColumnType("smallint unsigned");
 
                 b.Property<ushort?>("ExposureProgram").HasColumnType("smallint unsigned");
+
+                b.Property<double?>("ExposureTime").HasColumnType("double");
 
                 b.Property<ushort?>("Flash").HasColumnType("smallint unsigned");
 
@@ -1317,6 +1325,8 @@ namespace Marechai.Database.Migrations
                 b.Property<ushort?>("MeteringMode").HasColumnType("smallint unsigned");
 
                 b.Property<ushort?>("Orientation").HasColumnType("smallint unsigned");
+
+                b.Property<string>("OriginalExtension").HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<long>("OwnedMachineId").HasColumnType("bigint");
 
@@ -1345,6 +1355,8 @@ namespace Marechai.Database.Migrations
 
                 b.HasKey("Id");
 
+                b.HasIndex("Aperture");
+
                 b.HasIndex("Author");
 
                 b.HasIndex("CameraManufacturer");
@@ -1363,11 +1375,11 @@ namespace Marechai.Database.Migrations
 
                 b.HasIndex("ExifVersion");
 
-                b.HasIndex("Exposure");
-
                 b.HasIndex("ExposureMethod");
 
                 b.HasIndex("ExposureProgram");
+
+                b.HasIndex("ExposureTime");
 
                 b.HasIndex("Flash");
 

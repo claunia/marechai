@@ -24,7 +24,7 @@ namespace Marechai.Areas.Admin.Models
         [DisplayName("Exif version")]
         public string ExifVersion { get; set; }
         [DisplayName("Exposure time")]
-        public string Exposure { get; set; }
+        public double? Exposure { get; set; }
         [DisplayName("Exposure mode")]
         public ExposureMode? ExposureMethod { get; set; }
         [DisplayName("Exposure Program")]

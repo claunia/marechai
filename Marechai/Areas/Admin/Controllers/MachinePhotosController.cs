@@ -59,7 +59,7 @@ namespace Marechai.Areas.Admin.Controllers
                     Id = m.Id, CameraManufacturer = m.CameraManufacturer, CameraModel = m.CameraModel,
                     ColorSpace = m.ColorSpace, Comments = m.Comments, Contrast = m.Contrast,
                     CreationDate = m.CreationDate, DigitalZoomRatio = m.DigitalZoomRatio, ExifVersion = m.ExifVersion,
-                    Exposure = m.Exposure, ExposureProgram = m.ExposureProgram, Flash = m.Flash, Focal = m.Focal,
+                    Exposure = m.ExposureTime, ExposureProgram = m.ExposureProgram, Flash = m.Flash, Focal = m.Focal,
                     FocalLength = m.FocalLength, FocalLengthEquivalent = m.FocalLengthEquivalent,
                     HorizontalResolution = m.HorizontalResolution, IsoRating = m.IsoRating, Lens = m.Lens,
                     LightSource = m.LightSource, MeteringMode = m.MeteringMode, ResolutionUnit = m.ResolutionUnit,

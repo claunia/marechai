@@ -342,12 +342,12 @@ namespace Marechai.Database
         AdobeRgb = 2, [Display(Name = "Wide Gamut RGB")]
         WideGamutRgb = 4093, [Display(Name = "ICC Profile")]
         IccProfile = 65534, [Display(Name = "Uncalibrated")]
-        Uncalibreated = 65535
+        Uncalibrated = 65535
     }
 
     public enum Contrast : ushort
     {
-        Normal = 0, Low = 1, Hig = 2
+        Normal = 0, Low = 1, High = 2
     }
 
     public enum ExposureMode : ushort
