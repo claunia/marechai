@@ -34,7 +34,7 @@ namespace Marechai.Database.Models
         [DisplayName("Lens focal length")]
         public double? FocalLength { get; set; }
         [DisplayName("Focal length in 35 mm film")]
-        public ushort? FocalLengthEquivalent { get; set; }
+        public double? FocalLengthEquivalent { get; set; }
         [DisplayName("Horizontal resolution")]
         public double? HorizontalResolution { get; set; }
         [DisplayName("ISO speed rating")]

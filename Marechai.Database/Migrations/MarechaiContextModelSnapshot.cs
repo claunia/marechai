@@ -876,7 +876,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<double?>("FocalLength").HasColumnType("double");
 
-                b.Property<ushort?>("FocalLengthEquivalent").HasColumnType("smallint unsigned");
+                b.Property<double?>("FocalLengthEquivalent").HasColumnType("double");
 
                 b.Property<double?>("HorizontalResolution").HasColumnType("double");
 
@@ -1302,7 +1302,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<double?>("FocalLength").HasColumnType("double");
 
-                b.Property<ushort?>("FocalLengthEquivalent").HasColumnType("smallint unsigned");
+                b.Property<double?>("FocalLengthEquivalent").HasColumnType("double");
 
                 b.Property<double?>("HorizontalResolution").HasColumnType("double");
 
