@@ -36,6 +36,7 @@
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
 @inject IWebHostEnvironment Host
+@inject MachinePhotosService MachinePhotosService
 
 @if (!_loaded)
 {
@@ -871,6 +872,27 @@
     </tr>
 }
 </table>
+
+@if(_photos.Count > 0)
+{
+    foreach (var photo in _photos)
+    {
+        <div class="col-md-2">
+            <figure class="figure">
+                <picture>
+                    <source type="image/avif" srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x">
+                    <source type="image/heic" srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x">
+                    <source type="image/webp" srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x">
+                    <source type="image/jp2" srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x">
+                    <img class="figure-img img-fluid rounded" srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x" src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                </picture>
+                <figcaption class="figure-caption">
+                    <a href="/machines/photo/@photo" target="_blank">@L["Details"]</a></figcaption>
+            </figure>
+        </div>
+    }
+}
+
 @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/photos/computers", _machine.Id + ".jpg")))
 {
     <img src="@Path.Combine("/assets/photos/computers", _machine.Id + ".jpg")" alt="">

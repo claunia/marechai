@@ -706,4 +706,8 @@
     <value>Los comentarios deben contener 255 caracteres o menos.</value>
     <comment>User comments must be 255 characters or less.</comment>
   </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+    <comment>Details</comment>
+  </data>
 </root>
