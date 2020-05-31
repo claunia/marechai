@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Database;
 using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +61,30 @@ namespace Marechai.Services
             model.Type       = viewModel.Type;
             model.FamilyId   = viewModel.FamilyId;
 
+            var news = new News
+            {
+                AddedId = model.Id, Date = DateTime.UtcNow
+            };
+
+            switch(model.Type)
+            {
+                case MachineType.Computer:
+                    news.Type = NewsType.UpdatedComputerInDb;
+
+                    break;
+                case MachineType.Console:
+                    news.Type = NewsType.UpdatedConsoleInDb;
+
+                    break;
+                default:
+                    news = null;
+
+                    break;
+            }
+
+            if(news != null)
+                await _context.News.AddAsync(news);
+
             await _context.SaveChangesAsync();
         }
 
@@ -72,6 +98,33 @@ namespace Marechai.Services
 
             await _context.Machines.AddAsync(model);
             await _context.SaveChangesAsync();
+
+            var news = new News
+            {
+                AddedId = model.Id, Date = DateTime.UtcNow
+            };
+
+            switch(model.Type)
+            {
+                case MachineType.Computer:
+                    news.Type = NewsType.NewComputerInDb;
+
+                    break;
+                case MachineType.Console:
+                    news.Type = NewsType.NewConsoleInDb;
+
+                    break;
+                default:
+                    news = null;
+
+                    break;
+            }
+
+            if(news != null)
+            {
+                await _context.News.AddAsync(news);
+                await _context.SaveChangesAsync();
+            }
 
             return model.Id;
         }
