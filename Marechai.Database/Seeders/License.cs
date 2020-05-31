@@ -7,6 +7,7 @@ namespace Marechai.Database.Seeders
 {
     public static class License
     {
+        // Last updated 31 May 2020 using SPDX License List v3.9
         public static void Seed(MarechaiContext context)
         {
             List<Models.License> existingLicenses     = context.Licenses.ToList();
@@ -260,9 +261,9 @@ namespace Marechai.Database.Seeders
                 },
                 new Models.License
                 {
-                    Id = 49, Name = "BSD 3-Clause \"new Models.License\" or \"Revised\" License", SPDX = "BSD-3-Clause",
+                    Id          = 49, Name = "BSD 3-Clause \"New\" or \"Revised\" License", SPDX = "BSD-3-Clause",
                     FsfApproved = true, OsiApproved = true,
-                    Link = "https://spdx.org/licenses/BSD-3-Clause.html#licenseText"
+                    Link        = "https://spdx.org/licenses/BSD-3-Clause.html#licenseText"
                 },
                 new Models.License
                 {
@@ -1271,9 +1272,8 @@ namespace Marechai.Database.Seeders
                 },
                 new Models.License
                 {
-                    Id          = 238, Name = "new Models.Licensesletr License", SPDX = "new Models.Licensesletr",
-                    FsfApproved = false, OsiApproved = false,
-                    Link        = "https://spdx.org/licenses/new Models.Licensesletr.html#licenseText"
+                    Id          = 238, Name   = "Newsletr License", SPDX = "Newsletr", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/Newsletr.html#licenseText"
                 },
                 new Models.License
                 {
@@ -1662,8 +1662,8 @@ namespace Marechai.Database.Seeders
                 },
                 new Models.License
                 {
-                    Id          = 315, Name = "Standard ML of new Models.License Jersey License", SPDX = "SMLNJ",
-                    FsfApproved = true, OsiApproved = false, Link = "https://spdx.org/licenses/SMLNJ.html#licenseText"
+                    Id          = 315, Name   = "Standard ML of New Jersey License", SPDX = "SMLNJ", FsfApproved = true,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/SMLNJ.html#licenseText"
                 },
                 new Models.License
                 {
@@ -1911,6 +1911,97 @@ namespace Marechai.Database.Seeders
                 {
                     Id          = 363, Name   = "Zope Public License 2.1", SPDX = "ZPL-2.1", FsfApproved = true,
                     OsiApproved = false, Link = "https://spdx.org/licenses/ZPL-2.1.html#licenseText"
+                },
+                new Models.License
+                {
+                    Id          = 364, Name   = "Public domain", SPDX = null, FsfApproved = true,
+                    OsiApproved = false, Link = null
+                },
+                new Models.License
+                {
+                    Id = 365, Name = "Cryptographic Autonomy License 1.0", SPDX = "CAL-1.0", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/CAL-1.0.html"
+                },
+                new Models.License
+                {
+                    Id   = 366, Name = "Cryptographic Autonomy License 1.0 (Combined Work Exception)",
+                    SPDX = "CAL-1.0-Combined-Work-Exception", FsfApproved = false, OsiApproved = false,
+                    Link = "https://spdx.org/licenses/CAL-1.0-Combined-Work-Exception.html"
+                },
+                new Models.License
+                {
+                    Id = 367, Name = "CERN Open Hardware Licence Version 2 - Permissive", SPDX = "CERN-OHL-P-2.0",
+                    FsfApproved = false, OsiApproved = false, Link = "https://spdx.org/licenses/CERN-OHL-P-2.0.html"
+                },
+                new Models.License
+                {
+                    Id   = 368, Name                     = "CERN Open Hardware Licence Version 2 - Strongly Reciprocal",
+                    SPDX = "CERN-OHL-S-2.0", FsfApproved = false, OsiApproved = false,
+                    Link = "https://spdx.org/licenses/CERN-OHL-S-2.0.html"
+                },
+                new Models.License
+                {
+                    Id   = 369, Name                     = "CERN Open Hardware Licence Version 2 - Weakly Reciprocal",
+                    SPDX = "CERN-OHL-W-2.0", FsfApproved = false, OsiApproved = false,
+                    Link = "https://spdx.org/licenses/CERN-OHL-W-2.0.html"
+                },
+                new Models.License
+                {
+                    Id          = 370, Name = "Hippocratic License 2.1", SPDX = "Hippocratic-2.1", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/Hippocratic-2.1.html"
+                },
+                new Models.License
+                {
+                    Id          = 371, Name = "LGPL-3.0 Linking Exception", SPDX = "LGPL-3.0-linking-exception",
+                    FsfApproved = false, OsiApproved = false,
+                    Link        = "https://spdx.org/licenses/LGPL-3.0-linking-exception.html"
+                },
+                new Models.License
+                {
+                    Id          = 372, Name = "Mulan Permissive Software License, Version 2", SPDX = "MulanPSL-2.0",
+                    FsfApproved = false, OsiApproved = false, Link = "https://spdx.org/licenses/MulanPSL-2.0.html"
+                },
+                new Models.License
+                {
+                    Id = 373, Name = "Non-Commercial Government Licence", SPDX = "NCGL-UK-2.0", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/NCGL-UK-2.0.html"
+                },
+                new Models.License
+                {
+                    Id = 374, Name = "Open Use of Data Agreement v1.0", SPDX = "O-UDA-1.0", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/O-UDA-1.0.html"
+                },
+                new Models.License
+                {
+                    Id = 375, Name = "OGC Software License, Version 1.0", SPDX = "OGC-1.0", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/OGC-1.0.html"
+                },
+                new Models.License
+                {
+                    Id = 376, Name = "The Parity Public License 7.0.0", SPDX = "Parity-7.0.0", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/Parity-7.0.0.html"
+                },
+                new Models.License
+                {
+                    Id = 377, Name = "PolyForm Noncommercial License 1.0.0", SPDX = "PolyForm-Noncommercial-1.0.0",
+                    FsfApproved = false, OsiApproved = false,
+                    Link = "https://spdx.org/licenses/PolyForm-Noncommercial-1.0.0.html"
+                },
+                new Models.License
+                {
+                    Id = 378, Name = "PolyForm Small Business License 1.0.0", SPDX = "PolyForm-Small-Business-1.0.0",
+                    FsfApproved = false, OsiApproved = false,
+                    Link = "https://spdx.org/licenses/PolyForm-Small-Business-1.0.0.html"
+                },
+                new Models.License
+                {
+                    Id          = 379, Name = "Solderpad Hardware License v2.0", SPDX = "SHL-2.0", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/SHL-2.0.html"
+                },
+                new Models.License
+                {
+                    Id          = 380, Name = "Solderpad Hardware License v2.1", SPDX = "SHL-2.1", FsfApproved = false,
+                    OsiApproved = false, Link = "https://spdx.org/licenses/SHL-2.1.html"
                 }
             })
             {
