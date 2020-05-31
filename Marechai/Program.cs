@@ -37,6 +37,7 @@ using Marechai.Helpers;
 using Markdig;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Version = DiscImageChef.Interop.Version;
@@ -114,12 +115,54 @@ namespace Marechai
 
             Console.WriteLine("\u001b[31;1mUpdating MySQL database without Entity Framework if it exists...\u001b[0m");
             Database = new Mysql();
-            bool res = Database.OpenDb("zeus.claunia.com", "marechai", "marechai", "marechaipass", 3306);
 
-            if(res)
+            IConfigurationBuilder builder          = new ConfigurationBuilder().AddJsonFile("appsettings.json");
+            IConfigurationRoot    configuration    = builder.Build();
+            string                connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            if(connectionString is null)
+                Console.WriteLine("\u001b[31;1mCould not find a correct connection string...\u001b[0m");
+            else
             {
-                Console.WriteLine("\u001b[31;1mClosing database...\u001b[0m");
-                Database.CloseDb();
+                string   server = null, user = null, database = null, password = null;
+                ushort   port   = 0;
+                string[] pieces = connectionString.Split(";");
+
+                foreach(string piece in pieces)
+                {
+                    if(piece.StartsWith("server=", StringComparison.Ordinal))
+                        server = piece.Substring(7);
+                    else if(piece.StartsWith("user=", StringComparison.Ordinal))
+                        user = piece.Substring(5);
+                    else if(piece.StartsWith("password=", StringComparison.Ordinal))
+                        password = piece.Substring(9);
+                    else if(piece.StartsWith("database=", StringComparison.Ordinal))
+                        database = piece.Substring(9);
+                    else if(piece.StartsWith("port=", StringComparison.Ordinal))
+                    {
+                        string portString = piece.Substring(5);
+
+                        ushort.TryParse(portString, out port);
+                    }
+                }
+
+                if(server is null   ||
+                   user is null     ||
+                   database is null ||
+                   password is null ||
+                   port == 0)
+                    Console.WriteLine("\u001b[31;1mCould not find a correct connection string...\u001b[0m");
+
+                else
+                {
+                    bool res = Database.OpenDb(server, user, database, password, port);
+
+                    if(res)
+                    {
+                        Console.WriteLine("\u001b[31;1mClosing database...\u001b[0m");
+                        Database.CloseDb();
+                    }
+                }
             }
 
             DateTime start = DateTime.Now;

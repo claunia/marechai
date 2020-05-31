@@ -30,6 +30,7 @@
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Marechai.Database.Models
 {
@@ -102,11 +103,9 @@ namespace Marechai.Database.Models
             if(optionsBuilder.IsConfigured)
                 return;
 
-            #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http: //go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-            optionsBuilder.
-                UseMySql("server=zeus.claunia.com;port=3306;user=marechai;password=marechaipass;database=marechai");
-
-            optionsBuilder.UseLazyLoadingProxies();
+            IConfigurationBuilder builder       = new ConfigurationBuilder().AddJsonFile("appsettings.json");
+            IConfigurationRoot    configuration = builder.Build();
+            optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
