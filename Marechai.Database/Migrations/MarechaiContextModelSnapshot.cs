@@ -49,9 +49,9 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Email").HasColumnType("varchar(256) CHARACTER SET utf8mb4").HasMaxLength(256);
 
-                b.Property<bool>("EmailConfirmed").HasColumnType("tinyint(1)");
+                b.Property<bool>("EmailConfirmed").HasColumnType("bit(1)");
 
-                b.Property<bool>("LockoutEnabled").HasColumnType("tinyint(1)");
+                b.Property<bool>("LockoutEnabled").HasColumnType("bit(1)");
 
                 b.Property<DateTimeOffset?>("LockoutEnd").HasColumnType("datetime(6)");
 
@@ -65,11 +65,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("PhoneNumber").HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                b.Property<bool>("PhoneNumberConfirmed").HasColumnType("tinyint(1)");
+                b.Property<bool>("PhoneNumberConfirmed").HasColumnType("bit(1)");
 
                 b.Property<string>("SecurityStamp").HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                b.Property<bool>("TwoFactorEnabled").HasColumnType("tinyint(1)");
+                b.Property<bool>("TwoFactorEnabled").HasColumnType("bit(1)");
 
                 b.Property<string>("UserName").HasColumnType("varchar(256) CHARACTER SET utf8mb4").HasMaxLength(256);
 
@@ -169,31 +169,31 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<bool>("Agif").ValueGeneratedOnAdd().HasColumnName("agif").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Agif").ValueGeneratedOnAdd().HasColumnName("agif").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
                 b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnName("browser").
                   HasColumnType("varchar(64)").HasDefaultValueSql("''").HasMaxLength(64);
 
-                b.Property<bool>("Colors").ValueGeneratedOnAdd().HasColumnName("colors").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Colors").ValueGeneratedOnAdd().HasColumnName("colors").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
-                b.Property<bool>("Flash").ValueGeneratedOnAdd().HasColumnName("flash").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Flash").ValueGeneratedOnAdd().HasColumnName("flash").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
-                b.Property<bool>("Frames").ValueGeneratedOnAdd().HasColumnName("frames").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Frames").ValueGeneratedOnAdd().HasColumnName("frames").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
-                b.Property<bool>("Gif87").ValueGeneratedOnAdd().HasColumnName("gif87").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Gif87").ValueGeneratedOnAdd().HasColumnName("gif87").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
-                b.Property<bool>("Gif89").ValueGeneratedOnAdd().HasColumnName("gif89").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Gif89").ValueGeneratedOnAdd().HasColumnName("gif89").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
-                b.Property<bool>("Jpeg").ValueGeneratedOnAdd().HasColumnName("jpeg").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Jpeg").ValueGeneratedOnAdd().HasColumnName("jpeg").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
-                b.Property<bool>("Js").ValueGeneratedOnAdd().HasColumnName("js").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Js").ValueGeneratedOnAdd().HasColumnName("js").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
                 b.Property<string>("Os").IsRequired().ValueGeneratedOnAdd().HasColumnName("os").
@@ -202,13 +202,13 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Platform").IsRequired().ValueGeneratedOnAdd().HasColumnName("platform").
                   HasColumnType("varchar(8)").HasDefaultValueSql("''").HasMaxLength(8);
 
-                b.Property<bool>("Png").ValueGeneratedOnAdd().HasColumnName("png").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Png").ValueGeneratedOnAdd().HasColumnName("png").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
-                b.Property<bool>("Pngt").ValueGeneratedOnAdd().HasColumnName("pngt").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Pngt").ValueGeneratedOnAdd().HasColumnName("pngt").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
-                b.Property<bool>("Table").ValueGeneratedOnAdd().HasColumnName("table").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Table").ValueGeneratedOnAdd().HasColumnName("table").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
                 b.Property<string>("UserAgent").IsRequired().ValueGeneratedOnAdd().HasColumnName("user_agent").
@@ -480,7 +480,7 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<string>("Id").HasColumnType("char(3)");
 
-                b.Property<bool>("Enabled").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasDefaultValue(true);
+                b.Property<bool>("Enabled").ValueGeneratedOnAdd().HasColumnType("bit(1)").HasDefaultValue(true);
 
                 b.Property<string>("Name").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -734,13 +734,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int");
 
-                b.Property<bool>("FsfApproved").HasColumnType("tinyint(1)");
+                b.Property<bool>("FsfApproved").HasColumnType("bit(1)");
 
                 b.Property<string>("Link").HasColumnType("varchar(512) CHARACTER SET utf8mb4").HasMaxLength(512);
 
                 b.Property<string>("Name").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<bool>("OsiApproved").HasColumnType("tinyint(1)");
+                b.Property<bool>("OsiApproved").HasColumnType("bit(1)");
 
                 b.Property<string>("SPDX").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -1226,7 +1226,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime>("AcquisitionDate").HasColumnType("datetime(6)");
 
-                b.Property<bool>("Boxed").HasColumnType("tinyint(1)");
+                b.Property<bool>("Boxed").HasColumnType("bit(1)");
 
                 b.Property<DateTime?>("LastStatusDate").HasColumnType("datetime(6)");
 
@@ -1234,16 +1234,16 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("MachineId").HasColumnType("int(11)");
 
-                b.Property<bool>("Manuals").HasColumnType("tinyint(1)");
+                b.Property<bool>("Manuals").HasColumnType("bit(1)");
 
                 b.Property<string>("SerialNumber").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<bool>("SerialNumberVisible").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").
+                b.Property<bool>("SerialNumberVisible").ValueGeneratedOnAdd().HasColumnType("bit(1)").
                   HasDefaultValue(true);
 
                 b.Property<int>("Status").HasColumnType("int");
 
-                b.Property<bool>("Trade").HasColumnType("tinyint(1)");
+                b.Property<bool>("Trade").HasColumnType("bit(1)");
 
                 b.Property<string>("UserId").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -1459,7 +1459,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime?>("End").HasColumnType("datetime(6)");
 
-                b.Property<bool>("Ongoing").HasColumnType("tinyint(1)");
+                b.Property<bool>("Ongoing").HasColumnType("bit(1)");
 
                 b.Property<int>("PersonId").HasColumnType("int");
 
@@ -1736,12 +1736,12 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
-                b.Property<bool>("Chars").ValueGeneratedOnAdd().HasColumnName("chars").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Chars").ValueGeneratedOnAdd().HasColumnName("chars").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
                 b.Property<long?>("Colors").HasColumnName("colors").HasColumnType("bigint(20)");
 
-                b.Property<bool>("Grayscale").HasColumnType("tinyint(1)");
+                b.Property<bool>("Grayscale").HasColumnType("bit(1)");
 
                 b.Property<int>("Height").ValueGeneratedOnAdd().HasColumnName("height").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
