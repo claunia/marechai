@@ -43,5 +43,31 @@
 
 <script src="_content/Blazorise/blazorise.js"></script>
 <script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script>
+<script>
+let dotNetClassReference;
+
+function SetDotNetClassReference(reference)
+{
+    dotNetClassReference = reference;
+}
+
+function SetCompanyDescriptionText(markdown)
+{
+    let textArea = document.getElementById("txtCompanyDescriptionMarkdown");
+    
+    if(!textArea) return;
+
+    textArea.value = markdown;
+}
+
+function OnCompanyMarkdownChanged()
+{
+    let textArea = document.getElementById("txtCompanyDescriptionMarkdown");
+    
+    if(!textArea) return;
+    
+    dotNetClassReference.invokeMethodAsync('OnCompanyDescriptionChangedDotnet', textArea.value);
+}
+</script>
 </body>
 </html>

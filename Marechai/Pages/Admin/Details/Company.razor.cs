@@ -11,7 +11,9 @@ using Marechai.Database.Models;
 using Marechai.Helpers;
 using Marechai.Shared;
 using Marechai.ViewModels;
+using Markdig;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using SkiaSharp;
 using Svg.Skia;
 
@@ -19,45 +21,49 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Company
     {
-        const int              _maxUploadSize = 5 * 1048576;
-        List<CompanyViewModel> _companies;
-        List<Iso31661Numeric>  _countries;
-        bool                   _creating;
-        CompanyLogo            _currentLogo;
-        int?                   _currentLogoYear;
-        bool                   _deleteInProgress;
-        bool                   _editing;
-        Modal                  _frmDelete;
-        Modal                  _frmLogoYear;
-        Modal                  _frmUpload;
-        ElementReference       _inputUpload;
-        bool                   _loaded;
-        List<CompanyLogo>      _logos;
-        CompanyViewModel       _model;
-        double                 _progressValue;
-
-        bool         _savingLogo;
-        bool         _unknownAddress;
-        bool         _unknownCity;
-        bool         _unknownCountry;
-        bool         _unknownFacebook;
-        bool         _unknownFounded;
-        bool         _unknownLogoYear;
-        bool         _unknownPostalCode;
-        bool         _unknownProvince;
-        bool         _unknownSold;
-        bool         _unknownSoldTo;
-        bool         _unknownTwitter;
-        bool         _unknownWebsite;
-        bool         _uploaded;
-        string       _uploadedPngData;
-        string       _uploadedSvgData;
-        string       _uploadedWebpData;
-        bool         _uploadError;
-        string       _uploadErrorMessage;
-        bool         _uploading;
-        MemoryStream _uploadMs;
-        bool         _yearChangeInProgress;
+        const int                   _maxUploadSize = 5 * 1048576;
+        bool                        _addingDescription;
+        List<CompanyViewModel>      _companies;
+        List<Iso31661Numeric>       _countries;
+        bool                        _creating;
+        CompanyLogo                 _currentLogo;
+        int?                        _currentLogoYear;
+        bool                        _deleteInProgress;
+        CompanyDescriptionViewModel _description;
+        bool                        _editing;
+        Modal                       _frmDelete;
+        Modal                       _frmLogoYear;
+        Modal                       _frmUpload;
+        ElementReference            _inputUpload;
+        bool                        _loaded;
+        List<CompanyLogo>           _logos;
+        CompanyViewModel            _model;
+        MarkdownPipeline            _pipeline;
+        double                      _progressValue;
+        bool                        _readonlyDescription;
+        bool                        _savingLogo;
+        string                      _selectedDescriptionTab;
+        bool                        _unknownAddress;
+        bool                        _unknownCity;
+        bool                        _unknownCountry;
+        bool                        _unknownFacebook;
+        bool                        _unknownFounded;
+        bool                        _unknownLogoYear;
+        bool                        _unknownPostalCode;
+        bool                        _unknownProvince;
+        bool                        _unknownSold;
+        bool                        _unknownSoldTo;
+        bool                        _unknownTwitter;
+        bool                        _unknownWebsite;
+        bool                        _uploaded;
+        string                      _uploadedPngData;
+        string                      _uploadedSvgData;
+        string                      _uploadedWebpData;
+        bool                        _uploadError;
+        string                      _uploadErrorMessage;
+        bool                        _uploading;
+        MemoryStream                _uploadMs;
+        bool                        _yearChangeInProgress;
         [Parameter]
         public int Id { get; set; }
 
@@ -81,17 +87,32 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _countries = await CountriesService.GetAsync();
-            _companies = await Service.GetAsync();
-            _model     = _creating ? new CompanyViewModel() : await Service.GetAsync(Id);
-            _logos     = await CompanyLogosService.GetByCompany(Id);
+            _countries              = await CountriesService.GetAsync();
+            _companies              = await Service.GetAsync();
+            _model                  = _creating ? new CompanyViewModel() : await Service.GetAsync(Id);
+            _logos                  = await CompanyLogosService.GetByCompany(Id);
+            _description            = await Service.GetDescriptionAsync(Id);
+            _selectedDescriptionTab = "markdown";
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/companies/edit/",
                                                                  StringComparison.InvariantCulture);
 
+            _pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+            if(_description?.Markdown != null)
+                _description.Html = Markdown.ToHtml(_description.Markdown);
+
             if(_editing)
                 SetCheckboxes();
+
+            if(firstRender)
+            {
+                DotNetObjectReference<Company> dotNetReference = DotNetObjectReference.Create(this);
+                await JSRuntime.InvokeVoidAsync("SetDotNetClassReference", dotNetReference);
+            }
+
+            _readonlyDescription = true;
 
             StateHasChanged();
         }
@@ -354,7 +375,7 @@ namespace Marechai.Pages.Admin.Details
             _uploadedSvgData    = "";
             _uploadedPngData    = "";
             _uploadedWebpData   = "";
-            _savingLogo = false;
+            _savingLogo         = false;
             _frmUpload.Show();
         }
 
@@ -371,7 +392,7 @@ namespace Marechai.Pages.Admin.Details
             _uploadedSvgData    = "";
             _uploadedPngData    = "";
             _uploadedWebpData   = "";
-            _savingLogo = false;
+            _savingLogo         = false;
         }
 
         async Task UploadFile()
@@ -527,7 +548,9 @@ namespace Marechai.Pages.Admin.Details
             {
                 SvgRender.RenderCompanyLogo(guid, _uploadMs, Host.WebRootPath);
 
-                var fs = new FileStream(Path.Combine(Host.WebRootPath, "assets/logos", $"{guid}.svg"), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                var fs = new FileStream(Path.Combine(Host.WebRootPath, "assets/logos", $"{guid}.svg"),
+                                        FileMode.OpenOrCreate, FileAccess.ReadWrite);
+
                 _uploadMs.Position = 0;
                 _uploadMs.WriteTo(fs);
                 fs.Close();
@@ -552,6 +575,61 @@ namespace Marechai.Pages.Admin.Details
 
             // Tell we finished loading
             StateHasChanged();
+        }
+
+        void OnSelectedDescriptionTabChanged(string name)
+        {
+            if(name == "preview" &&
+               !_readonlyDescription)
+                _description.Html = Markdown.ToHtml(_description.Markdown, _pipeline);
+
+            _selectedDescriptionTab = name;
+        }
+
+        [JSInvokableAttribute("OnCompanyDescriptionChangedDotnet")]
+        public void OnDescriptionChanged(string value)
+        {
+            if(!_readonlyDescription)
+                _description.Markdown = value;
+        }
+
+        void AddNewDescription()
+        {
+            _description           = new CompanyDescriptionViewModel();
+            _description.CompanyId = Id;
+            _readonlyDescription   = false;
+            _addingDescription     = true;
+        }
+
+        void EditDescription() => _readonlyDescription = false;
+
+        async Task CancelDescription()
+        {
+            _description         = _addingDescription ? null : await Service.GetDescriptionAsync(Id);
+            _readonlyDescription = true;
+            await JSRuntime.InvokeVoidAsync("SetCompanyDescriptionText", _description?.Markdown ?? "");
+            _addingDescription = false;
+
+            StateHasChanged();
+        }
+
+        async Task SaveDescription()
+        {
+            if(_readonlyDescription)
+                return;
+
+            if(string.IsNullOrWhiteSpace(_description.Markdown))
+            {
+                await CancelDescription();
+
+                return;
+            }
+
+            _description.Html = Markdown.ToHtml(_description.Markdown, _pipeline);
+
+            await Service.CreateOrUpdateDescriptionAsync(Id, _description);
+            _addingDescription = false;
+            await CancelDescription();
         }
     }
 }

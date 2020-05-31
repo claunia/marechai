@@ -39,7 +39,7 @@ namespace Marechai.Pages.Companies
             _computers = machines.Where(m => m.Type == MachineType.Computer).ToList();
             _consoles  = machines.Where(m => m.Type == MachineType.Console).ToList();
 
-            _description = await Service.GetDescriptionAsync(Id);
+            _description = await Service.GetDescriptionTextAsync(Id);
             _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
             _logos       = await CompanyLogosService.GetByCompany(Id);
 

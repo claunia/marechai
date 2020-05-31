@@ -41,6 +41,7 @@
 @inject CompanyLogosService CompanyLogosService
 @inject IWebHostEnvironment Host
 @inject IFileReaderService FileReaderService;
+@inject IJSRuntime JSRuntime
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 
 
@@ -480,11 +481,11 @@
                 {
                     <table class="table table-dark">
                         <thead>
-                            <tr>
-                                <th>@L["SVG"]</th>
-                                <th>@L["PNG"]</th>
-                                <th>@L["WebP"]</th>
-                            </tr>
+                        <tr>
+                            <th>@L["SVG"]</th>
+                            <th>@L["PNG"]</th>
+                            <th>@L["WebP"]</th>
+                        </tr>
                         </thead>
                         <tbody>
                         <tr>
@@ -532,3 +533,40 @@
         </ModalFooter>
     </ModalContent>
 </Modal>
+
+<hr/>
+<div class="container">
+    <h4>@L["Company description"]</h4>
+    <hr/>
+    @if (_readonlyDescription &&
+         _description is null)
+    {
+        <Button Color="Color.Success" Clicked="@AddNewDescription">@L["Add new description"]</Button>
+    }
+    @if (!_readonlyDescription || _description != null)
+    {
+        if (_readonlyDescription)
+        {
+            <Button Color="Color.Success" Clicked="@EditDescription">@L["Edit"]</Button>
+        }
+        else
+        {
+            <Button Color="Color.Primary" Clicked="@CancelDescription">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@SaveDescription">@L["Save"]</Button>
+        }
+        <Tabs SelectedTab="@_selectedDescriptionTab" SelectedTabChanged="@OnSelectedDescriptionTabChanged">
+            <Items>
+                <Tab Name="markdown">Markdown</Tab>
+                <Tab Name="preview">Preview</Tab>
+            </Items>
+            <Content>
+                <TabPanel Name="markdown">
+                    <textarea onchange="OnCompanyMarkdownChanged()" class="form-control" rows="200" id="txtCompanyDescriptionMarkdown" readonly="@_readonlyDescription">@_description.Markdown</textarea>
+                </TabPanel>
+                <TabPanel Name="preview">
+                    @((MarkupString)_description.Html)
+                </TabPanel>
+            </Content>
+        </Tabs>
+    }
+</div>
