@@ -463,7 +463,7 @@ namespace Marechai.Database
 
     public enum Saturation : ushort
     {
-        Normal = 0, Low = 1, Hig = 2
+        Normal = 0, Low = 1, High = 2
     }
 
     public enum SceneCaptureType : ushort
@@ -497,6 +497,6 @@ namespace Marechai.Database
 
     public enum Sharpness : ushort
     {
-        Normal = 0, Low = 1, Hig = 2
+        Normal = 0, Low = 1, High = 2
     }
 }
