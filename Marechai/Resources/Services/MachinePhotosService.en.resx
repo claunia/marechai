@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Unknown (source url)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo's source URL</comment>
+  </data>
+  <data name="Unknown (author)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo author</comment>
+  </data>
+  <data name="Unknown (aperture)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo aperture</comment>
+  </data>
+  <data name="Unknown (camera manufacturer)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a camera manufacturer</comment>
+  </data>
+  <data name="Unknown (camera model)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a camera model</comment>
+  </data>
+  <data name="Unknown (color space)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo color space</comment>
+  </data>
+  <data name="Unknown (contrast)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo contrast</comment>
+  </data>
+  <data name="Unknown (creation date)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo creation date</comment>
+  </data>
+  <data name="Unknown (digital zoom ratio)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo digital zoom ratio</comment>
+  </data>
+  <data name="Unknown (exif version)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo exif version</comment>
+  </data>
+  <data name="Unknown (exposure time)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo exposure time</comment>
+  </data>
+  <data name="Unknown (exposure mode)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo exposure mode</comment>
+  </data>
+  <data name="Unknown (exposure program)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo exposure program</comment>
+  </data>
+  <data name="Unknown (flash)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a photo flash</comment>
+  </data>
+  <data name="Unknown (f-number)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a focal number</comment>
+  </data>
+  <data name="Unknown (focal length)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a focal length</comment>
+  </data>
+  <data name="Unknown (focal length in 35mm film)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a focal length</comment>
+  </data>
+  <data name="Unknown (horizontal resolution)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a resolution</comment>
+  </data>
+  <data name="Unknown (ISO rating)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to an ISO rating</comment>
+  </data>
+  <data name="Unknown (lens)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a lens model or name</comment>
+  </data>
+  <data name="Unknown (light source)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a light source</comment>
+  </data>
+  <data name="Unknown (metering mode)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a metering mode</comment>
+  </data>
+  <data name="Unknown (resolution unit)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a resolution unit</comment>
+  </data>
+  <data name="Unknown (orientation)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a orientation</comment>
+  </data>
+  <data name="Unknown (saturation)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a saturation</comment>
+  </data>
+  <data name="Unknown (scene capture type)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a scene capture type</comment>
+  </data>
+  <data name="Unknown (sensing method)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a sensing method</comment>
+  </data>
+  <data name="Unknown (sharpness)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a sharpness</comment>
+  </data>
+  <data name="Unknown (software used)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a software used</comment>
+  </data>
+  <data name="Unknown (subject distance range)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a subject distance range</comment>
+  </data>
+  <data name="Unknown (vertical resolution)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a vertical resolution</comment>
+  </data>
+  <data name="Unknown (white balance)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to a white balance</comment>
+  </data>
+  <data name="Unknown or empty (user comments)" xml:space="preserve">
+    <value>Unknown</value>
+    <comment>Unknown, referring to user comments</comment>
+  </data>
+</root>

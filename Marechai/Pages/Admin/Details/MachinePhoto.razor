@@ -1,0 +1,769 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Filename       : Details.cshtml
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Admin view details
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/machines/photo/details/{Id:guid}"
+@page "/admin/machines/photo/edit/{Id:guid}"
+@using Marechai.Database
+@using Marechai.Database.Models
+@inherits OwningComponentBase<MachinePhotosService>
+@inject IStringLocalizer<MachinePhotosService> L
+@inject NavigationManager NavigationManager
+@inject LicensesService LicensesService
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Machine photo details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Machine"]</FieldLabel>
+        <TextEdit Disabled="true" Text="@($"{_model.MachineCompanyName} - {_model.MachineName}")"/>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Uploaded by"]</FieldLabel>
+        <TextEdit Disabled="true" Text="@($"{_user.UserName} <{_user.Email}>")"/>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Uploaded date"]</FieldLabel>
+        <TextEdit Disabled="true" Text="@($"{_model.UploadDate}")"/>
+    </Field>
+    <Field>
+        <FieldLabel>@L["License"]</FieldLabel>
+        <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@_model.LicenseId">
+            @foreach (var license in _licenses)
+            {
+                <SelectItem TValue="int" Value="@license.Id">@license.Name</SelectItem>
+            }
+        </Select>
+    </Field>
+    @if (_editing || _model.Author != null)
+    {
+        <Field>
+            <FieldLabel>@L["Author"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownAuthor">@L["Unknown (author)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSource)
+            {
+                <Validation Validator="@ValidateAuthor">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.Author">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid author."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Source != null)
+    {
+        <Field>
+            <FieldLabel>@L["Source URL"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSource">@L["Unknown (source url)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSource)
+            {
+                <Validation Validator="@ValidateSource">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.Source">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid source URL."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Aperture != null)
+    {
+        <Field>
+            <FieldLabel>@L["Aperture"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownAperture">@L["Unknown (aperture)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownAperture)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.Aperture">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid aperture."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.CameraManufacturer != null)
+    {
+        <Field>
+            <FieldLabel>@L["Camera manufacturer"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownCameraManufacturer">@L["Unknown (camera manufacturer)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownCameraManufacturer)
+            {
+                <Validation Validator="@ValidateCameraManufacturer">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.CameraManufacturer">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid camera manufacturer."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.CameraModel != null)
+    {
+        <Field>
+            <FieldLabel>@L["Camera model"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownCameraModel">@L["Unknown (camera model)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownCameraModel)
+            {
+                <Validation Validator="@ValidateCameraModel">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.CameraModel">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid camera model."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.ColorSpace != null)
+    {
+        <Field>
+            <FieldLabel>@L["Color space"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownColorSpace">@L["Unknown (color space)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownColorSpace)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@ColorSpace">
+                    @foreach (ushort value in Enum.GetValues(typeof(ColorSpace)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((ColorSpace)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Contrast != null)
+    {
+        <Field>
+            <FieldLabel>@L["Contrast"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownContrast">@L["Unknown (contrast)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownContrast)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@Contrast">
+                    @foreach (ushort value in Enum.GetValues(typeof(Contrast)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((Contrast)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.CreationDate != null)
+    {
+        <Field>
+            <FieldLabel>@L["Creation date"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownCreationDate">@L["Unknown (creation date)"]</Check>
+            }
+            @if (!_editing ||
+                  !_unknownCreationDate)
+            {
+                <Validation Validator="@ValidateDate">
+                    <DateEdit Disabled="!_editing" TValue="DateTime?" @bind-Date="@_model.CreationDate">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a correct creation date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
+            </Field>
+    }
+    @if (_editing || _model.DigitalZoomRatio != null)
+    {
+        <Field>
+            <FieldLabel>@L["Digital zoom ratio"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownDigitalZoomRatio">@L["Unknown (digital zoom ratio)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownDigitalZoomRatio)
+            {
+                <Validation Validator="@ValidateDoubleBiggerOrEqualThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.DigitalZoomRatio">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid digital zoom ratio."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.ExifVersion != null)
+    {
+        <Field>
+            <FieldLabel>@L["Exif version"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownExifVersion">@L["Unknown (exif version)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownExifVersion)
+            {
+                <Validation Validator="@ValidateExifVersion">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.ExifVersion">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid Exif version."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.ExposureTime != null)
+    {
+        <Field>
+            <FieldLabel>@L["Exposure time"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownExposure">@L["Unknown (exposure time)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownExposure)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.ExposureTime">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid exposure time."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.ExposureMethod != null)
+    {
+        <Field>
+            <FieldLabel>@L["Exposure mode"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownExposureMethod">@L["Unknown (exposure mode)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownExposureMethod)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@ExposureMode">
+                    @foreach (ushort value in Enum.GetValues(typeof(ExposureMode)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((ExposureMode)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.ExposureProgram != null)
+    {
+        <Field>
+            <FieldLabel>@L["Exposure program"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownExposureProgram">@L["Unknown (exposure program)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownExposureProgram)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@ExposureProgram">
+                    @foreach (ushort value in Enum.GetValues(typeof(ExposureProgram)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((ExposureProgram)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Flash != null)
+    {
+        <Field>
+            <FieldLabel>@L["Flash"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownFlash">@L["Unknown (flash)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownFlash)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@Flash">
+                    @foreach (ushort value in Enum.GetValues(typeof(Flash)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((Flash)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Focal != null)
+    {
+        <Field>
+            <FieldLabel>@L["F-number"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownFocal">@L["Unknown (f-number)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownFocal)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.Focal">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid focal number."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.FocalLength != null)
+    {
+        <Field>
+            <FieldLabel>@L["Focal length"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownFocalLength">@L["Unknown (focal length)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownFocalLength)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.FocalLength">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid focal length."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.FocalLengthEquivalent != null)
+    {
+        <Field>
+            <FieldLabel>@L["Focal length in 35mm film"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownFocalLengthEquivalent">@L["Unknown (focal length in 35mm film)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownFocalLengthEquivalent)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.FocalLengthEquivalent">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid focal length in 35mm film."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.HorizontalResolution != null)
+    {
+        <Field>
+            <FieldLabel>@L["Horizontal resolution"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownHorizontalResolution">@L["Unknown (horizontal resolution)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownHorizontalResolution)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.HorizontalResolution">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid horizontal resolution."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.IsoRating != null)
+    {
+        <Field>
+            <FieldLabel>@L["ISO rating"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownIsoRating">@L["Unknown (ISO rating)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownIsoRating)
+            {
+                <Validation Validator="@ValidateUnsignedShortBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="ushort?" @bind-Value="@_model.IsoRating">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid ISO rating."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Lens != null)
+    {
+        <Field>
+            <FieldLabel>@L["Lens"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownLens">@L["Unknown (lens)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownLens)
+            {
+                <Validation Validator="@ValidateLens">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.Lens">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid lens."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.LightSource != null)
+    {
+        <Field>
+            <FieldLabel>@L["Light source"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownLightSource">@L["Unknown (light source)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownLightSource)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@LightSource">
+                    @foreach (ushort value in Enum.GetValues(typeof(LightSource)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((LightSource)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.MeteringMode != null)
+    {
+        <Field>
+            <FieldLabel>@L["Metering mode"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownMeteringMode">@L["Unknown (metering mode)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownMeteringMode)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@MeteringMode">
+                    @foreach (ushort value in Enum.GetValues(typeof(MeteringMode)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((MeteringMode)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.ResolutionUnit != null)
+    {
+        <Field>
+            <FieldLabel>@L["Resolution unit"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownResolutionUnit">@L["Unknown (resolution unit)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownResolutionUnit)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@ResolutionUnit">
+                    @foreach (ushort value in Enum.GetValues(typeof(ResolutionUnit)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((ResolutionUnit)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Orientation != null)
+    {
+        <Field>
+            <FieldLabel>@L["Orientation"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownOrientation">@L["Unknown (orientation)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownOrientation)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@Orientation">
+                    @foreach (ushort value in Enum.GetValues(typeof(Marechai.Database.Orientation)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((Marechai.Database.Orientation)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Saturation != null)
+    {
+        <Field>
+            <FieldLabel>@L["Saturation"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSaturation">@L["Unknown (saturation)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSaturation)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@Saturation">
+                    @foreach (ushort value in Enum.GetValues(typeof(Saturation)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((Saturation)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.SceneCaptureType != null)
+    {
+        <Field>
+            <FieldLabel>@L["Scene capture type"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSceneCaptureType">@L["Unknown (scene capture type)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSceneCaptureType)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@SceneCaptureType">
+                    @foreach (ushort value in Enum.GetValues(typeof(SceneCaptureType)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((SceneCaptureType)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.SensingMethod != null)
+    {
+        <Field>
+            <FieldLabel>@L["Sensing method"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSensingMethod">@L["Unknown (sensing method)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSensingMethod)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@SensingMethod">
+                    @foreach (ushort value in Enum.GetValues(typeof(SensingMethod)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((SensingMethod)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Sharpness != null)
+    {
+        <Field>
+            <FieldLabel>@L["Sharpness"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSharpness">@L["Unknown (sharpness)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSharpness)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@Sharpness">
+                    @foreach (ushort value in Enum.GetValues(typeof(Sharpness)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((Sharpness)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.SoftwareUsed != null)
+    {
+        <Field>
+            <FieldLabel>@L["Software used"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSoftwareUsed">@L["Unknown (software used)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSoftwareUsed)
+            {
+                <Validation Validator="@ValidateSoftwareUsed">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.SoftwareUsed">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid software used."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.SubjectDistanceRange != null)
+    {
+        <Field>
+            <FieldLabel>@L["Subject distance range"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownSubjectDistanceRange">@L["Unknown (subject distance range)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownSubjectDistanceRange)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@SubjectDistanceRange">
+                    @foreach (ushort value in Enum.GetValues(typeof(SubjectDistanceRange)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((SubjectDistanceRange)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.VerticalResolution != null)
+    {
+        <Field>
+            <FieldLabel>@L["Vertical resolution"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownVerticalResolution">@L["Unknown (vertical resolution)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownVerticalResolution)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.VerticalResolution">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid vertical resolution."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.WhiteBalance != null)
+    {
+        <Field>
+            <FieldLabel>@L["White balance"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownWhiteBalance">@L["Unknown (white balance)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownWhiteBalance)
+            {
+                <Select Disabled="!_editing" TValue="ushort" @bind-SelectedValue="@WhiteBalance">
+                    @foreach (ushort value in Enum.GetValues(typeof(WhiteBalance)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((WhiteBalance)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Comments != null)
+    {
+        <Field>
+            <FieldLabel>@L["User comments"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownComments">@L["Unknown or empty (user comments)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownComments)
+            {
+                <Validation Validator="@ValidateComments">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.Comments">
+                        <Feedback>
+                            <ValidationError>@L["Please enter valid comments."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+</div>
+<a href="/assets/photos/machines/originals/@($"{_model.Id}{_model.OriginalExtension}")" target="_blank">
+    <img src="/assets/photos/machines/originals/@($"{_model.Id}{_model.OriginalExtension}")" alt="" height="auto" width="auto" style="max-height: 512px; max-width: 512px" />
+</a>
+<div>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/machines/details/@_model.MachineId" class="btn btn-secondary">@L["Back to machine"]</a>
+</div>

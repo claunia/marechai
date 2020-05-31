@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Unknown (source url)" xml:space="preserve">
+    <value>Descconocida</value>
+    <comment>Unknown, referring to a photo's source URL</comment>
+  </data>
+  <data name="Unknown (author)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a photo author</comment>
+  </data>
+  <data name="Unknown (aperture)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a photo aperture</comment>
+  </data>
+  <data name="Unknown (camera manufacturer)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a camera manufacturer</comment>
+  </data>
+  <data name="Unknown (camera model)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a camera model</comment>
+  </data>
+  <data name="Unknown (color space)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a photo color space</comment>
+  </data>
+  <data name="Unknown (contrast)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a photo contrast</comment>
+  </data>
+  <data name="Unknown (creation date)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a photo creation date</comment>
+  </data>
+  <data name="Unknown (digital zoom ratio)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a photo digital zoom ratio</comment>
+  </data>
+  <data name="Unknown (exif version)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a photo exif version</comment>
+  </data>
+  <data name="Unknown (exposure time)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a photo exposure time</comment>
+  </data>
+  <data name="Unknown (exposure mode)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a photo exposure mode</comment>
+  </data>
+  <data name="Unknown (exposure program)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a photo exposure program</comment>
+  </data>
+  <data name="Unknown (flash)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a photo flash</comment>
+  </data>
+  <data name="Unknown (f-number)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a focal number</comment>
+  </data>
+  <data name="Unknown (focal length)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a focal length</comment>
+  </data>
+  <data name="Unknown (focal length in 35mm film)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a focal length</comment>
+  </data>
+  <data name="Unknown (horizontal resolution)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a resolution</comment>
+  </data>
+  <data name="Unknown (ISO rating)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to an ISO rating</comment>
+  </data>
+  <data name="Unknown (lens)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a lens model or name</comment>
+  </data>
+  <data name="Unknown (light source)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a light source</comment>
+  </data>
+  <data name="Unknown (metering mode)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a metering mode</comment>
+  </data>
+  <data name="Unknown (resolution unit)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a resolution unit</comment>
+  </data>
+  <data name="Unknown (orientation)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a orientation</comment>
+  </data>
+  <data name="Unknown (saturation)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a saturation</comment>
+  </data>
+  <data name="Unknown (scene capture type)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a scene capture type</comment>
+  </data>
+  <data name="Unknown (sensing method)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a sensing method</comment>
+  </data>
+  <data name="Unknown (sharpness)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a sharpness</comment>
+  </data>
+  <data name="Unknown (software used)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a software used</comment>
+  </data>
+  <data name="Unknown (subject distance range)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a subject distance range</comment>
+  </data>
+  <data name="Unknown (vertical resolution)" xml:space="preserve">
+    <value>Desconocida</value>
+    <comment>Unknown, referring to a vertical resolution</comment>
+  </data>
+  <data name="Unknown (white balance)" xml:space="preserve">
+    <value>Desconocido</value>
+    <comment>Unknown, referring to a white balance</comment>
+  </data>
+  <data name="Unknown or empty (user comments)" xml:space="preserve">
+    <value>Desconocidos o ninguno</value>
+    <comment>Unknown, referring to user comments</comment>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+    <comment>Loading...</comment>
+  </data>
+  <data name="Upload photo for machine {0} manufactured by {1}" xml:space="preserve">
+    <value>Subir foto para la máquina {0} fabricada por {1}</value>
+    <comment>Upload photo for machine {0} manufactured by {1}</comment>
+  </data>
+  <data name="Choose photo file" xml:space="preserve">
+    <value>Elige archivo de foto</value>
+    <comment>Choose photo file</comment>
+  </data>
+  <data name="License" xml:space="preserve">
+    <value>Licencia</value>
+    <comment>License</comment>
+  </data>
+  <data name="Source URL" xml:space="preserve">
+    <value>Dirección de origen</value>
+    <comment>Source URL</comment>
+  </data>
+  <data name="Please enter a valid source URL." xml:space="preserve">
+    <value>Por favor introduce una dirección de origen válida.</value>
+    <comment>Please enter a valid source URL.</comment>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Subir</value>
+    <comment>Upload</comment>
+  </data>
+  <data name="Image format recognized as {0}" xml:space="preserve">
+    <value>Formato de imagen reconocido como {0}</value>
+    <comment>Image format recognized as {0}</comment>
+  </data>
+  <data name="All finished!" xml:space="preserve">
+    <value>¡Terminado!</value>
+    <comment>All finished!</comment>
+  </data>
+  <data name="Go to photo details" xml:space="preserve">
+    <value>Ir a detalles de la foto</value>
+    <comment>Go to photo details</comment>
+  </data>
+  <data name="Extracting Exif information..." xml:space="preserve">
+    <value>Extrayendo información Exif...</value>
+    <comment>Extracting Exif information...</comment>
+  </data>
+  <data name="OK!" xml:space="preserve">
+    <value>¡OK!</value>
+    <comment>OK!</comment>
+  </data>
+  <data name="Error!" xml:space="preserve">
+    <value>¡Error!</value>
+    <comment>Error!</comment>
+  </data>
+  <data name="Moving file to proper place..." xml:space="preserve">
+    <value>Moviendo el archivo al lugar adecuado...</value>
+    <comment>Moving file to proper place...</comment>
+  </data>
+  <data name="Converting photo to JPEG with an HD resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG con una resolución HD (miniatura)...</value>
+    <comment>Converting photo to JPEG with an HD resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to JPEG with a 1440p resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG con una resolución 1440p (miniatura)...</value>
+    <comment>Converting photo to JPEG with a 1440p resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to JPEG with a 4K resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG con una resolución 4K (miniatura)...</value>
+    <comment>Converting photo to JPEG with a 4K resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to JPEG with an HD resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG con una resolución HD...</value>
+    <comment>Converting photo to JPEG with an HD resolution...</comment>
+  </data>
+  <data name="Converting photo to JPEG with a 1440p resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG con una resolución 1440p...</value>
+    <comment>Converting photo to JPEG with a 1440p resolution...</comment>
+  </data>
+  <data name="Converting photo to JPEG with a 4K resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG con una resolución 4K...</value>
+    <comment>Converting photo to JPEG with a 4K resolution...</comment>
+  </data>
+  <data name="Converting photo to JPEG2000 with an HD resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG2000 con una resolución HD (miniatura)...</value>
+    <comment>Converting photo to JPEG2000 with an HD resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to JPEG2000 with a 1440p resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG2000 con una resolución 1440p (miniatura)...</value>
+    <comment>Converting photo to JPEG2000 with a 1440p resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to JPEG2000 with a 4K resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG2000 con una resolución 4K (miniatura)...</value>
+    <comment>Converting photo to JPEG2000 with a 4K resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to JPEG2000 with an HD resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG2000 con una resolución HD...</value>
+    <comment>Converting photo to JPEG2000 with an HD resolution...</comment>
+  </data>
+  <data name="Converting photo to JPEG2000 with a 1440p resolution..." xml:space="preserve">
+    <value>AAAConvirtiendo foto a JPEG2000 con una resolución 1440p...</value>
+    <comment>Converting photo to JPEG2000 with a 1440p resolution...</comment>
+  </data>
+  <data name="Converting photo to JPEG2000 with a 4K resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a JPEG2000 con una resolución 4K...</value>
+    <comment>Converting photo to JPEG2000 with a 4K resolution...</comment>
+  </data>
+  <data name="Converting photo to WebP with an HD resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a WebP con una resolución HD (miniatura)...</value>
+    <comment>Converting photo to WebP with an HD resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to WebP with a 1440p resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a WebP con una resolución 1440p (miniatura)...</value>
+    <comment>Converting photo to WebP with a 1440p resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to WebP with a 4K resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a WebP con una resolución 4K (miniatura)...</value>
+    <comment>Converting photo to WebP with a 4K resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to WebP with an HD resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a WebP con una resolución HD...</value>
+    <comment>Converting photo to WebP with an HD resolution...</comment>
+  </data>
+  <data name="Converting photo to WebP with a 1440p resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a WebP con una resolución 1440p...</value>
+    <comment>Converting photo to WebP with a 1440p resolution...</comment>
+  </data>
+  <data name="Converting photo to WebP with a 4K resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a WebP con una resolución 4K...</value>
+    <comment>Converting photo to WebP with a 4K resolution...</comment>
+  </data>
+  <data name="Converting photo to HEIF with an HD resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a HEIF con una resolución HD (miniatura)...</value>
+    <comment>Converting photo to HEIF with an HD resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to HEIF with a 1440p resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a HEIF con una resolución 1440p (miniatura)...</value>
+    <comment>Converting photo to HEIF with a 1440p resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to HEIF with a 4K resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a HEIF con una resolución 4K (miniatura)...</value>
+    <comment>Converting photo to HEIF with a 4K resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to HEIF with an HD resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a HEIF con una resolución HD...</value>
+    <comment>Converting photo to HEIF with an HD resolution...</comment>
+  </data>
+  <data name="Converting photo to HEIF with a 1440p resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a HEIF con una resolución 1440p...</value>
+    <comment>Converting photo to HEIF with a 1440p resolution...</comment>
+  </data>
+  <data name="Converting photo to HEIF with a 4K resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a HEIF con una resolución 4K...</value>
+    <comment>Converting photo to HEIF with a 4K resolution...</comment>
+  </data>
+  <data name="Converting photo to AV1F with an HD resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a AV1F con una resolución HD (miniatura)...</value>
+    <comment>Converting photo to AV1F with an HD resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to AV1F with a 1440p resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a AV1F con una resolución 1440p (miniatura)...</value>
+    <comment>Converting photo to AV1F with a 1440p resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to AV1F with a 4K resolution (thumbnail)..." xml:space="preserve">
+    <value>Convirtiendo foto a AV1F con una resolución 4K (miniatura)...</value>
+    <comment>Converting photo to AV1F with a 4K resolution (thumbnail)...</comment>
+  </data>
+  <data name="Converting photo to AV1F with an HD resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a AV1F con una resolución HD...</value>
+    <comment>Converting photo to AV1F with an HD resolution...</comment>
+  </data>
+  <data name="Converting photo to AV1F with a 1440p resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a AV1F con una resolución 1440p...</value>
+    <comment>Converting photo to AV1F with a 1440p resolution...</comment>
+  </data>
+  <data name="Converting photo to AV1F with a 4K resolution..." xml:space="preserve">
+    <value>Convirtiendo foto a AV1F con una resolución 4K...</value>
+    <comment>Converting photo to AV1F with a 4K resolution...</comment>
+  </data>
+  <data name="Adding photo to database..." xml:space="preserve">
+    <value>Añadiendo foto a la base de datos...</value>
+    <comment>Adding photo to database...</comment>
+  </data>
+  <data name="Please choose a valid license." xml:space="preserve">
+    <value>Por favor elige una licencia válida.</value>
+    <comment>Please choose a valid license.</comment>
+  </data>
+  <data name="Cannot run ImageMagick please contact the administrator." xml:space="preserve">
+    <value>No se puede ejecutar ImageMagick, por favor contacta con el administrador.</value>
+    <comment>Cannot run ImageMagick please contact the administrator.</comment>
+  </data>
+  <data name="The selected file is too big." xml:space="preserve">
+    <value>El archivo seleccionado es demasiado grande.</value>
+    <comment>The selected file is too big.</comment>
+  </data>
+  <data name="There was an error uploading the file." xml:space="preserve">
+    <value>Ocurrió un error subiendo el archivo.</value>
+    <comment>There was an error uploading the file.</comment>
+  </data>
+  <data name="The uploaded file was not recognized as an image." xml:space="preserve">
+    <value>El archivo seleccionado no se ha reconocido como una imagen.</value>
+    <comment>The uploaded file was not recognized as an image.</comment>
+  </data>
+  <data name="Source URL must be smaller than 255 characters." xml:space="preserve">
+    <value>La dirección de origen debe contener menos de 255 caracteres.</value>
+    <comment>Source URL must be smaller than 255 characters.</comment>
+  </data>
+  <data name="Machine photo details" xml:space="preserve">
+    <value>Detalles de foto de máquina</value>
+    <comment>Machine photo details</comment>
+  </data>
+  <data name="Machine" xml:space="preserve">
+    <value>Máquina</value>
+    <comment>Machine</comment>
+  </data>
+  <data name="Uploaded by" xml:space="preserve">
+    <value>Subida por</value>
+    <comment>Uploaded by</comment>
+  </data>
+  <data name="Uploaded date" xml:space="preserve">
+    <value>Subida el</value>
+    <comment>Uploaded date</comment>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Autor</value>
+    <comment>Author</comment>
+  </data>
+  <data name="Aperture" xml:space="preserve">
+    <value>Apertura</value>
+    <comment>Aperture</comment>
+  </data>
+  <data name="Please enter a valid aperture." xml:space="preserve">
+    <value>Por favor introduce una apertura válida.</value>
+    <comment>Please enter a valid aperture.</comment>
+  </data>
+  <data name="Camera manufacturer" xml:space="preserve">
+    <value>Fabricante de la cámara</value>
+    <comment>Camera manufacturer</comment>
+  </data>
+  <data name="Please enter a valid camera manufacturer." xml:space="preserve">
+    <value>Por favor introduce un fabricante válido.</value>
+    <comment>Please enter a valid camera manufacturer.</comment>
+  </data>
+  <data name="Camera model" xml:space="preserve">
+    <value>Modelo de la cámara</value>
+    <comment>Camera model</comment>
+  </data>
+  <data name="Please enter a valid camera model." xml:space="preserve">
+    <value>Por favor introduce un modelo válido.</value>
+    <comment>Please enter a valid camera model.</comment>
+  </data>
+  <data name="Color space" xml:space="preserve">
+    <value>Espacio de color</value>
+    <comment>Color space</comment>
+  </data>
+  <data name="Contrast" xml:space="preserve">
+    <value>Contraste</value>
+    <comment>Contrast</comment>
+  </data>
+  <data name="Creation date" xml:space="preserve">
+    <value>Fecha de creación</value>
+    <comment>Creation date</comment>
+  </data>
+  <data name="Please enter a correct creation date." xml:space="preserve">
+    <value>Por favor introduce una fecha de creación válida.</value>
+    <comment>Please enter a correct creation date.</comment>
+  </data>
+  <data name="Digital zoom ratio" xml:space="preserve">
+    <value>Relación del zoom digital</value>
+    <comment>Digital zoom ratio</comment>
+  </data>
+  <data name="Please enter a valid digital zoom ratio." xml:space="preserve">
+    <value>Por favor introduce una relación válida.</value>
+    <comment>Please enter a valid digital zoom ratio.</comment>
+  </data>
+  <data name="Exif version" xml:space="preserve">
+    <value>Versión Exif</value>
+    <comment>Exif version</comment>
+  </data>
+  <data name="Please enter a valid Exif version." xml:space="preserve">
+    <value>Por favor introduce una versión Exif válida.</value>
+    <comment>Please enter a valid Exif version.</comment>
+  </data>
+  <data name="Exposure time" xml:space="preserve">
+    <value>Tiempo de exposición</value>
+    <comment>Exposure time</comment>
+  </data>
+  <data name="Please enter a valid exposure time." xml:space="preserve">
+    <value>Por favor introduce un tiempo de exposición válido.</value>
+    <comment>Please enter a valid exposure time.</comment>
+  </data>
+  <data name="Exposure mode" xml:space="preserve">
+    <value>Modo de exposición</value>
+    <comment>Exposure mode</comment>
+  </data>
+  <data name="Exposure program" xml:space="preserve">
+    <value>Programa de exposición</value>
+    <comment>Exposure program</comment>
+  </data>
+  <data name="Flash" xml:space="preserve">
+    <value>Flash</value>
+    <comment>Flash</comment>
+  </data>
+  <data name="F-number" xml:space="preserve">
+    <value>Focal</value>
+    <comment>F-number</comment>
+  </data>
+  <data name="Please enter a valid focal number." xml:space="preserve">
+    <value>Por favor introduce un número focal válido.</value>
+    <comment>Please enter a valid focal number.</comment>
+  </data>
+  <data name="Focal length" xml:space="preserve">
+    <value>Longitud focal</value>
+    <comment>Focal length</comment>
+  </data>
+  <data name="Please enter a valid focal length." xml:space="preserve">
+    <value>Por favor introduce una longitud focal válida.</value>
+    <comment>Please enter a valid focal length.</comment>
+  </data>
+  <data name="Focal length in 35mm film" xml:space="preserve">
+    <value>Longitud focal en película de 35mm</value>
+    <comment>Focal length in 35mm film</comment>
+  </data>
+  <data name="Please enter a valid focal length in 35mm film." xml:space="preserve">
+    <value>Por favor introduce una longitud focal válida.</value>
+    <comment>Please enter a valid focal length in 35mm film.</comment>
+  </data>
+  <data name="Horizontal resolution" xml:space="preserve">
+    <value>Resolución horizontal</value>
+    <comment>Horizontal resolution</comment>
+  </data>
+  <data name="Please enter a valid horizontal resolution." xml:space="preserve">
+    <value>Por favor introduce una resolución válida.</value>
+    <comment>Please enter a valid horizontal resolution.</comment>
+  </data>
+  <data name="ISO rating" xml:space="preserve">
+    <value>Sensibilidad ISO</value>
+    <comment>ISO rating</comment>
+  </data>
+  <data name="Please enter a valid ISO rating." xml:space="preserve">
+    <value>Por favor introduce una sensibilidad válida.</value>
+    <comment>Please enter a valid ISO rating.</comment>
+  </data>
+  <data name="Lens" xml:space="preserve">
+    <value>Objectivo</value>
+    <comment>Lens</comment>
+  </data>
+  <data name="Please enter a valid lens." xml:space="preserve">
+    <value>Por favor introduce un objetivo válido.</value>
+    <comment>Please enter a valid lens.</comment>
+  </data>
+  <data name="Light source" xml:space="preserve">
+    <value>Fuente de luz</value>
+    <comment>Light source</comment>
+  </data>
+  <data name="Metering mode" xml:space="preserve">
+    <value>Modo de medición</value>
+    <comment>Metering mode</comment>
+  </data>
+  <data name="Resolution unit" xml:space="preserve">
+    <value>Unidad de resolución</value>
+    <comment>Resolution unit</comment>
+  </data>
+  <data name="Orientation" xml:space="preserve">
+    <value>Orientación</value>
+    <comment>Orientation</comment>
+  </data>
+  <data name="Saturation" xml:space="preserve">
+    <value>Saturación</value>
+    <comment>Saturation</comment>
+  </data>
+  <data name="Scene capture type" xml:space="preserve">
+    <value>Tipo de captura de escena</value>
+    <comment>Scene capture type</comment>
+  </data>
+  <data name="Sensing method" xml:space="preserve">
+    <value>Método de sensibilidad</value>
+    <comment>Sensing method</comment>
+  </data>
+  <data name="Sharpness" xml:space="preserve">
+    <value>Nitidez</value>
+    <comment>Sharpness</comment>
+  </data>
+  <data name="Software used" xml:space="preserve">
+    <value>Software utilizado</value>
+    <comment>Software used</comment>
+  </data>
+  <data name="Please enter a valid software used." xml:space="preserve">
+    <value>Por favor introduce un software utilizado válido.</value>
+    <comment>Please enter a valid software used.</comment>
+  </data>
+  <data name="Subject distance range" xml:space="preserve">
+    <value>Rango de distancia del sujeto</value>
+    <comment>Subject distance range</comment>
+  </data>
+  <data name="Vertical resolution" xml:space="preserve">
+    <value>Resolución vertical</value>
+    <comment>Vertical resolution</comment>
+  </data>
+  <data name="Please enter a valid vertical resolution." xml:space="preserve">
+    <value>Por favor introduce una resolución válida.</value>
+    <comment>Please enter a valid vertical resolution.</comment>
+  </data>
+  <data name="White balance" xml:space="preserve">
+    <value>Balance de blancos</value>
+    <comment>White balance</comment>
+  </data>
+  <data name="User comments" xml:space="preserve">
+    <value>Comentarios de usuario</value>
+    <comment>User comments</comment>
+  </data>
+  <data name="Please enter valid comments." xml:space="preserve">
+    <value>Por favor introduce unos comentarios válidos.</value>
+    <comment>Please enter valid comments.</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+    <comment>Edit</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>Save</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel</comment>
+  </data>
+  <data name="Back to machine" xml:space="preserve">
+    <value>Volver a la máquina</value>
+    <comment>Back to machine</comment>
+  </data>
+  <data name="Author must be 255 characters or less." xml:space="preserve">
+    <value>El autor debe contener 255 caracteres o menos.</value>
+    <comment>Author must be 255 characters or less.</comment>
+  </data>
+  <data name="Camera manufacturer must be 255 characters or less." xml:space="preserve">
+    <value>El fabricante de la cámara debe contener 255 caracteres o menos.</value>
+    <comment>Camera manufacturer must be 255 characters or less.</comment>
+  </data>
+  <data name="Camera model must be 255 characters or less." xml:space="preserve">
+    <value>El modelo de la cámara debe contener 255 caracteres o menos.</value>
+    <comment>Camera model must be 255 characters or less.</comment>
+  </data>
+  <data name="Exif version must be 255 characters or less." xml:space="preserve">
+    <value>La versión Exif debe contener 255 caracteres o menos.</value>
+    <comment>Exif version must be 255 characters or less.</comment>
+  </data>
+  <data name="Lens name must be 255 characters or less." xml:space="preserve">
+    <value>El nombre del objetivo debe contener 255 caracteres o menos.</value>
+    <comment>Lens name must be 255 characters or less.</comment>
+  </data>
+  <data name="Software used must be 255 characters or less." xml:space="preserve">
+    <value>El software utilizado debe contener 255 caracteres o menos.</value>
+    <comment>Software used must be 255 characters or less.</comment>
+  </data>
+  <data name="User comments must be 255 characters or less." xml:space="preserve">
+    <value>Los comentarios deben contener 255 caracteres o menos.</value>
+    <comment>User comments must be 255 characters or less.</comment>
+  </data>
+</root>

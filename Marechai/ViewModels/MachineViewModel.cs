@@ -8,7 +8,6 @@ namespace Marechai.ViewModels
     {
         public string                    Name              { get; set; }
         public string                    Model             { get; set; }
-        public string                    CompanyName       { get; set; }
         public int                       CompanyId         { get; set; }
         public Guid?                     CompanyLogo       { get; set; }
         public DateTime?                 Introduced        { get; set; }

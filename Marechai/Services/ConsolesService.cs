@@ -35,20 +35,14 @@ using Marechai.Database;
 using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Services
 {
     public class ConsolesService
     {
-        readonly MarechaiContext                   _context;
-        readonly IStringLocalizer<ConsolesService> _l;
+        readonly MarechaiContext _context;
 
-        public ConsolesService(MarechaiContext context, IStringLocalizer<ConsolesService> localizer)
-        {
-            _context = context;
-            _l       = localizer;
-        }
+        public ConsolesService(MarechaiContext context) => _context = context;
 
         public async Task<int> GetConsolesCountAsync() =>
             await _context.Machines.CountAsync(c => c.Type == MachineType.Console);
@@ -70,7 +64,7 @@ namespace Marechai.Services
                            Where(m => m.Type == MachineType.Console && EF.Functions.Like(m.Name, $"{c}%")).
                            OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new MachineViewModel
                            {
-                               Id = m.Id, Name = m.Name, CompanyName = m.Company.Name
+                               Id = m.Id, Name = m.Name, Company = m.Company.Name
                            }).ToListAsync();
 
         public async Task<List<MachineViewModel>> GetConsolesByYearAsync(int year) =>
@@ -79,14 +73,14 @@ namespace Marechai.Services
                                       m.Introduced.Value.Year == year).OrderBy(m => m.Company.Name).ThenBy(m => m.Name).
                            Select(m => new MachineViewModel
                            {
-                               Id = m.Id, Name = m.Name, CompanyName = m.Company.Name
+                               Id = m.Id, Name = m.Name, Company = m.Company.Name
                            }).ToListAsync();
 
         public async Task<List<MachineViewModel>> GetConsolesAsync() =>
             await _context.Machines.Include(m => m.Company).Where(m => m.Type == MachineType.Console).
                            OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new MachineViewModel
                            {
-                               Id = m.Id, Name = m.Name, CompanyName = m.Company.Name
+                               Id = m.Id, Name = m.Name, Company = m.Company.Name
                            }).ToListAsync();
     }
 }

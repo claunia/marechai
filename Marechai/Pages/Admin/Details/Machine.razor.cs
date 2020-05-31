@@ -61,6 +61,7 @@ namespace Marechai.Pages.Admin.Details
         List<StorageByMachineViewModel>    _machineStorage;
         MachineViewModel                   _model;
         bool                               _noFamily;
+        List<Guid>                         _photos;
         bool                               _prototype;
         bool                               _savingCpu;
         bool                               _savingGpu;
@@ -111,6 +112,7 @@ namespace Marechai.Pages.Admin.Details
             _machineMemories = await MemoriesByMachineService.GetByMachine(Id);
             _machineStorage  = await StorageByMachineService.GetByMachine(Id);
             _machineScreens  = await ScreensByMachineService.GetByMachine(Id);
+            _photos          = await MachinePhotosService.GetGuidsByMachineAsync(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/machines/edit/",

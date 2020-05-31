@@ -38,7 +38,8 @@ namespace Marechai.Services
         public async Task<MachineViewModel> GetAsync(int id) => await _context.Machines.Where(m => m.Id == id).
                                                                                Select(m => new MachineViewModel
                                                                                {
-                                                                                   Id = m.Id, CompanyId = m.CompanyId,
+                                                                                   Id = m.Id, Company = m.Company.Name,
+                                                                                   CompanyId = m.CompanyId,
                                                                                    Name = m.Name, Model = m.Model,
                                                                                    Introduced = m.Introduced,
                                                                                    Type = m.Type, FamilyId = m.FamilyId
@@ -92,7 +93,7 @@ namespace Marechai.Services
 
             if(company != null)
             {
-                model.CompanyName = company.Name;
+                model.Company = company.Name;
 
                 IQueryable<CompanyLogo> logos = _context.CompanyLogos.Where(l => l.CompanyId == company.Id);
 
