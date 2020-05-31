@@ -71,6 +71,7 @@ namespace Marechai.Database.Models
         [Required]
         public virtual License License { get; set; }
 
-        public int LicenseId { get; set; }
+        public int    LicenseId { get; set; }
+        public string UserId    { get; set; }
     }
 }
