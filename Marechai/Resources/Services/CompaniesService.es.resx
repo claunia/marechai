@@ -498,4 +498,12 @@
     <value>Ocurrió un error renderizando el archivo subido. ¿Es un SVG correcto?</value>
     <comment>An error occuring rendering the uploaded file. Is it a correct SVG file?</comment>
   </data>
+  <data name="Company description" xml:space="preserve">
+    <value>Descripción</value>
+    <comment>Company description</comment>
+  </data>
+  <data name="Add new description" xml:space="preserve">
+    <value>Añadir nueva descripción</value>
+    <comment>Add new description</comment>
+  </data>
 </root>
