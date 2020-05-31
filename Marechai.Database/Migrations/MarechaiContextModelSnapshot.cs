@@ -88,6 +88,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<short?>("CountryId").HasColumnType("smallint(3)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int?>("Edition").HasColumnType("int");
 
                 b.Property<string>("Isbn").HasColumnType("varchar(13) CHARACTER SET utf8mb4").HasMaxLength(13);
@@ -105,6 +107,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Synopsis").HasColumnType("longtext CHARACTER SET utf8mb4").HasMaxLength(262144);
 
                 b.Property<string>("Title").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -137,7 +141,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<long>("BookId").HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("MachineId").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -154,7 +162,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<long>("BookId").HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("MachineFamilyId").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -177,6 +189,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<sbyte>("Colors").ValueGeneratedOnAdd().HasColumnName("colors").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
                 b.Property<sbyte>("Flash").ValueGeneratedOnAdd().HasColumnName("flash").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
@@ -211,6 +225,8 @@ namespace Marechai.Database.Migrations
                 b.Property<sbyte>("Table").ValueGeneratedOnAdd().HasColumnName("table").HasColumnType("tinyint(1)").
                   HasDefaultValueSql("'0'");
 
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
                 b.Property<string>("UserAgent").IsRequired().ValueGeneratedOnAdd().HasColumnName("user_agent").
                   HasColumnType("varchar(128)").HasDefaultValueSql("''").HasMaxLength(128);
 
@@ -240,7 +256,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("CompanyId").HasColumnType("int");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -259,9 +279,13 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("CompanyId").HasColumnType("int");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("DocumentId").HasColumnType("bigint");
 
                 b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -280,9 +304,13 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("CompanyId").HasColumnType("int");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("MagazineId").HasColumnType("bigint");
 
                 b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -305,6 +333,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<short?>("CountryId").HasColumnName("country").HasColumnType("smallint(3)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int?>("DocumentCompanyId").HasColumnType("int");
 
                 b.Property<string>("Facebook").HasColumnName("facebook").HasColumnType("varchar(45)").HasMaxLength(45);
@@ -326,6 +356,8 @@ namespace Marechai.Database.Migrations
                 b.Property<int>("Status").HasColumnName("status").HasColumnType("int(11)");
 
                 b.Property<string>("Twitter").HasColumnName("twitter").HasColumnType("varchar(45)").HasMaxLength(45);
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<string>("Website").HasColumnName("website").HasColumnType("varchar(255)").HasMaxLength(255);
 
@@ -366,10 +398,14 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("CompanyId").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Html").HasColumnType("longtext CHARACTER SET utf8mb4").HasMaxLength(262144);
 
                 b.Property<string>("Text").IsRequired().HasColumnType("longtext CHARACTER SET utf8mb4").
                   HasMaxLength(262144);
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -387,6 +423,10 @@ namespace Marechai.Database.Migrations
                 b.Property<int>("CompanyId").HasColumnName("company_id").HasColumnType("int(11)");
 
                 b.Property<Guid>("Guid").HasColumnName("logo_guid").HasColumnType("char(36)");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<int?>("Year").HasColumnName("year").HasColumnType("int(4)");
 
@@ -407,6 +447,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<short?>("CountryId").HasColumnType("smallint(3)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("NativeTitle").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime?>("Published").HasColumnType("datetime(6)");
@@ -414,6 +456,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Synopsis").HasColumnType("longtext CHARACTER SET utf8mb4").HasMaxLength(262144);
 
                 b.Property<string>("Title").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -436,7 +480,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int?>("CompanyId").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Name").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -453,6 +501,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Alias").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("DisplayName").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<string>("Name").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
@@ -460,6 +510,8 @@ namespace Marechai.Database.Migrations
                 b.Property<int?>("PersonId").HasColumnType("int");
 
                 b.Property<string>("Surname").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -497,9 +549,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("DocumentId").HasColumnType("bigint");
 
                 b.Property<int>("MachineId").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -514,9 +570,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("DocumentId").HasColumnType("bigint");
 
                 b.Property<int>("MachineFamilyId").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -534,6 +594,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnName("browser").
                   HasColumnType("char(128)").HasDefaultValueSql("''");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Date").IsRequired().ValueGeneratedOnAdd().HasColumnName("date").
                   HasColumnType("char(20)").HasDefaultValueSql("''");
 
@@ -542,6 +604,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Referer").IsRequired().ValueGeneratedOnAdd().HasColumnName("referer").
                   HasColumnType("char(255)").HasDefaultValueSql("''");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -562,6 +626,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<float?>("DieSize").HasColumnName("die_size").HasColumnType("float");
 
                 b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
@@ -579,6 +645,8 @@ namespace Marechai.Database.Migrations
                 b.Property<float?>("ProcessNm").HasColumnName("process_nm").HasColumnType("float");
 
                 b.Property<long?>("Transistors").HasColumnName("transistors").HasColumnType("bigint(20)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -607,9 +675,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("GpuId").HasColumnName("gpu").HasColumnType("int(11)");
 
                 b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -624,9 +696,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("GpuId").HasColumnType("int(11)");
 
                 b.Property<long>("OwnedMachineId").HasColumnType("bigint");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -641,8 +717,12 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Name").IsRequired().HasColumnName("instruction_set").HasColumnType("varchar(45)").
                   HasMaxLength(45);
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -653,8 +733,12 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Extension").IsRequired().HasColumnName("extension").HasColumnType("varchar(45)").
                   HasMaxLength(45);
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -668,6 +752,10 @@ namespace Marechai.Database.Migrations
                 b.Property<int>("ProcessorId").HasColumnName("processor_id").HasColumnType("int(11)");
 
                 b.Property<int>("ExtensionId").HasColumnName("extension_id").HasColumnType("int(11)");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id", "ProcessorId", "ExtensionId");
 
@@ -734,6 +822,8 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<bool>("FsfApproved").HasColumnType("bit(1)");
 
                 b.Property<string>("Link").HasColumnType("varchar(512) CHARACTER SET utf8mb4").HasMaxLength(512);
@@ -745,6 +835,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("SPDX").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<string>("Text").HasColumnType("longtext").HasMaxLength(131072);
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -766,6 +858,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnName("browser").
                   HasColumnType("char(128)").HasDefaultValueSql("''");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Date").IsRequired().ValueGeneratedOnAdd().HasColumnName("date").
                   HasColumnType("char(20)").HasDefaultValueSql("''");
 
@@ -774,6 +868,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Referer").IsRequired().ValueGeneratedOnAdd().HasColumnName("referer").
                   HasColumnType("char(255)").HasDefaultValueSql("''");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -795,6 +891,8 @@ namespace Marechai.Database.Migrations
                 b.Property<int>("CompanyId").ValueGeneratedOnAdd().HasColumnName("company").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int?>("FamilyId").HasColumnName("family").HasColumnType("int(11)");
 
                 b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
@@ -806,6 +904,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -830,8 +930,12 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(255)").
                   HasMaxLength(255);
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -859,6 +963,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Comments").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<ushort?>("Contrast").HasColumnType("smallint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
                 b.Property<DateTime?>("CreationDate").HasColumnType("datetime(6)");
 
@@ -913,6 +1019,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Source").HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<ushort?>("SubjectDistanceRange").HasColumnType("smallint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<DateTime>("UploadDate").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().
                   HasColumnType("datetime(6)");
@@ -1006,6 +1114,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<short?>("CountryId").HasColumnType("smallint(3)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<DateTime?>("FirstPublication").HasColumnType("datetime(6)");
 
                 b.Property<string>("Issn").HasColumnType("varchar(8) CHARACTER SET utf8mb4").HasMaxLength(8);
@@ -1017,6 +1127,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Synopsis").HasColumnType("longtext CHARACTER SET utf8mb4").HasMaxLength(262144);
 
                 b.Property<string>("Title").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1043,6 +1155,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Caption").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("MagazineId").HasColumnType("bigint");
 
                 b.Property<string>("NativeCaption").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
@@ -1052,6 +1166,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("ProductCode").HasColumnType("varchar(18) CHARACTER SET utf8mb4").HasMaxLength(18);
 
                 b.Property<DateTime?>("Published").HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1074,9 +1190,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("MachineId").HasColumnType("int(11)");
 
                 b.Property<long>("MagazineId").HasColumnType("bigint");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1091,9 +1211,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("MachineFamilyId").HasColumnType("int(11)");
 
                 b.Property<long>("MagazineId").HasColumnType("bigint");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1122,6 +1246,8 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
 
                 b.Property<long?>("Size").HasColumnName("size").HasColumnType("bigint(20)");
@@ -1130,6 +1256,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<int>("Usage").ValueGeneratedOnAdd().HasColumnName("usage").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
@@ -1153,6 +1281,8 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("OwnedMachineId").HasColumnType("bigint");
 
                 b.Property<long>("Size").HasColumnType("bigint");
@@ -1160,6 +1290,8 @@ namespace Marechai.Database.Migrations
                 b.Property<double>("Speed").HasColumnType("double");
 
                 b.Property<int>("Type").HasColumnType("int");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<int>("Usage").HasColumnType("int");
 
@@ -1182,11 +1314,15 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Donator").IsRequired().ValueGeneratedOnAdd().HasColumnName("donator").
                   HasColumnType("char(128)").HasDefaultValueSql("''");
 
                 b.Property<decimal>("Quantity").ValueGeneratedOnAdd().HasColumnName("quantity").
                   HasColumnType("decimal(11,2)").HasDefaultValueSql("'0.00'");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1204,10 +1340,14 @@ namespace Marechai.Database.Migrations
                 b.Property<int>("AddedId").ValueGeneratedOnAdd().HasColumnName("added_id").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<DateTime>("Date").HasColumnName("date").HasColumnType("datetime");
 
                 b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1228,6 +1368,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<bool>("Boxed").HasColumnType("bit(1)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<DateTime?>("LastStatusDate").HasColumnType("datetime(6)");
 
                 b.Property<DateTime?>("LostDate").HasColumnType("datetime(6)");
@@ -1244,6 +1386,8 @@ namespace Marechai.Database.Migrations
                 b.Property<int>("Status").HasColumnType("int");
 
                 b.Property<bool>("Trade").HasColumnType("bit(1)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<string>("UserId").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -1291,6 +1435,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Comments").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<ushort?>("Contrast").HasColumnType("smallint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
                 b.Property<DateTime?>("CreationDate").HasColumnType("datetime(6)");
 
@@ -1343,6 +1489,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("SoftwareUsed").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<ushort?>("SubjectDistanceRange").HasColumnType("smallint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<DateTime>("UploadDate").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().
                   HasColumnType("datetime(6)");
@@ -1436,9 +1584,13 @@ namespace Marechai.Database.Migrations
 
                 b.Property<long>("BookId").HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("PersonId").HasColumnType("int");
 
                 b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1457,6 +1609,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("CompanyId").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<DateTime?>("End").HasColumnType("datetime(6)");
 
                 b.Property<bool>("Ongoing").HasColumnType("bit(1)");
@@ -1466,6 +1620,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Position").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime?>("Start").HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1486,11 +1642,15 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("DocumentId").HasColumnType("bigint");
 
                 b.Property<int>("PersonId").HasColumnType("int");
 
                 b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1507,11 +1667,15 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("MagazineId").HasColumnType("bigint");
 
                 b.Property<int>("PersonId").HasColumnType("int");
 
                 b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1534,6 +1698,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<short?>("CountryOfBirthId").HasColumnType("smallint(3)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<DateTime?>("DeathDate").HasColumnType("datetime(6)");
 
                 b.Property<string>("DisplayName").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
@@ -1549,6 +1715,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Surname").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<string>("Twitter").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<string>("Webpage").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -1588,6 +1756,8 @@ namespace Marechai.Database.Migrations
                 b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
                 b.Property<int?>("Cores").HasColumnName("cores").HasColumnType("int(11)");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
                 b.Property<int?>("DataBus").HasColumnName("data_bus").HasColumnType("int(11)");
 
@@ -1634,6 +1804,8 @@ namespace Marechai.Database.Migrations
                 b.Property<int?>("ThreadsPerCore").HasColumnName("threads_per_core").HasColumnType("int(11)");
 
                 b.Property<long?>("Transistors").HasColumnName("transistors").HasColumnType("bigint(20)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1694,11 +1866,15 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
 
                 b.Property<int>("ProcessorId").HasColumnName("processor").HasColumnType("int(11)");
 
                 b.Property<float?>("Speed").HasColumnName("speed").HasColumnType("float");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1715,11 +1891,15 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("OwnedMachineId").HasColumnType("bigint");
 
                 b.Property<int>("ProcessorId").HasColumnType("int(11)");
 
                 b.Property<float>("Speed").HasColumnType("float");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1741,12 +1921,16 @@ namespace Marechai.Database.Migrations
 
                 b.Property<long?>("Colors").HasColumnName("colors").HasColumnType("bigint(20)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<bool>("Grayscale").HasColumnType("bit(1)");
 
                 b.Property<int>("Height").ValueGeneratedOnAdd().HasColumnName("height").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
 
                 b.Property<long?>("Palette").HasColumnName("palette").HasColumnType("bigint(20)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<int>("Width").ValueGeneratedOnAdd().HasColumnName("width").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
@@ -1775,9 +1959,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("GpuId").HasColumnName("gpu").HasColumnType("int(11)");
 
                 b.Property<int>("ResolutionId").HasColumnName("resolution").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1792,9 +1980,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("ResolutionId").HasColumnType("int(11)");
 
                 b.Property<int>("ScreenId").HasColumnType("int");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1809,6 +2001,8 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<double>("Diagonal").HasColumnType("double");
 
                 b.Property<long?>("EffectiveColors").HasColumnType("bigint");
@@ -1818,6 +2012,8 @@ namespace Marechai.Database.Migrations
                 b.Property<int>("NativeResolutionId").HasColumnType("int(11)");
 
                 b.Property<string>("Type").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<double?>("Width").HasColumnType("double");
 
@@ -1842,9 +2038,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("MachineId").HasColumnType("int(11)");
 
                 b.Property<int>("ScreenId").HasColumnType("int");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1859,9 +2059,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
 
                 b.Property<int>("SoundSynthId").HasColumnName("sound_synth").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1876,9 +2080,13 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<long>("OwnedMachineId").HasColumnType("bigint");
 
                 b.Property<int>("SoundSynthId").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1895,6 +2103,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int?>("Depth").HasColumnName("depth").HasColumnType("int(11)");
 
                 b.Property<double?>("Frequency").HasColumnName("frequency").HasColumnType("double");
@@ -1910,6 +2120,8 @@ namespace Marechai.Database.Migrations
                 b.Property<int?>("SquareWave").HasColumnName("square_wave").HasColumnType("int(11)");
 
                 b.Property<int?>("Type").HasColumnName("type").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<int?>("Voices").HasColumnName("voices").HasColumnType("int(11)");
 
@@ -1946,6 +2158,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<long?>("Capacity").HasColumnName("capacity").HasColumnType("bigint(20)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("Interface").ValueGeneratedOnAdd().HasColumnName("interface").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
 
@@ -1953,6 +2167,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)").
                   HasDefaultValueSql("'0'");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -1973,11 +2189,15 @@ namespace Marechai.Database.Migrations
 
                 b.Property<long>("Capacity").HasColumnType("bigint");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<int>("Interface").HasColumnType("int");
 
                 b.Property<long>("OwnedMachineId").HasColumnType("bigint");
 
                 b.Property<int>("Type").HasColumnType("int");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
