@@ -150,6 +150,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="..\CODEOWNERS">
+      <Link>CODEOWNERS</Link>
+    </Content>
+    <Content Include="..\CONTRIBUTING.md">
+      <Link>CONTRIBUTING.md</Link>
+    </Content>
+    <Content Include="..\README.md">
+      <Link>README.md</Link>
+    </Content>
+    <Content Include="..\TODO.md">
+      <Link>TODO.md</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Delete.cshtml" />
