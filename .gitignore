@@ -449,3 +449,5 @@ Marechai/wwwroot/assets/**/*.tif
 Marechai/wwwroot/assets/**/*.jpg
 Marechai/wwwroot/assets/**/*.tiff
 Marechai/wwwroot/assets/**/*.webp
+appsettings.Development.json
+appsettings.Production.json
