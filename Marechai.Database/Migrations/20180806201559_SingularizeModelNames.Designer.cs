@@ -2,12 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : 20180806201559_SingularizeModelNames.Designer.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Rename models to singular names.
 //
 // --[ License ] --------------------------------------------------------------
 //

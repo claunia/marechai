@@ -2,12 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : V4.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Contains SQL queries to create the database version 4.
 //
 // --[ License ] --------------------------------------------------------------
 //

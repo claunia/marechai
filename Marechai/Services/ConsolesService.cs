@@ -2,12 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : ConsolesService.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Consoles service
 //
 // --[ License ] --------------------------------------------------------------
 //

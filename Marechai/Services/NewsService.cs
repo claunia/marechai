@@ -2,12 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : NewsService.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     News service
 //
 // --[ License ] --------------------------------------------------------------
 //

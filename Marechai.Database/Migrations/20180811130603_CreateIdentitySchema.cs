@@ -2,12 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : 20180811130603_CreateIdentitySchema.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Adds ASP.NET Identity tables
 //
 // --[ License ] --------------------------------------------------------------
 //

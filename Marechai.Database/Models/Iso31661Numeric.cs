@@ -2,12 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Iso31661Numeric.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Contains list of country codes according to ISO-3166-1 Numeric.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -2,12 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : 20180805214952_InitialMigration.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Contains the initial migration from MySQL to Entity Framework.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -2,12 +2,7 @@
  // MARECHAI: Master repository of computing history artifacts information
  // ----------------------------------------------------------------------------
  //
- // Filename       : site.js
  // Author(s)      : Natalia Portillo <claunia@claunia.com>
- //
- // --[ Description ] ----------------------------------------------------------
- //
- //     Sitewide javascript code
  //
  // --[ License ] --------------------------------------------------------------
  //

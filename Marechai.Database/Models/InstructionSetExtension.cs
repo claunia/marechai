@@ -2,12 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : InstructionSetExtension.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Describe instruction set extensions (e.g. MMX, NEON, iWMMX)
 //
 // --[ License ] --------------------------------------------------------------
 //

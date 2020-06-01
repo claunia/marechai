@@ -2,13 +2,7 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Gpu.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Describes chips (or chipsets) whose primary function is to generate
-//     graphics (raster, vectorial, 3D, etc).
 //
 // --[ License ] --------------------------------------------------------------
 //

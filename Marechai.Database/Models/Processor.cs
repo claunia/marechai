@@ -2,13 +2,8 @@
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
-// Filename       : Processor.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Describes general purpose processors or application specific coprocessors
-//     that are not strictly for graphic or sound generation.
 //
 // --[ License ] --------------------------------------------------------------
 //
