@@ -41,9 +41,9 @@ namespace Marechai.Database.Models
         public long? Colors { get; set; }
         [Range(2, 281474976710656)]
         public long? Palette { get; set; }
-        [DisplayName("Character based")]
+        [DisplayName("Character based"), DefaultValue(false)]
         public bool Chars { get; set; }
-        [DisplayName("Grayscale")]
+        [DisplayName("Grayscale"), DefaultValue(false)]
         public bool Grayscale { get; set; }
 
         public virtual ICollection<ResolutionsByGpu>    ResolutionsByGpu    { get; set; }

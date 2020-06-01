@@ -38,15 +38,15 @@ namespace Marechai.Database.Models
         public StatusType Status { get;  set; }
         [DisplayName("Last status check date")]
         public DateTime? LastStatusDate { get; set; }
-        [DisplayName("Available for trade or sale")]
+        [DisplayName("Available for trade or sale"), DefaultValue(false)]
         public bool Trade { get; set; }
-        [DisplayName("Has original boxes")]
+        [DisplayName("Has original boxes"), DefaultValue(false)]
         public bool Boxed { get; set; }
-        [DisplayName("Has original manuals")]
+        [DisplayName("Has original manuals"), DefaultValue(false)]
         public bool Manuals { get; set; }
         [DisplayName("Serial number")]
         public string SerialNumber { get; set; }
-        [DisplayName("Serial number visible to other users")]
+        [DisplayName("Serial number visible to other users"), DefaultValue(false)]
         public bool SerialNumberVisible { get; set; }
         public int    MachineId { get;         set; }
         public string UserId    { get;         set; }

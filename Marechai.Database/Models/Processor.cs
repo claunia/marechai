@@ -28,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models
 {
@@ -93,8 +92,5 @@ namespace Marechai.Database.Models
         public virtual InstructionSet InstructionSet { get;                                             set; }
         public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensions { get; set; }
         public virtual ICollection<ProcessorsByMachine>                 ProcessorsByMachine      { get; set; }
-
-        [NotMapped]
-        public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
     }
 }

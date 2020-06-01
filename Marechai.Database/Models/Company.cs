@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace Marechai.Database.Models
@@ -85,19 +84,5 @@ namespace Marechai.Database.Models
         public virtual ICollection<PeopleByCompany> People { get; set; }
         public virtual CompanyLogo LastLogo => Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
         public virtual DocumentCompany DocumentCompany { get; set; }
-
-        [DisplayName("Sold"), NotMapped]
-        public string SoldView => Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
-                                      ? Sold is null
-                                            ? "Unknown"
-                                            : Sold.Value.ToShortDateString()
-                                      : Sold is null
-                                          ? SoldToId is null
-                                                ? ""
-                                                : "Unknown"
-                                          : Sold.Value.ToShortDateString();
-
-        [NotMapped]
-        public CompanyDescription Description => Descriptions?.FirstOrDefault();
     }
 }

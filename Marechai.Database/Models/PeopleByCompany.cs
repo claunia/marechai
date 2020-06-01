@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System;
+using System.ComponentModel;
 
 namespace Marechai.Database.Models
 {
@@ -34,7 +35,8 @@ namespace Marechai.Database.Models
         public string    Position  { get; set; }
         public DateTime? Start     { get; set; }
         public DateTime? End       { get; set; }
-        public bool      Ongoing   { get; set; }
+        [DefaultValue(false)]
+        public bool Ongoing { get; set; }
 
         public virtual Person  Person  { get; set; }
         public virtual Company Company { get; set; }

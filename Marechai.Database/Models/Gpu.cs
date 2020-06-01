@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models
 {
@@ -60,8 +59,5 @@ namespace Marechai.Database.Models
         public virtual Company                       Company          { get; set; }
         public virtual ICollection<GpusByMachine>    GpusByMachine    { get; set; }
         public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
-
-        [NotMapped]
-        public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
     }
 }

@@ -26,7 +26,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models
 {
@@ -44,22 +43,6 @@ namespace Marechai.Database.Models
         public long? EffectiveColors { get; set; }
         [Required]
         public string Type { get; set; }
-
-        [NotMapped]
-        public long? Colors => EffectiveColors ?? NativeResolution.Colors;
-
-        [NotMapped]
-        public string Size
-        {
-            get
-            {
-                if(Width  != null &&
-                   Height != null)
-                    return$"{Width}x{Height} mm";
-
-                return"Unknown";
-            }
-        }
 
         public virtual ICollection<ResolutionsByScreen> Resolutions       { get; set; }
         public virtual ICollection<ScreensByMachine>    ScreensByMachines { get; set; }

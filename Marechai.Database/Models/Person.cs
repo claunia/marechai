@@ -54,7 +54,6 @@ namespace Marechai.Database.Models
         public string Alias            { get; set; }
         [DisplayName("Name to be displayed")]
         public string DisplayName { get; set; }
-
         [NotMapped, DisplayName("Name")]
         public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 

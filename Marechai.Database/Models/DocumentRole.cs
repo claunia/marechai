@@ -23,6 +23,7 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -31,8 +32,9 @@ namespace Marechai.Database.Models
     public class DocumentRole
     {
         [Column(TypeName = "char(3)"), Key, Required]
-        public string Id { get;      set; }
-        public string Name    { get; set; }
-        public bool   Enabled { get; set; }
+        public string Id { get;   set; }
+        public string Name { get; set; }
+        [DefaultValue(false)]
+        public bool Enabled { get; set; }
     }
 }

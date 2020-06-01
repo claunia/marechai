@@ -36,9 +36,9 @@ namespace Marechai.Database.Models
         public string Name { get; set; }
         [DisplayName("SPDX identifier")]
         public string SPDX { get; set; }
-        [DisplayName("FSF approved"), Required]
+        [DisplayName("FSF approved"), Required, DefaultValue(false)]
         public bool FsfApproved { get; set; }
-        [DisplayName("OSI approved"), Required]
+        [DisplayName("OSI approved"), Required, DefaultValue(false)]
         public bool OsiApproved { get; set; }
         [DisplayName("License text link"), StringLength(512), Url]
         public string Link { get; set; }

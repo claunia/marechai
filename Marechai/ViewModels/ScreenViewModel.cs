@@ -23,8 +23,6 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Marechai.ViewModels
 {
     public class ScreenViewModel : BaseViewModel<int>
@@ -37,10 +35,8 @@ namespace Marechai.ViewModels
         public long?               EffectiveColors    { get; set; }
         public string              Type               { get; set; }
 
-        [NotMapped]
         public long? Colors => EffectiveColors ?? NativeResolution.Colors;
 
-        [NotMapped]
         public string Size
         {
             get

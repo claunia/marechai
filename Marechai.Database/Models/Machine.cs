@@ -25,9 +25,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models
 {
@@ -66,9 +64,5 @@ namespace Marechai.Database.Models
         public virtual ICollection<DocumentsByMachine>  Documents  { get; set; }
         public virtual ICollection<BooksByMachine>      Books      { get; set; }
         public virtual ICollection<MagazinesByMachine>  Magazines  { get; set; }
-
-        [NotMapped, DisplayName("Introduced")]
-        public string IntroducedView =>
-            Introduced == DateTime.MinValue ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
     }
 }

@@ -40,23 +40,27 @@ namespace Marechai.Database.Models
         public string Os { get; set; }
         [Required, StringLength(8)]
         public string Platform { get; set; }
-        [DisplayName("GIF87")]
+        [DisplayName("GIF87"), DefaultValue(false)]
         public bool Gif87 { get; set; }
-        [DisplayName("GIF89")]
+        [DisplayName("GIF89"), DefaultValue(false)]
         public bool Gif89 { get; set; }
-        [DisplayName("JPEG")]
+        [DisplayName("JPEG"), DefaultValue(false)]
         public bool Jpeg { get; set; }
-        [DisplayName("PNG")]
+        [DisplayName("PNG"), DefaultValue(false)]
         public bool Png { get; set; }
-        [DisplayName("Transparent PNG")]
+        [DisplayName("Transparent PNG"), DefaultValue(false)]
         public bool Pngt { get; set; }
-        [DisplayName("Animated GIF")]
-        public bool Agif { get;   set; }
-        public bool Table  { get; set; }
+        [DisplayName("Animated GIF"), DefaultValue(false)]
+        public bool Agif { get; set; }
+        [DefaultValue(false)]
+        public bool Table { get; set; }
+        [DefaultValue(false)]
         public bool Colors { get; set; }
-        [DisplayName("JavaScript")]
-        public bool Js { get;     set; }
+        [DisplayName("JavaScript"), DefaultValue(false)]
+        public bool Js { get; set; }
+        [DefaultValue(false)]
         public bool Frames { get; set; }
-        public bool Flash  { get; set; }
+        [DefaultValue(false)]
+        public bool Flash { get; set; }
     }
 }
