@@ -70,6 +70,9 @@ namespace Marechai
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).
                      AddRoles<ApplicationRole>().AddEntityFrameworkStores<MarechaiContext>();
 
+            // The following line enables Application Insights telemetry collection.
+            services.AddApplicationInsightsTelemetry();
+            
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
