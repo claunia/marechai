@@ -122,21 +122,28 @@
         <tr>
             <th>@L["Country"]</th>
             <td>
-                <a href="/companies/country/@_company.CountryId">
-                    @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", _company.CountryId + ".svg")))
-                    {
-                        <picture>
-                            <source type="image/svg+xml" srcset="/assets/flags/countries/@(_company.CountryId).svg">
-                            <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(_company.CountryId).webp,
+                @if (_company.Country != null)
+                {
+                    <a href="/companies/country/@_company.CountryId">
+                        @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", _company.CountryId + ".svg")))
+                        {
+                            <picture>
+                                <source type="image/svg+xml" srcset="/assets/flags/countries/@(_company.CountryId).svg">
+                                <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(_company.CountryId).webp,
         /assets/flags/countries/webp/1x/@(_company.CountryId).webp 2x,
         /assets/flags/countries/webp/1x/@(_company.CountryId).webp 3x">
-                            <img srcset="/assets/flags/countries/png/1x/@(_company.CountryId).png,
+                                <img srcset="/assets/flags/countries/png/1x/@(_company.CountryId).png,
                                  /assets/flags/countries/png/1x/@(_company.CountryId).png 2x,
                                  /assets/flags/countries/png/1x/@(_company.CountryId).webp 3x" src="/assets/flags/countries/png/1x@(_company.CountryId).png" alt="" height="32" />
-                        </picture>
-                    }
-                    @L[_company.Country]
-                </a>
+                            </picture>
+                        }
+                        @L[_company.Country]
+                    </a>
+                }
+                else
+                {
+                    @L["Unknown (country)"]
+                }
             </td>
         </tr>
         <tr>
