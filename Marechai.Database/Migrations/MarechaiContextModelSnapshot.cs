@@ -82,6 +82,39 @@ namespace Marechai.Database.Migrations
                 b.ToTable("AspNetUsers");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.Audit", b =>
+            {
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
+
+                b.Property<string>("AffectedColumns").HasColumnType("json");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("Keys").HasColumnType("json");
+
+                b.Property<string>("NewValues").HasColumnType("json");
+
+                b.Property<string>("OldValues").HasColumnType("json");
+
+                b.Property<string>("Table").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<byte>("Type").HasColumnType("tinyint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<string>("UserId").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Table");
+
+                b.HasIndex("Type");
+
+                b.HasIndex("UserId");
+
+                b.ToTable("Audit");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Book", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
@@ -2289,6 +2322,12 @@ namespace Marechai.Database.Migrations
                 b.HasKey("UserId", "LoginProvider", "Name");
 
                 b.ToTable("AspNetUserTokens");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Audit", b =>
+            {
+                b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany().HasForeignKey("UserId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Book", b =>

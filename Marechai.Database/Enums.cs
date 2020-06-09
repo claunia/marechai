@@ -494,4 +494,10 @@ namespace Marechai.Database
     {
         Normal = 0, Low = 1, High = 2
     }
+
+    public enum AuditType : byte
+    {
+        None    = 0, Created = 1, Updated = 2,
+        Deleted = 3
+    }
 }

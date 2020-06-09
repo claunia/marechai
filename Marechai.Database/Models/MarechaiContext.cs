@@ -93,6 +93,8 @@ namespace Marechai.Database.Models
         public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
         public virtual DbSet<StorageByOwnedMachine>               StorageByOwnedMachine               { get; set; }
 
+        public virtual DbSet<Audit> Audit { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if(optionsBuilder.IsConfigured)
@@ -1462,6 +1464,13 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.SPDX);
                 entity.HasIndex(e => e.FsfApproved);
                 entity.HasIndex(e => e.OsiApproved);
+            });
+
+            modelBuilder.Entity<Audit>(entity =>
+            {
+                entity.HasIndex(d => d.UserId);
+                entity.HasIndex(d => d.Table);
+                entity.HasIndex(d => d.Type);
             });
         }
     }
