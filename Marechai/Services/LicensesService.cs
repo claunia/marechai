@@ -51,7 +51,7 @@ namespace Marechai.Services
                 OsiApproved = l.OsiApproved, SPDX = l.SPDX, Text = l.Text
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(License viewModel)
+        public async Task UpdateAsync(License viewModel, string userId)
         {
             License model = await _context.Licenses.FindAsync(viewModel.Id);
 
@@ -65,10 +65,10 @@ namespace Marechai.Services
             model.SPDX        = viewModel.SPDX;
             model.Text        = viewModel.Text;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(License viewModel)
+        public async Task<int> CreateAsync(License viewModel, string userId)
         {
             var model = new License
             {
@@ -77,12 +77,12 @@ namespace Marechai.Services
             };
 
             await _context.Licenses.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             License item = await _context.Licenses.FindAsync(id);
 
@@ -91,7 +91,7 @@ namespace Marechai.Services
 
             _context.Licenses.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

@@ -26,8 +26,11 @@
 }
 
 @page "/admin/processors"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<ProcessorsService>
 @inject IStringLocalizer<ProcessorsService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Processors"]</h3>
 @if (_processors is null)

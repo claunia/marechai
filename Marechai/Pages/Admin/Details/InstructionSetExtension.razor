@@ -28,10 +28,13 @@
 @page "/admin/instruction_set_extensions/details/{Id:int}"
 @page "/admin/instruction_set_extensions/edit/{Id:int}"
 @page "/admin/instruction_set_extensions/create"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<InstructionSetExtensionsService>
 @inject IStringLocalizer<InstructionSetExtensionsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 @inject NavigationManager NavigationManager
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <h3>@L["Instruction set extension details"]</h3>
 <hr />
 

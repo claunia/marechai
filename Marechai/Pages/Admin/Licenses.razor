@@ -26,8 +26,11 @@
 }
 
 @page "/admin/licenses"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<LicensesService>
 @inject IStringLocalizer<LicensesService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Licenses"]</h3>
 @if (_licenses is null)

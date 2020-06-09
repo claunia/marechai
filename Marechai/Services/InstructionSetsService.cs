@@ -50,7 +50,7 @@ namespace Marechai.Services
                 Name = e.Name, Id = e.Id
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(InstructionSet viewModel)
+        public async Task UpdateAsync(InstructionSet viewModel, string userId)
         {
             InstructionSet model = await _context.InstructionSets.FindAsync(viewModel.Id);
 
@@ -59,10 +59,10 @@ namespace Marechai.Services
 
             model.Name = viewModel.Name;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(InstructionSet viewModel)
+        public async Task<int> CreateAsync(InstructionSet viewModel, string userId)
         {
             var model = new InstructionSet
             {
@@ -70,12 +70,12 @@ namespace Marechai.Services
             };
 
             await _context.InstructionSets.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             InstructionSet item = await _context.InstructionSets.FindAsync(id);
 
@@ -84,7 +84,7 @@ namespace Marechai.Services
 
             _context.InstructionSets.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
         public bool VerifyUnique(string name) =>

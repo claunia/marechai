@@ -28,6 +28,7 @@
 @page "/admin/processors/details/{Id:int}"
 @page "/admin/processors/edit/{Id:int}"
 @page "/admin/processors/create"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<ProcessorsService>
 @inject IStringLocalizer<ProcessorsService> L
 @inject CompaniesService CompaniesService
@@ -35,6 +36,8 @@
 @inject NavigationManager NavigationManager
 @inject InstructionSetExtensionsByProcessorService InstructionSetExtensionsByProcessorService
 @inject InstructionSetExtensionsService InstructionSetExtensionsService
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Processor details"]</h3>
 <hr />

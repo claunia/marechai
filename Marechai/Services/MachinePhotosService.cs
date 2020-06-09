@@ -62,7 +62,7 @@ namespace Marechai.Services
                 WhiteBalance = p.WhiteBalance, OriginalExtension = p.OriginalExtension
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(MachinePhotoViewModel viewModel)
+        public async Task UpdateAsync(MachinePhotoViewModel viewModel, string userId)
         {
             MachinePhoto model = await _context.MachinePhotos.FindAsync(viewModel.Id);
 
@@ -104,10 +104,10 @@ namespace Marechai.Services
             model.VerticalResolution    = viewModel.VerticalResolution;
             model.WhiteBalance          = viewModel.WhiteBalance;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<Guid> CreateAsync(MachinePhotoViewModel viewModel)
+        public async Task<Guid> CreateAsync(MachinePhotoViewModel viewModel, string userId)
         {
             var model = new MachinePhoto
             {
@@ -132,7 +132,7 @@ namespace Marechai.Services
             };
 
             await _context.MachinePhotos.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }

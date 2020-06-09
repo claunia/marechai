@@ -28,12 +28,15 @@
 @page "/admin/gpus/details/{Id:int}"
 @page "/admin/gpus/edit/{Id:int}"
 @page "/admin/gpus/create"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<GpusService>
 @inject IStringLocalizer<GpusService> L
 @inject CompaniesService CompaniesService
 @inject NavigationManager NavigationManager
 @inject ResolutionsService ResolutionsService
 @inject ResolutionsByGpuService ResolutionsByGpuService
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Graphical processing unit details"]</h3>
 <hr />

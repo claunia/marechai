@@ -50,7 +50,7 @@ namespace Marechai.Services
                 Extension = e.Extension, Id = e.Id
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(InstructionSetExtension viewModel)
+        public async Task UpdateAsync(InstructionSetExtension viewModel, string userId)
         {
             InstructionSetExtension model = await _context.InstructionSetExtensions.FindAsync(viewModel.Id);
 
@@ -59,10 +59,10 @@ namespace Marechai.Services
 
             model.Extension = viewModel.Extension;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(InstructionSetExtension viewModel)
+        public async Task<int> CreateAsync(InstructionSetExtension viewModel, string userId)
         {
             var model = new InstructionSetExtension
             {
@@ -70,12 +70,12 @@ namespace Marechai.Services
             };
 
             await _context.InstructionSetExtensions.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             InstructionSetExtension item = await _context.InstructionSetExtensions.FindAsync(id);
 
@@ -84,7 +84,7 @@ namespace Marechai.Services
 
             _context.InstructionSetExtensions.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
         public bool VerifyUnique(string extension) =>

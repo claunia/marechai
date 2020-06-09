@@ -51,7 +51,7 @@ namespace Marechai.Services
                 Id = m.Id, CompanyId = m.CompanyId, Name = m.Name
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(MachineFamilyViewModel viewModel)
+        public async Task UpdateAsync(MachineFamilyViewModel viewModel, string userId)
         {
             MachineFamily model = await _context.MachineFamilies.FindAsync(viewModel.Id);
 
@@ -61,10 +61,10 @@ namespace Marechai.Services
             model.Name      = viewModel.Name;
             model.CompanyId = viewModel.CompanyId;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(MachineFamilyViewModel viewModel)
+        public async Task<int> CreateAsync(MachineFamilyViewModel viewModel, string userId)
         {
             var model = new MachineFamily
             {
@@ -72,12 +72,12 @@ namespace Marechai.Services
             };
 
             await _context.MachineFamilies.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             MachineFamily item = await _context.MachineFamilies.FindAsync(id);
 
@@ -86,7 +86,7 @@ namespace Marechai.Services
 
             _context.MachineFamilies.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

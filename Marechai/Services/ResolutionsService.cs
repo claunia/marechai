@@ -53,7 +53,7 @@ namespace Marechai.Services
                 Palette = r.Palette, Chars = r.Chars, Grayscale = r.Grayscale
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(ResolutionViewModel viewModel)
+        public async Task UpdateAsync(ResolutionViewModel viewModel, string userId)
         {
             Resolution model = await _context.Resolutions.FindAsync(viewModel.Id);
 
@@ -67,10 +67,10 @@ namespace Marechai.Services
             model.Palette   = viewModel.Palette;
             model.Width     = viewModel.Width;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(ResolutionViewModel viewModel)
+        public async Task<int> CreateAsync(ResolutionViewModel viewModel, string userId)
         {
             var model = new Resolution
             {
@@ -79,12 +79,12 @@ namespace Marechai.Services
             };
 
             await _context.Resolutions.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             Resolution item = await _context.Resolutions.FindAsync(id);
 
@@ -93,7 +93,7 @@ namespace Marechai.Services
 
             _context.Resolutions.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

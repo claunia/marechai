@@ -46,7 +46,7 @@ namespace Marechai.Services
                                SoundSynthId = g.SoundSynthId, MachineId = g.MachineId
                            }).OrderBy(g => g.CompanyName).ThenBy(g => g.Name).ToListAsync();
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, string userId)
         {
             SoundByMachine item = await _context.SoundByMachine.FindAsync(id);
 
@@ -55,10 +55,10 @@ namespace Marechai.Services
 
             _context.SoundByMachine.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<long> CreateAsync(int soundSynthId, int machineId)
+        public async Task<long> CreateAsync(int soundSynthId, int machineId, string userId)
         {
             var item = new SoundByMachine
             {
@@ -66,7 +66,7 @@ namespace Marechai.Services
             };
 
             await _context.SoundByMachine.AddAsync(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return item.Id;
         }

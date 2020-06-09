@@ -54,7 +54,7 @@ namespace Marechai.Services
                                               ThenBy(r => r.Resolution.Colors).ThenBy(r => r.Resolution.Palette).
                                               ToList();
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, string userId)
         {
             ResolutionsByGpu item = await _context.ResolutionsByGpu.FindAsync(id);
 
@@ -63,10 +63,10 @@ namespace Marechai.Services
 
             _context.ResolutionsByGpu.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<long> CreateAsync(int resolutionId, int gpuId)
+        public async Task<long> CreateAsync(int resolutionId, int gpuId, string userId)
         {
             var item = new ResolutionsByGpu
             {
@@ -74,7 +74,7 @@ namespace Marechai.Services
             };
 
             await _context.ResolutionsByGpu.AddAsync(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return item.Id;
         }

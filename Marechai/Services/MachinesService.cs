@@ -72,7 +72,7 @@ namespace Marechai.Services
                                                                                    Type = m.Type, FamilyId = m.FamilyId
                                                                                }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(MachineViewModel viewModel)
+        public async Task UpdateAsync(MachineViewModel viewModel, string userId)
         {
             Machine model = await _context.Machines.FindAsync(viewModel.Id);
 
@@ -110,10 +110,10 @@ namespace Marechai.Services
             if(news != null)
                 await _context.News.AddAsync(news);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(MachineViewModel viewModel)
+        public async Task<int> CreateAsync(MachineViewModel viewModel, string userId)
         {
             var model = new Machine
             {
@@ -122,7 +122,7 @@ namespace Marechai.Services
             };
 
             await _context.Machines.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             var news = new News
             {
@@ -148,7 +148,7 @@ namespace Marechai.Services
             if(news != null)
             {
                 await _context.News.AddAsync(news);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesWithUserAsync(userId);
             }
 
             return model.Id;
@@ -213,7 +213,7 @@ namespace Marechai.Services
             return model;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             Machine item = await _context.Machines.FindAsync(id);
 
@@ -222,7 +222,7 @@ namespace Marechai.Services
 
             _context.Machines.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

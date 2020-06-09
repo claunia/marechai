@@ -26,8 +26,11 @@
 }
 
 @page "/admin/machine_families"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<MachineFamiliesService>
 @inject IStringLocalizer<MachineFamiliesService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine families"]</h3>
 @if (_machineFamilies is null)

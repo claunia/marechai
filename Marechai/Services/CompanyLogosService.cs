@@ -50,7 +50,7 @@ namespace Marechai.Services
         public async Task<List<CompanyLogo>> GetByCompany(int companyId) =>
             await _context.CompanyLogos.Where(l => l.CompanyId == companyId).OrderBy(l => l.Year).ToListAsync();
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             CompanyLogo logo = await _context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
 
@@ -58,7 +58,7 @@ namespace Marechai.Services
                 return;
 
             _context.CompanyLogos.Remove(logo);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             if(File.Exists(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg")))
                 File.Delete(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg"));
@@ -100,7 +100,7 @@ namespace Marechai.Services
                 File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png"));
         }
 
-        public async Task ChangeYearAsync(int id, int? year)
+        public async Task ChangeYearAsync(int id, int? year, string userId)
         {
             CompanyLogo logo = await _context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
 
@@ -108,10 +108,10 @@ namespace Marechai.Services
                 return;
 
             logo.Year = year;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(int companyId, Guid guid, int? year)
+        public async Task<int> CreateAsync(int companyId, Guid guid, int? year, string userId)
         {
             var logo = new CompanyLogo
             {
@@ -119,7 +119,7 @@ namespace Marechai.Services
             };
 
             await _context.CompanyLogos.AddAsync(logo);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return logo.Id;
         }

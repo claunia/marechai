@@ -46,7 +46,7 @@ namespace Marechai.Services
                                ProcessorId = p.ProcessorId, MachineId = p.MachineId, Speed = p.Speed
                            }).OrderBy(p => p.CompanyName).ThenBy(p => p.Name).ToListAsync();
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, string userId)
         {
             ProcessorsByMachine item = await _context.ProcessorsByMachine.FindAsync(id);
 
@@ -55,10 +55,10 @@ namespace Marechai.Services
 
             _context.ProcessorsByMachine.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<long> CreateAsync(int processorId, int machineId, float? speed)
+        public async Task<long> CreateAsync(int processorId, int machineId, float? speed, string userId)
         {
             var item = new ProcessorsByMachine
             {
@@ -66,7 +66,7 @@ namespace Marechai.Services
             };
 
             await _context.ProcessorsByMachine.AddAsync(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return item.Id;
         }

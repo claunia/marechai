@@ -28,10 +28,13 @@
 @page "/admin/document_companies/details/{Id:int}"
 @page "/admin/document_companies/edit/{Id:int}"
 @page "/admin/document_companies/create"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<DocumentCompaniesService>
 @inject IStringLocalizer<DocumentCompaniesService> L
 @inject CompaniesService CompaniesService
 @inject NavigationManager NavigationManager
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Document company details"]</h3>
 <hr />

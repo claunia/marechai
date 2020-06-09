@@ -23,8 +23,11 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 
 namespace Marechai.Database.Models
@@ -92,8 +95,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
         public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
         public virtual DbSet<StorageByOwnedMachine>               StorageByOwnedMachine               { get; set; }
-
-        public virtual DbSet<Audit> Audit { get; set; }
+        public virtual DbSet<Audit>                               Audit                               { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -103,6 +105,85 @@ namespace Marechai.Database.Models
             IConfigurationBuilder builder       = new ConfigurationBuilder().AddJsonFile("appsettings.json");
             IConfigurationRoot    configuration = builder.Build();
             optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies();
+        }
+
+        public async Task<int> SaveChangesWithUserAsync(string userId)
+        {
+            ChangeTracker.DetectChanges();
+            List<Audit> audits = new List<Audit>();
+
+            foreach(EntityEntry entry in ChangeTracker.Entries())
+            {
+                if(entry.Entity is Audit               ||
+                   entry.State == EntityState.Detached ||
+                   entry.State == EntityState.Unchanged)
+                    continue;
+
+                var audit = new Audit();
+                audit.UserId = userId;
+                audit.Table  = entry.Metadata.GetTableName();
+
+                Dictionary<string, object> keys    = new Dictionary<string, object>();
+                Dictionary<string, object> olds    = new Dictionary<string, object>();
+                Dictionary<string, object> news    = new Dictionary<string, object>();
+                List<string>               columns = new List<string>();
+
+                foreach(PropertyEntry property in entry.Properties)
+                {
+                    string propertyName = property.Metadata.Name;
+                    string columnName   = property.Metadata.GetColumnName();
+
+                    if(property.Metadata.IsPrimaryKey())
+                    {
+                        keys[propertyName] = property.CurrentValue;
+
+                        continue;
+                    }
+
+                    switch(entry.State)
+                    {
+                        case EntityState.Deleted:
+                            audit.Type         = AuditType.Deleted;
+                            olds[propertyName] = property.CurrentValue;
+
+                            break;
+                        case EntityState.Modified:
+                            if(property.IsModified)
+                            {
+                                audit.Type         = AuditType.Updated;
+                                news[propertyName] = property.CurrentValue;
+                                olds[propertyName] = property.OriginalValue;
+                                columns.Add(columnName);
+                            }
+
+                            break;
+
+                        case EntityState.Added:
+                            audit.Type         = AuditType.Created;
+                            news[propertyName] = property.CurrentValue;
+
+                            break;
+                    }
+                }
+
+                if(keys.Count > 0)
+                    audit.Keys = keys;
+
+                if(olds.Count > 0)
+                    audit.OldValues = olds;
+
+                if(news.Count > 0)
+                    audit.NewValues = news;
+
+                if(columns.Count > 0)
+                    audit.AffectedColumns = columns;
+
+                audits.Add(audit);
+            }
+
+            await Audit.AddRangeAsync(audits);
+
+            return await SaveChangesAsync();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -1468,7 +1549,6 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<Audit>(entity =>
             {
-                entity.HasIndex(d => d.UserId);
                 entity.HasIndex(d => d.Table);
                 entity.HasIndex(d => d.Type);
             });

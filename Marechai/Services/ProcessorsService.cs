@@ -80,7 +80,7 @@ namespace Marechai.Services
                 L3 = p.L3, InstructionSet = p.InstructionSet.Name, InstructionSetId = p.InstructionSetId
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(ProcessorViewModel viewModel)
+        public async Task UpdateAsync(ProcessorViewModel viewModel, string userId)
         {
             Processor model = await _context.Processors.FindAsync(viewModel.Id);
 
@@ -113,10 +113,10 @@ namespace Marechai.Services
             model.ThreadsPerCore   = viewModel.ThreadsPerCore;
             model.Transistors      = viewModel.Transistors;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(ProcessorViewModel viewModel)
+        public async Task<int> CreateAsync(ProcessorViewModel viewModel, string userId)
         {
             var model = new Processor
             {
@@ -132,12 +132,12 @@ namespace Marechai.Services
             };
 
             await _context.Processors.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             Processor item = await _context.Processors.FindAsync(id);
 
@@ -146,7 +146,7 @@ namespace Marechai.Services
 
             _context.Processors.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

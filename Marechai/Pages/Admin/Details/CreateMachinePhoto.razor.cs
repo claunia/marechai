@@ -617,7 +617,7 @@ namespace Marechai.Pages.Admin.Details
         {
             try
             {
-                await Service.CreateAsync(_model);
+                await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
                 _addToDatabase = true;
             }
             catch(Exception e)

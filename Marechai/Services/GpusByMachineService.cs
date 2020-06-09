@@ -45,7 +45,7 @@ namespace Marechai.Services
                 MachineId = g.MachineId
             }).OrderBy(g => g.CompanyName).ThenBy(g => g.Name).ToListAsync();
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, string userId)
         {
             GpusByMachine item = await _context.GpusByMachine.FindAsync(id);
 
@@ -54,10 +54,10 @@ namespace Marechai.Services
 
             _context.GpusByMachine.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<long> CreateAsync(int gpuId, int machineId)
+        public async Task<long> CreateAsync(int gpuId, int machineId, string userId)
         {
             var item = new GpusByMachine
             {
@@ -65,7 +65,7 @@ namespace Marechai.Services
             };
 
             await _context.GpusByMachine.AddAsync(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return item.Id;
         }

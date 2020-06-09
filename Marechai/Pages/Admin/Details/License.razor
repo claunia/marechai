@@ -28,9 +28,12 @@
 @page "/admin/licenses/details/{Id:int}"
 @page "/admin/licenses/edit/{Id:int}"
 @page "/admin/licenses/create"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<LicensesService>
 @inject IStringLocalizer<LicensesService> L
 @inject NavigationManager NavigationManager
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["License details"]</h3>
 <hr />

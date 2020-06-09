@@ -54,7 +54,7 @@ namespace Marechai.Services
                                               ThenBy(r => r.Resolution.Colors).ThenBy(r => r.Resolution.Palette).
                                               ToList();
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, string userId)
         {
             ResolutionsByScreen item = await _context.ResolutionsByScreen.FindAsync(id);
 
@@ -63,10 +63,10 @@ namespace Marechai.Services
 
             _context.ResolutionsByScreen.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<long> CreateAsync(int resolutionId, int screenId)
+        public async Task<long> CreateAsync(int resolutionId, int screenId, string userId)
         {
             var item = new ResolutionsByScreen
             {
@@ -74,7 +74,7 @@ namespace Marechai.Services
             };
 
             await _context.ResolutionsByScreen.AddAsync(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return item.Id;
         }

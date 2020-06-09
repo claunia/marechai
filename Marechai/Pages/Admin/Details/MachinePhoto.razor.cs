@@ -32,6 +32,7 @@ using Marechai.Database.Models;
 using Marechai.Shared;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Orientation = Marechai.Database.Orientation;
 
 namespace Marechai.Pages.Admin.Details
@@ -39,6 +40,7 @@ namespace Marechai.Pages.Admin.Details
     public partial class MachinePhoto
     {
         const int                     _maxUploadSize = 25 * 1048576;
+        AuthenticationState           _authState;
         bool                          _editing;
         List<Database.Models.License> _licenses;
         bool                          _loaded;
@@ -272,8 +274,9 @@ namespace Marechai.Pages.Admin.Details
             if(Id == Guid.Empty)
                 return;
 
-            _model    = await Service.GetAsync(Id);
-            _licenses = await LicensesService.GetAsync();
+            _model     = await Service.GetAsync(Id);
+            _licenses  = await LicensesService.GetAsync();
+            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             _editing = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                          StartsWith("admin/machines/photo/edit/", StringComparison.InvariantCulture);
@@ -341,7 +344,7 @@ namespace Marechai.Pages.Admin.Details
 
         async void OnSaveClicked()
         {
-            await Service.UpdateAsync(_model);
+            await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
             _editing = false;
             _model   = await Service.GetAsync(Id);
             SetCheckboxes();

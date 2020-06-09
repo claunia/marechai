@@ -26,8 +26,11 @@
 }
 
 @page "/admin/document_people"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<DocumentPeopleService>
 @inject IStringLocalizer<DocumentPeopleService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Document companies"]</h3>
 @if (_people is null)

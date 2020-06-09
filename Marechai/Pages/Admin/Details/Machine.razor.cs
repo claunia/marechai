@@ -32,6 +32,7 @@ using Marechai.Database;
 using Marechai.Shared;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Admin.Details
 {
@@ -55,6 +56,7 @@ namespace Marechai.Pages.Admin.Details
         int                                _addingStorageInterface;
         long?                              _addingStorageSize;
         int                                _addingStorageType;
+        AuthenticationState                _authState;
         List<CompanyViewModel>             _companies;
         List<ProcessorViewModel>           _cpus;
         bool                               _creating;
@@ -138,6 +140,7 @@ namespace Marechai.Pages.Admin.Details
             _machineStorage  = await StorageByMachineService.GetByMachine(Id);
             _machineScreens  = await ScreensByMachineService.GetByMachine(Id);
             _photos          = await MachinePhotosService.GetGuidsByMachineAsync(Id);
+            _authState       = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/machines/edit/",
@@ -200,9 +203,9 @@ namespace Marechai.Pages.Admin.Details
                 return;
 
             if(_creating)
-                Id = await Service.CreateAsync(_model);
+                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
             else
-                await Service.UpdateAsync(_model);
+                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _editing  = false;
             _creating = false;
@@ -260,7 +263,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await GpusByMachineService.DeleteAsync(_currentGpuByMachine.Id);
+            await GpusByMachineService.DeleteAsync(_currentGpuByMachine.Id,
+                                                   (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineGpus = await GpusByMachineService.GetByMachine(Id);
 
             _deleteInProgress = false;
@@ -317,7 +322,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await GpusByMachineService.CreateAsync(_addingGpuId.Value, Id);
+            await GpusByMachineService.CreateAsync(_addingGpuId.Value, Id,
+                                                   (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineGpus = await GpusByMachineService.GetByMachine(Id);
 
             _addingGpu   = false;
@@ -354,7 +361,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await SoundSynthsByMachineService.DeleteAsync(_currentSoundByMachine.Id);
+            await SoundSynthsByMachineService.DeleteAsync(_currentSoundByMachine.Id,
+                                                          (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineSound = await SoundSynthsByMachineService.GetByMachine(Id);
 
             _deleteInProgress = false;
@@ -396,7 +405,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await SoundSynthsByMachineService.CreateAsync(_addingSoundId.Value, Id);
+            await SoundSynthsByMachineService.CreateAsync(_addingSoundId.Value, Id,
+                                                          (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineSound = await SoundSynthsByMachineService.GetByMachine(Id);
 
             _addingSound   = false;
@@ -436,7 +447,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await ProcessorsByMachineService.DeleteAsync(_currentCpuByMachine.Id);
+            await ProcessorsByMachineService.DeleteAsync(_currentCpuByMachine.Id,
+                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineCpus = await ProcessorsByMachineService.GetByMachine(Id);
 
             _deleteInProgress = false;
@@ -481,7 +494,8 @@ namespace Marechai.Pages.Admin.Details
             await Task.Yield();
 
             await ProcessorsByMachineService.CreateAsync(_addingCpuId.Value, Id,
-                                                         _unknownProcessorSpeed ? null : _addingProcessorSpeed);
+                                                         _unknownProcessorSpeed ? null : _addingProcessorSpeed,
+                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _machineCpus = await ProcessorsByMachineService.GetByMachine(Id);
 
@@ -531,7 +545,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await MemoriesByMachineService.DeleteAsync(_currentMemoryByMachine.Id);
+            await MemoriesByMachineService.DeleteAsync(_currentMemoryByMachine.Id,
+                                                       (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineMemories = await MemoriesByMachineService.GetByMachine(Id);
 
             _deleteInProgress = false;
@@ -572,7 +588,8 @@ namespace Marechai.Pages.Admin.Details
             await MemoriesByMachineService.CreateAsync(Id, (MemoryType)_addingMemoryType,
                                                        (MemoryUsage)_addingMemoryUsage,
                                                        _unknownMemorySize ? null : _addingMemorySize,
-                                                       _unknownMemorySpeed ? null : _addingMemorySpeed);
+                                                       _unknownMemorySpeed ? null : _addingMemorySpeed,
+                                                       (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _machineMemories = await MemoriesByMachineService.GetByMachine(Id);
 
@@ -633,7 +650,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await StorageByMachineService.DeleteAsync(_currentStorageByMachine.Id);
+            await StorageByMachineService.DeleteAsync(_currentStorageByMachine.Id,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineStorage = await StorageByMachineService.GetByMachine(Id);
 
             _deleteInProgress = false;
@@ -671,7 +690,8 @@ namespace Marechai.Pages.Admin.Details
 
             await StorageByMachineService.CreateAsync(Id, (StorageType)_addingStorageType,
                                                       (StorageInterface)_addingStorageInterface,
-                                                      _unknownStorageSize ? null : _addingStorageSize);
+                                                      _unknownStorageSize ? null : _addingStorageSize,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _machineStorage = await StorageByMachineService.GetByMachine(Id);
 
@@ -717,7 +737,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await ScreensByMachineService.DeleteAsync(_currentScreenByMachine.Id);
+            await ScreensByMachineService.DeleteAsync(_currentScreenByMachine.Id,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineScreens = await ScreensByMachineService.GetByMachine(Id);
 
             _deleteInProgress = false;
@@ -759,7 +781,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await ScreensByMachineService.CreateAsync(_addingScreenId.Value, Id);
+            await ScreensByMachineService.CreateAsync(_addingScreenId.Value, Id,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _machineScreens = await ScreensByMachineService.GetByMachine(Id);
 
             _addingScreen   = false;

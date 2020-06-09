@@ -75,7 +75,7 @@ namespace Marechai.Services
                 NativeResolutionId = s.NativeResolutionId, Type = s.Type, Width = s.Width
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(ScreenViewModel viewModel)
+        public async Task UpdateAsync(ScreenViewModel viewModel, string userId)
         {
             Screen model = await _context.Screens.FindAsync(viewModel.Id);
 
@@ -94,10 +94,10 @@ namespace Marechai.Services
             model.Type               = viewModel.Type;
             model.Width              = viewModel.Width;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(ScreenViewModel viewModel)
+        public async Task<int> CreateAsync(ScreenViewModel viewModel, string userId)
         {
             var model = new Screen
             {
@@ -106,12 +106,12 @@ namespace Marechai.Services
             };
 
             await _context.Screens.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             Screen item = await _context.Screens.FindAsync(id);
 
@@ -120,7 +120,7 @@ namespace Marechai.Services
 
             _context.Screens.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

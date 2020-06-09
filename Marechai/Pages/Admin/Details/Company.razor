@@ -29,6 +29,7 @@
 @page "/admin/companies/edit/{Id:int}"
 @page "/admin/companies/create"
 @using Marechai.Database
+@using Marechai.Database.Models
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
 @inject Iso31661NumericService CountriesService
@@ -37,6 +38,8 @@
 @inject IWebHostEnvironment Host
 @inject IFileReaderService FileReaderService;
 @inject IJSRuntime JSRuntime
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 
 

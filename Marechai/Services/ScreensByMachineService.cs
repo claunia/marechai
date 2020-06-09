@@ -60,7 +60,7 @@ namespace Marechai.Services
                                }
                            }).ToListAsync();
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, string userId)
         {
             ScreensByMachine item = await _context.ScreensByMachine.FindAsync(id);
 
@@ -69,10 +69,10 @@ namespace Marechai.Services
 
             _context.ScreensByMachine.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<long> CreateAsync(int machineId, int screenId)
+        public async Task<long> CreateAsync(int machineId, int screenId, string userId)
         {
             if(_context.ScreensByMachine.Any(s => s.MachineId == machineId && s.ScreenId == screenId))
                 return 0;
@@ -83,7 +83,7 @@ namespace Marechai.Services
             };
 
             await _context.ScreensByMachine.AddAsync(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return item.Id;
         }

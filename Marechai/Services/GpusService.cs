@@ -64,7 +64,7 @@ namespace Marechai.Services
                 DieSize    = g.DieSize, Transistors = g.Transistors
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(GpuViewModel viewModel)
+        public async Task UpdateAsync(GpuViewModel viewModel, string userId)
         {
             Gpu model = await _context.Gpus.FindAsync(viewModel.Id);
 
@@ -81,10 +81,10 @@ namespace Marechai.Services
             model.DieSize     = viewModel.DieSize;
             model.Transistors = viewModel.Transistors;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(GpuViewModel viewModel)
+        public async Task<int> CreateAsync(GpuViewModel viewModel, string userId)
         {
             var model = new Gpu
             {
@@ -94,12 +94,12 @@ namespace Marechai.Services
             };
 
             await _context.Gpus.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             Gpu item = await _context.Gpus.FindAsync(id);
 
@@ -108,7 +108,7 @@ namespace Marechai.Services
 
             _context.Gpus.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

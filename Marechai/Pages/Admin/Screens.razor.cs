@@ -28,6 +28,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.ViewModels;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Admin
 {
@@ -53,11 +54,12 @@ namespace Marechai.Pages.Admin
 
             _deleteInProgress = true;
             _screens          = null;
+            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await Service.DeleteAsync(_screen.Id);
+            await Service.DeleteAsync(_screen.Id, (await UserManager.GetUserAsync(authState.User)).Id);
             _screens = await Service.GetAsync();
 
             _deleteInProgress = false;

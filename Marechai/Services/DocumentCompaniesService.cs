@@ -53,7 +53,7 @@ namespace Marechai.Services
                 Id = d.Id, Name = d.Name, CompanyId = d.CompanyId
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(DocumentCompanyViewModel viewModel)
+        public async Task UpdateAsync(DocumentCompanyViewModel viewModel, string userId)
         {
             DocumentCompany model = await _context.DocumentCompanies.FindAsync(viewModel.Id);
 
@@ -63,10 +63,10 @@ namespace Marechai.Services
             model.CompanyId = viewModel.CompanyId;
             model.Name      = viewModel.Name;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(DocumentCompanyViewModel viewModel)
+        public async Task<int> CreateAsync(DocumentCompanyViewModel viewModel, string userId)
         {
             var model = new DocumentCompany
             {
@@ -74,12 +74,12 @@ namespace Marechai.Services
             };
 
             await _context.DocumentCompanies.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             DocumentCompany item = await _context.DocumentCompanies.FindAsync(id);
 
@@ -88,7 +88,7 @@ namespace Marechai.Services
 
             _context.DocumentCompanies.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

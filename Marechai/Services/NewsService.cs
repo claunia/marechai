@@ -23,10 +23,8 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Marechai.Database;
 using Marechai.Database.Models;
@@ -50,7 +48,8 @@ namespace Marechai.Services
         public async Task<List<NewsViewModel>> GetAsync() => await _context.News.OrderByDescending(n => n.Date).
                                                                             Select(n => new NewsViewModel
                                                                             {
-                                                                                Id = n.Id, Timestamp = n.Date, Type = n.Type, AffectedId = n.AddedId
+                                                                                Id   = n.Id, Timestamp    = n.Date,
+                                                                                Type = n.Type, AffectedId = n.AddedId
                                                                             }).ToListAsync();
 
         public List<NewsViewModel> GetNews()
@@ -124,7 +123,7 @@ namespace Marechai.Services
             return news;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             News item = await _context.News.FindAsync(id);
 
@@ -133,7 +132,7 @@ namespace Marechai.Services
 
             _context.News.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

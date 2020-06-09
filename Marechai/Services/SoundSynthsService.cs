@@ -75,7 +75,7 @@ namespace Marechai.Services
                                                                                       Type        = s.Type
                                                                                   }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(SoundSynthViewModel viewModel)
+        public async Task UpdateAsync(SoundSynthViewModel viewModel, string userId)
         {
             SoundSynth model = await _context.SoundSynths.FindAsync(viewModel.Id);
 
@@ -93,10 +93,10 @@ namespace Marechai.Services
             model.SquareWave = viewModel.SquareWave;
             model.WhiteNoise = viewModel.WhiteNoise;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(SoundSynthViewModel viewModel)
+        public async Task<int> CreateAsync(SoundSynthViewModel viewModel, string userId)
         {
             var model = new SoundSynth
             {
@@ -107,12 +107,12 @@ namespace Marechai.Services
             };
 
             await _context.SoundSynths.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             SoundSynth item = await _context.SoundSynths.FindAsync(id);
 
@@ -121,7 +121,7 @@ namespace Marechai.Services
 
             _context.SoundSynths.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

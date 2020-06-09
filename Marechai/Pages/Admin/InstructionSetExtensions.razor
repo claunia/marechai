@@ -26,8 +26,11 @@
 }
 
 @page "/admin/instruction_set_extensions"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<InstructionSetExtensionsService>
 @inject IStringLocalizer<InstructionSetExtensionsService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Instruction set extensions"]</h3>
 @if (_extensions is null)

@@ -30,11 +30,13 @@ using Blazorise;
 using Marechai.Shared;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Admin.Details
 {
     public partial class MachineFamily
     {
+        AuthenticationState    _authState;
         List<CompanyViewModel> _companies;
         bool                   _creating;
         bool                   _editing;
@@ -60,6 +62,7 @@ namespace Marechai.Pages.Admin.Details
 
             _companies = await CompaniesService.GetAsync();
             _model     = _creating ? new MachineFamilyViewModel() : await Service.GetAsync(Id);
+            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/machine_families/edit/",
@@ -96,9 +99,9 @@ namespace Marechai.Pages.Admin.Details
                 return;
 
             if(_creating)
-                Id = await Service.CreateAsync(_model);
+                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
             else
-                await Service.UpdateAsync(_model);
+                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _editing  = false;
             _creating = false;

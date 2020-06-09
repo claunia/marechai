@@ -46,7 +46,7 @@ namespace Marechai.Services
                                ProcessorId = e.ProcessorId, ExtensionId = e.ExtensionId
                            }).OrderBy(e => e.Extension).ToListAsync();
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             InstructionSetExtensionsByProcessor item = await _context.InstructionSetExtensionsByProcessor.FindAsync(id);
 
@@ -55,10 +55,10 @@ namespace Marechai.Services
 
             _context.InstructionSetExtensionsByProcessor.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(int processorId, int extensionId)
+        public async Task<int> CreateAsync(int processorId, int extensionId, string userId)
         {
             var item = new InstructionSetExtensionsByProcessor
             {
@@ -66,7 +66,7 @@ namespace Marechai.Services
             };
 
             await _context.InstructionSetExtensionsByProcessor.AddAsync(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return item.Id;
         }

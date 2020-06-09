@@ -47,7 +47,7 @@ namespace Marechai.Services
                                MachineId = s.MachineId
                            }).OrderBy(s => s.Type).ThenBy(s => s.Interface).ThenBy(s => s.Capacity).ToListAsync();
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, string userId)
         {
             StorageByMachine item = await _context.StorageByMachine.FindAsync(id);
 
@@ -56,11 +56,11 @@ namespace Marechai.Services
 
             _context.StorageByMachine.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
         public async Task<long> CreateAsync(int machineId, StorageType type, StorageInterface @interface,
-                                            long? capacity)
+                                            long? capacity, string userId)
         {
             var item = new StorageByMachine
             {
@@ -68,7 +68,7 @@ namespace Marechai.Services
             };
 
             await _context.StorageByMachine.AddAsync(item);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return item.Id;
         }

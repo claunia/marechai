@@ -28,10 +28,13 @@
 @page "/admin/instruction_sets/details/{Id:int}"
 @page "/admin/instruction_sets/edit/{Id:int}"
 @page "/admin/instruction_sets/create"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<InstructionSetsService>
 @inject IStringLocalizer<InstructionSetsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 @inject NavigationManager NavigationManager
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <h3>@L["Instruction set details"]</h3>
 <hr />
 

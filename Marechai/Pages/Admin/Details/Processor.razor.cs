@@ -31,27 +31,27 @@ using Blazorise;
 using Marechai.Shared;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Admin.Details
 {
     public partial class Processor
     {
-        bool                   _addingExtension;
-        int?                   _addingExtensionId;
-        List<CompanyViewModel> _companies;
-        bool                   _creating;
-
-        InstructionSetExtensionByProcessorViewModel   _currentInstructionByMachine;
-        bool                                          _deleteInProgress;
-        string                                        _deleteText;
-        string                                        _deleteTitle;
-        bool                                          _editing;
-        Modal                                         _frmDelete;
-        List<Database.Models.InstructionSetExtension> _instructionSetExtensions;
-        List<Database.Models.InstructionSet>          _instructionSets;
-        bool                                          _loaded;
-        ProcessorViewModel                            _model;
-
+        bool                                              _addingExtension;
+        int?                                              _addingExtensionId;
+        AuthenticationState                               _authState;
+        List<CompanyViewModel>                            _companies;
+        bool                                              _creating;
+        InstructionSetExtensionByProcessorViewModel       _currentInstructionByMachine;
+        bool                                              _deleteInProgress;
+        string                                            _deleteText;
+        string                                            _deleteTitle;
+        bool                                              _editing;
+        Modal                                             _frmDelete;
+        List<Database.Models.InstructionSetExtension>     _instructionSetExtensions;
+        List<Database.Models.InstructionSet>              _instructionSets;
+        bool                                              _loaded;
+        ProcessorViewModel                                _model;
         List<InstructionSetExtensionByProcessorViewModel> _processorExtensions;
         bool                                              _prototype;
         bool                                              _savingExtension;
@@ -101,6 +101,7 @@ namespace Marechai.Pages.Admin.Details
             _model                    = _creating ? new ProcessorViewModel() : await Service.GetAsync(Id);
             _instructionSetExtensions = await InstructionSetExtensionsService.GetAsync();
             _processorExtensions      = await InstructionSetExtensionsByProcessorService.GetByProcessor(Id);
+            _authState                = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/processors/edit/",
@@ -289,9 +290,9 @@ namespace Marechai.Pages.Admin.Details
                 return;
 
             if(_creating)
-                Id = await Service.CreateAsync(_model);
+                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
             else
-                await Service.UpdateAsync(_model);
+                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _editing  = false;
             _creating = false;
@@ -350,7 +351,10 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await InstructionSetExtensionsByProcessorService.DeleteAsync(_currentInstructionByMachine.Id);
+            await InstructionSetExtensionsByProcessorService.DeleteAsync(_currentInstructionByMachine.Id,
+                                                                         (await UserManager.
+                                                                              GetUserAsync(_authState.User)).Id);
+
             _processorExtensions = await InstructionSetExtensionsByProcessorService.GetByProcessor(Id);
 
             _deleteInProgress = false;
@@ -398,7 +402,10 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await InstructionSetExtensionsByProcessorService.CreateAsync(Id, _addingExtensionId.Value);
+            await InstructionSetExtensionsByProcessorService.CreateAsync(Id, _addingExtensionId.Value,
+                                                                         (await UserManager.
+                                                                              GetUserAsync(_authState.User)).Id);
+
             _processorExtensions = await InstructionSetExtensionsByProcessorService.GetByProcessor(Id);
 
             _addingExtension   = false;

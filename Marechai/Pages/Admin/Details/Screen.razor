@@ -28,12 +28,14 @@
 @page "/admin/screens/details/{Id:int}"
 @page "/admin/screens/edit/{Id:int}"
 @page "/admin/screens/create"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<ScreensService>
 @inject IStringLocalizer<ScreensService> L
 @inject ResolutionsService ResolutionsService
 @inject NavigationManager NavigationManager
 @inject ResolutionsByScreenService ResolutionsByScreenService
-
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Screen details"]</h3>
 <hr />

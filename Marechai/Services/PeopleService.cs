@@ -56,7 +56,7 @@ namespace Marechai.Services
                 Facebook  = p.Facebook, Photo      = p.Photo, Alias = p.Alias, DisplayName = p.DisplayName
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(PersonViewModel viewModel)
+        public async Task UpdateAsync(PersonViewModel viewModel, string userId)
         {
             Person model = await _context.People.FindAsync(viewModel.Id);
 
@@ -75,10 +75,10 @@ namespace Marechai.Services
             model.Alias            = viewModel.Alias;
             model.DisplayName      = viewModel.DisplayName;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(PersonViewModel viewModel)
+        public async Task<int> CreateAsync(PersonViewModel viewModel, string userId)
         {
             var model = new Person
             {
@@ -89,12 +89,12 @@ namespace Marechai.Services
             };
 
             await _context.People.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             Person item = await _context.People.FindAsync(id);
 
@@ -103,7 +103,7 @@ namespace Marechai.Services
 
             _context.People.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

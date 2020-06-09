@@ -38,6 +38,7 @@ using Marechai.Shared;
 using Marechai.ViewModels;
 using Markdig;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using SkiaSharp;
 using Svg.Skia;
@@ -48,6 +49,7 @@ namespace Marechai.Pages.Admin.Details
     {
         const int                   _maxUploadSize = 5 * 1048576;
         bool                        _addingDescription;
+        AuthenticationState         _authState;
         List<CompanyViewModel>      _companies;
         List<Iso31661Numeric>       _countries;
         bool                        _creating;
@@ -118,6 +120,7 @@ namespace Marechai.Pages.Admin.Details
             _logos                  = await CompanyLogosService.GetByCompany(Id);
             _description            = await Service.GetDescriptionAsync(Id);
             _selectedDescriptionTab = "markdown";
+            _authState              = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/companies/edit/",
@@ -246,9 +249,9 @@ namespace Marechai.Pages.Admin.Details
                 return;
 
             if(_creating)
-                Id = await Service.CreateAsync(_model);
+                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
             else
-                await Service.UpdateAsync(_model);
+                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _editing  = false;
             _creating = false;
@@ -325,7 +328,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await CompanyLogosService.DeleteAsync(_currentLogo.Id);
+            await CompanyLogosService.DeleteAsync(_currentLogo.Id,
+                                                  (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _logos = await CompanyLogosService.GetByCompany(Id);
 
             _deleteInProgress = false;
@@ -360,7 +365,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await CompanyLogosService.ChangeYearAsync(_currentLogo.Id, _unknownLogoYear ? null : _currentLogoYear);
+            await CompanyLogosService.ChangeYearAsync(_currentLogo.Id, _unknownLogoYear ? null : _currentLogoYear,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _logos = await CompanyLogosService.GetByCompany(Id);
 
             _yearChangeInProgress = false;
@@ -589,7 +596,8 @@ namespace Marechai.Pages.Admin.Details
                 return;
             }
 
-            await CompanyLogosService.CreateAsync(Id, guid, _unknownLogoYear ? null : _currentLogoYear);
+            await CompanyLogosService.CreateAsync(Id, guid, _unknownLogoYear ? null : _currentLogoYear,
+                                                  (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _logos = await CompanyLogosService.GetByCompany(Id);
 
@@ -652,7 +660,9 @@ namespace Marechai.Pages.Admin.Details
 
             _description.Html = Markdown.ToHtml(_description.Markdown, _pipeline);
 
-            await Service.CreateOrUpdateDescriptionAsync(Id, _description);
+            await Service.CreateOrUpdateDescriptionAsync(Id, _description,
+                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _addingDescription = false;
             await CancelDescription();
         }

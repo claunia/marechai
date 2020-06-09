@@ -28,10 +28,13 @@
 @page "/admin/sound_synths/details/{Id:int}"
 @page "/admin/sound_synths/edit/{Id:int}"
 @page "/admin/sound_synths/create"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<SoundSynthsService>
 @inject IStringLocalizer<SoundSynthsService> L
 @inject CompaniesService CompaniesService
 @inject NavigationManager NavigationManager
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Sound synthesizer details"]</h3>
 <hr />

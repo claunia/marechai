@@ -86,7 +86,7 @@ namespace Marechai.Services
                                                                                    Country = c.Country.Name
                                                                                }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(CompanyViewModel viewModel)
+        public async Task UpdateAsync(CompanyViewModel viewModel, string userId)
         {
             Company model = await _context.Companies.FindAsync(viewModel.Id);
 
@@ -107,10 +107,10 @@ namespace Marechai.Services
             model.Province   = viewModel.Province;
             model.PostalCode = viewModel.PostalCode;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(CompanyViewModel viewModel)
+        public async Task<int> CreateAsync(CompanyViewModel viewModel, string userId)
         {
             var model = new Company
             {
@@ -122,7 +122,7 @@ namespace Marechai.Services
             };
 
             await _context.Companies.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
@@ -186,7 +186,7 @@ namespace Marechai.Services
                                                                                       Name = c.Name
                                                                                   }).ToListAsync();
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             Company item = await _context.Companies.FindAsync(id);
 
@@ -195,7 +195,7 @@ namespace Marechai.Services
 
             _context.Companies.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
         public async Task<CompanyDescriptionViewModel> GetDescriptionAsync(int id) => await _context.
@@ -219,7 +219,8 @@ namespace Marechai.Services
                                                                                                            }).
                                                                                             FirstOrDefaultAsync();
 
-        public async Task<int> CreateOrUpdateDescriptionAsync(int id, CompanyDescriptionViewModel description)
+        public async Task<int> CreateOrUpdateDescriptionAsync(int id, CompanyDescriptionViewModel description,
+                                                              string userId)
         {
             CompanyDescription current = await _context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id);
 
@@ -238,7 +239,7 @@ namespace Marechai.Services
                 current.Text = description.Markdown;
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return current.Id;
         }

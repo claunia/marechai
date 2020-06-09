@@ -31,6 +31,7 @@ using Blazorise;
 using Marechai.Shared;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Admin.Details
 {
@@ -38,6 +39,7 @@ namespace Marechai.Pages.Admin.Details
     {
         bool                              _addingResolution;
         int?                              _addingResolutionId;
+        AuthenticationState               _authState;
         bool                              _creating;
         ResolutionByScreenViewModel       _currentResolution;
         bool                              _deleteInProgress;
@@ -74,6 +76,7 @@ namespace Marechai.Pages.Admin.Details
             _resolutions       = await ResolutionsService.GetAsync();
             _model             = _creating ? new ScreenViewModel() : await Service.GetAsync(Id);
             _screenResolutions = await ResolutionsByScreenService.GetByScreen(Id);
+            _authState         = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/screens/edit/",
@@ -139,9 +142,9 @@ namespace Marechai.Pages.Admin.Details
                 return;
 
             if(_creating)
-                Id = await Service.CreateAsync(_model);
+                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
             else
-                await Service.UpdateAsync(_model);
+                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _editing  = false;
             _creating = false;
@@ -180,7 +183,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await ResolutionsByScreenService.DeleteAsync(_currentResolution.Id);
+            await ResolutionsByScreenService.DeleteAsync(_currentResolution.Id,
+                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _screenResolutions = await ResolutionsByScreenService.GetByScreen(Id);
 
             _deleteInProgress = false;
@@ -228,7 +233,9 @@ namespace Marechai.Pages.Admin.Details
             // Yield thread to let UI to update
             await Task.Yield();
 
-            await ResolutionsByScreenService.CreateAsync(_addingResolutionId.Value, Id);
+            await ResolutionsByScreenService.CreateAsync(_addingResolutionId.Value, Id,
+                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
+
             _screenResolutions = await ResolutionsByScreenService.GetByScreen(Id);
 
             _addingResolution   = false;

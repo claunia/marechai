@@ -26,8 +26,11 @@
 }
 
 @page "/admin/gpus"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<GpusService>
 @inject IStringLocalizer<GpusService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Graphics Processing Units"]</h3>
 @if (_gpus is null)

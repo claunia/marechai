@@ -56,7 +56,7 @@ namespace Marechai.Services
                 DisplayName = d.DisplayName, PersonId = d.PersonId
             }).FirstOrDefaultAsync();
 
-        public async Task UpdateAsync(DocumentPersonViewModel viewModel)
+        public async Task UpdateAsync(DocumentPersonViewModel viewModel, string userId)
         {
             DocumentPerson model = await _context.DocumentPeople.FindAsync(viewModel.Id);
 
@@ -69,10 +69,10 @@ namespace Marechai.Services
             model.DisplayName = viewModel.DisplayName;
             model.PersonId    = viewModel.PersonId;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<int> CreateAsync(DocumentPersonViewModel viewModel)
+        public async Task<int> CreateAsync(DocumentPersonViewModel viewModel, string userId)
         {
             var model = new DocumentPerson
             {
@@ -81,12 +81,12 @@ namespace Marechai.Services
             };
 
             await _context.AddAsync(model);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
 
             return model.Id;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, string userId)
         {
             DocumentPerson item = await _context.DocumentPeople.FindAsync(id);
 
@@ -95,7 +95,7 @@ namespace Marechai.Services
 
             _context.DocumentPeople.Remove(item);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesWithUserAsync(userId);
         }
     }
 }

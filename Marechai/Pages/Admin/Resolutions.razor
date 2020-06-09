@@ -26,8 +26,11 @@
 }
 
 @page "/admin/resolutions"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<ResolutionsService>
 @inject IStringLocalizer<ResolutionsService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Resolutions"]</h3>
 @if (_resolutions is null)

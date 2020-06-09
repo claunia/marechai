@@ -26,8 +26,11 @@
 }
 
 @page "/admin/screens"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<ScreensService>
 @inject IStringLocalizer<ScreensService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Screens"]</h3>
 @if (_screens is null)
