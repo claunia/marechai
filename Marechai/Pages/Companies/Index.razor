@@ -43,7 +43,7 @@
 {
     <p align="center">
         <b>@string.Format(L["Companies founded in {0}."], L[_countryName])</b>
-        if (File.Exists(System.IO.Path.Combine(Host.WebRootPath, "assets/flags/countries", CountryId + ".svg")))
+        @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", CountryId + ".svg")))
         {
         <picture>
             <source type="image/svg+xml" srcset="/assets/flags/countries/@(CountryId).svg">
@@ -76,8 +76,7 @@
             <tr>
                 <td class="text-right">
             <a href="/company/@company.Id">
-                @if (company.LastLogo != null &&
-                     File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
+                @if (company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
                 {
                     <picture>
                         <source type="image/svg+xml" srcset="/assets/logos/@(company.LastLogo).svg">
