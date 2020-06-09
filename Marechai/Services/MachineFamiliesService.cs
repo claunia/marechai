@@ -43,7 +43,7 @@ namespace Marechai.Services
                            Select(m => new MachineFamilyViewModel
                            {
                                Id = m.Id, Company = m.Company.Name, Name = m.Name
-                           }).ToListAsync();
+                           }).OrderBy(m => m.Name).ToListAsync();
 
         public async Task<MachineFamilyViewModel> GetAsync(int id) =>
             await _context.MachineFamilies.Where(f => f.Id == id).Select(m => new MachineFamilyViewModel
