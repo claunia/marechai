@@ -370,7 +370,7 @@
                 </Select>
             </Field>
             <Field>
-                <FieldLabel>@L["Nominal speed (MHz)"]</FieldLabel>
+                <FieldLabel>@L["Nominal speed (Hz)"]</FieldLabel>
                 <Check TValue="bool" @bind-Checked="@_unknownMemorySpeed">@L["Unknown (memory by machine speed)"]</Check>
                 @if (!_unknownMemorySpeed)
                 {
@@ -445,7 +445,7 @@
                         <td>
                             @if (item.Speed.HasValue)
                             {
-                                @string.Format(L["{0:F3} MHz"], item.Speed)
+                                @string.Format(L["{0:F3} Hz"], item.Speed)
                             }
                             else
                             {

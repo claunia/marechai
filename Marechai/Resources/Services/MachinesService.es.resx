@@ -582,6 +582,10 @@
     <value>Velocidad nominal (MHz)</value>
     <comment>Nominal speed (MHz)</comment>
   </data>
+  <data name="Nominal speed (Hz)" xml:space="preserve">
+    <value>Velocidad nominal (Hz)</value>
+    <comment>Nominal speed (Hz)</comment>
+  </data>
   <data name="Please enter a valid speed for this processor." xml:space="preserve">
     <value>Por favor introduce una velocidad válida para este procesador.</value>
     <comment>Please enter a valid speed for this processor.</comment>
@@ -593,6 +597,10 @@
   <data name="{0:F3} MHz" xml:space="preserve">
     <value>{0:F3} MHz</value>
     <comment>{0:F3} MHz</comment>
+  </data>
+  <data name="{0:F3} Hz" xml:space="preserve">
+    <value>{0:F3} Hz</value>
+    <comment>{0:F3} Hz</comment>
   </data>
   <data name="Memory belonging to this machine" xml:space="preserve">
     <value>Memoria perteneciente a esta máquina</value>
