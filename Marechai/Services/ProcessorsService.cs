@@ -49,7 +49,7 @@ namespace Marechai.Services
                 SimdSize = p.SimdSize, L1Instruction = p.L1Instruction, L1Data = p.L1Data, L2 = p.L2,
                 L3 = p.L3, InstructionSet = p.InstructionSet.Name, Id = p.Id,
                 InstructionSetExtensions = p.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
-            }).ToListAsync();
+            }).OrderBy(p => p.CompanyName).ThenBy(p => p.Name).ToListAsync();
 
         public async Task<List<ProcessorViewModel>> GetByMachineAsync(int machineId) =>
             await _context.ProcessorsByMachine.Where(p => p.MachineId == machineId).Select(p => new ProcessorViewModel
@@ -66,7 +66,7 @@ namespace Marechai.Services
                 Id = p.Processor.Id,
                 InstructionSetExtensions =
                     p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
-            }).ToListAsync();
+            }).OrderBy(p => p.CompanyName).ThenBy(p => p.Name).ToListAsync();
 
         public async Task<ProcessorViewModel> GetAsync(int id) =>
             await _context.Processors.Where(p => p.Id == id).Select(p => new ProcessorViewModel
