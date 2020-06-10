@@ -141,6 +141,7 @@ namespace Marechai.Pages.Admin.Details
             _machineScreens  = await ScreensByMachineService.GetByMachine(Id);
             _photos          = await MachinePhotosService.GetGuidsByMachineAsync(Id);
             _authState       = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _machineSound    = await SoundSynthsByMachineService.GetByMachine(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/machines/edit/",
