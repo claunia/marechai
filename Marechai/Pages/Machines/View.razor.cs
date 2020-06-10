@@ -34,13 +34,26 @@ namespace Marechai.Pages.Machines
     public partial class View
     {
         bool[]           _gpuVisible;
+        int              _id;
         bool             _loaded;
         MachineViewModel _machine;
         List<Guid>       _photos;
         bool[]           _processorVisible;
         bool[]           _soundVisible;
+
         [Parameter]
-        public int Id { get; set; }
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                if(_id == value)
+                    return;
+
+                _id     = value;
+                _loaded = false;
+            }
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

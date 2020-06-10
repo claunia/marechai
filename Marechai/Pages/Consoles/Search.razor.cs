@@ -35,11 +35,36 @@ namespace Marechai.Pages.Consoles
         char?                  _character;
         List<MachineViewModel> _consoles;
         bool                   _loaded;
-        [Parameter]
-        public int? Year { get; set; }
+        string                 _startingCharacter;
+        int?                   _year;
 
         [Parameter]
-        public string StartingCharacter { get; set; }
+        public int? Year
+        {
+            get => _year;
+            set
+            {
+                if(_year == value)
+                    return;
+
+                _year   = value;
+                _loaded = false;
+            }
+        }
+
+        [Parameter]
+        public string StartingCharacter
+        {
+            get => _startingCharacter;
+            set
+            {
+                if(_startingCharacter == value)
+                    return;
+
+                _startingCharacter = value;
+                _loaded            = false;
+            }
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

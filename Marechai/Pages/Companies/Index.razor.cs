@@ -34,13 +34,38 @@ namespace Marechai.Pages.Companies
     {
         char?                  _character;
         List<CompanyViewModel> _companies;
+        int?                   _countryId;
         string                 _countryName;
         bool                   _loaded;
-        [Parameter]
-        public int? CountryId { get; set; }
+        string                 _startingCharacter;
 
         [Parameter]
-        public string StartingCharacter { get; set; }
+        public int? CountryId
+        {
+            get => _countryId;
+            set
+            {
+                if(_countryId == value)
+                    return;
+
+                _countryId = value;
+                _loaded    = false;
+            }
+        }
+
+        [Parameter]
+        public string StartingCharacter
+        {
+            get => _startingCharacter;
+            set
+            {
+                if(_startingCharacter == value)
+                    return;
+
+                _startingCharacter = value;
+                _loaded            = false;
+            }
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

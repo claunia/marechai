@@ -40,11 +40,24 @@ namespace Marechai.Pages.Companies
         List<Machine>     _computers;
         List<Machine>     _consoles;
         string            _description;
+        int               _id;
         bool              _loaded;
         List<CompanyLogo> _logos;
         Company           _soldTo;
+
         [Parameter]
-        public int Id { get; set; }
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                if(_id == value)
+                    return;
+
+                _id     = value;
+                _loaded = false;
+            }
+        }
 
         public bool ComputersCollapsed { get; set; } = true;
         public bool ConsolesCollapsed  { get; set; } = true;
