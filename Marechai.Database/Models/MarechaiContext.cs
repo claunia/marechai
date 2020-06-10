@@ -98,6 +98,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<Audit>                               Audit                               { get; set; }
         public virtual DbSet<Iso4217>                             Iso4217                             { get; set; }
         public virtual DbSet<CurrencyInflation>                   CurrenciesInflation                 { get; set; }
+        public virtual DbSet<CurrencyPegging>                     CurrenciesPegging                   { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1564,6 +1565,12 @@ namespace Marechai.Database.Models
             modelBuilder.Entity<CurrencyInflation>(entity =>
             {
                 entity.HasIndex(d => d.Year);
+            });
+
+            modelBuilder.Entity<CurrencyPegging>(entity =>
+            {
+                entity.HasIndex(d => d.Start);
+                entity.HasIndex(d => d.End);
             });
         }
     }

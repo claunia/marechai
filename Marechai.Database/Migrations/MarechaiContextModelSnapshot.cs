@@ -497,6 +497,37 @@ namespace Marechai.Database.Migrations
                 b.ToTable("CurrenciesInflation");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.CurrencyPegging", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("DestinationCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime?>("End").HasColumnType("datetime(6)");
+
+                b.Property<float>("Ratio").HasColumnType("float");
+
+                b.Property<string>("SourceCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("Start").HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("DestinationCode");
+
+                b.HasIndex("End");
+
+                b.HasIndex("SourceCode");
+
+                b.HasIndex("Start");
+
+                b.ToTable("CurrenciesPegging");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Document", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
@@ -2476,6 +2507,15 @@ namespace Marechai.Database.Migrations
             modelBuilder.Entity("Marechai.Database.Models.CurrencyInflation", b =>
             {
                 b.HasOne("Marechai.Database.Models.Iso4217", "Currency").WithMany().HasForeignKey("CurrencyCode").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.CurrencyPegging", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Iso4217", "Destination").WithMany().HasForeignKey("DestinationCode").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.Iso4217", "Source").WithMany().HasForeignKey("SourceCode").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
