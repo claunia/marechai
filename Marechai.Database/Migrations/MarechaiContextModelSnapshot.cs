@@ -474,6 +474,29 @@ namespace Marechai.Database.Migrations
                 b.ToTable("company_logos");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.CurrencyInflation", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("CurrencyCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+
+                b.Property<float>("Inflation").HasColumnType("float");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<uint>("Year").HasColumnType("int unsigned");
+
+                b.HasKey("Id");
+
+                b.HasIndex("CurrencyCode");
+
+                b.HasIndex("Year");
+
+                b.ToTable("CurrenciesInflation");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Document", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
@@ -2448,6 +2471,12 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("Logos").HasForeignKey("CompanyId").
                   HasConstraintName("fk_company_logos_company1").IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.CurrencyInflation", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Iso4217", "Currency").WithMany().HasForeignKey("CurrencyCode").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Document", b =>
