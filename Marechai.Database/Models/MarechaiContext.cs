@@ -25,15 +25,21 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Marechai.Database.Schemas;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
 
 namespace Marechai.Database.Models
 {
     public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
+        readonly ValueConverter<string, byte[]> hexToBytesConverter =
+            new ValueConverter<string, byte[]>(v => HexStringToBytesConverter.StringToHex(v),
+                                               v => HexStringToBytesConverter.HexToString(v));
+
         public MarechaiContext() { }
 
         public MarechaiContext(DbContextOptions<MarechaiContext> options) : base(options) { }
@@ -100,6 +106,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<CurrencyInflation>                   CurrenciesInflation                 { get; set; }
         public virtual DbSet<CurrencyPegging>                     CurrenciesPegging                   { get; set; }
         public virtual DbSet<DumpHardware>                        DumpHardwares                       { get; set; }
+        public virtual DbSet<DbFile>                              Files                               { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1584,6 +1591,28 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.SoftwareName);
                 entity.HasIndex(e => e.SoftwareVersion);
                 entity.HasIndex(e => e.SoftwareOperatingSystem);
+            });
+
+            modelBuilder.Entity<DbFile>(entity =>
+            {
+                entity.Property(e => e.Md5).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha1).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha256).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha3).HasConversion(hexToBytesConverter);
+
+                entity.HasIndex(e => e.Size);
+                entity.HasIndex(e => e.Md5);
+                entity.HasIndex(e => e.Sha1);
+                entity.HasIndex(e => e.Sha256);
+                entity.HasIndex(e => e.Sha3);
+                entity.HasIndex(e => e.Spamsum);
+                entity.HasIndex(e => e.Mime);
+                entity.HasIndex(e => e.Magic);
+                entity.HasIndex(e => e.AccoustId);
+                entity.HasIndex(e => e.Infected);
+                entity.HasIndex(e => e.Malware);
+                entity.HasIndex(e => e.Hack);
+                entity.HasIndex(e => e.HackGroup);
             });
         }
     }
