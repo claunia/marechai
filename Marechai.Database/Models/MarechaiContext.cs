@@ -108,6 +108,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<DumpHardware>                        DumpHardwares                       { get; set; }
         public virtual DbSet<DbFile>                              Files                               { get; set; }
         public virtual DbSet<FileDataStream>                      FileDataStreams                     { get; set; }
+        public virtual DbSet<Filesystem>                          Filesystems                         { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1620,6 +1621,21 @@ namespace Marechai.Database.Models
             {
                 entity.HasIndex(d => d.Name);
                 entity.HasIndex(d => d.Size);
+            });
+
+            modelBuilder.Entity<Filesystem>(entity =>
+            {
+                entity.HasIndex(d => d.Type);
+                entity.HasIndex(d => d.CreationDate);
+                entity.HasIndex(d => d.ModificationDate);
+                entity.HasIndex(d => d.BackupDate);
+                entity.HasIndex(d => d.Serial);
+                entity.HasIndex(d => d.Label);
+                entity.HasIndex(d => d.SystemIdentifier);
+                entity.HasIndex(d => d.VolumeSetIdentifier);
+                entity.HasIndex(d => d.PublisherIdentifier);
+                entity.HasIndex(d => d.DataPreparerIdentifier);
+                entity.HasIndex(d => d.ApplicationIdentifier);
             });
         }
     }

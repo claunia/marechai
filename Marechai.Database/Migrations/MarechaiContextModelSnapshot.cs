@@ -815,6 +815,77 @@ namespace Marechai.Database.Migrations
                 b.ToTable("FileDataStreams");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.Filesystem", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<string>("ApplicationIdentifier").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime?>("BackupDate").HasColumnType("datetime(6)");
+
+                b.Property<bool>("Bootable").HasColumnType("bit(1)");
+
+                b.Property<int>("ClusterSize").HasColumnType("int");
+
+                b.Property<ulong>("Clusters").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<DateTime?>("CreationDate").HasColumnType("datetime(6)");
+
+                b.Property<string>("DataPreparerIdentifier").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime?>("EffectiveDate").HasColumnType("datetime(6)");
+
+                b.Property<DateTime?>("ExpirationDate").HasColumnType("datetime(6)");
+
+                b.Property<ulong?>("Files").HasColumnType("bigint unsigned");
+
+                b.Property<ulong?>("FreeClusters").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Label").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime?>("ModificationDate").HasColumnType("datetime(6)");
+
+                b.Property<string>("PublisherIdentifier").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("Serial").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("SystemIdentifier").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("Type").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<string>("VolumeSetIdentifier").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ApplicationIdentifier");
+
+                b.HasIndex("BackupDate");
+
+                b.HasIndex("CreationDate");
+
+                b.HasIndex("DataPreparerIdentifier");
+
+                b.HasIndex("Label");
+
+                b.HasIndex("ModificationDate");
+
+                b.HasIndex("PublisherIdentifier");
+
+                b.HasIndex("Serial");
+
+                b.HasIndex("SystemIdentifier");
+
+                b.HasIndex("Type");
+
+                b.HasIndex("VolumeSetIdentifier");
+
+                b.ToTable("Filesystems");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Forbidden", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
