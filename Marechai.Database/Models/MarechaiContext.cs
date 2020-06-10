@@ -109,6 +109,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<DbFile>                              Files                               { get; set; }
         public virtual DbSet<FileDataStream>                      FileDataStreams                     { get; set; }
         public virtual DbSet<Filesystem>                          Filesystems                         { get; set; }
+        public virtual DbSet<LogicalPartition>                    LogicalPartitions                   { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1636,6 +1637,23 @@ namespace Marechai.Database.Models
                 entity.HasIndex(d => d.PublisherIdentifier);
                 entity.HasIndex(d => d.DataPreparerIdentifier);
                 entity.HasIndex(d => d.ApplicationIdentifier);
+            });
+
+            modelBuilder.Entity<LogicalPartition>(entity =>
+            {
+                entity.HasIndex(e => e.Description);
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.Type);
+                entity.HasIndex(e => e.Scheme);
+                entity.HasIndex(e => e.FirstSector);
+                entity.HasIndex(e => e.LastSector);
+            });
+
+            modelBuilder.Entity<FilesystemsByLogicalPartition>(entity =>
+            {
+                entity.HasOne(d => d.Partition).WithMany(p => p.Filesystems).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.Filesystem).WithMany(p => p.Partitions).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

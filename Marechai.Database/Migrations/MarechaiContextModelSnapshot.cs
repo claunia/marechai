@@ -886,6 +886,27 @@ namespace Marechai.Database.Migrations
                 b.ToTable("Filesystems");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.FilesystemsByLogicalPartition", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("FilesystemId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("PartitionId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("FilesystemId");
+
+                b.HasIndex("PartitionId");
+
+                b.ToTable("FilesystemsByLogicalPartition");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Forbidden", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -1215,6 +1236,47 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("Referer").HasName("idx_log_referer");
 
                 b.ToTable("log");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.LogicalPartition", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("Description").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ulong>("FirstSector").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("LastSector").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Name").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("Scheme").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<uint>("Sequence").HasColumnType("int unsigned");
+
+                b.Property<ulong>("Size").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Type").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Description");
+
+                b.HasIndex("FirstSector");
+
+                b.HasIndex("LastSector");
+
+                b.HasIndex("Name");
+
+                b.HasIndex("Scheme");
+
+                b.HasIndex("Type");
+
+                b.ToTable("LogicalPartitions");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Machine", b =>
@@ -2772,6 +2834,15 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.DbFile", "File").WithMany().HasForeignKey("FileId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.FilesystemsByLogicalPartition", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Filesystem", "Filesystem").WithMany("Partitions").
+                  HasForeignKey("FilesystemId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.LogicalPartition", "Partition").WithMany("Filesystems").
+                  HasForeignKey("PartitionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Gpu", b =>
