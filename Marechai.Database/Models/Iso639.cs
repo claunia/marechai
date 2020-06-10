@@ -23,6 +23,7 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -31,6 +32,11 @@ namespace Marechai.Database.Models
     /// <summary>ISO-639 codes</summary>
     public class Iso639
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedOn { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime UpdatedOn { get; set; }
+
         [Column(TypeName = "char(3)"), Key, Required]
         public string Id { get; set; }
         [Column(TypeName = "char(3)")]

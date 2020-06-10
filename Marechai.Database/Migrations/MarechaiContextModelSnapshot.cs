@@ -803,8 +803,12 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<short>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("smallint(3)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(64)").
                   HasMaxLength(64);
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
@@ -817,12 +821,16 @@ namespace Marechai.Database.Migrations
             {
                 b.Property<string>("Code").HasColumnType("varchar(3) CHARACTER SET utf8mb4").HasMaxLength(3);
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<byte?>("MinorUnits").HasColumnType("tinyint unsigned");
 
                 b.Property<string>("Name").IsRequired().HasColumnType("varchar(150) CHARACTER SET utf8mb4").
                   HasMaxLength(150);
 
                 b.Property<short>("Numeric").HasColumnType("smallint(3)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.Property<DateTime?>("Withdrawn").HasColumnType("datetime(6)");
 
@@ -841,6 +849,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Comment").HasColumnType("varchar(150)");
 
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
                 b.Property<string>("Part1").HasColumnType("char(2)");
 
                 b.Property<string>("Part2B").HasColumnType("char(3)");
@@ -853,6 +863,8 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Scope").IsRequired().HasColumnType("char(1)");
 
                 b.Property<string>("Type").IsRequired().HasColumnType("char(1)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 

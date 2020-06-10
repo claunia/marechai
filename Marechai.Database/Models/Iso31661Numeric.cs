@@ -23,14 +23,21 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models
 {
     public class Iso31661Numeric
     {
         public Iso31661Numeric() => Companies = new HashSet<Company>();
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedOn { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime UpdatedOn { get; set; }
 
         [Required]
         public short Id { get; set; }
