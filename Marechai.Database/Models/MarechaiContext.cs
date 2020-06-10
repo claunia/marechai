@@ -99,6 +99,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<Iso4217>                             Iso4217                             { get; set; }
         public virtual DbSet<CurrencyInflation>                   CurrenciesInflation                 { get; set; }
         public virtual DbSet<CurrencyPegging>                     CurrenciesPegging                   { get; set; }
+        public virtual DbSet<DumpHardware>                        DumpHardwares                       { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1571,6 +1572,18 @@ namespace Marechai.Database.Models
             {
                 entity.HasIndex(d => d.Start);
                 entity.HasIndex(d => d.End);
+            });
+
+            modelBuilder.Entity<DumpHardware>(entity =>
+            {
+                entity.HasIndex(e => e.Manufacturer);
+                entity.HasIndex(e => e.Model);
+                entity.HasIndex(e => e.Revision);
+                entity.HasIndex(e => e.Firmware);
+                entity.HasIndex(e => e.Serial);
+                entity.HasIndex(e => e.SoftwareName);
+                entity.HasIndex(e => e.SoftwareVersion);
+                entity.HasIndex(e => e.SoftwareOperatingSystem);
             });
         }
     }

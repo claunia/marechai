@@ -3,14 +3,16 @@ using System;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Marechai.Database.Migrations
 {
     [DbContext(typeof(MarechaiContext))]
-    partial class MarechaiContextModelSnapshot : ModelSnapshot
+    [Migration("20200610205411_AddDumpHardware")]
+    partial class AddDumpHardware
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
