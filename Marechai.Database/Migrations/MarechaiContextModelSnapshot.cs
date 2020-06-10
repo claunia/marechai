@@ -813,6 +813,28 @@ namespace Marechai.Database.Migrations
                 b.ToTable("iso3166_1_numeric");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.Iso4217", b =>
+            {
+                b.Property<string>("Code").HasColumnType("varchar(3) CHARACTER SET utf8mb4").HasMaxLength(3);
+
+                b.Property<byte?>("MinorUnits").HasColumnType("tinyint unsigned");
+
+                b.Property<string>("Name").IsRequired().HasColumnType("varchar(150) CHARACTER SET utf8mb4").
+                  HasMaxLength(150);
+
+                b.Property<short>("Numeric").HasColumnType("smallint(3)");
+
+                b.Property<DateTime?>("Withdrawn").HasColumnType("datetime(6)");
+
+                b.HasKey("Code");
+
+                b.HasIndex("Numeric");
+
+                b.HasIndex("Withdrawn");
+
+                b.ToTable("Iso4217");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Iso639", b =>
             {
                 b.Property<string>("Id").HasColumnType("char(3)");

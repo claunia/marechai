@@ -96,6 +96,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<StorageByMachine>                    StorageByMachine                    { get; set; }
         public virtual DbSet<StorageByOwnedMachine>               StorageByOwnedMachine               { get; set; }
         public virtual DbSet<Audit>                               Audit                               { get; set; }
+        public virtual DbSet<Iso4217>                             Iso4217                             { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1551,6 +1552,12 @@ namespace Marechai.Database.Models
             {
                 entity.HasIndex(d => d.Table);
                 entity.HasIndex(d => d.Type);
+            });
+
+            modelBuilder.Entity<Iso4217>(entity =>
+            {
+                entity.HasIndex(d => d.Numeric);
+                entity.HasIndex(d => d.Withdrawn);
             });
         }
     }
