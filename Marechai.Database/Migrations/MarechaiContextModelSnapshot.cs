@@ -790,6 +790,31 @@ namespace Marechai.Database.Migrations
                 b.ToTable("DumpHardwares");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.FileDataStream", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("FileId").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Name").HasColumnType("varchar(255) CHARACTER SET utf8mb4").HasMaxLength(255);
+
+                b.Property<ulong>("Size").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("FileId");
+
+                b.HasIndex("Name");
+
+                b.HasIndex("Size");
+
+                b.ToTable("FileDataStreams");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Forbidden", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -2670,6 +2695,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MachineFamily", "MachineFamily").WithMany("Documents").
                   HasForeignKey("MachineFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.FileDataStream", b =>
+            {
+                b.HasOne("Marechai.Database.Models.DbFile", "File").WithMany().HasForeignKey("FileId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Gpu", b =>

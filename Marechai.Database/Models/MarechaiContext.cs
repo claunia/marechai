@@ -107,6 +107,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<CurrencyPegging>                     CurrenciesPegging                   { get; set; }
         public virtual DbSet<DumpHardware>                        DumpHardwares                       { get; set; }
         public virtual DbSet<DbFile>                              Files                               { get; set; }
+        public virtual DbSet<FileDataStream>                      FileDataStreams                     { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1613,6 +1614,12 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.Malware);
                 entity.HasIndex(e => e.Hack);
                 entity.HasIndex(e => e.HackGroup);
+            });
+
+            modelBuilder.Entity<FileDataStream>(entity =>
+            {
+                entity.HasIndex(d => d.Name);
+                entity.HasIndex(d => d.Size);
             });
         }
     }
