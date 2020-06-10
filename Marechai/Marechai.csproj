@@ -162,6 +162,10 @@
     <Content Include="..\TODO.md">
       <Link>TODO.md</Link>
     </Content>
+    <Content Update="wwwroot\js\ga.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Delete.cshtml" />
