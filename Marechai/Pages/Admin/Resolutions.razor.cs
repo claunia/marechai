@@ -36,6 +36,7 @@ namespace Marechai.Pages.Admin
     {
         bool                      _deleteInProgress;
         Modal                     _frmDelete;
+        bool                      _loaded;
         ResolutionViewModel       _resolution;
         List<ResolutionViewModel> _resolutions;
 
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _resolution = null;
 
-        protected override async Task OnInitializedAsync() => _resolutions = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _resolutions = await Service.GetAsync();
+            _loaded      = true;
+            StateHasChanged();
+        }
     }
 }

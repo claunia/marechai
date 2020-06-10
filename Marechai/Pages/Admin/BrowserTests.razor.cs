@@ -31,8 +31,17 @@ namespace Marechai.Pages.Admin
 {
     public partial class BrowserTests
     {
+        bool              _loaded;
         List<BrowserTest> _tests;
 
-        protected override async Task OnInitializedAsync() => _tests = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _tests  = await Service.GetAsync();
+            _loaded = true;
+            StateHasChanged();
+        }
     }
 }

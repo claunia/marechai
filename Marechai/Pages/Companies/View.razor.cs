@@ -49,8 +49,11 @@ namespace Marechai.Pages.Companies
         public bool ComputersCollapsed { get; set; } = true;
         public bool ConsolesCollapsed  { get; set; } = true;
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if(_loaded)
+                return;
+
             if(Id <= 0)
             {
                 _loaded = true;
@@ -69,6 +72,7 @@ namespace Marechai.Pages.Companies
             _logos       = await CompanyLogosService.GetByCompany(Id);
 
             _loaded = true;
+            StateHasChanged();
         }
 
         void CollapseComputers()

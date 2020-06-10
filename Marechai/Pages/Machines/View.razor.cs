@@ -42,8 +42,11 @@ namespace Marechai.Pages.Machines
         [Parameter]
         public int Id { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if(_loaded)
+                return;
+
             _machine = await Service.GetMachine(Id);
 
             _processorVisible = new bool[_machine.Processors.Count];
@@ -52,6 +55,7 @@ namespace Marechai.Pages.Machines
             _photos           = await MachinePhotosService.GetGuidsByMachineAsync(Id);
 
             _loaded = true;
+            StateHasChanged();
         }
     }
 }

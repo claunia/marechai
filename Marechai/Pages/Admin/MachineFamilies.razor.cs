@@ -36,6 +36,7 @@ namespace Marechai.Pages.Admin
     {
         bool                         _deleteInProgress;
         Modal                        _frmDelete;
+        bool                         _loaded;
         List<MachineFamilyViewModel> _machineFamilies;
         MachineFamilyViewModel       _machineFamily;
 
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _machineFamily = null;
 
-        protected override async Task OnInitializedAsync() => _machineFamilies = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _machineFamilies = await Service.GetAsync();
+            _loaded          = true;
+            StateHasChanged();
+        }
     }
 }

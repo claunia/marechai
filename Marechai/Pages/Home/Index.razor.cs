@@ -30,8 +30,17 @@ namespace Marechai.Pages.Home
 {
     public partial class Index
     {
+        bool                _loaded;
         List<NewsViewModel> _news;
 
-        protected override void OnInitialized() => _news = Service.GetNews();
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _news   = Service.GetNews();
+            _loaded = true;
+            StateHasChanged();
+        }
     }
 }

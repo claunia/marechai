@@ -36,6 +36,7 @@ namespace Marechai.Pages.Admin
     {
         bool                  _deleteInProgress;
         Modal                 _frmDelete;
+        bool                  _loaded;
         List<PersonViewModel> _people;
         PersonViewModel       _person;
 
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _person = null;
 
-        protected override async Task OnInitializedAsync() => _people = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _people = await Service.GetAsync();
+            _loaded = true;
+            StateHasChanged();
+        }
     }
 }

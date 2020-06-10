@@ -38,6 +38,7 @@ namespace Marechai.Pages.Admin
         Modal              _frmDelete;
         GpuViewModel       _gpu;
         List<GpuViewModel> _gpus;
+        bool               _loaded;
 
         void ShowModal(int itemId)
         {
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _gpu = null;
 
-        protected override async Task OnInitializedAsync() => _gpus = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _gpus   = await Service.GetAsync();
+            _loaded = true;
+            StateHasChanged();
+        }
     }
 }

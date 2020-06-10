@@ -32,17 +32,20 @@ namespace Marechai.Pages.Consoles
 {
     public partial class Search
     {
-        char? _character;
-
+        char?                  _character;
         List<MachineViewModel> _consoles;
+        bool                   _loaded;
         [Parameter]
         public int? Year { get; set; }
 
         [Parameter]
         public string StartingCharacter { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if(_loaded)
+                return;
+
             _character = null;
 
             if(!string.IsNullOrWhiteSpace(StartingCharacter) &&
@@ -70,6 +73,8 @@ namespace Marechai.Pages.Consoles
                 _consoles = await Service.GetConsolesByYearAsync(Year.Value);
 
             _consoles ??= await Service.GetConsolesAsync();
+            _loaded   =   true;
+            StateHasChanged();
         }
     }
 }

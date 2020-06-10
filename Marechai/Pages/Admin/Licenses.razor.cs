@@ -38,6 +38,7 @@ namespace Marechai.Pages.Admin
         Modal         _frmDelete;
         License       _license;
         List<License> _licenses;
+        bool          _loaded;
 
         void ShowModal(int itemId)
         {
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _license = null;
 
-        protected override async Task OnInitializedAsync() => _licenses = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _licenses = await Service.GetAsync();
+            _loaded   = true;
+            StateHasChanged();
+        }
     }
 }

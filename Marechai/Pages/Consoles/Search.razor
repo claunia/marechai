@@ -33,7 +33,9 @@
 
 @if (_consoles is null)
 {
-    @L["Loading..."]
+    <p align="center">@L["Loading..."]</p>
+
+    return;
 }
 
 <p>@L["Search results:"]</p>

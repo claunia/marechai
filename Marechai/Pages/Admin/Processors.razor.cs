@@ -36,6 +36,7 @@ namespace Marechai.Pages.Admin
     {
         bool                     _deleteInProgress;
         Modal                    _frmDelete;
+        bool                     _loaded;
         ProcessorViewModel       _processor;
         List<ProcessorViewModel> _processors;
 
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _processor = null;
 
-        protected override async Task OnInitializedAsync() => _processors = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _processors = await Service.GetAsync();
+            _loaded     = true;
+            StateHasChanged();
+        }
     }
 }

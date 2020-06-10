@@ -29,6 +29,14 @@
 @inject IStringLocalizer<NewsService> L
 
 <h2>@L["News"]</h2>
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
 @foreach (var news in _news)
 {
     <table border="0" width="100%">

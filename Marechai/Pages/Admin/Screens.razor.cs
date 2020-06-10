@@ -36,6 +36,7 @@ namespace Marechai.Pages.Admin
     {
         bool                  _deleteInProgress;
         Modal                 _frmDelete;
+        bool                  _loaded;
         ScreenViewModel       _screen;
         List<ScreenViewModel> _screens;
 
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _screen = null;
 
-        protected override async Task OnInitializedAsync() => _screens = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _screens = await Service.GetAsync();
+            _loaded  = true;
+            StateHasChanged();
+        }
     }
 }

@@ -36,6 +36,7 @@ namespace Marechai.Pages.Admin
     {
         bool                      _deleteInProgress;
         Modal                     _frmDelete;
+        bool                      _loaded;
         SoundSynthViewModel       _soundSynth;
         List<SoundSynthViewModel> _soundSynths;
 
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _soundSynth = null;
 
-        protected override async Task OnInitializedAsync() => _soundSynths = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _soundSynths = await Service.GetAsync();
+            _loaded      = true;
+            StateHasChanged();
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace Marechai.Pages.Admin
         InstructionSetExtension       _extension;
         List<InstructionSetExtension> _extensions;
         Modal                         _frmDelete;
+        bool                          _loaded;
 
         void ShowModal(int itemId)
         {
@@ -74,6 +75,14 @@ namespace Marechai.Pages.Admin
 
         void ModalClosing(ModalClosingEventArgs obj) => _extension = null;
 
-        protected override async Task OnInitializedAsync() => _extensions = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _extensions = await Service.GetAsync();
+            _loaded     = true;
+            StateHasChanged();
+        }
     }
 }

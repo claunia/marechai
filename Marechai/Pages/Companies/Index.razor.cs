@@ -32,18 +32,21 @@ namespace Marechai.Pages.Companies
 {
     public partial class Index
     {
-        char? _character;
-
+        char?                  _character;
         List<CompanyViewModel> _companies;
         string                 _countryName;
+        bool                   _loaded;
         [Parameter]
         public int? CountryId { get; set; }
 
         [Parameter]
         public string StartingCharacter { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if(_loaded)
+                return;
+
             _character = null;
 
             if(!string.IsNullOrWhiteSpace(StartingCharacter) &&
@@ -80,6 +83,8 @@ namespace Marechai.Pages.Companies
             }
 
             _companies ??= await Service.GetAsync();
+            _loaded    =   true;
+            StateHasChanged();
         }
     }
 }

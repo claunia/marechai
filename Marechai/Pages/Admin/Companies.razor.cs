@@ -35,12 +35,20 @@ namespace Marechai.Pages.Admin
     public partial class Companies
     {
         List<CompanyViewModel> _companies;
+        CompanyViewModel       _currentCompany;
+        bool                   _deleteInProgress;
+        Modal                  _frmDelete;
+        bool                   _loaded;
 
-        CompanyViewModel _currentCompany;
-        bool             _deleteInProgress;
-        Modal            _frmDelete;
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
 
-        protected override async Task OnInitializedAsync() => _companies = await Service.GetAsync();
+            _companies = await Service.GetAsync();
+            _loaded    = true;
+            StateHasChanged();
+        }
 
         void ShowModal(int itemId)
         {

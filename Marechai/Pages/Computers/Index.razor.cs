@@ -34,13 +34,17 @@ namespace Marechai.Pages.Computers
         int  _maxYear;
         int  _minYear;
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if(_loaded)
+                return;
+
             _computers = await Service.GetComputersCountAsync();
             _minYear   = await Service.GetMinimumYearAsync();
             _maxYear   = await Service.GetMaximumYearAsync();
 
             _loaded = true;
+            StateHasChanged();
         }
     }
 }

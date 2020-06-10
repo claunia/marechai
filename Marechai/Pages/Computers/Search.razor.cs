@@ -32,17 +32,20 @@ namespace Marechai.Pages.Computers
 {
     public partial class Search
     {
-        char? _character;
-
+        char?                  _character;
         List<MachineViewModel> _computers;
+        bool                   _loaded;
         [Parameter]
         public int? Year { get; set; }
 
         [Parameter]
         public string StartingCharacter { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if(_loaded)
+                return;
+
             _character = null;
 
             if(!string.IsNullOrWhiteSpace(StartingCharacter) &&
@@ -70,6 +73,8 @@ namespace Marechai.Pages.Computers
                 _computers = await Service.GetComputersByYearAsync(Year.Value);
 
             _computers ??= await Service.GetComputersAsync();
+            _loaded    =   true;
+            StateHasChanged();
         }
     }
 }

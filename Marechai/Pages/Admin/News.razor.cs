@@ -37,9 +37,18 @@ namespace Marechai.Pages.Admin
         NewsViewModel       _currentNews;
         bool                _deleteInProgress;
         Modal               _frmDelete;
+        bool                _loaded;
         List<NewsViewModel> _news;
 
-        protected override async Task OnInitializedAsync() => _news = await Service.GetAsync();
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(_loaded)
+                return;
+
+            _news   = await Service.GetAsync();
+            _loaded = true;
+            StateHasChanged();
+        }
 
         void ShowModal(int itemId)
         {
