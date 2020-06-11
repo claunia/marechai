@@ -1672,6 +1672,13 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.Revision);
                 entity.HasIndex(e => e.Firmware);
             });
+
+            modelBuilder.Entity<LogicalPartitionsByMedia>(entity =>
+            {
+                entity.HasOne(d => d.Partition).WithMany(p => p.Media).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.Media).WithMany(p => p.LogicalPartitions).OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

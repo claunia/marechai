@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using Aaru.CommonTypes;
 
 namespace Marechai.Database.Models
@@ -54,5 +55,7 @@ namespace Marechai.Database.Models
         public int?                            LogicalBlockSize  { get; set; }
         public JsonObject<VariableBlockSize[]> BlockSizes        { get; set; }
         public StorageInterface?               StorageInterface  { get; set; }
+
+        public virtual ICollection<LogicalPartitionsByMedia> LogicalPartitions { get; set; }
     }
 }

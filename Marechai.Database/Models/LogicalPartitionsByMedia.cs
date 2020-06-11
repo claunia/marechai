@@ -23,24 +23,15 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models
 {
-    public class LogicalPartition : BaseModel<ulong>
+    public class LogicalPartitionsByMedia : BaseModel<ulong>
     {
-        public uint   Sequence { get; set; }
-        public string Name     { get; set; }
         [Required]
-        public string Type { get;        set; }
-        public ulong  FirstSector { get; set; }
-        public ulong  LastSector  { get; set; }
-        public ulong  Size        { get; set; }
-        public string Description { get; set; }
-        public string Scheme      { get; set; }
-
-        public virtual ICollection<FilesystemsByLogicalPartition> Filesystems { get; set; }
-        public virtual ICollection<LogicalPartitionsByMedia>      Media       { get; set; }
+        public virtual Media Media { get; set; }
+        [Required]
+        public virtual LogicalPartition Partition { get; set; }
     }
 }

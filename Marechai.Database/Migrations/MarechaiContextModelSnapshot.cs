@@ -1279,6 +1279,27 @@ namespace Marechai.Database.Migrations
                 b.ToTable("LogicalPartitions");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.LogicalPartitionsByMedia", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("MediaId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("PartitionId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("MediaId");
+
+                b.HasIndex("PartitionId");
+
+                b.ToTable("LogicalPartitionsByMedia");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Machine", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -2960,6 +2981,15 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Processor", "Processor").WithMany("InstructionSetExtensions").
                   HasForeignKey("ProcessorId").HasConstraintName("fk_extension_processor_id").IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.LogicalPartitionsByMedia", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("LogicalPartitions").
+                  HasForeignKey("MediaId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.LogicalPartition", "Partition").WithMany("Media").
+                  HasForeignKey("PartitionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Machine", b =>
