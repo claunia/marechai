@@ -23,6 +23,7 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.ComponentModel.DataAnnotations;
 
 // ReSharper disable UnusedMember.Global
@@ -499,5 +500,16 @@ namespace Marechai.Database
     {
         None    = 0, Created = 1, Updated = 2,
         Deleted = 3
+    }
+
+    [Flags]
+    public enum DumpStatus : ulong
+    {
+        Unknown              = 0, Cracked = 1 << 0, Fixed              = 1 << 1,
+        Hacked               = 1              << 2, Modified           = 1 << 3, Pirated                 = 1 << 4,
+        Trained              = 1              << 5, Translated         = 1 << 6, Overdumped              = 1 << 7,
+        Underdumped          = 1              << 8, Infected           = 1 << 9, Damaged                 = 1 << 10,
+        Verified             = 1              << 11, MissingData       = 1 << 12, MissingNonRequiredData = 1 << 13,
+        MissingEssentialData = 1              << 14, DamagedSubchannel = 1 << 15
     }
 }

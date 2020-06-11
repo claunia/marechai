@@ -57,5 +57,6 @@ namespace Marechai.Database.Models
         public StorageInterface?               StorageInterface  { get; set; }
 
         public virtual ICollection<LogicalPartitionsByMedia> LogicalPartitions { get; set; }
+        public virtual ICollection<MediaDump>                Dumps             { get; set; }
     }
 }

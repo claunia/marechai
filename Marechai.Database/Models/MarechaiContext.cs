@@ -112,6 +112,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<LogicalPartition>                    LogicalPartitions                   { get; set; }
         public virtual DbSet<FilesystemsByLogicalPartition>       FilesystemsByLogicalPartition       { get; set; }
         public virtual DbSet<Media>                               Media                               { get; set; }
+        public virtual DbSet<MediaDump>                           MediaDumps                          { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1678,6 +1679,14 @@ namespace Marechai.Database.Models
                 entity.HasOne(d => d.Partition).WithMany(p => p.Media).OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.Media).WithMany(p => p.LogicalPartitions).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<MediaDump>(entity =>
+            {
+                entity.HasOne(d => d.Media).WithMany(p => p.Dumps).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.Status);
+                entity.HasIndex(e => e.Format);
             });
         }
     }

@@ -1741,6 +1741,31 @@ namespace Marechai.Database.Migrations
                 b.ToTable("Media");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.MediaDump", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("Format").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ulong>("MediaId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("Status").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Format");
+
+                b.HasIndex("MediaId");
+
+                b.HasIndex("Status");
+
+                b.ToTable("MediaDumps");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
@@ -3048,6 +3073,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MagazineIssue", "Magazine").WithMany("MachineFamilies").
                   HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaDump", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("Dumps").HasForeignKey("MediaId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
