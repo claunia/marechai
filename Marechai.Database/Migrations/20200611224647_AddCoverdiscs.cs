@@ -1,4 +1,4 @@
-/******************************************************************************
+﻿/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -23,29 +23,30 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Migrations
 {
-    public class MagazineIssue : BaseModel<long>
+    public partial class AddCoverdiscs : Migration
     {
-        [Required]
-        public long MagazineId { get; set; }
-        [Required]
-        public string Caption { get;       set; }
-        public string NativeCaption { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
-        public DateTime? Published { get; set; }
-        [StringLength(18)]
-        public string ProductCode { get; set; }
-        public short Pages { get;        set; }
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<long>("MagazineIssueId", "Media", nullable: true);
 
-        public virtual Magazine                              Magazine        { get; set; }
-        public virtual ICollection<PeopleByMagazine>         People          { get; set; }
-        public virtual ICollection<MagazinesByMachine>       Machines        { get; set; }
-        public virtual ICollection<MagazinesByMachineFamily> MachineFamilies { get; set; }
-        public virtual ICollection<Media>                    Coverdiscs      { get; set; }
+            migrationBuilder.CreateIndex("IX_Media_MagazineIssueId", "Media", "MagazineIssueId");
+
+            migrationBuilder.AddForeignKey("FK_Media_MagazineIssues_MagazineIssueId", "Media", "MagazineIssueId",
+                                           "MagazineIssues", principalColumn: "Id",
+                                           onDelete: ReferentialAction.SetNull);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropForeignKey("FK_Media_MagazineIssues_MagazineIssueId", "Media");
+
+            migrationBuilder.DropIndex("IX_Media_MagazineIssueId", "Media");
+
+            migrationBuilder.DropColumn("MagazineIssueId", "Media");
+        }
     }
 }

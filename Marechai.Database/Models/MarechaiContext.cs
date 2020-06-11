@@ -1685,6 +1685,8 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.Model);
                 entity.HasIndex(e => e.Revision);
                 entity.HasIndex(e => e.Firmware);
+
+                entity.HasOne(d => d.MagazineIssue).WithMany(p => p.Coverdiscs).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<LogicalPartitionsByMedia>(entity =>

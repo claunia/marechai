@@ -2022,6 +2022,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int?>("LogicalBlockSize").HasColumnType("int");
 
+                b.Property<long?>("MagazineIssueId").HasColumnType("bigint");
+
                 b.Property<string>("Manufacturer").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<string>("Model").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
@@ -2067,6 +2069,8 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("CopyProtection");
 
                 b.HasIndex("Firmware");
+
+                b.HasIndex("MagazineIssueId");
 
                 b.HasIndex("Manufacturer");
 
@@ -4230,6 +4234,12 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("MasteringTexts").HasForeignKey("MediaId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Media", b =>
+            {
+                b.HasOne("Marechai.Database.Models.MagazineIssue", "MagazineIssue").WithMany("Coverdiscs").
+                  HasForeignKey("MagazineIssueId").OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaBySoftwareVariant", b =>
