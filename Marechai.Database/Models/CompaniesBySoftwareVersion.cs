@@ -23,22 +23,17 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models
 {
-    public class SoftwareFamily : BaseModel<ulong>
+    public class CompaniesBySoftwareVersion : BaseModel<ulong>
     {
         [Required]
-        public string Name { get;                       set; }
-        public         DateTime?      Introduced { get; set; }
-        public virtual SoftwareFamily Parent     { get; set; }
-
-        public virtual ICollection<SoftwareFamily>            Children  { get; set; }
-        public virtual ICollection<CompaniesBySoftwareFamily> Companies { get; set; }
-        public virtual ICollection<PeopleBySoftwareFamily>    People    { get; set; }
-        public virtual ICollection<SoftwareVersion>           Versions  { get; set; }
+        public virtual Company Company { get; set; }
+        [Required]
+        public virtual SoftwareVersion SoftwareVersion { get; set; }
+        [Required]
+        public virtual DocumentRole Role { get; set; }
     }
 }

@@ -1830,6 +1830,29 @@ namespace Marechai.Database.Models
                 entity.HasOne(d => d.Person).WithMany(p => p.SoftwareFamilies).OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(d => d.SoftwareFamily).WithMany(p => p.People).OnDelete(DeleteBehavior.Cascade);
             });
+
+            modelBuilder.Entity<SoftwareVersion>(entity =>
+            {
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.Introduced);
+                entity.HasIndex(e => e.Codename);
+                entity.HasIndex(e => e.Version);
+
+                entity.HasOne(e => e.Family).WithMany(e => e.Versions).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.Previous).WithOne(e => e.Next).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<CompaniesBySoftwareVersion>(entity =>
+            {
+                entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVersions).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVersion).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<PeopleBySoftwareVersion>(entity =>
+            {
+                entity.HasOne(d => d.Person).WithMany(p => p.SoftwareVersions).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVersion).WithMany(p => p.People).OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

@@ -29,16 +29,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models
 {
-    public class SoftwareFamily : BaseModel<ulong>
+    public class SoftwareVersion : BaseModel<ulong>
     {
         [Required]
-        public string Name { get;                       set; }
-        public         DateTime?      Introduced { get; set; }
-        public virtual SoftwareFamily Parent     { get; set; }
-
-        public virtual ICollection<SoftwareFamily>            Children  { get; set; }
-        public virtual ICollection<CompaniesBySoftwareFamily> Companies { get; set; }
-        public virtual ICollection<PeopleBySoftwareFamily>    People    { get; set; }
-        public virtual ICollection<SoftwareVersion>           Versions  { get; set; }
+        public virtual SoftwareFamily Family { get; set; }
+        public string Name     { get;               set; }
+        public string Codename { get;               set; }
+        [Required]
+        public string Version { get;                                             set; }
+        public         DateTime?                               Introduced { get; set; }
+        public virtual License                                 License    { get; set; }
+        public virtual SoftwareVersion                         Previous   { get; set; }
+        public virtual SoftwareVersion                         Next       { get; set; }
+        public virtual ICollection<CompaniesBySoftwareVersion> Companies  { get; set; }
+        public virtual ICollection<PeopleBySoftwareVersion>    People     { get; set; }
     }
 }
