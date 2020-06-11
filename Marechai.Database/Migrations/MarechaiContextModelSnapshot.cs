@@ -3466,6 +3466,33 @@ namespace Marechai.Database.Migrations
                 b.ToTable("SoftwareVariants");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareVariantByCompilationMedia", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("MediaId").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Path").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("PathSeparator").IsRequired().HasColumnType("varchar(1) CHARACTER SET utf8mb4");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("MediaId");
+
+                b.HasIndex("Path");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("SoftwareVariantByCompilationMedia");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
             {
                 b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
@@ -4520,6 +4547,15 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVersion", "SoftwareVersion").WithMany("Variants").
                   HasForeignKey("SoftwareVersionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareVariantByCompilationMedia", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Media", "Media").WithMany().HasForeignKey("MediaId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany().
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
