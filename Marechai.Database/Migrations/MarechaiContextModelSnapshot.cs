@@ -1971,6 +1971,35 @@ namespace Marechai.Database.Migrations
                 b.ToTable("marechai_db");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.MasteringText", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<short?>("Layer").HasColumnType("smallint");
+
+                b.Property<ulong>("MediaId").HasColumnType("bigint unsigned");
+
+                b.Property<short?>("Side").HasColumnType("smallint");
+
+                b.Property<string>("Text").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<byte>("Type").HasColumnType("tinyint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("MediaId");
+
+                b.HasIndex("Text");
+
+                b.HasIndex("Type");
+
+                b.ToTable("MasteringTexts");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Media", b =>
             {
                 b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
@@ -4170,6 +4199,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MagazineIssue", "Magazine").WithMany("MachineFamilies").
                   HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MasteringText", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("MasteringTexts").HasForeignKey("MediaId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaBySoftwareVariant", b =>

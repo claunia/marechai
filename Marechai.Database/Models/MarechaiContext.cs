@@ -122,6 +122,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<SoftwareFamily>                      SoftwareFamilies                    { get; set; }
         public virtual DbSet<SoftwareVariant>                     SoftwareVariants                    { get; set; }
         public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
+        public virtual DbSet<MasteringText>                       MasteringTexts                      { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1972,6 +1973,13 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.UserId);
 
                 entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Files).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<MasteringText>(entity =>
+            {
+                entity.HasIndex(e => e.Type);
+                entity.HasIndex(e => e.Text);
+                entity.HasOne(d => d.Media).WithMany(p => p.MasteringTexts).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

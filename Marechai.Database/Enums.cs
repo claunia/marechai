@@ -526,4 +526,11 @@ namespace Marechai.Database
         Unknown = 0, Retail = 1, Bundle = 2,
         Oem     = 3
     }
+
+    public enum MasteringTextType : byte
+    {
+        Unknown   = 0, LotNumber     = 1, MasteringSid = 2,
+        MouldSid  = 3, MasteringCode = 4, Barcode      = 5,
+        Toolstamp = 6
+    }
 }

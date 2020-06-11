@@ -61,5 +61,6 @@ namespace Marechai.Database.Models
         public virtual ICollection<MediaDump>                MediaDumps        { get; set; }
         public virtual ICollection<Dump>                     Dumps             { get; set; }
         public virtual ICollection<MediaBySoftwareVariant>   Software          { get; set; }
+        public virtual ICollection<MasteringText>            MasteringTexts    { get; set; }
     }
 }
