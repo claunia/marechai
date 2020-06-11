@@ -114,6 +114,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<Media>                               Media                               { get; set; }
         public virtual DbSet<MediaDump>                           MediaDumps                          { get; set; }
         public virtual DbSet<MediaDumpFileImage>                  MediaDumpFileImages                 { get; set; }
+        public virtual DbSet<MediaDumpImage>                      MediaDumpImages                     { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1712,6 +1713,24 @@ namespace Marechai.Database.Models
                 entity.HasOne(d => d.MediaDumpFileImage).WithMany(p => p.Filesystems).OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.Filesystem).WithMany(p => p.MediaDumpFileImages).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<MediaDumpImage>(entity =>
+            {
+                entity.Property(e => e.Md5).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha1).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha256).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha3).HasConversion(hexToBytesConverter);
+
+                entity.HasOne(d => d.MediaDump).WithOne(p => p.Image).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.Size);
+                entity.HasIndex(e => e.Md5);
+                entity.HasIndex(e => e.Sha1);
+                entity.HasIndex(e => e.Sha256);
+                entity.HasIndex(e => e.Sha3);
+                entity.HasIndex(e => e.Spamsum);
+                entity.HasIndex(e => e.AccoustId);
             });
         }
     }

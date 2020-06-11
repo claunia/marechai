@@ -36,5 +36,6 @@ namespace Marechai.Database.Models
         public DumpStatus Status { get;   set; }
 
         public virtual ICollection<MediaDumpFileImage> Files { get; set; }
+        public virtual MediaDumpImage                  Image { get; set; }
     }
 }
