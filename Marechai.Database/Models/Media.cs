@@ -55,6 +55,7 @@ namespace Marechai.Database.Models
         public int?                            LogicalBlockSize  { get; set; }
         public JsonObject<VariableBlockSize[]> BlockSizes        { get; set; }
         public StorageInterface?               StorageInterface  { get; set; }
+        public JsonObject<OpticalDiscTrack[]>  TableOfContents   { get; set; }
 
         public virtual ICollection<LogicalPartitionsByMedia> LogicalPartitions { get; set; }
         public virtual ICollection<MediaDump>                MediaDumps        { get; set; }

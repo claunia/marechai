@@ -2017,6 +2017,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int?>("StorageInterface").HasColumnType("int");
 
+                b.Property<string>("TableOfContents").HasColumnType("json");
+
                 b.Property<string>("Title").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<ushort?>("Tracks").HasColumnType("smallint unsigned");
