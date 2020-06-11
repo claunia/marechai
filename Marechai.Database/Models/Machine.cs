@@ -52,17 +52,18 @@ namespace Marechai.Database.Models
         [StringLength(50)]
         public string Model { get; set; }
 
-        public virtual Company                          Company    { get; set; }
-        public virtual MachineFamily                    Family     { get; set; }
-        public virtual ICollection<GpusByMachine>       Gpus       { get; set; }
-        public virtual ICollection<MemoryByMachine>     Memory     { get; set; }
-        public virtual ICollection<ProcessorsByMachine> Processors { get; set; }
-        public virtual ICollection<SoundByMachine>      Sound      { get; set; }
-        public virtual ICollection<StorageByMachine>    Storage    { get; set; }
-        public virtual ICollection<MachinePhoto>        Photos     { get; set; }
-        public virtual ICollection<ScreensByMachine>    Screens    { get; set; }
-        public virtual ICollection<DocumentsByMachine>  Documents  { get; set; }
-        public virtual ICollection<BooksByMachine>      Books      { get; set; }
-        public virtual ICollection<MagazinesByMachine>  Magazines  { get; set; }
+        public virtual Company                                Company    { get; set; }
+        public virtual MachineFamily                          Family     { get; set; }
+        public virtual ICollection<GpusByMachine>             Gpus       { get; set; }
+        public virtual ICollection<MemoryByMachine>           Memory     { get; set; }
+        public virtual ICollection<ProcessorsByMachine>       Processors { get; set; }
+        public virtual ICollection<SoundByMachine>            Sound      { get; set; }
+        public virtual ICollection<StorageByMachine>          Storage    { get; set; }
+        public virtual ICollection<MachinePhoto>              Photos     { get; set; }
+        public virtual ICollection<ScreensByMachine>          Screens    { get; set; }
+        public virtual ICollection<DocumentsByMachine>        Documents  { get; set; }
+        public virtual ICollection<BooksByMachine>            Books      { get; set; }
+        public virtual ICollection<MagazinesByMachine>        Magazines  { get; set; }
+        public virtual ICollection<MachinesBySoftwareVariant> Software   { get; set; }
     }
 }

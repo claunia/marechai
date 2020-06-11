@@ -120,6 +120,8 @@ namespace Marechai.Database.Models
         public virtual DbSet<MediaFile>                           MediaFiles                          { get; set; }
         public virtual DbSet<Dump>                                Dumps                               { get; set; }
         public virtual DbSet<SoftwareFamily>                      SoftwareFamilies                    { get; set; }
+        public virtual DbSet<SoftwareVariant>                     SoftwareVariants                    { get; set; }
+        public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1852,6 +1854,124 @@ namespace Marechai.Database.Models
             {
                 entity.HasOne(d => d.Person).WithMany(p => p.SoftwareVersions).OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(d => d.SoftwareVersion).WithMany(p => p.People).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<SoftwareVariant>(entity =>
+            {
+                entity.HasIndex(e => e.Introduced);
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.CatalogueNumber);
+                entity.HasIndex(e => e.DistributionMode);
+                entity.HasIndex(e => e.MinimumMemory);
+                entity.HasIndex(e => e.PartNumber);
+                entity.HasIndex(e => e.ProductCode);
+                entity.HasIndex(e => e.RecommendedMemory);
+                entity.HasIndex(e => e.RequiredStorage);
+                entity.HasIndex(e => e.SerialNumber);
+                entity.HasIndex(e => e.Version);
+
+                entity.HasOne(e => e.Parent).WithMany(e => e.Derivates).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(e => e.SoftwareVersion).WithMany(e => e.Variants).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<CompaniesBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVariants).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<GpusBySoftwareVariant>(entity =>
+            {
+                entity.HasIndex(e => e.Minimum);
+                entity.HasIndex(e => e.Recommended);
+
+                entity.HasOne(d => d.Gpu).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Gpus).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<InstructionSetsBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.InstructionSet).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Architectures).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<LanguagesBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.Language).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Languages).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<MachineFamiliesBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.MachineFamily).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.MachineFamilies).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<MachinesBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.Machine).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Machines).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<MediaBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.Media).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Media).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<PeopleBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.Person).WithMany(p => p.SoftwareVariants).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.People).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ProcessorsBySoftwareVariant>(entity =>
+            {
+                entity.HasIndex(e => e.Minimum);
+                entity.HasIndex(e => e.Recommended);
+                entity.HasIndex(e => e.Speed);
+
+                entity.HasOne(d => d.Processor).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Processors).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<RequiredOperatingSystemsBySofwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.RequiredOperatingSystems).
+                       OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<RequiredSoftwareBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.RequiredSoftware).
+                       OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<SoundBySoftwareVariant>(entity =>
+            {
+                entity.HasOne(d => d.SoundSynth).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.SupportedSound).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<FileDataStreamsByStandaloneFile>(entity =>
+            {
+                entity.HasOne(d => d.StandaloneFile).WithMany(p => p.DataStreams).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<StandaloneFile>(entity =>
+            {
+                entity.HasIndex(e => e.Path);
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.IsDirectory);
+                entity.HasIndex(e => e.CreationDate);
+                entity.HasIndex(e => e.AccessDate);
+                entity.HasIndex(e => e.StatusChangeDate);
+                entity.HasIndex(e => e.BackupDate);
+                entity.HasIndex(e => e.LastWriteDate);
+                entity.HasIndex(e => e.GroupId);
+                entity.HasIndex(e => e.UserId);
+
+                entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Files).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

@@ -24,37 +24,32 @@
 *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Aaru.CommonTypes.Structs;
 
 namespace Marechai.Database.Models
 {
-    /// <summary>ISO-639 codes</summary>
-    public class Iso639
+    public abstract class BaseFile : BaseModel<ulong>
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedOn { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime UpdatedOn { get; set; }
-
-        [Column(TypeName = "char(3)"), Key, Required]
-        public string Id { get; set; }
-        [Column(TypeName = "char(3)")]
-        public string Part2B { get; set; }
-        [Column(TypeName = "char(3)")]
-        public string Part2T { get; set; }
-        [Column(TypeName = "char(2)")]
-        public string Part1 { get; set; }
-        [Column(TypeName = "char(1)"), Required]
-        public string Scope { get; set; }
-        [Column(TypeName = "char(1)"), Required]
-        public string Type { get; set; }
-        [Column(TypeName = "varchar(150)"), Required]
-        public string ReferenceName { get; set; }
-        [Column(TypeName = "varchar(150)")]
-        public string Comment { get; set; }
-
-        public virtual ICollection<LanguagesBySoftwareVariant> Software { get; set; }
+        [StringLength(8192), Required]
+        public string Path { get; set; }
+        [StringLength(255), Required]
+        public string Name { get; set; }
+        [Required, DefaultValue('/')]
+        public char PathSeparator { get;              set; }
+        public bool           IsDirectory      { get; set; }
+        public DateTime?      CreationDate     { get; set; }
+        public DateTime?      AccessDate       { get; set; }
+        public DateTime?      StatusChangeDate { get; set; }
+        public DateTime?      BackupDate       { get; set; }
+        public DateTime?      LastWriteDate    { get; set; }
+        public FileAttributes Attributes       { get; set; }
+        public ushort?        PosixMode        { get; set; }
+        public uint?          DeviceNumber     { get; set; }
+        public ulong?         GroupId          { get; set; }
+        public ulong?         UserId           { get; set; }
+        public ulong?         Inode            { get; set; }
+        public ulong?         Links            { get; set; }
     }
 }

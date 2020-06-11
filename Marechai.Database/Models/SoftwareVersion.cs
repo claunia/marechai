@@ -43,5 +43,6 @@ namespace Marechai.Database.Models
         public virtual SoftwareVersion                         Next       { get; set; }
         public virtual ICollection<CompaniesBySoftwareVersion> Companies  { get; set; }
         public virtual ICollection<PeopleBySoftwareVersion>    People     { get; set; }
+        public virtual ICollection<SoftwareVariant>            Variants   { get; set; }
     }
 }

@@ -381,6 +381,31 @@ namespace Marechai.Database.Migrations
                 b.ToTable("CompaniesBySoftwareFamily");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.CompaniesBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<int>("CompanyId").HasColumnType("int(11)");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("CompanyId");
+
+                b.HasIndex("RoleId");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("CompaniesBySoftwareVariant");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.CompaniesBySoftwareVersion", b =>
             {
                 b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
@@ -927,6 +952,27 @@ namespace Marechai.Database.Migrations
                 b.ToTable("FileDataStreamsByMediaFile");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.FileDataStreamsByStandaloneFile", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("FileDataStreamId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("StandaloneFileId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("FileDataStreamId");
+
+                b.HasIndex("StandaloneFileId");
+
+                b.ToTable("FileDataStreamsByStandaloneFile");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.FilesByFilesystem", b =>
             {
                 b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
@@ -1187,6 +1233,35 @@ namespace Marechai.Database.Migrations
                 b.ToTable("GpusByOwnedMachine");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.GpusBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<int>("GpuId").HasColumnType("int(11)");
+
+                b.Property<bool?>("Minimum").HasColumnType("bit(1)");
+
+                b.Property<bool?>("Recommended").HasColumnType("bit(1)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("GpuId");
+
+                b.HasIndex("Minimum");
+
+                b.HasIndex("Recommended");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("GpusBySoftwareVariant");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.InstructionSet", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -1238,6 +1313,27 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("ProcessorId").HasName("idx_setextension_processor");
 
                 b.ToTable("instruction_set_extensions_by_processor");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.InstructionSetsBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<int>("InstructionSetId").HasColumnType("int(11)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("InstructionSetId");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("InstructionSetsBySoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Iso31661Numeric", b =>
@@ -1324,6 +1420,27 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("Type");
 
                 b.ToTable("ISO_639-3");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.LanguagesBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("LanguageId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("LanguageId");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("LanguagesBySoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.License", b =>
@@ -1492,6 +1609,27 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("Type").HasName("idx_machines_type");
 
                 b.ToTable("machines");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MachineFamiliesBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<int>("MachineFamilyId").HasColumnType("int(11)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("MachineFamilyId");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("MachineFamiliesBySoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MachineFamily", b =>
@@ -1676,6 +1814,27 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("WhiteBalance");
 
                 b.ToTable("MachinePhotos");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MachinesBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<int>("MachineId").HasColumnType("int(11)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("MachineId");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("MachinesBySoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Magazine", b =>
@@ -1893,6 +2052,27 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("Type");
 
                 b.ToTable("Media");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("MediaId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("MediaId");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("MediaBySoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaDump", b =>
@@ -2644,6 +2824,31 @@ namespace Marechai.Database.Migrations
                 b.ToTable("PeopleBySoftwareFamily");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.PeopleBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<int>("PersonId").HasColumnType("int");
+
+                b.Property<string>("RoleId").IsRequired().HasColumnType("char(3)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("PersonId");
+
+                b.HasIndex("RoleId");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("PeopleBySoftwareVariant");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.PeopleBySoftwareVersion", b =>
             {
                 b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
@@ -2893,6 +3098,81 @@ namespace Marechai.Database.Migrations
                 b.ToTable("ProcessorsByOwnedMachine");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.ProcessorsBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<bool?>("Minimum").HasColumnType("bit(1)");
+
+                b.Property<int>("ProcessorId").HasColumnType("int(11)");
+
+                b.Property<bool?>("Recommended").HasColumnType("bit(1)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<float?>("Speed").HasColumnType("float");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Minimum");
+
+                b.HasIndex("ProcessorId");
+
+                b.HasIndex("Recommended");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.HasIndex("Speed");
+
+                b.ToTable("ProcessorsBySoftwareVariant");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.RequiredOperatingSystemsBySofwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("OperatingSystemId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("OperatingSystemId");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.ToTable("RequiredOperatingSystemsBySofwareVariant");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.RequiredSoftwareBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("SoftwareVersionId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.HasIndex("SoftwareVersionId");
+
+                b.ToTable("RequiredSoftwareBySoftwareVariant");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Resolution", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -3061,6 +3341,71 @@ namespace Marechai.Database.Migrations
                 b.ToTable("SoftwareFamilies");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<string>("CatalogueNumber").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<uint>("DistributionMode").HasColumnType("int unsigned");
+
+                b.Property<DateTime?>("Introduced").HasColumnType("datetime(6)");
+
+                b.Property<ulong?>("MinimumMemory").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Name").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ulong?>("ParentId").HasColumnType("bigint unsigned");
+
+                b.Property<string>("PartNumber").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("ProductCode").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ulong?>("RecommendedMemory").HasColumnType("bigint unsigned");
+
+                b.Property<ulong?>("RequiredStorage").HasColumnType("bigint unsigned");
+
+                b.Property<string>("SerialNumber").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ulong>("SoftwareVersionId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<string>("Version").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.HasKey("Id");
+
+                b.HasIndex("CatalogueNumber");
+
+                b.HasIndex("DistributionMode");
+
+                b.HasIndex("Introduced");
+
+                b.HasIndex("MinimumMemory");
+
+                b.HasIndex("Name");
+
+                b.HasIndex("ParentId");
+
+                b.HasIndex("PartNumber");
+
+                b.HasIndex("ProductCode");
+
+                b.HasIndex("RecommendedMemory");
+
+                b.HasIndex("RequiredStorage");
+
+                b.HasIndex("SerialNumber");
+
+                b.HasIndex("SoftwareVersionId");
+
+                b.HasIndex("Version");
+
+                b.ToTable("SoftwareVariants");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
             {
                 b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
@@ -3144,6 +3489,27 @@ namespace Marechai.Database.Migrations
                 b.ToTable("SoundByOwnedMachine");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.SoundBySoftwareVariant", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<int>("SoundSynthId").HasColumnType("int(11)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.HasIndex("SoundSynthId");
+
+                b.ToTable("SoundBySoftwareVariant");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.SoundSynth", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -3197,6 +3563,77 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("WhiteNoise").HasName("idx_sound_synths_white_noise");
 
                 b.ToTable("sound_synths");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.StandaloneFile", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime?>("AccessDate").HasColumnType("datetime(6)");
+
+                b.Property<ulong>("Attributes").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime?>("BackupDate").HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<DateTime?>("CreationDate").HasColumnType("datetime(6)");
+
+                b.Property<uint?>("DeviceNumber").HasColumnType("int unsigned");
+
+                b.Property<ulong?>("GroupId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong?>("Inode").HasColumnType("bigint unsigned");
+
+                b.Property<bool>("IsDirectory").HasColumnType("bit(1)");
+
+                b.Property<DateTime?>("LastWriteDate").HasColumnType("datetime(6)");
+
+                b.Property<ulong?>("Links").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Name").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4").
+                  HasMaxLength(255);
+
+                b.Property<string>("Path").IsRequired().HasColumnType("longtext CHARACTER SET utf8mb4").
+                  HasMaxLength(8192);
+
+                b.Property<string>("PathSeparator").IsRequired().HasColumnType("varchar(1) CHARACTER SET utf8mb4");
+
+                b.Property<ushort?>("PosixMode").HasColumnType("smallint unsigned");
+
+                b.Property<ulong>("SoftwareVariantId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime?>("StatusChangeDate").HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<ulong?>("UserId").HasColumnType("bigint unsigned");
+
+                b.HasKey("Id");
+
+                b.HasIndex("AccessDate");
+
+                b.HasIndex("BackupDate");
+
+                b.HasIndex("CreationDate");
+
+                b.HasIndex("GroupId");
+
+                b.HasIndex("IsDirectory");
+
+                b.HasIndex("LastWriteDate");
+
+                b.HasIndex("Name");
+
+                b.HasIndex("Path");
+
+                b.HasIndex("SoftwareVariantId");
+
+                b.HasIndex("StatusChangeDate");
+
+                b.HasIndex("UserId");
+
+                b.ToTable("StandaloneFiles");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.StorageByMachine", b =>
@@ -3421,6 +3858,18 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("SoftwareFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.CompaniesBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("SoftwareVariants").
+                  HasForeignKey("CompanyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Companies").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.CompaniesBySoftwareVersion", b =>
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("SoftwareVersions").
@@ -3539,6 +3988,15 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("MediaFileId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.FileDataStreamsByStandaloneFile", b =>
+            {
+                b.HasOne("Marechai.Database.Models.FileDataStream", "FileDataStream").WithMany().
+                  HasForeignKey("FileDataStreamId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.StandaloneFile", "StandaloneFile").WithMany("DataStreams").
+                  HasForeignKey("StandaloneFileId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.FilesByFilesystem", b =>
             {
                 b.HasOne("Marechai.Database.Models.MediaFile", "File").WithMany().HasForeignKey("FileId").
@@ -3590,6 +4048,15 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("OwnedMachineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.GpusBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Gpu", "Gpu").WithMany("Software").HasForeignKey("GpuId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Gpus").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.InstructionSetExtensionsByProcessor", b =>
             {
                 b.HasOne("Marechai.Database.Models.InstructionSetExtension", "Extension").
@@ -3598,6 +4065,24 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Processor", "Processor").WithMany("InstructionSetExtensions").
                   HasForeignKey("ProcessorId").HasConstraintName("fk_extension_processor_id").IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.InstructionSetsBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.InstructionSet", "InstructionSet").WithMany("Software").
+                  HasForeignKey("InstructionSetId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Architectures").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.LanguagesBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Iso639", "Language").WithMany("Software").
+                  HasForeignKey("LanguageId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Languages").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.LogicalPartitionsByMedia", b =>
@@ -3618,6 +4103,15 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("FamilyId").HasConstraintName("fk_machines_family");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.MachineFamiliesBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.MachineFamily", "MachineFamily").WithMany("Software").
+                  HasForeignKey("MachineFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("MachineFamilies").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.MachineFamily", b =>
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("MachineFamilies").
@@ -3635,6 +4129,15 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("Photos").HasForeignKey("UserId").
                   OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MachinesBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Machine", "Machine").WithMany("Software").HasForeignKey("MachineId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Machines").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Magazine", b =>
@@ -3665,6 +4168,15 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MagazineIssue", "Magazine").WithMany("MachineFamilies").
                   HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("Software").HasForeignKey("MediaId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Media").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaDump", b =>
@@ -3793,6 +4305,18 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("SoftwareFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.PeopleBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Person", "Person").WithMany("SoftwareVariants").
+                  HasForeignKey("PersonId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("People").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.PeopleBySoftwareVersion", b =>
             {
                 b.HasOne("Marechai.Database.Models.Person", "Person").WithMany("SoftwareVersions").
@@ -3840,6 +4364,34 @@ namespace Marechai.Database.Migrations
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.ProcessorsBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Processor", "Processor").WithMany("Software").
+                  HasForeignKey("ProcessorId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Processors").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.RequiredOperatingSystemsBySofwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.SoftwareVersion", "OperatingSystem").WithMany().
+                  HasForeignKey("OperatingSystemId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").
+                  WithMany("RequiredOperatingSystems").HasForeignKey("SoftwareVariantId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.RequiredSoftwareBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("RequiredSoftware").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoftwareVersion", "SoftwareVersion").WithMany().
+                  HasForeignKey("SoftwareVersionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.ResolutionsByGpu", b =>
             {
                 b.HasOne("Marechai.Database.Models.Gpu", "Gpu").WithMany("ResolutionsByGpu").HasForeignKey("GpuId").
@@ -3880,6 +4432,15 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("ParentId").OnDelete(DeleteBehavior.SetNull);
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "Parent").WithMany("Derivates").
+                  HasForeignKey("ParentId").OnDelete(DeleteBehavior.SetNull);
+
+                b.HasOne("Marechai.Database.Models.SoftwareVersion", "SoftwareVersion").WithMany("Variants").
+                  HasForeignKey("SoftwareVersionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
             {
                 b.HasOne("Marechai.Database.Models.SoftwareFamily", "Family").WithMany("Versions").
@@ -3911,10 +4472,25 @@ namespace Marechai.Database.Migrations
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.SoundBySoftwareVariant", b =>
+            {
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("SupportedSound").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.SoundSynth", "SoundSynth").WithMany("Software").
+                  HasForeignKey("SoundSynthId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.SoundSynth", b =>
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("SoundSynths").
                   HasForeignKey("CompanyId").HasConstraintName("fk_sound_synths_company");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.StandaloneFile", b =>
+            {
+                b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Files").
+                  HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.StorageByMachine", b =>

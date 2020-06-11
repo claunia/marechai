@@ -62,5 +62,6 @@ namespace Marechai.Database.Models
         public virtual DocumentPerson                       DocumentPerson   { get; set; }
         public virtual ICollection<PeopleBySoftwareFamily>  SoftwareFamilies { get; set; }
         public virtual ICollection<PeopleBySoftwareVersion> SoftwareVersions { get; set; }
+        public virtual ICollection<PeopleBySoftwareVariant> SoftwareVariants { get; set; }
     }
 }

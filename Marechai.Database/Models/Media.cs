@@ -59,5 +59,6 @@ namespace Marechai.Database.Models
         public virtual ICollection<LogicalPartitionsByMedia> LogicalPartitions { get; set; }
         public virtual ICollection<MediaDump>                MediaDumps        { get; set; }
         public virtual ICollection<Dump>                     Dumps             { get; set; }
+        public virtual ICollection<MediaBySoftwareVariant>   Software          { get; set; }
     }
 }

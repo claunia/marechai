@@ -36,6 +36,7 @@ namespace Marechai.Database.Models
         [Required, StringLength(45), Remote("VerifyUnique", "InstructionSets", "Admin")]
         public string Name { get; set; }
 
-        public virtual ICollection<Processor> Processors { get; set; }
+        public virtual ICollection<Processor>                        Processors { get; set; }
+        public virtual ICollection<InstructionSetsBySoftwareVariant> Software   { get; set; }
     }
 }

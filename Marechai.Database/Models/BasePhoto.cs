@@ -29,7 +29,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models
 {
-    public class BasePhoto : BaseModel<Guid>
+    public abstract class BasePhoto : BaseModel<Guid>
     {
         public double? Aperture { get; set; }
         public string  Author   { get; set; }

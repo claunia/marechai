@@ -520,4 +520,10 @@ namespace Marechai.Database
         R    = 1        << 2, S = 1 << 3, T = 1 << 4,
         U    = 1        << 5, V = 1 << 6, W = 1 << 7
     }
+
+    public enum DistributionMode : uint
+    {
+        Unknown = 0, Retail = 1, Bundle = 2,
+        Oem     = 3
+    }
 }

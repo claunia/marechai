@@ -86,5 +86,6 @@ namespace Marechai.Database.Models
         public virtual DocumentCompany DocumentCompany { get; set; }
         public virtual ICollection<CompaniesBySoftwareFamily> SoftwareFamilies { get; set; }
         public virtual ICollection<CompaniesBySoftwareVersion> SoftwareVersions { get; set; }
+        public virtual ICollection<CompaniesBySoftwareVariant> SoftwareVariants { get; set; }
     }
 }
