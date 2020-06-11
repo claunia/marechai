@@ -117,6 +117,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<MediaDumpImage>                      MediaDumpImages                     { get; set; }
         public virtual DbSet<MediaDumpSubchannelImage>            MediaDumpSubchannelImages           { get; set; }
         public virtual DbSet<MediaDumpTrackImage>                 MediaDumpTrackImages                { get; set; }
+        public virtual DbSet<MediaFile>                           MediaFiles                          { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1769,6 +1770,30 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.Sha256);
                 entity.HasIndex(e => e.Sha3);
                 entity.HasIndex(e => e.Spamsum);
+            });
+
+            modelBuilder.Entity<MediaFile>(entity =>
+            {
+                entity.HasIndex(e => e.Path);
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.IsDirectory);
+                entity.HasIndex(e => e.CreationDate);
+                entity.HasIndex(e => e.AccessDate);
+                entity.HasIndex(e => e.StatusChangeDate);
+                entity.HasIndex(e => e.BackupDate);
+                entity.HasIndex(e => e.LastWriteDate);
+                entity.HasIndex(e => e.GroupId);
+                entity.HasIndex(e => e.UserId);
+            });
+
+            modelBuilder.Entity<FileDataStreamsByMediaFile>(entity =>
+            {
+                entity.HasOne(d => d.MediaFile).WithMany(p => p.DataStreams).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<FilesByFilesystem>(entity =>
+            {
+                entity.HasOne(d => d.Filesystem).WithMany(p => p.Files).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

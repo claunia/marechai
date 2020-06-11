@@ -38,7 +38,7 @@ namespace Marechai.Database.Models
         public DateTime? BackupDate             { get; set; }
         public int       ClusterSize            { get; set; }
         public ulong     Clusters               { get; set; }
-        public ulong?    Files                  { get; set; }
+        public ulong?    FilesCount             { get; set; }
         public bool      Bootable               { get; set; }
         public string    Serial                 { get; set; }
         public string    Label                  { get; set; }
@@ -53,5 +53,6 @@ namespace Marechai.Database.Models
 
         public virtual ICollection<FilesystemsByLogicalPartition> Partitions          { get; set; }
         public virtual ICollection<FilesystemsByMediaDumpFile>    MediaDumpFileImages { get; set; }
+        public virtual ICollection<FilesByFilesystem>             Files               { get; set; }
     }
 }
