@@ -33,5 +33,6 @@ namespace Marechai.Database.Models
         public virtual ICollection<MachinePhoto>      Photos             { get; set; }
         public virtual ICollection<OwnedMachinePhoto> OwnedMachinePhotos { get; set; }
         public virtual ICollection<OwnedMachine>      OwnedMachines      { get; set; }
+        public virtual ICollection<Dump>              Dumps              { get; set; }
     }
 }

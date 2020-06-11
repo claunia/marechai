@@ -739,11 +739,50 @@ namespace Marechai.Database.Migrations
                 b.ToTable("DocumentsByMachineFamily");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.Dump", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<DateTime?>("DumpDate").HasColumnType("datetime(6)");
+
+                b.Property<string>("Dumper").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("DumpingGroup").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ulong?>("MediaDumpId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong?>("MediaId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<string>("UserId").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.HasKey("Id");
+
+                b.HasIndex("DumpDate");
+
+                b.HasIndex("Dumper");
+
+                b.HasIndex("DumpingGroup");
+
+                b.HasIndex("MediaDumpId");
+
+                b.HasIndex("MediaId");
+
+                b.HasIndex("UserId");
+
+                b.ToTable("Dumps");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.DumpHardware", b =>
             {
                 b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("DumpId").HasColumnType("bigint unsigned");
 
                 b.Property<string>("Extents").IsRequired().HasColumnType("json");
 
@@ -770,6 +809,8 @@ namespace Marechai.Database.Migrations
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
+
+                b.HasIndex("DumpId");
 
                 b.HasIndex("Firmware");
 
@@ -3275,6 +3316,24 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("MachineFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.Dump", b =>
+            {
+                b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Dumps").
+                  HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("Dumps").HasForeignKey("MediaId").
+                  OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("Dumps").HasForeignKey("UserId").
+                  OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.DumpHardware", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Dump", "Dump").WithMany("DumpHardware").HasForeignKey("DumpId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.FileDataStream", b =>
             {
                 b.HasOne("Marechai.Database.Models.DbFile", "File").WithMany().HasForeignKey("FileId").
@@ -3420,7 +3479,7 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.MediaDump", b =>
             {
-                b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("Dumps").HasForeignKey("MediaId").
+                b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("MediaDumps").HasForeignKey("MediaId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 

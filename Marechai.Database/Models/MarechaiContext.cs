@@ -118,6 +118,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<MediaDumpSubchannelImage>            MediaDumpSubchannelImages           { get; set; }
         public virtual DbSet<MediaDumpTrackImage>                 MediaDumpTrackImages                { get; set; }
         public virtual DbSet<MediaFile>                           MediaFiles                          { get; set; }
+        public virtual DbSet<Dump>                                Dumps                               { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1602,6 +1603,8 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.SoftwareName);
                 entity.HasIndex(e => e.SoftwareVersion);
                 entity.HasIndex(e => e.SoftwareOperatingSystem);
+
+                entity.HasOne(e => e.Dump).WithMany(e => e.DumpHardware).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<DbFile>(entity =>
@@ -1688,7 +1691,7 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<MediaDump>(entity =>
             {
-                entity.HasOne(d => d.Media).WithMany(p => p.Dumps).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.Media).WithMany(p => p.MediaDumps).OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasIndex(e => e.Status);
                 entity.HasIndex(e => e.Format);
@@ -1794,6 +1797,17 @@ namespace Marechai.Database.Models
             modelBuilder.Entity<FilesByFilesystem>(entity =>
             {
                 entity.HasOne(d => d.Filesystem).WithMany(p => p.Files).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Dump>(entity =>
+            {
+                entity.HasIndex(e => e.Dumper);
+                entity.HasIndex(e => e.DumpingGroup);
+                entity.HasIndex(e => e.DumpDate);
+
+                entity.HasOne(e => e.User).WithMany(e => e.Dumps).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(e => e.Media).WithMany(e => e.Dumps).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.MediaDump).WithMany(e => e.Dumps).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
