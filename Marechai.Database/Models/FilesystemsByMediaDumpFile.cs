@@ -23,18 +23,15 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models
 {
-    public class MediaDump : BaseModel<ulong>
+    public class FilesystemsByMediaDumpFile : BaseModel<ulong>
     {
         [Required]
-        public virtual Media Media { get; set; }
-        public string     Format { get;   set; }
-        public DumpStatus Status { get;   set; }
-
-        public virtual ICollection<MediaDumpFileImage> Files { get; set; }
+        public virtual Filesystem Filesystem { get; set; }
+        [Required]
+        public virtual MediaDumpFileImage MediaDumpFileImage { get; set; }
     }
 }

@@ -907,6 +907,27 @@ namespace Marechai.Database.Migrations
                 b.ToTable("FilesystemsByLogicalPartition");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.FilesystemsByMediaDumpFile", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("FilesystemId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("MediaDumpFileImageId").HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("FilesystemId");
+
+                b.HasIndex("MediaDumpFileImageId");
+
+                b.ToTable("FilesystemsByMediaDumpFile");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Forbidden", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
@@ -1764,6 +1785,51 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("Status");
 
                 b.ToTable("MediaDumps");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaDumpFileImage", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<long>("FileSequence").HasColumnType("bigint");
+
+                b.Property<byte[]>("Md5").HasColumnType("binary(16)");
+
+                b.Property<ulong>("MediaDumpId").HasColumnType("bigint unsigned");
+
+                b.Property<short>("PartitionSequence").HasColumnType("smallint");
+
+                b.Property<byte[]>("Sha1").HasColumnType("binary(20)");
+
+                b.Property<byte[]>("Sha256").HasColumnType("binary(32)");
+
+                b.Property<byte[]>("Sha3").HasColumnType("binary(64)");
+
+                b.Property<ulong>("Size").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Spamsum").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Md5");
+
+                b.HasIndex("MediaDumpId");
+
+                b.HasIndex("Sha1");
+
+                b.HasIndex("Sha256");
+
+                b.HasIndex("Sha3");
+
+                b.HasIndex("Size");
+
+                b.HasIndex("Spamsum");
+
+                b.ToTable("MediaDumpFileImages");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
@@ -2974,6 +3040,15 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("PartitionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.FilesystemsByMediaDumpFile", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Filesystem", "Filesystem").WithMany("MediaDumpFileImages").
+                  HasForeignKey("FilesystemId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.MediaDumpFileImage", "MediaDumpFileImage").WithMany("Filesystems").
+                  HasForeignKey("MediaDumpFileImageId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.Gpu", b =>
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("Gpus").HasForeignKey("CompanyId").
@@ -3079,6 +3154,12 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("Dumps").HasForeignKey("MediaId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaDumpFileImage", b =>
+            {
+                b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Files").
+                  HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>

@@ -51,6 +51,7 @@ namespace Marechai.Database.Models
         public string    DataPreparerIdentifier { get; set; }
         public string    ApplicationIdentifier  { get; set; }
 
-        public virtual ICollection<FilesystemsByLogicalPartition> Partitions { get; set; }
+        public virtual ICollection<FilesystemsByLogicalPartition> Partitions          { get; set; }
+        public virtual ICollection<FilesystemsByMediaDumpFile>    MediaDumpFileImages { get; set; }
     }
 }
