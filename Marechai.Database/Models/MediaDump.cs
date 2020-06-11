@@ -40,5 +40,6 @@ namespace Marechai.Database.Models
         public virtual MediaDumpSubchannelImage         Subchannel { get; set; }
         public virtual ICollection<MediaDumpTrackImage> Tracks     { get; set; }
         public virtual ICollection<Dump>                Dumps      { get; set; }
+        public virtual ICollection<MediaTagDump>        Tags       { get; set; }
     }
 }

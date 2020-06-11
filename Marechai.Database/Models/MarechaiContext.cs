@@ -123,6 +123,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<SoftwareVariant>                     SoftwareVariants                    { get; set; }
         public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
         public virtual DbSet<MasteringText>                       MasteringTexts                      { get; set; }
+        public virtual DbSet<MediaTagDump>                        MediaTagDumps                       { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1980,6 +1981,13 @@ namespace Marechai.Database.Models
                 entity.HasIndex(e => e.Type);
                 entity.HasIndex(e => e.Text);
                 entity.HasOne(d => d.Media).WithMany(p => p.MasteringTexts).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<MediaTagDump>(entity =>
+            {
+                entity.HasIndex(e => e.Type);
+
+                entity.HasOne(e => e.MediaDump).WithMany(e => e.Tags).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

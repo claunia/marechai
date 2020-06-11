@@ -2384,6 +2384,31 @@ namespace Marechai.Database.Migrations
                 b.ToTable("MediaFiles");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.MediaTagDump", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<ulong>("FileId").HasColumnType("bigint unsigned");
+
+                b.Property<ulong>("MediaDumpId").HasColumnType("bigint unsigned");
+
+                b.Property<int>("Type").HasColumnType("int");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("FileId");
+
+                b.HasIndex("MediaDumpId");
+
+                b.HasIndex("Type");
+
+                b.ToTable("MediaTagDumps");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
@@ -4250,6 +4275,15 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Tracks").
                   HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaTagDump", b =>
+            {
+                b.HasOne("Marechai.Database.Models.DbFile", "File").WithMany().HasForeignKey("FileId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Tags").
+                  HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
