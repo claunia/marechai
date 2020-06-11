@@ -84,5 +84,6 @@ namespace Marechai.Database.Models
         public virtual ICollection<PeopleByCompany> People { get; set; }
         public virtual CompanyLogo LastLogo => Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
         public virtual DocumentCompany DocumentCompany { get; set; }
+        public virtual ICollection<CompaniesBySoftwareFamily> SoftwareFamilies { get; set; }
     }
 }

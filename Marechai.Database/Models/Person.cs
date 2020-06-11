@@ -57,8 +57,9 @@ namespace Marechai.Database.Models
         [NotMapped, DisplayName("Name")]
         public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 
-        public         short?                       CountryOfBirthId { get; set; }
-        public virtual ICollection<PeopleByCompany> Companies        { get; set; }
-        public virtual DocumentPerson               DocumentPerson   { get; set; }
+        public         short?                              CountryOfBirthId { get; set; }
+        public virtual ICollection<PeopleByCompany>        Companies        { get; set; }
+        public virtual DocumentPerson                      DocumentPerson   { get; set; }
+        public virtual ICollection<PeopleBySoftwareFamily> SoftwareFamilies { get; set; }
     }
 }

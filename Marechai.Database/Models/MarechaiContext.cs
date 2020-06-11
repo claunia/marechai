@@ -119,6 +119,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<MediaDumpTrackImage>                 MediaDumpTrackImages                { get; set; }
         public virtual DbSet<MediaFile>                           MediaFiles                          { get; set; }
         public virtual DbSet<Dump>                                Dumps                               { get; set; }
+        public virtual DbSet<SoftwareFamily>                      SoftwareFamilies                    { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1808,6 +1809,26 @@ namespace Marechai.Database.Models
                 entity.HasOne(e => e.User).WithMany(e => e.Dumps).OnDelete(DeleteBehavior.SetNull);
                 entity.HasOne(e => e.Media).WithMany(e => e.Dumps).OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(e => e.MediaDump).WithMany(e => e.Dumps).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<SoftwareFamily>(entity =>
+            {
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.Introduced);
+
+                entity.HasOne(e => e.Parent).WithMany(e => e.Children).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<CompaniesBySoftwareFamily>(entity =>
+            {
+                entity.HasOne(d => d.Company).WithMany(p => p.SoftwareFamilies).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareFamily).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<PeopleBySoftwareFamily>(entity =>
+            {
+                entity.HasOne(d => d.Person).WithMany(p => p.SoftwareFamilies).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.SoftwareFamily).WithMany(p => p.People).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
