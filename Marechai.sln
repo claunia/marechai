@@ -4,6 +4,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marechai", "Marechai\Marech
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marechai.Database", "Marechai.Database\Marechai.Database.csproj", "{F914D5B9-0C7F-4A40-B187-269B83497AF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aaru.CommonTypes", "Aaru.CommonTypes\Aaru.CommonTypes.csproj", "{F2B84194-26EB-4227-B1C5-6602517E85AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aaru.Console", "Aaru.Console\Aaru.Console.csproj", "{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aaru.Helpers", "Aaru.Helpers\Aaru.Helpers.csproj", "{F8BDF57B-1571-4CD0-84B3-B422088D359A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +24,17 @@ Global
 		{F914D5B9-0C7F-4A40-B187-269B83497AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F914D5B9-0C7F-4A40-B187-269B83497AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F914D5B9-0C7F-4A40-B187-269B83497AF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2B84194-26EB-4227-B1C5-6602517E85AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2B84194-26EB-4227-B1C5-6602517E85AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2B84194-26EB-4227-B1C5-6602517E85AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2B84194-26EB-4227-B1C5-6602517E85AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8BDF57B-1571-4CD0-84B3-B422088D359A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8BDF57B-1571-4CD0-84B3-B422088D359A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8BDF57B-1571-4CD0-84B3-B422088D359A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8BDF57B-1571-4CD0-84B3-B422088D359A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

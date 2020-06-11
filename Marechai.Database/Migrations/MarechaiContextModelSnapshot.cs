@@ -1637,6 +1637,89 @@ namespace Marechai.Database.Migrations
                 b.ToTable("marechai_db");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.Media", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<string>("Barcode").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("BlockSizes").HasColumnType("json");
+
+                b.Property<string>("CatalogueNumber").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("CopyProtection").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("Firmware").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ushort?>("LastSequence").HasColumnType("smallint unsigned");
+
+                b.Property<ushort?>("Layers").HasColumnType("smallint unsigned");
+
+                b.Property<int?>("LogicalBlockSize").HasColumnType("int");
+
+                b.Property<string>("Manufacturer").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("Model").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("PartNumber").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<int?>("PhysicalBlockSize").HasColumnType("int");
+
+                b.Property<string>("Revision").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ulong>("Sectors").HasColumnType("bigint unsigned");
+
+                b.Property<ushort?>("Sequence").HasColumnType("smallint unsigned");
+
+                b.Property<string>("SerialNumber").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ushort?>("Sessions").HasColumnType("smallint unsigned");
+
+                b.Property<ushort?>("Sides").HasColumnType("smallint unsigned");
+
+                b.Property<ulong>("Size").HasColumnType("bigint unsigned");
+
+                b.Property<int?>("StorageInterface").HasColumnType("int");
+
+                b.Property<string>("Title").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ushort?>("Tracks").HasColumnType("smallint unsigned");
+
+                b.Property<uint>("Type").HasColumnType("int unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<int?>("WriteOffset").HasColumnType("int");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Barcode");
+
+                b.HasIndex("CatalogueNumber");
+
+                b.HasIndex("CopyProtection");
+
+                b.HasIndex("Firmware");
+
+                b.HasIndex("Manufacturer");
+
+                b.HasIndex("Model");
+
+                b.HasIndex("PartNumber");
+
+                b.HasIndex("Revision");
+
+                b.HasIndex("SerialNumber");
+
+                b.HasIndex("Title");
+
+                b.HasIndex("Type");
+
+                b.ToTable("Media");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
