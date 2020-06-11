@@ -23,20 +23,26 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models
 {
-    public class MediaDump : BaseModel<ulong>
+    public class MediaDumpSubchannelImage : BaseModel<ulong>
     {
-        [Required]
-        public virtual Media Media { get; set; }
-        public string     Format { get;   set; }
-        public DumpStatus Status { get;   set; }
+        public short            TrackSequence { get; set; }
+        public SubchannelStatus Status        { get; set; }
+        public ulong            Size          { get; set; }
+        [Column(TypeName = "binary(16)")]
+        public string Md5 { get; set; }
+        [Column(TypeName = "binary(20)")]
+        public string Sha1 { get; set; }
+        [Column(TypeName = "binary(32)")]
+        public string Sha256 { get; set; }
+        [Column(TypeName = "binary(64)")]
+        public string Sha3 { get;        set; }
+        public string Spamsum     { get; set; }
+        public ulong? MediaDumpId { get; set; }
 
-        public virtual ICollection<MediaDumpFileImage> Files      { get; set; }
-        public virtual MediaDumpImage                  Image      { get; set; }
-        public virtual MediaDumpSubchannelImage        Subchannel { get; set; }
+        public virtual MediaDump MediaDump { get; set; }
     }
 }

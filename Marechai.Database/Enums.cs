@@ -512,4 +512,12 @@ namespace Marechai.Database
         Verified             = 1              << 11, MissingData       = 1 << 12, MissingNonRequiredData = 1 << 13,
         MissingEssentialData = 1              << 14, DamagedSubchannel = 1 << 15
     }
+
+    [Flags]
+    public enum SubchannelStatus : byte
+    {
+        None = 0, P = 1 << 0, Q = 1 << 1,
+        R    = 1        << 2, S = 1 << 3, T = 1 << 4,
+        U    = 1        << 5, V = 1 << 6, W = 1 << 7
+    }
 }
