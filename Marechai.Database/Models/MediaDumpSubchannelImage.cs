@@ -42,7 +42,9 @@ namespace Marechai.Database.Models
         public string Sha3 { get;        set; }
         public string Spamsum     { get; set; }
         public ulong? MediaDumpId { get; set; }
+        public ulong? TrackId     { get; set; }
 
-        public virtual MediaDump MediaDump { get; set; }
+        public virtual MediaDump           MediaDump { get; set; }
+        public virtual MediaDumpTrackImage Track     { get; set; }
     }
 }

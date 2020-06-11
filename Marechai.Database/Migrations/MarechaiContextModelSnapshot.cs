@@ -1899,6 +1899,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<byte>("Status").HasColumnType("tinyint unsigned");
 
+                b.Property<ulong?>("TrackId").HasColumnType("bigint unsigned");
+
                 b.Property<short>("TrackSequence").HasColumnType("smallint");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
@@ -1919,7 +1921,56 @@ namespace Marechai.Database.Migrations
 
                 b.HasIndex("Spamsum");
 
+                b.HasIndex("TrackId").IsUnique();
+
                 b.ToTable("MediaDumpSubchannelImages");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaDumpTrackImage", b =>
+            {
+                b.Property<ulong>("Id").ValueGeneratedOnAdd().HasColumnType("bigint unsigned");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<string>("Format").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<byte[]>("Md5").HasColumnType("binary(16)");
+
+                b.Property<ulong?>("MediaDumpId").HasColumnType("bigint unsigned");
+
+                b.Property<byte[]>("Sha1").HasColumnType("binary(20)");
+
+                b.Property<byte[]>("Sha256").HasColumnType("binary(32)");
+
+                b.Property<byte[]>("Sha3").HasColumnType("binary(64)");
+
+                b.Property<ulong>("Size").HasColumnType("bigint unsigned");
+
+                b.Property<string>("Spamsum").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<short>("TrackSequence").HasColumnType("smallint");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Format");
+
+                b.HasIndex("Md5");
+
+                b.HasIndex("MediaDumpId");
+
+                b.HasIndex("Sha1");
+
+                b.HasIndex("Sha256");
+
+                b.HasIndex("Sha3");
+
+                b.HasIndex("Size");
+
+                b.HasIndex("Spamsum");
+
+                b.ToTable("MediaDumpTrackImages");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
@@ -3264,6 +3315,16 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithOne("Subchannel").
                   HasForeignKey("Marechai.Database.Models.MediaDumpSubchannelImage", "MediaDumpId").
                   OnDelete(DeleteBehavior.Cascade);
+
+                b.HasOne("Marechai.Database.Models.MediaDumpTrackImage", "Track").WithOne("Subchannel").
+                  HasForeignKey("Marechai.Database.Models.MediaDumpSubchannelImage", "TrackId").
+                  OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaDumpTrackImage", b =>
+            {
+                b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Tracks").
+                  HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>

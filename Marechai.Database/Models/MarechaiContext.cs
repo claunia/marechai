@@ -116,6 +116,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<MediaDumpFileImage>                  MediaDumpFileImages                 { get; set; }
         public virtual DbSet<MediaDumpImage>                      MediaDumpImages                     { get; set; }
         public virtual DbSet<MediaDumpSubchannelImage>            MediaDumpSubchannelImages           { get; set; }
+        public virtual DbSet<MediaDumpTrackImage>                 MediaDumpTrackImages                { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1742,8 +1743,27 @@ namespace Marechai.Database.Models
                 entity.Property(e => e.Sha3).HasConversion(hexToBytesConverter);
 
                 entity.HasOne(d => d.MediaDump).WithOne(p => p.Subchannel).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(d => d.Track).WithOne(p => p.Subchannel).OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasIndex(e => e.Size);
+                entity.HasIndex(e => e.Md5);
+                entity.HasIndex(e => e.Sha1);
+                entity.HasIndex(e => e.Sha256);
+                entity.HasIndex(e => e.Sha3);
+                entity.HasIndex(e => e.Spamsum);
+            });
+
+            modelBuilder.Entity<MediaDumpTrackImage>(entity =>
+            {
+                entity.Property(e => e.Md5).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha1).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha256).HasConversion(hexToBytesConverter);
+                entity.Property(e => e.Sha3).HasConversion(hexToBytesConverter);
+
+                entity.HasOne(d => d.MediaDump).WithMany(p => p.Tracks).OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.Size);
+                entity.HasIndex(e => e.Format);
                 entity.HasIndex(e => e.Md5);
                 entity.HasIndex(e => e.Sha1);
                 entity.HasIndex(e => e.Sha256);
