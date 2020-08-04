@@ -131,7 +131,7 @@
         <tr>
         <td>
         <Collapse Visible="@_processorVisible[currentCounter]">
-        <collapseheader>
+        <CollapseHeader>
             @if(processor.Speed > 0)
             {
                 @(processor.GprSize > 0 ? string.Format(L["{0} @ {1}MHz ({2} bits)"], processor.Name, processor.Speed, processor.GprSize) : string.Format(L["{0} @ {1}MHz"], processor.Name, processor.Speed))
@@ -140,11 +140,11 @@
             {
                 @($"{processor.Name}")
             }
-            <span class="btn btn-link" @ onclick="() => _processorVisible[currentCounter] = !_processorVisible[currentCounter]">
+            <span class="btn btn-link" @onclick="() => _processorVisible[currentCounter] = !_processorVisible[currentCounter]">
                 @L["+info"]
             </span>
-        </collapseheader>
-        <collapsebody Class="card card-body">
+        </CollapseHeader>
+        <CollapseBody Class="card card-body">
         <table class="table table-borderless">
         @if(processor.ModelCode != null &&
             processor.ModelCode != processor.Name)
@@ -399,8 +399,8 @@
             </tr>
         }
         </table>
-        </collapsebody>
-        </collapse>
+        </CollapseBody>
+        </Collapse>
         </td>
         </tr>
 
@@ -490,29 +490,29 @@
                     {
                         <td>
                             <Collapse Visible="@_gpuVisible[currentCounter]">
-                                <collapseheader>
+                                <CollapseHeader>
                                     @L["Framebuffer"]
-                                    <span class="btn btn-link" @ onclick="() => _gpuVisible[currentCounter] = !_gpuVisible[currentCounter]">
+                                    <span class="btn btn-link" @onclick="() => _gpuVisible[currentCounter] = !_gpuVisible[currentCounter]">
                                         @L["+info"]
                                     </span>
-                                </collapseheader>
-                                <collapsebody Class="card card-body">
+                                </CollapseHeader>
+                                <CollapseBody Class="card card-body">
                                     @L["This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit."]
-                                </collapsebody>
-                            </collapse>
+                                </CollapseBody>
+                            </Collapse>
                         </td>
                     }
                     else
                     {
                         <td>
                             <Collapse Visible="@_gpuVisible[currentCounter]">
-                                <collapseheader>
+                                <CollapseHeader>
                                     @($"{gpu.Name}")
-                                    <span class="btn btn-link" @ onclick="() => _gpuVisible[currentCounter] = !_gpuVisible[currentCounter]">
+                                    <span class="btn btn-link" @onclick="() => _gpuVisible[currentCounter] = !_gpuVisible[currentCounter]">
                                         @L["+info"]
                                     </span>
-                                </collapseheader>
-                                <collapsebody Class="card card-body">
+                                </CollapseHeader>
+                                <CollapseBody Class="card card-body">
                                     <table class="table table-borderless">
                                         @if(gpu.ModelCode != null &&
                                             gpu.ModelCode != gpu.Name)
@@ -595,8 +595,8 @@
                                             </tr>
                                         }
                                     </table>
-                                </collapsebody>
-                            </collapse>
+                                </CollapseBody>
+                            </Collapse>
                         </td>
                     }
                     counter++;
@@ -623,29 +623,29 @@
                         {
                             <td>
                                 <Collapse Visible="@_soundVisible[currentCounter]">
-                                    <collapseheader>
+                                    <CollapseHeader>
                                         @L["Software"]
-                                        <span class="btn btn-link" @ onclick="() => _soundVisible[currentCounter] = !_soundVisible[currentCounter]">
+                                        <span class="btn btn-link" @onclick="() => _soundVisible[currentCounter] = !_soundVisible[currentCounter]">
                                             @L["+info"]
                                         </span>
-                                    </collapseheader>
-                                    <collapsebody Class="card card-body">
+                                    </CollapseHeader>
+                                    <CollapseBody Class="card card-body">
                                         @L["This machine directly sends data to a DAC or similar connected to the audio output."]
-                                    </collapsebody>
-                                </collapse>
+                                    </CollapseBody>
+                                </Collapse>
                             </td>
                         }
                         else
                         {
                             <td>
                                 <Collapse Visible="@_soundVisible[currentCounter]">
-                                    <collapseheader>
+                                    <CollapseHeader>
                                         @($"{sound.Name}")
-                                        <span class="btn btn-link" @ onclick="() => _soundVisible[currentCounter] = !_soundVisible[currentCounter]">
+                                        <span class="btn btn-link" @onclick="() => _soundVisible[currentCounter] = !_soundVisible[currentCounter]">
                                             @L["+info"]
                                         </span>
-                                    </collapseheader>
-                                    <collapsebody Class="card card-body">
+                                    </CollapseHeader>
+                                    <CollapseBody Class="card card-body">
                                         <table class="table table-borderless">
                                             @if(sound.ModelCode != null &&
                                                 sound.ModelCode != sound.Name)
@@ -761,8 +761,8 @@
                                                 </tr>
                                             }
                                         </table>
-                                    </collapsebody>
-                                </collapse>
+                                    </CollapseBody>
+                                </Collapse>
                             </td>
                         }
                     </tr>
