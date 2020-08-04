@@ -116,7 +116,18 @@
         {
             <tr>
                 <th>@L["Founded"]</th>
-                <td>@_company.Founded.Value.ToLongDateString().</td>
+                @if(_company.FoundedMonthIsUnknown)
+                {
+                    <td>@_company.Founded.Value.Year.</td>
+                }
+                else if(_company.FoundedDayIsUnknown)
+                {
+                    <td>@($"{_company.Founded.Value:Y}").</td>
+                }
+                else
+                {
+                    <td>@_company.Founded.Value.ToLongDateString().</td>
+                }
             </tr>
         }
         <tr>
@@ -163,12 +174,12 @@
                         {
                             <td>
                                 <a href="/company/@_soldTo.Id">
-                                    @string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, _company.Sold.Value.ToLongDateString())</a>
+                                    @string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</a>
                             </td>
                         }
                         else
                         {
-                            <td>@string.Format(L["Company sold on {0} to an unknown company."], _company.Sold.Value.ToLongDateString())</td>
+                            <td>@string.Format(L["Company sold on {0} to an unknown company."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
                         }
                     }
                     else
@@ -192,12 +203,12 @@
                         if (_soldTo != null)
                         {
                             <td>
-                                <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."], _company.Sold.Value.ToLongDateString(), _soldTo.Name)</a>
+                                <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString(), _soldTo.Name)</a>
                             </td>
                         }
                         else
                         {
-                            <td>@string.Format(L["Company merged on {0} to form an unknown company."], _company.Sold.Value.ToLongDateString())</td>
+                            <td>@string.Format(L["Company merged on {0} to form an unknown company."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
                         }
                     }
                     else
@@ -217,7 +228,7 @@
                 case CompanyStatus.Bankrupt:
                     if (_company.Sold != null)
                     {
-                        <td>@string.Format(L["Company declared bankruptcy on {0}."], _company.Sold.Value.ToLongDateString())</td>
+                        <td>@string.Format(L["Company declared bankruptcy on {0}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
                     }
                     else
                     {
@@ -227,7 +238,7 @@
                 case CompanyStatus.Defunct:
                     if (_company.Sold != null)
                     {
-                        <td>@string.Format(L["Company ceased operations on {0}."], _company.Sold.Value.ToLongDateString())</td>
+                        <td>@string.Format(L["Company ceased operations on {0}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
                     }
                     else
                     {
@@ -240,12 +251,12 @@
                         if (_soldTo != null)
                         {
                             <td>
-                                <a href="/company/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.Sold.Value.ToLongDateString())</a>
+                                <a href="/company/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</a>
                             </td>
                         }
                         else
                         {
-                            <td>@string.Format(L["Company was renamed on {0} to an unknown name."], _company.Sold.Value.ToLongDateString())</td>
+                            <td>@string.Format(L["Company was renamed on {0} to an unknown name."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
                         }
                     }
                     else

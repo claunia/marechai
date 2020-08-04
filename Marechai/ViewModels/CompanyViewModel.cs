@@ -46,6 +46,10 @@ namespace Marechai.ViewModels
         public Guid?         LastLogo   { get; set; }
         public string        SoldTo     { get; set; }
         public string        Country    { get; set; }
+        public bool FoundedDayIsUnknown   { get; set; }
+        public bool FoundedMonthIsUnknown { get; set; }
+        public bool SoldDayIsUnknown      { get; set; }
+        public bool SoldMonthIsUnknown    { get; set; }
 
         public string SoldView => Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
                                       ? Sold?.ToShortDateString() ?? "Unknown"

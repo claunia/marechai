@@ -69,6 +69,14 @@ namespace Marechai.Database.Models
         [Required]
         public CompanyStatus Status { get;   set; }
         public int? DocumentCompanyId { get; set; }
+        [DefaultValue(false)]
+        public bool FoundedMonthIsUnknown { get; set; }
+        [DefaultValue(false)]
+        public bool FoundedDayIsUnknown { get; set; }
+        [DefaultValue(false)]
+        public bool SoldMonthIsUnknown { get; set; }
+        [DefaultValue(false)]
+        public bool SoldDayIsUnknown { get; set; }
 
         public virtual Iso31661Numeric Country { get; set; }
         [DisplayName("Sold to")]

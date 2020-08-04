@@ -91,6 +91,7 @@ namespace Marechai.Pages.Admin.Details
         bool                        _uploading;
         MemoryStream                _uploadMs;
         bool                        _yearChangeInProgress;
+
         [Parameter]
         public int Id { get; set; }
 

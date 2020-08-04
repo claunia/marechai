@@ -449,6 +449,10 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime?>("Founded").HasColumnName("founded").HasColumnType("datetime");
 
+                b.Property<bool>("FoundedDayIsUnknown").HasColumnType("bit(1)");
+
+                b.Property<bool>("FoundedMonthIsUnknown").HasColumnType("bit(1)");
+
                 b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name").
                   HasColumnType("varchar(128)").HasDefaultValueSql("''");
 
@@ -458,6 +462,10 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("Province").HasColumnName("province").HasColumnType("varchar(80)").HasMaxLength(80);
 
                 b.Property<DateTime?>("Sold").HasColumnName("sold").HasColumnType("datetime");
+
+                b.Property<bool>("SoldDayIsUnknown").HasColumnType("bit(1)");
+
+                b.Property<bool>("SoldMonthIsUnknown").HasColumnType("bit(1)");
 
                 b.Property<int?>("SoldToId").HasColumnName("sold_to").HasColumnType("int(11)");
 

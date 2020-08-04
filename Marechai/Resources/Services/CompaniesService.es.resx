@@ -506,4 +506,28 @@
     <value>Añadir nueva descripción</value>
     <comment>Add new description</comment>
   </data>
+  <data name="Unknown foundation month" xml:space="preserve">
+    <value>Mes de fundación desconocido</value>
+    <comment>Unknown foundation month</comment>
+  </data>
+  <data name="Unknown foundation day" xml:space="preserve">
+    <value>Día de fundación desconocido</value>
+    <comment>Unknown foundation day</comment>
+  </data>
+  <data name="If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored." xml:space="preserve">
+    <value>Si el día o mes de la fundación están marcados como desconocidos, elige cualquiera en el campo inferior, será ignorado.</value>
+    <comment>If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored.</comment>
+  </data>
+  <data name="Unknown sold/merge/bankruptcy month" xml:space="preserve">
+    <value>Mes de venta, fusión o bancarrota desconocido</value>
+    <comment>Unknown sold/merge/bankruptcy month</comment>
+  </data>
+  <data name="Unknown sold/merge/bankruptcy day" xml:space="preserve">
+    <value>Día de venta, fusión o bancarrota desconocido</value>
+    <comment>Unknown sold/merge/bankruptcy day</comment>
+  </data>
+  <data name="If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored." xml:space="preserve">
+    <value>Si el día o mes de la venta, fusión o bancarrota están marcados como desconocidos, elige cualquiera en el campo inferior, será ignorado.</value>
+    <comment>If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored.</comment>
+  </data>
 </root>

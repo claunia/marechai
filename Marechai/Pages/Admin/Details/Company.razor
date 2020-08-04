@@ -83,6 +83,9 @@
             }
             @if (!_editing || !_unknownFounded)
             {
+                <Check TValue="bool" @bind-Checked="@_model.FoundedMonthIsUnknown" Disabled="!_editing">@L["Unknown foundation month"]</Check>
+                <Check TValue="bool" @bind-Checked="@_model.FoundedDayIsUnknown" Disabled="_model.FoundedMonthIsUnknown || !_editing">@L["Unknown foundation day"]</Check>
+                @L["If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored."]
                 <Validation Validator="@ValidateFounded">
                     <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.Founded" >
                         <Feedback>
@@ -273,6 +276,9 @@
                 @if (!_editing ||
                      !_unknownSold)
                 {
+                    <Check TValue="bool" @bind-Checked="@_model.SoldMonthIsUnknown" Disabled="!_editing">@L["Unknown sold/merge/bankruptcy month"]</Check>
+                    <Check TValue="bool" @bind-Checked="@_model.SoldDayIsUnknown" Disabled="_model.SoldMonthIsUnknown || !_editing">@L["Unknown sold/merge/bankruptcy day"]</Check>
+                    @L["If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored."]
                     <Validation Validator="@ValidateSold">
                         <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.Sold">
                             <Feedback>

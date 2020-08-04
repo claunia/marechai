@@ -54,14 +54,25 @@ namespace Marechai.Services
                                                                                      Logos.
                                                                                      OrderByDescending(l => l.Year).
                                                                                      FirstOrDefault().Guid,
-                                                                          Name       = c.Name, Founded     = c.Founded,
-                                                                          Sold       = c.Sold, SoldToId    = c.SoldToId,
-                                                                          CountryId  = c.CountryId, Status = c.Status,
-                                                                          Website    = c.Website, Twitter  = c.Twitter,
-                                                                          Facebook   = c.Facebook, Address = c.Address,
-                                                                          City       = c.City, Province    = c.Province,
-                                                                          PostalCode = c.PostalCode,
-                                                                          Country    = c.Country.Name
+                                                                          Name                = c.Name,
+                                                                          Founded             = c.Founded,
+                                                                          Sold                = c.Sold,
+                                                                          SoldToId            = c.SoldToId,
+                                                                          CountryId           = c.CountryId,
+                                                                          Status              = c.Status,
+                                                                          Website             = c.Website,
+                                                                          Twitter             = c.Twitter,
+                                                                          Facebook            = c.Facebook,
+                                                                          Address             = c.Address,
+                                                                          City                = c.City,
+                                                                          Province            = c.Province,
+                                                                          PostalCode          = c.PostalCode,
+                                                                          Country             = c.Country.Name,
+                                                                          FoundedDayIsUnknown = c.FoundedDayIsUnknown,
+                                                                          FoundedMonthIsUnknown =
+                                                                              c.FoundedMonthIsUnknown,
+                                                                          SoldDayIsUnknown   = c.SoldDayIsUnknown,
+                                                                          SoldMonthIsUnknown = c.SoldMonthIsUnknown
                                                                       }).ToListAsync();
 
         public async Task<CompanyViewModel> GetAsync(int id) => await _context.Companies.Where(c => c.Id == id).
@@ -73,17 +84,28 @@ namespace Marechai.Services
                                                                                               OrderByDescending(l => l.
                                                                                                                     Year).
                                                                                               FirstOrDefault().Guid,
-                                                                                   Name = c.Name, Founded = c.Founded,
-                                                                                   Sold = c.Sold, SoldToId = c.SoldToId,
-                                                                                   CountryId = c.CountryId,
-                                                                                   Status = c.Status,
-                                                                                   Website = c.Website,
-                                                                                   Twitter = c.Twitter,
-                                                                                   Facebook = c.Facebook,
-                                                                                   Address = c.Address, City = c.City,
-                                                                                   Province = c.Province,
+                                                                                   Name       = c.Name,
+                                                                                   Founded    = c.Founded,
+                                                                                   Sold       = c.Sold,
+                                                                                   SoldToId   = c.SoldToId,
+                                                                                   CountryId  = c.CountryId,
+                                                                                   Status     = c.Status,
+                                                                                   Website    = c.Website,
+                                                                                   Twitter    = c.Twitter,
+                                                                                   Facebook   = c.Facebook,
+                                                                                   Address    = c.Address,
+                                                                                   City       = c.City,
+                                                                                   Province   = c.Province,
                                                                                    PostalCode = c.PostalCode,
-                                                                                   Country = c.Country.Name
+                                                                                   Country    = c.Country.Name,
+                                                                                   FoundedDayIsUnknown =
+                                                                                       c.FoundedDayIsUnknown,
+                                                                                   FoundedMonthIsUnknown =
+                                                                                       c.FoundedMonthIsUnknown,
+                                                                                   SoldDayIsUnknown =
+                                                                                       c.SoldDayIsUnknown,
+                                                                                   SoldMonthIsUnknown =
+                                                                                       c.SoldMonthIsUnknown
                                                                                }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(CompanyViewModel viewModel, string userId)
@@ -93,20 +115,23 @@ namespace Marechai.Services
             if(model is null)
                 return;
 
-            model.Name       = viewModel.Name;
-            model.Founded    = viewModel.Founded;
-            model.Sold       = viewModel.Sold;
-            model.SoldToId   = viewModel.SoldToId;
-            model.CountryId  = viewModel.CountryId;
-            model.Status     = viewModel.Status;
-            model.Website    = viewModel.Website;
-            model.Twitter    = viewModel.Twitter;
-            model.Facebook   = viewModel.Facebook;
-            model.Address    = viewModel.Address;
-            model.City       = viewModel.City;
-            model.Province   = viewModel.Province;
-            model.PostalCode = viewModel.PostalCode;
-
+            model.Name                  = viewModel.Name;
+            model.Founded               = viewModel.Founded;
+            model.Sold                  = viewModel.Sold;
+            model.SoldToId              = viewModel.SoldToId;
+            model.CountryId             = viewModel.CountryId;
+            model.Status                = viewModel.Status;
+            model.Website               = viewModel.Website;
+            model.Twitter               = viewModel.Twitter;
+            model.Facebook              = viewModel.Facebook;
+            model.Address               = viewModel.Address;
+            model.City                  = viewModel.City;
+            model.Province              = viewModel.Province;
+            model.PostalCode            = viewModel.PostalCode;
+            model.FoundedDayIsUnknown   = viewModel.FoundedDayIsUnknown;
+            model.FoundedMonthIsUnknown = viewModel.FoundedMonthIsUnknown;
+            model.SoldDayIsUnknown      = viewModel.SoldDayIsUnknown;
+            model.SoldMonthIsUnknown    = viewModel.SoldMonthIsUnknown;
             await _context.SaveChangesWithUserAsync(userId);
         }
 
@@ -114,11 +139,23 @@ namespace Marechai.Services
         {
             var model = new Company
             {
-                Name       = viewModel.Name, Founded       = viewModel.Founded, Sold     = viewModel.Sold,
-                SoldToId   = viewModel.SoldToId, CountryId = viewModel.CountryId, Status = viewModel.Status,
-                Website    = viewModel.Website, Twitter    = viewModel.Twitter, Facebook = viewModel.Facebook,
-                Address    = viewModel.Address, City       = viewModel.City, Province    = viewModel.Province,
-                PostalCode = viewModel.PostalCode
+                Name                  = viewModel.Name,
+                Founded               = viewModel.Founded,
+                Sold                  = viewModel.Sold,
+                SoldToId              = viewModel.SoldToId,
+                CountryId             = viewModel.CountryId,
+                Status                = viewModel.Status,
+                Website               = viewModel.Website,
+                Twitter               = viewModel.Twitter,
+                Facebook              = viewModel.Facebook,
+                Address               = viewModel.Address,
+                City                  = viewModel.City,
+                Province              = viewModel.Province,
+                PostalCode            = viewModel.PostalCode,
+                FoundedDayIsUnknown   = viewModel.FoundedDayIsUnknown,
+                FoundedMonthIsUnknown = viewModel.FoundedMonthIsUnknown,
+                SoldDayIsUnknown      = viewModel.SoldDayIsUnknown,
+                SoldMonthIsUnknown    = viewModel.SoldMonthIsUnknown
             };
 
             await _context.Companies.AddAsync(model);
@@ -130,7 +167,9 @@ namespace Marechai.Services
         public async Task<List<Machine>> GetMachinesAsync(int id) =>
             await _context.Machines.Where(m => m.CompanyId == id).OrderBy(m => m.Name).Select(m => new Machine
             {
-                Id = m.Id, Name = m.Name, Type = m.Type
+                Id   = m.Id,
+                Name = m.Name,
+                Type = m.Type
             }).ToListAsync();
 
         public async Task<string> GetDescriptionTextAsync(int id)
@@ -143,7 +182,8 @@ namespace Marechai.Services
 
         public async Task<Company> GetSoldToAsync(int? id) => await _context.Companies.Select(c => new Company
         {
-            Id = c.Id, Name = c.Name
+            Id   = c.Id,
+            Name = c.Name
         }).FirstOrDefaultAsync(c => c.Id == id);
 
         public async Task<string> GetCountryNameAsync(int id) =>
@@ -228,7 +268,9 @@ namespace Marechai.Services
             {
                 current = new CompanyDescription
                 {
-                    CompanyId = id, Html = description.Html, Text = description.Markdown
+                    CompanyId = id,
+                    Html      = description.Html,
+                    Text      = description.Markdown
                 };
 
                 await _context.CompanyDescriptions.AddAsync(current);
