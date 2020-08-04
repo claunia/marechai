@@ -164,7 +164,7 @@ namespace Marechai.Services
             var model = new MachineViewModel
             {
                 Introduced = machine.Introduced, Name = machine.Name, CompanyId = machine.CompanyId,
-                Model      = machine.Model
+                Model      = machine.Model, Type = machine.Type
             };
 
             Company company = await _context.Companies.FindAsync(model.CompanyId);
