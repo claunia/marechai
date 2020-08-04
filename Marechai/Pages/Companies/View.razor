@@ -60,7 +60,7 @@
 /assets/logos/webp/3x/@(_company.LastLogo).webp 3x">
             <img srcset="/assets/logos/png/1x/@(_company.LastLogo).png,
                          /assets/logos/png/2x/@(_company.LastLogo).png 2x,
-                         /assets/logos/png/3x/@(_company.LastLogo).png 3x" src="/assets/logos/png/1x@(_company.LastLogo).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                         /assets/logos/png/3x/@(_company.LastLogo).png 3x" src="/assets/logos/png/1x/@(_company.LastLogo).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
         </picture>
     }
 </p>
@@ -85,7 +85,7 @@
     /assets/logos/webp/1x/@(logo.Guid).webp 3x">
                             <img class="d-block w-100" srcset="/assets/logos/png/1x/@(logo.Guid).png,
                              /assets/logos/png/1x/@(logo.Guid).png 2x,
-                             /assets/logos/png/1x/@(logo.Guid).webp 3x" src="/assets/logos/png/1x@(logo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                             /assets/logos/png/1x/@(logo.Guid).webp 3x" src="/assets/logos/png/1x/@(logo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
                         </picture>
                     </div>
 
@@ -136,16 +136,16 @@
                 @if (_company.Country != null)
                 {
                     <a href="/companies/country/@_company.CountryId">
-                        @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", _company.CountryId + ".svg")))
+                        @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{_company.CountryId:D3}.svg")))
                         {
                             <picture>
-                                <source type="image/svg+xml" srcset="/assets/flags/countries/@(_company.CountryId).svg">
-                                <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(_company.CountryId).webp,
-        /assets/flags/countries/webp/1x/@(_company.CountryId).webp 2x,
-        /assets/flags/countries/webp/1x/@(_company.CountryId).webp 3x">
-                                <img srcset="/assets/flags/countries/png/1x/@(_company.CountryId).png,
-                                 /assets/flags/countries/png/1x/@(_company.CountryId).png 2x,
-                                 /assets/flags/countries/png/1x/@(_company.CountryId).webp 3x" src="/assets/flags/countries/png/1x@(_company.CountryId).png" alt="" height="32" />
+                                <source type="image/svg+xml" srcset="/assets/flags/countries/@($"{_company.CountryId:D3}").svg">
+                                <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp,
+        /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 2x,
+        /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 3x">
+                                <img srcset="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png,
+                                 /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png 2x,
+                                 /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").webp 3x" src="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png" alt="" height="32" />
                             </picture>
                         }
                         @L[_company.Country]

@@ -43,16 +43,16 @@
 {
     <p align="center">
         <b>@string.Format(L["Companies founded in {0}."], L[_countryName])</b>
-        @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", CountryId + ".svg")))
+        @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{CountryId:D3}.svg")))
         {
         <picture>
-            <source type="image/svg+xml" srcset="/assets/flags/countries/@(CountryId).svg">
-            <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@(CountryId).webp,
-        /assets/flags/countries/webp/1x/@(CountryId).webp 2x,
-        /assets/flags/countries/webp/1x/@(CountryId).webp 3x">
-            <img srcset="/assets/flags/countries/png/1x/@(CountryId).png,
-                                 /assets/flags/countries/png/1x/@(CountryId).png 2x,
-                                 /assets/flags/countries/png/1x/@(CountryId).webp 3x" src="/assets/flags/countries/png/1x@(CountryId).png" alt="" height="32" />
+            <source type="image/svg+xml" srcset="/assets/flags/countries/@($"{CountryId:D3}").svg">
+            <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
+        /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 2x,
+        /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 3x">
+            <img srcset="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
+                                 /assets/flags/countries/png/1x/@($"{CountryId:D3}").png 2x,
+                                 /assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x" src="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png" alt="" height="32" />
         </picture>
         }
     </p>
@@ -85,7 +85,7 @@
 /assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x">
                         <img srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
                      /assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
-                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" src="/assets/logos/thumbs/png/1x@(company.LastLogo).png" alt="" height="auto" width="auto" style="max-height: 32px; max-width: 128px" />
+                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" src="/assets/logos/thumbs/png/1x/@(company.LastLogo).png" alt="" height="auto" width="auto" style="max-height: 32px; max-width: 128px" />
                     </picture>
                 }
             </a>
