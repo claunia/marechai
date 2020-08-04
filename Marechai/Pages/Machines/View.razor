@@ -85,9 +85,18 @@
             @L["Introduction date"]
         </th>
         <td style="width: 67%;">
-            <a asp-controller="Computer" asp-action="ByYear" asp-route-id="@_machine.Introduced.Value.Year">
+            @if(_machine.Type == MachineType.Computer)
+            {
+                <a href="/computers/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.ToLongDateString()</a>
+            }
+            else if(_machine.Type == MachineType.Console)
+            {
+                <a href="/consoles/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.ToLongDateString()</a>
+            }
+            else
+            {
                 @_machine.Introduced.Value.ToLongDateString()
-            </a>
+            }
         </td>
     </tr>
 }
