@@ -65,19 +65,15 @@
     }
 </p>
 <div class="row">
-@{
-    _carrouselActive = "active";
-}
 @if (_logos != null &&
      _logos.Count > 1)
 {
-    // TODO: Carousel
     <div class="col-3">
-        <div class="carousel slide" data-ride="carousel" id="logosCarousel">
-            <div class="carousel-inner">
-                @foreach (var logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
-                {
-                    <div class="carousel-item @_carrouselActive">
+        <Carousel @bind-SelectedSlide="@_selectedSlide" ShowIndicators="true" ShowControls="true">
+            @foreach(var logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
+            {
+                <CarouselSlide Name="@logo.Guid.ToString()">
+                    <div style="width: 256px; height: 256px; margin: auto;">
                         <picture>
                             <source type="image/svg+xml" srcset="/assets/logos/@(logo.Guid).svg">
                             <source type="image/webp" srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
@@ -88,21 +84,9 @@
                              /assets/logos/png/1x/@(logo.Guid).webp 3x" src="/assets/logos/png/1x/@(logo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
                         </picture>
                     </div>
-
-                    _carrouselActive = null;
-                }
-            </div>
-            <a class="carousel-control-prev" data-slide="prev" href="#logosCarousel" role="button">
-                <span aria-hidden="true" class="carousel-control-prev-icon">
-                </span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" data-slide="next" href="#logosCarousel" role="button">
-                <span aria-hidden="true" class="carousel-control-next-icon">
-                </span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>
+                </CarouselSlide>
+            }
+        </Carousel>
     </div>
 }
 <div class="col-6">
@@ -391,3 +375,19 @@
     </div>
 }
 </div>
+
+<style>
+    .carousel-indicators {
+        position: absolute;
+        bottom: -50px;
+    }
+
+    .carousel-indicators li {
+        background-color: black;
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        filter: sepia(100%) saturate(200%) brightness(0%) hue-rotate(330deg);
+    }
+</style>

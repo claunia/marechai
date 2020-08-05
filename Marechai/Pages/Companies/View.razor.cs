@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.Database;
@@ -35,7 +36,6 @@ namespace Marechai.Pages.Companies
 {
     public partial class View
     {
-        string            _carrouselActive;
         CompanyViewModel  _company;
         List<Machine>     _computers;
         List<Machine>     _consoles;
@@ -43,6 +43,7 @@ namespace Marechai.Pages.Companies
         int               _id;
         bool              _loaded;
         List<CompanyLogo> _logos;
+        string            _selectedSlide;
         Company           _soldTo;
 
         [Parameter]
@@ -83,6 +84,10 @@ namespace Marechai.Pages.Companies
             _description = await Service.GetDescriptionTextAsync(Id);
             _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
             _logos       = await CompanyLogosService.GetByCompany(Id);
+
+            _selectedSlide = _logos.
+                             FirstOrDefault(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos",
+                                                                             logo.Guid + ".svg")))?.Guid.ToString();
 
             _loaded = true;
             StateHasChanged();
