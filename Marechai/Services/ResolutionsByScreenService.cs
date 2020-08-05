@@ -42,11 +42,17 @@ namespace Marechai.Services
             (await _context.ResolutionsByScreen.Where(r => r.ResolutionId == resolutionId).
                             Select(r => new ResolutionByScreenViewModel
                             {
-                                Id = r.Id, ScreenId = r.ScreenId, Resolution = new ResolutionViewModel
+                                Id       = r.Id,
+                                ScreenId = r.ScreenId,
+                                Resolution = new ResolutionViewModel
                                 {
-                                    Id     = r.Resolution.Id, Width = r.Resolution.Width, Height = r.Resolution.Height,
-                                    Colors = r.Resolution.Colors, Palette = r.Resolution.Palette,
-                                    Chars  = r.Resolution.Chars, Grayscale = r.Resolution.Grayscale
+                                    Id        = r.Resolution.Id,
+                                    Width     = r.Resolution.Width,
+                                    Height    = r.Resolution.Height,
+                                    Colors    = r.Resolution.Colors,
+                                    Palette   = r.Resolution.Palette,
+                                    Chars     = r.Resolution.Chars,
+                                    Grayscale = r.Resolution.Grayscale
                                 },
                                 ResolutionId = r.ResolutionId
                             }).ToListAsync()).OrderBy(r => r.Resolution.Width).ThenBy(r => r.Resolution.Height).
@@ -70,7 +76,8 @@ namespace Marechai.Services
         {
             var item = new ResolutionsByScreen
             {
-                ScreenId = screenId, ResolutionId = resolutionId
+                ScreenId     = screenId,
+                ResolutionId = resolutionId
             };
 
             await _context.ResolutionsByScreen.AddAsync(item);

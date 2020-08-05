@@ -43,7 +43,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                MediaDumpId = table.Column<ulong>(nullable: false), Type = table.Column<int>(nullable: false),
+                MediaDumpId = table.Column<ulong>(nullable: false),
+                Type        = table.Column<int>(nullable: false),
                 FileId      = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {

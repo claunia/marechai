@@ -47,7 +47,8 @@ namespace Marechai.Areas.Identity.Pages.Account
 
                 string callbackUrl = Url.Page("/Account/ResetPassword", null, new
                 {
-                    area = "Identity", code
+                    area = "Identity",
+                    code
                 }, Request.Scheme);
 
                 await _emailSender.SendEmailAsync(Input.Email, "Reset Password",

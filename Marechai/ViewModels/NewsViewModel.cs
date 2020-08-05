@@ -30,7 +30,7 @@ namespace Marechai.ViewModels
 {
     public sealed class NewsViewModel : BaseViewModel<int>
     {
-        public NewsViewModel() { }
+        public NewsViewModel() {}
 
         public NewsViewModel(int affectedId, string text, DateTime timestamp, string controller, string itemName)
         {

@@ -43,8 +43,10 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Path = table.Column<string>(nullable: true), PathSeparator = table.Column<string>(nullable: false),
-                SoftwareVariantId = table.Column<ulong>(nullable: false), MediaId = table.Column<ulong>(nullable: false)
+                Path              = table.Column<string>(nullable: true),
+                PathSeparator     = table.Column<string>(nullable: false),
+                SoftwareVariantId = table.Column<ulong>(nullable: false),
+                MediaId           = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_SoftwareVariantByCompilationMedia", x => x.Id);

@@ -43,7 +43,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                CurrencyCode = table.Column<string>(nullable: false), Year = table.Column<uint>(nullable: false),
+                CurrencyCode = table.Column<string>(nullable: false),
+                Year         = table.Column<uint>(nullable: false),
                 Inflation    = table.Column<float>(nullable: false)
             }, constraints: table =>
             {

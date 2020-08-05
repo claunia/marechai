@@ -40,9 +40,9 @@ namespace Marechai.Database.Models
             new ValueConverter<string, byte[]>(v => HexStringToBytesConverter.StringToHex(v),
                                                v => HexStringToBytesConverter.HexToString(v));
 
-        public MarechaiContext() { }
+        public MarechaiContext() {}
 
-        public MarechaiContext(DbContextOptions<MarechaiContext> options) : base(options) { }
+        public MarechaiContext(DbContextOptions<MarechaiContext> options) : base(options) {}
 
         public virtual DbSet<Book>                                Books                               { get; set; }
         public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
@@ -457,7 +457,9 @@ namespace Marechai.Database.Models
             {
                 entity.HasKey(e => new
                 {
-                    e.Id, e.CompanyId, LogoGuid = e.Guid
+                    e.Id,
+                    e.CompanyId,
+                    LogoGuid = e.Guid
                 });
 
                 entity.ToTable("company_logos");
@@ -666,7 +668,9 @@ namespace Marechai.Database.Models
             {
                 entity.HasKey(e => new
                 {
-                    e.Id, e.ProcessorId, e.ExtensionId
+                    e.Id,
+                    e.ProcessorId,
+                    e.ExtensionId
                 });
 
                 entity.ToTable("instruction_set_extensions_by_processor");
@@ -1369,17 +1373,23 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => new
                 {
-                    e.Width, e.Height
+                    e.Width,
+                    e.Height
                 }).HasName("idx_resolutions_resolution");
 
                 entity.HasIndex(e => new
                 {
-                    e.Width, e.Height, e.Colors
+                    e.Width,
+                    e.Height,
+                    e.Colors
                 }).HasName("idx_resolutions_resolution_with_color");
 
                 entity.HasIndex(e => new
                 {
-                    e.Width, e.Height, e.Colors, e.Palette
+                    e.Width,
+                    e.Height,
+                    e.Colors,
+                    e.Palette
                 }).HasName("idx_resolutions_resolution_with_color_and_palette");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");

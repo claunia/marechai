@@ -40,15 +40,24 @@ namespace Marechai.Services
         public async Task<List<License>> GetAsync() =>
             await _context.Licenses.OrderBy(l => l.Name).Select(l => new License
             {
-                FsfApproved = l.FsfApproved, Id   = l.Id, Link = l.Link, Name = l.Name,
-                OsiApproved = l.OsiApproved, SPDX = l.SPDX
+                FsfApproved = l.FsfApproved,
+                Id          = l.Id,
+                Link        = l.Link,
+                Name        = l.Name,
+                OsiApproved = l.OsiApproved,
+                SPDX        = l.SPDX
             }).ToListAsync();
 
         public async Task<License> GetAsync(int id) =>
             await _context.Licenses.Where(l => l.Id == id).Select(l => new License
             {
-                FsfApproved = l.FsfApproved, Id   = l.Id, Link   = l.Link, Name = l.Name,
-                OsiApproved = l.OsiApproved, SPDX = l.SPDX, Text = l.Text
+                FsfApproved = l.FsfApproved,
+                Id          = l.Id,
+                Link        = l.Link,
+                Name        = l.Name,
+                OsiApproved = l.OsiApproved,
+                SPDX        = l.SPDX,
+                Text        = l.Text
             }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(License viewModel, string userId)
@@ -72,8 +81,12 @@ namespace Marechai.Services
         {
             var model = new License
             {
-                FsfApproved = viewModel.FsfApproved, Link = viewModel.Link, Name = viewModel.Name,
-                OsiApproved = viewModel.OsiApproved, SPDX = viewModel.SPDX, Text = viewModel.Text
+                FsfApproved = viewModel.FsfApproved,
+                Link        = viewModel.Link,
+                Name        = viewModel.Name,
+                OsiApproved = viewModel.OsiApproved,
+                SPDX        = viewModel.SPDX,
+                Text        = viewModel.Text
             };
 
             await _context.Licenses.AddAsync(model);

@@ -13,7 +13,8 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<int>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                Name     = table.Column<string>(), Surname = table.Column<string>(),
+                Name     = table.Column<string>(),
+                Surname  = table.Column<string>(),
                 PersonId = table.Column<int>(nullable: true)
             }, constraints: table =>
             {

@@ -6,6 +6,6 @@ namespace Marechai.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ResetPasswordConfirmationModel : PageModel
     {
-        public void OnGet() { }
+        public void OnGet() {}
     }
 }

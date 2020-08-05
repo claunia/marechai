@@ -230,7 +230,8 @@ namespace Marechai.Database.Migrations
                 city        = table.Column<string>("varchar(80)", nullable: true),
                 province    = table.Column<string>("varchar(80)", nullable: true),
                 postal_code = table.Column<string>("varchar(25)", nullable: true),
-                country     = table.Column<short>("smallint(3)", nullable: true), status = table.Column<int>("int(11)")
+                country     = table.Column<short>("smallint(3)", nullable: true),
+                status      = table.Column<int>("int(11)")
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_companies", x => x.id);
@@ -246,7 +247,8 @@ namespace Marechai.Database.Migrations
             {
                 id = table.Column<int>("int(11)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                company_id = table.Column<int>("int(11)"), text = table.Column<string>("text", nullable: true)
+                company_id = table.Column<int>("int(11)"),
+                text       = table.Column<string>("text", nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_company_descriptions", x => x.id);
@@ -257,13 +259,16 @@ namespace Marechai.Database.Migrations
             {
                 id = table.Column<int>("int(11)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                company_id = table.Column<int>("int(11)"), year = table.Column<int>("int(4)", nullable: true),
+                company_id = table.Column<int>("int(11)"),
+                year       = table.Column<int>("int(4)", nullable: true),
                 logo_guid  = table.Column<string>("char(36)")
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_company_logos", x => new
                 {
-                    x.id, x.company_id, x.logo_guid
+                    x.id,
+                    x.company_id,
+                    x.logo_guid
                 });
 
                 table.ForeignKey("fk_company_logos_company1", x => x.company_id, "companies", "id",
@@ -280,7 +285,8 @@ namespace Marechai.Database.Migrations
                 introduced  = table.Column<DateTime>("datetime", nullable: true),
                 package     = table.Column<string>("varchar(45)", nullable: true),
                 process     = table.Column<string>("varchar(45)", nullable: true),
-                process_nm  = table.Column<float>(nullable: true), die_size = table.Column<float>(nullable: true),
+                process_nm  = table.Column<float>(nullable: true),
+                die_size    = table.Column<float>(nullable: true),
                 transistors = table.Column<long>("bigint(20)", nullable: true)
             }, constraints: table =>
             {
@@ -294,7 +300,8 @@ namespace Marechai.Database.Migrations
             {
                 id = table.Column<int>("int(11)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                company = table.Column<int>("int(11)"), name = table.Column<string>("varchar(255)")
+                company = table.Column<int>("int(11)"),
+                name    = table.Column<string>("varchar(255)")
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_machine_families", x => x.id);
@@ -321,14 +328,17 @@ namespace Marechai.Database.Migrations
                 cores            = table.Column<int>("int(11)", nullable: true),
                 threads_per_core = table.Column<int>("int(11)", nullable: true),
                 process          = table.Column<string>("varchar(45)", nullable: true),
-                process_nm       = table.Column<float>(nullable: true), die_size = table.Column<float>(nullable: true),
+                process_nm       = table.Column<float>(nullable: true),
+                die_size         = table.Column<float>(nullable: true),
                 transistors      = table.Column<long>("bigint(20)", nullable: true),
                 data_bus         = table.Column<int>("int(11)", nullable: true),
                 addr_bus         = table.Column<int>("int(11)", nullable: true),
                 SIMD_registers   = table.Column<int>("int(11)", nullable: true),
                 SIMD_size        = table.Column<int>("int(11)", nullable: true),
-                L1_instruction   = table.Column<float>(nullable: true), L1_data = table.Column<float>(nullable: true),
-                L2               = table.Column<float>(nullable: true), L3      = table.Column<float>(nullable: true)
+                L1_instruction   = table.Column<float>(nullable: true),
+                L1_data          = table.Column<float>(nullable: true),
+                L2               = table.Column<float>(nullable: true),
+                L3               = table.Column<float>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_processors", x => x.id);
@@ -364,7 +374,8 @@ namespace Marechai.Database.Migrations
 
             migrationBuilder.CreateTable("resolutions_by_gpu", table => new
             {
-                gpu = table.Column<int>("int(11)"), resolution = table.Column<int>("int(11)"),
+                gpu        = table.Column<int>("int(11)"),
+                resolution = table.Column<int>("int(11)"),
                 id = table.Column<long>("bigint(20)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
             }, constraints: table =>
@@ -403,12 +414,15 @@ namespace Marechai.Database.Migrations
             {
                 id = table.Column<int>("int(11)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                processor_id = table.Column<int>("int(11)"), extension_id = table.Column<int>("int(11)")
+                processor_id = table.Column<int>("int(11)"),
+                extension_id = table.Column<int>("int(11)")
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_instruction_set_extensions_by_processor", x => new
                 {
-                    x.id, x.processor_id, x.extension_id
+                    x.id,
+                    x.processor_id,
+                    x.extension_id
                 });
 
                 table.ForeignKey("fk_extension_extension_id", x => x.extension_id, "instruction_set_extensions", "id",
@@ -420,7 +434,8 @@ namespace Marechai.Database.Migrations
 
             migrationBuilder.CreateTable("gpus_by_machine", table => new
             {
-                gpu = table.Column<int>("int(11)"), machine = table.Column<int>("int(11)"),
+                gpu     = table.Column<int>("int(11)"),
+                machine = table.Column<int>("int(11)"),
                 id = table.Column<long>("bigint(20)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
             }, constraints: table =>
@@ -453,7 +468,8 @@ namespace Marechai.Database.Migrations
 
             migrationBuilder.CreateTable("processors_by_machine", table => new
             {
-                processor = table.Column<int>("int(11)"), machine = table.Column<int>("int(11)"),
+                processor = table.Column<int>("int(11)"),
+                machine   = table.Column<int>("int(11)"),
                 speed     = table.Column<float>(nullable: true),
                 id = table.Column<long>("bigint(20)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
@@ -470,7 +486,8 @@ namespace Marechai.Database.Migrations
 
             migrationBuilder.CreateTable("sound_by_machine", table => new
             {
-                sound_synth = table.Column<int>("int(11)"), machine = table.Column<int>("int(11)"),
+                sound_synth = table.Column<int>("int(11)"),
+                machine     = table.Column<int>("int(11)"),
                 id = table.Column<long>("bigint(20)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
             }, constraints: table =>

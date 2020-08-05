@@ -48,8 +48,10 @@ namespace Marechai.Services
         public async Task<List<NewsViewModel>> GetAsync() => await _context.News.OrderByDescending(n => n.Date).
                                                                             Select(n => new NewsViewModel
                                                                             {
-                                                                                Id   = n.Id, Timestamp    = n.Date,
-                                                                                Type = n.Type, AffectedId = n.AddedId
+                                                                                Id         = n.Id,
+                                                                                Timestamp  = n.Date,
+                                                                                Type       = n.Type,
+                                                                                AffectedId = n.AddedId
                                                                             }).ToListAsync();
 
         public List<NewsViewModel> GetNews()

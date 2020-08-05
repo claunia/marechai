@@ -42,20 +42,27 @@ namespace Marechai.Services
             await _context.ScreensByMachine.Where(s => s.MachineId == machineId).
                            Select(s => new ScreenByMachineViewModel
                            {
-                               Id = s.Id, ScreenId = s.ScreenId, MachineId = s.MachineId, Screen = new ScreenViewModel
+                               Id        = s.Id,
+                               ScreenId  = s.ScreenId,
+                               MachineId = s.MachineId,
+                               Screen = new ScreenViewModel
                                {
-                                   Diagonal = s.Screen.Diagonal, EffectiveColors = s.Screen.EffectiveColors,
-                                   Height   = s.Screen.Height, Id                = s.Screen.Id, NativeResolution =
-                                       new ResolutionViewModel
-                                       {
-                                           Chars = s.Screen.NativeResolution.Chars,
-                                           Colors = s.Screen.NativeResolution.Colors,
-                                           Grayscale = s.Screen.NativeResolution.Grayscale,
-                                           Height = s.Screen.NativeResolution.Height, Id = s.Screen.NativeResolutionId,
-                                           Palette = s.Screen.NativeResolution.Palette,
-                                           Width = s.Screen.NativeResolution.Width
-                                       },
-                                   NativeResolutionId = s.Screen.NativeResolutionId, Type = s.Screen.Type,
+                                   Diagonal        = s.Screen.Diagonal,
+                                   EffectiveColors = s.Screen.EffectiveColors,
+                                   Height          = s.Screen.Height,
+                                   Id              = s.Screen.Id,
+                                   NativeResolution = new ResolutionViewModel
+                                   {
+                                       Chars     = s.Screen.NativeResolution.Chars,
+                                       Colors    = s.Screen.NativeResolution.Colors,
+                                       Grayscale = s.Screen.NativeResolution.Grayscale,
+                                       Height    = s.Screen.NativeResolution.Height,
+                                       Id        = s.Screen.NativeResolutionId,
+                                       Palette   = s.Screen.NativeResolution.Palette,
+                                       Width     = s.Screen.NativeResolution.Width
+                                   },
+                                   NativeResolutionId = s.Screen.NativeResolutionId,
+                                   Type               = s.Screen.Type,
                                    Width              = s.Screen.Width
                                }
                            }).ToListAsync();
@@ -79,7 +86,8 @@ namespace Marechai.Services
 
             var item = new ScreensByMachine
             {
-                ScreenId = screenId, MachineId = machineId
+                ScreenId  = screenId,
+                MachineId = machineId
             };
 
             await _context.ScreensByMachine.AddAsync(item);

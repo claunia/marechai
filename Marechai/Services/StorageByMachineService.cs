@@ -43,7 +43,10 @@ namespace Marechai.Services
             await _context.StorageByMachine.Where(s => s.MachineId == machineId).
                            Select(s => new StorageByMachineViewModel
                            {
-                               Id        = s.Id, Type = s.Type, Interface = s.Interface, Capacity = s.Capacity,
+                               Id        = s.Id,
+                               Type      = s.Type,
+                               Interface = s.Interface,
+                               Capacity  = s.Capacity,
                                MachineId = s.MachineId
                            }).OrderBy(s => s.Type).ThenBy(s => s.Interface).ThenBy(s => s.Capacity).ToListAsync();
 
@@ -64,7 +67,10 @@ namespace Marechai.Services
         {
             var item = new StorageByMachine
             {
-                MachineId = machineId, Type = type, Interface = @interface, Capacity = capacity
+                MachineId = machineId,
+                Type      = type,
+                Interface = @interface,
+                Capacity  = capacity
             };
 
             await _context.StorageByMachine.AddAsync(item);

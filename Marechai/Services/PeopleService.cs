@@ -42,18 +42,35 @@ namespace Marechai.Services
             await _context.People.OrderBy(p => p.DisplayName).ThenBy(p => p.Alias).ThenBy(p => p.Name).
                            ThenBy(p => p.Surname).Select(p => new PersonViewModel
                            {
-                               Id = p.Id, Name = p.Name, Surname = p.Surname, CountryOfBirth = p.CountryOfBirth.Name,
-                               BirthDate = p.BirthDate, DeathDate = p.DeathDate, Webpage = p.Webpage,
-                               Twitter = p.Twitter, Facebook = p.Facebook, Photo = p.Photo, Alias = p.Alias,
-                               DisplayName = p.DisplayName
+                               Id             = p.Id,
+                               Name           = p.Name,
+                               Surname        = p.Surname,
+                               CountryOfBirth = p.CountryOfBirth.Name,
+                               BirthDate      = p.BirthDate,
+                               DeathDate      = p.DeathDate,
+                               Webpage        = p.Webpage,
+                               Twitter        = p.Twitter,
+                               Facebook       = p.Facebook,
+                               Photo          = p.Photo,
+                               Alias          = p.Alias,
+                               DisplayName    = p.DisplayName
                            }).ToListAsync();
 
         public async Task<PersonViewModel> GetAsync(int id) =>
             await _context.People.Where(p => p.Id == id).Select(p => new PersonViewModel
             {
-                Id        = p.Id, Name             = p.Name, Surname = p.Surname, CountryOfBirthId = p.CountryOfBirthId,
-                BirthDate = p.BirthDate, DeathDate = p.DeathDate, Webpage = p.Webpage, Twitter = p.Twitter,
-                Facebook  = p.Facebook, Photo      = p.Photo, Alias = p.Alias, DisplayName = p.DisplayName
+                Id               = p.Id,
+                Name             = p.Name,
+                Surname          = p.Surname,
+                CountryOfBirthId = p.CountryOfBirthId,
+                BirthDate        = p.BirthDate,
+                DeathDate        = p.DeathDate,
+                Webpage          = p.Webpage,
+                Twitter          = p.Twitter,
+                Facebook         = p.Facebook,
+                Photo            = p.Photo,
+                Alias            = p.Alias,
+                DisplayName      = p.DisplayName
             }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(PersonViewModel viewModel, string userId)
@@ -82,10 +99,17 @@ namespace Marechai.Services
         {
             var model = new Person
             {
-                Name      = viewModel.Name, Surname = viewModel.Surname, CountryOfBirthId = viewModel.CountryOfBirthId,
-                BirthDate = viewModel.BirthDate, DeathDate = viewModel.DeathDate, Webpage = viewModel.Webpage,
-                Twitter   = viewModel.Twitter, Facebook = viewModel.Facebook, Photo = viewModel.Photo,
-                Alias     = viewModel.Alias, DisplayName = viewModel.DisplayName
+                Name             = viewModel.Name,
+                Surname          = viewModel.Surname,
+                CountryOfBirthId = viewModel.CountryOfBirthId,
+                BirthDate        = viewModel.BirthDate,
+                DeathDate        = viewModel.DeathDate,
+                Webpage          = viewModel.Webpage,
+                Twitter          = viewModel.Twitter,
+                Facebook         = viewModel.Facebook,
+                Photo            = viewModel.Photo,
+                Alias            = viewModel.Alias,
+                DisplayName      = viewModel.DisplayName
             };
 
             await _context.People.AddAsync(model);

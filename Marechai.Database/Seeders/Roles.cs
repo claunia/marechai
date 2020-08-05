@@ -37,7 +37,8 @@ namespace Marechai.Database.Seeders
         {
             var roles = configuration.GetSection("MarechaiRoles").GetChildren().Select(x => new
             {
-                Name = x.GetValue<string>("Name"), Description = x.GetValue<string>("Description")
+                Name        = x.GetValue<string>("Name"),
+                Description = x.GetValue<string>("Description")
             }).ToList();
 
             if(roles.Count == 0)

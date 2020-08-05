@@ -43,10 +43,14 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Sequence    = table.Column<uint>(nullable: false), Name          = table.Column<string>(nullable: true),
-                Type        = table.Column<string>(nullable: false), FirstSector = table.Column<ulong>(nullable: false),
-                LastSector  = table.Column<ulong>(nullable: false), Size         = table.Column<ulong>(nullable: false),
-                Description = table.Column<string>(nullable: true), Scheme       = table.Column<string>(nullable: true)
+                Sequence    = table.Column<uint>(nullable: false),
+                Name        = table.Column<string>(nullable: true),
+                Type        = table.Column<string>(nullable: false),
+                FirstSector = table.Column<ulong>(nullable: false),
+                LastSector  = table.Column<ulong>(nullable: false),
+                Size        = table.Column<ulong>(nullable: false),
+                Description = table.Column<string>(nullable: true),
+                Scheme      = table.Column<string>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_LogicalPartitions", x => x.Id);
@@ -62,7 +66,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                FilesystemId = table.Column<ulong>(nullable: false), PartitionId = table.Column<ulong>(nullable: false)
+                FilesystemId = table.Column<ulong>(nullable: false),
+                PartitionId  = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_FilesystemsByLogicalPartition", x => x.Id);

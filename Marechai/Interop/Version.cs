@@ -75,7 +75,7 @@ namespace DiscImageChef.Interop
                                               GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
 
             if(monoDisplayName != null)
-                return(string)monoDisplayName.Invoke(null, null);
+                return (string)monoDisplayName.Invoke(null, null);
 
             return null;
         }

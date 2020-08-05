@@ -45,9 +45,12 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Dumper       = table.Column<string>(nullable: true), UserId = table.Column<string>(nullable: true),
-                DumpingGroup = table.Column<string>(nullable: true), DumpDate = table.Column<DateTime>(nullable: true),
-                MediaId      = table.Column<ulong>(nullable: true), MediaDumpId = table.Column<ulong>(nullable: true)
+                Dumper       = table.Column<string>(nullable: true),
+                UserId       = table.Column<string>(nullable: true),
+                DumpingGroup = table.Column<string>(nullable: true),
+                DumpDate     = table.Column<DateTime>(nullable: true),
+                MediaId      = table.Column<ulong>(nullable: true),
+                MediaDumpId  = table.Column<ulong>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Dumps", x => x.Id);

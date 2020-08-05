@@ -40,34 +40,32 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string Companies = V17.Companies;
 
-        public static readonly string Machines = "CREATE TABLE `machines` (;\n"               +
-                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,;\n"   +
+        public static readonly string Machines = "CREATE TABLE `machines` (;\n" +
+                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,;\n" +
                                                  "`company` int(11) NOT NULL DEFAULT '0',;\n" +
-                                                 "`year` int(11) NOT NULL DEFAULT '0',;\n"    +
-                                                 "`model` char(50) NOT NULL DEFAULT '',;\n"   +
-                                                 "`colors` int(11) NOT NULL DEFAULT '0',;\n"  +
-                                                 "`res` char(10) NOT NULL DEFAULT '',;\n"     +
-                                                 "`hdd1` int(11) NOT NULL DEFAULT '0',;\n"    +
-                                                 "`hdd2` int(11) DEFAULT NULL,;\n"            +
-                                                 "`hdd3` int(11) DEFAULT NULL,;\n"            +
-                                                 "`disk1` int(11) NOT NULL DEFAULT '0',;\n"   +
-                                                 "`cap1` char(25) NOT NULL DEFAULT '0',;\n"   +
-                                                 "`disk2` int(11) DEFAULT NULL,;\n"           +
-                                                 "`cap2` char(25) DEFAULT NULL,;\n"           +
-                                                 "`type` int(11) NOT NULL DEFAULT '0',;\n"    +
-                                                 "PRIMARY KEY (`id`),;\n"                     +
+                                                 "`year` int(11) NOT NULL DEFAULT '0',;\n" +
+                                                 "`model` char(50) NOT NULL DEFAULT '',;\n" +
+                                                 "`colors` int(11) NOT NULL DEFAULT '0',;\n" +
+                                                 "`res` char(10) NOT NULL DEFAULT '',;\n" +
+                                                 "`hdd1` int(11) NOT NULL DEFAULT '0',;\n" +
+                                                 "`hdd2` int(11) DEFAULT NULL,;\n" + "`hdd3` int(11) DEFAULT NULL,;\n" +
+                                                 "`disk1` int(11) NOT NULL DEFAULT '0',;\n" +
+                                                 "`cap1` char(25) NOT NULL DEFAULT '0',;\n" +
+                                                 "`disk2` int(11) DEFAULT NULL,;\n" +
+                                                 "`cap2` char(25) DEFAULT NULL,;\n" +
+                                                 "`type` int(11) NOT NULL DEFAULT '0',;\n" + "PRIMARY KEY (`id`),;\n" +
                                                  "KEY `idx_machines_company` (`company`),;\n" +
-                                                 "KEY `idx_machines_year` (`year`),;\n"       +
-                                                 "KEY `idx_machines_model` (`model`),;\n"     +
-                                                 "KEY `idx_machines_colors` (`colors`),;\n"   +
-                                                 "KEY `idx_machines_res` (`res`),;\n"         +
-                                                 "KEY `idx_machines_hdd1` (`hdd1`),;\n"       +
-                                                 "KEY `idx_machines_hdd2` (`hdd2`),;\n"       +
-                                                 "KEY `idx_machines_hdd3` (`hdd3`),;\n"       +
-                                                 "KEY `idx_machines_disk1` (`disk1`),;\n"     +
-                                                 "KEY `idx_machines_disk2` (`disk2`),;\n"     +
-                                                 "KEY `idx_machines_cap1` (`cap1`),;\n"       +
-                                                 "KEY `idx_machines_cap2` (`cap2`),;\n"       +
+                                                 "KEY `idx_machines_year` (`year`),;\n" +
+                                                 "KEY `idx_machines_model` (`model`),;\n" +
+                                                 "KEY `idx_machines_colors` (`colors`),;\n" +
+                                                 "KEY `idx_machines_res` (`res`),;\n" +
+                                                 "KEY `idx_machines_hdd1` (`hdd1`),;\n" +
+                                                 "KEY `idx_machines_hdd2` (`hdd2`),;\n" +
+                                                 "KEY `idx_machines_hdd3` (`hdd3`),;\n" +
+                                                 "KEY `idx_machines_disk1` (`disk1`),;\n" +
+                                                 "KEY `idx_machines_disk2` (`disk2`),;\n" +
+                                                 "KEY `idx_machines_cap1` (`cap1`),;\n" +
+                                                 "KEY `idx_machines_cap2` (`cap2`),;\n" +
                                                  "KEY `idx_machines_type` (`type`));";
 
         public static readonly string DiskFormats = V17.DiskFormats;

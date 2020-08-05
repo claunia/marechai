@@ -11,9 +11,12 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<int>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                Width           = table.Column<double>(nullable: true), Height = table.Column<double>(nullable: true),
-                Diagonal        = table.Column<double>(), NativeResolutionId   = table.Column<int>(),
-                EffectiveColors = table.Column<long>(nullable: true), Type     = table.Column<string>()
+                Width              = table.Column<double>(nullable: true),
+                Height             = table.Column<double>(nullable: true),
+                Diagonal           = table.Column<double>(),
+                NativeResolutionId = table.Column<int>(),
+                EffectiveColors    = table.Column<long>(nullable: true),
+                Type               = table.Column<string>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Screens", x => x.Id);
@@ -26,7 +29,8 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                ScreenId = table.Column<int>(), ResolutionId = table.Column<int>()
+                ScreenId     = table.Column<int>(),
+                ResolutionId = table.Column<int>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_ResolutionsByScreen", x => x.Id);
@@ -42,7 +46,8 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                ScreenId = table.Column<int>(), MachineId = table.Column<int>()
+                ScreenId  = table.Column<int>(),
+                MachineId = table.Column<int>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_ScreensByMachine", x => x.Id);

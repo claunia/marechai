@@ -43,9 +43,12 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                FamilyId   = table.Column<ulong>(nullable: false), Name        = table.Column<string>(nullable: true),
-                Codename   = table.Column<string>(nullable: true), Version     = table.Column<string>(nullable: false),
-                Introduced = table.Column<DateTime>(nullable: true), LicenseId = table.Column<int>(nullable: true),
+                FamilyId   = table.Column<ulong>(nullable: false),
+                Name       = table.Column<string>(nullable: true),
+                Codename   = table.Column<string>(nullable: true),
+                Version    = table.Column<string>(nullable: false),
+                Introduced = table.Column<DateTime>(nullable: true),
+                LicenseId  = table.Column<int>(nullable: true),
                 PreviousId = table.Column<ulong>(nullable: true)
             }, constraints: table =>
             {
@@ -72,7 +75,8 @@ namespace Marechai.Database.Migrations
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
                 CompanyId         = table.Column<int>(nullable: false),
-                SoftwareVersionId = table.Column<ulong>(nullable: false), RoleId = table.Column<string>(nullable: false)
+                SoftwareVersionId = table.Column<ulong>(nullable: false),
+                RoleId            = table.Column<string>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_CompaniesBySoftwareVersion", x => x.Id);
@@ -98,7 +102,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                SoftwareVersionId = table.Column<ulong>(nullable: false), PersonId = table.Column<int>(nullable: false),
+                SoftwareVersionId = table.Column<ulong>(nullable: false),
+                PersonId          = table.Column<int>(nullable: false),
                 RoleId            = table.Column<string>(nullable: false)
             }, constraints: table =>
             {

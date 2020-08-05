@@ -77,7 +77,8 @@ namespace Marechai.Areas.Identity.Pages.Account
                 {
                     return RedirectToPage("./LoginWith2fa", new
                     {
-                        ReturnUrl = returnUrl, Input.RememberMe
+                        ReturnUrl = returnUrl,
+                        Input.RememberMe
                     });
                 }
 

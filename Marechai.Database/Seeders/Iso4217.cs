@@ -111,7 +111,9 @@ namespace Marechai.Database.Seeders
                 {
                     var newCode = new Models.Iso4217
                     {
-                        Code = currency.Code, Name = currency.Name, Numeric = currency.Number
+                        Code    = currency.Code,
+                        Name    = currency.Name,
+                        Numeric = currency.Number
                     };
 
                     if(byte.TryParse(currency.MinorUnits, out minorUnits))
@@ -170,7 +172,9 @@ namespace Marechai.Database.Seeders
                 {
                     var newCode = new Models.Iso4217
                     {
-                        Code = currency.Code, Name = currency.Name, Numeric = currency.Number
+                        Code    = currency.Code,
+                        Name    = currency.Name,
+                        Numeric = currency.Number
                     };
 
                     if(byte.TryParse(currency.MinorUnits, out minorUnits))

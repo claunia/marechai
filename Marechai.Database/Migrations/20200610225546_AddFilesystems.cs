@@ -43,19 +43,24 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Type = table.Column<string>(nullable: false), CreationDate = table.Column<DateTime>(nullable: true),
-                ModificationDate = table.Column<DateTime>(nullable: true),
-                BackupDate = table.Column<DateTime>(nullable: true), ClusterSize = table.Column<int>(nullable: false),
-                Clusters = table.Column<ulong>(nullable: false), Files = table.Column<ulong>(nullable: true),
-                Bootable = table.Column<bool>(nullable: false), Serial = table.Column<string>(nullable: true),
-                Label = table.Column<string>(nullable: true), FreeClusters = table.Column<ulong>(nullable: true),
-                ExpirationDate = table.Column<DateTime>(nullable: true),
-                EffectiveDate = table.Column<DateTime>(nullable: true),
-                SystemIdentifier = table.Column<string>(nullable: true),
-                VolumeSetIdentifier = table.Column<string>(nullable: true),
-                PublisherIdentifier = table.Column<string>(nullable: true),
+                Type                   = table.Column<string>(nullable: false),
+                CreationDate           = table.Column<DateTime>(nullable: true),
+                ModificationDate       = table.Column<DateTime>(nullable: true),
+                BackupDate             = table.Column<DateTime>(nullable: true),
+                ClusterSize            = table.Column<int>(nullable: false),
+                Clusters               = table.Column<ulong>(nullable: false),
+                Files                  = table.Column<ulong>(nullable: true),
+                Bootable               = table.Column<bool>(nullable: false),
+                Serial                 = table.Column<string>(nullable: true),
+                Label                  = table.Column<string>(nullable: true),
+                FreeClusters           = table.Column<ulong>(nullable: true),
+                ExpirationDate         = table.Column<DateTime>(nullable: true),
+                EffectiveDate          = table.Column<DateTime>(nullable: true),
+                SystemIdentifier       = table.Column<string>(nullable: true),
+                VolumeSetIdentifier    = table.Column<string>(nullable: true),
+                PublisherIdentifier    = table.Column<string>(nullable: true),
                 DataPreparerIdentifier = table.Column<string>(nullable: true),
-                ApplicationIdentifier = table.Column<string>(nullable: true)
+                ApplicationIdentifier  = table.Column<string>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Filesystems", x => x.Id);

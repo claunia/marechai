@@ -37,9 +37,9 @@ namespace Marechai.Services
 
         public BrowserTestsService(MarechaiContext context) => _context = context;
 
-        public Task<List<BrowserTest>> GetAsync() => _context.
-                                                     BrowserTests.OrderBy(b => b.Browser).ThenBy(b => b.Version).
-                                                     ThenBy(b => b.Os).ThenBy(b => b.Platform).ThenBy(b => b.UserAgent).
-                                                     ToListAsync();
+        public Task<List<BrowserTest>> GetAsync() => _context.BrowserTests.OrderBy(b => b.Browser).
+                                                              ThenBy(b => b.Version).ThenBy(b => b.Os).
+                                                              ThenBy(b => b.Platform).ThenBy(b => b.UserAgent).
+                                                              ToListAsync();
     }
 }

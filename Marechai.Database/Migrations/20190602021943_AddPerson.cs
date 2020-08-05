@@ -12,11 +12,15 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<int>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                Name      = table.Column<string>(), Surname = table.Column<string>(),
-                BirthDate = table.Column<DateTime>(),
-                DeathDate = table.Column<DateTime>(nullable: true), Webpage = table.Column<string>(nullable: true),
-                Twitter   = table.Column<string>(nullable: true), Facebook  = table.Column<string>(nullable: true),
-                Photo     = table.Column<Guid>(), CountryOfBirthId          = table.Column<short>(nullable: true)
+                Name             = table.Column<string>(),
+                Surname          = table.Column<string>(),
+                BirthDate        = table.Column<DateTime>(),
+                DeathDate        = table.Column<DateTime>(nullable: true),
+                Webpage          = table.Column<string>(nullable: true),
+                Twitter          = table.Column<string>(nullable: true),
+                Facebook         = table.Column<string>(nullable: true),
+                Photo            = table.Column<Guid>(),
+                CountryOfBirthId = table.Column<short>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_People", x => x.Id);

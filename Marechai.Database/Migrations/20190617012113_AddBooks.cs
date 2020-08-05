@@ -12,14 +12,16 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                Title      = table.Column<string>(), NativeTitle               = table.Column<string>(nullable: true),
-                Published  = table.Column<DateTime>(nullable: true), CountryId = table.Column<short>(nullable: true),
-                Synopsis   = table.Column<string>(maxLength: 262144, nullable: true),
-                Isbn       = table.Column<string>(maxLength: 13, nullable: true),
-                Pages      = table.Column<short>(nullable: true),
-                Edition    = table.Column<int>(nullable: true),
-                PreviousId = table.Column<long>(nullable: true),
-                SourceId   = table.Column<long>(nullable: true)
+                Title       = table.Column<string>(),
+                NativeTitle = table.Column<string>(nullable: true),
+                Published   = table.Column<DateTime>(nullable: true),
+                CountryId   = table.Column<short>(nullable: true),
+                Synopsis    = table.Column<string>(maxLength: 262144, nullable: true),
+                Isbn        = table.Column<string>(maxLength: 13, nullable: true),
+                Pages       = table.Column<short>(nullable: true),
+                Edition     = table.Column<int>(nullable: true),
+                PreviousId  = table.Column<long>(nullable: true),
+                SourceId    = table.Column<long>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Books", x => x.Id);

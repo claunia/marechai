@@ -76,17 +76,16 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string CompaniesForeignKeys = V7.CompaniesForeignKeys;
 
-        public static readonly string CompanyLogos = "CREATE TABLE IF NOT EXISTS `company_logos` (\n"   +
-                                                     "`id` INT NOT NULL AUTO_INCREMENT,\n"              +
-                                                     "`company_id` INT(11) NOT NULL,\n"                 +
-                                                     "`year` INT(4) DEFAULT NULL,\n"                    +
-                                                     "`logo_guid` CHAR(36) NOT NULL,\n"                 +
+        public static readonly string CompanyLogos = "CREATE TABLE IF NOT EXISTS `company_logos` (\n" +
+                                                     "`id` INT NOT NULL AUTO_INCREMENT,\n" +
+                                                     "`company_id` INT(11) NOT NULL,\n" +
+                                                     "`year` INT(4) DEFAULT NULL,\n" +
+                                                     "`logo_guid` CHAR(36) NOT NULL,\n" +
                                                      "PRIMARY KEY (`id`, `company_id`, `logo_guid`),\n" +
-                                                     "UNIQUE INDEX `idx_id` (`id` ASC),\n"              +
-                                                     "INDEX `idx_company_id` (`company_id` ASC),\n"     +
-                                                     "INDEX `idx_guid` (`logo_guid` ASC),\n"            +
-                                                     "CONSTRAINT `fk_company_logos_company1`\n"         +
-                                                     "FOREIGN KEY (`company_id`)\n"                     +
-                                                     "REFERENCES `companies` (`id`))";
+                                                     "UNIQUE INDEX `idx_id` (`id` ASC),\n" +
+                                                     "INDEX `idx_company_id` (`company_id` ASC),\n" +
+                                                     "INDEX `idx_guid` (`logo_guid` ASC),\n" +
+                                                     "CONSTRAINT `fk_company_logos_company1`\n" +
+                                                     "FOREIGN KEY (`company_id`)\n" + "REFERENCES `companies` (`id`))";
     }
 }

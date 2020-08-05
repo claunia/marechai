@@ -38,34 +38,33 @@ namespace Marechai.Database.Schemas.Sql
                                                    "PRIMARY KEY (`id`)\n"                            + ");\n" +
                                                    "INSERT INTO marechai_db (version) VALUES ('7');";
 
-        public static readonly string Companies = "CREATE TABLE `companies` (\n"                            +
-                                                  "`id` int(11)            NOT NULL AUTO_INCREMENT,\n"      +
-                                                  "`name` varchar(128) NOT NULL DEFAULT '',\n"              +
-                                                  "`founded` datetime          DEFAULT NULL,\n"             +
-                                                  "`website` varchar(255) DEFAULT NULL,\n"                  +
-                                                  "`twitter` varchar(45) DEFAULT NULL,\n"                   +
-                                                  "`facebook` varchar(45) DEFAULT NULL,\n"                  +
-                                                  "`sold` datetime DEFAULT NULL,\n"                         +
-                                                  "`sold_to` int(11)   DEFAULT NULL,\n"                     +
-                                                  "`address` varchar(80) DEFAULT NULL,\n"                   +
-                                                  "`city` varchar(80) DEFAULT NULL,\n"                      +
-                                                  "`province` varchar(80) DEFAULT NULL,\n"                  +
-                                                  "`postal_code` varchar(25) DEFAULT NULL,\n"               +
+        public static readonly string Companies = "CREATE TABLE `companies` (\n" +
+                                                  "`id` int(11)            NOT NULL AUTO_INCREMENT,\n" +
+                                                  "`name` varchar(128) NOT NULL DEFAULT '',\n" +
+                                                  "`founded` datetime          DEFAULT NULL,\n" +
+                                                  "`website` varchar(255) DEFAULT NULL,\n" +
+                                                  "`twitter` varchar(45) DEFAULT NULL,\n" +
+                                                  "`facebook` varchar(45) DEFAULT NULL,\n" +
+                                                  "`sold` datetime DEFAULT NULL,\n" +
+                                                  "`sold_to` int(11)   DEFAULT NULL,\n" +
+                                                  "`address` varchar(80) DEFAULT NULL,\n" +
+                                                  "`city` varchar(80) DEFAULT NULL,\n" +
+                                                  "`province` varchar(80) DEFAULT NULL,\n" +
+                                                  "`postal_code` varchar(25) DEFAULT NULL,\n" +
                                                   "`country` smallint(3) UNSIGNED ZEROFILL DEFAULT NULL,\n" +
-                                                  "`status` int NOT NULL,\n"                                +
-                                                  "PRIMARY KEY (`id`),\n"                                   +
-                                                  "KEY `idx_companies_name` (`name`),\n"                    +
-                                                  "KEY `idx_companies_founded` (`founded`),\n"              +
-                                                  "KEY `idx_companies_website` (`website`),\n"              +
-                                                  "KEY `idx_companies_twitter` (`twitter`),\n"              +
-                                                  "KEY `idx_companies_facebook` (`facebook`),\n"            +
-                                                  "KEY `idx_companies_sold` (`sold`),\n"                    +
-                                                  "KEY `idx_companies_sold_to` (`sold_to`),\n"              +
-                                                  "KEY `idx_companies_address` (`address`),\n"              +
-                                                  "KEY `idx_companies_city` (`city`),\n"                    +
-                                                  "KEY `idx_companies_province` (`province`),\n"            +
-                                                  "KEY `idx_companies_postal_code` (`postal_code`),\n"      +
-                                                  "KEY `idx_companies_status` (`status`),\n"                +
+                                                  "`status` int NOT NULL,\n" + "PRIMARY KEY (`id`),\n" +
+                                                  "KEY `idx_companies_name` (`name`),\n" +
+                                                  "KEY `idx_companies_founded` (`founded`),\n" +
+                                                  "KEY `idx_companies_website` (`website`),\n" +
+                                                  "KEY `idx_companies_twitter` (`twitter`),\n" +
+                                                  "KEY `idx_companies_facebook` (`facebook`),\n" +
+                                                  "KEY `idx_companies_sold` (`sold`),\n" +
+                                                  "KEY `idx_companies_sold_to` (`sold_to`),\n" +
+                                                  "KEY `idx_companies_address` (`address`),\n" +
+                                                  "KEY `idx_companies_city` (`city`),\n" +
+                                                  "KEY `idx_companies_province` (`province`),\n" +
+                                                  "KEY `idx_companies_postal_code` (`postal_code`),\n" +
+                                                  "KEY `idx_companies_status` (`status`),\n" +
                                                   "KEY `idx_companies_country` (`country`));";
 
         public static readonly string Computers = V6.Computers;

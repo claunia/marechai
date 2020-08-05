@@ -41,8 +41,11 @@ namespace Marechai.Services
         public async Task<List<GpuByMachineViewModel>> GetByMachine(int machineId) =>
             await _context.GpusByMachine.Where(g => g.MachineId == machineId).Select(g => new GpuByMachineViewModel
             {
-                Id        = g.Id, Name = g.Gpu.Name, CompanyName = g.Gpu.Company.Name, GpuId = g.GpuId,
-                MachineId = g.MachineId
+                Id          = g.Id,
+                Name        = g.Gpu.Name,
+                CompanyName = g.Gpu.Company.Name,
+                GpuId       = g.GpuId,
+                MachineId   = g.MachineId
             }).OrderBy(g => g.CompanyName).ThenBy(g => g.Name).ToListAsync();
 
         public async Task DeleteAsync(long id, string userId)
@@ -61,7 +64,8 @@ namespace Marechai.Services
         {
             var item = new GpusByMachine
             {
-                GpuId = gpuId, MachineId = machineId
+                GpuId     = gpuId,
+                MachineId = machineId
             };
 
             await _context.GpusByMachine.AddAsync(item);

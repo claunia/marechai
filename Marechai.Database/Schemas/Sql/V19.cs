@@ -40,30 +40,28 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string Companies = V18.Companies;
 
-        public static readonly string Machines = "CREATE TABLE `machines` (;\n"               +
-                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,;\n"   +
+        public static readonly string Machines = "CREATE TABLE `machines` (;\n" +
+                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,;\n" +
                                                  "`company` int(11) NOT NULL DEFAULT '0',;\n" +
-                                                 "`year` int(11) NOT NULL DEFAULT '0',;\n"    +
-                                                 "`model` char(50) NOT NULL DEFAULT '',;\n"   +
-                                                 "`hdd1` int(11) NOT NULL DEFAULT '0',;\n"    +
-                                                 "`hdd2` int(11) DEFAULT NULL,;\n"            +
-                                                 "`hdd3` int(11) DEFAULT NULL,;\n"            +
-                                                 "`disk1` int(11) NOT NULL DEFAULT '0',;\n"   +
-                                                 "`cap1` char(25) NOT NULL DEFAULT '0',;\n"   +
-                                                 "`disk2` int(11) DEFAULT NULL,;\n"           +
-                                                 "`cap2` char(25) DEFAULT NULL,;\n"           +
-                                                 "`type` int(11) NOT NULL DEFAULT '0',;\n"    +
-                                                 "PRIMARY KEY (`id`),;\n"                     +
+                                                 "`year` int(11) NOT NULL DEFAULT '0',;\n" +
+                                                 "`model` char(50) NOT NULL DEFAULT '',;\n" +
+                                                 "`hdd1` int(11) NOT NULL DEFAULT '0',;\n" +
+                                                 "`hdd2` int(11) DEFAULT NULL,;\n" + "`hdd3` int(11) DEFAULT NULL,;\n" +
+                                                 "`disk1` int(11) NOT NULL DEFAULT '0',;\n" +
+                                                 "`cap1` char(25) NOT NULL DEFAULT '0',;\n" +
+                                                 "`disk2` int(11) DEFAULT NULL,;\n" +
+                                                 "`cap2` char(25) DEFAULT NULL,;\n" +
+                                                 "`type` int(11) NOT NULL DEFAULT '0',;\n" + "PRIMARY KEY (`id`),;\n" +
                                                  "KEY `idx_machines_company` (`company`),;\n" +
-                                                 "KEY `idx_machines_year` (`year`),;\n"       +
-                                                 "KEY `idx_machines_model` (`model`),;\n"     +
-                                                 "KEY `idx_machines_hdd1` (`hdd1`),;\n"       +
-                                                 "KEY `idx_machines_hdd2` (`hdd2`),;\n"       +
-                                                 "KEY `idx_machines_hdd3` (`hdd3`),;\n"       +
-                                                 "KEY `idx_machines_disk1` (`disk1`),;\n"     +
-                                                 "KEY `idx_machines_disk2` (`disk2`),;\n"     +
-                                                 "KEY `idx_machines_cap1` (`cap1`),;\n"       +
-                                                 "KEY `idx_machines_cap2` (`cap2`),;\n"       +
+                                                 "KEY `idx_machines_year` (`year`),;\n" +
+                                                 "KEY `idx_machines_model` (`model`),;\n" +
+                                                 "KEY `idx_machines_hdd1` (`hdd1`),;\n" +
+                                                 "KEY `idx_machines_hdd2` (`hdd2`),;\n" +
+                                                 "KEY `idx_machines_hdd3` (`hdd3`),;\n" +
+                                                 "KEY `idx_machines_disk1` (`disk1`),;\n" +
+                                                 "KEY `idx_machines_disk2` (`disk2`),;\n" +
+                                                 "KEY `idx_machines_cap1` (`cap1`),;\n" +
+                                                 "KEY `idx_machines_cap2` (`cap2`),;\n" +
                                                  "KEY `idx_machines_type` (`type`));";
 
         public static readonly string DiskFormats = V18.DiskFormats;
@@ -112,29 +110,26 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string MemoryByMachine = V18.MemoryByMachine;
 
-        public static readonly string Resolutions =
-            "CREATE TABLE `resolutions` (\n"                                               +
-            "`id` INT NOT NULL AUTO_INCREMENT,\n"                                          +
-            "`width` INT NOT NULL DEFAULT 0,\n"                                            +
-            "`height` INT NOT NULL DEFAULT 0,\n"                                           +
-            "`colors` BIGINT DEFAULT NULL,\n"                                              +
-            "`palette` BIGINT DEFAULT NULL,\n"                                             +
-            "`chars` BOOL NOT NULL DEFAULT 0,\n"                                           + "PRIMARY KEY (`id`),\n" +
-            "KEY `idx_resolutions_width` (`width`),\n"                                     +
-            "KEY `idx_resolutions_height` (`height`),\n"                                   +
-            "KEY `idx_resolutions_colors` (`colors`),\n"                                   +
-            "KEY `idx_resolutions_palette` (`palette`),\n"                                 +
-            "INDEX `idx_resolutions_resolution` (`width`,`height`),\n"                     +
-            "INDEX `idx_resolutions_resolution_with_color` (`width`,`height`,`colors`),\n" +
-            "INDEX `idx_resolutions_resolution_with_color_and_palette` (`width`,`height`,`colors`,`palette`));";
+        public static readonly string Resolutions = "CREATE TABLE `resolutions` (\n" +
+                                                    "`id` INT NOT NULL AUTO_INCREMENT,\n" +
+                                                    "`width` INT NOT NULL DEFAULT 0,\n" +
+                                                    "`height` INT NOT NULL DEFAULT 0,\n" +
+                                                    "`colors` BIGINT DEFAULT NULL,\n" +
+                                                    "`palette` BIGINT DEFAULT NULL,\n" +
+                                                    "`chars` BOOL NOT NULL DEFAULT 0,\n" + "PRIMARY KEY (`id`),\n" +
+                                                    "KEY `idx_resolutions_width` (`width`),\n" +
+                                                    "KEY `idx_resolutions_height` (`height`),\n" +
+                                                    "KEY `idx_resolutions_colors` (`colors`),\n" +
+                                                    "KEY `idx_resolutions_palette` (`palette`),\n" +
+                                                    "INDEX `idx_resolutions_resolution` (`width`,`height`),\n" +
+                                                    "INDEX `idx_resolutions_resolution_with_color` (`width`,`height`,`colors`),\n" +
+                                                    "INDEX `idx_resolutions_resolution_with_color_and_palette` (`width`,`height`,`colors`,`palette`));";
 
-        public static readonly string ResolutionsByGpu =
-            "CREATE TABLE `resolutions_by_gpu` (\n"                                                                                      +
-            "`gpu` INT NOT NULL,\n"                                                                                                      +
-            "`resolution` INT NOT NULL,\n"                                                                                               +
-            "KEY `idx_resolutions_by_gpu_gpu` (`gpu`),\n"                                                                                +
-            "KEY `idx_resolutions_by_gpu_resolution` (`resolution`),\n"                                                                  +
-            "CONSTRAINT `fk_resolutions_by_gpu_gpu` FOREIGN KEY (`gpu`) REFERENCES `gpus` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,\n" +
-            "CONSTRAINT `fk_resolutions_by_gpu_resolution` FOREIGN KEY (`resolution`) REFERENCES `resolutions` (`id`) ON UPDATE CASCADE ON DELETE CASCADE);";
+        public static readonly string ResolutionsByGpu = "CREATE TABLE `resolutions_by_gpu` (\n" +
+                                                         "`gpu` INT NOT NULL,\n" + "`resolution` INT NOT NULL,\n" +
+                                                         "KEY `idx_resolutions_by_gpu_gpu` (`gpu`),\n" +
+                                                         "KEY `idx_resolutions_by_gpu_resolution` (`resolution`),\n" +
+                                                         "CONSTRAINT `fk_resolutions_by_gpu_gpu` FOREIGN KEY (`gpu`) REFERENCES `gpus` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,\n" +
+                                                         "CONSTRAINT `fk_resolutions_by_gpu_resolution` FOREIGN KEY (`resolution`) REFERENCES `resolutions` (`id`) ON UPDATE CASCADE ON DELETE CASCADE);";
     }
 }

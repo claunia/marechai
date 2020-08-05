@@ -99,8 +99,14 @@ namespace Marechai.Database.Seeders
 
                     codes.Add(new Models.Iso639
                     {
-                        Id    = pieces[0], Part2B = pieces[1], Part2T        = pieces[2], Part1   = pieces[3],
-                        Scope = pieces[4], Type   = pieces[5], ReferenceName = pieces[6], Comment = pieces[7]
+                        Id            = pieces[0],
+                        Part2B        = pieces[1],
+                        Part2T        = pieces[2],
+                        Part1         = pieces[3],
+                        Scope         = pieces[4],
+                        Type          = pieces[5],
+                        ReferenceName = pieces[6],
+                        Comment       = pieces[7]
                     });
 
                     line = sr.ReadLine();

@@ -62,62 +62,59 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string OwnedConsoles = V9.OwnedConsoles;
 
-        public static readonly string Processors =
-            "CREATE TABLE `processors` (\n"                                                                                 +
-            "`id` int(11) NOT NULL AUTO_INCREMENT,\n"                                                                       +
-            "`name` char(50) NOT NULL DEFAULT '',\n"                                                                        +
-            "`company` int(11) DEFAULT NULL,\n"                                                                             +
-            "`model_code` varchar(45) DEFAULT NULL,\n"                                                                      +
-            "`introduced` datetime DEFAULT NULL,\n"                                                                         +
-            "`instruction_set` int(11) DEFAULT NULL,\n"                                                                     +
-            "`speed` double DEFAULT NULL,\n"                                                                                +
-            "`package` varchar(45) DEFAULT NULL,\n"                                                                         +
-            "`GPRs` int(11) DEFAULT NULL,\n"                                                                                +
-            "`GPR_size` int(11) DEFAULT NULL,\n"                                                                            +
-            "`FPRs` int(11) DEFAULT NULL,\n"                                                                                +
-            "`FPR_size` int(11) DEFAULT NULL,\n"                                                                            +
-            "`cores` int(11) DEFAULT NULL,\n"                                                                               +
-            "`threads_per_core` int(11) DEFAULT NULL,\n"                                                                    +
-            "`process` varchar(45) DEFAULT NULL,\n"                                                                         +
-            "`process_nm` float DEFAULT NULL,\n"                                                                            +
-            "`die_size` float DEFAULT NULL,\n"                                                                              +
-            "`transistors` bigint(20) DEFAULT NULL,\n"                                                                      +
-            "`data_bus` int(11) DEFAULT NULL,\n"                                                                            +
-            "`addr_bus` int(11) DEFAULT NULL,\n"                                                                            +
-            "`SIMD_registers` int(11) DEFAULT NULL,\n"                                                                      +
-            "`SIMD_size` int(11) DEFAULT NULL,\n"                                                                           +
-            "`L1_instruction` float DEFAULT NULL,\n"                                                                        +
-            "`L1_data` float DEFAULT NULL,\n"                                                                               +
-            "`L2` float DEFAULT NULL,\n"                                                                                    +
-            "`L3` float DEFAULT NULL,\n"                                                                                    +
-            "PRIMARY KEY (`id`),\n"                                                                                         +
-            "KEY `idx_processors_name` (`name`),\n"                                                                         +
-            "KEY `idx_processors_company` (`company`),\n"                                                                   +
-            "KEY `idx_processors_model_code` (`model_code`),\n"                                                             +
-            "KEY `idx_processors_introduced` (`introduced`),\n"                                                             +
-            "KEY `idx_processors_instruction_set` (`instruction_set`),\n"                                                   +
-            "KEY `idx_processors_speed` (`speed`),\n"                                                                       +
-            "KEY `idx_processors_package` (`package`),\n"                                                                   +
-            "KEY `idx_processors_GPRs` (`GPRs`),\n"                                                                         +
-            "KEY `idx_processors_GPR_size` (`GPR_size`),\n"                                                                 +
-            "KEY `idx_processors_FPRs` (`FPRs`),\n"                                                                         +
-            "KEY `idx_processors_FPR_size` (`FPR_size`),\n"                                                                 +
-            "KEY `idx_processors_cores` (`cores`),\n"                                                                       +
-            "KEY `idx_processors_threads_per_core` (`threads_per_core`),\n"                                                 +
-            "KEY `idx_processors_process` (`process`),\n"                                                                   +
-            "KEY `idx_processors_process_nm` (`process_nm`),\n"                                                             +
-            "KEY `idx_processors_die_size` (`die_size`),\n"                                                                 +
-            "KEY `idx_processors_transistors` (`transistors`),\n"                                                           +
-            "KEY `idx_processors_data_bus` (`data_bus`),\n"                                                                 +
-            "KEY `idx_processors_addr_bus` (`addr_bus`),\n"                                                                 +
-            "KEY `idx_processors_SIMD_registers` (`SIMD_registers`),\n"                                                     +
-            "KEY `idx_processors_SIMD_size` (`SIMD_size`),\n"                                                               +
-            "KEY `idx_processors_L1_instruction` (`L1_instruction`),\n"                                                     +
-            "KEY `idx_processors_L1_data` (`L1_data`),\n"                                                                   +
-            "KEY `idx_processors_L2` (`L2`),\n"                                                                             +
-            "KEY `idx_processors_L3` (`L3`),\n"                                                                             +
-            "CONSTRAINT `fk_processors_company` FOREIGN KEY (`company`) REFERENCES `companies` (`id`) ON UPDATE CASCADE,\n" +
-            "CONSTRAINT `fk_processors_instruction_set` FOREIGN KEY (`instruction_set`) REFERENCES `instruction_sets` (`id`) ON UPDATE CASCADE);";
+        public static readonly string Processors = "CREATE TABLE `processors` (\n" +
+                                                   "`id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                                                   "`name` char(50) NOT NULL DEFAULT '',\n" +
+                                                   "`company` int(11) DEFAULT NULL,\n" +
+                                                   "`model_code` varchar(45) DEFAULT NULL,\n" +
+                                                   "`introduced` datetime DEFAULT NULL,\n" +
+                                                   "`instruction_set` int(11) DEFAULT NULL,\n" +
+                                                   "`speed` double DEFAULT NULL,\n" +
+                                                   "`package` varchar(45) DEFAULT NULL,\n" +
+                                                   "`GPRs` int(11) DEFAULT NULL,\n" +
+                                                   "`GPR_size` int(11) DEFAULT NULL,\n" +
+                                                   "`FPRs` int(11) DEFAULT NULL,\n" +
+                                                   "`FPR_size` int(11) DEFAULT NULL,\n" +
+                                                   "`cores` int(11) DEFAULT NULL,\n" +
+                                                   "`threads_per_core` int(11) DEFAULT NULL,\n" +
+                                                   "`process` varchar(45) DEFAULT NULL,\n" +
+                                                   "`process_nm` float DEFAULT NULL,\n" +
+                                                   "`die_size` float DEFAULT NULL,\n" +
+                                                   "`transistors` bigint(20) DEFAULT NULL,\n" +
+                                                   "`data_bus` int(11) DEFAULT NULL,\n" +
+                                                   "`addr_bus` int(11) DEFAULT NULL,\n" +
+                                                   "`SIMD_registers` int(11) DEFAULT NULL,\n" +
+                                                   "`SIMD_size` int(11) DEFAULT NULL,\n" +
+                                                   "`L1_instruction` float DEFAULT NULL,\n" +
+                                                   "`L1_data` float DEFAULT NULL,\n" + "`L2` float DEFAULT NULL,\n" +
+                                                   "`L3` float DEFAULT NULL,\n" + "PRIMARY KEY (`id`),\n" +
+                                                   "KEY `idx_processors_name` (`name`),\n" +
+                                                   "KEY `idx_processors_company` (`company`),\n" +
+                                                   "KEY `idx_processors_model_code` (`model_code`),\n" +
+                                                   "KEY `idx_processors_introduced` (`introduced`),\n" +
+                                                   "KEY `idx_processors_instruction_set` (`instruction_set`),\n" +
+                                                   "KEY `idx_processors_speed` (`speed`),\n" +
+                                                   "KEY `idx_processors_package` (`package`),\n" +
+                                                   "KEY `idx_processors_GPRs` (`GPRs`),\n" +
+                                                   "KEY `idx_processors_GPR_size` (`GPR_size`),\n" +
+                                                   "KEY `idx_processors_FPRs` (`FPRs`),\n" +
+                                                   "KEY `idx_processors_FPR_size` (`FPR_size`),\n" +
+                                                   "KEY `idx_processors_cores` (`cores`),\n" +
+                                                   "KEY `idx_processors_threads_per_core` (`threads_per_core`),\n" +
+                                                   "KEY `idx_processors_process` (`process`),\n" +
+                                                   "KEY `idx_processors_process_nm` (`process_nm`),\n" +
+                                                   "KEY `idx_processors_die_size` (`die_size`),\n" +
+                                                   "KEY `idx_processors_transistors` (`transistors`),\n" +
+                                                   "KEY `idx_processors_data_bus` (`data_bus`),\n" +
+                                                   "KEY `idx_processors_addr_bus` (`addr_bus`),\n" +
+                                                   "KEY `idx_processors_SIMD_registers` (`SIMD_registers`),\n" +
+                                                   "KEY `idx_processors_SIMD_size` (`SIMD_size`),\n" +
+                                                   "KEY `idx_processors_L1_instruction` (`L1_instruction`),\n" +
+                                                   "KEY `idx_processors_L1_data` (`L1_data`),\n" +
+                                                   "KEY `idx_processors_L2` (`L2`),\n" +
+                                                   "KEY `idx_processors_L3` (`L3`),\n" +
+                                                   "CONSTRAINT `fk_processors_company` FOREIGN KEY (`company`) REFERENCES `companies` (`id`) ON UPDATE CASCADE,\n" +
+                                                   "CONSTRAINT `fk_processors_instruction_set` FOREIGN KEY (`instruction_set`) REFERENCES `instruction_sets` (`id`) ON UPDATE CASCADE);";
 
         public static readonly string SoundSynths = V9.SoundSynths;
 
@@ -146,18 +143,13 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string InstructionSetExtensionsByProcessor =
             "CREATE TABLE IF NOT EXISTS `instruction_set_extensions_by_processor` (\n" +
-            "`id` INT           NOT NULL AUTO_INCREMENT,\n"                            +
-            "`processor_id` INT NOT NULL,\n"                                           +
-            "`extension_id` INT     NOT NULL,\n"                                       +
-            "PRIMARY                KEY (`id`, `processor_id`, `extension_id`),\n"     +
-            "INDEX `idx_setextension_processor` (`processor_id` ASC),\n"               +
-            "INDEX `idx_setextension_extension` (`extension_id` ASC),\n"               +
-            "CONSTRAINT `fk_extension_processor_id`\n"                                 +
-            "FOREIGN KEY (`processor_id`)\n"                                           +
-            "REFERENCES `processors` (`id`)\n"                                         + "ON DELETE RESTRICT\n" +
-            "ON UPDATE CASCADE,\n"                                                     +
-            "CONSTRAINT `fk_extension_extension_id`\n"                                 + "FOREIGN KEY (`extension_id`)\n" +
-            "REFERENCES `instruction_set_extensions` (`id`)\n"                         +
-            "ON DELETE RESTRICT\n"                                                     + "ON UPDATE CASCADE);";
+            "`id` INT           NOT NULL AUTO_INCREMENT,\n" + "`processor_id` INT NOT NULL,\n" +
+            "`extension_id` INT     NOT NULL,\n" +
+            "PRIMARY                KEY (`id`, `processor_id`, `extension_id`),\n" +
+            "INDEX `idx_setextension_processor` (`processor_id` ASC),\n" +
+            "INDEX `idx_setextension_extension` (`extension_id` ASC),\n" + "CONSTRAINT `fk_extension_processor_id`\n" +
+            "FOREIGN KEY (`processor_id`)\n" + "REFERENCES `processors` (`id`)\n" + "ON DELETE RESTRICT\n" +
+            "ON UPDATE CASCADE,\n" + "CONSTRAINT `fk_extension_extension_id`\n" + "FOREIGN KEY (`extension_id`)\n" +
+            "REFERENCES `instruction_set_extensions` (`id`)\n" + "ON DELETE RESTRICT\n" + "ON UPDATE CASCADE);";
     }
 }

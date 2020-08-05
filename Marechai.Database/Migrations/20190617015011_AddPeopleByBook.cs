@@ -11,7 +11,9 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                PersonId = table.Column<int>(), BookId = table.Column<long>(), RoleId = table.Column<string>("char(3)")
+                PersonId = table.Column<int>(),
+                BookId   = table.Column<long>(),
+                RoleId   = table.Column<string>("char(3)")
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_PeopleByBooks", x => x.Id);

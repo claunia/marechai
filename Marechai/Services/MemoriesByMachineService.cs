@@ -42,8 +42,12 @@ namespace Marechai.Services
         public async Task<List<MemoryByMachineViewModel>> GetByMachine(int machineId) =>
             await _context.MemoryByMachine.Where(m => m.MachineId == machineId).Select(m => new MemoryByMachineViewModel
             {
-                Id    = m.Id, Type         = m.Type, Usage = m.Usage, Size = m.Size,
-                Speed = m.Speed, MachineId = m.MachineId
+                Id        = m.Id,
+                Type      = m.Type,
+                Usage     = m.Usage,
+                Size      = m.Size,
+                Speed     = m.Speed,
+                MachineId = m.MachineId
             }).OrderBy(m => m.Type).ThenBy(m => m.Usage).ThenBy(m => m.Size).ThenBy(m => m.Speed).ToListAsync();
 
         public async Task DeleteAsync(long id, string userId)
@@ -63,7 +67,10 @@ namespace Marechai.Services
         {
             var item = new MemoryByMachine
             {
-                MachineId = machineId, Type = type, Usage = usage, Size = size,
+                MachineId = machineId,
+                Type      = type,
+                Usage     = usage,
+                Size      = size,
                 Speed     = speed
             };
 

@@ -66,7 +66,7 @@ namespace DiscImageChef.Interop
         {
             if((int)Environment.OSVersion.Platform < 4 ||
                (int)Environment.OSVersion.Platform == 5)
-                return(PlatformID)(int)Environment.OSVersion.Platform;
+                return (PlatformID)(int)Environment.OSVersion.Platform;
 
             int error = uname(out utsname unixname);
 
@@ -76,7 +76,7 @@ namespace DiscImageChef.Interop
             switch(unixname.sysname)
             {
                 // TODO: Differentiate Linux, Android, Tizen
-                case"Linux":
+                case "Linux":
                 {
                 #if __ANDROID__
                         return PlatformID.Android;
@@ -84,7 +84,7 @@ namespace DiscImageChef.Interop
                     return PlatformID.Linux;
                 #endif
                 }
-                case"Darwin":
+                case "Darwin":
                 {
                     int osxError;
 
@@ -123,29 +123,29 @@ namespace DiscImageChef.Interop
 
                     return PlatformID.MacOSX;
                 }
-                case"GNU": return PlatformID.Hurd;
-                case"FreeBSD":
-                case"GNU/kFreeBSD": return PlatformID.FreeBSD;
-                case"DragonFly": return PlatformID.DragonFly;
-                case"Haiku":     return PlatformID.Haiku;
-                case"HP-UX":     return PlatformID.HPUX;
-                case"AIX":       return PlatformID.AIX;
-                case"OS400":     return PlatformID.OS400;
-                case"IRIX":
-                case"IRIX64": return PlatformID.IRIX;
-                case"Minix":          return PlatformID.Minix;
-                case"NetBSD":         return PlatformID.NetBSD;
-                case"NONSTOP_KERNEL": return PlatformID.NonStop;
-                case"OpenBSD":        return PlatformID.OpenBSD;
-                case"QNX":            return PlatformID.QNX;
-                case"SINIX-Y":        return PlatformID.SINIX;
-                case"SunOS":          return PlatformID.Solaris;
-                case"OSF1":           return PlatformID.Tru64;
-                case"ULTRIX":         return PlatformID.Ultrix;
-                case"SCO_SV":         return PlatformID.OpenServer;
-                case"UnixWare":       return PlatformID.UnixWare;
-                case"Interix":
-                case"UWIN-W7": return PlatformID.Win32NT;
+                case "GNU": return PlatformID.Hurd;
+                case "FreeBSD":
+                case "GNU/kFreeBSD": return PlatformID.FreeBSD;
+                case "DragonFly": return PlatformID.DragonFly;
+                case "Haiku":     return PlatformID.Haiku;
+                case "HP-UX":     return PlatformID.HPUX;
+                case "AIX":       return PlatformID.AIX;
+                case "OS400":     return PlatformID.OS400;
+                case "IRIX":
+                case "IRIX64": return PlatformID.IRIX;
+                case "Minix":          return PlatformID.Minix;
+                case "NetBSD":         return PlatformID.NetBSD;
+                case "NONSTOP_KERNEL": return PlatformID.NonStop;
+                case "OpenBSD":        return PlatformID.OpenBSD;
+                case "QNX":            return PlatformID.QNX;
+                case "SINIX-Y":        return PlatformID.SINIX;
+                case "SunOS":          return PlatformID.Solaris;
+                case "OSF1":           return PlatformID.Tru64;
+                case "ULTRIX":         return PlatformID.Ultrix;
+                case "SCO_SV":         return PlatformID.OpenServer;
+                case "UnixWare":       return PlatformID.UnixWare;
+                case "Interix":
+                case "UWIN-W7": return PlatformID.Win32NT;
                 default:
                 {
                     if(unixname.sysname.StartsWith("CYGWIN_NT", StringComparison.Ordinal)  ||
@@ -169,12 +169,12 @@ namespace DiscImageChef.Interop
             {
                 case PlatformID.MacOSX:
                     if(Environment.OSVersion.Version.Major != 1)
-                        return$"10.{Environment.OSVersion.Version.Major - 4}.{Environment.OSVersion.Version.Minor}";
+                        return $"10.{Environment.OSVersion.Version.Major - 4}.{Environment.OSVersion.Version.Minor}";
 
                     switch(Environment.OSVersion.Version.Minor)
                     {
-                        case 3: return"10.0";
-                        case 4: return"10.1";
+                        case 3: return "10.0";
+                        case 4: return "10.1";
                     }
 
                     goto default;
@@ -199,107 +199,107 @@ namespace DiscImageChef.Interop
         {
             switch(id)
             {
-                case PlatformID.AIX:       return"AIX";
-                case PlatformID.Android:   return"Android";
-                case PlatformID.DragonFly: return"DragonFly BSD";
-                case PlatformID.FreeBSD:   return"FreeBSD";
-                case PlatformID.Haiku:     return"Haiku";
-                case PlatformID.HPUX:      return"HP/UX";
-                case PlatformID.Hurd:      return"Hurd";
-                case PlatformID.iOS:       return"iOS";
-                case PlatformID.IRIX:      return"IRIX";
-                case PlatformID.Linux:     return"Linux";
+                case PlatformID.AIX:       return "AIX";
+                case PlatformID.Android:   return "Android";
+                case PlatformID.DragonFly: return "DragonFly BSD";
+                case PlatformID.FreeBSD:   return "FreeBSD";
+                case PlatformID.Haiku:     return "Haiku";
+                case PlatformID.HPUX:      return "HP/UX";
+                case PlatformID.Hurd:      return "Hurd";
+                case PlatformID.iOS:       return "iOS";
+                case PlatformID.IRIX:      return "IRIX";
+                case PlatformID.Linux:     return "Linux";
                 case PlatformID.MacOSX:
                     if(string.IsNullOrEmpty(version))
-                        return"macOS";
+                        return "macOS";
 
                     string[] pieces = version.Split('.');
 
                     if(pieces.Length < 2 ||
                        !int.TryParse(pieces[1], out int minor))
-                        return"macOS";
+                        return "macOS";
 
                     if(minor >= 12)
-                        return"macOS";
+                        return "macOS";
 
                     if(minor >= 8)
-                        return"OS X";
+                        return "OS X";
 
-                    return"Mac OS X";
+                    return "Mac OS X";
 
-                case PlatformID.Minix:        return"MINIX";
-                case PlatformID.NetBSD:       return"NetBSD";
-                case PlatformID.NonStop:      return"NonStop OS";
-                case PlatformID.OpenBSD:      return"OpenBSD";
-                case PlatformID.OpenServer:   return"SCO OpenServer";
-                case PlatformID.OS400:        return"OS/400";
-                case PlatformID.PlayStation3: return"Sony CellOS";
-                case PlatformID.PlayStation4: return"Sony Orbis OS";
-                case PlatformID.QNX:          return"QNX";
-                case PlatformID.SINIX:        return"SINIX";
-                case PlatformID.Solaris:      return"Sun Solaris";
-                case PlatformID.Tizen:        return"Samsung Tizen";
-                case PlatformID.Tru64:        return"Tru64 UNIX";
-                case PlatformID.Ultrix:       return"Ultrix";
-                case PlatformID.Unix:         return"UNIX";
-                case PlatformID.UnixWare:     return"SCO UnixWare";
-                case PlatformID.Wii:          return"Nintendo Wii";
-                case PlatformID.WiiU:         return"Nintendo Wii U";
+                case PlatformID.Minix:        return "MINIX";
+                case PlatformID.NetBSD:       return "NetBSD";
+                case PlatformID.NonStop:      return "NonStop OS";
+                case PlatformID.OpenBSD:      return "OpenBSD";
+                case PlatformID.OpenServer:   return "SCO OpenServer";
+                case PlatformID.OS400:        return "OS/400";
+                case PlatformID.PlayStation3: return "Sony CellOS";
+                case PlatformID.PlayStation4: return "Sony Orbis OS";
+                case PlatformID.QNX:          return "QNX";
+                case PlatformID.SINIX:        return "SINIX";
+                case PlatformID.Solaris:      return "Sun Solaris";
+                case PlatformID.Tizen:        return "Samsung Tizen";
+                case PlatformID.Tru64:        return "Tru64 UNIX";
+                case PlatformID.Ultrix:       return "Ultrix";
+                case PlatformID.Unix:         return "UNIX";
+                case PlatformID.UnixWare:     return "SCO UnixWare";
+                case PlatformID.Wii:          return "Nintendo Wii";
+                case PlatformID.WiiU:         return "Nintendo Wii U";
                 case PlatformID.Win32NT:
                     if(string.IsNullOrEmpty(version))
-                        return"Windows NT/2000/XP/Vista/7/10";
+                        return "Windows NT/2000/XP/Vista/7/10";
 
                     if(version.StartsWith("3.", StringComparison.Ordinal) ||
                        version.StartsWith("4.", StringComparison.Ordinal))
-                        return"Windows NT";
+                        return "Windows NT";
 
                     if(version.StartsWith("5.0", StringComparison.Ordinal))
-                        return"Windows 2000";
+                        return "Windows 2000";
 
                     if(version.StartsWith("5.1", StringComparison.Ordinal))
-                        return"Windows XP";
+                        return "Windows XP";
 
                     if(version.StartsWith("5.2", StringComparison.Ordinal))
-                        return"Windows 2003";
+                        return "Windows 2003";
 
                     if(version.StartsWith("6.0", StringComparison.Ordinal))
-                        return"Windows Vista";
+                        return "Windows Vista";
 
                     if(version.StartsWith("6.1", StringComparison.Ordinal))
-                        return"Windows 7";
+                        return "Windows 7";
 
                     if(version.StartsWith("6.2", StringComparison.Ordinal))
-                        return"Windows 8";
+                        return "Windows 8";
 
                     if(version.StartsWith("6.3", StringComparison.Ordinal))
-                        return"Windows 8.1";
+                        return "Windows 8.1";
 
                     if(version.StartsWith("10.0", StringComparison.Ordinal))
-                        return"Windows 10";
+                        return "Windows 10";
 
-                    return"Windows NT/2000/XP/Vista/7/10";
-                case PlatformID.Win32S: return"Windows 3.x with win32s";
+                    return "Windows NT/2000/XP/Vista/7/10";
+                case PlatformID.Win32S: return "Windows 3.x with win32s";
                 case PlatformID.Win32Windows:
                     if(string.IsNullOrEmpty(version))
-                        return"Windows 9x/Me";
+                        return "Windows 9x/Me";
 
                     if(version.StartsWith("4.0", StringComparison.Ordinal))
-                        return"Windows 95";
+                        return "Windows 95";
 
                     if(version.StartsWith("4.10.2222", StringComparison.Ordinal))
-                        return"Windows 98 SE";
+                        return "Windows 98 SE";
 
                     if(version.StartsWith("4.1", StringComparison.Ordinal))
-                        return"Windows 98";
+                        return "Windows 98";
 
                     if(version.StartsWith("4.9", StringComparison.Ordinal))
-                        return"Windows Me";
+                        return "Windows Me";
 
-                    return"Windows 9x/Me";
-                case PlatformID.WinCE:        return"Windows CE/Mobile";
-                case PlatformID.WindowsPhone: return"Windows Phone";
-                case PlatformID.Xbox:         return"Xbox OS";
-                case PlatformID.zOS:          return"z/OS";
+                    return "Windows 9x/Me";
+                case PlatformID.WinCE:        return "Windows CE/Mobile";
+                case PlatformID.WindowsPhone: return "Windows Phone";
+                case PlatformID.Xbox:         return "Xbox OS";
+                case PlatformID.zOS:          return "z/OS";
                 default:                      return id.ToString();
             }
         }

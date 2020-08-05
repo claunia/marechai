@@ -48,25 +48,24 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string Forbidden = V10.Forbidden;
 
-        public static readonly string Gpus = "CREATE TABLE `gpus` (\n"                       +
-                                             "`id` int(11)     NOT NULL AUTO_INCREMENT,\n"   +
-                                             "`name` char(128) NOT NULL DEFAULT '',\n"       +
-                                             "`company` int(11)    DEFAULT NULL,\n"          +
-                                             "`model_code` varchar(45) DEFAULT NULL,\n"      +
-                                             "`introduced` datetime DEFAULT NULL,\n"         +
-                                             "`package` varchar(45) DEFAULT NULL,\n"         +
-                                             "`process` varchar(45) DEFAULT NULL,\n"         +
-                                             "`process_nm` float DEFAULT NULL,\n"            +
-                                             "`die_size` float       DEFAULT NULL,\n"        +
-                                             "`transistors` bigint(20) DEFAULT NULL,\n"      + "PRIMARY KEY (`id`),\n" +
-                                             "KEY `idx_gpus_name` (`name`),\n"               +
-                                             "KEY `idx_gpus_company` (`company`),\n"         +
-                                             "KEY `idx_gpus_model_code` (`model_code`),\n"   +
-                                             "KEY `idx_gpus_introduced` (`introduced`),\n"   +
-                                             "KEY `idx_gpus_package` (`package`),\n"         +
-                                             "KEY `idx_gpus_process` (`process`),\n"         +
-                                             "KEY `idx_gpus_process_nm` (`process_nm`),\n"   +
-                                             "KEY `idx_gpus_die_size` (`die_size`),\n"       +
+        public static readonly string Gpus = "CREATE TABLE `gpus` (\n" + "`id` int(11)     NOT NULL AUTO_INCREMENT,\n" +
+                                             "`name` char(128) NOT NULL DEFAULT '',\n" +
+                                             "`company` int(11)    DEFAULT NULL,\n" +
+                                             "`model_code` varchar(45) DEFAULT NULL,\n" +
+                                             "`introduced` datetime DEFAULT NULL,\n" +
+                                             "`package` varchar(45) DEFAULT NULL,\n" +
+                                             "`process` varchar(45) DEFAULT NULL,\n" +
+                                             "`process_nm` float DEFAULT NULL,\n" +
+                                             "`die_size` float       DEFAULT NULL,\n" +
+                                             "`transistors` bigint(20) DEFAULT NULL,\n" + "PRIMARY KEY (`id`),\n" +
+                                             "KEY `idx_gpus_name` (`name`),\n" +
+                                             "KEY `idx_gpus_company` (`company`),\n" +
+                                             "KEY `idx_gpus_model_code` (`model_code`),\n" +
+                                             "KEY `idx_gpus_introduced` (`introduced`),\n" +
+                                             "KEY `idx_gpus_package` (`package`),\n" +
+                                             "KEY `idx_gpus_process` (`process`),\n" +
+                                             "KEY `idx_gpus_process_nm` (`process_nm`),\n" +
+                                             "KEY `idx_gpus_die_size` (`die_size`),\n" +
                                              "KEY `idx_gpus_transistors` (`transistors`),\n" +
                                              "CONSTRAINT `fk_gpus_company` FOREIGN KEY (`company`) REFERENCES `companies` (`id`) ON UPDATE CASCADE);";
 

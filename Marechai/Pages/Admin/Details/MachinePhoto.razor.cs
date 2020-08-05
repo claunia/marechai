@@ -91,7 +91,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.ColorSpace is null)
                     return 0;
 
-                return(ushort)_model.ColorSpace;
+                return (ushort)_model.ColorSpace;
             }
             set => _model.ColorSpace = (ColorSpace)value;
         }
@@ -103,7 +103,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.Contrast is null)
                     return 0;
 
-                return(ushort)_model.Contrast;
+                return (ushort)_model.Contrast;
             }
             set => _model.Contrast = (Contrast)value;
         }
@@ -115,7 +115,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.ExposureMethod is null)
                     return 0;
 
-                return(ushort)_model.ExposureMethod;
+                return (ushort)_model.ExposureMethod;
             }
             set => _model.ExposureMethod = (ExposureMode)value;
         }
@@ -127,7 +127,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.ExposureProgram is null)
                     return 0;
 
-                return(ushort)_model.ExposureProgram;
+                return (ushort)_model.ExposureProgram;
             }
             set => _model.ExposureProgram = (ExposureProgram)value;
         }
@@ -139,7 +139,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.Flash is null)
                     return 0;
 
-                return(ushort)_model.Flash;
+                return (ushort)_model.Flash;
             }
             set => _model.Flash = (Flash)value;
         }
@@ -151,7 +151,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.LightSource is null)
                     return 0;
 
-                return(ushort)_model.LightSource;
+                return (ushort)_model.LightSource;
             }
             set => _model.LightSource = (LightSource)value;
         }
@@ -163,7 +163,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.MeteringMode is null)
                     return 0;
 
-                return(ushort)_model.MeteringMode;
+                return (ushort)_model.MeteringMode;
             }
             set => _model.MeteringMode = (MeteringMode)value;
         }
@@ -175,7 +175,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.ResolutionUnit is null)
                     return 0;
 
-                return(ushort)_model.ResolutionUnit;
+                return (ushort)_model.ResolutionUnit;
             }
             set => _model.ResolutionUnit = (ResolutionUnit)value;
         }
@@ -187,7 +187,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.Orientation is null)
                     return 0;
 
-                return(ushort)_model.Orientation;
+                return (ushort)_model.Orientation;
             }
             set => _model.Orientation = (Orientation)value;
         }
@@ -199,7 +199,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.Saturation is null)
                     return 0;
 
-                return(ushort)_model.Saturation;
+                return (ushort)_model.Saturation;
             }
             set => _model.Saturation = (Saturation)value;
         }
@@ -211,7 +211,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.SceneCaptureType is null)
                     return 0;
 
-                return(ushort)_model.SceneCaptureType;
+                return (ushort)_model.SceneCaptureType;
             }
             set => _model.SceneCaptureType = (SceneCaptureType)value;
         }
@@ -223,7 +223,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.SensingMethod is null)
                     return 0;
 
-                return(ushort)_model.SensingMethod;
+                return (ushort)_model.SensingMethod;
             }
             set => _model.SensingMethod = (SensingMethod)value;
         }
@@ -235,7 +235,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.Sharpness is null)
                     return 0;
 
-                return(ushort)_model.Sharpness;
+                return (ushort)_model.Sharpness;
             }
             set => _model.Sharpness = (Sharpness)value;
         }
@@ -247,7 +247,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.SubjectDistanceRange is null)
                     return 0;
 
-                return(ushort)_model.SubjectDistanceRange;
+                return (ushort)_model.SubjectDistanceRange;
             }
             set => _model.SubjectDistanceRange = (SubjectDistanceRange)value;
         }
@@ -259,7 +259,7 @@ namespace Marechai.Pages.Admin.Details
                 if(_model.WhiteBalance is null)
                     return 0;
 
-                return(ushort)_model.WhiteBalance;
+                return (ushort)_model.WhiteBalance;
             }
             set => _model.WhiteBalance = (WhiteBalance)value;
         }

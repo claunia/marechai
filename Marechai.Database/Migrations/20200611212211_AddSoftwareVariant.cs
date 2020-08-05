@@ -43,16 +43,19 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Name = table.Column<string>(nullable: true), Version = table.Column<string>(nullable: true),
-                Introduced = table.Column<DateTime>(nullable: true), ParentId = table.Column<ulong>(nullable: true),
+                Name              = table.Column<string>(nullable: true),
+                Version           = table.Column<string>(nullable: true),
+                Introduced        = table.Column<DateTime>(nullable: true),
+                ParentId          = table.Column<ulong>(nullable: true),
                 SoftwareVersionId = table.Column<ulong>(nullable: false),
-                MinimumMemory = table.Column<ulong>(nullable: true),
+                MinimumMemory     = table.Column<ulong>(nullable: true),
                 RecommendedMemory = table.Column<ulong>(nullable: true),
-                RequiredStorage = table.Column<ulong>(nullable: true),
-                PartNumber = table.Column<string>(nullable: true), SerialNumber = table.Column<string>(nullable: true),
-                ProductCode = table.Column<string>(nullable: true),
-                CatalogueNumber = table.Column<string>(nullable: true),
-                DistributionMode = table.Column<uint>(nullable: false)
+                RequiredStorage   = table.Column<ulong>(nullable: true),
+                PartNumber        = table.Column<string>(nullable: true),
+                SerialNumber      = table.Column<string>(nullable: true),
+                ProductCode       = table.Column<string>(nullable: true),
+                CatalogueNumber   = table.Column<string>(nullable: true),
+                DistributionMode  = table.Column<uint>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_SoftwareVariants", x => x.Id);
@@ -75,7 +78,8 @@ namespace Marechai.Database.Migrations
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
                 CompanyId         = table.Column<int>(nullable: false),
-                SoftwareVariantId = table.Column<ulong>(nullable: false), RoleId = table.Column<string>(nullable: false)
+                SoftwareVariantId = table.Column<ulong>(nullable: false),
+                RoleId            = table.Column<string>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_CompaniesBySoftwareVariant", x => x.Id);
@@ -101,8 +105,10 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                GpuId   = table.Column<int>(nullable: false), SoftwareVariantId = table.Column<ulong>(nullable: false),
-                Minimum = table.Column<bool>(nullable: true), Recommended       = table.Column<bool>(nullable: true)
+                GpuId             = table.Column<int>(nullable: false),
+                SoftwareVariantId = table.Column<ulong>(nullable: false),
+                Minimum           = table.Column<bool>(nullable: true),
+                Recommended       = table.Column<bool>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_GpusBySoftwareVariant", x => x.Id);
@@ -198,7 +204,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                MachineId = table.Column<int>(nullable: false), SoftwareVariantId = table.Column<ulong>(nullable: false)
+                MachineId         = table.Column<int>(nullable: false),
+                SoftwareVariantId = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_MachinesBySoftwareVariant", x => x.Id);
@@ -221,7 +228,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                MediaId = table.Column<ulong>(nullable: false), SoftwareVariantId = table.Column<ulong>(nullable: false)
+                MediaId           = table.Column<ulong>(nullable: false),
+                SoftwareVariantId = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_MediaBySoftwareVariant", x => x.Id);
@@ -244,7 +252,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                SoftwareVariantId = table.Column<ulong>(nullable: false), PersonId = table.Column<int>(nullable: false),
+                SoftwareVariantId = table.Column<ulong>(nullable: false),
+                PersonId          = table.Column<int>(nullable: false),
                 RoleId            = table.Column<string>(nullable: false)
             }, constraints: table =>
             {
@@ -272,8 +281,10 @@ namespace Marechai.Database.Migrations
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
                 ProcessorId       = table.Column<int>(nullable: false),
-                SoftwareVariantId = table.Column<ulong>(nullable: false), Speed = table.Column<float>(nullable: true),
-                Minimum           = table.Column<bool>(nullable: true), Recommended = table.Column<bool>(nullable: true)
+                SoftwareVariantId = table.Column<ulong>(nullable: false),
+                Speed             = table.Column<float>(nullable: true),
+                Minimum           = table.Column<bool>(nullable: true),
+                Recommended       = table.Column<bool>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_ProcessorsBySoftwareVariant", x => x.Id);
@@ -370,19 +381,23 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Path = table.Column<string>(maxLength: 8192, nullable: false),
-                Name = table.Column<string>(maxLength: 255, nullable: false),
-                PathSeparator = table.Column<string>(nullable: false),
-                IsDirectory = table.Column<bool>(nullable: false),
-                CreationDate = table.Column<DateTime>(nullable: true),
-                AccessDate = table.Column<DateTime>(nullable: true),
-                StatusChangeDate = table.Column<DateTime>(nullable: true),
-                BackupDate = table.Column<DateTime>(nullable: true),
-                LastWriteDate = table.Column<DateTime>(nullable: true),
-                Attributes = table.Column<ulong>(nullable: false), PosixMode = table.Column<ushort>(nullable: true),
-                DeviceNumber = table.Column<uint>(nullable: true), GroupId = table.Column<ulong>(nullable: true),
-                UserId = table.Column<ulong>(nullable: true), Inode = table.Column<ulong>(nullable: true),
-                Links = table.Column<ulong>(nullable: true), SoftwareVariantId = table.Column<ulong>(nullable: false)
+                Path              = table.Column<string>(maxLength: 8192, nullable: false),
+                Name              = table.Column<string>(maxLength: 255, nullable: false),
+                PathSeparator     = table.Column<string>(nullable: false),
+                IsDirectory       = table.Column<bool>(nullable: false),
+                CreationDate      = table.Column<DateTime>(nullable: true),
+                AccessDate        = table.Column<DateTime>(nullable: true),
+                StatusChangeDate  = table.Column<DateTime>(nullable: true),
+                BackupDate        = table.Column<DateTime>(nullable: true),
+                LastWriteDate     = table.Column<DateTime>(nullable: true),
+                Attributes        = table.Column<ulong>(nullable: false),
+                PosixMode         = table.Column<ushort>(nullable: true),
+                DeviceNumber      = table.Column<uint>(nullable: true),
+                GroupId           = table.Column<ulong>(nullable: true),
+                UserId            = table.Column<ulong>(nullable: true),
+                Inode             = table.Column<ulong>(nullable: true),
+                Links             = table.Column<ulong>(nullable: true),
+                SoftwareVariantId = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_StandaloneFiles", x => x.Id);

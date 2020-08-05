@@ -134,7 +134,9 @@ namespace Marechai.Pages.Admin.Details
             {
                 StartInfo =
                 {
-                    FileName               = "exiftool", CreateNoWindow = true, RedirectStandardError = true,
+                    FileName               = "exiftool",
+                    CreateNoWindow         = true,
+                    RedirectStandardError  = true,
                     RedirectStandardOutput = true
                 }
             };
@@ -143,7 +145,9 @@ namespace Marechai.Pages.Admin.Details
             {
                 StartInfo =
                 {
-                    FileName               = "identify", CreateNoWindow = true, RedirectStandardError = true,
+                    FileName               = "identify",
+                    CreateNoWindow         = true,
+                    RedirectStandardError  = true,
                     RedirectStandardOutput = true
                 }
             };
@@ -152,7 +156,9 @@ namespace Marechai.Pages.Admin.Details
             {
                 StartInfo =
                 {
-                    FileName               = "convert", CreateNoWindow = true, RedirectStandardError = true,
+                    FileName               = "convert",
+                    CreateNoWindow         = true,
+                    RedirectStandardError  = true,
                     RedirectStandardOutput = true
                 }
             };
@@ -256,8 +262,11 @@ namespace Marechai.Pages.Admin.Details
             {
                 StartInfo =
                 {
-                    FileName               = "identify", CreateNoWindow = true, RedirectStandardError = true,
-                    RedirectStandardOutput = true, ArgumentList =
+                    FileName               = "identify",
+                    CreateNoWindow         = true,
+                    RedirectStandardError  = true,
+                    RedirectStandardOutput = true,
+                    ArgumentList =
                     {
                         tmpPath
                     }
@@ -311,9 +320,13 @@ namespace Marechai.Pages.Admin.Details
 
             _model = new MachinePhotoViewModel
             {
-                UserId = (await UserManager.GetUserAsync(_authState.User)).Id, MachineId = MachineId,
-                Id     = Guid.NewGuid(), OriginalExtension = extension, UploadDate = DateTime.UtcNow,
-                Source = _unknownSource ? null : _sourceUrl, LicenseId = _licenseId
+                UserId            = (await UserManager.GetUserAsync(_authState.User)).Id,
+                MachineId         = MachineId,
+                Id                = Guid.NewGuid(),
+                OriginalExtension = extension,
+                UploadDate        = DateTime.UtcNow,
+                Source            = _unknownSource ? null : _sourceUrl,
+                LicenseId         = _licenseId
             };
 
             try
@@ -322,10 +335,15 @@ namespace Marechai.Pages.Admin.Details
                 {
                     StartInfo =
                     {
-                        FileName               = "exiftool", CreateNoWindow = true, RedirectStandardError = true,
-                        RedirectStandardOutput = true, ArgumentList =
+                        FileName               = "exiftool",
+                        CreateNoWindow         = true,
+                        RedirectStandardError  = true,
+                        RedirectStandardOutput = true,
+                        ArgumentList =
                         {
-                            "-n", "-json", tmpPath
+                            "-n",
+                            "-json",
+                            tmpPath
                         }
                     }
                 };

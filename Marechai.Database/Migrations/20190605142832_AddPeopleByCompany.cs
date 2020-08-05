@@ -12,9 +12,12 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                PersonId = table.Column<int>(), CompanyId                  = table.Column<int>(),
-                Position = table.Column<string>(nullable: true), Start     = table.Column<DateTime>(nullable: true),
-                End      = table.Column<DateTime>(nullable: true), Ongoing = table.Column<bool>()
+                PersonId  = table.Column<int>(),
+                CompanyId = table.Column<int>(),
+                Position  = table.Column<string>(nullable: true),
+                Start     = table.Column<DateTime>(nullable: true),
+                End       = table.Column<DateTime>(nullable: true),
+                Ongoing   = table.Column<bool>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_PeopleByCompany", x => x.Id);

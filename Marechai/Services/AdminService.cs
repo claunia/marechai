@@ -25,5 +25,5 @@
 
 namespace Marechai.Services
 {
-    public class AdminService { }
+    public class AdminService {}
 }

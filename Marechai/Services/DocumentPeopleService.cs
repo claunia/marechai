@@ -44,7 +44,8 @@ namespace Marechai.Services
                                                                              ThenBy(d => d.Surname).
                                                                              Select(d => new DocumentPersonViewModel
                                                                              {
-                                                                                 Id       = d.Id, Name = d.FullName,
+                                                                                 Id       = d.Id,
+                                                                                 Name     = d.FullName,
                                                                                  Person   = d.Person.FullName,
                                                                                  PersonId = d.PersonId
                                                                              }).ToListAsync();
@@ -52,8 +53,12 @@ namespace Marechai.Services
         public async Task<DocumentPersonViewModel> GetAsync(int id) =>
             await _context.DocumentPeople.Where(p => p.Id == id).Select(d => new DocumentPersonViewModel
             {
-                Id          = d.Id, Alias             = d.Alias, Name = d.Name, Surname = d.Surname,
-                DisplayName = d.DisplayName, PersonId = d.PersonId
+                Id          = d.Id,
+                Alias       = d.Alias,
+                Name        = d.Name,
+                Surname     = d.Surname,
+                DisplayName = d.DisplayName,
+                PersonId    = d.PersonId
             }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(DocumentPersonViewModel viewModel, string userId)
@@ -76,8 +81,11 @@ namespace Marechai.Services
         {
             var model = new DocumentPerson
             {
-                Alias       = viewModel.Alias, Name           = viewModel.Name, Surname = viewModel.Surname,
-                DisplayName = viewModel.DisplayName, PersonId = viewModel.PersonId
+                Alias       = viewModel.Alias,
+                Name        = viewModel.Name,
+                Surname     = viewModel.Surname,
+                DisplayName = viewModel.DisplayName,
+                PersonId    = viewModel.PersonId
             };
 
             await _context.AddAsync(model);

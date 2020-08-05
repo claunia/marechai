@@ -42,11 +42,17 @@ namespace Marechai.Services
             (await _context.ResolutionsByGpu.Where(r => r.ResolutionId == resolutionId).
                             Select(r => new ResolutionByGpuViewModel
                             {
-                                Id = r.Id, GpuId = r.GpuId, Resolution = new ResolutionViewModel
+                                Id    = r.Id,
+                                GpuId = r.GpuId,
+                                Resolution = new ResolutionViewModel
                                 {
-                                    Id     = r.Resolution.Id, Width = r.Resolution.Width, Height = r.Resolution.Height,
-                                    Colors = r.Resolution.Colors, Palette = r.Resolution.Palette,
-                                    Chars  = r.Resolution.Chars, Grayscale = r.Resolution.Grayscale
+                                    Id        = r.Resolution.Id,
+                                    Width     = r.Resolution.Width,
+                                    Height    = r.Resolution.Height,
+                                    Colors    = r.Resolution.Colors,
+                                    Palette   = r.Resolution.Palette,
+                                    Chars     = r.Resolution.Chars,
+                                    Grayscale = r.Resolution.Grayscale
                                 },
                                 ResolutionId = r.ResolutionId
                             }).ToListAsync()).OrderBy(r => r.Resolution.Width).ThenBy(r => r.Resolution.Height).
@@ -70,7 +76,8 @@ namespace Marechai.Services
         {
             var item = new ResolutionsByGpu
             {
-                GpuId = gpuId, ResolutionId = resolutionId
+                GpuId        = gpuId,
+                ResolutionId = resolutionId
             };
 
             await _context.ResolutionsByGpu.AddAsync(item);

@@ -41,7 +41,7 @@ namespace Marechai.ViewModels
             if(Chars)
             {
                 if(Colors == null)
-                    return$"{Width}x{Height} characters";
+                    return $"{Width}x{Height} characters";
 
                 if(Palette != null &&
                    Colors  != Palette)
@@ -53,7 +53,7 @@ namespace Marechai.ViewModels
             }
 
             if(Colors == null)
-                return$"{Width}x{Height} pixels";
+                return $"{Width}x{Height} pixels";
 
             if(Palette != null &&
                Colors  != Palette)

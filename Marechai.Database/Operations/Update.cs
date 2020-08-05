@@ -1046,31 +1046,30 @@ namespace Marechai.Database
             trans             = dbCon.BeginTransaction();
             dbCmd.Transaction = trans;
 
-            dbCmd.CommandText =
-                "CREATE INDEX `idx_processors_company` ON `processors` (`company`);\n"                   +
-                "CREATE INDEX `idx_processors_model_code` ON `processors` (`model_code`);\n"             +
-                "CREATE INDEX `idx_processors_introduced` ON `processors` (`introduced`);\n"             +
-                "CREATE INDEX `idx_processors_instruction_set` ON `processors` (`instruction_set`);\n"   +
-                "CREATE INDEX `idx_processors_speed` ON `processors` (`speed`);\n"                       +
-                "CREATE INDEX `idx_processors_package` ON `processors` (`package`);\n"                   +
-                "CREATE INDEX `idx_processors_GPRs` ON `processors` (`GPRs`);\n"                         +
-                "CREATE INDEX `idx_processors_GPR_size` ON `processors` (`GPR_size`);\n"                 +
-                "CREATE INDEX `idx_processors_FPRs` ON `processors` (`FPRs`);\n"                         +
-                "CREATE INDEX `idx_processors_FPR_size` ON `processors` (`FPR_size`);\n"                 +
-                "CREATE INDEX `idx_processors_cores` ON `processors` (`cores`);\n"                       +
-                "CREATE INDEX `idx_processors_threads_per_core` ON `processors` (`threads_per_core`);\n" +
-                "CREATE INDEX `idx_processors_process` ON `processors` (`process`);\n"                   +
-                "CREATE INDEX `idx_processors_process_nm` ON `processors` (`process_nm`);\n"             +
-                "CREATE INDEX `idx_processors_die_size` ON `processors` (`die_size`);\n"                 +
-                "CREATE INDEX `idx_processors_transistors` ON `processors` (`transistors`);\n"           +
-                "CREATE INDEX `idx_processors_data_bus` ON `processors` (`data_bus`);\n"                 +
-                "CREATE INDEX `idx_processors_addr_bus` ON `processors` (`addr_bus`);\n"                 +
-                "CREATE INDEX `idx_processors_SIMD_registers` ON `processors` (`SIMD_registers`);\n"     +
-                "CREATE INDEX `idx_processors_SIMD_size` ON `processors` (`SIMD_size`);\n"               +
-                "CREATE INDEX `idx_processors_L1_instruction` ON `processors` (`L1_instruction`);\n"     +
-                "CREATE INDEX `idx_processors_L1_data` ON `processors` (`L1_data`);\n"                   +
-                "CREATE INDEX `idx_processors_L2` ON `processors` (`L2`);\n"                             +
-                "CREATE INDEX `idx_processors_L3` ON `processors` (`L3`);";
+            dbCmd.CommandText = "CREATE INDEX `idx_processors_company` ON `processors` (`company`);\n" +
+                                "CREATE INDEX `idx_processors_model_code` ON `processors` (`model_code`);\n" +
+                                "CREATE INDEX `idx_processors_introduced` ON `processors` (`introduced`);\n" +
+                                "CREATE INDEX `idx_processors_instruction_set` ON `processors` (`instruction_set`);\n" +
+                                "CREATE INDEX `idx_processors_speed` ON `processors` (`speed`);\n" +
+                                "CREATE INDEX `idx_processors_package` ON `processors` (`package`);\n" +
+                                "CREATE INDEX `idx_processors_GPRs` ON `processors` (`GPRs`);\n" +
+                                "CREATE INDEX `idx_processors_GPR_size` ON `processors` (`GPR_size`);\n" +
+                                "CREATE INDEX `idx_processors_FPRs` ON `processors` (`FPRs`);\n" +
+                                "CREATE INDEX `idx_processors_FPR_size` ON `processors` (`FPR_size`);\n" +
+                                "CREATE INDEX `idx_processors_cores` ON `processors` (`cores`);\n" +
+                                "CREATE INDEX `idx_processors_threads_per_core` ON `processors` (`threads_per_core`);\n" +
+                                "CREATE INDEX `idx_processors_process` ON `processors` (`process`);\n" +
+                                "CREATE INDEX `idx_processors_process_nm` ON `processors` (`process_nm`);\n" +
+                                "CREATE INDEX `idx_processors_die_size` ON `processors` (`die_size`);\n" +
+                                "CREATE INDEX `idx_processors_transistors` ON `processors` (`transistors`);\n" +
+                                "CREATE INDEX `idx_processors_data_bus` ON `processors` (`data_bus`);\n" +
+                                "CREATE INDEX `idx_processors_addr_bus` ON `processors` (`addr_bus`);\n" +
+                                "CREATE INDEX `idx_processors_SIMD_registers` ON `processors` (`SIMD_registers`);\n" +
+                                "CREATE INDEX `idx_processors_SIMD_size` ON `processors` (`SIMD_size`);\n" +
+                                "CREATE INDEX `idx_processors_L1_instruction` ON `processors` (`L1_instruction`);\n" +
+                                "CREATE INDEX `idx_processors_L1_data` ON `processors` (`L1_data`);\n" +
+                                "CREATE INDEX `idx_processors_L2` ON `processors` (`L2`);\n" +
+                                "CREATE INDEX `idx_processors_L3` ON `processors` (`L3`);";
 
             dbCmd.ExecuteNonQuery();
             trans.Commit();
@@ -1512,27 +1511,27 @@ namespace Marechai.Database
             dbCmd.Transaction = trans;
 
             dbCmd.CommandText =
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_company`, ADD INDEX `idx_machines_company` (`company`);\n"             +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_year`, ADD INDEX `idx_machines_year` (`year`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_model`, ADD INDEX `idx_machines_model` (`model`);\n"                   +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_cpu1`, ADD INDEX `idx_machines_cpu1` (`cpu1`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_cpu2`, ADD INDEX `idx_machines_cpu2` (`cpu2`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_mhz1`, ADD INDEX `idx_machines_mhz1` (`mhz1`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_mhz2`, ADD INDEX `idx_machines_mhz2` (`mhz2`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_ram`, ADD INDEX `idx_machines_ram` (`ram`);\n"                         +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_rom`, ADD INDEX `idx_machines_rom` (`rom`);\n"                         +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_gpu`, ADD INDEX `idx_machines_gpu` (`gpu`);\n"                         +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_vram`, ADD INDEX `idx_machines_vram` (`vram`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_colors`, ADD INDEX `idx_machines_colors` (`colors`);\n"                +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_res`, ADD INDEX `idx_machines_res` (`res`);\n"                         +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_company`, ADD INDEX `idx_machines_company` (`company`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_year`, ADD INDEX `idx_machines_year` (`year`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_model`, ADD INDEX `idx_machines_model` (`model`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_cpu1`, ADD INDEX `idx_machines_cpu1` (`cpu1`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_cpu2`, ADD INDEX `idx_machines_cpu2` (`cpu2`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_mhz1`, ADD INDEX `idx_machines_mhz1` (`mhz1`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_mhz2`, ADD INDEX `idx_machines_mhz2` (`mhz2`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_ram`, ADD INDEX `idx_machines_ram` (`ram`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_rom`, ADD INDEX `idx_machines_rom` (`rom`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_gpu`, ADD INDEX `idx_machines_gpu` (`gpu`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_vram`, ADD INDEX `idx_machines_vram` (`vram`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_colors`, ADD INDEX `idx_machines_colors` (`colors`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_res`, ADD INDEX `idx_machines_res` (`res`);\n" +
                 "ALTER TABLE `machines` DROP INDEX `idx_computers_sound_synth`, ADD INDEX `idx_machines_sound_synth` (`sound_synth`);\n" +
                 "ALTER TABLE `machines` DROP INDEX `idx_computers_music_synth`, ADD INDEX `idx_machines_music_synth` (`music_synth`);\n" +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd1`, ADD INDEX `idx_machines_hdd1` (`hdd1`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd2`, ADD INDEX `idx_machines_hdd2` (`hdd2`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd3`, ADD INDEX `idx_machines_hdd3` (`hdd3`);\n"                      +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_disk1`, ADD INDEX `idx_machines_disk1` (`disk1`);\n"                   +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_disk2`, ADD INDEX `idx_machines_disk2` (`disk2`);\n"                   +
-                "ALTER TABLE `machines` DROP INDEX `idx_computers_cap1`, ADD INDEX `idx_machines_cap1` (`cap1`);\n"                      +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd1`, ADD INDEX `idx_machines_hdd1` (`hdd1`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd2`, ADD INDEX `idx_machines_hdd2` (`hdd2`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_hdd3`, ADD INDEX `idx_machines_hdd3` (`hdd3`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_disk1`, ADD INDEX `idx_machines_disk1` (`disk1`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_disk2`, ADD INDEX `idx_machines_disk2` (`disk2`);\n" +
+                "ALTER TABLE `machines` DROP INDEX `idx_computers_cap1`, ADD INDEX `idx_machines_cap1` (`cap1`);\n" +
                 "ALTER TABLE `machines` DROP INDEX `idx_computers_cap2`, ADD INDEX `idx_machines_cap2` (`cap2`);";
 
             dbCmd.ExecuteNonQuery();
@@ -1566,15 +1565,15 @@ namespace Marechai.Database
             dbCmd.Transaction = trans;
 
             dbCmd.CommandText =
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;\n"            +
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_cpu1` (cpu1) REFERENCES `processors` (`id`) ON UPDATE CASCADE;\n"                 +
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_cpu2` (cpu2) REFERENCES `processors` (`id`) ON UPDATE CASCADE;\n"                 +
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_disk1` (disk1) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"             +
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_disk2` (disk2) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"             +
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_gpu` (gpu) REFERENCES `gpus` (`id`) ON UPDATE CASCADE;\n"                         +
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd1` (hdd1) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"               +
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd2` (hdd2) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"               +
-                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd3` (hdd3) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n"               +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_company` (company) REFERENCES `companies` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_cpu1` (cpu1) REFERENCES `processors` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_cpu2` (cpu2) REFERENCES `processors` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_disk1` (disk1) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_disk2` (disk2) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_gpu` (gpu) REFERENCES `gpus` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd1` (hdd1) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd2` (hdd2) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n" +
+                "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_hdd3` (hdd3) REFERENCES `disk_formats` (`id`) ON UPDATE CASCADE;\n" +
                 "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_music_synth` (music_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;\n" +
                 "ALTER TABLE `machines` ADD FOREIGN KEY `fk_machines_sound_synth` (sound_synth) REFERENCES `sound_synths` (`id`) ON UPDATE CASCADE;";
 
@@ -1675,13 +1674,11 @@ namespace Marechai.Database
                 param3.Value = (string)dataRow["model"];
                 param4.Value = dataRow["cpu1"] == DBNull.Value ? (object)null : (int)dataRow["cpu1"];
 
-                param5.Value = dataRow["mhz1"] == DBNull.Value ? (object)null
-                                    : float.Parse(dataRow["mhz1"].ToString());
+                param5.Value = dataRow["mhz1"] == DBNull.Value ? (object)null : float.Parse(dataRow["mhz1"].ToString());
 
                 param6.Value = dataRow["cpu2"] == DBNull.Value ? (object)null : (int)dataRow["cpu2"];
 
-                param7.Value = dataRow["mhz2"] == DBNull.Value ? (object)null
-                                    : float.Parse(dataRow["mhz2"].ToString());
+                param7.Value = dataRow["mhz2"] == DBNull.Value ? (object)null : float.Parse(dataRow["mhz2"].ToString());
 
                 param8.Value  = (int)dataRow["ram"];
                 param9.Value  = (int)dataRow["rom"];
@@ -2549,7 +2546,7 @@ namespace Marechai.Database
 
                     switch(media)
                     {
-                        case"disk1":
+                        case "disk1":
                             if(dataRow["cap1"] != DBNull.Value)
                                 if(int.TryParse((string)dataRow["cap1"], out int cap))
                                     param4.Value = cap == 0
@@ -2559,7 +2556,7 @@ namespace Marechai.Database
                                                            : cap * 1024;
 
                             break;
-                        case"disk2":
+                        case "disk2":
                             if(dataRow["cap2"] != DBNull.Value)
                                 if(int.TryParse((string)dataRow["cap2"], out int cap))
                                     param4.Value = cap == 0

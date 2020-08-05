@@ -43,9 +43,9 @@ namespace Marechai.ViewModels
             {
                 if(Width  != null &&
                    Height != null)
-                    return$"{Width}x{Height} mm";
+                    return $"{Width}x{Height} mm";
 
-                return"Unknown";
+                return "Unknown";
             }
         }
     }

@@ -43,7 +43,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                MediaId = table.Column<ulong>(nullable: false), PartitionId = table.Column<ulong>(nullable: false)
+                MediaId     = table.Column<ulong>(nullable: false),
+                PartitionId = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_LogicalPartitionsByMedia", x => x.Id);

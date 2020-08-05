@@ -8,7 +8,8 @@ namespace Marechai.Database.Migrations
         {
             migrationBuilder.CreateTable("DocumentRoles", table => new
             {
-                Id      = table.Column<string>("char(3)"), Name = table.Column<string>(nullable: true),
+                Id      = table.Column<string>("char(3)"),
+                Name    = table.Column<string>(nullable: true),
                 Enabled = table.Column<bool>(nullable: false, defaultValue: true)
             }, constraints: table =>
             {

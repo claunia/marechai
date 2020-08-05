@@ -50,10 +50,9 @@ namespace Marechai.Services
                                                                       Select(c => new CompanyViewModel
                                                                       {
                                                                           Id = c.Id,
-                                                                          LastLogo = c.
-                                                                                     Logos.
-                                                                                     OrderByDescending(l => l.Year).
-                                                                                     FirstOrDefault().Guid,
+                                                                          LastLogo = c.Logos.
+                                                                              OrderByDescending(l => l.Year).
+                                                                              FirstOrDefault().Guid,
                                                                           Name                = c.Name,
                                                                           Founded             = c.Founded,
                                                                           Sold                = c.Sold,
@@ -79,11 +78,9 @@ namespace Marechai.Services
                                                                                Select(c => new CompanyViewModel
                                                                                {
                                                                                    Id = c.Id,
-                                                                                   LastLogo = c.
-                                                                                              Logos.
-                                                                                              OrderByDescending(l => l.
-                                                                                                                    Year).
-                                                                                              FirstOrDefault().Guid,
+                                                                                   LastLogo = c.Logos.
+                                                                                       OrderByDescending(l => l.Year).
+                                                                                       FirstOrDefault().Guid,
                                                                                    Name       = c.Name,
                                                                                    Founded    = c.Founded,
                                                                                    Sold       = c.Sold,
@@ -189,42 +186,23 @@ namespace Marechai.Services
         public async Task<string> GetCountryNameAsync(int id) =>
             (await _context.Iso31661Numeric.FirstOrDefaultAsync(c => c.Id == id))?.Name;
 
-        public Task<List<CompanyViewModel>> GetCompaniesByCountryAsync(int countryId) => _context.
-                                                                                         Companies.
-                                                                                         Include(c => c.Logos).
-                                                                                         Where(c => c.CountryId ==
-                                                                                                    countryId).
-                                                                                         OrderBy(c => c.Name).
-                                                                                         Select(c =>
-                                                                                                    new CompanyViewModel
-                                                                                                    {
-                                                                                                        Id = c.Id,
-                                                                                                        LastLogo = c.
-                                                                                                                   Logos.
-                                                                                                                   OrderByDescending(l =>
-                                                                                                                                         l.
-                                                                                                                                             Year).
-                                                                                                                   FirstOrDefault().
-                                                                                                                   Guid,
-                                                                                                        Name = c.Name
-                                                                                                    }).ToListAsync();
+        public Task<List<CompanyViewModel>> GetCompaniesByCountryAsync(int countryId) => _context.Companies.
+            Include(c => c.Logos).Where(c => c.CountryId == countryId).OrderBy(c => c.Name).
+            Select(c => new CompanyViewModel
+            {
+                Id       = c.Id,
+                LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
+                Name     = c.Name
+            }).ToListAsync();
 
-        public Task<List<CompanyViewModel>> GetCompaniesByLetterAsync(char id) => _context.
-                                                                                  Companies.Include(c => c.Logos).
-                                                                                  Where(c => EF.Functions.Like(c.Name,
-                                                                                                               $"{id}%")).
-                                                                                  OrderBy(c => c.Name).
-                                                                                  Select(c => new CompanyViewModel
-                                                                                  {
-                                                                                      Id = c.Id,
-                                                                                      LastLogo = c.
-                                                                                                 Logos.
-                                                                                                 OrderByDescending(l =>
-                                                                                                                       l.
-                                                                                                                           Year).
-                                                                                                 FirstOrDefault().Guid,
-                                                                                      Name = c.Name
-                                                                                  }).ToListAsync();
+        public Task<List<CompanyViewModel>> GetCompaniesByLetterAsync(char id) => _context.Companies.
+            Include(c => c.Logos).Where(c => EF.Functions.Like(c.Name, $"{id}%")).OrderBy(c => c.Name).
+            Select(c => new CompanyViewModel
+            {
+                Id       = c.Id,
+                LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
+                Name     = c.Name
+            }).ToListAsync();
 
         public async Task DeleteAsync(int id, string userId)
         {
@@ -239,25 +217,13 @@ namespace Marechai.Services
         }
 
         public async Task<CompanyDescriptionViewModel> GetDescriptionAsync(int id) => await _context.
-                                                                                            CompanyDescriptions.
-                                                                                            Where(d => d.CompanyId ==
-                                                                                                       id).
-                                                                                            Select(d =>
-                                                                                                       new
-                                                                                                           CompanyDescriptionViewModel
-                                                                                                           {
-                                                                                                               Id =
-                                                                                                                   d.Id,
-                                                                                                               CompanyId
-                                                                                                                   = d.
-                                                                                                                       CompanyId,
-                                                                                                               Html = d.
-                                                                                                                   Html,
-                                                                                                               Markdown
-                                                                                                                   = d.
-                                                                                                                       Text
-                                                                                                           }).
-                                                                                            FirstOrDefaultAsync();
+            CompanyDescriptions.Where(d => d.CompanyId == id).Select(d => new CompanyDescriptionViewModel
+            {
+                Id        = d.Id,
+                CompanyId = d.CompanyId,
+                Html      = d.Html,
+                Markdown  = d.Text
+            }).FirstOrDefaultAsync();
 
         public async Task<int> CreateOrUpdateDescriptionAsync(int id, CompanyDescriptionViewModel description,
                                                               string userId)

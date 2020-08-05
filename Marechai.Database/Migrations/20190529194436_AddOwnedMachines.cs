@@ -12,13 +12,17 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                AcquisitionDate     = table.Column<DateTime>(), LostDate  = table.Column<DateTime>(nullable: true),
-                Status              = table.Column<int>(), LastStatusDate = table.Column<DateTime>(nullable: true),
-                Trade               = table.Column<bool>(), Boxed         = table.Column<bool>(),
+                AcquisitionDate     = table.Column<DateTime>(),
+                LostDate            = table.Column<DateTime>(nullable: true),
+                Status              = table.Column<int>(),
+                LastStatusDate      = table.Column<DateTime>(nullable: true),
+                Trade               = table.Column<bool>(),
+                Boxed               = table.Column<bool>(),
                 Manuals             = table.Column<bool>(),
                 SerialNumber        = table.Column<string>(nullable: true),
                 SerialNumberVisible = table.Column<bool>(nullable: false, defaultValue: true),
-                MachineId           = table.Column<int>(), UserId = table.Column<string>(nullable: true)
+                MachineId           = table.Column<int>(),
+                UserId              = table.Column<string>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_OwnedMachines", x => x.Id);
@@ -34,7 +38,8 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                GpuId = table.Column<int>(), OwnedMachineId = table.Column<long>()
+                GpuId          = table.Column<int>(),
+                OwnedMachineId = table.Column<long>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_GpusByOwnedMachine", x => x.Id);
@@ -50,8 +55,11 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                OwnedMachineId = table.Column<long>(), Type  = table.Column<int>(), Usage = table.Column<int>(),
-                Size           = table.Column<long>(), Speed = table.Column<double>()
+                OwnedMachineId = table.Column<long>(),
+                Type           = table.Column<int>(),
+                Usage          = table.Column<int>(),
+                Size           = table.Column<long>(),
+                Speed          = table.Column<double>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_MemoryByOwnedMachine", x => x.Id);
@@ -62,7 +70,8 @@ namespace Marechai.Database.Migrations
 
             migrationBuilder.CreateTable("OwnedMachinePhotos", table => new
             {
-                Id                    = table.Column<Guid>(), Author = table.Column<string>(nullable: true),
+                Id                    = table.Column<Guid>(),
+                Author                = table.Column<string>(nullable: true),
                 CameraManufacturer    = table.Column<string>(nullable: true),
                 CameraModel           = table.Column<string>(nullable: true),
                 ColorSpace            = table.Column<ushort>(nullable: true),
@@ -97,7 +106,8 @@ namespace Marechai.Database.Migrations
                 VerticalResolution = table.Column<double>(nullable: true),
                 WhiteBalance       = table.Column<ushort>(nullable: true),
                 UserId             = table.Column<string>(nullable: true),
-                LicenseId          = table.Column<int>(), OwnedMachineId = table.Column<long>()
+                LicenseId          = table.Column<int>(),
+                OwnedMachineId     = table.Column<long>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_OwnedMachinePhotos", x => x.Id);
@@ -116,7 +126,9 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                ProcessorId = table.Column<int>(), OwnedMachineId = table.Column<long>(), Speed = table.Column<float>()
+                ProcessorId    = table.Column<int>(),
+                OwnedMachineId = table.Column<long>(),
+                Speed          = table.Column<float>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_ProcessorsByOwnedMachine", x => x.Id);
@@ -132,7 +144,8 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                SoundSynthId = table.Column<int>(), OwnedMachineId = table.Column<long>()
+                SoundSynthId   = table.Column<int>(),
+                OwnedMachineId = table.Column<long>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_SoundByOwnedMachine", x => x.Id);
@@ -148,7 +161,9 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                OwnedMachineId = table.Column<long>(), Type = table.Column<int>(), Interface = table.Column<int>(),
+                OwnedMachineId = table.Column<long>(),
+                Type           = table.Column<int>(),
+                Interface      = table.Column<int>(),
                 Capacity       = table.Column<long>()
             }, constraints: table =>
             {

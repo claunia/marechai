@@ -9,8 +9,8 @@ namespace Marechai.Areas.Identity.Pages.Account.Manage
 {
     public class ResetAuthenticatorModel : PageModel
     {
-        readonly SignInManager<ApplicationUser>   _signInManager;
         readonly ILogger<ResetAuthenticatorModel> _logger;
+        readonly SignInManager<ApplicationUser>   _signInManager;
         readonly UserManager<ApplicationUser>     _userManager;
 
         public ResetAuthenticatorModel(UserManager<ApplicationUser> userManager,

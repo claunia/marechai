@@ -41,13 +41,15 @@ namespace Marechai.Services
         public async Task<List<InstructionSet>> GetAsync() =>
             await _context.InstructionSets.OrderBy(e => e.Name).Select(e => new InstructionSet
             {
-                Name = e.Name, Id = e.Id
+                Name = e.Name,
+                Id   = e.Id
             }).ToListAsync();
 
         public async Task<InstructionSet> GetAsync(int id) =>
             await _context.InstructionSets.Where(e => e.Id == id).Select(e => new InstructionSet
             {
-                Name = e.Name, Id = e.Id
+                Name = e.Name,
+                Id   = e.Id
             }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(InstructionSet viewModel, string userId)

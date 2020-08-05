@@ -14,7 +14,8 @@ namespace Marechai.Database.Migrations
             {
                 id = table.Column<int>("int(11)").
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                company_id = table.Column<int>("int(11)"), text = table.Column<string>("text", nullable: true)
+                company_id = table.Column<int>("int(11)"),
+                text       = table.Column<string>("text", nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_company_descriptions", x => x.id);

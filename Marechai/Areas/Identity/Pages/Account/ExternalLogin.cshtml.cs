@@ -139,7 +139,8 @@ namespace Marechai.Areas.Identity.Pages.Account
             {
                 var user = new ApplicationUser
                 {
-                    UserName = Input.Email, Email = Input.Email
+                    UserName = Input.Email,
+                    Email    = Input.Email
                 };
 
                 IdentityResult result = await _userManager.CreateAsync(user);
@@ -158,7 +159,9 @@ namespace Marechai.Areas.Identity.Pages.Account
 
                         string callbackUrl = Url.Page("/Account/ConfirmEmail", null, new
                         {
-                            area = "Identity", userId, code
+                            area = "Identity",
+                            userId,
+                            code
                         }, Request.Scheme);
 
                         await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",

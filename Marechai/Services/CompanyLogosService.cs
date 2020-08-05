@@ -115,7 +115,9 @@ namespace Marechai.Services
         {
             var logo = new CompanyLogo
             {
-                Guid = guid, Year = year, CompanyId = companyId
+                Guid      = guid,
+                Year      = year,
+                CompanyId = companyId
             };
 
             await _context.CompanyLogos.AddAsync(logo);

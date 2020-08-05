@@ -12,10 +12,12 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                MagazineId    = table.Column<long>(), Caption = table.Column<string>(),
+                MagazineId    = table.Column<long>(),
+                Caption       = table.Column<string>(),
                 NativeCaption = table.Column<string>(nullable: true),
                 Published     = table.Column<DateTime>(nullable: true),
-                ProductCode   = table.Column<string>(maxLength: 18, nullable: true), Pages = table.Column<short>()
+                ProductCode   = table.Column<string>(maxLength: 18, nullable: true),
+                Pages         = table.Column<short>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_MagazineIssues", x => x.Id);

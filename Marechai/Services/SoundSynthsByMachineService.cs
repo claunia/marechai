@@ -42,8 +42,11 @@ namespace Marechai.Services
             await _context.SoundByMachine.Where(g => g.MachineId == machineId).
                            Select(g => new SoundSynthByMachineViewModel
                            {
-                               Id           = g.Id, Name = g.SoundSynth.Name, CompanyName = g.SoundSynth.Company.Name,
-                               SoundSynthId = g.SoundSynthId, MachineId = g.MachineId
+                               Id           = g.Id,
+                               Name         = g.SoundSynth.Name,
+                               CompanyName  = g.SoundSynth.Company.Name,
+                               SoundSynthId = g.SoundSynthId,
+                               MachineId    = g.MachineId
                            }).OrderBy(g => g.CompanyName).ThenBy(g => g.Name).ToListAsync();
 
         public async Task DeleteAsync(long id, string userId)
@@ -62,7 +65,8 @@ namespace Marechai.Services
         {
             var item = new SoundByMachine
             {
-                SoundSynthId = soundSynthId, MachineId = machineId
+                SoundSynthId = soundSynthId,
+                MachineId    = machineId
             };
 
             await _context.SoundByMachine.AddAsync(item);

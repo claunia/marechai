@@ -42,24 +42,26 @@ namespace Marechai.Services
         public async Task<int> GetComputersCountAsync() =>
             await _context.Machines.CountAsync(c => c.Type == MachineType.Computer);
 
-        public Task<int> GetMinimumYearAsync() => _context.
-                                                  Machines.Where(t => t.Type == MachineType.Computer &&
+        public Task<int> GetMinimumYearAsync() => _context.Machines.
+                                                           Where(t => t.Type == MachineType.Computer &&
                                                                       t.Introduced.HasValue          &&
                                                                       t.Introduced.Value.Year > 1000).
-                                                  MinAsync(t => t.Introduced.Value.Year);
+                                                           MinAsync(t => t.Introduced.Value.Year);
 
-        public Task<int> GetMaximumYearAsync() => _context.
-                                                  Machines.Where(t => t.Type == MachineType.Computer &&
+        public Task<int> GetMaximumYearAsync() => _context.Machines.
+                                                           Where(t => t.Type == MachineType.Computer &&
                                                                       t.Introduced.HasValue          &&
                                                                       t.Introduced.Value.Year > 1000).
-                                                  MaxAsync(t => t.Introduced.Value.Year);
+                                                           MaxAsync(t => t.Introduced.Value.Year);
 
         public async Task<List<MachineViewModel>> GetComputersByLetterAsync(char c) =>
             await _context.Machines.Include(m => m.Company).
                            Where(m => m.Type == MachineType.Computer && EF.Functions.Like(m.Name, $"{c}%")).
                            OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new MachineViewModel
                            {
-                               Id = m.Id, Name = m.Name, Company = m.Company.Name
+                               Id      = m.Id,
+                               Name    = m.Name,
+                               Company = m.Company.Name
                            }).ToListAsync();
 
         public async Task<List<MachineViewModel>> GetComputersByYearAsync(int year) =>
@@ -68,14 +70,18 @@ namespace Marechai.Services
                                       m.Introduced.Value.Year == year).OrderBy(m => m.Company.Name).ThenBy(m => m.Name).
                            Select(m => new MachineViewModel
                            {
-                               Id = m.Id, Name = m.Name, Company = m.Company.Name
+                               Id      = m.Id,
+                               Name    = m.Name,
+                               Company = m.Company.Name
                            }).ToListAsync();
 
         public async Task<List<MachineViewModel>> GetComputersAsync() =>
             await _context.Machines.Include(m => m.Company).Where(m => m.Type == MachineType.Computer).
                            OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new MachineViewModel
                            {
-                               Id = m.Id, Name = m.Name, Company = m.Company.Name
+                               Id      = m.Id,
+                               Name    = m.Name,
+                               Company = m.Company.Name
                            }).ToListAsync();
     }
 }

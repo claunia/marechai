@@ -34,8 +34,8 @@ namespace Marechai.Pages
         public void OnGet() => HttpContext.Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
                                                                    CookieRequestCultureProvider.
                                                                        MakeCookieValue(new
-                                                                                           RequestCulture(CultureInfo.CurrentCulture,
-                                                                                                          CultureInfo.
-                                                                                                              CurrentUICulture)));
+                                                                           RequestCulture(CultureInfo.CurrentCulture,
+                                                                               CultureInfo.
+                                                                                   CurrentUICulture)));
     }
 }

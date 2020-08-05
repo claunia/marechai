@@ -44,8 +44,10 @@ namespace Marechai.Database.Migrations
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
                 SourceCode      = table.Column<string>(nullable: false),
-                DestinationCode = table.Column<string>(nullable: false), Ratio = table.Column<float>(nullable: false),
-                Start           = table.Column<DateTime>(nullable: false), End = table.Column<DateTime>(nullable: true)
+                DestinationCode = table.Column<string>(nullable: false),
+                Ratio           = table.Column<float>(nullable: false),
+                Start           = table.Column<DateTime>(nullable: false),
+                End             = table.Column<DateTime>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_CurrenciesPegging", x => x.Id);

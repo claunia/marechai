@@ -40,16 +40,15 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string Companies = V20.Companies;
 
-        public static readonly string Machines = "CREATE TABLE `machines` (;\n"                     +
-                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,;\n"         +
-                                                 "`company` int(11) NOT NULL DEFAULT '0',;\n"       +
-                                                 "`introduced` DATETIME NULL,;\n"                   +
-                                                 "`model` char(50) NOT NULL DEFAULT '',;\n"         +
-                                                 "`type` int(11) NOT NULL DEFAULT '0',;\n"          +
-                                                 "PRIMARY KEY (`id`),;\n"                           +
-                                                 "KEY `idx_machines_company` (`company`),;\n"       +
+        public static readonly string Machines = "CREATE TABLE `machines` (;\n" +
+                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,;\n" +
+                                                 "`company` int(11) NOT NULL DEFAULT '0',;\n" +
+                                                 "`introduced` DATETIME NULL,;\n" +
+                                                 "`model` char(50) NOT NULL DEFAULT '',;\n" +
+                                                 "`type` int(11) NOT NULL DEFAULT '0',;\n" + "PRIMARY KEY (`id`),;\n" +
+                                                 "KEY `idx_machines_company` (`company`),;\n" +
                                                  "KEY `idx_machines_introduced` (`introduced`),;\n" +
-                                                 "KEY `idx_machines_model` (`model`),;\n"           +
+                                                 "KEY `idx_machines_model` (`model`),;\n" +
                                                  "KEY `idx_machines_type` (`type`));";
 
         public static readonly string Forbidden = V20.Forbidden;

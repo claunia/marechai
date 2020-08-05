@@ -78,15 +78,13 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string CompanyLogos = V8.CompanyLogos;
 
-        public static readonly string CompanyDescriptions =
-            "CREATE TABLE `company_descriptions` (\n"                                                                           +
-            "`id` INT NOT NULL AUTO_INCREMENT,\n"                                                                               +
-            "`company_id` INT NOT NULL,\n"                                                                                      +
-            "`text` text,\n"                                                                                                    +
-            "PRIMARY KEY (`id`),\n"                                                                                             +
-            "INDEX `idx_company_id` (`company_id` ASC),\n"                                                                      +
-            "FULLTEXT KEY `idx_text` (`text`),\n"                                                                               +
-            "CONSTRAINT `fk_company_id` FOREIGN KEY (`id`) REFERENCES `companies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
-            ")";
+        public static readonly string CompanyDescriptions = "CREATE TABLE `company_descriptions` (\n" +
+                                                            "`id` INT NOT NULL AUTO_INCREMENT,\n" +
+                                                            "`company_id` INT NOT NULL,\n" + "`text` text,\n" +
+                                                            "PRIMARY KEY (`id`),\n" +
+                                                            "INDEX `idx_company_id` (`company_id` ASC),\n" +
+                                                            "FULLTEXT KEY `idx_text` (`text`),\n" +
+                                                            "CONSTRAINT `fk_company_id` FOREIGN KEY (`id`) REFERENCES `companies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                                                            ")";
     }
 }

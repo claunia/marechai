@@ -42,8 +42,12 @@ namespace Marechai.Services
             await _context.ProcessorsByMachine.Where(p => p.MachineId == machineId).
                            Select(p => new ProcessorByMachineViewModel
                            {
-                               Id          = p.Id, Name = p.Processor.Name, CompanyName = p.Processor.Company.Name,
-                               ProcessorId = p.ProcessorId, MachineId = p.MachineId, Speed = p.Speed
+                               Id          = p.Id,
+                               Name        = p.Processor.Name,
+                               CompanyName = p.Processor.Company.Name,
+                               ProcessorId = p.ProcessorId,
+                               MachineId   = p.MachineId,
+                               Speed       = p.Speed
                            }).OrderBy(p => p.CompanyName).ThenBy(p => p.Name).ToListAsync();
 
         public async Task DeleteAsync(long id, string userId)
@@ -62,7 +66,9 @@ namespace Marechai.Services
         {
             var item = new ProcessorsByMachine
             {
-                ProcessorId = processorId, MachineId = machineId, Speed = speed
+                ProcessorId = processorId,
+                MachineId   = machineId,
+                Speed       = speed
             };
 
             await _context.ProcessorsByMachine.AddAsync(item);

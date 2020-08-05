@@ -43,8 +43,9 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Name = table.Column<string>(maxLength: 255, nullable: true),
-                Size = table.Column<ulong>(nullable: false), FileId = table.Column<ulong>(nullable: false)
+                Name   = table.Column<string>(maxLength: 255, nullable: true),
+                Size   = table.Column<ulong>(nullable: false),
+                FileId = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_FileDataStreams", x => x.Id);

@@ -42,13 +42,17 @@ namespace Marechai.Services
             await _context.MachineFamilies.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).
                            Select(m => new MachineFamilyViewModel
                            {
-                               Id = m.Id, Company = m.Company.Name, Name = m.Name
+                               Id      = m.Id,
+                               Company = m.Company.Name,
+                               Name    = m.Name
                            }).OrderBy(m => m.Name).ToListAsync();
 
         public async Task<MachineFamilyViewModel> GetAsync(int id) =>
             await _context.MachineFamilies.Where(f => f.Id == id).Select(m => new MachineFamilyViewModel
             {
-                Id = m.Id, CompanyId = m.CompanyId, Name = m.Name
+                Id        = m.Id,
+                CompanyId = m.CompanyId,
+                Name      = m.Name
             }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(MachineFamilyViewModel viewModel, string userId)
@@ -68,7 +72,8 @@ namespace Marechai.Services
         {
             var model = new MachineFamily
             {
-                Name = viewModel.Name, CompanyId = viewModel.CompanyId
+                Name      = viewModel.Name,
+                CompanyId = viewModel.CompanyId
             };
 
             await _context.MachineFamilies.AddAsync(model);

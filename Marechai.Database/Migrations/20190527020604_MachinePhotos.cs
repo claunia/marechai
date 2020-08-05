@@ -12,7 +12,8 @@ namespace Marechai.Database.Migrations
 
             migrationBuilder.CreateTable("MachinePhotos", table => new
             {
-                Id                    = table.Column<Guid>(), Author = table.Column<string>(nullable: true),
+                Id                    = table.Column<Guid>(),
+                Author                = table.Column<string>(nullable: true),
                 CameraManufacturer    = table.Column<string>(nullable: true),
                 CameraModel           = table.Column<string>(nullable: true),
                 ColorSpace            = table.Column<string>(nullable: true),

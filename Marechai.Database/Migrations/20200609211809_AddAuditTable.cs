@@ -18,9 +18,12 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Type = table.Column<byte>(nullable: false), UserId = table.Column<string>(nullable: false),
-                Table = table.Column<string>(nullable: true), Keys = table.Column<string>(nullable: true),
-                OldValues = table.Column<string>(nullable: true), NewValues = table.Column<string>(nullable: true),
+                Type            = table.Column<byte>(nullable: false),
+                UserId          = table.Column<string>(nullable: false),
+                Table           = table.Column<string>(nullable: true),
+                Keys            = table.Column<string>(nullable: true),
+                OldValues       = table.Column<string>(nullable: true),
+                NewValues       = table.Column<string>(nullable: true),
                 AffectedColumns = table.Column<string>(nullable: true)
             }, constraints: table =>
             {

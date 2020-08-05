@@ -11,7 +11,8 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<long>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                MagazineId = table.Column<long>(), MachineId = table.Column<int>()
+                MagazineId = table.Column<long>(),
+                MachineId  = table.Column<int>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_MagazinesByMachines", x => x.Id);

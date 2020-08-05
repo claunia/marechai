@@ -53,19 +53,22 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Path = table.Column<string>(maxLength: 8192, nullable: false),
-                Name = table.Column<string>(maxLength: 255, nullable: false),
-                PathSeparator = table.Column<string>(nullable: false),
-                IsDirectory = table.Column<bool>(nullable: false),
-                CreationDate = table.Column<DateTime>(nullable: true),
-                AccessDate = table.Column<DateTime>(nullable: true),
+                Path             = table.Column<string>(maxLength: 8192, nullable: false),
+                Name             = table.Column<string>(maxLength: 255, nullable: false),
+                PathSeparator    = table.Column<string>(nullable: false),
+                IsDirectory      = table.Column<bool>(nullable: false),
+                CreationDate     = table.Column<DateTime>(nullable: true),
+                AccessDate       = table.Column<DateTime>(nullable: true),
                 StatusChangeDate = table.Column<DateTime>(nullable: true),
-                BackupDate = table.Column<DateTime>(nullable: true),
-                LastWriteDate = table.Column<DateTime>(nullable: true),
-                Attributes = table.Column<ulong>(nullable: false), PosixMode = table.Column<ushort>(nullable: true),
-                DeviceNumber = table.Column<uint>(nullable: true), GroupId = table.Column<ulong>(nullable: true),
-                UserId = table.Column<ulong>(nullable: true), Inode = table.Column<ulong>(nullable: true),
-                Links = table.Column<ulong>(nullable: true)
+                BackupDate       = table.Column<DateTime>(nullable: true),
+                LastWriteDate    = table.Column<DateTime>(nullable: true),
+                Attributes       = table.Column<ulong>(nullable: false),
+                PosixMode        = table.Column<ushort>(nullable: true),
+                DeviceNumber     = table.Column<uint>(nullable: true),
+                GroupId          = table.Column<ulong>(nullable: true),
+                UserId           = table.Column<ulong>(nullable: true),
+                Inode            = table.Column<ulong>(nullable: true),
+                Links            = table.Column<ulong>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_MediaFiles", x => x.Id);
@@ -104,7 +107,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                FilesystemId = table.Column<ulong>(nullable: false), FileId = table.Column<ulong>(nullable: false)
+                FilesystemId = table.Column<ulong>(nullable: false),
+                FileId       = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_FilesByFilesystem", x => x.Id);

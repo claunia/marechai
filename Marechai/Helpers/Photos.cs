@@ -107,7 +107,7 @@ namespace Marechai.Helpers
 
             switch(resolution)
             {
-                case"hd":
+                case "hd":
                     if(thumbnail)
                     {
                         width  = 256;
@@ -120,7 +120,7 @@ namespace Marechai.Helpers
                     }
 
                     break;
-                case"1440p":
+                case "1440p":
                     if(thumbnail)
                     {
                         width  = 384;
@@ -133,7 +133,7 @@ namespace Marechai.Helpers
                     }
 
                     break;
-                case"4k":
+                case "4k":
                     if(thumbnail)
                     {
                         width  = 512;
@@ -154,26 +154,26 @@ namespace Marechai.Helpers
 
             switch(outputFormat)
             {
-                case"jpeg":
+                case "jpeg":
                     outputPath = Path.Combine(outputPath, $"{id}.jpg");
 
                     return ConvertUsingImageMagick(originalPath, outputPath, width, height);
-                case"jp2k":
+                case "jp2k":
                     outputPath = Path.Combine(outputPath, $"{id}.jp2");
 
                     return ConvertUsingImageMagick(originalPath, outputPath, width, height);
 
-                case"webp":
+                case "webp":
                     outputPath = Path.Combine(outputPath, $"{id}.webp");
 
                     return ConvertUsingImageMagick(originalPath, outputPath, width, height);
 
-                case"heif":
+                case "heif":
                     outputPath = Path.Combine(outputPath, $"{id}.heic");
 
                     return ConvertUsingImageMagick(originalPath, outputPath, width, height);
 
-                case"avif":
+                case "avif":
                     outputPath = Path.Combine(outputPath, $"{id}.avif");
 
                     tmpPath = Path.GetTempFileName();
@@ -205,10 +205,16 @@ namespace Marechai.Helpers
             {
                 StartInfo =
                 {
-                    FileName               = "convert", CreateNoWindow = true, RedirectStandardError = true,
-                    RedirectStandardOutput = true, ArgumentList =
+                    FileName               = "convert",
+                    CreateNoWindow         = true,
+                    RedirectStandardError  = true,
+                    RedirectStandardOutput = true,
+                    ArgumentList =
                     {
-                        "-resize", $"{width}x{height}", "-strip", originalPath,
+                        "-resize",
+                        $"{width}x{height}",
+                        "-strip",
+                        originalPath,
                         outputPath
                     }
                 }
@@ -234,10 +240,16 @@ namespace Marechai.Helpers
             {
                 StartInfo =
                 {
-                    FileName               = "avifenc", CreateNoWindow = true, RedirectStandardError = true,
-                    RedirectStandardOutput = true, ArgumentList =
+                    FileName               = "avifenc",
+                    CreateNoWindow         = true,
+                    RedirectStandardError  = true,
+                    RedirectStandardOutput = true,
+                    ArgumentList =
                     {
-                        "-j", "4", originalPath, outputPath
+                        "-j",
+                        "4",
+                        originalPath,
+                        outputPath
                     }
                 }
             };
@@ -261,12 +273,12 @@ namespace Marechai.Helpers
             List<Task> pool = new List<Task>
             {
                 new Task(() => FinishedRenderingJpeg4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "JPEG", "4k", true))),
+                                                                                    sourceFormat, "JPEG", "4k", true))),
                 new Task(() => FinishedRenderingJpeg1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                  sourceFormat, "JPEG", "1440p",
-                                                                                  true))),
+                                                                              sourceFormat, "JPEG", "1440p",
+                                                                              true))),
                 new Task(() => FinishedRenderingJpegHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "JPEG", "hd", true))),
+                                                                                    sourceFormat, "JPEG", "hd", true))),
                 new Task(() => FinishedRenderingJpeg4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "JPEG", "4k", false))),
                 new Task(() => FinishedRenderingJpeg1440?.Invoke(Convert(webRootPath, id, originalFilePath,
@@ -274,12 +286,12 @@ namespace Marechai.Helpers
                 new Task(() => FinishedRenderingJpegHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "JPEG", "hd", false))),
                 new Task(() => FinishedRenderingJp2k4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "JP2K", "4k", true))),
+                                                                                    sourceFormat, "JP2K", "4k", true))),
                 new Task(() => FinishedRenderingJp2k1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                  sourceFormat, "JP2K", "1440p",
-                                                                                  true))),
+                                                                              sourceFormat, "JP2K", "1440p",
+                                                                              true))),
                 new Task(() => FinishedRenderingJp2kHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "JP2K", "hd", true))),
+                                                                                    sourceFormat, "JP2K", "hd", true))),
                 new Task(() => FinishedRenderingJp2k4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "JP2K", "4k", false))),
                 new Task(() => FinishedRenderingJp2k1440?.Invoke(Convert(webRootPath, id, originalFilePath,
@@ -287,12 +299,12 @@ namespace Marechai.Helpers
                 new Task(() => FinishedRenderingJp2kHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "JP2K", "hd", false))),
                 new Task(() => FinishedRenderingWebp4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "WEBP", "4k", true))),
+                                                                                    sourceFormat, "WEBP", "4k", true))),
                 new Task(() => FinishedRenderingWebp1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                  sourceFormat, "WEBP", "1440p",
-                                                                                  true))),
+                                                                              sourceFormat, "WEBP", "1440p",
+                                                                              true))),
                 new Task(() => FinishedRenderingWebpHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "WEBP", "hd", true))),
+                                                                                    sourceFormat, "WEBP", "hd", true))),
                 new Task(() => FinishedRenderingWebp4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "WEBP", "4k", false))),
                 new Task(() => FinishedRenderingWebp1440?.Invoke(Convert(webRootPath, id, originalFilePath,
@@ -300,12 +312,12 @@ namespace Marechai.Helpers
                 new Task(() => FinishedRenderingWebpHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "WEBP", "hd", false))),
                 new Task(() => FinishedRenderingHeif4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "HEIF", "4k", true))),
+                                                                                    sourceFormat, "HEIF", "4k", true))),
                 new Task(() => FinishedRenderingHeif1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                  sourceFormat, "HEIF", "1440p",
-                                                                                  true))),
+                                                                              sourceFormat, "HEIF", "1440p",
+                                                                              true))),
                 new Task(() => FinishedRenderingHeifHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "HEIF", "hd", true))),
+                                                                                    sourceFormat, "HEIF", "hd", true))),
                 new Task(() => FinishedRenderingHeif4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "HEIF", "4k", false))),
                 new Task(() => FinishedRenderingHeif1440?.Invoke(Convert(webRootPath, id, originalFilePath,
@@ -313,12 +325,12 @@ namespace Marechai.Helpers
                 new Task(() => FinishedRenderingHeifHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "HEIF", "hd", false))),
                 new Task(() => FinishedRenderingAvif4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "AVIF", "4k", true))),
+                                                                                    sourceFormat, "AVIF", "4k", true))),
                 new Task(() => FinishedRenderingAvif1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                  sourceFormat, "AVIF", "1440p",
-                                                                                  true))),
+                                                                              sourceFormat, "AVIF", "1440p",
+                                                                              true))),
                 new Task(() => FinishedRenderingAvifHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                sourceFormat, "AVIF", "hd", true))),
+                                                                                    sourceFormat, "AVIF", "hd", true))),
                 new Task(() => FinishedRenderingAvif4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
                                                                        "AVIF", "4k", false))),
                 new Task(() => FinishedRenderingAvif1440?.Invoke(Convert(webRootPath, id, originalFilePath,

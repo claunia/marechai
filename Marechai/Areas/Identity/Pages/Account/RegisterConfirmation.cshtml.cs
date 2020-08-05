@@ -55,7 +55,10 @@ namespace Marechai.Areas.Identity.Pages.Account
 
                 EmailConfirmationUrl = Url.Page("/Account/ConfirmEmail", null, new
                 {
-                    area = "Identity", userId, code, returnUrl
+                    area = "Identity",
+                    userId,
+                    code,
+                    returnUrl
                 }, Request.Scheme);
             }
 

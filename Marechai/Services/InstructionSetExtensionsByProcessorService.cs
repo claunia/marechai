@@ -42,8 +42,11 @@ namespace Marechai.Services
             await _context.InstructionSetExtensionsByProcessor.Where(e => e.ProcessorId == processorId).
                            Select(e => new InstructionSetExtensionByProcessorViewModel
                            {
-                               Id          = e.Id, Extension = e.Extension.Extension, Processor = e.Processor.Name,
-                               ProcessorId = e.ProcessorId, ExtensionId = e.ExtensionId
+                               Id          = e.Id,
+                               Extension   = e.Extension.Extension,
+                               Processor   = e.Processor.Name,
+                               ProcessorId = e.ProcessorId,
+                               ExtensionId = e.ExtensionId
                            }).OrderBy(e => e.Extension).ToListAsync();
 
         public async Task DeleteAsync(int id, string userId)
@@ -62,7 +65,8 @@ namespace Marechai.Services
         {
             var item = new InstructionSetExtensionsByProcessor
             {
-                ProcessorId = processorId, ExtensionId = extensionId
+                ProcessorId = processorId,
+                ExtensionId = extensionId
             };
 
             await _context.InstructionSetExtensionsByProcessor.AddAsync(item);

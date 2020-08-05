@@ -42,7 +42,8 @@ namespace Marechai.Services
                                                                               DocumentCompanies.OrderBy(c => c.Name).
                                                                               Select(d => new DocumentCompanyViewModel
                                                                               {
-                                                                                  Id        = d.Id, Name = d.Name,
+                                                                                  Id        = d.Id,
+                                                                                  Name      = d.Name,
                                                                                   Company   = d.Company.Name,
                                                                                   CompanyId = d.CompanyId
                                                                               }).ToListAsync();
@@ -50,7 +51,9 @@ namespace Marechai.Services
         public async Task<DocumentCompanyViewModel> GetAsync(int id) =>
             await _context.DocumentCompanies.Where(d => d.Id == id).Select(d => new DocumentCompanyViewModel
             {
-                Id = d.Id, Name = d.Name, CompanyId = d.CompanyId
+                Id        = d.Id,
+                Name      = d.Name,
+                CompanyId = d.CompanyId
             }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(DocumentCompanyViewModel viewModel, string userId)
@@ -70,7 +73,8 @@ namespace Marechai.Services
         {
             var model = new DocumentCompany
             {
-                CompanyId = viewModel.CompanyId, Name = viewModel.Name
+                CompanyId = viewModel.CompanyId,
+                Name      = viewModel.Name
             };
 
             await _context.DocumentCompanies.AddAsync(model);

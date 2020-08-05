@@ -27,7 +27,7 @@ namespace Marechai.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public void OnGet() { }
+        public void OnGet() {}
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -51,7 +51,8 @@ namespace Marechai.Areas.Identity.Pages.Account
 
             string callbackUrl = Url.Page("/Account/ConfirmEmail", null, new
             {
-                userId, code
+                userId,
+                code
             }, Request.Scheme);
 
             await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",

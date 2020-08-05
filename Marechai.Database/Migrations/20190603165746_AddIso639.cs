@@ -8,11 +8,14 @@ namespace Marechai.Database.Migrations
         {
             migrationBuilder.CreateTable("ISO_639-3", table => new
             {
-                Id      = table.Column<string>("char(3)"), Part2B = table.Column<string>("char(3)", nullable: true),
-                Part2T  = table.Column<string>("char(3)", nullable: true),
-                Part1   = table.Column<string>("char(2)", nullable: true), Scope = table.Column<string>("char(1)"),
-                Type    = table.Column<string>("char(1)"), Ref_Name              = table.Column<string>("varchar(150)"),
-                Comment = table.Column<string>("varchar(150)", nullable: true)
+                Id       = table.Column<string>("char(3)"),
+                Part2B   = table.Column<string>("char(3)", nullable: true),
+                Part2T   = table.Column<string>("char(3)", nullable: true),
+                Part1    = table.Column<string>("char(2)", nullable: true),
+                Scope    = table.Column<string>("char(1)"),
+                Type     = table.Column<string>("char(1)"),
+                Ref_Name = table.Column<string>("varchar(150)"),
+                Comment  = table.Column<string>("varchar(150)", nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_ISO_639-3", x => x.Id);

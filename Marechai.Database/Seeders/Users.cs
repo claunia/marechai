@@ -67,7 +67,9 @@ namespace Marechai.Database.Seeders
             {
                 uberAdmin = new ApplicationUser
                 {
-                    UserName = "claunia", Email = "claunia@claunia.com", EmailConfirmed = true
+                    UserName       = "claunia",
+                    Email          = "claunia@claunia.com",
+                    EmailConfirmed = true
                 };
 
                 byte[] newPass = new byte[8];

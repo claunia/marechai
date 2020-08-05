@@ -40,20 +40,19 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string Companies = V21.Companies;
 
-        public static readonly string Machines = "CREATE TABLE `machines` (\n"                     +
-                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,\n"         +
-                                                 "`company` int(11) NOT NULL DEFAULT '0',\n"       +
-                                                 "`name` varchar(255) NOT NULL,\n"                 +
-                                                 "`type` int(11) NOT NULL DEFAULT '0',\n"          +
-                                                 "`introduced` datetime DEFAULT NULL,\n"           +
-                                                 "`family` int(11) DEFAULT NULL,\n"                +
-                                                 "`model` varchar(50) DEFAULT NULL,\n"             +
-                                                 "PRIMARY KEY (`id`),\n"                           +
-                                                 "KEY `idx_machines_company` (`company`),\n"       +
-                                                 "KEY `idx_machines_type` (`type`),\n"             +
+        public static readonly string Machines = "CREATE TABLE `machines` (\n" +
+                                                 "`id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                                                 "`company` int(11) NOT NULL DEFAULT '0',\n" +
+                                                 "`name` varchar(255) NOT NULL,\n" +
+                                                 "`type` int(11) NOT NULL DEFAULT '0',\n" +
+                                                 "`introduced` datetime DEFAULT NULL,\n" +
+                                                 "`family` int(11) DEFAULT NULL,\n" +
+                                                 "`model` varchar(50) DEFAULT NULL,\n" + "PRIMARY KEY (`id`),\n" +
+                                                 "KEY `idx_machines_company` (`company`),\n" +
+                                                 "KEY `idx_machines_type` (`type`),\n" +
                                                  "KEY `idx_machines_introduced` (`introduced`),\n" +
-                                                 "KEY `idx_machines_family` (`family`),\n"         +
-                                                 "KEY `idx_machines_name` (`name`),\n"             +
+                                                 "KEY `idx_machines_family` (`family`),\n" +
+                                                 "KEY `idx_machines_name` (`name`),\n" +
                                                  "KEY `idx_machines_model` (`model`));";
 
         public static readonly string Forbidden = V21.Forbidden;
@@ -108,13 +107,12 @@ namespace Marechai.Database.Schemas.Sql
 
         public static readonly string StorageByMachine = V21.StorageByMachine;
 
-        public static readonly string MachineFamilies = "CREATE TABLE `machine_families` (\n"               +
-                                                        "`id` INT NOT NULL AUTO_INCREMENT,\n"               +
-                                                        "`company` INT NOT NULL,\n"                         +
-                                                        "`name` VARCHAR(255) NOT NULL,\n"                   +
-                                                        "PRIMARY KEY (`id`),\n"                             +
+        public static readonly string MachineFamilies = "CREATE TABLE `machine_families` (\n" +
+                                                        "`id` INT NOT NULL AUTO_INCREMENT,\n" +
+                                                        "`company` INT NOT NULL,\n" +
+                                                        "`name` VARCHAR(255) NOT NULL,\n" + "PRIMARY KEY (`id`),\n" +
                                                         "KEY `idx_machine_families_company` (`company`),\n" +
-                                                        "KEY `idx_machine_families_name` (`name`),\n"       +
+                                                        "KEY `idx_machine_families_name` (`name`),\n" +
                                                         "CONSTRAINT `fk_machine_families_company` FOREIGN KEY (`company`) REFERENCES `companies` (`id`) ON UPDATE CASCADE ON DELETE CASCADE);";
     }
 }

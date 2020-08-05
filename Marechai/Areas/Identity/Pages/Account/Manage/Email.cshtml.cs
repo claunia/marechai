@@ -89,7 +89,9 @@ namespace Marechai.Areas.Identity.Pages.Account.Manage
 
                 string callbackUrl = Url.Page("/Account/ConfirmEmailChange", null, new
                 {
-                    userId, email = Input.NewEmail, code
+                    userId,
+                    email = Input.NewEmail,
+                    code
                 }, Request.Scheme);
 
                 await _emailSender.SendEmailAsync(Input.NewEmail, "Confirm your email",
@@ -128,7 +130,9 @@ namespace Marechai.Areas.Identity.Pages.Account.Manage
 
             string callbackUrl = Url.Page("/Account/ConfirmEmail", null, new
             {
-                area = "Identity", userId, code
+                area = "Identity",
+                userId,
+                code
             }, Request.Scheme);
 
             await _emailSender.SendEmailAsync(email, "Confirm your email",

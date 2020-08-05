@@ -11,8 +11,10 @@ namespace Marechai.Database.Migrations
             {
                 Id = table.Column<int>().
                            Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                Name        = table.Column<string>(), SPDX      = table.Column<string>(nullable: true),
-                FsfApproved = table.Column<bool>(), OsiApproved = table.Column<bool>(),
+                Name        = table.Column<string>(),
+                SPDX        = table.Column<string>(nullable: true),
+                FsfApproved = table.Column<bool>(),
+                OsiApproved = table.Column<bool>(),
                 Link        = table.Column<string>(maxLength: 512, nullable: true),
                 Text        = table.Column<string>("longtext", maxLength: 131072, nullable: true)
             }, constraints: table =>

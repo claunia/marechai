@@ -57,7 +57,7 @@ namespace Marechai.Helpers
 
                     switch(format)
                     {
-                        case"webp":
+                        case "webp":
                             skFormat = SKEncodedImageFormat.Webp;
 
                             break;
@@ -128,7 +128,9 @@ namespace Marechai.Helpers
                 {
                     context.CompanyLogos.Add(new CompanyLogo
                     {
-                        CompanyId = companyId, Year = year, Guid = guid
+                        CompanyId = companyId,
+                        Year      = year,
+                        Guid      = guid
                     });
 
                     context.SaveChanges();
@@ -160,7 +162,7 @@ namespace Marechai.Helpers
 
                         switch(format)
                         {
-                            case"webp":
+                            case "webp":
                                 skFormat = SKEncodedImageFormat.Webp;
 
                                 break;
@@ -247,7 +249,7 @@ namespace Marechai.Helpers
 
                     switch(format)
                     {
-                        case"webp":
+                        case "webp":
                             skFormat = SKEncodedImageFormat.Webp;
 
                             break;

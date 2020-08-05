@@ -58,18 +58,26 @@ namespace Marechai.Services
             await _context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).ThenBy(m => m.Family.Name).
                            Select(m => new MachineViewModel
                            {
-                               Id         = m.Id, Company      = m.Company.Name, Name = m.Name, Model = m.Model,
-                               Introduced = m.Introduced, Type = m.Type, Family       = m.Family.Name
+                               Id         = m.Id,
+                               Company    = m.Company.Name,
+                               Name       = m.Name,
+                               Model      = m.Model,
+                               Introduced = m.Introduced,
+                               Type       = m.Type,
+                               Family     = m.Family.Name
                            }).ToListAsync();
 
         public async Task<MachineViewModel> GetAsync(int id) => await _context.Machines.Where(m => m.Id == id).
                                                                                Select(m => new MachineViewModel
                                                                                {
-                                                                                   Id = m.Id, Company = m.Company.Name,
-                                                                                   CompanyId = m.CompanyId,
-                                                                                   Name = m.Name, Model = m.Model,
+                                                                                   Id         = m.Id,
+                                                                                   Company    = m.Company.Name,
+                                                                                   CompanyId  = m.CompanyId,
+                                                                                   Name       = m.Name,
+                                                                                   Model      = m.Model,
                                                                                    Introduced = m.Introduced,
-                                                                                   Type = m.Type, FamilyId = m.FamilyId
+                                                                                   Type       = m.Type,
+                                                                                   FamilyId   = m.FamilyId
                                                                                }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(MachineViewModel viewModel, string userId)
@@ -88,7 +96,8 @@ namespace Marechai.Services
 
             var news = new News
             {
-                AddedId = model.Id, Date = DateTime.UtcNow
+                AddedId = model.Id,
+                Date    = DateTime.UtcNow
             };
 
             switch(model.Type)
@@ -117,8 +126,12 @@ namespace Marechai.Services
         {
             var model = new Machine
             {
-                CompanyId  = viewModel.CompanyId, Name  = viewModel.Name, Model    = viewModel.Model,
-                Introduced = viewModel.Introduced, Type = viewModel.Type, FamilyId = viewModel.FamilyId
+                CompanyId  = viewModel.CompanyId,
+                Name       = viewModel.Name,
+                Model      = viewModel.Model,
+                Introduced = viewModel.Introduced,
+                Type       = viewModel.Type,
+                FamilyId   = viewModel.FamilyId
             };
 
             await _context.Machines.AddAsync(model);
@@ -126,7 +139,8 @@ namespace Marechai.Services
 
             var news = new News
             {
-                AddedId = model.Id, Date = DateTime.UtcNow
+                AddedId = model.Id,
+                Date    = DateTime.UtcNow
             };
 
             switch(model.Type)
@@ -163,8 +177,11 @@ namespace Marechai.Services
 
             var model = new MachineViewModel
             {
-                Introduced = machine.Introduced, Name = machine.Name, CompanyId = machine.CompanyId,
-                Model      = machine.Model, Type = machine.Type
+                Introduced = machine.Introduced,
+                Name       = machine.Name,
+                CompanyId  = machine.CompanyId,
+                Model      = machine.Model,
+                Type       = machine.Type
             };
 
             Company company = await _context.Companies.FindAsync(model.CompanyId);
@@ -197,7 +214,10 @@ namespace Marechai.Services
             model.Memory = await _context.MemoryByMachine.Where(m => m.MachineId == machine.Id).
                                           Select(m => new MemoryViewModel
                                           {
-                                              Type = m.Type, Usage = m.Usage, Size = m.Size, Speed = m.Speed
+                                              Type  = m.Type,
+                                              Usage = m.Usage,
+                                              Size  = m.Size,
+                                              Speed = m.Speed
                                           }).ToListAsync();
 
             model.Processors = await _processorsService.GetByMachineAsync(machine.Id);
@@ -207,7 +227,9 @@ namespace Marechai.Services
             model.Storage = await _context.StorageByMachine.Where(s => s.MachineId == machine.Id).
                                            Select(s => new StorageViewModel
                                            {
-                                               Type = s.Type, Interface = s.Interface, Capacity = s.Capacity
+                                               Type      = s.Type,
+                                               Interface = s.Interface,
+                                               Capacity  = s.Capacity
                                            }).ToListAsync();
 
             return model;

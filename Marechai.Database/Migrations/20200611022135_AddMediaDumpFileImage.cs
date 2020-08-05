@@ -43,13 +43,15 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                MediaDumpId = table.Column<ulong>(nullable: false), FileSequence = table.Column<long>(nullable: false),
-                PartitionSequence = table.Column<short>(nullable: false), Size = table.Column<ulong>(nullable: false),
-                Md5 = table.Column<byte[]>("binary(16)", nullable: true),
-                Sha1 = table.Column<byte[]>("binary(20)", nullable: true),
-                Sha256 = table.Column<byte[]>("binary(32)", nullable: true),
-                Sha3 = table.Column<byte[]>("binary(64)", nullable: true),
-                Spamsum = table.Column<string>(nullable: true)
+                MediaDumpId       = table.Column<ulong>(nullable: false),
+                FileSequence      = table.Column<long>(nullable: false),
+                PartitionSequence = table.Column<short>(nullable: false),
+                Size              = table.Column<ulong>(nullable: false),
+                Md5               = table.Column<byte[]>("binary(16)", nullable: true),
+                Sha1              = table.Column<byte[]>("binary(20)", nullable: true),
+                Sha256            = table.Column<byte[]>("binary(32)", nullable: true),
+                Sha3              = table.Column<byte[]>("binary(64)", nullable: true),
+                Spamsum           = table.Column<string>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_MediaDumpFileImages", x => x.Id);

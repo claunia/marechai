@@ -50,9 +50,6 @@ namespace Marechai.Database.Migrations
             migrationBuilder.CreateIndex("IX_DumpHardwares_SoftwareVersion", "DumpHardwares", "SoftwareVersion");
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable("DumpHardwares");
-        }
+        protected override void Down(MigrationBuilder migrationBuilder) => migrationBuilder.DropTable("DumpHardwares");
     }
 }

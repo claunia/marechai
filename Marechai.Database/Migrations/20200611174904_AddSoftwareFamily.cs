@@ -43,8 +43,9 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                Name     = table.Column<string>(nullable: false), Introduced = table.Column<DateTime>(nullable: true),
-                ParentId = table.Column<ulong>(nullable: true)
+                Name       = table.Column<string>(nullable: false),
+                Introduced = table.Column<DateTime>(nullable: true),
+                ParentId   = table.Column<ulong>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_SoftwareFamilies", x => x.Id);
@@ -63,7 +64,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                RoleId = table.Column<string>(nullable: false), CompanyId = table.Column<int>(nullable: false),
+                RoleId           = table.Column<string>(nullable: false),
+                CompanyId        = table.Column<int>(nullable: false),
                 SoftwareFamilyId = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {
@@ -90,7 +92,8 @@ namespace Marechai.Database.Migrations
                 UpdatedOn = table.Column<DateTime>(nullable: false).
                                   Annotation("MySql:ValueGenerationStrategy",
                                              MySqlValueGenerationStrategy.ComputedColumn),
-                RoleId           = table.Column<string>(nullable: false), PersonId = table.Column<int>(nullable: false),
+                RoleId           = table.Column<string>(nullable: false),
+                PersonId         = table.Column<int>(nullable: false),
                 SoftwareFamilyId = table.Column<ulong>(nullable: false)
             }, constraints: table =>
             {

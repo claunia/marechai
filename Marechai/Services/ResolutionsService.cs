@@ -41,16 +41,26 @@ namespace Marechai.Services
         public async Task<List<ResolutionViewModel>> GetAsync() =>
             await _context.Resolutions.Select(r => new ResolutionViewModel
                            {
-                               Id      = r.Id, Width      = r.Width, Height    = r.Height, Colors = r.Colors,
-                               Palette = r.Palette, Chars = r.Chars, Grayscale = r.Grayscale
+                               Id        = r.Id,
+                               Width     = r.Width,
+                               Height    = r.Height,
+                               Colors    = r.Colors,
+                               Palette   = r.Palette,
+                               Chars     = r.Chars,
+                               Grayscale = r.Grayscale
                            }).OrderBy(r => r.Width).ThenBy(r => r.Height).ThenBy(r => r.Chars).ThenBy(r => r.Grayscale).
                            ThenBy(r => r.Colors).ThenBy(r => r.Palette).ToListAsync();
 
         public async Task<ResolutionViewModel> GetAsync(int id) =>
             await _context.Resolutions.Where(r => r.Id == id).Select(r => new ResolutionViewModel
             {
-                Id      = r.Id, Width      = r.Width, Height    = r.Height, Colors = r.Colors,
-                Palette = r.Palette, Chars = r.Chars, Grayscale = r.Grayscale
+                Id        = r.Id,
+                Width     = r.Width,
+                Height    = r.Height,
+                Colors    = r.Colors,
+                Palette   = r.Palette,
+                Chars     = r.Chars,
+                Grayscale = r.Grayscale
             }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(ResolutionViewModel viewModel, string userId)
@@ -74,8 +84,12 @@ namespace Marechai.Services
         {
             var model = new Resolution
             {
-                Chars  = viewModel.Chars, Colors   = viewModel.Colors, Grayscale = viewModel.Grayscale,
-                Height = viewModel.Height, Palette = viewModel.Palette, Width    = viewModel.Width
+                Chars     = viewModel.Chars,
+                Colors    = viewModel.Colors,
+                Grayscale = viewModel.Grayscale,
+                Height    = viewModel.Height,
+                Palette   = viewModel.Palette,
+                Width     = viewModel.Width
             };
 
             await _context.Resolutions.AddAsync(model);
