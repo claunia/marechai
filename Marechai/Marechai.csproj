@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>4.0.0.1762</Version>
+    <Version>4.0.0.1763</Version>
     <Company>Canary Islands Computer Museum</Company>
     <Copyright>Copyright © 2003-2020 Natalia Portillo</Copyright>
     <Product>Canary Islands Computer Museum Website</Product>
@@ -30,10 +30,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="MSBump" Version="2.3.2" PrivateAssets="All" />
     <PackageReference Include="MySql.Data" Version="8.0.21" />
-    <PackageReference Include="SkiaSharp" Version="1.68.3" />
-    <PackageReference Include="SkiaSharp.Extended" Version="1.60.0" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="1.68.3" />
-    <PackageReference Include="Svg.Skia" Version="0.3.0" />
+    <PackageReference Include="SkiaSharp" Version="2.80.1" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.80.1" />
+    <PackageReference Include="Svg.Skia" Version="0.4.1" />
     <PackageReference Include="Tewr.Blazor.FileReader" Version="1.5.0.20109" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
