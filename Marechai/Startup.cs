@@ -24,7 +24,6 @@
 *******************************************************************************/
 
 using System.Globalization;
-using Blazor.FileReader;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -41,6 +40,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Tewr.Blazor.FileReader;
 
 namespace Marechai
 {
@@ -62,17 +62,16 @@ namespace Marechai
             services.AddBlazorise(options => options.ChangeTextOnKeyPress = true).AddBootstrapProviders().
                      AddFontAwesomeIcons();
 
-            services.AddDbContext<MarechaiContext>(options => options.
-                                                              UseLazyLoadingProxies().
-                                                              UseMySql(Configuration.
-                                                                           GetConnectionString("DefaultConnection")));
+            services.AddDbContext<MarechaiContext>(options => options.UseLazyLoadingProxies().
+                                                                      UseMySql(Configuration.
+                                                                                   GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).
                      AddRoles<ApplicationRole>().AddEntityFrameworkStores<MarechaiContext>();
 
             // The following line enables Application Insights telemetry collection.
             services.AddApplicationInsightsTelemetry();
-            
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
 

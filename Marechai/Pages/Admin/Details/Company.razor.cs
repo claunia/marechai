@@ -29,7 +29,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Blazor.FileReader;
 using Blazorise;
 using Marechai.Database;
 using Marechai.Database.Models;
@@ -42,6 +41,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using SkiaSharp;
 using Svg.Skia;
+using Tewr.Blazor.FileReader;
 
 namespace Marechai.Pages.Admin.Details
 {

@@ -31,13 +31,13 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Blazor.FileReader;
 using Blazorise;
 using Marechai.Helpers;
 using Marechai.Shared;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Tewr.Blazor.FileReader;
 
 namespace Marechai.Pages.Admin.Details
 {
