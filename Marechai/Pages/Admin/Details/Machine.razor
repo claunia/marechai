@@ -112,7 +112,7 @@
     @if (_editing || _model.Introduced.HasValue)
     {
         <Field>
-            <FieldLabel>@L["Introduced"]</FieldLabel>
+            <FieldLabel>@L["Introduced (public release)"]</FieldLabel>
             @if (_editing)
             {
                 <Check TValue="bool" Disabled="_prototype" @bind-Checked="@_unknownIntroduced">@L["Unknown (introduction date)"]</Check>

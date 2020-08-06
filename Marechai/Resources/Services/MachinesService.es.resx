@@ -734,4 +734,7 @@
     <value>¿Estás seguro de eliminar la pantalla seleccionada de esta máquina?</value>
     <comment>Are you sure you want to delete the selected screen from this machine?</comment>
   </data>
+  <data name="Introduced (public release)" xml:space="preserve">
+    <value>Introducida públicamente en</value>
+  </data>
 </root>
