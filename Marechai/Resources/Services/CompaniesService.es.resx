@@ -530,4 +530,7 @@
     <value>Si el día o mes de la venta, fusión o bancarrota están marcados como desconocidos, elige cualquiera en el campo inferior, será ignorado.</value>
     <comment>If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored.</comment>
   </data>
+  <data name="in use since {0}" xml:space="preserve">
+    <value>en uso desde el {0}</value>
+  </data>
 </root>

@@ -84,6 +84,10 @@
                              /assets/logos/png/1x/@(logo.Guid).webp 3x" src="/assets/logos/png/1x/@(logo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
                         </picture>
                     </div>
+                    @if(logo.Year.HasValue)
+                    {
+                        <div style="text-align: center;">@(string.Format(L["in use since {0}"], logo.Year))</div>
+                    }
                 </CarouselSlide>
             }
         </Carousel>
