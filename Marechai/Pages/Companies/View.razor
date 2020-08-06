@@ -118,6 +118,13 @@
                 }
             </tr>
         }
+        @if(!string.IsNullOrEmpty(_company.LegalName))
+        {
+            <tr>
+                <th class="text-right">@L["Legal name"]</th>
+                <td>@_company.LegalName</td>
+            </tr>
+        }
         <tr>
             <th class="text-right">@L["Country"]</th>
             <td>

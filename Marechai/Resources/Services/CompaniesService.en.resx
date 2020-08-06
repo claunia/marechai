@@ -166,4 +166,7 @@
     <value>Unknown</value>
     <comment>Unknown, referring to a company logo year</comment>
   </data>
+  <data name="Unknown (legal name)" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
 </root>

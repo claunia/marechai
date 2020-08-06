@@ -75,6 +75,7 @@ namespace Marechai.Pages.Admin.Details
         bool                        _unknownCountry;
         bool                        _unknownFacebook;
         bool                        _unknownFounded;
+        bool                        _unknownLegalName;
         bool                        _unknownLogoYear;
         bool                        _unknownPostalCode;
         bool                        _unknownProvince;
@@ -159,6 +160,7 @@ namespace Marechai.Pages.Admin.Details
             _unknownPostalCode = string.IsNullOrWhiteSpace(_model.PostalCode);
             _unknownSold       = !_model.Sold.HasValue;
             _unknownSoldTo     = !_model.SoldToId.HasValue;
+            _unknownLegalName  = string.IsNullOrWhiteSpace(_model.LegalName);
         }
 
         void OnEditClicked()
@@ -249,6 +251,11 @@ namespace Marechai.Pages.Admin.Details
             else if(_model.Sold?.Date >= DateTime.UtcNow.Date)
                 return;
 
+            if(_unknownLegalName)
+                _model.LegalName = null;
+            else if(string.IsNullOrWhiteSpace(_model.LegalName))
+                return;
+
             if(_creating)
                 Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
             else
@@ -282,6 +289,9 @@ namespace Marechai.Pages.Admin.Details
 
         void ValidateWebsite(ValidatorEventArgs e) =>
             Validators.ValidateUrl(e, L["Webpage must be smaller than 255 characters."], 255);
+
+        void ValidateLegalName(ValidatorEventArgs e) =>
+            Validators.ValidateString(e, L["Legal name must be smaller than 256 characters."], 256);
 
         void ValidateTwitter(ValidatorEventArgs e)
         {

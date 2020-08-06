@@ -55,7 +55,7 @@
 
 <div>
     <Field>
-        <FieldLabel>@L["Name"]</FieldLabel>
+        <FieldLabel>@L["Common name (as usually displayed publicly)"]</FieldLabel>
         <Validation Validator="@ValidateName">
             <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Name">
                 <Feedback>
@@ -64,6 +64,27 @@
             </TextEdit>
         </Validation>
     </Field>
+    @if (_editing || _model.LegalName != null)
+    {
+        <Field>
+            <FieldLabel>@L["Legal name (as shown in governmental registries including \"Inc.\", \"Corp.\", \"gmbH\", etc...)"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownLegalName">@L["Unknown (legal name)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownLegalName)
+            {
+                <Validation Validator="@ValidateLegalName">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.LegalName">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid legal name."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
     <Field>
         <FieldLabel>@L["Status"]</FieldLabel>
         <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@Status">

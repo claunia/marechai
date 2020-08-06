@@ -71,7 +71,8 @@ namespace Marechai.Services
                                                                           FoundedMonthIsUnknown =
                                                                               c.FoundedMonthIsUnknown,
                                                                           SoldDayIsUnknown   = c.SoldDayIsUnknown,
-                                                                          SoldMonthIsUnknown = c.SoldMonthIsUnknown
+                                                                          SoldMonthIsUnknown = c.SoldMonthIsUnknown,
+                                                                          LegalName          = c.LegalName
                                                                       }).ToListAsync();
 
         public async Task<CompanyViewModel> GetAsync(int id) => await _context.Companies.Where(c => c.Id == id).
@@ -102,7 +103,8 @@ namespace Marechai.Services
                                                                                    SoldDayIsUnknown =
                                                                                        c.SoldDayIsUnknown,
                                                                                    SoldMonthIsUnknown =
-                                                                                       c.SoldMonthIsUnknown
+                                                                                       c.SoldMonthIsUnknown,
+                                                                                   LegalName = c.LegalName
                                                                                }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(CompanyViewModel viewModel, string userId)
@@ -129,6 +131,7 @@ namespace Marechai.Services
             model.FoundedMonthIsUnknown = viewModel.FoundedMonthIsUnknown;
             model.SoldDayIsUnknown      = viewModel.SoldDayIsUnknown;
             model.SoldMonthIsUnknown    = viewModel.SoldMonthIsUnknown;
+            model.LegalName             = viewModel.LegalName;
             await _context.SaveChangesWithUserAsync(userId);
         }
 
@@ -152,7 +155,8 @@ namespace Marechai.Services
                 FoundedDayIsUnknown   = viewModel.FoundedDayIsUnknown,
                 FoundedMonthIsUnknown = viewModel.FoundedMonthIsUnknown,
                 SoldDayIsUnknown      = viewModel.SoldDayIsUnknown,
-                SoldMonthIsUnknown    = viewModel.SoldMonthIsUnknown
+                SoldMonthIsUnknown    = viewModel.SoldMonthIsUnknown,
+                LegalName             = viewModel.LegalName
             };
 
             await _context.Companies.AddAsync(model);

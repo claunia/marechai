@@ -13,7 +13,7 @@ namespace Marechai.Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "3.1.4").HasAnnotation("Relational:MaxIdentifierLength", 64);
+            modelBuilder.HasAnnotation("ProductVersion", "3.1.6").HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Marechai.Database.Models.ApplicationRole", b =>
             {
@@ -452,6 +452,8 @@ namespace Marechai.Database.Migrations
                 b.Property<bool>("FoundedDayIsUnknown").HasColumnType("bit(1)");
 
                 b.Property<bool>("FoundedMonthIsUnknown").HasColumnType("bit(1)");
+
+                b.Property<string>("LegalName").HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name").
                   HasColumnType("varchar(128)").HasDefaultValueSql("''");

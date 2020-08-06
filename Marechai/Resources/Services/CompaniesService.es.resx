@@ -533,4 +533,22 @@
   <data name="in use since {0}" xml:space="preserve">
     <value>en uso desde el {0}</value>
   </data>
+  <data name="Legal name must be smaller than 256 characters." xml:space="preserve">
+    <value>El nombre legal debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Common name (as usually displayed publicly)" xml:space="preserve">
+    <value>Nombre común (como se muestra en público usualmente)</value>
+  </data>
+  <data name="Legal name (as shown in governmental registries including &quot;Inc.&quot;, &quot;Corp.&quot;, &quot;gmbH&quot;, etc...)" xml:space="preserve">
+    <value>Nombre legal (como aparece en registros gubernamentales incluyendo "Inc.", "Corp.", "gmbH", etc...)</value>
+  </data>
+  <data name="Unknown (legal name)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Please enter a valid legal name." xml:space="preserve">
+    <value>Por favor introduce un nombre legal válido.</value>
+  </data>
+  <data name="Legal name" xml:space="preserve">
+    <value>Nombre legal</value>
+  </data>
 </root>

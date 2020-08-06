@@ -50,6 +50,7 @@ namespace Marechai.ViewModels
         public bool          FoundedMonthIsUnknown { get; set; }
         public bool          SoldDayIsUnknown      { get; set; }
         public bool          SoldMonthIsUnknown    { get; set; }
+        public string        LegalName             { get; set; }
 
         public string SoldView => Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
                                       ? Sold?.ToShortDateString() ?? "Unknown"

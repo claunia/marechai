@@ -77,6 +77,7 @@ namespace Marechai.Database.Models
         public bool SoldMonthIsUnknown { get; set; }
         [DefaultValue(false)]
         public bool SoldDayIsUnknown { get; set; }
+        public string LegalName { get;      set; }
 
         public virtual Iso31661Numeric Country { get; set; }
         [DisplayName("Sold to")]
