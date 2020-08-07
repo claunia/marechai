@@ -1,0 +1,94 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/currency_inflation/details/{Id:int}"
+@page "/admin/currency_inflation/edit/{Id:int}"
+@page "/admin/currency_inflation/create"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<CurrencyInflationService>
+@inject IStringLocalizer<CurrencyInflationService> L
+@inject Iso4217Service CurrenciesService
+@inject NavigationManager NavigationManager
+@inject IWebHostEnvironment Host
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+
+
+<h3>@L["Currency inflation details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Currency"]</FieldLabel>
+        <Select Disabled="!_editing" TValue="string" @bind-SelectedValue="@_model.CurrencyCode">
+            @foreach (var currency in _currencies)
+            {
+                <SelectItem TValue="string" Value="@currency.Code">@currency.Name</SelectItem>
+            }
+        </Select>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Year"]</FieldLabel>
+        <Validation Validator="@ValidateYear">
+            <NumericEdit Disabled="!_editing" TValue="uint" Decimals="0" @bind-Value="@_model.Year">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid year."]</ValidationError>
+                </Feedback>
+            </NumericEdit>
+        </Validation>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Inflation (ratio)"]</FieldLabel>
+        <Validation Validator="@ValidateInflation">
+            <NumericEdit Disabled="!_editing" TValue="float" Decimals="3" @bind-Value="@_model.Inflation">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid inflation."]</ValidationError>
+                </Feedback>
+            </NumericEdit>
+        </Validation>
+    </Field>
+</div>
+<div>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/currency_inflation" class="btn btn-secondary">@L["Back to list"]</a>
+</div>

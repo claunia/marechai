@@ -23,16 +23,20 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Marechai.Database.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Database.Models
+namespace Marechai.Services
 {
-    public class CurrencyInflation : BaseModel<int>
+    public class Iso4217Service
     {
-        [Required]
-        public virtual Iso4217 Currency { get; set; }
-        public uint   Year         { get;      set; }
-        public float  Inflation    { get;      set; }
-        public string CurrencyCode { get;      set; }
+        readonly MarechaiContext _context;
+
+        public Iso4217Service(MarechaiContext context) => _context = context;
+
+        public async Task<List<Iso4217>> GetAsync() => await _context.Iso4217.OrderBy(c => c.Name).ToListAsync();
     }
 }

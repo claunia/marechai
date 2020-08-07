@@ -14,4 +14,10 @@
   <data name="Books" xml:space="preserve">
     <value>Books</value>
   </data>
+  <data name="Administrative pages for currencies" xml:space="preserve">
+    <value>Administrative pages for currencies</value>
+  </data>
+  <data name="Currency inflation" xml:space="preserve">
+    <value>Currency inflation</value>
+  </data>
 </root>

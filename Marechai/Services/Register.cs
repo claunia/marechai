@@ -68,6 +68,8 @@ namespace Marechai.Services
             services.AddScoped<ResolutionsByGpuService>();
             services.AddScoped<MachinePhotosService>();
             services.AddScoped<BooksService>();
+            services.AddScoped<CurrencyInflationService>();
+            services.AddScoped<Iso4217Service>();
         }
     }
 }
