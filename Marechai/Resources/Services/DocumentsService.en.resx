@@ -1,0 +1,95 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Are you sure you want to delete the document {0}?" xml:space="preserve">
+    <value>Are you sure you want to delete the document {0}?</value>
+  </data>
+  <data name="Documents" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="Create new" xml:space="preserve">
+    <value>Create new</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Delete document" xml:space="preserve">
+    <value>Delete document</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ISBN" xml:space="preserve">
+    <value>ISBN</value>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Native title" xml:space="preserve">
+    <value>Native title</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Published</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Document details" xml:space="preserve">
+    <value>Document details</value>
+  </data>
+  <data name="Title using latin script" xml:space="preserve">
+    <value>Title using latin script</value>
+  </data>
+  <data name="Please enter a valid title." xml:space="preserve">
+    <value>Please enter a valid title.</value>
+  </data>
+  <data name="Native title, that is, title using native script (cyrillic, chinese, etc)" xml:space="preserve">
+    <value>Native title, that is, title using native script (cyrillic, chinese, etc)</value>
+  </data>
+  <data name="Unknown (native title)" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Please enter a valid native title." xml:space="preserve">
+    <value>Please enter a valid native title.</value>
+  </data>
+  <data name="Unknown (publication date)" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Please enter a valid publication date." xml:space="preserve">
+    <value>Please enter a valid publication date.</value>
+  </data>
+  <data name="Country of publication" xml:space="preserve">
+    <value>Country of publication</value>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Back to list</value>
+  </data>
+  <data name="Title must be smaller than 256 characters." xml:space="preserve">
+    <value>Title must be smaller than 256 characters.</value>
+  </data>
+  <data name="Native title must be smaller than 256 characters." xml:space="preserve">
+    <value>Native title must be smaller than 256 characters.</value>
+  </data>
+  <data name="Unknown (country of publication)" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+</root>

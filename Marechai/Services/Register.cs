@@ -71,6 +71,7 @@ namespace Marechai.Services
             services.AddScoped<CurrencyInflationService>();
             services.AddScoped<Iso4217Service>();
             services.AddScoped<CurrencyPeggingService>();
+            services.AddScoped<DocumentsService>();
         }
     }
 }
