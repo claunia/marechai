@@ -1,0 +1,110 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/books"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<BooksService>
+@inject IStringLocalizer<BooksService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Books"]</h3>
+@if (_books is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <a class="btn btn-primary" href="/admin/books/create">@L["Create new"]</a>
+</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>
+            @L["Title"]
+        </th>
+        <th>
+            @L["Native title"]
+        </th>
+        <th>
+            @L["Published"]
+        </th>
+        <th>
+            @L["Country"]
+        </th>
+        <th>
+            @L["ISBN"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _books)
+    {
+        <tr>
+            <td>
+                @item.Title
+            </td>
+            <td>
+                @item.NativeTitle
+            </td>
+            <td>
+                @($"{item.Published:d}")
+            </td>
+            <td>
+                @item.Country
+            </td>
+            <td>
+                @item.Isbn
+            </td>
+            <td>
+                <a class="btn btn-primary" href="/admin/books/details/@item.Id">@L["Details"]</a>
+                <a class="btn btn-secondary" href="/admin/books/edit/@item.Id">@L["Edit"]</a>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete book"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete the book {0}?"], _currentBook?.Title)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>

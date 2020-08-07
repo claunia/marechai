@@ -118,99 +118,118 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-    <comment>Loading message</comment>
-  </data>
-  <data name="Administration area" xml:space="preserve">
-    <value>Área de administración</value>
-    <comment>Administration area</comment>
-  </data>
-  <data name="Welcome to the administration area. Act with care!" xml:space="preserve">
-    <value>Bienvenido/a al área de administración. ¡Actúa con cuidado!</value>
-    <comment>Welcome message.</comment>
-  </data>
-  <data name="Browser tests" xml:space="preserve">
-    <value>Pruebas de navegadores</value>
-    <comment>Browser tests.</comment>
-  </data>
-  <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-    <comment>Companies.</comment>
-  </data>
-  <data name="Document companies" xml:space="preserve">
-    <value>Compañías de documentos</value>
-    <comment>Document companies.</comment>
-  </data>
-  <data name="Document people" xml:space="preserve">
-    <value>Personas de documentos</value>
-    <comment>Document people.</comment>
-  </data>
-  <data name="Graphics Processing Units" xml:space="preserve">
-    <value>Unidades de proceso de gráficos</value>
-    <comment>Graphics Processing Units.</comment>
-  </data>
-  <data name="Database administrative pages" xml:space="preserve">
-    <value>Páginas de administración de la base de datos</value>
-    <comment>Database administrative pages.</comment>
-  </data>
-  <data name="Administrative pages for documents" xml:space="preserve">
-    <value>Páginas de administración de documentos</value>
-    <comment>Administrative pages for documents.</comment>
-  </data>
-  <data name="Administrative pages for owned machines" xml:space="preserve">
-    <value>Páginas de administración para máquinas en propiedad</value>
-    <comment>Administrative pages for owned machines.</comment>
-  </data>
-  <data name="User administrative pages" xml:space="preserve">
-    <value>Páginas de administración de usuarios</value>
-    <comment>User administrative pages.</comment>
-  </data>
-  <data name="Instruction set extensions" xml:space="preserve">
-    <value>Extensiones de arquitectura</value>
-    <comment>Instruction set extensions.</comment>
-  </data>
-  <data name="Instruction sets" xml:space="preserve">
-    <value>Arquitecturas</value>
-    <comment>Instruction sets.</comment>
-  </data>
-  <data name="Licenses" xml:space="preserve">
-    <value>Licencias</value>
-    <comment>Licenses.</comment>
-  </data>
-  <data name="Machine families" xml:space="preserve">
-    <value>Familias de máquinas</value>
-    <comment>Machine families.</comment>
-  </data>
-  <data name="Machines" xml:space="preserve">
-    <value>Máquinas</value>
-    <comment>Machines.</comment>
-  </data>
-  <data name="People" xml:space="preserve">
-    <value>Gente</value>
-    <comment>People.</comment>
-  </data>
-  <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-    <comment>News.</comment>
-  </data>
-  <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-    <comment>Processors.</comment>
-  </data>
-  <data name="Screens" xml:space="preserve">
-    <value>Pantallas</value>
-    <comment>Screens.</comment>
-  </data>
-  <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-    <comment>Sound synthesizers.</comment>
-  </data>
-  <data name="Resolutions" xml:space="preserve">
-    <value>Resoluciones</value>
-    <comment>Resolutions.</comment>
-  </data>
   <data name="Books" xml:space="preserve">
     <value>Libros</value>
+    <comment>Books</comment>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+    <comment>Message that appears while data is being loaded from database</comment>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>País</value>
+    <comment>Country where the book was published</comment>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+    <comment>Details</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+    <comment>Edit</comment>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>Delete</comment>
+  </data>
+  <data name="Delete book" xml:space="preserve">
+    <value>Eliminar libro</value>
+    <comment>Delete book</comment>
+  </data>
+  <data name="Are you sure you want to delete the book {0}?" xml:space="preserve">
+    <value>¿Está seguro de que desea borrar el libro {0}?</value>
+    <comment>{0} book name</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>Cancel</comment>
+  </data>
+  <data name="Create new" xml:space="preserve">
+    <value>Crear nuevo</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Native title" xml:space="preserve">
+    <value>Título nativo</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Publicado el</value>
+  </data>
+  <data name="ISBN" xml:space="preserve">
+    <value>ISBN</value>
+  </data>
+  <data name="Book details" xml:space="preserve">
+    <value>Detalles de libro</value>
+  </data>
+  <data name="Title using latin script" xml:space="preserve">
+    <value>Título utilizando escritura latina</value>
+  </data>
+  <data name="Please enter a valid title." xml:space="preserve">
+    <value>Por favor introduce un título válido.</value>
+  </data>
+  <data name="Native title, that is, title using native script (cyrillic, chinese, etc)" xml:space="preserve">
+    <value>Título nativo, es decir, el título usando el sistema de escritura nativo (cirílico, chino, etc)</value>
+  </data>
+  <data name="Unknown (native title)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Please enter a valid native title." xml:space="preserve">
+    <value>Por favor introduce un título nativo válido.</value>
+  </data>
+  <data name="Unknown (publication date)" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+  <data name="Please enter a valid publication date." xml:space="preserve">
+    <value>Por favor introduce una fecha de publicación válida.</value>
+  </data>
+  <data name="Country of publication" xml:space="preserve">
+    <value>País de publicación</value>
+  </data>
+  <data name="Unknown (country of publication)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Unknown (ISBN)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Please enter a valid ISBN." xml:space="preserve">
+    <value>Por favor introduce un ISBN válido.</value>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Páginas</value>
+  </data>
+  <data name="Unknown (pages)" xml:space="preserve">
+    <value>Desconocidas</value>
+  </data>
+  <data name="Unknown (edition)" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+  <data name="Please enter a valid number of pages." xml:space="preserve">
+    <value>Por favor introduce un número de páginas válido.</value>
+  </data>
+  <data name="Edition" xml:space="preserve">
+    <value>Edición</value>
+  </data>
+  <data name="Please enter a valid edition number." xml:space="preserve">
+    <value>Por favor introduce un número de edición válido.</value>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+  </data>
+  <data name="Title must be smaller than 256 characters." xml:space="preserve">
+    <value>El título debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Native title must be smaller than 256 characters." xml:space="preserve">
+    <value>El título nativo debe contener menos de 256 caracteres.</value>
   </data>
 </root>

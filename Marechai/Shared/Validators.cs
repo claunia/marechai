@@ -133,5 +133,81 @@ namespace Marechai.Shared
             else
                 e.Status = ValidationStatus.Success;
         }
+
+        public static void ValidateShort(ValidatorEventArgs e, short minValue = 0, short maxValue = short.MaxValue)
+        {
+            if(!(e.Value is short item) ||
+               item < minValue          ||
+               item > maxValue)
+                e.Status = ValidationStatus.Error;
+            else
+                e.Status = ValidationStatus.Success;
+        }
+
+        public static void ValidateIsbn(ValidatorEventArgs e)
+        {
+            e.Status = ValidationStatus.Error;
+
+            if(!(e.Value is string isbn))
+                return;
+
+            if(isbn.Length != 10 &&
+               isbn.Length != 13)
+                return;
+
+            for(int c = 0; c < (isbn.Length == 13 ? 13 : 9); c++)
+            {
+                if(isbn[c] < 0x30 ||
+                   isbn[c] > 0x39)
+                    return;
+            }
+
+            int sum;
+            int modulo;
+
+            if(isbn.Length == 10)
+            {
+                if((isbn[9] < 0x30 || isbn[9] > 0x39) &&
+                   isbn[9] != 'x'                     &&
+                   isbn[9] != 'X')
+                    return;
+
+                sum    = 0;
+                modulo = 0;
+
+                for(int i = 0; i < 10; i++)
+                {
+                    modulo += isbn[i] - 0x30;
+                    sum    += modulo;
+                }
+
+                modulo = sum % 11;
+
+                if((isbn[9] == 'x' || isbn[9] == 'X') &&
+                   modulo == 10)
+                    e.Status = ValidationStatus.Success;
+                else if(modulo == isbn[9] - 0x30)
+                    e.Status = ValidationStatus.Success;
+
+                return;
+            }
+
+            if(isbn[0] != '9' ||
+               isbn[1] != '7' ||
+               (isbn[1] != '8' && isbn[1] != '9'))
+                return;
+
+            sum = (isbn[0] - 0x30) + ((isbn[1] - 0x30) * 3) + (isbn[2]  - 0x30) + ((isbn[3]  - 0x30) * 3) +
+                  (isbn[4] - 0x30) + ((isbn[5] - 0x30) * 3) + (isbn[6]  - 0x30) + ((isbn[7]  - 0x30) * 3) +
+                  (isbn[8] - 0x30) + ((isbn[9] - 0x30) * 3) + (isbn[10] - 0x30) + ((isbn[11] - 0x30) * 3);
+
+            modulo = sum % 10;
+
+            if(modulo != 0)
+                modulo = 10 - modulo;
+
+            if(modulo == isbn[12] - 0x30)
+                e.Status = ValidationStatus.Success;
+        }
     }
 }

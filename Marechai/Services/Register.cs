@@ -67,6 +67,7 @@ namespace Marechai.Services
             services.AddScoped<ResolutionsByScreenService>();
             services.AddScoped<ResolutionsByGpuService>();
             services.AddScoped<MachinePhotosService>();
+            services.AddScoped<BooksService>();
         }
     }
 }
