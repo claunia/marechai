@@ -1,0 +1,124 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/currency_pegging/details/{Id:int}"
+@page "/admin/currency_pegging/edit/{Id:int}"
+@page "/admin/currency_pegging/create"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<CurrencyPeggingService>
+@inject IStringLocalizer<CurrencyPeggingService> L
+@inject Iso4217Service CurrenciesService
+@inject NavigationManager NavigationManager
+@inject IWebHostEnvironment Host
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+
+
+<h3>@L["Currency pegging details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Source currency"]</FieldLabel>
+        <Select Disabled="!_editing" TValue="string" @bind-SelectedValue="@_model.SourceCode">
+            @foreach (var currency in _currencies)
+            {
+                <SelectItem TValue="string" Value="@currency.Code">@currency.Name</SelectItem>
+            }
+        </Select>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Destination currency"]</FieldLabel>
+        <Select Disabled="!_editing" TValue="string" @bind-SelectedValue="@_model.DestinationCode">
+            @foreach (var currency in _currencies)
+            {
+                <SelectItem TValue="string" Value="@currency.Code">@currency.Name</SelectItem>
+            }
+        </Select>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Pegging (ratio)"]</FieldLabel>
+        <Validation Validator="@ValidatePegging">
+            <NumericEdit Disabled="!_editing" TValue="float" Decimals="3" @bind-Value="@_model.Ratio">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid pegging."]</ValidationError>
+                </Feedback>
+            </NumericEdit>
+        </Validation>
+    </Field>
+    <Field>
+        <FieldLabel>@L["Start date"]</FieldLabel>
+        <Validation Validator="@ValidateStart">
+            <DateEdit Disabled="!_editing" TValue="DateTime" @bind-Date="@_model.Start">
+                <Feedback>
+                    <ValidationError>@L["Please enter a start date."]</ValidationError>
+                </Feedback>
+            </DateEdit>
+        </Validation>
+    </Field>
+    @if (_editing || _model.End.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["End date"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownEnd">@L["Unknown or never (end date)"]</Check>
+            }
+            @if (!_editing ||
+                 (!_unknownEnd))
+            {
+                <Validation Validator="@ValidateEnd">
+                    <DateEdit Disabled="!_editing" TValue="DateTime?" @bind-Date="@_model.End">
+                        <Feedback>
+                            <ValidationError>@L["Please enter an ending date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
+            </Field>
+    }
+</div>
+<div>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/currency_pegging" class="btn btn-secondary">@L["Back to list"]</a>
+</div>

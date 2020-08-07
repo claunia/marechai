@@ -70,6 +70,7 @@ namespace Marechai.Services
             services.AddScoped<BooksService>();
             services.AddScoped<CurrencyInflationService>();
             services.AddScoped<Iso4217Service>();
+            services.AddScoped<CurrencyPeggingService>();
         }
     }
 }

@@ -24,23 +24,17 @@
 *******************************************************************************/
 
 using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.ViewModels
 {
-    public class CurrencyPegging : BaseModel<int>
+    public class CurrencyPeggingViewModel : BaseViewModel<int>
     {
-        [Required]
-        public virtual Iso4217 Source { get; set; }
-        [Required]
-        public virtual Iso4217 Destination { get; set; }
-        public float Ratio { get;                 set; }
-        [DataType(DataType.Date)]
-        public DateTime Start { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? End { get; set; }
-
-        public string SourceCode      { get; set; }
-        public string DestinationCode { get; set; }
+        public string    SourceCode      { get; set; }
+        public string    DestinationCode { get; set; }
+        public string    SourceName      { get; set; }
+        public string    DestinationName { get; set; }
+        public float     Ratio           { get; set; }
+        public DateTime  Start           { get; set; }
+        public DateTime? End             { get; set; }
     }
 }

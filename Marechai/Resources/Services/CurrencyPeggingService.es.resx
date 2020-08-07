@@ -118,108 +118,88 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-    <comment>Loading message</comment>
-  </data>
-  <data name="Administration area" xml:space="preserve">
-    <value>Área de administración</value>
-    <comment>Administration area</comment>
-  </data>
-  <data name="Welcome to the administration area. Act with care!" xml:space="preserve">
-    <value>Bienvenido/a al área de administración. ¡Actúa con cuidado!</value>
-    <comment>Welcome message.</comment>
-  </data>
-  <data name="Browser tests" xml:space="preserve">
-    <value>Pruebas de navegadores</value>
-    <comment>Browser tests.</comment>
-  </data>
-  <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-    <comment>Companies.</comment>
-  </data>
-  <data name="Document companies" xml:space="preserve">
-    <value>Compañías de documentos</value>
-    <comment>Document companies.</comment>
-  </data>
-  <data name="Document people" xml:space="preserve">
-    <value>Personas de documentos</value>
-    <comment>Document people.</comment>
-  </data>
-  <data name="Graphics Processing Units" xml:space="preserve">
-    <value>Unidades de proceso de gráficos</value>
-    <comment>Graphics Processing Units.</comment>
-  </data>
-  <data name="Database administrative pages" xml:space="preserve">
-    <value>Páginas de administración de la base de datos</value>
-    <comment>Database administrative pages.</comment>
-  </data>
-  <data name="Administrative pages for documents" xml:space="preserve">
-    <value>Páginas de administración de documentos</value>
-    <comment>Administrative pages for documents.</comment>
-  </data>
-  <data name="Administrative pages for owned machines" xml:space="preserve">
-    <value>Páginas de administración para máquinas en propiedad</value>
-    <comment>Administrative pages for owned machines.</comment>
-  </data>
-  <data name="User administrative pages" xml:space="preserve">
-    <value>Páginas de administración de usuarios</value>
-    <comment>User administrative pages.</comment>
-  </data>
-  <data name="Instruction set extensions" xml:space="preserve">
-    <value>Extensiones de arquitectura</value>
-    <comment>Instruction set extensions.</comment>
-  </data>
-  <data name="Instruction sets" xml:space="preserve">
-    <value>Arquitecturas</value>
-    <comment>Instruction sets.</comment>
-  </data>
-  <data name="Licenses" xml:space="preserve">
-    <value>Licencias</value>
-    <comment>Licenses.</comment>
-  </data>
-  <data name="Machine families" xml:space="preserve">
-    <value>Familias de máquinas</value>
-    <comment>Machine families.</comment>
-  </data>
-  <data name="Machines" xml:space="preserve">
-    <value>Máquinas</value>
-    <comment>Machines.</comment>
-  </data>
-  <data name="People" xml:space="preserve">
-    <value>Gente</value>
-    <comment>People.</comment>
-  </data>
-  <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-    <comment>News.</comment>
-  </data>
-  <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-    <comment>Processors.</comment>
-  </data>
-  <data name="Screens" xml:space="preserve">
-    <value>Pantallas</value>
-    <comment>Screens.</comment>
-  </data>
-  <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-    <comment>Sound synthesizers.</comment>
-  </data>
-  <data name="Resolutions" xml:space="preserve">
-    <value>Resoluciones</value>
-    <comment>Resolutions.</comment>
-  </data>
-  <data name="Books" xml:space="preserve">
-    <value>Libros</value>
-  </data>
-  <data name="Administrative pages for currencies" xml:space="preserve">
-    <value>Páginas de administración para divisas</value>
-  </data>
-  <data name="Currency inflation" xml:space="preserve">
-    <value>Inflación de divisa</value>
-  </data>
   <data name="Currency pegging" xml:space="preserve">
     <value>Vinculación de divisa</value>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+  </data>
+  <data name="Create new" xml:space="preserve">
+    <value>Crear nueva</value>
+  </data>
+  <data name="Source currency" xml:space="preserve">
+    <value>Divisa de origen</value>
+  </data>
+  <data name="Destination currency" xml:space="preserve">
+    <value>Divisa de destino</value>
+  </data>
+  <data name="Starting date" xml:space="preserve">
+    <value>Fecha de comienzo</value>
+  </data>
+  <data name="Ending date" xml:space="preserve">
+    <value>Fecha de finalización</value>
+  </data>
+  <data name="Pegging" xml:space="preserve">
+    <value>Vinculación</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Delete currency pegging" xml:space="preserve">
+    <value>Eliminar vinculación de divisa</value>
+  </data>
+  <data name="Are you sure you want to delete the pegging of {0:F} happened to currency {1} with currency {2} since {3}?" xml:space="preserve">
+    <value>¿Estás seguro de querer eliminar la vinculación de divisa de {0:F} en la divisa {1} con la divisa {2} desde {3}?</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Currency pegging details" xml:space="preserve">
+    <value>Detalles de vinculación de divisa</value>
+  </data>
+  <data name="Pegging (ratio)" xml:space="preserve">
+    <value>Vinculación (relación)</value>
+  </data>
+  <data name="Please enter a valid pegging." xml:space="preserve">
+    <value>Por favor introduce una vinculación válida.</value>
+  </data>
+  <data name="Start date" xml:space="preserve">
+    <value>Fecha de comienzo</value>
+  </data>
+  <data name="Please enter a start date." xml:space="preserve">
+    <value>Por favor introduce una fecha de comienzo válida.</value>
+  </data>
+  <data name="End date" xml:space="preserve">
+    <value>Fecha de finalización</value>
+  </data>
+  <data name="Unknown or never (end date)" xml:space="preserve">
+    <value>Desconocida o nunca</value>
+  </data>
+  <data name="Please enter an ending date." xml:space="preserve">
+    <value>Por favor introduce una fecha de finalización.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+  </data>
+  <data name="Starting date must be before now." xml:space="preserve">
+    <value>La fecha de comienzo debe ser anterior a ahora.</value>
+  </data>
+  <data name="Pegging must be bigger than 0." xml:space="preserve">
+    <value>La vinculación debe ser mayor de 0.</value>
+  </data>
+  <data name="Ending date must be before now." xml:space="preserve">
+    <value>La fecha de finalización debe ser anterior a ahora.</value>
+  </data>
+  <data name="Ending date must be before starting date." xml:space="preserve">
+    <value>La fecha de finalización debe ser anterior a la de comienzo.</value>
   </data>
 </root>

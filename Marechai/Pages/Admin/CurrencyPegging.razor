@@ -1,0 +1,110 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/currency_pegging"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<CurrencyPeggingService>
+@inject IStringLocalizer<CurrencyPeggingService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Currency pegging"]</h3>
+@if (_peggings is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <a class="btn btn-primary" href="/admin/currency_pegging/create">@L["Create new"]</a>
+</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>
+            @L["Source currency"]
+        </th>
+        <th>
+            @L["Destination currency"]
+        </th>
+        <th>
+            @L["Starting date"]
+        </th>
+        <th>
+            @L["Ending date"]
+        </th>
+        <th>
+            @L["Pegging"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _peggings)
+    {
+        <tr>
+            <td>
+                @item.SourceName
+            </td>
+            <td>
+                @item.DestinationName
+            </td>
+            <td>
+                @item.Start.ToLongDateString()
+            </td>
+            <td>
+                @item.End?.ToLongDateString()
+            </td>
+            <td>
+                @($"{item.Ratio:F2}")
+            </td>
+            <td>
+                <a class="btn btn-primary" href="/admin/currency_pegging/details/@item.Id">@L["Details"]</a>
+                <a class="btn btn-secondary" href="/admin/currency_pegging/edit/@item.Id">@L["Edit"]</a>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete currency pegging"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete the pegging of {0:F} happened to currency {1} with currency {2} since {3}?"], _currentPegging?.Ratio, _currentPegging?.SourceName, _currentPegging?.DestinationName, _currentPegging?.Start.ToLongDateString())</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>

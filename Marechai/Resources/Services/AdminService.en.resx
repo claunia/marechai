@@ -20,4 +20,7 @@
   <data name="Currency inflation" xml:space="preserve">
     <value>Currency inflation</value>
   </data>
+  <data name="Currency pegging" xml:space="preserve">
+    <value>Currency pegging</value>
+  </data>
 </root>
