@@ -209,5 +209,45 @@ namespace Marechai.Shared
             if(modulo == isbn[12] - 0x30)
                 e.Status = ValidationStatus.Success;
         }
+
+        public static void ValidateIssn(ValidatorEventArgs e)
+        {
+            e.Status = ValidationStatus.Error;
+
+            if(!(e.Value is string issn))
+                return;
+
+            if(issn.Length != 8)
+                return;
+
+            for(int c = 0; c < 7; c++)
+            {
+                if(issn[c] < 0x30 ||
+                   issn[c] > 0x39)
+                    return;
+            }
+
+            if((issn[7] < 0x30 || issn[7] > 0x39) &&
+               issn[7] != 'x'                     &&
+               issn[7] != 'X')
+                return;
+
+            int sum    = 0;
+            int modulo = 0;
+
+            for(int i = 0; i < 7; i++)
+            {
+                modulo += issn[i] - 0x30;
+                sum    += modulo;
+            }
+
+            modulo = sum % 11;
+
+            if((issn[7] == 'x' || issn[7] == 'X') &&
+               modulo == 10)
+                e.Status = ValidationStatus.Success;
+            else if(modulo == issn[7] - 0x30)
+                e.Status = ValidationStatus.Success;
+        }
     }
 }

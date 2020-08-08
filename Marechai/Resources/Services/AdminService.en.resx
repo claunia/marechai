@@ -29,4 +29,10 @@
   <data name="Administrative pages for media dumps" xml:space="preserve">
     <value>Administrative pages for media dumps</value>
   </data>
+  <data name="Magazines" xml:space="preserve">
+    <value>Magazines</value>
+  </data>
+  <data name="Documents" xml:space="preserve">
+    <value>Documents</value>
+  </data>
 </root>

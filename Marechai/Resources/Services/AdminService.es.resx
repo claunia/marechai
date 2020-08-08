@@ -228,4 +228,10 @@
   <data name="Administrative pages for media dumps" xml:space="preserve">
     <value>Páginas de administración de volcados</value>
   </data>
+  <data name="Magazines" xml:space="preserve">
+    <value>Revistas</value>
+  </data>
+  <data name="Documents" xml:space="preserve">
+    <value>Documentos</value>
+  </data>
 </root>

@@ -1,0 +1,159 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/magazines/details/{Id:long}"
+@page "/admin/magazines/edit/{Id:long}"
+@page "/admin/magazines/create"
+@using Marechai.Database
+@using Marechai.Database.Models
+@inherits OwningComponentBase<MagazinesService>
+@inject IStringLocalizer<MagazinesService> L
+@inject Iso31661NumericService CountriesService
+@inject NavigationManager NavigationManager
+@inject IWebHostEnvironment Host
+@inject IJSRuntime JSRuntime
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+
+
+<h3>@L["Magazine details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Title using latin script"]</FieldLabel>
+        <Validation Validator="@ValidateTitle">
+            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Title">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid title."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
+    </Field>
+    @if (_editing || _model.NativeTitle != null)
+    {
+        <Field>
+            <FieldLabel>@L["Native title, that is, title using native script (cyrillic, chinese, etc)"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownNativeTitle">@L["Unknown (native title)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownNativeTitle)
+            {
+                <Validation Validator="@ValidateNativeTitle">
+                    <TextEdit Disabled="!_editing" @bind-Text="@_model.NativeTitle">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid native title."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.FirstPublication != null)
+    {
+        <Field>
+            <FieldLabel>@L["First publication"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownFirstPublication">@L["Unknown (first publication date)"]</Check>
+            }
+            @if (!_editing || !_unknownFirstPublication)
+            {
+                <Validation Validator="@ValidateFirstPublication">
+                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.FirstPublication" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid first publication date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.CountryId != null)
+    {
+        <Field>
+            <FieldLabel>@L["Country of publication"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownCountry">@L["Unknown (country of publication)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownCountry)
+            {
+                <Select Disabled="!_editing" TValue="short?" @bind-SelectedValue="@_model.CountryId">
+                    @foreach (var country in _countries)
+                    {
+                        <SelectItem TValue="short?" Value="@country.Id">@country.Name</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if (_editing || _model.Issn != null)
+    {
+        <Field>
+            <FieldLabel>@L["ISSN"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownIssn">@L["Unknown (ISSN)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownIssn)
+            {
+                <Validation Validator="@ValidateIssn">
+                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Issn">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid ISSN."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+</div>
+<div>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/magazines" class="btn btn-secondary">@L["Back to list"]</a>
+</div>
