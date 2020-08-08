@@ -1896,6 +1896,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
+                b.Property<uint?>("IssueNumber").HasColumnType("int unsigned");
+
                 b.Property<long>("MagazineId").HasColumnType("bigint");
 
                 b.Property<string>("NativeCaption").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
