@@ -40,7 +40,7 @@ namespace Marechai.Database.Models
         public DateTime? Published { get; set; }
         [StringLength(18)]
         public string ProductCode { get; set; }
-        public short Pages { get;        set; }
+        public short? Pages { get;        set; }
 
         public virtual Magazine                              Magazine        { get; set; }
         public virtual ICollection<PeopleByMagazine>         People          { get; set; }

@@ -1900,7 +1900,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("NativeCaption").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<short>("Pages").HasColumnType("smallint");
+                b.Property<short?>("Pages").HasColumnType("smallint");
 
                 b.Property<string>("ProductCode").HasColumnType("varchar(18) CHARACTER SET utf8mb4").HasMaxLength(18);
 
