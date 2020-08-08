@@ -120,6 +120,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<MediaFile>                           MediaFiles                          { get; set; }
         public virtual DbSet<Dump>                                Dumps                               { get; set; }
         public virtual DbSet<SoftwareFamily>                      SoftwareFamilies                    { get; set; }
+        public virtual DbSet<SoftwareVersion>                     SoftwareVersions                    { get; set; }
         public virtual DbSet<SoftwareVariant>                     SoftwareVariants                    { get; set; }
         public virtual DbSet<StandaloneFile>                      StandaloneFiles                     { get; set; }
         public virtual DbSet<MasteringText>                       MasteringTexts                      { get; set; }
@@ -1850,6 +1851,8 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<SoftwareVersion>(entity =>
             {
+                entity.ToTable("SoftwareVersion");
+
                 entity.HasIndex(e => e.Name);
                 entity.HasIndex(e => e.Introduced);
                 entity.HasIndex(e => e.Codename);

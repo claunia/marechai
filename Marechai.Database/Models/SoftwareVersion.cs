@@ -44,5 +44,9 @@ namespace Marechai.Database.Models
         public virtual ICollection<CompaniesBySoftwareVersion> Companies  { get; set; }
         public virtual ICollection<PeopleBySoftwareVersion>    People     { get; set; }
         public virtual ICollection<SoftwareVariant>            Variants   { get; set; }
+
+        public ulong  FamilyId   { get; set; }
+        public int?   LicenseId  { get; set; }
+        public ulong? PreviousId { get; set; }
     }
 }
