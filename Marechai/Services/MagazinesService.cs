@@ -54,6 +54,15 @@ namespace Marechai.Services
                                                                            Country          = b.Country.Name
                                                                        }).ToListAsync();
 
+        public async Task<List<MagazineViewModel>> GetTitlesAsync() => await _context.
+                                                                             Magazines.OrderBy(b => b.Title).
+                                                                             ThenBy(b => b.FirstPublication).
+                                                                             Select(b => new MagazineViewModel
+                                                                             {
+                                                                                 Id    = b.Id,
+                                                                                 Title = $"{b.Title} ({b.Country.Name}"
+                                                                             }).ToListAsync();
+
         public async Task<MagazineViewModel> GetAsync(long id) => await _context.Magazines.Where(b => b.Id == id).
                                                                       Select(b => new MagazineViewModel
                                                                       {

@@ -118,123 +118,112 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Magazine issues" xml:space="preserve">
+    <value>Números de revista</value>
+  </data>
   <data name="Loading..." xml:space="preserve">
     <value>Cargando...</value>
-    <comment>Loading message</comment>
   </data>
-  <data name="Administration area" xml:space="preserve">
-    <value>Área de administración</value>
-    <comment>Administration area</comment>
+  <data name="Create new" xml:space="preserve">
+    <value>Crear nuevo</value>
   </data>
-  <data name="Welcome to the administration area. Act with care!" xml:space="preserve">
-    <value>Bienvenido/a al área de administración. ¡Actúa con cuidado!</value>
-    <comment>Welcome message.</comment>
+  <data name="Magazine title" xml:space="preserve">
+    <value>Título de la revista</value>
   </data>
-  <data name="Browser tests" xml:space="preserve">
-    <value>Pruebas de navegadores</value>
-    <comment>Browser tests.</comment>
+  <data name="Published" xml:space="preserve">
+    <value>Publicación</value>
   </data>
-  <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-    <comment>Companies.</comment>
+  <data name="Caption" xml:space="preserve">
+    <value>Portada</value>
   </data>
-  <data name="Document companies" xml:space="preserve">
-    <value>Compañías de documentos</value>
-    <comment>Document companies.</comment>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
   </data>
-  <data name="Document people" xml:space="preserve">
-    <value>Personas de documentos</value>
-    <comment>Document people.</comment>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
   </data>
-  <data name="Graphics Processing Units" xml:space="preserve">
-    <value>Unidades de proceso de gráficos</value>
-    <comment>Graphics Processing Units.</comment>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
   </data>
-  <data name="Database administrative pages" xml:space="preserve">
-    <value>Páginas de administración de la base de datos</value>
-    <comment>Database administrative pages.</comment>
+  <data name="Delete magazine issue" xml:space="preserve">
+    <value>Eliminar número de revista</value>
   </data>
-  <data name="Administrative pages for documents" xml:space="preserve">
-    <value>Páginas de administración de documentos</value>
-    <comment>Administrative pages for documents.</comment>
+  <data name="Are you sure you want to delete the magazine issue published on {0} for magazine {1} with caption {2}?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar el número de la revista {1} publicado el {0} con la portada {2}?</value>
   </data>
-  <data name="Administrative pages for owned machines" xml:space="preserve">
-    <value>Páginas de administración para máquinas en propiedad</value>
-    <comment>Administrative pages for owned machines.</comment>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
   </data>
-  <data name="User administrative pages" xml:space="preserve">
-    <value>Páginas de administración de usuarios</value>
-    <comment>User administrative pages.</comment>
+  <data name="Magazine issue details" xml:space="preserve">
+    <value>Detalles de número de revista</value>
   </data>
-  <data name="Instruction set extensions" xml:space="preserve">
-    <value>Extensiones de arquitectura</value>
-    <comment>Instruction set extensions.</comment>
+  <data name="Magazine" xml:space="preserve">
+    <value>Revista</value>
   </data>
-  <data name="Instruction sets" xml:space="preserve">
-    <value>Arquitecturas</value>
-    <comment>Instruction sets.</comment>
+  <data name="Caption using latin script" xml:space="preserve">
+    <value>Portada usando escritura latina</value>
   </data>
-  <data name="Licenses" xml:space="preserve">
-    <value>Licencias</value>
-    <comment>Licenses.</comment>
+  <data name="Please enter a valid caption." xml:space="preserve">
+    <value>Por favor introduce un texto de portada válido.</value>
   </data>
-  <data name="Machine families" xml:space="preserve">
-    <value>Familias de máquinas</value>
-    <comment>Machine families.</comment>
+  <data name="Native caption, that is, caption using native script (cyrillic, chinese, etc)" xml:space="preserve">
+    <value>Portada nativa, es decir, el text de portada usando escritura nativa (cirílico, chino, etc)</value>
   </data>
-  <data name="Machines" xml:space="preserve">
-    <value>Máquinas</value>
-    <comment>Machines.</comment>
+  <data name="Unknown (native caption)" xml:space="preserve">
+    <value>Desconocido</value>
   </data>
-  <data name="People" xml:space="preserve">
-    <value>Gente</value>
-    <comment>People.</comment>
+  <data name="Please enter a valid native caption." xml:space="preserve">
+    <value>Por favor introduce un texto de portada nativo válido.</value>
   </data>
-  <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-    <comment>News.</comment>
+  <data name="Unknown (publication date)" xml:space="preserve">
+    <value>Desconocida</value>
   </data>
-  <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-    <comment>Processors.</comment>
+  <data name="If the date of exact publication is unknown, set as first day of first month the publication applies to. E.g. July/August 1998 -&gt; 1st July 1998" xml:space="preserve">
+    <value>Si la fecha exacta de la publicación es desconocida, poner como el primer día del mes al que se aplica la publicación. Ej.: Julio/Agosto 1998 -&gt; 1 de Agosto de 1998</value>
   </data>
-  <data name="Screens" xml:space="preserve">
-    <value>Pantallas</value>
-    <comment>Screens.</comment>
+  <data name="Please enter a valid publication date." xml:space="preserve">
+    <value>Por favor introduce una fecha de publicación válida.</value>
   </data>
-  <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-    <comment>Sound synthesizers.</comment>
+  <data name="Product code" xml:space="preserve">
+    <value>Código de producto</value>
   </data>
-  <data name="Resolutions" xml:space="preserve">
-    <value>Resoluciones</value>
-    <comment>Resolutions.</comment>
+  <data name="Unknown (Product code)" xml:space="preserve">
+    <value>Desconocido</value>
   </data>
-  <data name="Books" xml:space="preserve">
-    <value>Libros</value>
+  <data name="Please enter a valid product code." xml:space="preserve">
+    <value>Por favor introduce un código de producto válido.</value>
   </data>
-  <data name="Administrative pages for currencies" xml:space="preserve">
-    <value>Páginas de administración para divisas</value>
+  <data name="Pages" xml:space="preserve">
+    <value>Páginas</value>
   </data>
-  <data name="Currency inflation" xml:space="preserve">
-    <value>Inflación de divisa</value>
+  <data name="Unknown (pages)" xml:space="preserve">
+    <value>Desconocido</value>
   </data>
-  <data name="Currency pegging" xml:space="preserve">
-    <value>Vinculación de divisa</value>
+  <data name="Please enter a valid number of pages." xml:space="preserve">
+    <value>Por favor introduce un número de páginas válido.</value>
   </data>
-  <data name="Dumps" xml:space="preserve">
-    <value>Volcados</value>
+  <data name="Issue number" xml:space="preserve">
+    <value>Número de publicación</value>
   </data>
-  <data name="Administrative pages for media dumps" xml:space="preserve">
-    <value>Páginas de administración de volcados</value>
+  <data name="Unknown (issue number)" xml:space="preserve">
+    <value>Desconocido</value>
   </data>
-  <data name="Magazines" xml:space="preserve">
-    <value>Revistas</value>
+  <data name="Please enter a valid issue number." xml:space="preserve">
+    <value>Por favor introduce un número de publicación válido.</value>
   </data>
-  <data name="Documents" xml:space="preserve">
-    <value>Documentos</value>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
   </data>
-  <data name="Magazine issues" xml:space="preserve">
-    <value>Números de revistas</value>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+  </data>
+  <data name="Caption must be smaller than 256 characters." xml:space="preserve">
+    <value>El texto de la portada debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Native caption must be smaller than 256 characters." xml:space="preserve">
+    <value>La portada nativa debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Product code must be smaller than 18 characters." xml:space="preserve">
+    <value>El código de producto debe contener menos de 18 caracteres.</value>
   </data>
 </root>

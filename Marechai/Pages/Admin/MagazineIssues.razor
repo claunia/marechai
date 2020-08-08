@@ -1,0 +1,98 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/magazine_issues"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<MagazineIssuesService>
+@inject IStringLocalizer<MagazineIssuesService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Magazine issues"]</h3>
+@if (_magazineIssues is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <a class="btn btn-primary" href="/admin/magazine_issues/create">@L["Create new"]</a>
+</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>
+            @L["Magazine title"]
+        </th>
+        <th>
+            @L["Published"]
+        </th>
+        <th>
+            @L["Caption"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _magazineIssues)
+    {
+        <tr>
+            <td>
+                @item.MagazineTitle
+            </td>
+            <td>
+                @($"{item.Published:d}")
+            </td>
+            <td>
+                @item.Caption
+            </td>
+            <td>
+                <a class="btn btn-primary" href="/admin/magazine_issues/details/@item.Id">@L["Details"]</a>
+                <a class="btn btn-secondary" href="/admin/magazine_issues/edit/@item.Id">@L["Edit"]</a>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete magazine issue"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete the magazine issue published on {0} for magazine {1} with caption {2}?"], _currentMagazineIssue?.Published,_currentMagazineIssue?.MagazineTitle,_currentMagazineIssue?.Caption)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
