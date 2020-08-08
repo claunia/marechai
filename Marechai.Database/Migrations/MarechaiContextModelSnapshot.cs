@@ -565,7 +565,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("CurrencyCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+                b.Property<string>("CurrencyCode").HasColumnType("varchar(3) CHARACTER SET utf8mb4");
 
                 b.Property<float>("Inflation").HasColumnType("float");
 
@@ -588,13 +588,13 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("DestinationCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+                b.Property<string>("DestinationCode").HasColumnType("varchar(3) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime?>("End").HasColumnType("datetime(6)");
 
                 b.Property<float>("Ratio").HasColumnType("float");
 
-                b.Property<string>("SourceCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+                b.Property<string>("SourceCode").HasColumnType("varchar(3) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime>("Start").HasColumnType("datetime(6)");
 
@@ -832,13 +832,13 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime?>("DumpDate").HasColumnType("datetime(6)");
 
-                b.Property<string>("Dumper").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                b.Property<string>("Dumper").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<string>("DumpingGroup").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<ulong?>("MediaDumpId").HasColumnType("bigint unsigned");
+                b.Property<ulong>("MediaDumpId").HasColumnType("bigint unsigned");
 
-                b.Property<ulong?>("MediaId").HasColumnType("bigint unsigned");
+                b.Property<ulong>("MediaId").HasColumnType("bigint unsigned");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
@@ -4055,10 +4055,10 @@ namespace Marechai.Database.Migrations
             modelBuilder.Entity("Marechai.Database.Models.Dump", b =>
             {
                 b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Dumps").
-                  HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade);
+                  HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade).IsRequired();
 
                 b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("Dumps").HasForeignKey("MediaId").
-                  OnDelete(DeleteBehavior.Cascade);
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("Dumps").HasForeignKey("UserId").
                   OnDelete(DeleteBehavior.SetNull);
