@@ -222,4 +222,10 @@
   <data name="Currency pegging" xml:space="preserve">
     <value>Vinculación de divisa</value>
   </data>
+  <data name="Dumps" xml:space="preserve">
+    <value>Volcados</value>
+  </data>
+  <data name="Administrative pages for media dumps" xml:space="preserve">
+    <value>Páginas de administración de volcados</value>
+  </data>
 </root>

@@ -72,6 +72,8 @@ namespace Marechai.Services
             services.AddScoped<Iso4217Service>();
             services.AddScoped<CurrencyPeggingService>();
             services.AddScoped<DocumentsService>();
+            services.AddScoped<DumpsService>();
+            services.AddScoped<MediaService>();
         }
     }
 }

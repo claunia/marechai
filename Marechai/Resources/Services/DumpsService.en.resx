@@ -1,0 +1,92 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Dumps" xml:space="preserve">
+    <value>Dumps</value>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Create new" xml:space="preserve">
+    <value>Create new</value>
+  </data>
+  <data name="Dumper" xml:space="preserve">
+    <value>Dumper</value>
+  </data>
+  <data name="Dumping group" xml:space="preserve">
+    <value>Dumping group</value>
+  </data>
+  <data name="Dump date" xml:space="preserve">
+    <value>Dump date</value>
+  </data>
+  <data name="Media title" xml:space="preserve">
+    <value>Media title</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Delete dump" xml:space="preserve">
+    <value>Delete dump</value>
+  </data>
+  <data name="Are you sure you want to delete the dump made by {0} on {1} for media titled {2}?" xml:space="preserve">
+    <value>Are you sure you want to delete the dump made by {0} on {1} for media titled {2}?</value>
+  </data>
+  <data name="Unknown (dump date)" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Dump details" xml:space="preserve">
+    <value>Dump details</value>
+  </data>
+  <data name="Please enter a valid dumper." xml:space="preserve">
+    <value>Please enter a valid dumper.</value>
+  </data>
+  <data name="Dumper's user" xml:space="preserve">
+    <value>Dumper's user</value>
+  </data>
+  <data name="Unknown (user)" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Dumping group, or group whose guidelines where followed to make the dump" xml:space="preserve">
+    <value>Dumping group, or group whose guidelines where followed to make the dump</value>
+  </data>
+  <data name="Unknown (dumping group)" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Please enter a valid dumping group." xml:space="preserve">
+    <value>Please enter a valid dumping group.</value>
+  </data>
+  <data name="Please enter a valid dump date." xml:space="preserve">
+    <value>Please enter a valid dump date.</value>
+  </data>
+  <data name="Media" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Back to list</value>
+  </data>
+</root>

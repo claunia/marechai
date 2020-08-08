@@ -23,4 +23,10 @@
   <data name="Currency pegging" xml:space="preserve">
     <value>Currency pegging</value>
   </data>
+  <data name="Dumps" xml:space="preserve">
+    <value>Dumps</value>
+  </data>
+  <data name="Administrative pages for media dumps" xml:space="preserve">
+    <value>Administrative pages for media dumps</value>
+  </data>
 </root>

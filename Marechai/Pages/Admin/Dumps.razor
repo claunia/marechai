@@ -1,0 +1,110 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/dumps"
+@using Marechai.Database.Models
+@inherits OwningComponentBase<DumpsService>
+@inject IStringLocalizer<DumpsService> L
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+<h3>@L["Dumps"]</h3>
+@if (_dumps is null)
+{
+    <p>@L["Loading..."]</p>
+
+    return;
+}
+<p>
+    <a class="btn btn-primary" href="/admin/dumps/create">@L["Create new"]</a>
+</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>
+            @L["Dumper"]
+        </th>
+        <th>
+            @L["Dumping group"]
+        </th>
+        <th>
+            @L["Dump date"]
+        </th>
+        <th>
+            @L["Media title"]
+        </th>
+        <th>
+            @L["Username"]
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _dumps)
+    {
+        <tr>
+            <td>
+                @item.Dumper
+            </td>
+            <td>
+                @item.DumpingGroup
+            </td>
+            <td>
+                @item.DumpDate
+            </td>
+            <td>
+                @item.MediaTitle
+            </td>
+            <td>
+                @item.UserName
+            </td>
+            <td>
+                <a class="btn btn-primary" href="/admin/dumps/details/@item.Id">@L["Details"]</a>
+                <a class="btn btn-secondary" href="/admin/dumps/edit/@item.Id">@L["Edit"]</a>
+                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@L["Delete dump"]</ModalTitle>
+            <CloseButton Clicked="@HideModal"/>
+        </ModalHeader>
+        <ModalBody>
+            <Text>@string.Format(@L["Are you sure you want to delete the dump made by {0} on {1} for media titled {2}?"], _currentDump?.Dumper, _currentDump?.DumpDate.ToString() ?? L["Unknown (dump date)"], _currentDump?.MediaTitle)</Text>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
