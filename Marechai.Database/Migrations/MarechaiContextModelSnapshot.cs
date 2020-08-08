@@ -2060,7 +2060,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("TableOfContents").HasColumnType("json");
 
-                b.Property<string>("Title").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+                b.Property<string>("Title").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<ushort?>("Tracks").HasColumnType("smallint unsigned");
 

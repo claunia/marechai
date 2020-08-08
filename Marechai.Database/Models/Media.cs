@@ -25,13 +25,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Aaru.CommonTypes;
 
 namespace Marechai.Database.Models
 {
     public class Media : BaseModel<ulong>
     {
-        public         string                          Title             { get; set; }
+        [Required]
+        public string Title { get;                                              set; }
         public         ushort?                         Sequence          { get; set; }
         public         ushort?                         LastSequence      { get; set; }
         public         MediaType                       Type              { get; set; }
