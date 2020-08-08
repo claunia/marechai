@@ -1,4 +1,4 @@
-/******************************************************************************
+﻿/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -24,22 +24,14 @@
 *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.ViewModels
 {
-    public class SoftwareFamily : BaseModel<ulong>
+    public class SoftwareFamilyViewModel : BaseViewModel<ulong>
     {
-        [Required]
-        public string Name { get;                       set; }
-        public         DateTime?      Introduced { get; set; }
-        public virtual SoftwareFamily Parent     { get; set; }
-        public         ulong?         ParentId   { get; set; }
-
-        public virtual ICollection<SoftwareFamily>            Children  { get; set; }
-        public virtual ICollection<CompaniesBySoftwareFamily> Companies { get; set; }
-        public virtual ICollection<PeopleBySoftwareFamily>    People    { get; set; }
-        public virtual ICollection<SoftwareVersion>           Versions  { get; set; }
+        public string    Name       { get; set; }
+        public DateTime? Introduced { get; set; }
+        public string    Parent     { get; set; }
+        public ulong?    ParentId   { get; set; }
     }
 }

@@ -76,6 +76,7 @@ namespace Marechai.Services
             services.AddScoped<MediaService>();
             services.AddScoped<MagazinesService>();
             services.AddScoped<MagazineIssuesService>();
+            services.AddScoped<SoftwareFamiliesService>();
         }
     }
 }

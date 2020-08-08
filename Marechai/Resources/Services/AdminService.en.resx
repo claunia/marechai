@@ -38,4 +38,10 @@
   <data name="Magazine issues" xml:space="preserve">
     <value>Magazine issues</value>
   </data>
+  <data name="Administrative pages for software" xml:space="preserve">
+    <value>Administrative pages for software</value>
+  </data>
+  <data name="Software families" xml:space="preserve">
+    <value />
+  </data>
 </root>

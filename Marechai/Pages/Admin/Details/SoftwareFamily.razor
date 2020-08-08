@@ -1,0 +1,116 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2020 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/software_families/details/{Id:ulong}"
+@page "/admin/software_families/edit/{Id:ulong}"
+@page "/admin/software_families/create"
+@using Marechai.Database
+@using Marechai.Database.Models
+@inherits OwningComponentBase<SoftwareFamiliesService>
+@inject IStringLocalizer<SoftwareFamiliesService> L
+@inject NavigationManager NavigationManager
+@inject IWebHostEnvironment Host
+@inject IJSRuntime JSRuntime
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize(Roles = "UberAdmin, Admin")]
+
+
+<h3>@L["Software family details"]</h3>
+<hr />
+
+@if (!_loaded)
+{
+    <p align="center">@L["Loading..."]</p>
+
+    return;
+}
+
+<div>
+    <Field>
+        <FieldLabel>@L["Name"]</FieldLabel>
+        <Validation Validator="@ValidateName">
+            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Name">
+                <Feedback>
+                    <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                </Feedback>
+            </TextEdit>
+        </Validation>
+    </Field>
+    @if (_editing || _model.Introduced != null)
+    {
+        <Field>
+            <FieldLabel>@L["Introduced"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownIntroduced">@L["Unknown (introduction date)"]</Check>
+            }
+            @if (!_editing || !_unknownIntroduced)
+            {
+                <Validation Validator="@ValidateIntroduced">
+                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.Introduced" >
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid introduction date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if (_editing || _model.ParentId != null)
+    {
+        <Field>
+            <FieldLabel>@L["Parent software family"]</FieldLabel>
+            @if (_editing)
+            {
+                <Check TValue="bool" @bind-Checked="@_unknownParent">@L["Unknown or none (parent software family)"]</Check>
+            }
+            @if (!_editing ||
+                 !_unknownParent)
+            {
+                <Select Disabled="!_editing" TValue="ulong?" @bind-SelectedValue="@_model.ParentId">
+                    @foreach (var family in _softwareFamilies)
+                    {
+                        <SelectItem TValue="ulong?" Value="@family.Id">@family.Name</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+</div>
+<div>
+    @if (!_editing)
+    {
+        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
+    }
+    else
+    {
+        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
+    }
+    <a href="/admin/software_families" class="btn btn-secondary">@L["Back to list"]</a>
+</div>

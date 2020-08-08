@@ -118,129 +118,67 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-    <comment>Loading message</comment>
-  </data>
-  <data name="Administration area" xml:space="preserve">
-    <value>Área de administración</value>
-    <comment>Administration area</comment>
-  </data>
-  <data name="Welcome to the administration area. Act with care!" xml:space="preserve">
-    <value>Bienvenido/a al área de administración. ¡Actúa con cuidado!</value>
-    <comment>Welcome message.</comment>
-  </data>
-  <data name="Browser tests" xml:space="preserve">
-    <value>Pruebas de navegadores</value>
-    <comment>Browser tests.</comment>
-  </data>
-  <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-    <comment>Companies.</comment>
-  </data>
-  <data name="Document companies" xml:space="preserve">
-    <value>Compañías de documentos</value>
-    <comment>Document companies.</comment>
-  </data>
-  <data name="Document people" xml:space="preserve">
-    <value>Personas de documentos</value>
-    <comment>Document people.</comment>
-  </data>
-  <data name="Graphics Processing Units" xml:space="preserve">
-    <value>Unidades de proceso de gráficos</value>
-    <comment>Graphics Processing Units.</comment>
-  </data>
-  <data name="Database administrative pages" xml:space="preserve">
-    <value>Páginas de administración de la base de datos</value>
-    <comment>Database administrative pages.</comment>
-  </data>
-  <data name="Administrative pages for documents" xml:space="preserve">
-    <value>Páginas de administración de documentos</value>
-    <comment>Administrative pages for documents.</comment>
-  </data>
-  <data name="Administrative pages for owned machines" xml:space="preserve">
-    <value>Páginas de administración para máquinas en propiedad</value>
-    <comment>Administrative pages for owned machines.</comment>
-  </data>
-  <data name="User administrative pages" xml:space="preserve">
-    <value>Páginas de administración de usuarios</value>
-    <comment>User administrative pages.</comment>
-  </data>
-  <data name="Instruction set extensions" xml:space="preserve">
-    <value>Extensiones de arquitectura</value>
-    <comment>Instruction set extensions.</comment>
-  </data>
-  <data name="Instruction sets" xml:space="preserve">
-    <value>Arquitecturas</value>
-    <comment>Instruction sets.</comment>
-  </data>
-  <data name="Licenses" xml:space="preserve">
-    <value>Licencias</value>
-    <comment>Licenses.</comment>
-  </data>
-  <data name="Machine families" xml:space="preserve">
-    <value>Familias de máquinas</value>
-    <comment>Machine families.</comment>
-  </data>
-  <data name="Machines" xml:space="preserve">
-    <value>Máquinas</value>
-    <comment>Machines.</comment>
-  </data>
-  <data name="People" xml:space="preserve">
-    <value>Gente</value>
-    <comment>People.</comment>
-  </data>
-  <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-    <comment>News.</comment>
-  </data>
-  <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-    <comment>Processors.</comment>
-  </data>
-  <data name="Screens" xml:space="preserve">
-    <value>Pantallas</value>
-    <comment>Screens.</comment>
-  </data>
-  <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-    <comment>Sound synthesizers.</comment>
-  </data>
-  <data name="Resolutions" xml:space="preserve">
-    <value>Resoluciones</value>
-    <comment>Resolutions.</comment>
-  </data>
-  <data name="Books" xml:space="preserve">
-    <value>Libros</value>
-  </data>
-  <data name="Administrative pages for currencies" xml:space="preserve">
-    <value>Páginas de administración para divisas</value>
-  </data>
-  <data name="Currency inflation" xml:space="preserve">
-    <value>Inflación de divisa</value>
-  </data>
-  <data name="Currency pegging" xml:space="preserve">
-    <value>Vinculación de divisa</value>
-  </data>
-  <data name="Dumps" xml:space="preserve">
-    <value>Volcados</value>
-  </data>
-  <data name="Administrative pages for media dumps" xml:space="preserve">
-    <value>Páginas de administración de volcados</value>
-  </data>
-  <data name="Magazines" xml:space="preserve">
-    <value>Revistas</value>
-  </data>
-  <data name="Documents" xml:space="preserve">
-    <value>Documentos</value>
-  </data>
-  <data name="Magazine issues" xml:space="preserve">
-    <value>Números de revistas</value>
-  </data>
-  <data name="Administrative pages for software" xml:space="preserve">
-    <value>Páginas de administración para software</value>
-  </data>
   <data name="Software families" xml:space="preserve">
     <value>Familias de software</value>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+  </data>
+  <data name="Create new" xml:space="preserve">
+    <value>Crear nueva</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Introduced" xml:space="preserve">
+    <value>Introducida en</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Predecesora</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Delete software family" xml:space="preserve">
+    <value>Eliminar familia de software</value>
+  </data>
+  <data name="Are you sure you want to delete the software family {0}?" xml:space="preserve">
+    <value>¿Estás seguro de querer eliminar la familia de software {0}?</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Software family details" xml:space="preserve">
+    <value>Detalles de familia de software</value>
+  </data>
+  <data name="Please enter a valid name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido.</value>
+  </data>
+  <data name="Unknown (introduction date)" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+  <data name="Please enter a valid introduction date." xml:space="preserve">
+    <value>Por favor introduce una fecha de introducción válida.</value>
+  </data>
+  <data name="Parent software family" xml:space="preserve">
+    <value>Familia de software predecesora</value>
+  </data>
+  <data name="Unknown or none (parent software family)" xml:space="preserve">
+    <value>Desconocido o ninguno</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+  </data>
+  <data name="Name must be smaller than 256 characters." xml:space="preserve">
+    <value>El nombre debe contener menos de 256 caracteres.</value>
   </data>
 </root>
