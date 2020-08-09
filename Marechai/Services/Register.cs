@@ -85,6 +85,7 @@ namespace Marechai.Services
             services.AddScoped<CompaniesBySoftwareVariantService>();
             services.AddScoped<CompaniesBySoftwareVersionService>();
             services.AddScoped<DocumentRolesService>();
+            services.AddScoped<BooksByMachineFamilyService>();
         }
     }
 }

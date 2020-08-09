@@ -253,4 +253,13 @@
   <data name="Are you sure you want to delete the company {0} with role {1} from this book?" xml:space="preserve">
     <value>¿Estás seguro de eliminar la compañía {0} con el rol {1} de este libro?</value>
   </data>
+  <data name="Machine families this book talks about" xml:space="preserve">
+    <value>Familias de máquinas sobre las que habla este libro</value>
+  </data>
+  <data name="Add new (machine family)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Familia</value>
+  </data>
 </root>

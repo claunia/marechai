@@ -38,31 +38,38 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Book
     {
-        bool                           _addingCompany;
-        int?                           _addingCompanyId;
-        string                         _addingCompanyRoleId;
-        AuthenticationState            _authState;
-        List<CompanyByBookViewModel>   _bookCompanies;
-        List<DocumentCompanyViewModel> _companies;
-        List<Iso31661Numeric>          _countries;
-        bool                           _creating;
-        CompanyByBookViewModel         _currentCompanyByBook;
-        bool                           _deleteInProgress;
-        string                         _deleteText;
-        string                         _deleteTitle;
-        bool                           _deletingCompanyByBook;
-        bool                           _editing;
-        Modal                          _frmDelete;
-        bool                           _loaded;
-        BookViewModel                  _model;
-        List<DocumentRoleViewModel>    _roles;
-        bool                           _savingCompany;
-        bool                           _unknownCountry;
-        bool                           _unknownEdition;
-        bool                           _unknownIsbn;
-        bool                           _unknownNativeTitle;
-        bool                           _unknownPages;
-        bool                           _unknownPublished;
+        bool                               _addingCompany;
+        int?                               _addingCompanyId;
+        string                             _addingCompanyRoleId;
+        bool                               _addingMachineFamily;
+        int?                               _addingMachineFamilyId;
+        AuthenticationState                _authState;
+        List<CompanyByBookViewModel>       _bookCompanies;
+        List<BookByMachineFamilyViewModel> _bookMachineFamilies;
+        List<DocumentCompanyViewModel>     _companies;
+        List<Iso31661Numeric>              _countries;
+        bool                               _creating;
+        BookByMachineFamilyViewModel       _currentBookByMachineFamily;
+        CompanyByBookViewModel             _currentCompanyByBook;
+        bool                               _deleteInProgress;
+        string                             _deleteText;
+        string                             _deleteTitle;
+        bool                               _deletingBookByMachineFamily;
+        bool                               _deletingCompanyByBook;
+        bool                               _editing;
+        Modal                              _frmDelete;
+        bool                               _loaded;
+        List<MachineFamilyViewModel>       _machineFamilies;
+        BookViewModel                      _model;
+        List<DocumentRoleViewModel>        _roles;
+        bool                               _savingCompany;
+        bool                               _savingMachineFamily;
+        bool                               _unknownCountry;
+        bool                               _unknownEdition;
+        bool                               _unknownIsbn;
+        bool                               _unknownNativeTitle;
+        bool                               _unknownPages;
+        bool                               _unknownPublished;
 
         [Parameter]
         public long Id { get; set; }
@@ -81,14 +88,16 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _countries               = await CountriesService.GetAsync();
-            _companies               = await CompaniesService.GetAsync();
-            _roles                   = await DocumentRolesService.GetEnabledAsync();
-            _machineFamilies         = await MachineFamiliesService.GetAsync();
-            _model                   = _creating ? new BookViewModel() : await Service.GetAsync(Id);
-            _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            _addingCompanyRoleId     = _roles.First().Id;
-            _bookCompanies           = await CompaniesByBookService.GetByBook(Id);
+            _countries             = await CountriesService.GetAsync();
+            _companies             = await CompaniesService.GetAsync();
+            _roles                 = await DocumentRolesService.GetEnabledAsync();
+            _machineFamilies       = await MachineFamiliesService.GetAsync();
+            _model                 = _creating ? new BookViewModel() : await Service.GetAsync(Id);
+            _authState             = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId   = _roles.First().Id;
+            _bookCompanies         = await CompaniesByBookService.GetByBook(Id);
+            _addingMachineFamilyId = _machineFamilies.First().Id;
+            _bookMachineFamilies   = await BooksByMachineFamilyService.GetByBook(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/books/edit/",
@@ -225,19 +234,19 @@ namespace Marechai.Pages.Admin.Details
             _addingCompanyId = _companies.First().Id;
         }
 
-        void CancelAddCpu()
+        void CancelAddCompany()
         {
             _addingCompany   = false;
             _savingCompany   = false;
             _addingCompanyId = null;
         }
 
-        async Task ConfirmAddCpu()
+        async Task ConfirmAddCompany()
         {
             if(_addingCompanyId is null ||
                _addingCompanyId <= 0)
             {
-                CancelAddCpu();
+                CancelAddCompany();
 
                 return;
             }
@@ -263,7 +272,7 @@ namespace Marechai.Pages.Admin.Details
             StateHasChanged();
         }
 
-        void ShowCpuDeleteModal(long itemId)
+        void ShowCompanyDeleteModal(long itemId)
         {
             _currentCompanyByBook  = _bookCompanies.FirstOrDefault(n => n.Id == itemId);
             _deletingCompanyByBook = true;
@@ -288,10 +297,12 @@ namespace Marechai.Pages.Admin.Details
         async void ConfirmDelete()
         {
             if(_deletingCompanyByBook)
-                await ConfirmDeleteCpuByMachine();
+                await ConfirmDeleteCompanyByBook();
+            else if(_deletingBookByMachineFamily)
+                await ConfirmDeleteBookByMachineFamily();
         }
 
-        async Task ConfirmDeleteCpuByMachine()
+        async Task ConfirmDeleteCompanyByBook()
         {
             if(_currentCompanyByBook is null)
                 return;
@@ -305,6 +316,88 @@ namespace Marechai.Pages.Admin.Details
                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _bookCompanies = await CompaniesByBookService.GetByBook(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void OnAddFamilyClick()
+        {
+            _addingMachineFamily   = true;
+            _savingMachineFamily   = false;
+            _addingMachineFamilyId = _machineFamilies.First().Id;
+        }
+
+        void CancelAddFamily()
+        {
+            _addingMachineFamily   = false;
+            _savingMachineFamily   = false;
+            _addingMachineFamilyId = null;
+        }
+
+        async Task ConfirmAddFamily()
+        {
+            if(_addingMachineFamilyId is null ||
+               _addingMachineFamilyId <= 0)
+            {
+                CancelAddFamily();
+
+                return;
+            }
+
+            _savingMachineFamily = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await BooksByMachineFamilyService.CreateAsync(_addingMachineFamilyId.Value, Id,
+                                                          (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _bookMachineFamilies = await BooksByMachineFamilyService.GetByBook(Id);
+
+            _addingMachineFamily   = false;
+            _savingMachineFamily   = false;
+            _addingMachineFamilyId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowMachineFamilyDeleteModal(long itemId)
+        {
+            _currentBookByMachineFamily  = _bookMachineFamilies.FirstOrDefault(n => n.Id == itemId);
+            _deletingBookByMachineFamily = true;
+            _deleteTitle                 = L["Delete machine family from this book"];
+
+            _deleteText = string.Format(L["Are you sure you want to delete the machine family {0} from this book?"],
+                                        _currentBookByMachineFamily?.MachineFamily);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeleteBookByMachineFamily()
+        {
+            if(_currentBookByMachineFamily is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await BooksByMachineFamilyService.DeleteAsync(_currentBookByMachineFamily.Id,
+                                                          (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _bookMachineFamilies = await BooksByMachineFamilyService.GetByBook(Id);
 
             _deleteInProgress = false;
             _frmDelete.Hide();
