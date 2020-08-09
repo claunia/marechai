@@ -229,4 +229,13 @@
   <data name="Role" xml:space="preserve">
     <value>Rol</value>
   </data>
+  <data name="Add new (machine family)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Familia</value>
+  </data>
+  <data name="Machine families this document talks about" xml:space="preserve">
+    <value>Familias de máquinas sobre las que habla este documento</value>
+  </data>
 </root>

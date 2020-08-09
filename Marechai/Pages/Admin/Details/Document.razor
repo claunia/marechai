@@ -36,6 +36,8 @@
 @inject DocumentCompaniesService CompaniesService
 @inject DocumentRolesService DocumentRolesService
 @inject CompaniesByDocumentService CompaniesByDocumentService
+@inject MachineFamiliesService MachineFamiliesService
+@inject DocumentsByMachineFamilyService DocumentsByMachineFamilyService
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
@@ -165,8 +167,8 @@
                     }
                 </Select>
             </Field>
-            <Button Color="Color.Primary" Clicked="@CancelAddCpu" Disabled="@_savingCompany">@L["Cancel"]</Button>
-            <Button Color="Color.Success" Clicked="@ConfirmAddCpu" Disabled="@_savingCompany">@L["Add"]</Button>
+            <Button Color="Color.Primary" Clicked="@CancelAddCompany" Disabled="@_savingCompany">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddCompany" Disabled="@_savingCompany">@L["Add"]</Button>
         </div>
     }
     @if (_documentCompanies?.Count > 0)
@@ -195,7 +197,55 @@
                             @item.Role
                         </td>
                         <td>
-                            <Button Color="Color.Danger" Clicked="() => {ShowCpuDeleteModal(item.Id);}" Disabled="@_addingCompany">@L["Delete"]</Button>
+                            <Button Color="Color.Danger" Clicked="() => {ShowCompanyDeleteModal(item.Id);}" Disabled="@_addingCompany">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <hr />
+    <h3>@L["Machine families this document talks about"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddFamilyClick" Disabled="_addingMachineFamily">@L["Add new (machine family)"]</Button>
+    @if (_addingMachineFamily)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Family"]</FieldLabel>
+                <Select Disabled="_savingMachineFamily" TValue="int?" @bind-SelectedValue="@_addingMachineFamilyId">
+                    @foreach (var family in _machineFamilies)
+                    {
+                        <SelectItem TValue="int?" Value="@family.Id">@family.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddFamily" Disabled="@_savingMachineFamily">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddFamily" Disabled="@_savingMachineFamily">@L["Add"]</Button>
+        </div>
+    }
+    @if (_documentMachineFamilies?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Family"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _documentMachineFamilies)
+                {
+                    <tr>
+                        <td>
+                            @item.MachineFamily
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowMachineFamilyDeleteModal(item.Id);}" Disabled="@_addingMachineFamily">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
