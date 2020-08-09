@@ -78,7 +78,13 @@ namespace Marechai.Services
             services.AddScoped<MagazineIssuesService>();
             services.AddScoped<SoftwareFamiliesService>();
             services.AddScoped<SoftwareVersionsService>();
-            services.AddScoped<SoftwareVariantsService>();
+            services.AddScoped<CompaniesByBookService>();
+            services.AddScoped<CompaniesByDocumentService>();
+            services.AddScoped<CompaniesByMagazineService>();
+            services.AddScoped<CompaniesBySoftwareFamilyService>();
+            services.AddScoped<CompaniesBySoftwareVariantService>();
+            services.AddScoped<CompaniesBySoftwareVersionService>();
+            services.AddScoped<DocumentRolesService>();
         }
     }
 }

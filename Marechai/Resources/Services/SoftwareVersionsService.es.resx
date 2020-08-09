@@ -208,4 +208,25 @@
   <data name="Back to list" xml:space="preserve">
     <value>Volver a la lista</value>
   </data>
+  <data name="Companies involved in this software version" xml:space="preserve">
+    <value>Compañías involucradas en esta versión de software</value>
+  </data>
+  <data name="Add new (company)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Compañía</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rol</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="Delete company from this software version" xml:space="preserve">
+    <value>Eliminar compañía de esta versión de software</value>
+  </data>
+  <data name="Are you sure you want to delete the company {0} with role {1} from this software version?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la compañía {0} con rol {1} de esta versión de software?</value>
+  </data>
 </root>

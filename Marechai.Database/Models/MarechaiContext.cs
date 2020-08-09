@@ -126,6 +126,9 @@ namespace Marechai.Database.Models
         public virtual DbSet<MasteringText>                       MasteringTexts                      { get; set; }
         public virtual DbSet<MediaTagDump>                        MediaTagDumps                       { get; set; }
         public virtual DbSet<SoftwareVariantByCompilationMedia>   SoftwareVariantByCompilationMedia   { get; set; }
+        public virtual DbSet<CompaniesBySoftwareFamily>           CompaniesBySoftwareFamilies         { get; set; }
+        public virtual DbSet<CompaniesBySoftwareVariant>          CompaniesBySoftwareVariants         { get; set; }
+        public virtual DbSet<CompaniesBySoftwareVersion>          CompaniesBySoftwareVersions         { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1839,6 +1842,8 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<CompaniesBySoftwareFamily>(entity =>
             {
+                entity.ToTable("CompaniesBySoftwareFamily");
+
                 entity.HasOne(d => d.Company).WithMany(p => p.SoftwareFamilies).OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(d => d.SoftwareFamily).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
             });
@@ -1864,6 +1869,8 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<CompaniesBySoftwareVersion>(entity =>
             {
+                entity.ToTable("CompaniesBySoftwareVersion");
+
                 entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVersions).OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(d => d.SoftwareVersion).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
             });
@@ -1894,6 +1901,8 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<CompaniesBySoftwareVariant>(entity =>
             {
+                entity.ToTable("CompaniesBySoftwareVariant");
+
                 entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVariants).OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
             });
