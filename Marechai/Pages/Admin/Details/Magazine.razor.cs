@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Database.Models;
@@ -37,16 +38,29 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Magazine
     {
-        AuthenticationState   _authState;
-        List<Iso31661Numeric> _countries;
-        bool                  _creating;
-        bool                  _editing;
-        bool                  _loaded;
-        MagazineViewModel     _model;
-        bool                  _unknownCountry;
-        bool                  _unknownFirstPublication;
-        bool                  _unknownIssn;
-        bool                  _unknownNativeTitle;
+        bool                             _addingCompany;
+        int?                             _addingCompanyId;
+        string                           _addingCompanyRoleId;
+        AuthenticationState              _authState;
+        List<DocumentCompanyViewModel>   _companies;
+        List<Iso31661Numeric>            _countries;
+        bool                             _creating;
+        CompanyByMagazineViewModel       _currentCompanyByMagazine;
+        bool                             _deleteInProgress;
+        string                           _deleteText;
+        string                           _deleteTitle;
+        bool                             _deletingCompanyByMagazine;
+        bool                             _editing;
+        Modal                            _frmDelete;
+        bool                             _loaded;
+        List<CompanyByMagazineViewModel> _magazineCompanies;
+        MagazineViewModel                _model;
+        List<DocumentRoleViewModel>      _roles;
+        bool                             _savingCompany;
+        bool                             _unknownCountry;
+        bool                             _unknownFirstPublication;
+        bool                             _unknownIssn;
+        bool                             _unknownNativeTitle;
 
         [Parameter]
         public long Id { get; set; }
@@ -65,9 +79,12 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _countries = await CountriesService.GetAsync();
-            _model     = _creating ? new MagazineViewModel() : await Service.GetAsync(Id);
-            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _countries           = await CountriesService.GetAsync();
+            _companies           = await CompaniesService.GetAsync();
+            _roles               = await DocumentRolesService.GetEnabledAsync();
+            _model               = _creating ? new MagazineViewModel() : await Service.GetAsync(Id);
+            _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId = _roles.First().Id;
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/magazines/edit/",
@@ -156,5 +173,103 @@ namespace Marechai.Pages.Admin.Details
             Validators.ValidateString(e, L["Native title must be smaller than 256 characters."], 256);
 
         void ValidateIssn(ValidatorEventArgs e) => Validators.ValidateIssn(e);
+
+        void OnAddCompanyClick()
+        {
+            _addingCompany   = true;
+            _savingCompany   = false;
+            _addingCompanyId = _companies.First().Id;
+        }
+
+        void CancelAddCpu()
+        {
+            _addingCompany   = false;
+            _savingCompany   = false;
+            _addingCompanyId = null;
+        }
+
+        async Task ConfirmAddCpu()
+        {
+            if(_addingCompanyId is null ||
+               _addingCompanyId <= 0)
+            {
+                CancelAddCpu();
+
+                return;
+            }
+
+            _savingCompany = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompaniesByMagazineService.CreateAsync(_addingCompanyId.Value, Id, _addingCompanyRoleId,
+                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _magazineCompanies = await CompaniesByMagazineService.GetByMagazine(Id);
+
+            _addingCompany   = false;
+            _savingCompany   = false;
+            _addingCompanyId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowCpuDeleteModal(long itemId)
+        {
+            _currentCompanyByMagazine  = _magazineCompanies.FirstOrDefault(n => n.Id == itemId);
+            _deletingCompanyByMagazine = true;
+            _deleteTitle               = L["Delete company from this magazine"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the company {0} with role {1} from this magazine?"],
+                              _currentCompanyByMagazine?.Company, _currentCompanyByMagazine?.Role);
+
+            _frmDelete.Show();
+        }
+
+        void ModalClosing(ModalClosingEventArgs obj)
+        {
+            _deleteInProgress          = false;
+            _deletingCompanyByMagazine = false;
+            _currentCompanyByMagazine  = null;
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_deletingCompanyByMagazine)
+                await ConfirmDeleteCpuByMachine();
+        }
+
+        async Task ConfirmDeleteCpuByMachine()
+        {
+            if(_currentCompanyByMagazine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompaniesByMagazineService.DeleteAsync(_currentCompanyByMagazine.Id,
+                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _magazineCompanies = await CompaniesByMagazineService.GetByMagazine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
     }
 }
