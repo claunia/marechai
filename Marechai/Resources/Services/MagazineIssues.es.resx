@@ -226,4 +226,13 @@
   <data name="Product code must be smaller than 18 characters." xml:space="preserve">
     <value>El código de producto debe contener menos de 18 caracteres.</value>
   </data>
+  <data name="Machine families this magazine issue talks about" xml:space="preserve">
+    <value>Familias de máquinas sobre las que habla este número de revista</value>
+  </data>
+  <data name="Add new (machine family)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Familia</value>
+  </data>
 </root>

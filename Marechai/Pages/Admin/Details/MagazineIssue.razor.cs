@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Shared;
@@ -36,17 +37,28 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class MagazineIssue
     {
-        AuthenticationState     _authState;
-        bool                    _creating;
-        bool                    _editing;
-        bool                    _loaded;
-        List<MagazineViewModel> _magazines;
-        MagazineIssueViewModel  _model;
-        bool                    _unknownIssueNumber;
-        bool                    _unknownNativeCaption;
-        bool                    _unknownPages;
-        bool                    _unknownProductCode;
-        bool                    _unknownPublished;
+        bool                                   _addingMachineFamily;
+        int?                                   _addingMachineFamilyId;
+        AuthenticationState                    _authState;
+        bool                                   _creating;
+        MagazineByMachineFamilyViewModel       _currentMagazineByMachineFamily;
+        bool                                   _deleteInProgress;
+        string                                 _deleteText;
+        string                                 _deleteTitle;
+        bool                                   _deletingMagazineByMachineFamily;
+        bool                                   _editing;
+        Modal                                  _frmDelete;
+        bool                                   _loaded;
+        List<MachineFamilyViewModel>           _machineFamilies;
+        List<MagazineByMachineFamilyViewModel> _magazineMachineFamilies;
+        List<MagazineViewModel>                _magazines;
+        MagazineIssueViewModel                 _model;
+        bool                                   _savingMachineFamily;
+        bool                                   _unknownIssueNumber;
+        bool                                   _unknownNativeCaption;
+        bool                                   _unknownPages;
+        bool                                   _unknownProductCode;
+        bool                                   _unknownPublished;
 
         [Parameter]
         public long Id { get; set; }
@@ -65,9 +77,12 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _magazines = await MagazinesService.GetTitlesAsync();
-            _model     = _creating ? new MagazineIssueViewModel() : await Service.GetAsync(Id);
-            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _magazines               = await MagazinesService.GetTitlesAsync();
+            _machineFamilies         = await MachineFamiliesService.GetAsync();
+            _model                   = _creating ? new MagazineIssueViewModel() : await Service.GetAsync(Id);
+            _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingMachineFamilyId   = _machineFamilies.First().Id;
+            _magazineMachineFamilies = await MagazinesByMachineFamilyService.GetByMagazine(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/magazine_issues/edit/",
@@ -168,5 +183,103 @@ namespace Marechai.Pages.Admin.Details
 
         void ValidateProductCode(ValidatorEventArgs e) =>
             Validators.ValidateString(e, L["Product code must be smaller than 18 characters."], 18);
+
+        void ModalClosing(ModalClosingEventArgs obj)
+        {
+            _deleteInProgress                = false;
+            _deletingMagazineByMachineFamily = false;
+            _currentMagazineByMachineFamily  = null;
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_deletingMagazineByMachineFamily)
+                await ConfirmDeleteMagazineByMachineFamily();
+        }
+
+        void OnAddFamilyClick()
+        {
+            _addingMachineFamily   = true;
+            _savingMachineFamily   = false;
+            _addingMachineFamilyId = _machineFamilies.First().Id;
+        }
+
+        void CancelAddFamily()
+        {
+            _addingMachineFamily   = false;
+            _savingMachineFamily   = false;
+            _addingMachineFamilyId = null;
+        }
+
+        async Task ConfirmAddFamily()
+        {
+            if(_addingMachineFamilyId is null ||
+               _addingMachineFamilyId <= 0)
+            {
+                CancelAddFamily();
+
+                return;
+            }
+
+            _savingMachineFamily = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await MagazinesByMachineFamilyService.CreateAsync(_addingMachineFamilyId.Value, Id,
+                                                              (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _magazineMachineFamilies = await MagazinesByMachineFamilyService.GetByMagazine(Id);
+
+            _addingMachineFamily   = false;
+            _savingMachineFamily   = false;
+            _addingMachineFamilyId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowMachineFamilyDeleteModal(long itemId)
+        {
+            _currentMagazineByMachineFamily  = _magazineMachineFamilies.FirstOrDefault(n => n.Id == itemId);
+            _deletingMagazineByMachineFamily = true;
+            _deleteTitle                     = L["Delete machine family from this magazine"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the machine family {0} from this magazine issue?"],
+                              _currentMagazineByMachineFamily?.MachineFamily);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeleteMagazineByMachineFamily()
+        {
+            if(_currentMagazineByMachineFamily is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await MagazinesByMachineFamilyService.DeleteAsync(_currentMagazineByMachineFamily.Id,
+                                                              (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _magazineMachineFamilies = await MagazinesByMachineFamilyService.GetByMagazine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
     }
 }

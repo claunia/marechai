@@ -33,6 +33,8 @@
 @inherits OwningComponentBase<MagazineIssuesService>
 @inject IStringLocalizer<MagazineIssuesService> L
 @inject MagazinesService MagazinesService
+@inject MachineFamiliesService MachineFamiliesService
+@inject MagazinesByMachineFamilyService MagazinesByMachineFamilyService
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
@@ -189,3 +191,70 @@
     }
     <a href="/admin/magazine_issues" class="btn btn-secondary">@L["Back to list"]</a>
 </div>
+@if (!_editing)
+{
+    <hr />
+    <h3>@L["Machine families this magazine issue talks about"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddFamilyClick" Disabled="_addingMachineFamily">@L["Add new (machine family)"]</Button>
+    @if (_addingMachineFamily)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Family"]</FieldLabel>
+                <Select Disabled="_savingMachineFamily" TValue="int?" @bind-SelectedValue="@_addingMachineFamilyId">
+                    @foreach (var family in _machineFamilies)
+                    {
+                        <SelectItem TValue="int?" Value="@family.Id">@family.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddFamily" Disabled="@_savingMachineFamily">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddFamily" Disabled="@_savingMachineFamily">@L["Add"]</Button>
+        </div>
+    }
+    @if (_magazineMachineFamilies?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Family"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _magazineMachineFamilies)
+                {
+                    <tr>
+                        <td>
+                            @item.MachineFamily
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowMachineFamilyDeleteModal(item.Id);}" Disabled="@_addingMachineFamily">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+        <ModalBackdrop />
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>@_deleteTitle</ModalTitle>
+                <CloseButton Clicked="@HideModal" />
+            </ModalHeader>
+            <ModalBody>
+                <Text>@_deleteText</Text>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
