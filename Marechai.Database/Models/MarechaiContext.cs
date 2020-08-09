@@ -129,6 +129,7 @@ namespace Marechai.Database.Models
         public virtual DbSet<CompaniesBySoftwareFamily>           CompaniesBySoftwareFamilies         { get; set; }
         public virtual DbSet<CompaniesBySoftwareVariant>          CompaniesBySoftwareVariants         { get; set; }
         public virtual DbSet<CompaniesBySoftwareVersion>          CompaniesBySoftwareVersions         { get; set; }
+        public virtual DbSet<DocumentsByMachineFamily>            DocumentsByMachineFamilies          { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -546,6 +547,8 @@ namespace Marechai.Database.Models
 
             modelBuilder.Entity<DocumentsByMachineFamily>(entity =>
             {
+                entity.ToTable("DocumentsByMachineFamily");
+
                 entity.HasIndex(e => e.DocumentId);
 
                 entity.HasIndex(e => e.MachineFamilyId);
