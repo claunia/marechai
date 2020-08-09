@@ -143,8 +143,8 @@
                     }
                 </Select>
             </Field>
-            <Button Color="Color.Primary" Clicked="@CancelAddCpu" Disabled="@_savingCompany">@L["Cancel"]</Button>
-            <Button Color="Color.Success" Clicked="@ConfirmAddCpu" Disabled="@_savingCompany">@L["Add"]</Button>
+            <Button Color="Color.Primary" Clicked="@CancelAddCompany" Disabled="@_savingCompany">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddCompany" Disabled="@_savingCompany">@L["Add"]</Button>
         </div>
     }
     @if (_softwareFamilyCompanies?.Count > 0)
@@ -173,7 +173,7 @@
                             @item.Role
                         </td>
                         <td>
-                            <Button Color="Color.Danger" Clicked="() => {ShowCpuDeleteModal(item.Id);}" Disabled="@_addingCompany">@L["Delete"]</Button>
+                            <Button Color="Color.Danger" Clicked="() => {ShowCompanyDeleteModal(item.Id);}" Disabled="@_addingCompany">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }

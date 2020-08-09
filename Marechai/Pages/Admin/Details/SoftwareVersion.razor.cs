@@ -194,19 +194,19 @@ namespace Marechai.Pages.Admin.Details
             _addingCompanyId = _companies.First().Id;
         }
 
-        void CancelAddCpu()
+        void CancelAddCompany()
         {
             _addingCompany   = false;
             _savingCompany   = false;
             _addingCompanyId = null;
         }
 
-        async Task ConfirmAddCpu()
+        async Task ConfirmAddCompany()
         {
             if(_addingCompanyId is null ||
                _addingCompanyId <= 0)
             {
-                CancelAddCpu();
+                CancelAddCompany();
 
                 return;
             }
@@ -232,7 +232,7 @@ namespace Marechai.Pages.Admin.Details
             StateHasChanged();
         }
 
-        void ShowCpuDeleteModal(ulong itemId)
+        void ShowCompanyDeleteModal(ulong itemId)
         {
             _currentCompanyBySoftwareVersion  = _softwareVersionCompanies.FirstOrDefault(n => n.Id == itemId);
             _deletingCompanyBySoftwareVersion = true;
@@ -257,10 +257,10 @@ namespace Marechai.Pages.Admin.Details
         async void ConfirmDelete()
         {
             if(_deletingCompanyBySoftwareVersion)
-                await ConfirmDeleteCpuByMachine();
+                await ConfirmDeleteCompanyByMachine();
         }
 
-        async Task ConfirmDeleteCpuByMachine()
+        async Task ConfirmDeleteCompanyByMachine()
         {
             if(_currentCompanyBySoftwareVersion is null)
                 return;

@@ -236,9 +236,11 @@ namespace Marechai.Pages.Admin.Details
 
         void ModalClosing(ModalClosingEventArgs obj)
         {
-            _deleteInProgress          = false;
-            _deletingCompanyByDocument = false;
-            _currentCompanyByDocument  = null;
+            _deleteInProgress                = false;
+            _deletingCompanyByDocument       = false;
+            _currentCompanyByDocument        = null;
+            _deletingDocumentByMachineFamily = false;
+            _currentDocumentByMachineFamily  = null;
         }
 
         void HideModal() => _frmDelete.Hide();
