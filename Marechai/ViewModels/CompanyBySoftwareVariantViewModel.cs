@@ -23,21 +23,14 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel.DataAnnotations;
-
-namespace Marechai.Database.Models
+namespace Marechai.ViewModels
 {
-    public class CompaniesBySoftwareVariant : BaseModel<ulong>
+    public class CompanyBySoftwareVariantViewModel : BaseViewModel<ulong>
     {
-        [Required]
-        public virtual Company Company { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
-        [Required]
-        public virtual DocumentRole Role { get; set; }
-
-        public string RoleId            { get; set; }
         public int    CompanyId         { get; set; }
         public ulong  SoftwareVariantId { get; set; }
+        public string RoleId            { get; set; }
+        public string Company           { get; set; }
+        public string Role              { get; set; }
     }
 }

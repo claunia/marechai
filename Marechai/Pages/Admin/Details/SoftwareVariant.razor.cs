@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Database;
@@ -37,25 +38,37 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class SoftwareVariant
     {
-        AuthenticationState            _authState;
-        bool                           _creating;
-        bool                           _editing;
-        bool                           _loaded;
-        SoftwareVariantViewModel       _model;
-        List<SoftwareVariantViewModel> _softwareVariants;
-        List<SoftwareVersionViewModel> _softwareVersions;
-        bool                           _unknownCatalogueNumber;
-        bool                           _unknownIntroduced;
-        bool                           _unknownMinimumMemory;
-        bool                           _unknownName;
-        bool                           _unknownParent;
-        bool                           _unknownPartNumber;
-        bool                           _unknownProductCode;
-        bool                           _unknownRecommendedMemory;
-        bool                           _unknownRequiredStorage;
-
-        bool _unknownSerialNumber;
-        bool _unknownVersion;
+        bool                                    _addingCompany;
+        int?                                    _addingCompanyId;
+        string                   _addingCompanyRoleId;
+        AuthenticationState                     _authState;
+        List<CompanyViewModel>                  _companies;
+        bool                                    _creating;
+        CompanyBySoftwareVariantViewModel       _currentCompanyBySoftwareVariant;
+        bool                                    _deleteInProgress;
+        string                                  _deleteText;
+        string                                  _deleteTitle;
+        bool                                    _deletingCompanyBySoftwareVariant;
+        bool                                    _editing;
+        Modal                                   _frmDelete;
+        bool                                    _loaded;
+        SoftwareVariantViewModel                _model;
+        List<DocumentRoleViewModel>             _roles;
+        bool                                    _savingCompany;
+        List<CompanyBySoftwareVariantViewModel> _softwareVariantCompanies;
+        List<SoftwareVariantViewModel>          _softwareVariants;
+        List<SoftwareVersionViewModel>          _softwareVersions;
+        bool                                    _unknownCatalogueNumber;
+        bool                                    _unknownIntroduced;
+        bool                                    _unknownMinimumMemory;
+        bool                                    _unknownName;
+        bool                                    _unknownParent;
+        bool                                    _unknownPartNumber;
+        bool                                    _unknownProductCode;
+        bool                                    _unknownRecommendedMemory;
+        bool                                    _unknownRequiredStorage;
+        bool                                    _unknownSerialNumber;
+        bool                                    _unknownVersion;
 
         [Parameter]
         public ulong Id { get; set; }
@@ -81,10 +94,13 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _softwareVariants = await Service.GetAsync();
-            _softwareVersions = await SoftwareVersionsService.GetAsync();
-            _model            = _creating ? new SoftwareVariantViewModel() : await Service.GetAsync(Id);
-            _authState        = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _softwareVariants    = await Service.GetAsync();
+            _softwareVersions    = await SoftwareVersionsService.GetAsync();
+            _companies           = await CompaniesService.GetAsync();
+            _roles               = await DocumentRolesService.GetEnabledAsync();
+            _model               = _creating ? new SoftwareVariantViewModel() : await Service.GetAsync(Id);
+            _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId = _roles.First().Id;
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/software_variants/edit/",
@@ -209,5 +225,103 @@ namespace Marechai.Pages.Admin.Details
         void ValidateIntroduced(ValidatorEventArgs e) => Validators.ValidateDate(e);
 
         void ValidateUnsignedLongBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateUnsignedLong(e);
+
+        void OnAddCompanyClick()
+        {
+            _addingCompany   = true;
+            _savingCompany   = false;
+            _addingCompanyId = _companies.First().Id;
+        }
+
+        void CancelAddCpu()
+        {
+            _addingCompany   = false;
+            _savingCompany   = false;
+            _addingCompanyId = null;
+        }
+
+        async Task ConfirmAddCpu()
+        {
+            if(_addingCompanyId is null ||
+               _addingCompanyId <= 0)
+            {
+                CancelAddCpu();
+
+                return;
+            }
+
+            _savingCompany = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompaniesBySoftwareVariantService.CreateAsync(_addingCompanyId.Value, Id, _addingCompanyRoleId,
+                                                                (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _softwareVariantCompanies = await CompaniesBySoftwareVariantService.GetBySoftwareVariant(Id);
+
+            _addingCompany   = false;
+            _savingCompany   = false;
+            _addingCompanyId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowCpuDeleteModal(ulong itemId)
+        {
+            _currentCompanyBySoftwareVariant  = _softwareVariantCompanies.FirstOrDefault(n => n.Id == itemId);
+            _deletingCompanyBySoftwareVariant = true;
+            _deleteTitle                      = L["Delete company from this software variant"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the company {0} with role {1} from this software variant?"],
+                              _currentCompanyBySoftwareVariant?.Company, _currentCompanyBySoftwareVariant?.Role);
+
+            _frmDelete.Show();
+        }
+
+        void ModalClosing(ModalClosingEventArgs obj)
+        {
+            _deleteInProgress                 = false;
+            _deletingCompanyBySoftwareVariant = false;
+            _currentCompanyBySoftwareVariant  = null;
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_deletingCompanyBySoftwareVariant)
+                await ConfirmDeleteCpuByMachine();
+        }
+
+        async Task ConfirmDeleteCpuByMachine()
+        {
+            if(_currentCompanyBySoftwareVariant is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompaniesBySoftwareVariantService.DeleteAsync(_currentCompanyBySoftwareVariant.Id,
+                                                                (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _softwareVariantCompanies = await CompaniesBySoftwareVariantService.GetBySoftwareVariant(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
     }
 }
