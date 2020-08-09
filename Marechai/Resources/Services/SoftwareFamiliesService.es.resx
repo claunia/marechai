@@ -181,4 +181,25 @@
   <data name="Name must be smaller than 256 characters." xml:space="preserve">
     <value>El nombre debe contener menos de 256 caracteres.</value>
   </data>
+  <data name="Companies involved in this software family" xml:space="preserve">
+    <value>Compañías involucradas en esta familia de software</value>
+  </data>
+  <data name="Add new (company)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Compañía</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rol</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="Delete company from this software family" xml:space="preserve">
+    <value>Eliminar compañía de esta familia de software</value>
+  </data>
+  <data name="Are you sure you want to delete the company {0} with role {1} from this software family?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la compañía {0} con rol {1} de esta familia de software?</value>
+  </data>
 </root>

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Shared;
@@ -36,14 +37,27 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class SoftwareFamily
     {
-        AuthenticationState           _authState;
-        bool                          _creating;
-        bool                          _editing;
-        bool                          _loaded;
-        SoftwareFamilyViewModel       _model;
-        List<SoftwareFamilyViewModel> _softwareFamilies;
-        bool                          _unknownIntroduced;
-        bool                          _unknownParent;
+        bool                                   _addingCompany;
+        int?                                   _addingCompanyId;
+        string                                 _addingCompanyRoleId;
+        AuthenticationState                    _authState;
+        List<CompanyViewModel>                 _companies;
+        bool                                   _creating;
+        CompanyBySoftwareFamilyViewModel       _currentCompanyBySoftwareFamily;
+        bool                                   _deleteInProgress;
+        string                                 _deleteText;
+        string                                 _deleteTitle;
+        bool                                   _deletingCompanyBySoftwareFamily;
+        bool                                   _editing;
+        Modal                                  _frmDelete;
+        bool                                   _loaded;
+        SoftwareFamilyViewModel                _model;
+        List<DocumentRoleViewModel>            _roles;
+        bool                                   _savingCompany;
+        List<SoftwareFamilyViewModel>          _softwareFamilies;
+        List<CompanyBySoftwareFamilyViewModel> _softwareFamilyCompanies;
+        bool                                   _unknownIntroduced;
+        bool                                   _unknownParent;
 
         [Parameter]
         public ulong Id { get; set; }
@@ -63,9 +77,12 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _softwareFamilies = await Service.GetAsync();
-            _model            = _creating ? new SoftwareFamilyViewModel() : await Service.GetAsync(Id);
-            _authState        = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _softwareFamilies    = await Service.GetAsync();
+            _companies           = await CompaniesService.GetAsync();
+            _roles               = await DocumentRolesService.GetEnabledAsync();
+            _model               = _creating ? new SoftwareFamilyViewModel() : await Service.GetAsync(Id);
+            _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId = _roles.First().Id;
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/software_families/edit/",
@@ -137,5 +154,103 @@ namespace Marechai.Pages.Admin.Details
             Validators.ValidateString(e, L["Name must be smaller than 256 characters."], 256);
 
         void ValidateIntroduced(ValidatorEventArgs e) => Validators.ValidateDate(e);
+
+        void OnAddCompanyClick()
+        {
+            _addingCompany   = true;
+            _savingCompany   = false;
+            _addingCompanyId = _companies.First().Id;
+        }
+
+        void CancelAddCpu()
+        {
+            _addingCompany   = false;
+            _savingCompany   = false;
+            _addingCompanyId = null;
+        }
+
+        async Task ConfirmAddCpu()
+        {
+            if(_addingCompanyId is null ||
+               _addingCompanyId <= 0)
+            {
+                CancelAddCpu();
+
+                return;
+            }
+
+            _savingCompany = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompaniesBySoftwareFamilyService.CreateAsync(_addingCompanyId.Value, Id, _addingCompanyRoleId,
+                                                               (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
+
+            _addingCompany   = false;
+            _savingCompany   = false;
+            _addingCompanyId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowCpuDeleteModal(ulong itemId)
+        {
+            _currentCompanyBySoftwareFamily  = _softwareFamilyCompanies.FirstOrDefault(n => n.Id == itemId);
+            _deletingCompanyBySoftwareFamily = true;
+            _deleteTitle                     = L["Delete company from this software family"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the company {0} with role {1} from this software family?"],
+                              _currentCompanyBySoftwareFamily?.Company, _currentCompanyBySoftwareFamily?.Role);
+
+            _frmDelete.Show();
+        }
+
+        void ModalClosing(ModalClosingEventArgs obj)
+        {
+            _deleteInProgress                = false;
+            _deletingCompanyBySoftwareFamily = false;
+            _currentCompanyBySoftwareFamily  = null;
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_deletingCompanyBySoftwareFamily)
+                await ConfirmDeleteCpuByMachine();
+        }
+
+        async Task ConfirmDeleteCpuByMachine()
+        {
+            if(_currentCompanyBySoftwareFamily is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompaniesBySoftwareFamilyService.DeleteAsync(_currentCompanyBySoftwareFamily.Id,
+                                                               (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
     }
 }
