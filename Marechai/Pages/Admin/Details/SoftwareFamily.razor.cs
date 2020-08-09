@@ -77,12 +77,13 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _softwareFamilies    = await Service.GetAsync();
-            _companies           = await CompaniesService.GetAsync();
-            _roles               = await DocumentRolesService.GetEnabledAsync();
-            _model               = _creating ? new SoftwareFamilyViewModel() : await Service.GetAsync(Id);
-            _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            _addingCompanyRoleId = _roles.First().Id;
+            _softwareFamilies        = await Service.GetAsync();
+            _companies               = await CompaniesService.GetAsync();
+            _roles                   = await DocumentRolesService.GetEnabledAsync();
+            _model                   = _creating ? new SoftwareFamilyViewModel() : await Service.GetAsync(Id);
+            _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId     = _roles.First().Id;
+            _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/software_families/edit/",

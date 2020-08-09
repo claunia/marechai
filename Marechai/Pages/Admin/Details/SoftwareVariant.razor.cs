@@ -40,7 +40,7 @@ namespace Marechai.Pages.Admin.Details
     {
         bool                                    _addingCompany;
         int?                                    _addingCompanyId;
-        string                   _addingCompanyRoleId;
+        string                                  _addingCompanyRoleId;
         AuthenticationState                     _authState;
         List<CompanyViewModel>                  _companies;
         bool                                    _creating;
@@ -94,13 +94,14 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _softwareVariants    = await Service.GetAsync();
-            _softwareVersions    = await SoftwareVersionsService.GetAsync();
-            _companies           = await CompaniesService.GetAsync();
-            _roles               = await DocumentRolesService.GetEnabledAsync();
-            _model               = _creating ? new SoftwareVariantViewModel() : await Service.GetAsync(Id);
-            _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            _addingCompanyRoleId = _roles.First().Id;
+            _softwareVariants         = await Service.GetAsync();
+            _softwareVersions         = await SoftwareVersionsService.GetAsync();
+            _companies                = await CompaniesService.GetAsync();
+            _roles                    = await DocumentRolesService.GetEnabledAsync();
+            _model                    = _creating ? new SoftwareVariantViewModel() : await Service.GetAsync(Id);
+            _authState                = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId      = _roles.First().Id;
+            _softwareVariantCompanies = await CompaniesBySoftwareVariantService.GetBySoftwareVariant(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/software_variants/edit/",

@@ -81,12 +81,14 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _countries           = await CountriesService.GetAsync();
-            _companies           = await CompaniesService.GetAsync();
-            _roles               = await DocumentRolesService.GetEnabledAsync();
-            _model               = _creating ? new BookViewModel() : await Service.GetAsync(Id);
-            _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            _addingCompanyRoleId = _roles.First().Id;
+            _countries               = await CountriesService.GetAsync();
+            _companies               = await CompaniesService.GetAsync();
+            _roles                   = await DocumentRolesService.GetEnabledAsync();
+            _machineFamilies         = await MachineFamiliesService.GetAsync();
+            _model                   = _creating ? new BookViewModel() : await Service.GetAsync(Id);
+            _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId     = _roles.First().Id;
+            _bookCompanies           = await CompaniesByBookService.GetByBook(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/books/edit/",

@@ -82,14 +82,15 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _softwareVersions    = await Service.GetAsync();
-            _softwareFamilies    = await SoftwareFamiliesService.GetAsync();
-            _licenses            = await LicensesService.GetAsync();
-            _companies           = await CompaniesService.GetAsync();
-            _roles               = await DocumentRolesService.GetEnabledAsync();
-            _model               = _creating ? new SoftwareVersionViewModel() : await Service.GetAsync(Id);
-            _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            _addingCompanyRoleId = _roles.First().Id;
+            _softwareVersions         = await Service.GetAsync();
+            _softwareFamilies         = await SoftwareFamiliesService.GetAsync();
+            _licenses                 = await LicensesService.GetAsync();
+            _companies                = await CompaniesService.GetAsync();
+            _roles                    = await DocumentRolesService.GetEnabledAsync();
+            _model                    = _creating ? new SoftwareVersionViewModel() : await Service.GetAsync(Id);
+            _authState                = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId      = _roles.First().Id;
+            _softwareVersionCompanies = await CompaniesBySoftwareVersionService.GetBySoftwareVersion(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/software_versions/edit/",

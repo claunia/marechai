@@ -85,6 +85,7 @@ namespace Marechai.Pages.Admin.Details
             _model               = _creating ? new MagazineViewModel() : await Service.GetAsync(Id);
             _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             _addingCompanyRoleId = _roles.First().Id;
+            _magazineCompanies   = await CompaniesByMagazineService.GetByMagazine(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/magazines/edit/",
