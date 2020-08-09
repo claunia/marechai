@@ -249,5 +249,16 @@ namespace Marechai.Shared
             else if(modulo == issn[7] - 0x30)
                 e.Status = ValidationStatus.Success;
         }
+
+        public static void ValidateUnsignedLong(ValidatorEventArgs e, ulong minValue = 0,
+                                                ulong maxValue = long.MaxValue)
+        {
+            if(!(e.Value is ulong item) ||
+               item < minValue          ||
+               item > maxValue)
+                e.Status = ValidationStatus.Error;
+            else
+                e.Status = ValidationStatus.Success;
+        }
     }
 }

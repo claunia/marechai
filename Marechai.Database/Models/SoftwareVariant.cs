@@ -60,5 +60,7 @@ namespace Marechai.Database.Models
         public virtual ICollection<RequiredSoftwareBySoftwareVariant>        RequiredSoftware         { get; set; }
         public virtual ICollection<SoundBySoftwareVariant>                   SupportedSound           { get; set; }
         public virtual ICollection<StandaloneFile>                           Files                    { get; set; }
+        public         ulong?                                                ParentId                 { get; set; }
+        public         ulong                                                 SoftwareVersionId        { get; set; }
     }
 }

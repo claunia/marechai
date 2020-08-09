@@ -47,4 +47,7 @@
   <data name="Software versions" xml:space="preserve">
     <value>Software versions</value>
   </data>
+  <data name="Software variants" xml:space="preserve">
+    <value>Software variants</value>
+  </data>
 </root>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Catalogue number must be smaller than 256 characters." xml:space="preserve">
+    <value>El número de catálogo debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Product code must be smaller than 256 characters." xml:space="preserve">
+    <value>El código de producto debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Serial number must be smaller than 256 characters." xml:space="preserve">
+    <value>El número de serie debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Part number must be smaller than 256 characters." xml:space="preserve">
+    <value>El número de pieza debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Version must be smaller than 256 characters." xml:space="preserve">
+    <value>La versión debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Name must be smaller than 256 characters." xml:space="preserve">
+    <value>El nombre debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Back to list" xml:space="preserve">
+    <value>Volver a la lista</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Distribution mode" xml:space="preserve">
+    <value>Modo de distribución</value>
+  </data>
+  <data name="Please enter a valid catalogue number." xml:space="preserve">
+    <value>Por favor introduce un número de catálogo válido.</value>
+  </data>
+  <data name="Unknown (catalogue number)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Catalogue number" xml:space="preserve">
+    <value>Número de catálogo</value>
+  </data>
+  <data name="Please enter a valid product code." xml:space="preserve">
+    <value>Por favor introduce un código de producto válido.</value>
+  </data>
+  <data name="Unknown (product code)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Product code" xml:space="preserve">
+    <value>Código de producto</value>
+  </data>
+  <data name="Please enter a valid serial number." xml:space="preserve">
+    <value>Por favor introduce un número de serie válido.</value>
+  </data>
+  <data name="Serial number is NOT the serial number used to install the software, but a serial number some software manufacturers use as SKU." xml:space="preserve">
+    <value>El número de serie NO ES el número de serie utilizado para instalar el software, sino un número de serie algunos fabricantes usan como inventario.</value>
+  </data>
+  <data name="Unknown (serial number)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Serial number" xml:space="preserve">
+    <value>Número de serie</value>
+  </data>
+  <data name="Please enter a valid part number." xml:space="preserve">
+    <value>Por favor introduce un número de pieza válido.</value>
+  </data>
+  <data name="Unknown (part number)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Part number" xml:space="preserve">
+    <value>Número de pieza</value>
+  </data>
+  <data name="Please enter the required storage size in bytes." xml:space="preserve">
+    <value>Por favor introduce el tamaño de almacenamiento requerido en bytes.</value>
+  </data>
+  <data name="Unknown (required storage)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Required storage (bytes)" xml:space="preserve">
+    <value>Tamaño de almacenamiento requerido (bytes)</value>
+  </data>
+  <data name="Please enter the recommended memory size in bytes." xml:space="preserve">
+    <value>Por favor introduce la memoria recomendada en bytes.</value>
+  </data>
+  <data name="Unknown (recommended memory)" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+  <data name="Recommended memory (bytes)" xml:space="preserve">
+    <value>Memoria recomendada (bytes)</value>
+  </data>
+  <data name="Please enter the minimum memory size in bytes." xml:space="preserve">
+    <value>Por favor introduce la memoria mínima en bytes.</value>
+  </data>
+  <data name="Unknown (minimum memory)" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+  <data name="Minimum memory (bytes)" xml:space="preserve">
+    <value>Memoria mínima (bytes)</value>
+  </data>
+  <data name="Unknown or none (parent variant)" xml:space="preserve">
+    <value>Desconocida o ninguna</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Predecesora</value>
+  </data>
+  <data name="Please enter a valid introduction date." xml:space="preserve">
+    <value>Por favor introduce una fecha de introducción válida.</value>
+  </data>
+  <data name="Unknown (introduction date)" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+  <data name="Introduced" xml:space="preserve">
+    <value>Introducida</value>
+  </data>
+  <data name="Please enter a valid version." xml:space="preserve">
+    <value>Por favor introduce una versión válida.</value>
+  </data>
+  <data name="Unknown (version)" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+  <data name="Version, if different from software version's" xml:space="preserve">
+    <value>Versión, si es diferente de la versión de software</value>
+  </data>
+  <data name="Please enter a valid name." xml:space="preserve">
+    <value>Por favor introduce un nombre válido.</value>
+  </data>
+  <data name="Unknown (name)" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Name, if different from software version name" xml:space="preserve">
+    <value>Nombre, si es diferente del nombre de la versión de software</value>
+  </data>
+  <data name="Software version" xml:space="preserve">
+    <value>Versión de software</value>
+  </data>
+  <data name="Software variant details" xml:space="preserve">
+    <value>Detalles de variante de software</value>
+  </data>
+  <data name="Are you sure you want to delete the software variant {0}?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la variante de software {0}?</value>
+  </data>
+  <data name="Delete software variant" xml:space="preserve">
+    <value>Eliminar variante de software</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Familia</value>
+  </data>
+  <data name="Create new" xml:space="preserve">
+    <value>Crear nueva</value>
+  </data>
+  <data name="Loading..." xml:space="preserve">
+    <value>Cargando...</value>
+  </data>
+  <data name="Software variants" xml:space="preserve">
+    <value>Variantes de software</value>
+  </data>
+</root>
