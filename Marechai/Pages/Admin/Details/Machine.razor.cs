@@ -489,7 +489,7 @@ namespace Marechai.Pages.Admin.Details
                 return;
             }
 
-            _savingGpu = true;
+            _savingCpu = true;
 
             // Yield thread to let UI to update
             await Task.Yield();
