@@ -33,6 +33,9 @@
 @inherits OwningComponentBase<DocumentsService>
 @inject IStringLocalizer<DocumentsService> L
 @inject Iso31661NumericService CountriesService
+@inject DocumentCompaniesService CompaniesService
+@inject DocumentRolesService DocumentRolesService
+@inject CompaniesByDocumentService CompaniesByDocumentService
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
@@ -136,3 +139,85 @@
     }
     <a href="/admin/documents" class="btn btn-secondary">@L["Back to list"]</a>
 </div>
+@if (!_editing)
+{
+    <hr />
+    <h3>@L["Companies involved in this document"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddCompanyClick" Disabled="_addingCompany">@L["Add new (company)"]</Button>
+    @if (_addingCompany)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Company"]</FieldLabel>
+                <Select Disabled="_savingCompany" TValue="int?" @bind-SelectedValue="@_addingCompanyId">
+                    @foreach (var company in _companies)
+                    {
+                        <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>@L["Role"]</FieldLabel>
+                <Select Disabled="!_editing" TValue="string" @bind-SelectedValue="@_addingCompanyRoleId">
+                    @foreach (var role in _roles)
+                    {
+                        <SelectItem TValue="string" Value="@role.Id">@role.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddCpu" Disabled="@_savingCompany">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddCpu" Disabled="@_savingCompany">@L["Add"]</Button>
+        </div>
+    }
+    @if (_documentCompanies?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Company"]
+                    </th>
+                    <th>
+                        @L["Role"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _documentCompanies)
+                {
+                    <tr>
+                        <td>
+                            @item.Company
+                        </td>
+                        <td>
+                            @item.Role
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowCpuDeleteModal(item.Id);}" Disabled="@_addingCompany">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+        <ModalBackdrop />
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>@_deleteTitle</ModalTitle>
+                <CloseButton Clicked="@HideModal" />
+            </ModalHeader>
+            <ModalBody>
+                <Text>@_deleteText</Text>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}

@@ -92,4 +92,25 @@
   <data name="Unknown (country of publication)" xml:space="preserve">
     <value>Unknown</value>
   </data>
+  <data name="Companies involved in this document" xml:space="preserve">
+    <value>Companies involved in this document</value>
+  </data>
+  <data name="Add new (company)" xml:space="preserve">
+    <value>Add new</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Delete company from this document" xml:space="preserve">
+    <value>Delete company from this document</value>
+  </data>
+  <data name="Are you sure you want to delete the company {0} with role {1} from this document?" xml:space="preserve">
+    <value>Are you sure you want to delete the company {0} with role {1} from this document?</value>
+  </data>
 </root>
