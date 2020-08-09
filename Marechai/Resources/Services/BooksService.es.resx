@@ -147,7 +147,7 @@
     <comment>Delete book</comment>
   </data>
   <data name="Are you sure you want to delete the book {0}?" xml:space="preserve">
-    <value>¿Está seguro de que desea borrar el libro {0}?</value>
+    <value>¿Estás seguro de borrar el libro {0}?</value>
     <comment>{0} book name</comment>
   </data>
   <data name="Cancel" xml:space="preserve">
@@ -231,5 +231,26 @@
   </data>
   <data name="Native title must be smaller than 256 characters." xml:space="preserve">
     <value>El título nativo debe contener menos de 256 caracteres.</value>
+  </data>
+  <data name="Companies involved in this book" xml:space="preserve">
+    <value>Compañías involucradas en este libro</value>
+  </data>
+  <data name="Add new (company)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Compañía</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rol</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Añadir</value>
+  </data>
+  <data name="Delete company from this book" xml:space="preserve">
+    <value>Eliminar compañía de este libro</value>
+  </data>
+  <data name="Are you sure you want to delete the company {0} with role {1} from this book?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la compañía {0} con el rol {1} de este libro?</value>
   </data>
 </root>

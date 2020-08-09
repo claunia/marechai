@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Marechai.Database.Models;
@@ -37,18 +38,31 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Book
     {
-        AuthenticationState   _authState;
-        List<Iso31661Numeric> _countries;
-        bool                  _creating;
-        bool                  _editing;
-        bool                  _loaded;
-        BookViewModel         _model;
-        bool                  _unknownCountry;
-        bool                  _unknownEdition;
-        bool                  _unknownIsbn;
-        bool                  _unknownNativeTitle;
-        bool                  _unknownPages;
-        bool                  _unknownPublished;
+        bool                           _addingCompany;
+        int?                           _addingCompanyId;
+        string                         _addingCompanyRoleId;
+        AuthenticationState            _authState;
+        List<CompanyByBookViewModel>   _bookCompanies;
+        List<DocumentCompanyViewModel> _companies;
+        List<Iso31661Numeric>          _countries;
+        bool                           _creating;
+        CompanyByBookViewModel         _currentCompanyByBook;
+        bool                           _deleteInProgress;
+        string                         _deleteText;
+        string                         _deleteTitle;
+        bool                           _deletingCompanyByBook;
+        bool                           _editing;
+        Modal                          _frmDelete;
+        bool                           _loaded;
+        BookViewModel                  _model;
+        List<DocumentRoleViewModel>    _roles;
+        bool                           _savingCompany;
+        bool                           _unknownCountry;
+        bool                           _unknownEdition;
+        bool                           _unknownIsbn;
+        bool                           _unknownNativeTitle;
+        bool                           _unknownPages;
+        bool                           _unknownPublished;
 
         [Parameter]
         public long Id { get; set; }
@@ -67,9 +81,12 @@ namespace Marechai.Pages.Admin.Details
                !_creating)
                 return;
 
-            _countries = await CountriesService.GetAsync();
-            _model     = _creating ? new BookViewModel() : await Service.GetAsync(Id);
-            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _countries           = await CountriesService.GetAsync();
+            _companies           = await CompaniesService.GetAsync();
+            _roles               = await DocumentRolesService.GetEnabledAsync();
+            _model               = _creating ? new BookViewModel() : await Service.GetAsync(Id);
+            _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            _addingCompanyRoleId = _roles.First().Id;
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/books/edit/",
@@ -198,5 +215,103 @@ namespace Marechai.Pages.Admin.Details
         void ValidateEdition(ValidatorEventArgs e) => Validators.ValidateInteger(e, 1);
 
         void ValidateIsbn(ValidatorEventArgs e) => Validators.ValidateIsbn(e);
+
+        void OnAddCompanyClick()
+        {
+            _addingCompany   = true;
+            _savingCompany   = false;
+            _addingCompanyId = _companies.First().Id;
+        }
+
+        void CancelAddCpu()
+        {
+            _addingCompany   = false;
+            _savingCompany   = false;
+            _addingCompanyId = null;
+        }
+
+        async Task ConfirmAddCpu()
+        {
+            if(_addingCompanyId is null ||
+               _addingCompanyId <= 0)
+            {
+                CancelAddCpu();
+
+                return;
+            }
+
+            _savingCompany = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompaniesByBookService.CreateAsync(_addingCompanyId.Value, Id, _addingCompanyRoleId,
+                                                     (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _bookCompanies = await CompaniesByBookService.GetByBook(Id);
+
+            _addingCompany   = false;
+            _savingCompany   = false;
+            _addingCompanyId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowCpuDeleteModal(long itemId)
+        {
+            _currentCompanyByBook  = _bookCompanies.FirstOrDefault(n => n.Id == itemId);
+            _deletingCompanyByBook = true;
+            _deleteTitle           = L["Delete company from this book"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the company {0} with role {1} from this book?"],
+                              _currentCompanyByBook?.Company, _currentCompanyByBook?.Role);
+
+            _frmDelete.Show();
+        }
+
+        void ModalClosing(ModalClosingEventArgs obj)
+        {
+            _deleteInProgress      = false;
+            _deletingCompanyByBook = false;
+            _currentCompanyByBook  = null;
+        }
+
+        void HideModal() => _frmDelete.Hide();
+
+        async void ConfirmDelete()
+        {
+            if(_deletingCompanyByBook)
+                await ConfirmDeleteCpuByMachine();
+        }
+
+        async Task ConfirmDeleteCpuByMachine()
+        {
+            if(_currentCompanyByBook is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await CompaniesByBookService.DeleteAsync(_currentCompanyByBook.Id,
+                                                     (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _bookCompanies = await CompaniesByBookService.GetByBook(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
     }
 }
