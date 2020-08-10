@@ -38,39 +38,48 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Book
     {
-        bool                               _addingCompany;
-        int?                               _addingCompanyId;
-        string                             _addingCompanyRoleId;
-        bool                               _addingMachine;
-        bool                               _addingMachineFamily;
-        int?                               _addingMachineFamilyId;
-        int?                               _addingMachineId;
+        bool   _addingCompany;
+        int?   _addingCompanyId;
+        string _addingCompanyRoleId;
+        bool   _addingMachine;
+        bool   _addingMachineFamily;
+        int?   _addingMachineFamilyId;
+        int?   _addingMachineId;
+
+        bool                               _addingPerson;
+        int?                               _addingPersonId;
+        string                             _addingPersonRoleId;
         AuthenticationState                _authState;
         List<CompanyByBookViewModel>       _bookCompanies;
         List<BookByMachineFamilyViewModel> _bookMachineFamilies;
         List<BookByMachineViewModel>       _bookMachines;
+        List<PersonByBookViewModel>        _bookPeople;
         List<DocumentCompanyViewModel>     _companies;
         List<Iso31661Numeric>              _countries;
         bool                               _creating;
         BookByMachineViewModel             _currentBookByMachine;
         BookByMachineFamilyViewModel       _currentBookByMachineFamily;
         CompanyByBookViewModel             _currentCompanyByBook;
+        PersonByBookViewModel              _currentPersonByBook;
         bool                               _deleteInProgress;
         string                             _deleteText;
         string                             _deleteTitle;
         bool                               _deletingBookByMachine;
         bool                               _deletingBookByMachineFamily;
         bool                               _deletingCompanyByBook;
+        bool                               _deletingPersonByBook;
         bool                               _editing;
         Modal                              _frmDelete;
         bool                               _loaded;
         List<MachineFamilyViewModel>       _machineFamilies;
         List<MachineViewModel>             _machines;
         BookViewModel                      _model;
+        List<DocumentPersonViewModel>      _people;
         List<DocumentRoleViewModel>        _roles;
         bool                               _savingCompany;
         bool                               _savingMachine;
         bool                               _savingMachineFamily;
+        bool                               _savingPerson;
         bool                               _unknownCountry;
         bool                               _unknownEdition;
         bool                               _unknownIsbn;
@@ -108,6 +117,8 @@ namespace Marechai.Pages.Admin.Details
             _bookMachineFamilies   = await BooksByMachineFamilyService.GetByBook(Id);
             _addingMachineId       = _machines.First().Id;
             _bookMachines          = await BooksByMachineService.GetByBook(Id);
+            _addingPersonRoleId    = _roles.First().Id;
+            _bookPeople            = await PeopleByBookService.GetByBook(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/books/edit/",
@@ -304,6 +315,8 @@ namespace Marechai.Pages.Admin.Details
             _currentBookByMachineFamily  = null;
             _deletingBookByMachine       = false;
             _currentBookByMachine        = null;
+            _deletingPersonByBook        = false;
+            _currentPersonByBook         = null;
         }
 
         void HideModal() => _frmDelete.Hide();
@@ -316,6 +329,8 @@ namespace Marechai.Pages.Admin.Details
                 await ConfirmDeleteBookByMachineFamily();
             else if(_deletingBookByMachine)
                 await ConfirmDeleteBookByMachine();
+            else if(_deletingPersonByBook)
+                await ConfirmDeletePersonByBook();
         }
 
         async Task ConfirmDeleteCompanyByBook()
@@ -496,6 +511,89 @@ namespace Marechai.Pages.Admin.Details
                                                     (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _bookMachines = await BooksByMachineService.GetByBook(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void OnAddPersonClick()
+        {
+            _addingPerson   = true;
+            _savingPerson   = false;
+            _addingPersonId = _people.First().Id;
+        }
+
+        void CancelAddPerson()
+        {
+            _addingPerson   = false;
+            _savingPerson   = false;
+            _addingPersonId = null;
+        }
+
+        async Task ConfirmAddPerson()
+        {
+            if(_addingPersonId is null ||
+               _addingPersonId <= 0)
+            {
+                CancelAddPerson();
+
+                return;
+            }
+
+            _savingPerson = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await PeopleByBookService.CreateAsync(_addingPersonId.Value, Id, _addingPersonRoleId,
+                                                  (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _bookPeople = await PeopleByBookService.GetByBook(Id);
+
+            _addingPerson   = false;
+            _savingPerson   = false;
+            _addingPersonId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowPersonDeleteModal(long itemId)
+        {
+            _currentPersonByBook  = _bookPeople.FirstOrDefault(n => n.Id == itemId);
+            _deletingPersonByBook = true;
+            _deleteTitle          = L["Delete person from this book"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the person {0} with role {1} from this book?"],
+                              _currentPersonByBook?.FullName, _currentPersonByBook?.Role);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeletePersonByBook()
+        {
+            if(_currentPersonByBook is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await PeopleByBookService.DeleteAsync(_currentPersonByBook.Id,
+                                                  (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _bookPeople = await PeopleByBookService.GetByBook(Id);
 
             _deleteInProgress = false;
             _frmDelete.Hide();

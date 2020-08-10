@@ -40,6 +40,8 @@
 @inject BooksByMachineFamilyService BooksByMachineFamilyService
 @inject MachinesService MachinesService
 @inject BooksByMachineService BooksByMachineService
+@inject DocumentPeopleService PeopleService
+@inject PeopleByBookService PeopleByBookService
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
@@ -283,6 +285,69 @@
     }
 
     <hr />
+    <h3>@L["People involved in this book"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddPersonClick" Disabled="_addingPerson">@L["Add new (person)"]</Button>
+    @if (_addingPerson)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Person"]</FieldLabel>
+                <Select Disabled="_savingPerson" TValue="int?" @bind-SelectedValue="@_addingPersonId">
+                    @foreach (var person in _people)
+                    {
+                        <SelectItem TValue="int?" Value="@person.Id">@person.FullName</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>@L["Role"]</FieldLabel>
+                <Select Disabled="!_editing" TValue="string" @bind-SelectedValue="@_addingPersonRoleId">
+                    @foreach (var role in _roles)
+                    {
+                        <SelectItem TValue="string" Value="@role.Id">@role.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddPerson" Disabled="@_savingPerson">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddPerson" Disabled="@_savingPerson">@L["Add"]</Button>
+        </div>
+    }
+    @if (_bookPeople?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Person"]
+                    </th>
+                    <th>
+                        @L["Role"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _bookPeople)
+                {
+                    <tr>
+                        <td>
+                            @item.FullName
+                        </td>
+                        <td>
+                            @item.Role
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowPersonDeleteModal(item.Id);}" Disabled="@_addingPerson">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <hr />
     <h3>@L["Machine families this book talks about"]</h3>
     <Button Color="Color.Success" Clicked="OnAddFamilyClick" Disabled="_addingMachineFamily">@L["Add new (machine family)"]</Button>
     @if (_addingMachineFamily)
@@ -377,7 +442,7 @@
             </table>
         </div>
     }
-    
+
     <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
         <ModalBackdrop />
         <ModalContent Centered="true">

@@ -167,4 +167,19 @@
   <data name="Machines this book talks about" xml:space="preserve">
     <value>Machines this book talks about</value>
   </data>
+  <data name="People involved in this book" xml:space="preserve">
+    <value>People involved in this book</value>
+  </data>
+  <data name="Add new (person)" xml:space="preserve">
+    <value>Add new</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="Delete person from this book" xml:space="preserve">
+    <value>Delete person from this book</value>
+  </data>
+  <data name="Are you sure you want to delete the person {0} with role {1} from this book?" xml:space="preserve">
+    <value>Are you sure you want to delete the person {0} with role {1} from this book?</value>
+  </data>
 </root>

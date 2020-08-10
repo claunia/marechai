@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -25,11 +25,13 @@
 
 namespace Marechai.ViewModels
 {
-    public class DocumentPersonViewModel : BaseViewModel<int>
+    public class PersonByBookViewModel : BaseViewModel<long>
     {
+        public int    PersonId    { get; set; }
+        public long   BookId      { get; set; }
+        public string RoleId      { get; set; }
+        public string Role        { get; set; }
         public string Name        { get; set; }
-        public string Person      { get; set; }
-        public int?   PersonId    { get; set; }
         public string Alias       { get; set; }
         public string Surname     { get; set; }
         public string DisplayName { get; set; }
