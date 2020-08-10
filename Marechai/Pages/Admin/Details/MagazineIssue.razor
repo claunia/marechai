@@ -35,6 +35,8 @@
 @inject MagazinesService MagazinesService
 @inject MachineFamiliesService MachineFamiliesService
 @inject MagazinesByMachineFamilyService MagazinesByMachineFamilyService
+@inject MachinesService MachinesService
+@inject MagazinesByMachineService MagazinesByMachineService
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
@@ -233,6 +235,54 @@
                         </td>
                         <td>
                             <Button Color="Color.Danger" Clicked="() => {ShowMachineFamilyDeleteModal(item.Id);}" Disabled="@_addingMachineFamily">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <hr />
+    <h3>@L["Machines this magazine talks about"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddMachineClick" Disabled="_addingMachine">@L["Add new (machine)"]</Button>
+    @if (_addingMachine)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L[""]</FieldLabel>
+                <Select Disabled="_savingMachine" TValue="int?" @bind-SelectedValue="@_addingMachineId">
+                    @foreach (var machine in _machines)
+                    {
+                        <SelectItem TValue="int?" Value="@machine.Id">@machine.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddMachine" Disabled="@_savingMachine">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddMachine" Disabled="@_savingMachine">@L["Add"]</Button>
+        </div>
+    }
+    @if (_magazineMachines?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Machine"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _magazineMachines)
+                {
+                    <tr>
+                        <td>
+                            @item.Machine
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowMachineDeleteModal(item.Id);}" Disabled="@_addingMachine">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }

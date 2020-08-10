@@ -37,22 +37,29 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class MagazineIssue
     {
+        bool                                   _addingMachine;
         bool                                   _addingMachineFamily;
         int?                                   _addingMachineFamilyId;
+        int?                                   _addingMachineId;
         AuthenticationState                    _authState;
         bool                                   _creating;
+        MagazineByMachineViewModel             _currentMagazineByMachine;
         MagazineByMachineFamilyViewModel       _currentMagazineByMachineFamily;
         bool                                   _deleteInProgress;
         string                                 _deleteText;
         string                                 _deleteTitle;
+        bool                                   _deletingMagazineByMachine;
         bool                                   _deletingMagazineByMachineFamily;
         bool                                   _editing;
         Modal                                  _frmDelete;
         bool                                   _loaded;
         List<MachineFamilyViewModel>           _machineFamilies;
+        List<MachineViewModel>                 _machines;
         List<MagazineByMachineFamilyViewModel> _magazineMachineFamilies;
+        List<MagazineByMachineViewModel>       _magazineMachines;
         List<MagazineViewModel>                _magazines;
         MagazineIssueViewModel                 _model;
+        bool                                   _savingMachine;
         bool                                   _savingMachineFamily;
         bool                                   _unknownIssueNumber;
         bool                                   _unknownNativeCaption;
@@ -79,10 +86,13 @@ namespace Marechai.Pages.Admin.Details
 
             _magazines               = await MagazinesService.GetTitlesAsync();
             _machineFamilies         = await MachineFamiliesService.GetAsync();
+            _machines                = await MachinesService.GetAsync();
             _model                   = _creating ? new MagazineIssueViewModel() : await Service.GetAsync(Id);
             _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             _addingMachineFamilyId   = _machineFamilies.First().Id;
             _magazineMachineFamilies = await MagazinesByMachineFamilyService.GetByMagazine(Id);
+            _addingMachineId         = _machines.First().Id;
+            _magazineMachines        = await MagazinesByMachineService.GetByMagazine(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/magazine_issues/edit/",
@@ -189,6 +199,8 @@ namespace Marechai.Pages.Admin.Details
             _deleteInProgress                = false;
             _deletingMagazineByMachineFamily = false;
             _currentMagazineByMachineFamily  = null;
+            _deletingMagazineByMachine       = false;
+            _currentMagazineByMachine        = null;
         }
 
         void HideModal() => _frmDelete.Hide();
@@ -197,6 +209,8 @@ namespace Marechai.Pages.Admin.Details
         {
             if(_deletingMagazineByMachineFamily)
                 await ConfirmDeleteMagazineByMachineFamily();
+            else if(_deletingMagazineByMachine)
+                await ConfirmDeleteMagazineByMachine();
         }
 
         void OnAddFamilyClick()
@@ -271,6 +285,88 @@ namespace Marechai.Pages.Admin.Details
                                                               (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _magazineMachineFamilies = await MagazinesByMachineFamilyService.GetByMagazine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void OnAddMachineClick()
+        {
+            _addingMachine   = true;
+            _savingMachine   = false;
+            _addingMachineId = _machines.First().Id;
+        }
+
+        void CancelAddMachine()
+        {
+            _addingMachine   = false;
+            _savingMachine   = false;
+            _addingMachineId = null;
+        }
+
+        async Task ConfirmAddMachine()
+        {
+            if(_addingMachineId is null ||
+               _addingMachineId <= 0)
+            {
+                CancelAddMachine();
+
+                return;
+            }
+
+            _savingMachine = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await MagazinesByMachineService.CreateAsync(_addingMachineId.Value, Id,
+                                                        (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _magazineMachines = await MagazinesByMachineService.GetByMagazine(Id);
+
+            _addingMachine   = false;
+            _savingMachine   = false;
+            _addingMachineId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowMachineDeleteModal(long itemId)
+        {
+            _currentMagazineByMachine  = _magazineMachines.FirstOrDefault(n => n.Id == itemId);
+            _deletingMagazineByMachine = true;
+            _deleteTitle               = L["Delete machine from this magazine"];
+
+            _deleteText = string.Format(L["Are you sure you want to delete the machine {0} from this magazine issue?"],
+                                        _currentMagazineByMachine?.Machine);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeleteMagazineByMachine()
+        {
+            if(_currentMagazineByMachine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await MagazinesByMachineService.DeleteAsync(_currentMagazineByMachine.Id,
+                                                        (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _magazineMachines = await MagazinesByMachineService.GetByMagazine(Id);
 
             _deleteInProgress = false;
             _frmDelete.Hide();
