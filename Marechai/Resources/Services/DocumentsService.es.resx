@@ -238,4 +238,25 @@
   <data name="Machine families this document talks about" xml:space="preserve">
     <value>Familias de máquinas sobre las que habla este documento</value>
   </data>
+  <data name="Add new (machine)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Are you sure you want to delete the machine family {0} from this document?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la familia de máquinas {0} de este documento?</value>
+  </data>
+  <data name="Are you sure you want to delete the machine {0} from this document?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la máquina {0} de este documento?</value>
+  </data>
+  <data name="Delete machine family from this document" xml:space="preserve">
+    <value>Eliminar familia de máquinas de este documento</value>
+  </data>
+  <data name="Delete machine from this document" xml:space="preserve">
+    <value>Eliminar máquina de este documento</value>
+  </data>
+  <data name="Machine" xml:space="preserve">
+    <value>Máquina</value>
+  </data>
+  <data name="Machines this document talks about" xml:space="preserve">
+    <value>Máquinas sobre las que habla este documento</value>
+  </data>
 </root>
