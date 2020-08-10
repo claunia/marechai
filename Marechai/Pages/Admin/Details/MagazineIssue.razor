@@ -37,6 +37,9 @@
 @inject MagazinesByMachineFamilyService MagazinesByMachineFamilyService
 @inject MachinesService MachinesService
 @inject MagazinesByMachineService MagazinesByMachineService
+@inject DocumentPeopleService PeopleService
+@inject PeopleByMagazineService PeopleByMagazineService
+@inject DocumentRolesService DocumentRolesService
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
@@ -195,6 +198,69 @@
 </div>
 @if (!_editing)
 {
+<hr />
+    <h3>@L["People involved in this magazine"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddPersonClick" Disabled="_addingPerson">@L["Add new (person)"]</Button>
+    @if (_addingPerson)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L["Person"]</FieldLabel>
+                <Select Disabled="_savingPerson" TValue="int?" @bind-SelectedValue="@_addingPersonId">
+                    @foreach (var person in _people)
+                    {
+                        <SelectItem TValue="int?" Value="@person.Id">@person.FullName</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>@L["Role"]</FieldLabel>
+                <Select Disabled="!_editing" TValue="string" @bind-SelectedValue="@_addingPersonRoleId">
+                    @foreach (var role in _roles)
+                    {
+                        <SelectItem TValue="string" Value="@role.Id">@role.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddPerson" Disabled="@_savingPerson">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddPerson" Disabled="@_savingPerson">@L["Add"]</Button>
+        </div>
+    }
+    @if (_magazinePeople?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Person"]
+                    </th>
+                    <th>
+                        @L["Role"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _magazinePeople)
+                {
+                    <tr>
+                        <td>
+                            @item.FullName
+                        </td>
+                        <td>
+                            @item.Role
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowPersonDeleteModal(item.Id);}" Disabled="@_addingPerson">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
     <hr />
     <h3>@L["Machine families this magazine issue talks about"]</h3>
     <Button Color="Color.Success" Clicked="OnAddFamilyClick" Disabled="_addingMachineFamily">@L["Add new (machine family)"]</Button>

@@ -256,4 +256,22 @@
   <data name="Are you sure you want to delete the machine family {0} from this magazine issue?" xml:space="preserve">
     <value>¿Estás seguro de eliminar la familia de máquinas {0} de esta revista?</value>
   </data>
+  <data name="Add new (person)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Are you sure you want to delete the person {0} with role {1} from this magazine?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la persona {0} con rol {1} de esta revista?</value>
+  </data>
+  <data name="Delete person from this magazine" xml:space="preserve">
+    <value>Eliminar persona de esta revista</value>
+  </data>
+  <data name="People involved in this magazine" xml:space="preserve">
+    <value>Personas involucradas en esta revista</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Persona</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rol</value>
+  </data>
 </root>

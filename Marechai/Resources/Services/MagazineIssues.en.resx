@@ -149,4 +149,22 @@
   <data name="Are you sure you want to delete the machine family {0} from this magazine issue?" xml:space="preserve">
     <value>Are you sure you want to delete the machine family {0} from this magazine issue?</value>
   </data>
+  <data name="People involved in this magazine" xml:space="preserve">
+    <value>People involved in this magazine</value>
+  </data>
+  <data name="Add new (person)" xml:space="preserve">
+    <value>Add new</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Delete person from this magazine" xml:space="preserve">
+    <value>Delete person from this magazine</value>
+  </data>
+  <data name="Are you sure you want to delete the person {0} with role {1} from this magazine?" xml:space="preserve">
+    <value>Are you sure you want to delete the person {0} with role {1} from this magazine?</value>
+  </data>
 </root>

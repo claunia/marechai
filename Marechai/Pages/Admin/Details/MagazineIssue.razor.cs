@@ -37,19 +37,25 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class MagazineIssue
     {
-        bool                                   _addingMachine;
-        bool                                   _addingMachineFamily;
-        int?                                   _addingMachineFamilyId;
-        int?                                   _addingMachineId;
+        bool _addingMachine;
+        bool _addingMachineFamily;
+        int? _addingMachineFamilyId;
+        int? _addingMachineId;
+
+        bool                                   _addingPerson;
+        int?                                   _addingPersonId;
+        string                                 _addingPersonRoleId;
         AuthenticationState                    _authState;
         bool                                   _creating;
         MagazineByMachineViewModel             _currentMagazineByMachine;
         MagazineByMachineFamilyViewModel       _currentMagazineByMachineFamily;
+        PersonByMagazineViewModel              _currentPersonByMagazine;
         bool                                   _deleteInProgress;
         string                                 _deleteText;
         string                                 _deleteTitle;
         bool                                   _deletingMagazineByMachine;
         bool                                   _deletingMagazineByMachineFamily;
+        bool                                   _deletingPersonByMagazine;
         bool                                   _editing;
         Modal                                  _frmDelete;
         bool                                   _loaded;
@@ -57,10 +63,14 @@ namespace Marechai.Pages.Admin.Details
         List<MachineViewModel>                 _machines;
         List<MagazineByMachineFamilyViewModel> _magazineMachineFamilies;
         List<MagazineByMachineViewModel>       _magazineMachines;
+        List<PersonByMagazineViewModel>        _magazinePeople;
         List<MagazineViewModel>                _magazines;
         MagazineIssueViewModel                 _model;
+        List<DocumentPersonViewModel>          _people;
+        List<DocumentRoleViewModel>            _roles;
         bool                                   _savingMachine;
         bool                                   _savingMachineFamily;
+        bool                                   _savingPerson;
         bool                                   _unknownIssueNumber;
         bool                                   _unknownNativeCaption;
         bool                                   _unknownPages;
@@ -87,12 +97,15 @@ namespace Marechai.Pages.Admin.Details
             _magazines               = await MagazinesService.GetTitlesAsync();
             _machineFamilies         = await MachineFamiliesService.GetAsync();
             _machines                = await MachinesService.GetAsync();
+            _roles                   = await DocumentRolesService.GetEnabledAsync();
             _model                   = _creating ? new MagazineIssueViewModel() : await Service.GetAsync(Id);
             _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             _addingMachineFamilyId   = _machineFamilies.First().Id;
             _magazineMachineFamilies = await MagazinesByMachineFamilyService.GetByMagazine(Id);
             _addingMachineId         = _machines.First().Id;
             _magazineMachines        = await MagazinesByMachineService.GetByMagazine(Id);
+            _addingPersonRoleId      = _roles.First().Id;
+            _magazinePeople          = await PeopleByMagazineService.GetByMagazine(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/magazine_issues/edit/",
@@ -201,6 +214,8 @@ namespace Marechai.Pages.Admin.Details
             _currentMagazineByMachineFamily  = null;
             _deletingMagazineByMachine       = false;
             _currentMagazineByMachine        = null;
+            _deletingPersonByMagazine        = false;
+            _currentPersonByMagazine         = null;
         }
 
         void HideModal() => _frmDelete.Hide();
@@ -211,6 +226,8 @@ namespace Marechai.Pages.Admin.Details
                 await ConfirmDeleteMagazineByMachineFamily();
             else if(_deletingMagazineByMachine)
                 await ConfirmDeleteMagazineByMachine();
+            else if(_deletingPersonByMagazine)
+                await ConfirmDeletePersonByMagazine();
         }
 
         void OnAddFamilyClick()
@@ -367,6 +384,89 @@ namespace Marechai.Pages.Admin.Details
                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _magazineMachines = await MagazinesByMachineService.GetByMagazine(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void OnAddPersonClick()
+        {
+            _addingPerson   = true;
+            _savingPerson   = false;
+            _addingPersonId = _people.First().Id;
+        }
+
+        void CancelAddPerson()
+        {
+            _addingPerson   = false;
+            _savingPerson   = false;
+            _addingPersonId = null;
+        }
+
+        async Task ConfirmAddPerson()
+        {
+            if(_addingPersonId is null ||
+               _addingPersonId <= 0)
+            {
+                CancelAddPerson();
+
+                return;
+            }
+
+            _savingPerson = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await PeopleByMagazineService.CreateAsync(_addingPersonId.Value, Id, _addingPersonRoleId,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _magazinePeople = await PeopleByMagazineService.GetByMagazine(Id);
+
+            _addingPerson   = false;
+            _savingPerson   = false;
+            _addingPersonId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowPersonDeleteModal(long itemId)
+        {
+            _currentPersonByMagazine  = _magazinePeople.FirstOrDefault(n => n.Id == itemId);
+            _deletingPersonByMagazine = true;
+            _deleteTitle              = L["Delete person from this magazine"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the person {0} with role {1} from this magazine?"],
+                              _currentPersonByMagazine?.FullName, _currentPersonByMagazine?.Role);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeletePersonByMagazine()
+        {
+            if(_currentPersonByMagazine is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await PeopleByMagazineService.DeleteAsync(_currentPersonByMagazine.Id,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _magazinePeople = await PeopleByMagazineService.GetByMagazine(Id);
 
             _deleteInProgress = false;
             _frmDelete.Hide();
