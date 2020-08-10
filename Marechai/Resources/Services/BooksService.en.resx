@@ -146,4 +146,25 @@
   <data name="Family" xml:space="preserve">
     <value>Family</value>
   </data>
+  <data name="Delete machine family from this book" xml:space="preserve">
+    <value>Delete machine family from this book</value>
+  </data>
+  <data name="Are you sure you want to delete the machine family {0} from this book?" xml:space="preserve">
+    <value>Are you sure you want to delete the machine family {0} from this book?</value>
+  </data>
+  <data name="Delete machine from this book" xml:space="preserve">
+    <value>Delete machine from this book</value>
+  </data>
+  <data name="Are you sure you want to delete the machine {0} from this book?" xml:space="preserve">
+    <value>Are you sure you want to delete the machine {0} from this book?</value>
+  </data>
+  <data name="Machine" xml:space="preserve">
+    <value>Machine</value>
+  </data>
+  <data name="Add new (machine)" xml:space="preserve">
+    <value>Add new</value>
+  </data>
+  <data name="Machines this book talks about" xml:space="preserve">
+    <value>Machines this book talks about</value>
+  </data>
 </root>

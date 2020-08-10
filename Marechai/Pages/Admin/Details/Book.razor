@@ -38,6 +38,8 @@
 @inject CompaniesByBookService CompaniesByBookService
 @inject MachineFamiliesService MachineFamiliesService
 @inject BooksByMachineFamilyService BooksByMachineFamilyService
+@inject MachinesService MachinesService
+@inject BooksByMachineService BooksByMachineService
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
@@ -328,6 +330,54 @@
         </div>
     }
 
+    <hr />
+    <h3>@L["Machines this book talks about"]</h3>
+    <Button Color="Color.Success" Clicked="OnAddMachineClick" Disabled="_addingMachine">@L["Add new (machine)"]</Button>
+    @if (_addingMachine)
+    {
+        <div>
+            <Field>
+                <FieldLabel>@L[""]</FieldLabel>
+                <Select Disabled="_savingMachine" TValue="int?" @bind-SelectedValue="@_addingMachineId">
+                    @foreach (var machine in _machines)
+                    {
+                        <SelectItem TValue="int?" Value="@machine.Id">@machine.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Button Color="Color.Primary" Clicked="@CancelAddMachine" Disabled="@_savingMachine">@L["Cancel"]</Button>
+            <Button Color="Color.Success" Clicked="@ConfirmAddMachine" Disabled="@_savingMachine">@L["Add"]</Button>
+        </div>
+    }
+    @if (_bookMachines?.Count > 0)
+    {
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        @L["Machine"]
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in _bookMachines)
+                {
+                    <tr>
+                        <td>
+                            @item.Machine
+                        </td>
+                        <td>
+                            <Button Color="Color.Danger" Clicked="() => {ShowMachineDeleteModal(item.Id);}" Disabled="@_addingMachine">@L["Delete"]</Button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    
     <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
         <ModalBackdrop />
         <ModalContent Centered="true">

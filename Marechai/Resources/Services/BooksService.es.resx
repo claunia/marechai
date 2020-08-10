@@ -262,4 +262,25 @@
   <data name="Family" xml:space="preserve">
     <value>Familia</value>
   </data>
+  <data name="Delete machine family from this book" xml:space="preserve">
+    <value>Eliminar familia de máquinas de este libro</value>
+  </data>
+  <data name="Are you sure you want to delete the machine family {0} from this book?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la familia de máquinas {0} de este libro?</value>
+  </data>
+  <data name="Delete machine from this book" xml:space="preserve">
+    <value>Eliminar máquina de este libro</value>
+  </data>
+  <data name="Are you sure you want to delete the machine {0} from this book?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la máquina {0} de este libro?</value>
+  </data>
+  <data name="Machine" xml:space="preserve">
+    <value>Máquina</value>
+  </data>
+  <data name="Add new (machine)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Machines this book talks about" xml:space="preserve">
+    <value>Máquinas sobre las que habla este libro</value>
+  </data>
 </root>
