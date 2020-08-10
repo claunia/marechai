@@ -259,4 +259,19 @@
   <data name="Machines this document talks about" xml:space="preserve">
     <value>Máquinas sobre las que habla este documento</value>
   </data>
+  <data name="Add new (person)" xml:space="preserve">
+    <value>Añadir nueva</value>
+  </data>
+  <data name="Are you sure you want to delete the person {0} with role {1} from this document?" xml:space="preserve">
+    <value>¿Estás seguro de eliminar la persona {0} con el rol {1} de este documento?</value>
+  </data>
+  <data name="Delete person from this document" xml:space="preserve">
+    <value>Eliminar persona de este documento</value>
+  </data>
+  <data name="People involved in this document" xml:space="preserve">
+    <value>Personas involucradas en este documento</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Persona</value>
+  </data>
 </root>

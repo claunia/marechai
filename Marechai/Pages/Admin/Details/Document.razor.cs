@@ -38,13 +38,17 @@ namespace Marechai.Pages.Admin.Details
 {
     public partial class Document
     {
-        bool                                   _addingCompany;
-        int?                                   _addingCompanyId;
-        string                                 _addingCompanyRoleId;
-        bool                                   _addingMachine;
-        bool                                   _addingMachineFamily;
-        int?                                   _addingMachineFamilyId;
-        int?                                   _addingMachineId;
+        bool   _addingCompany;
+        int?   _addingCompanyId;
+        string _addingCompanyRoleId;
+        bool   _addingMachine;
+        bool   _addingMachineFamily;
+        int?   _addingMachineFamilyId;
+        int?   _addingMachineId;
+
+        bool                                   _addingPerson;
+        int?                                   _addingPersonId;
+        string                                 _addingPersonRoleId;
         AuthenticationState                    _authState;
         List<DocumentCompanyViewModel>         _companies;
         List<Iso31661Numeric>                  _countries;
@@ -52,25 +56,30 @@ namespace Marechai.Pages.Admin.Details
         CompanyByDocumentViewModel             _currentCompanyByDocument;
         DocumentByMachineViewModel             _currentDocumentByMachine;
         DocumentByMachineFamilyViewModel       _currentDocumentByMachineFamily;
+        PersonByDocumentViewModel              _currentPersonByDocument;
         bool                                   _deleteInProgress;
         string                                 _deleteText;
         string                                 _deleteTitle;
         bool                                   _deletingCompanyByDocument;
         bool                                   _deletingDocumentByMachine;
         bool                                   _deletingDocumentByMachineFamily;
+        bool                                   _deletingPersonByDocument;
         List<CompanyByDocumentViewModel>       _documentCompanies;
         List<DocumentByMachineFamilyViewModel> _documentMachineFamilies;
         List<DocumentByMachineViewModel>       _documentMachines;
+        List<PersonByDocumentViewModel>        _documentPeople;
         bool                                   _editing;
         Modal                                  _frmDelete;
         bool                                   _loaded;
         List<MachineFamilyViewModel>           _machineFamilies;
         List<MachineViewModel>                 _machines;
         DocumentViewModel                      _model;
+        List<DocumentPersonViewModel>          _people;
         List<DocumentRoleViewModel>            _roles;
         bool                                   _savingCompany;
         bool                                   _savingMachine;
         bool                                   _savingMachineFamily;
+        bool                                   _savingPerson;
         bool                                   _unknownCountry;
         bool                                   _unknownNativeTitle;
         bool                                   _unknownPublished;
@@ -105,6 +114,8 @@ namespace Marechai.Pages.Admin.Details
             _documentMachineFamilies = await DocumentsByMachineFamilyService.GetByDocument(Id);
             _addingMachineId         = _machines.First().Id;
             _documentMachines        = await DocumentsByMachineService.GetByDocument(Id);
+            _addingPersonRoleId      = _roles.First().Id;
+            _documentPeople          = await PeopleByDocumentService.GetByDocument(Id);
 
             _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
                                                       StartsWith("admin/documents/edit/",
@@ -253,6 +264,8 @@ namespace Marechai.Pages.Admin.Details
             _currentDocumentByMachineFamily  = null;
             _deletingDocumentByMachine       = false;
             _currentDocumentByMachine        = null;
+            _deletingPersonByDocument        = false;
+            _currentPersonByDocument         = null;
         }
 
         void HideModal() => _frmDelete.Hide();
@@ -265,6 +278,8 @@ namespace Marechai.Pages.Admin.Details
                 await ConfirmDeleteDocumentByMachineFamily();
             else if(_deletingDocumentByMachine)
                 await ConfirmDeleteDocumentByMachine();
+            else if(_deletingPersonByDocument)
+                await ConfirmDeletePersonByDocument();
         }
 
         async Task ConfirmDeleteCompanyByMachine()
@@ -445,6 +460,89 @@ namespace Marechai.Pages.Admin.Details
                                                         (await UserManager.GetUserAsync(_authState.User)).Id);
 
             _documentMachines = await DocumentsByMachineService.GetByDocument(Id);
+
+            _deleteInProgress = false;
+            _frmDelete.Hide();
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void OnAddPersonClick()
+        {
+            _addingPerson   = true;
+            _savingPerson   = false;
+            _addingPersonId = _people.First().Id;
+        }
+
+        void CancelAddPerson()
+        {
+            _addingPerson   = false;
+            _savingPerson   = false;
+            _addingPersonId = null;
+        }
+
+        async Task ConfirmAddPerson()
+        {
+            if(_addingPersonId is null ||
+               _addingPersonId <= 0)
+            {
+                CancelAddPerson();
+
+                return;
+            }
+
+            _savingPerson = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await PeopleByDocumentService.CreateAsync(_addingPersonId.Value, Id, _addingPersonRoleId,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _documentPeople = await PeopleByDocumentService.GetByDocument(Id);
+
+            _addingPerson   = false;
+            _savingPerson   = false;
+            _addingPersonId = null;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            // Tell we finished loading
+            StateHasChanged();
+        }
+
+        void ShowPersonDeleteModal(long itemId)
+        {
+            _currentPersonByDocument  = _documentPeople.FirstOrDefault(n => n.Id == itemId);
+            _deletingPersonByDocument = true;
+            _deleteTitle              = L["Delete person from this document"];
+
+            _deleteText =
+                string.Format(L["Are you sure you want to delete the person {0} with role {1} from this document?"],
+                              _currentPersonByDocument?.FullName, _currentPersonByDocument?.Role);
+
+            _frmDelete.Show();
+        }
+
+        async Task ConfirmDeletePersonByDocument()
+        {
+            if(_currentPersonByDocument is null)
+                return;
+
+            _deleteInProgress = true;
+
+            // Yield thread to let UI to update
+            await Task.Yield();
+
+            await PeopleByDocumentService.DeleteAsync(_currentPersonByDocument.Id,
+                                                      (await UserManager.GetUserAsync(_authState.User)).Id);
+
+            _documentPeople = await PeopleByDocumentService.GetByDocument(Id);
 
             _deleteInProgress = false;
             _frmDelete.Hide();
