@@ -533,4 +533,10 @@ namespace Marechai.Database
         MouldSid  = 3, MasteringCode = 4, Barcode      = 5,
         Toolstamp = 6
     }
+
+    public enum DocumentScanType : uint
+    {
+        Page            = 0, Cover = 1, BackCover     = 2,
+        TableOfContents = 3, Index = 4, CopyrightPage = 5
+    }
 }

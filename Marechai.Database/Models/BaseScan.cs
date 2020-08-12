@@ -24,30 +24,40 @@
 *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Marechai.Database.Models
 {
-    public class MagazineIssue : BaseModel<long>
+    public abstract class BaseScan : BaseModel<Guid>
     {
-        [Required]
-        public long MagazineId { get; set; }
-        [Required]
-        public string Caption { get;       set; }
-        public string NativeCaption { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
-        public DateTime? Published { get; set; }
-        [StringLength(18)]
-        public string ProductCode { get; set; }
-        public short? Pages       { get; set; }
-        public uint?  IssueNumber { get; set; }
+        public string Author { get; set; }
+        [DisplayName("Color space")]
+        public ColorSpace? ColorSpace { get; set; }
+        [DisplayName("User comments")]
+        public string Comments { get; set; }
+        [DisplayName("Date and time of digitizing")]
+        public DateTime? CreationDate { get; set; }
+        [DisplayName("Exif version")]
+        public string ExifVersion { get; set; }
+        [DisplayName("Horizontal resolution")]
+        public double? HorizontalResolution { get; set; }
+        [DisplayName("Resolution unit")]
+        public ResolutionUnit? ResolutionUnit { get; set; }
+        [DisplayName("Scanner manufacturer")]
+        public string ScannerManufacturer { get; set; }
+        [DisplayName("Scanner model")]
+        public string ScannerModel { get; set; }
+        [DisplayName("Software used")]
+        public string SoftwareUsed { get; set; }
+        [Timestamp]
+        public DateTime UploadDate { get; set; }
+        [DisplayName("Vertical resolution")]
+        public double? VerticalResolution { get; set; }
+        public string OriginalExtension { get;   set; }
 
-        public virtual Magazine                              Magazine        { get; set; }
-        public virtual ICollection<PeopleByMagazine>         People          { get; set; }
-        public virtual ICollection<MagazinesByMachine>       Machines        { get; set; }
-        public virtual ICollection<MagazinesByMachineFamily> MachineFamilies { get; set; }
-        public virtual ICollection<Media>                    Coverdiscs      { get; set; }
-        public virtual ICollection<MagazineScan>             Scans           { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
+        public string UserId { get; set; }
     }
 }

@@ -168,6 +168,86 @@ namespace Marechai.Database.Migrations
                 b.ToTable("Books");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.BookScan", b =>
+            {
+                b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
+
+                b.Property<string>("Author").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<long>("BookId").HasColumnType("bigint");
+
+                b.Property<ushort?>("ColorSpace").HasColumnType("smallint unsigned");
+
+                b.Property<string>("Comments").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<DateTime?>("CreationDate").HasColumnType("datetime(6)");
+
+                b.Property<string>("ExifVersion").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<double?>("HorizontalResolution").HasColumnType("double");
+
+                b.Property<string>("OriginalExtension").HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                b.Property<uint?>("Page").HasColumnType("int unsigned");
+
+                b.Property<ushort?>("ResolutionUnit").HasColumnType("smallint unsigned");
+
+                b.Property<string>("ScannerManufacturer").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("ScannerModel").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("SoftwareUsed").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<uint>("Type").HasColumnType("int unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UploadDate").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().
+                  HasColumnType("datetime(6)");
+
+                b.Property<string>("UserId").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<double?>("VerticalResolution").HasColumnType("double");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Author");
+
+                b.HasIndex("BookId");
+
+                b.HasIndex("ColorSpace");
+
+                b.HasIndex("Comments");
+
+                b.HasIndex("CreationDate");
+
+                b.HasIndex("ExifVersion");
+
+                b.HasIndex("HorizontalResolution");
+
+                b.HasIndex("Page");
+
+                b.HasIndex("ResolutionUnit");
+
+                b.HasIndex("ScannerManufacturer");
+
+                b.HasIndex("ScannerModel");
+
+                b.HasIndex("SoftwareUsed");
+
+                b.HasIndex("Type");
+
+                b.HasIndex("UploadDate");
+
+                b.HasIndex("UserId");
+
+                b.HasIndex("VerticalResolution");
+
+                b.ToTable("BookScans");
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.BooksByMachine", b =>
             {
                 b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint");
@@ -780,6 +860,86 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("Name");
 
                 b.ToTable("DocumentRoles");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.DocumentScan", b =>
+            {
+                b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
+
+                b.Property<string>("Author").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ushort?>("ColorSpace").HasColumnType("smallint unsigned");
+
+                b.Property<string>("Comments").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<DateTime?>("CreationDate").HasColumnType("datetime(6)");
+
+                b.Property<long>("DocumentId").HasColumnType("bigint");
+
+                b.Property<string>("ExifVersion").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<double?>("HorizontalResolution").HasColumnType("double");
+
+                b.Property<string>("OriginalExtension").HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                b.Property<uint?>("Page").HasColumnType("int unsigned");
+
+                b.Property<ushort?>("ResolutionUnit").HasColumnType("smallint unsigned");
+
+                b.Property<string>("ScannerManufacturer").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("ScannerModel").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("SoftwareUsed").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<uint>("Type").HasColumnType("int unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UploadDate").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().
+                  HasColumnType("datetime(6)");
+
+                b.Property<string>("UserId").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<double?>("VerticalResolution").HasColumnType("double");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Author");
+
+                b.HasIndex("ColorSpace");
+
+                b.HasIndex("Comments");
+
+                b.HasIndex("CreationDate");
+
+                b.HasIndex("DocumentId");
+
+                b.HasIndex("ExifVersion");
+
+                b.HasIndex("HorizontalResolution");
+
+                b.HasIndex("Page");
+
+                b.HasIndex("ResolutionUnit");
+
+                b.HasIndex("ScannerManufacturer");
+
+                b.HasIndex("ScannerModel");
+
+                b.HasIndex("SoftwareUsed");
+
+                b.HasIndex("Type");
+
+                b.HasIndex("UploadDate");
+
+                b.HasIndex("UserId");
+
+                b.HasIndex("VerticalResolution");
+
+                b.ToTable("DocumentScans");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.DocumentsByMachine", b =>
@@ -1925,6 +2085,86 @@ namespace Marechai.Database.Migrations
                 b.HasIndex("Published");
 
                 b.ToTable("MagazineIssues");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MagazineScan", b =>
+            {
+                b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
+
+                b.Property<string>("Author").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<ushort?>("ColorSpace").HasColumnType("smallint unsigned");
+
+                b.Property<string>("Comments").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
+
+                b.Property<DateTime?>("CreationDate").HasColumnType("datetime(6)");
+
+                b.Property<string>("ExifVersion").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<double?>("HorizontalResolution").HasColumnType("double");
+
+                b.Property<long>("MagazineId").HasColumnType("bigint");
+
+                b.Property<string>("OriginalExtension").HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                b.Property<uint?>("Page").HasColumnType("int unsigned");
+
+                b.Property<ushort?>("ResolutionUnit").HasColumnType("smallint unsigned");
+
+                b.Property<string>("ScannerManufacturer").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("ScannerModel").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<string>("SoftwareUsed").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<uint>("Type").HasColumnType("int unsigned");
+
+                b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
+
+                b.Property<DateTime>("UploadDate").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().
+                  HasColumnType("datetime(6)");
+
+                b.Property<string>("UserId").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                b.Property<double?>("VerticalResolution").HasColumnType("double");
+
+                b.HasKey("Id");
+
+                b.HasIndex("Author");
+
+                b.HasIndex("ColorSpace");
+
+                b.HasIndex("Comments");
+
+                b.HasIndex("CreationDate");
+
+                b.HasIndex("ExifVersion");
+
+                b.HasIndex("HorizontalResolution");
+
+                b.HasIndex("MagazineId");
+
+                b.HasIndex("Page");
+
+                b.HasIndex("ResolutionUnit");
+
+                b.HasIndex("ScannerManufacturer");
+
+                b.HasIndex("ScannerModel");
+
+                b.HasIndex("SoftwareUsed");
+
+                b.HasIndex("Type");
+
+                b.HasIndex("UploadDate");
+
+                b.HasIndex("UserId");
+
+                b.HasIndex("VerticalResolution");
+
+                b.ToTable("MagazineScans");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MagazinesByMachine", b =>
@@ -3891,6 +4131,15 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.Book", "Source").WithMany("Derivates").HasForeignKey("SourceId");
             });
 
+            modelBuilder.Entity("Marechai.Database.Models.BookScan", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Book", "Book").WithMany("Scans").HasForeignKey("BookId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("BookScans").
+                  HasForeignKey("UserId").OnDelete(DeleteBehavior.SetNull);
+            });
+
             modelBuilder.Entity("Marechai.Database.Models.BooksByMachine", b =>
             {
                 b.HasOne("Marechai.Database.Models.Book", "Book").WithMany("Machines").HasForeignKey("BookId").
@@ -4034,6 +4283,15 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.Person", "Person").WithOne("DocumentPerson").
                   HasForeignKey("Marechai.Database.Models.DocumentPerson", "PersonId").OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.DocumentScan", b =>
+            {
+                b.HasOne("Marechai.Database.Models.Document", "Document").WithMany("Scans").HasForeignKey("DocumentId").
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("DocumentScans").
+                  HasForeignKey("UserId").OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Marechai.Database.Models.DocumentsByMachine", b =>
@@ -4249,6 +4507,15 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.Magazine", "Magazine").WithMany("Issues").
                   HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MagazineScan", b =>
+            {
+                b.HasOne("Marechai.Database.Models.MagazineIssue", "Magazine").WithMany("Scans").
+                  HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("MagazineScans").
+                  HasForeignKey("UserId").OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MagazinesByMachine", b =>

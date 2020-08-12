@@ -23,18 +23,11 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
-
 namespace Marechai.Database.Models
 {
-    public class Document : DocumentBase
+    public abstract class DocumentScanBase : BaseScan
     {
-        public virtual Iso31661Numeric Country { get; set; }
-
-        public virtual ICollection<PeopleByDocument>         People          { get; set; }
-        public virtual ICollection<CompaniesByDocument>      Companies       { get; set; }
-        public virtual ICollection<DocumentsByMachine>       Machines        { get; set; }
-        public virtual ICollection<DocumentsByMachineFamily> MachineFamilies { get; set; }
-        public virtual ICollection<DocumentScan>             Scans           { get; set; }
+        public DocumentScanType Type { get; set; }
+        public uint?            Page { get; set; }
     }
 }
