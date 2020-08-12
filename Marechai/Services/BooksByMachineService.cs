@@ -45,7 +45,7 @@ namespace Marechai.Services
                 BookId    = p.BookId,
                 MachineId = p.MachineId,
                 Machine   = p.Machine.Name
-            }).OrderBy(p => p.Machine).ThenBy(p => p.Book).ToListAsync();
+            }).OrderBy(p => p.Machine).ToListAsync();
 
         public async Task DeleteAsync(long id, string userId)
         {
