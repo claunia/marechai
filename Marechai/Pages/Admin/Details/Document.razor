@@ -42,6 +42,8 @@
 @inject DocumentsByMachineService DocumentsByMachineService
 @inject DocumentPeopleService PeopleService
 @inject PeopleByDocumentService PeopleByDocumentService
+@inject IFileReaderService FileReaderService
+@inject DocumentScansService DocumentScansService
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
@@ -134,7 +136,7 @@
     }
 </div>
 <div>
-    @if (!_editing)
+    @if (!_editing && !_editingScan && !_addingScan)
     {
         <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
     }
@@ -145,7 +147,7 @@
     }
     <a href="/admin/documents" class="btn btn-secondary">@L["Back to list"]</a>
 </div>
-@if (!_editing)
+@if (!_editing && !_editingScan && !_addingScan)
 {
     <hr />
     <h3>@L["Companies involved in this document"]</h3>
@@ -369,6 +371,31 @@
         </div>
     }
 
+
+    <Button Color="Color.Primary" Clicked="@AddScan">@L["Add new scan"]</Button>
+
+    @if(_scans.Count > 0)
+    {
+        foreach (var scan in _scans)
+        {
+            <div class="col-md-2">
+                <figure class="figure">
+                    <picture>
+                        <source type="image/avif" srcset="/assets/scans/documents/thumbs/avif/hd/@(scan).avif, /assets/scans/documents/thumbs/avif/1440p/@(scan).avif 2x, /assets/scans/documents/thumbs/avif/4k/@(scan).avif 3x">
+                        <source type="image/heic" srcset="/assets/scans/documents/thumbs/heif/hd/@(scan).heic, /assets/scans/documents/thumbs/heif/1440p/@(scan).heic 2x, /assets/scans/documents/thumbs/heif/4k/@(scan).heic 3x">
+                        <source type="image/webp" srcset="/assets/scans/documents/thumbs/webp/hd/@(scan).webp, /assets/scans/documents/thumbs/webp/1440p/@(scan).webp 2x, /assets/scans/documents/thumbs/webp/4k/@(scan).webp 3x">
+                        <source type="image/jp2" srcset="/assets/scans/documents/thumbs/jp2k/hd/@(scan).jp2, /assets/scans/documents/thumbs/jp2k/1440p/@(scan).jp2 2x, /assets/scans/documents/thumbs/jp2k/4k/@(scan).jp2 3x">
+                        <img class="figure-img img-fluid rounded" srcset="/assets/scans/documents/thumbs/jpeg/hd/@(scan).jpg, /assets/scans/documents/thumbs/jpeg/1440p/@(scan).jpg 2x, /assets/scans/documents/thumbs/jpeg/4k/@(scan).jpg 3x" src="/assets/scans/documents/thumbs/jpeg/hd/@(scan).jpg" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                    </picture>
+                    <figcaption class="figure-caption">
+                        <Button Color="Color.Secondary" Clicked="async () => {await EditScan(scan);}">@L["Delete"]</Button>
+                        <Button Color="Color.Danger" Clicked="() => {ShowScanDeleteModal(scan);}">@L["Delete"]</Button>
+                    </figcaption>
+                </figure>
+            </div>
+        }
+    }
+
     <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
         <ModalBackdrop />
         <ModalContent Centered="true">
@@ -385,4 +412,998 @@
             </ModalFooter>
         </ModalContent>
     </Modal>
+}
+
+@if(_addingScan && !_editing)
+{
+    @if(!_uploaded)
+    {
+        @if(!_uploading)
+        {
+            <FieldLabel>@L["Choose scan file"]</FieldLabel>
+            <input type="file" @ref=_inputUpload /><br/>
+            <Field>
+                <FieldLabel>@L["Scan type"]</FieldLabel>
+                <Select Disabled="!_editingScan" TValue="uint" @bind-SelectedValue="@_uploadScanType">
+                    @foreach (uint value in Enum.GetValues(typeof(DocumentScanType)))
+                    {
+                        <SelectItem TValue="uint" Value="@value">@(((DocumentScanType)value).ToString())</SelectItem>
+                    }
+                </Select>
+            </Field>
+            <Field>
+                <FieldLabel>@L["Page"]</FieldLabel>
+                <Check TValue="bool" @bind-Checked="@_unknownScanPage">@L["Unknown (scan page)"]</Check>
+                @if (!_unknownScanPage)
+                {
+                    <Validation Validator="@ValidateUnsignedIntegerBiggerThanZero">
+                        <NumericEdit Disabled="!_editing" TValue="uint?" @bind-Value="@_uploadScanPage">
+                            <Feedback>
+                                <ValidationError>@L["Please enter a valid scanned page."]</ValidationError>
+                            </Feedback>
+                        </NumericEdit>
+                    </Validation>
+                }
+            </Field>
+            <Button Color="Color.Success" Clicked="@UploadFile" Disabled="@_uploading">@L["Upload"]</Button><br/>
+        }
+        else
+        {
+            @L["Uploading..."]
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: @(_progressValue)%;" aria-valuenow="@_progressValue" aria-valuemin="0" aria-valuemax="100">@($"{_progressValue:F2}")%</div>
+            </div>
+        }
+        @if(_uploadError)
+        {
+            <span class="text-danger">@_uploadErrorMessage</span>
+        }
+    }
+    else
+    {
+        <h5>@string.Format(L["Image format recognized as {0}"], _imageFormat)</h5>
+        @if (_allFinished)
+        {
+            <span class="text-success">@L["All finished!"]</span>
+        }
+        <table>
+            <tr>
+                <td>
+                    @L["Extracting Exif information..."]
+                </td>
+                <td>
+                    @if(_extractExif == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_extractExif == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Moving file to proper place..."]
+                </td>
+                <td>
+                    @if(_moveFile == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_moveFile == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_moveFile == true)
+                    {
+                        <a href="/assets/scans/documents/originals/@($"{_selectedScan.Id}{_selectedScan.OriginalExtension}")" target="_blank">
+                            <img src="/assets/scans/documents/originals/@($"{_selectedScan.Id}{_selectedScan.OriginalExtension}")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG with an HD resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertJpegHdTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJpegHdTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJpegHdTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/jpeg/hd/{_selectedScan.Id}.jpg")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/jpeg/hd/{_selectedScan.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG with a 1440p resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertJpeg1440Th == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJpeg1440Th == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJpeg1440Th == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/jpeg/1440p/{_selectedScan.Id}.jpg")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/jpeg/1440p/{_selectedScan.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG with a 4K resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertJpeg4kTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJpeg4kTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJpeg4kTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/jpeg/4k/{_selectedScan.Id}.jpg")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/jpeg/4k/{_selectedScan.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG with an HD resolution..."]
+                </td>
+                <td>
+                    @if(_convertJpegHd == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJpegHd == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJpegHd == true)
+                    {
+                        <a href="@($"/assets/scans/documents/jpeg/hd/{_selectedScan.Id}.jpg")" target="_blank">
+                            <img src="@($"/assets/scans/documents/jpeg/hd/{_selectedScan.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG with a 1440p resolution..."]
+                </td>
+                <td>
+                    @if(_convertJpeg1440 == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJpeg1440 == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJpeg1440 == true)
+                    {
+                        <a href="@($"/assets/scans/documents/jpeg/1440p/{_selectedScan.Id}.jpg")" target="_blank">
+                            <img src="@($"/assets/scans/documents/jpeg/1440p/{_selectedScan.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG with a 4K resolution..."]
+                </td>
+                <td>
+                    @if(_convertJpeg4k == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJpeg4k == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJpeg4k == true)
+                    {
+                        <a href="@($"/assets/scans/documents/jpeg/4k/{_selectedScan.Id}.jpg")" target="_blank">
+                            <img src="@($"/assets/scans/documents/jpeg/4k/{_selectedScan.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG2000 with an HD resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertJp2kHdTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJp2kHdTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJp2kHdTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/jp2k/hd/{_selectedScan.Id}.jp2")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/jp2k/hd/{_selectedScan.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG2000 with a 1440p resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertJp2k1440Th == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJp2k1440Th == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJp2k1440Th == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/jp2k/1440p/{_selectedScan.Id}.jp2")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/jp2k/1440p/{_selectedScan.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG2000 with a 4K resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertJp2k4kTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJp2k4kTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJp2k4kTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/jp2k/4k/{_selectedScan.Id}.jp2")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/jp2k/4k/{_selectedScan.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG2000 with an HD resolution..."]
+                </td>
+                <td>
+                    @if(_convertJp2kHd == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJp2kHd == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJp2kHd == true)
+                    {
+                        <a href="@($"/assets/scans/documents/jp2k/hd/{_selectedScan.Id}.jp2")" target="_blank">
+                            <img src="@($"/assets/scans/documents/jp2k/hd/{_selectedScan.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG2000 with a 1440p resolution..."]
+                </td>
+                <td>
+                    @if(_convertJp2k1440 == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJp2k1440 == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJp2k1440 == true)
+                    {
+                        <a href="@($"/assets/scans/documents/jp2k/1440p/{_selectedScan.Id}.jp2")" target="_blank">
+                            <img src="@($"/assets/scans/documents/jp2k/1440p/{_selectedScan.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to JPEG2000 with a 4K resolution..."]
+                </td>
+                <td>
+                    @if(_convertJp2k4k == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertJp2k4k == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertJp2k4k == true)
+                    {
+                        <a href="@($"/assets/scans/documents/jp2k/4k/{_selectedScan.Id}.jp2")" target="_blank">
+                            <img src="@($"/assets/scans/documents/jp2k/4k/{_selectedScan.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to WebP with an HD resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertWebpHdTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertWebpHdTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertWebpHdTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/webp/hd/{_selectedScan.Id}.webp")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/webp/hd/{_selectedScan.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to WebP with a 1440p resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertWebp1440Th == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertWebp1440Th == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertWebp1440Th == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/webp/1440p/{_selectedScan.Id}.webp")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/webp/1440p/{_selectedScan.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to WebP with a 4K resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertWebp4kTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertWebp4kTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertWebp4kTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/webp/4k/{_selectedScan.Id}.webp")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/webp/4k/{_selectedScan.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to WebP with an HD resolution..."]
+                </td>
+                <td>
+                    @if(_convertWebpHd == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertWebpHd == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertWebpHd == true)
+                    {
+                        <a href="@($"/assets/scans/documents/webp/hd/{_selectedScan.Id}.webp")" target="_blank">
+                            <img src="@($"/assets/scans/documents/webp/hd/{_selectedScan.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to WebP with a 1440p resolution..."]
+                </td>
+                <td>
+                    @if(_convertWebp1440 == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertWebp1440 == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertWebp1440 == true)
+                    {
+                        <a href="@($"/assets/scans/documents/webp/1440p/{_selectedScan.Id}.webp")" target="_blank">
+                            <img src="@($"/assets/scans/documents/webp/1440p/{_selectedScan.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to WebP with a 4K resolution..."]
+                </td>
+                <td>
+                    @if(_convertWebp4k == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertWebp4k == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertWebp4k == true)
+                    {
+                        <a href="@($"/assets/scans/documents/webp/4k/{_selectedScan.Id}.webp")" target="_blank">
+                            <img src="@($"/assets/scans/documents/webp/4k/{_selectedScan.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to HEIF with an HD resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertHeifHdTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertHeifHdTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertHeifHdTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/heif/hd/{_selectedScan.Id}.heic")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/heif/hd/{_selectedScan.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to HEIF with a 1440p resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertHeif1440Th == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertHeif1440Th == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertHeif1440Th == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/heif/1440p/{_selectedScan.Id}.heic")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/heif/1440p/{_selectedScan.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to HEIF with a 4K resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertHeif4kTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertHeif4kTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertHeif4kTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/heif/4k/{_selectedScan.Id}.heic")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/heif/4k/{_selectedScan.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to HEIF with an HD resolution..."]
+                </td>
+                <td>
+                    @if(_convertHeifHd == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertHeifHd == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertHeifHd == true)
+                    {
+                        <a href="@($"/assets/scans/documents/heif/hd/{_selectedScan.Id}.heic")" target="_blank">
+                            <img src="@($"/assets/scans/documents/heif/hd/{_selectedScan.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to HEIF with a 1440p resolution..."]
+                </td>
+                <td>
+                    @if(_convertHeif1440 == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertHeif1440 == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertHeif1440 == true)
+                    {
+                        <a href="@($"/assets/scans/documents/heif/1440p/{_selectedScan.Id}.heic")" target="_blank">
+                            <img src="@($"/assets/scans/documents/heif/1440p/{_selectedScan.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to HEIF with a 4K resolution..."]
+                </td>
+                <td>
+                    @if(_convertHeif4k == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertHeif4k == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertHeif4k == true)
+                    {
+                        <a href="@($"/assets/scans/documents/heif/4k/{_selectedScan.Id}.heic")" target="_blank">
+                            <img src="@($"/assets/scans/documents/heif/4k/{_selectedScan.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to AV1F with an HD resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertAvifHdTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertAvifHdTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertAvifHdTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/avif/hd/{_selectedScan.Id}.avif")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/avif/hd/{_selectedScan.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to AV1F with a 1440p resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertAvif1440Th == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertAvif1440Th == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertAvif1440Th == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/avif/1440p/{_selectedScan.Id}.avif")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/avif/1440p/{_selectedScan.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to AV1F with a 4K resolution (thumbnail)..."]
+                </td>
+                <td>
+                    @if(_convertAvif4kTh == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertAvif4kTh == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertAvif4kTh == true)
+                    {
+                        <a href="@($"/assets/scans/documents/thumbs/avif/4k/{_selectedScan.Id}.avif")" target="_blank">
+                            <img src="@($"/assets/scans/documents/thumbs/avif/4k/{_selectedScan.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to AV1F with an HD resolution..."]
+                </td>
+                <td>
+                    @if(_convertAvifHd == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertAvifHd == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertAvifHd == true)
+                    {
+                        <a href="@($"/assets/scans/documents/avif/hd/{_selectedScan.Id}.avif")" target="_blank">
+                            <img src="@($"/assets/scans/documents/avif/hd/{_selectedScan.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to AV1F with a 1440p resolution..."]
+                </td>
+                <td>
+                    @if(_convertAvif1440 == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertAvif1440 == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertAvif1440 == true)
+                    {
+                        <a href="@($"/assets/scans/documents/avif/1440p/{_selectedScan.Id}.avif")" target="_blank">
+                            <img src="@($"/assets/scans/documents/avif/1440p/{_selectedScan.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Converting photo to AV1F with a 4K resolution..."]
+                </td>
+                <td>
+                    @if(_convertAvif4k == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_convertAvif4k == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                    @if(_convertAvif4k == true)
+                    {
+                        <a href="@($"/assets/scans/documents/avif/4k/{_selectedScan.Id}.avif")" target="_blank">
+                            <img src="@($"/assets/scans/documents/avif/4k/{_selectedScan.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        </a>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @L["Adding photo to database..."]
+                </td>
+                <td>
+                    @if(_addToDatabase == true)
+                    {
+                        <span class="text-success">@L["OK!"]</span>
+                    }
+                    else if(_addToDatabase == false)
+                    {
+                        <span class="text-danger">@L["Error!"]</span>
+                    }
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    }
+}
+
+
+@if(_editingScan && !_editing)
+{
+    <div>
+        <Field>
+            <FieldLabel>@L["Uploaded by"]</FieldLabel>
+            <TextEdit Disabled="true" Text="@($"{_scanUser.UserName} <{_scanUser.Email}>")"/>
+        </Field>
+        <Field>
+            <FieldLabel>@L["Uploaded date"]</FieldLabel>
+            <TextEdit Disabled="true" Text="@($"{_selectedScan.UploadDate}")"/>
+        </Field>
+        <Field>
+            <FieldLabel>@L["Scan type"]</FieldLabel>
+            <Select Disabled="!_editingScan" TValue="uint" @bind-SelectedValue="@ScanType">
+                @foreach (uint value in Enum.GetValues(typeof(DocumentScanType)))
+                {
+                    <SelectItem TValue="uint" Value="@value">@(((DocumentScanType)value).ToString())</SelectItem>
+                }
+            </Select>
+        </Field>
+        <Field>
+            <FieldLabel>@L["Page"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanPage">@L["Unknown (scan page)"]</Check>
+            @if (!_unknownScanPage)
+            {
+                <Validation Validator="@ValidateUnsignedIntegerBiggerThanZero">
+                    <NumericEdit Disabled="!_editing" TValue="uint?" @bind-Value="@_selectedScan.Page">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid scanned page."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Author"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanAuthor">@L["Unknown (author)"]</Check>
+            @if (!_unknownScanAuthor)
+            {
+                <Validation Validator="@ValidateScanAuthor">
+                    <TextEdit Disabled="!_editingScan" @bind-Text="@_selectedScan.Author">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid author."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Scanner manufacturer"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanScannerManufacturer">@L["Unknown (scanner manufacturer)"]</Check>
+            @if (!_unknownScanScannerManufacturer)
+            {
+                <Validation Validator="@ValidateScannerManufacturer">
+                    <TextEdit Disabled="!_editingScan" @bind-Text="@_selectedScan.ScannerManufacturer">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid scanner manufacturer."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Scanner model"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanScannerModel">@L["Unknown (scanner model)"]</Check>
+            @if (!_unknownScanScannerModel)
+            {
+                <Validation Validator="@ValidateScannerModel">
+                    <TextEdit Disabled="!_editingScan" @bind-Text="@_selectedScan.ScannerModel">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid scanner model."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Color space"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanColorSpace">@L["Unknown (color space)"]</Check>
+            @if (!_unknownScanColorSpace)
+            {
+                <Select Disabled="!_editingScan" TValue="ushort" @bind-SelectedValue="@ScanColorSpace">
+                    @foreach (ushort value in Enum.GetValues(typeof(ColorSpace)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((ColorSpace)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Creation date"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanCreationDate">@L["Unknown (creation date)"]</Check>
+            @if (!_unknownScanCreationDate)
+            {
+                <Validation Validator="@ValidateDate">
+                    <DateEdit Disabled="!_editingScan" TValue="DateTime?" @bind-Date="@_selectedScan.CreationDate">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a correct creation date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
+            </Field>
+        <Field>
+            <FieldLabel>@L["Exif version"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanExifVersion">@L["Unknown (exif version)"]</Check>
+            @if (!_unknownScanExifVersion)
+            {
+                <Validation Validator="@ValidateExifVersion">
+                    <TextEdit Disabled="!_editingScan" @bind-Text="@_selectedScan.ExifVersion">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid Exif version."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Horizontal resolution"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanHorizontalResolution">@L["Unknown (horizontal resolution)"]</Check>
+            @if (!_unknownScanHorizontalResolution)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editingScan" TValue="double?" Decimals="3" @bind-Value="@_selectedScan.HorizontalResolution">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid horizontal resolution."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Resolution unit"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanResolutionUnit">@L["Unknown (resolution unit)"]</Check>
+            @if (!_unknownScanResolutionUnit)
+            {
+                <Select Disabled="!_editingScan" TValue="ushort" @bind-SelectedValue="@ScanResolutionUnit">
+                    @foreach (ushort value in Enum.GetValues(typeof(ResolutionUnit)))
+                    {
+                        <SelectItem TValue="ushort" Value="@value">@(((ResolutionUnit)value).ToString())</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Software used"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanSoftwareUsed">@L["Unknown (software used)"]</Check>
+            @if (!_unknownScanSoftwareUsed)
+            {
+                <Validation Validator="@ValidateSoftwareUsed">
+                    <TextEdit Disabled="!_editingScan" @bind-Text="@_selectedScan.SoftwareUsed">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid software used."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["Vertical resolution"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanVerticalResolution">@L["Unknown (vertical resolution)"]</Check>
+            @if (!_unknownScanVerticalResolution)
+            {
+                <Validation Validator="@ValidateDoubleBiggerThanZero">
+                    <NumericEdit Disabled="!_editingScan" TValue="double?" Decimals="3" @bind-Value="@_selectedScan.VerticalResolution">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid vertical resolution."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+        <Field>
+            <FieldLabel>@L["User comments"]</FieldLabel>
+            <Check TValue="bool" @bind-Checked="@_unknownScanComments">@L["Unknown or empty (user comments)"]</Check>
+            @if (!_unknownScanComments)
+            {
+                <Validation Validator="@ValidateComments">
+                    <TextEdit Disabled="!_editingScan" @bind-Text="@_selectedScan.Comments">
+                        <Feedback>
+                            <ValidationError>@L["Please enter valid comments."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+        <Button Color="Color.Success" Clicked="@OnSaveScanClicked">@L["Save"]</Button>
+        <Button Color="Color.Danger" Clicked="@OnCancelScanClicked">@L["Cancel"]</Button>
+    </div>
 }
