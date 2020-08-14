@@ -109,6 +109,21 @@ namespace Marechai.Helpers
             model.WhiteBalance          = WhiteBalance;
             model.Comments              = Description;
         }
+
+        public void ToViewModel(BaseScanViewModel model)
+        {
+            model.ScannerManufacturer  = Make;
+            model.ScannerModel         = Model;
+            model.Author               = Author;
+            model.CreationDate         = DateTimeOriginal ?? CreateDate ?? ModifyDate;
+            model.ExifVersion          = ExifVersion;
+            model.HorizontalResolution = XResolution;
+            model.SoftwareUsed         = Software;
+            model.VerticalResolution   = YResolution;
+            model.ColorSpace           = ColorSpace;
+            model.ResolutionUnit       = ResolutionUnit;
+            model.Comments             = Description;
+        }
     }
 
     internal class ExiftoolDateConverter : JsonConverter<DateTime?>
