@@ -96,6 +96,7 @@ namespace Marechai.Services
             services.AddScoped<PeopleByMagazineService>();
             services.AddScoped<BookScansService>();
             services.AddScoped<DocumentScansService>();
+            services.AddScoped<MagazineScansService>();
         }
     }
 }
