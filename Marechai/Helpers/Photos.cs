@@ -36,67 +36,67 @@ namespace Marechai.Helpers
     {
         public delegate Task ConversionFinished(bool result);
 
-        public static void EnsureCreated(string webRootPath)
+        public static void EnsureCreated(string webRootPath, bool scan, string item)
         {
             List<string> paths = new List<string>();
 
-            string photosRoot                = Path.Combine(webRootPath, "assets", "photos");
-            string machinePhotosRoot         = Path.Combine(photosRoot, "machines");
-            string machineThumbsRoot         = Path.Combine(machinePhotosRoot, "thumbs");
-            string machineOriginalPhotosRoot = Path.Combine(machinePhotosRoot, "originals");
+            string photosRoot             = Path.Combine(webRootPath, "assets", scan ? "scan" : "photos");
+            string itemPhotosRoot         = Path.Combine(photosRoot, item);
+            string itemThumbsRoot         = Path.Combine(itemPhotosRoot, "thumbs");
+            string itemOriginalPhotosRoot = Path.Combine(itemPhotosRoot, "originals");
 
             paths.Add(photosRoot);
-            paths.Add(machinePhotosRoot);
-            paths.Add(machineThumbsRoot);
-            paths.Add(machineOriginalPhotosRoot);
+            paths.Add(itemPhotosRoot);
+            paths.Add(itemThumbsRoot);
+            paths.Add(itemOriginalPhotosRoot);
 
-            paths.Add(Path.Combine(machineThumbsRoot, "jpeg", "hd"));
-            paths.Add(Path.Combine(machineThumbsRoot, "jpeg", "1440p"));
-            paths.Add(Path.Combine(machineThumbsRoot, "jpeg", "4k"));
-            paths.Add(Path.Combine(machinePhotosRoot, "jpeg", "hd"));
-            paths.Add(Path.Combine(machinePhotosRoot, "jpeg", "1440p"));
-            paths.Add(Path.Combine(machinePhotosRoot, "jpeg", "4k"));
+            paths.Add(Path.Combine(itemThumbsRoot, "jpeg", "hd"));
+            paths.Add(Path.Combine(itemThumbsRoot, "jpeg", "1440p"));
+            paths.Add(Path.Combine(itemThumbsRoot, "jpeg", "4k"));
+            paths.Add(Path.Combine(itemPhotosRoot, "jpeg", "hd"));
+            paths.Add(Path.Combine(itemPhotosRoot, "jpeg", "1440p"));
+            paths.Add(Path.Combine(itemPhotosRoot, "jpeg", "4k"));
 
-            paths.Add(Path.Combine(machineThumbsRoot, "jp2k", "hd"));
-            paths.Add(Path.Combine(machineThumbsRoot, "jp2k", "1440p"));
-            paths.Add(Path.Combine(machineThumbsRoot, "jp2k", "4k"));
-            paths.Add(Path.Combine(machinePhotosRoot, "jp2k", "hd"));
-            paths.Add(Path.Combine(machinePhotosRoot, "jp2k", "1440p"));
-            paths.Add(Path.Combine(machinePhotosRoot, "jp2k", "4k"));
+            paths.Add(Path.Combine(itemThumbsRoot, "jp2k", "hd"));
+            paths.Add(Path.Combine(itemThumbsRoot, "jp2k", "1440p"));
+            paths.Add(Path.Combine(itemThumbsRoot, "jp2k", "4k"));
+            paths.Add(Path.Combine(itemPhotosRoot, "jp2k", "hd"));
+            paths.Add(Path.Combine(itemPhotosRoot, "jp2k", "1440p"));
+            paths.Add(Path.Combine(itemPhotosRoot, "jp2k", "4k"));
 
-            paths.Add(Path.Combine(machineThumbsRoot, "webp", "hd"));
-            paths.Add(Path.Combine(machineThumbsRoot, "webp", "1440p"));
-            paths.Add(Path.Combine(machineThumbsRoot, "webp", "4k"));
-            paths.Add(Path.Combine(machinePhotosRoot, "webp", "hd"));
-            paths.Add(Path.Combine(machinePhotosRoot, "webp", "1440p"));
-            paths.Add(Path.Combine(machinePhotosRoot, "webp", "4k"));
+            paths.Add(Path.Combine(itemThumbsRoot, "webp", "hd"));
+            paths.Add(Path.Combine(itemThumbsRoot, "webp", "1440p"));
+            paths.Add(Path.Combine(itemThumbsRoot, "webp", "4k"));
+            paths.Add(Path.Combine(itemPhotosRoot, "webp", "hd"));
+            paths.Add(Path.Combine(itemPhotosRoot, "webp", "1440p"));
+            paths.Add(Path.Combine(itemPhotosRoot, "webp", "4k"));
 
-            paths.Add(Path.Combine(machineThumbsRoot, "heif", "hd"));
-            paths.Add(Path.Combine(machineThumbsRoot, "heif", "1440p"));
-            paths.Add(Path.Combine(machineThumbsRoot, "heif", "4k"));
-            paths.Add(Path.Combine(machinePhotosRoot, "heif", "hd"));
-            paths.Add(Path.Combine(machinePhotosRoot, "heif", "1440p"));
-            paths.Add(Path.Combine(machinePhotosRoot, "heif", "4k"));
+            paths.Add(Path.Combine(itemThumbsRoot, "heif", "hd"));
+            paths.Add(Path.Combine(itemThumbsRoot, "heif", "1440p"));
+            paths.Add(Path.Combine(itemThumbsRoot, "heif", "4k"));
+            paths.Add(Path.Combine(itemPhotosRoot, "heif", "hd"));
+            paths.Add(Path.Combine(itemPhotosRoot, "heif", "1440p"));
+            paths.Add(Path.Combine(itemPhotosRoot, "heif", "4k"));
 
-            paths.Add(Path.Combine(machineThumbsRoot, "avif", "hd"));
-            paths.Add(Path.Combine(machineThumbsRoot, "avif", "1440p"));
-            paths.Add(Path.Combine(machineThumbsRoot, "avif", "4k"));
-            paths.Add(Path.Combine(machinePhotosRoot, "avif", "hd"));
-            paths.Add(Path.Combine(machinePhotosRoot, "avif", "1440p"));
-            paths.Add(Path.Combine(machinePhotosRoot, "avif", "4k"));
+            paths.Add(Path.Combine(itemThumbsRoot, "avif", "hd"));
+            paths.Add(Path.Combine(itemThumbsRoot, "avif", "1440p"));
+            paths.Add(Path.Combine(itemThumbsRoot, "avif", "4k"));
+            paths.Add(Path.Combine(itemPhotosRoot, "avif", "hd"));
+            paths.Add(Path.Combine(itemPhotosRoot, "avif", "1440p"));
+            paths.Add(Path.Combine(itemPhotosRoot, "avif", "4k"));
 
             foreach(string path in paths.Where(path => !Directory.Exists(path)))
                 Directory.CreateDirectory(path);
         }
 
         public static bool Convert(string webRootPath, Guid id, string originalPath, string sourceFormat,
-                                   string outputFormat, string resolution, bool thumbnail)
+                                   string outputFormat, string resolution, bool thumbnail, bool scan, string item)
         {
             outputFormat = outputFormat.ToLowerInvariant();
             resolution   = resolution.ToLowerInvariant();
             sourceFormat = sourceFormat.ToLowerInvariant();
 
-            string outputPath = Path.Combine(webRootPath, "assets", "photos", "machines");
+            string outputPath = Path.Combine(webRootPath, "assets", scan ? "scans" : "photos", item);
             int    width, height;
 
             if(thumbnail)
@@ -268,75 +268,91 @@ namespace Marechai.Helpers
             }
         }
 
-        public void ConversionWorker(string webRootPath, Guid id, string originalFilePath, string sourceFormat)
+        public void ConversionWorker(string webRootPath, Guid id, string originalFilePath, string sourceFormat,
+                                     bool scan, string item)
         {
             List<Task> pool = new List<Task>
             {
                 new Task(() => FinishedRenderingJpeg4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "JPEG", "4k", true))),
+                                                                                    sourceFormat, "JPEG", "4k", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingJpeg1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                              sourceFormat, "JPEG", "1440p",
-                                                                              true))),
+                                                                              sourceFormat, "JPEG", "1440p", true,
+                                                                              scan, item))),
                 new Task(() => FinishedRenderingJpegHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "JPEG", "hd", true))),
+                                                                                    sourceFormat, "JPEG", "hd", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingJpeg4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "JPEG", "4k", false))),
+                                                                       "JPEG", "4k", false, scan, item))),
                 new Task(() => FinishedRenderingJpeg1440?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                         sourceFormat, "JPEG", "1440p", false))),
+                                                                         sourceFormat, "JPEG", "1440p", false, scan,
+                                                                         item))),
                 new Task(() => FinishedRenderingJpegHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "JPEG", "hd", false))),
+                                                                       "JPEG", "hd", false, scan, item))),
                 new Task(() => FinishedRenderingJp2k4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "JP2K", "4k", true))),
+                                                                                    sourceFormat, "JP2K", "4k", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingJp2k1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                              sourceFormat, "JP2K", "1440p",
-                                                                              true))),
+                                                                              sourceFormat, "JP2K", "1440p", true,
+                                                                              scan, item))),
                 new Task(() => FinishedRenderingJp2kHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "JP2K", "hd", true))),
+                                                                                    sourceFormat, "JP2K", "hd", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingJp2k4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "JP2K", "4k", false))),
+                                                                       "JP2K", "4k", false, scan, item))),
                 new Task(() => FinishedRenderingJp2k1440?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                         sourceFormat, "JP2K", "1440p", false))),
+                                                                         sourceFormat, "JP2K", "1440p", false, scan,
+                                                                         item))),
                 new Task(() => FinishedRenderingJp2kHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "JP2K", "hd", false))),
+                                                                       "JP2K", "hd", false, scan, item))),
                 new Task(() => FinishedRenderingWebp4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "WEBP", "4k", true))),
+                                                                                    sourceFormat, "WEBP", "4k", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingWebp1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                              sourceFormat, "WEBP", "1440p",
-                                                                              true))),
+                                                                              sourceFormat, "WEBP", "1440p", true,
+                                                                              scan, item))),
                 new Task(() => FinishedRenderingWebpHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "WEBP", "hd", true))),
+                                                                                    sourceFormat, "WEBP", "hd", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingWebp4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "WEBP", "4k", false))),
+                                                                       "WEBP", "4k", false, scan, item))),
                 new Task(() => FinishedRenderingWebp1440?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                         sourceFormat, "WEBP", "1440p", false))),
+                                                                         sourceFormat, "WEBP", "1440p", false, scan,
+                                                                         item))),
                 new Task(() => FinishedRenderingWebpHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "WEBP", "hd", false))),
+                                                                       "WEBP", "hd", false, scan, item))),
                 new Task(() => FinishedRenderingHeif4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "HEIF", "4k", true))),
+                                                                                    sourceFormat, "HEIF", "4k", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingHeif1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                              sourceFormat, "HEIF", "1440p",
-                                                                              true))),
+                                                                              sourceFormat, "HEIF", "1440p", true,
+                                                                              scan, item))),
                 new Task(() => FinishedRenderingHeifHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "HEIF", "hd", true))),
+                                                                                    sourceFormat, "HEIF", "hd", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingHeif4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "HEIF", "4k", false))),
+                                                                       "HEIF", "4k", false, scan, item))),
                 new Task(() => FinishedRenderingHeif1440?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                         sourceFormat, "HEIF", "1440p", false))),
+                                                                         sourceFormat, "HEIF", "1440p", false, scan,
+                                                                         item))),
                 new Task(() => FinishedRenderingHeifHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "HEIF", "hd", false))),
+                                                                       "HEIF", "hd", false, scan, item))),
                 new Task(() => FinishedRenderingAvif4kThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "AVIF", "4k", true))),
+                                                                                    sourceFormat, "AVIF", "4k", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingAvif1440Thumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                              sourceFormat, "AVIF", "1440p",
-                                                                              true))),
+                                                                              sourceFormat, "AVIF", "1440p", true,
+                                                                              scan, item))),
                 new Task(() => FinishedRenderingAvifHdThumbnail?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                                    sourceFormat, "AVIF", "hd", true))),
+                                                                                    sourceFormat, "AVIF", "hd", true,
+                                                                                    scan, item))),
                 new Task(() => FinishedRenderingAvif4k?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "AVIF", "4k", false))),
+                                                                       "AVIF", "4k", false, scan, item))),
                 new Task(() => FinishedRenderingAvif1440?.Invoke(Convert(webRootPath, id, originalFilePath,
-                                                                         sourceFormat, "AVIF", "1440p", false))),
+                                                                         sourceFormat, "AVIF", "1440p", false, scan,
+                                                                         item))),
                 new Task(() => FinishedRenderingAvifHd?.Invoke(Convert(webRootPath, id, originalFilePath, sourceFormat,
-                                                                       "AVIF", "hd", false)))
+                                                                       "AVIF", "hd", false, scan, item)))
             };
 
             foreach(Task thread in pool)

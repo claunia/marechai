@@ -213,7 +213,14 @@ namespace Marechai
 
                     start = DateTime.Now;
                     Console.WriteLine("\u001b[31;1mEnsuring photo folders exist...\u001b[0m");
-                    Photos.EnsureCreated("wwwroot");
+                    Photos.EnsureCreated("wwwroot", false, "machines");
+                    end = DateTime.Now;
+
+                    start = DateTime.Now;
+                    Console.WriteLine("\u001b[31;1mEnsuring scan folders exist...\u001b[0m");
+                    Photos.EnsureCreated("wwwroot", true, "books");
+                    Photos.EnsureCreated("wwwroot", true, "documents");
+                    Photos.EnsureCreated("wwwroot", true, "magazines");
                     end = DateTime.Now;
 
                     Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
@@ -233,11 +240,11 @@ namespace Marechai
             host.Run();
         }
 
-        public static IHost BuildHost(string[] args) => Host.
-                                                        CreateDefaultBuilder(args).
-                                                        ConfigureWebHostDefaults(webBuilder =>
-                                                        {
-                                                            webBuilder.UseStartup<Startup>().UseUrls("http://*:5000");
-                                                        }).Build();
+        public static IHost BuildHost(string[] args) => Host.CreateDefaultBuilder(args).
+                                                             ConfigureWebHostDefaults(webBuilder =>
+                                                             {
+                                                                 webBuilder.UseStartup<Startup>().
+                                                                            UseUrls("http://*:5000");
+                                                             }).Build();
     }
 }

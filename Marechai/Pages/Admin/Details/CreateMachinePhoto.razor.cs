@@ -417,7 +417,8 @@ namespace Marechai.Pages.Admin.Details
             photos.FinishedRenderingAvifHdThumbnail   += OnFinishedRenderingAvifHdThumbnail;
 
             #pragma warning disable 4014
-            Task.Run(() => photos.ConversionWorker(Host.WebRootPath, _model.Id, originalFilePath, _imageFormat));
+            Task.Run(() => photos.ConversionWorker(Host.WebRootPath, _model.Id, originalFilePath, _imageFormat, false,
+                                                   "machines"));
             #pragma warning restore 4014
         }
 
