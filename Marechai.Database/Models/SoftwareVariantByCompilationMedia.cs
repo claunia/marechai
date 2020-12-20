@@ -37,5 +37,8 @@ namespace Marechai.Database.Models
         public virtual SoftwareVariant SoftwareVariant { get; set; }
         [Required]
         public virtual Media Media { get; set; }
+
+        public ulong SoftwareVariantId { get; set; }
+        public ulong MediaId           { get; set; }
     }
 }

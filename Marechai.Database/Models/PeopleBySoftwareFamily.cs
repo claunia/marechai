@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models
 {
@@ -35,5 +36,8 @@ namespace Marechai.Database.Models
         public virtual Person Person { get; set; }
         [Required]
         public virtual SoftwareFamily SoftwareFamily { get; set; }
+
+        [Column(TypeName = "char(3)"), Required]
+        public string RoleId { get; set; }
     }
 }

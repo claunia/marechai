@@ -33,5 +33,8 @@ namespace Marechai.Database.Models
         public virtual FileDataStream FileDataStream { get; set; }
         [Required]
         public virtual StandaloneFile StandaloneFile { get; set; }
+
+        public ulong FileDataStreamId { get; set; }
+        public ulong StandaloneFileId { get; set; }
     }
 }

@@ -33,5 +33,8 @@ namespace Marechai.Database.Models
         public virtual SoftwareVersion SoftwareVersion { get; set; }
         [Required]
         public virtual SoftwareVariant SoftwareVariant { get; set; }
+
+        public ulong SoftwareVersionId { get; set; }
+        public ulong SoftwareVariantId { get; set; }
     }
 }

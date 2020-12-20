@@ -58,7 +58,7 @@ namespace Marechai.Database.Seeders
                     codes.Current = listOne.Current;
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 Console.WriteLine("Exception trying to read list one.");
             }
@@ -77,7 +77,7 @@ namespace Marechai.Database.Seeders
                     codes.Historical = listThree.Historical;
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 Console.WriteLine("Exception trying to read list three.");
             }

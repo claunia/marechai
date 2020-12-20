@@ -34,5 +34,7 @@ namespace Marechai.Database.Models
         public ulong Size { get;  set; }
         [Required]
         public virtual DbFile File { get; set; }
+
+        public ulong FileId { get; set; }
     }
 }

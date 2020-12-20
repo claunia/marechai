@@ -10,5 +10,7 @@ namespace Marechai.Database.Models
         public MediaTagType Type { get;           set; }
         [Required]
         public virtual DbFile File { get; set; }
+
+        public ulong FileId { get; set; }
     }
 }

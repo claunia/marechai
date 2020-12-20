@@ -213,7 +213,7 @@ namespace Marechai.Helpers
             float  svgMax    = Math.Max(svgSize.Width, svgSize.Height);
             float  canvasMin = minSize   * multiplier;
             float  scale     = canvasMin / svgMax;
-            var    matrix    = SKMatrix.MakeScale(scale, scale);
+            var    matrix    = SKMatrix.CreateScale(scale, scale);
             var    bitmap    = new SKBitmap((int)(svgSize.Width * scale), (int)(svgSize.Height * scale));
             var    canvas    = new SKCanvas(bitmap);
             canvas.Clear();

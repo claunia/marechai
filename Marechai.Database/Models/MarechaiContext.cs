@@ -23,6 +23,7 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.Database.Schemas;
@@ -141,7 +142,7 @@ namespace Marechai.Database.Models
 
             IConfigurationBuilder builder       = new ConfigurationBuilder().AddJsonFile("appsettings.json");
             IConfigurationRoot    configuration = builder.Build();
-            optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies();
+            optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection"), new MariaDbServerVersion(new Version(10, 5, 0)), b=> b.UseMicrosoftJson()).UseLazyLoadingProxies();
         }
 
         public async Task<int> SaveChangesWithUserAsync(string userId)
@@ -237,7 +238,7 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => e.CountryId);
 
-                entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
+                entity.HasIndex(e => e.Synopsis).IsFullText();
 
                 entity.HasIndex(e => e.Isbn);
 
@@ -280,15 +281,15 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("browser_tests");
 
-                entity.HasIndex(e => e.Browser).HasName("idx_browser_tests_browser");
+                entity.HasIndex(e => e.Browser).HasDatabaseName("idx_browser_tests_browser");
 
-                entity.HasIndex(e => e.Os).HasName("idx_browser_tests_os");
+                entity.HasIndex(e => e.Os).HasDatabaseName("idx_browser_tests_os");
 
-                entity.HasIndex(e => e.Platform).HasName("idx_browser_tests_platform");
+                entity.HasIndex(e => e.Platform).HasDatabaseName("idx_browser_tests_platform");
 
-                entity.HasIndex(e => e.UserAgent).HasName("idx_browser_tests_user_agent");
+                entity.HasIndex(e => e.UserAgent).HasDatabaseName("idx_browser_tests_user_agent");
 
-                entity.HasIndex(e => e.Version).HasName("idx_browser_tests_version");
+                entity.HasIndex(e => e.Version).HasDatabaseName("idx_browser_tests_version");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -394,31 +395,31 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("companies");
 
-                entity.HasIndex(e => e.Address).HasName("idx_companies_address");
+                entity.HasIndex(e => e.Address).HasDatabaseName("idx_companies_address");
 
-                entity.HasIndex(e => e.City).HasName("idx_companies_city");
+                entity.HasIndex(e => e.City).HasDatabaseName("idx_companies_city");
 
-                entity.HasIndex(e => e.CountryId).HasName("idx_companies_country");
+                entity.HasIndex(e => e.CountryId).HasDatabaseName("idx_companies_country");
 
-                entity.HasIndex(e => e.Facebook).HasName("idx_companies_facebook");
+                entity.HasIndex(e => e.Facebook).HasDatabaseName("idx_companies_facebook");
 
-                entity.HasIndex(e => e.Founded).HasName("idx_companies_founded");
+                entity.HasIndex(e => e.Founded).HasDatabaseName("idx_companies_founded");
 
-                entity.HasIndex(e => e.Name).HasName("idx_companies_name");
+                entity.HasIndex(e => e.Name).HasDatabaseName("idx_companies_name");
 
-                entity.HasIndex(e => e.PostalCode).HasName("idx_companies_postal_code");
+                entity.HasIndex(e => e.PostalCode).HasDatabaseName("idx_companies_postal_code");
 
-                entity.HasIndex(e => e.Province).HasName("idx_companies_province");
+                entity.HasIndex(e => e.Province).HasDatabaseName("idx_companies_province");
 
-                entity.HasIndex(e => e.Sold).HasName("idx_companies_sold");
+                entity.HasIndex(e => e.Sold).HasDatabaseName("idx_companies_sold");
 
-                entity.HasIndex(e => e.SoldToId).HasName("idx_companies_sold_to");
+                entity.HasIndex(e => e.SoldToId).HasDatabaseName("idx_companies_sold_to");
 
-                entity.HasIndex(e => e.Status).HasName("idx_companies_status");
+                entity.HasIndex(e => e.Status).HasDatabaseName("idx_companies_status");
 
-                entity.HasIndex(e => e.Twitter).HasName("idx_companies_twitter");
+                entity.HasIndex(e => e.Twitter).HasDatabaseName("idx_companies_twitter");
 
-                entity.HasIndex(e => e.Website).HasName("idx_companies_website");
+                entity.HasIndex(e => e.Website).HasDatabaseName("idx_companies_website");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -459,7 +460,7 @@ namespace Marechai.Database.Models
                        HasForeignKey<DocumentCompany>(d => d.CompanyId).OnDelete(DeleteBehavior.SetNull);
             });
 
-            modelBuilder.Entity<CompanyDescription>().HasIndex(e => e.Text).ForMySqlIsFullText();
+            modelBuilder.Entity<CompanyDescription>().HasIndex(e => e.Text).IsFullText();
 
             modelBuilder.Entity<CompanyLogo>(entity =>
             {
@@ -472,11 +473,11 @@ namespace Marechai.Database.Models
 
                 entity.ToTable("company_logos");
 
-                entity.HasIndex(e => e.CompanyId).HasName("idx_company_id");
+                entity.HasIndex(e => e.CompanyId).HasDatabaseName("idx_company_id");
 
-                entity.HasIndex(e => e.Id).HasName("idx_id").IsUnique();
+                entity.HasIndex(e => e.Id).HasDatabaseName("idx_id").IsUnique();
 
-                entity.HasIndex(e => e.Guid).HasName("idx_guid");
+                entity.HasIndex(e => e.Guid).HasDatabaseName("idx_guid");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)").ValueGeneratedOnAdd();
 
@@ -500,7 +501,7 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => e.CountryId);
 
-                entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
+                entity.HasIndex(e => e.Synopsis).IsFullText();
 
                 entity.HasOne(d => d.Country).WithMany(p => p.Documents).HasForeignKey(d => d.CountryId);
             });
@@ -565,13 +566,13 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("forbidden");
 
-                entity.HasIndex(e => e.Browser).HasName("idx_forbidden_browser");
+                entity.HasIndex(e => e.Browser).HasDatabaseName("idx_forbidden_browser");
 
-                entity.HasIndex(e => e.Date).HasName("idx_forbidden_date");
+                entity.HasIndex(e => e.Date).HasDatabaseName("idx_forbidden_date");
 
-                entity.HasIndex(e => e.Ip).HasName("idx_forbidden_ip");
+                entity.HasIndex(e => e.Ip).HasDatabaseName("idx_forbidden_ip");
 
-                entity.HasIndex(e => e.Referer).HasName("idx_forbidden_referer");
+                entity.HasIndex(e => e.Referer).HasDatabaseName("idx_forbidden_referer");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -592,23 +593,23 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("gpus");
 
-                entity.HasIndex(e => e.CompanyId).HasName("idx_gpus_company");
+                entity.HasIndex(e => e.CompanyId).HasDatabaseName("idx_gpus_company");
 
-                entity.HasIndex(e => e.DieSize).HasName("idx_gpus_die_size");
+                entity.HasIndex(e => e.DieSize).HasDatabaseName("idx_gpus_die_size");
 
-                entity.HasIndex(e => e.Introduced).HasName("idx_gpus_introduced");
+                entity.HasIndex(e => e.Introduced).HasDatabaseName("idx_gpus_introduced");
 
-                entity.HasIndex(e => e.ModelCode).HasName("idx_gpus_model_code");
+                entity.HasIndex(e => e.ModelCode).HasDatabaseName("idx_gpus_model_code");
 
-                entity.HasIndex(e => e.Name).HasName("idx_gpus_name");
+                entity.HasIndex(e => e.Name).HasDatabaseName("idx_gpus_name");
 
-                entity.HasIndex(e => e.Package).HasName("idx_gpus_package");
+                entity.HasIndex(e => e.Package).HasDatabaseName("idx_gpus_package");
 
-                entity.HasIndex(e => e.Process).HasName("idx_gpus_process");
+                entity.HasIndex(e => e.Process).HasDatabaseName("idx_gpus_process");
 
-                entity.HasIndex(e => e.ProcessNm).HasName("idx_gpus_process_nm");
+                entity.HasIndex(e => e.ProcessNm).HasDatabaseName("idx_gpus_process_nm");
 
-                entity.HasIndex(e => e.Transistors).HasName("idx_gpus_transistors");
+                entity.HasIndex(e => e.Transistors).HasDatabaseName("idx_gpus_transistors");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -639,9 +640,9 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("gpus_by_machine");
 
-                entity.HasIndex(e => e.GpuId).HasName("idx_gpus_by_machine_gpus");
+                entity.HasIndex(e => e.GpuId).HasDatabaseName("idx_gpus_by_machine_gpus");
 
-                entity.HasIndex(e => e.MachineId).HasName("idx_gpus_by_machine_machine");
+                entity.HasIndex(e => e.MachineId).HasDatabaseName("idx_gpus_by_machine_machine");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
@@ -685,9 +686,9 @@ namespace Marechai.Database.Models
 
                 entity.ToTable("instruction_set_extensions_by_processor");
 
-                entity.HasIndex(e => e.ExtensionId).HasName("idx_setextension_extension");
+                entity.HasIndex(e => e.ExtensionId).HasDatabaseName("idx_setextension_extension");
 
-                entity.HasIndex(e => e.ProcessorId).HasName("idx_setextension_processor");
+                entity.HasIndex(e => e.ProcessorId).HasDatabaseName("idx_setextension_processor");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)").ValueGeneratedOnAdd();
 
@@ -717,7 +718,7 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("iso3166_1_numeric");
 
-                entity.HasIndex(e => e.Name).HasName("idx_name");
+                entity.HasIndex(e => e.Name).HasDatabaseName("idx_name");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("smallint(3)");
 
@@ -751,13 +752,13 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("log");
 
-                entity.HasIndex(e => e.Browser).HasName("idx_log_browser");
+                entity.HasIndex(e => e.Browser).HasDatabaseName("idx_log_browser");
 
-                entity.HasIndex(e => e.Date).HasName("idx_log_date");
+                entity.HasIndex(e => e.Date).HasDatabaseName("idx_log_date");
 
-                entity.HasIndex(e => e.Ip).HasName("idx_log_ip");
+                entity.HasIndex(e => e.Ip).HasDatabaseName("idx_log_ip");
 
-                entity.HasIndex(e => e.Referer).HasName("idx_log_referer");
+                entity.HasIndex(e => e.Referer).HasDatabaseName("idx_log_referer");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -778,9 +779,9 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("machine_families");
 
-                entity.HasIndex(e => e.CompanyId).HasName("idx_machine_families_company");
+                entity.HasIndex(e => e.CompanyId).HasDatabaseName("idx_machine_families_company");
 
-                entity.HasIndex(e => e.Name).HasName("idx_machine_families_name");
+                entity.HasIndex(e => e.Name).HasDatabaseName("idx_machine_families_name");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -796,17 +797,17 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("machines");
 
-                entity.HasIndex(e => e.CompanyId).HasName("idx_machines_company");
+                entity.HasIndex(e => e.CompanyId).HasDatabaseName("idx_machines_company");
 
-                entity.HasIndex(e => e.FamilyId).HasName("idx_machines_family");
+                entity.HasIndex(e => e.FamilyId).HasDatabaseName("idx_machines_family");
 
-                entity.HasIndex(e => e.Introduced).HasName("idx_machines_introduced");
+                entity.HasIndex(e => e.Introduced).HasDatabaseName("idx_machines_introduced");
 
-                entity.HasIndex(e => e.Model).HasName("idx_machines_model");
+                entity.HasIndex(e => e.Model).HasDatabaseName("idx_machines_model");
 
-                entity.HasIndex(e => e.Name).HasName("idx_machines_name");
+                entity.HasIndex(e => e.Name).HasDatabaseName("idx_machines_name");
 
-                entity.HasIndex(e => e.Type).HasName("idx_machines_type");
+                entity.HasIndex(e => e.Type).HasDatabaseName("idx_machines_type");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -1015,7 +1016,7 @@ namespace Marechai.Database.Models
 
                 entity.HasIndex(e => e.CountryId);
 
-                entity.HasIndex(e => e.Synopsis).ForMySqlIsFullText();
+                entity.HasIndex(e => e.Synopsis).IsFullText();
 
                 entity.HasIndex(e => e.Issn);
 
@@ -1065,15 +1066,15 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("memory_by_machine");
 
-                entity.HasIndex(e => e.MachineId).HasName("idx_memory_by_machine_machine");
+                entity.HasIndex(e => e.MachineId).HasDatabaseName("idx_memory_by_machine_machine");
 
-                entity.HasIndex(e => e.Size).HasName("idx_memory_by_machine_size");
+                entity.HasIndex(e => e.Size).HasDatabaseName("idx_memory_by_machine_size");
 
-                entity.HasIndex(e => e.Speed).HasName("idx_memory_by_machine_speed");
+                entity.HasIndex(e => e.Speed).HasDatabaseName("idx_memory_by_machine_speed");
 
-                entity.HasIndex(e => e.Type).HasName("idx_memory_by_machine_type");
+                entity.HasIndex(e => e.Type).HasDatabaseName("idx_memory_by_machine_type");
 
-                entity.HasIndex(e => e.Usage).HasName("idx_memory_by_machine_usage");
+                entity.HasIndex(e => e.Usage).HasDatabaseName("idx_memory_by_machine_usage");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
@@ -1110,9 +1111,9 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("money_donations");
 
-                entity.HasIndex(e => e.Donator).HasName("idx_money_donations_donator");
+                entity.HasIndex(e => e.Donator).HasDatabaseName("idx_money_donations_donator");
 
-                entity.HasIndex(e => e.Quantity).HasName("idx_money_donations_quantity");
+                entity.HasIndex(e => e.Quantity).HasDatabaseName("idx_money_donations_quantity");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -1127,11 +1128,11 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("news");
 
-                entity.HasIndex(e => e.AddedId).HasName("idx_news_ip");
+                entity.HasIndex(e => e.AddedId).HasDatabaseName("idx_news_ip");
 
-                entity.HasIndex(e => e.Date).HasName("idx_news_date");
+                entity.HasIndex(e => e.Date).HasDatabaseName("idx_news_date");
 
-                entity.HasIndex(e => e.Type).HasName("idx_news_type");
+                entity.HasIndex(e => e.Type).HasDatabaseName("idx_news_type");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -1227,55 +1228,55 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("processors");
 
-                entity.HasIndex(e => e.AddrBus).HasName("idx_processors_addr_bus");
+                entity.HasIndex(e => e.AddrBus).HasDatabaseName("idx_processors_addr_bus");
 
-                entity.HasIndex(e => e.CompanyId).HasName("idx_processors_company");
+                entity.HasIndex(e => e.CompanyId).HasDatabaseName("idx_processors_company");
 
-                entity.HasIndex(e => e.Cores).HasName("idx_processors_cores");
+                entity.HasIndex(e => e.Cores).HasDatabaseName("idx_processors_cores");
 
-                entity.HasIndex(e => e.DataBus).HasName("idx_processors_data_bus");
+                entity.HasIndex(e => e.DataBus).HasDatabaseName("idx_processors_data_bus");
 
-                entity.HasIndex(e => e.DieSize).HasName("idx_processors_die_size");
+                entity.HasIndex(e => e.DieSize).HasDatabaseName("idx_processors_die_size");
 
-                entity.HasIndex(e => e.FprSize).HasName("idx_processors_FPR_size");
+                entity.HasIndex(e => e.FprSize).HasDatabaseName("idx_processors_FPR_size");
 
-                entity.HasIndex(e => e.Fprs).HasName("idx_processors_FPRs");
+                entity.HasIndex(e => e.Fprs).HasDatabaseName("idx_processors_FPRs");
 
-                entity.HasIndex(e => e.GprSize).HasName("idx_processors_GPR_size");
+                entity.HasIndex(e => e.GprSize).HasDatabaseName("idx_processors_GPR_size");
 
-                entity.HasIndex(e => e.Gprs).HasName("idx_processors_GPRs");
+                entity.HasIndex(e => e.Gprs).HasDatabaseName("idx_processors_GPRs");
 
-                entity.HasIndex(e => e.InstructionSetId).HasName("idx_processors_instruction_set");
+                entity.HasIndex(e => e.InstructionSetId).HasDatabaseName("idx_processors_instruction_set");
 
-                entity.HasIndex(e => e.Introduced).HasName("idx_processors_introduced");
+                entity.HasIndex(e => e.Introduced).HasDatabaseName("idx_processors_introduced");
 
-                entity.HasIndex(e => e.L1Data).HasName("idx_processors_L1_data");
+                entity.HasIndex(e => e.L1Data).HasDatabaseName("idx_processors_L1_data");
 
-                entity.HasIndex(e => e.L1Instruction).HasName("idx_processors_L1_instruction");
+                entity.HasIndex(e => e.L1Instruction).HasDatabaseName("idx_processors_L1_instruction");
 
-                entity.HasIndex(e => e.L2).HasName("idx_processors_L2");
+                entity.HasIndex(e => e.L2).HasDatabaseName("idx_processors_L2");
 
-                entity.HasIndex(e => e.L3).HasName("idx_processors_L3");
+                entity.HasIndex(e => e.L3).HasDatabaseName("idx_processors_L3");
 
-                entity.HasIndex(e => e.ModelCode).HasName("idx_processors_model_code");
+                entity.HasIndex(e => e.ModelCode).HasDatabaseName("idx_processors_model_code");
 
-                entity.HasIndex(e => e.Name).HasName("idx_processors_name");
+                entity.HasIndex(e => e.Name).HasDatabaseName("idx_processors_name");
 
-                entity.HasIndex(e => e.Package).HasName("idx_processors_package");
+                entity.HasIndex(e => e.Package).HasDatabaseName("idx_processors_package");
 
-                entity.HasIndex(e => e.Process).HasName("idx_processors_process");
+                entity.HasIndex(e => e.Process).HasDatabaseName("idx_processors_process");
 
-                entity.HasIndex(e => e.ProcessNm).HasName("idx_processors_process_nm");
+                entity.HasIndex(e => e.ProcessNm).HasDatabaseName("idx_processors_process_nm");
 
-                entity.HasIndex(e => e.SimdRegisters).HasName("idx_processors_SIMD_registers");
+                entity.HasIndex(e => e.SimdRegisters).HasDatabaseName("idx_processors_SIMD_registers");
 
-                entity.HasIndex(e => e.SimdSize).HasName("idx_processors_SIMD_size");
+                entity.HasIndex(e => e.SimdSize).HasDatabaseName("idx_processors_SIMD_size");
 
-                entity.HasIndex(e => e.Speed).HasName("idx_processors_speed");
+                entity.HasIndex(e => e.Speed).HasDatabaseName("idx_processors_speed");
 
-                entity.HasIndex(e => e.ThreadsPerCore).HasName("idx_processors_threads_per_core");
+                entity.HasIndex(e => e.ThreadsPerCore).HasDatabaseName("idx_processors_threads_per_core");
 
-                entity.HasIndex(e => e.Transistors).HasName("idx_processors_transistors");
+                entity.HasIndex(e => e.Transistors).HasDatabaseName("idx_processors_transistors");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -1337,11 +1338,11 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("processors_by_machine");
 
-                entity.HasIndex(e => e.MachineId).HasName("idx_processors_by_machine_machine");
+                entity.HasIndex(e => e.MachineId).HasDatabaseName("idx_processors_by_machine_machine");
 
-                entity.HasIndex(e => e.ProcessorId).HasName("idx_processors_by_machine_processor");
+                entity.HasIndex(e => e.ProcessorId).HasDatabaseName("idx_processors_by_machine_processor");
 
-                entity.HasIndex(e => e.Speed).HasName("idx_processors_by_machine_speed");
+                entity.HasIndex(e => e.Speed).HasDatabaseName("idx_processors_by_machine_speed");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
@@ -1373,26 +1374,26 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("resolutions");
 
-                entity.HasIndex(e => e.Colors).HasName("idx_resolutions_colors");
+                entity.HasIndex(e => e.Colors).HasDatabaseName("idx_resolutions_colors");
 
-                entity.HasIndex(e => e.Height).HasName("idx_resolutions_height");
+                entity.HasIndex(e => e.Height).HasDatabaseName("idx_resolutions_height");
 
-                entity.HasIndex(e => e.Palette).HasName("idx_resolutions_palette");
+                entity.HasIndex(e => e.Palette).HasDatabaseName("idx_resolutions_palette");
 
-                entity.HasIndex(e => e.Width).HasName("idx_resolutions_width");
+                entity.HasIndex(e => e.Width).HasDatabaseName("idx_resolutions_width");
 
                 entity.HasIndex(e => new
                 {
                     e.Width,
                     e.Height
-                }).HasName("idx_resolutions_resolution");
+                }).HasDatabaseName("idx_resolutions_resolution");
 
                 entity.HasIndex(e => new
                 {
                     e.Width,
                     e.Height,
                     e.Colors
-                }).HasName("idx_resolutions_resolution_with_color");
+                }).HasDatabaseName("idx_resolutions_resolution_with_color");
 
                 entity.HasIndex(e => new
                 {
@@ -1400,7 +1401,7 @@ namespace Marechai.Database.Models
                     e.Height,
                     e.Colors,
                     e.Palette
-                }).HasName("idx_resolutions_resolution_with_color_and_palette");
+                }).HasDatabaseName("idx_resolutions_resolution_with_color_and_palette");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -1421,9 +1422,9 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("resolutions_by_gpu");
 
-                entity.HasIndex(e => e.GpuId).HasName("idx_resolutions_by_gpu_gpu");
+                entity.HasIndex(e => e.GpuId).HasDatabaseName("idx_resolutions_by_gpu_gpu");
 
-                entity.HasIndex(e => e.ResolutionId).HasName("idx_resolutions_by_gpu_resolution");
+                entity.HasIndex(e => e.ResolutionId).HasDatabaseName("idx_resolutions_by_gpu_resolution");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
@@ -1471,9 +1472,9 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("sound_by_machine");
 
-                entity.HasIndex(e => e.MachineId).HasName("idx_sound_by_machine_machine");
+                entity.HasIndex(e => e.MachineId).HasDatabaseName("idx_sound_by_machine_machine");
 
-                entity.HasIndex(e => e.SoundSynthId).HasName("idx_sound_by_machine_sound_synth");
+                entity.HasIndex(e => e.SoundSynthId).HasDatabaseName("idx_sound_by_machine_sound_synth");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 
@@ -1501,25 +1502,25 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("sound_synths");
 
-                entity.HasIndex(e => e.CompanyId).HasName("idx_sound_synths_company");
+                entity.HasIndex(e => e.CompanyId).HasDatabaseName("idx_sound_synths_company");
 
-                entity.HasIndex(e => e.Depth).HasName("idx_sound_synths_depth");
+                entity.HasIndex(e => e.Depth).HasDatabaseName("idx_sound_synths_depth");
 
-                entity.HasIndex(e => e.Frequency).HasName("idx_sound_synths_frequency");
+                entity.HasIndex(e => e.Frequency).HasDatabaseName("idx_sound_synths_frequency");
 
-                entity.HasIndex(e => e.Introduced).HasName("idx_sound_synths_introduced");
+                entity.HasIndex(e => e.Introduced).HasDatabaseName("idx_sound_synths_introduced");
 
-                entity.HasIndex(e => e.ModelCode).HasName("idx_sound_synths_model_code");
+                entity.HasIndex(e => e.ModelCode).HasDatabaseName("idx_sound_synths_model_code");
 
-                entity.HasIndex(e => e.Name).HasName("idx_sound_synths_name");
+                entity.HasIndex(e => e.Name).HasDatabaseName("idx_sound_synths_name");
 
-                entity.HasIndex(e => e.SquareWave).HasName("idx_sound_synths_square_wave");
+                entity.HasIndex(e => e.SquareWave).HasDatabaseName("idx_sound_synths_square_wave");
 
-                entity.HasIndex(e => e.Type).HasName("idx_sound_synths_type");
+                entity.HasIndex(e => e.Type).HasDatabaseName("idx_sound_synths_type");
 
-                entity.HasIndex(e => e.Voices).HasName("idx_sound_synths_voices");
+                entity.HasIndex(e => e.Voices).HasDatabaseName("idx_sound_synths_voices");
 
-                entity.HasIndex(e => e.WhiteNoise).HasName("idx_sound_synths_white_noise");
+                entity.HasIndex(e => e.WhiteNoise).HasDatabaseName("idx_sound_synths_white_noise");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
@@ -1552,13 +1553,13 @@ namespace Marechai.Database.Models
             {
                 entity.ToTable("storage_by_machine");
 
-                entity.HasIndex(e => e.Capacity).HasName("idx_storage_capacity");
+                entity.HasIndex(e => e.Capacity).HasDatabaseName("idx_storage_capacity");
 
-                entity.HasIndex(e => e.Interface).HasName("idx_storage_interface");
+                entity.HasIndex(e => e.Interface).HasDatabaseName("idx_storage_interface");
 
-                entity.HasIndex(e => e.MachineId).HasName("idx_storage_machine");
+                entity.HasIndex(e => e.MachineId).HasDatabaseName("idx_storage_machine");
 
-                entity.HasIndex(e => e.Type).HasName("idx_storage_type");
+                entity.HasIndex(e => e.Type).HasDatabaseName("idx_storage_type");
 
                 entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint(20)");
 

@@ -23,8 +23,8 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models
 {
@@ -46,8 +46,8 @@ namespace Marechai.Database.Models
         public string SoftwareVersion { get; set; }
         [StringLength(64)]
         public string SoftwareOperatingSystem { get; set; }
-        [Required]
-        public JsonObject<Extent[]> Extents { get; set; }
+        [Required, Column(TypeName = "json")]
+        public Extent[] Extents { get; set; }
         [Required]
         public virtual Dump Dump { get; set; }
     }

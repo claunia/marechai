@@ -52,7 +52,7 @@ namespace DiscImageChef.Interop
         {
             Assembly assembly = typeof(GCSettings).Assembly;
 
-            string[] assemblyPath = assembly.CodeBase.Split(new[]
+            string[] assemblyPath = assembly.Location.Split(new[]
             {
                 '/', '\\'
             }, StringSplitOptions.RemoveEmptyEntries);

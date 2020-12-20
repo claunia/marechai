@@ -89,9 +89,6 @@
   <data name="Pegging must be bigger than 0." xml:space="preserve">
     <value>Pegging must be bigger than 0.</value>
   </data>
-  <data name="Please enter an ending date." xml:space="preserve">
-    <value>Please enter an ending date.</value>
-  </data>
   <data name="Ending date must be before now." xml:space="preserve">
     <value>Ending date must be before now.</value>
   </data>

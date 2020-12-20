@@ -23,6 +23,7 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Globalization;
 using Blazorise;
 using Blazorise.Bootstrap;
@@ -48,7 +49,7 @@ namespace Marechai
     {
         readonly CultureInfo[] supportedCultures =
         {
-            new CultureInfo("en-US"), new CultureInfo("es")
+            new("en-US"), new("es")
         };
 
         public Startup(IConfiguration configuration) => Configuration = configuration;
@@ -63,8 +64,10 @@ namespace Marechai
                      AddFontAwesomeIcons();
 
             services.AddDbContext<MarechaiContext>(options => options.UseLazyLoadingProxies().
-                                                                      UseMySql(Configuration.
-                                                                                   GetConnectionString("DefaultConnection")));
+                                                                      UseMySql(Configuration.GetConnectionString("DefaultConnection"),
+                                                                               new MariaDbServerVersion(new Version(10,
+                                                                                   5, 0)),
+                                                                               b => b.UseMicrosoftJson()));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).
                      AddRoles<ApplicationRole>().AddEntityFrameworkStores<MarechaiContext>();
@@ -93,7 +96,7 @@ namespace Marechai
             if(env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {

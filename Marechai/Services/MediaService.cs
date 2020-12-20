@@ -65,9 +65,9 @@ namespace Marechai.Services
                                                                         Firmware          = d.Firmware,
                                                                         PhysicalBlockSize = d.PhysicalBlockSize,
                                                                         LogicalBlockSize  = d.LogicalBlockSize,
-                                                                        BlockSizes        = d.BlockSizes.Object,
+                                                                        BlockSizes        = d.BlockSizes,
                                                                         StorageInterface  = d.StorageInterface,
-                                                                        TableOfContents   = d.TableOfContents.Object
+                                                                        TableOfContents   = d.TableOfContents
                                                                     }).ToListAsync();
 
         public async Task<List<MediaViewModel>> GetTitlesAsync() => await _context.
@@ -106,11 +106,10 @@ namespace Marechai.Services
                                                                                        d.PhysicalBlockSize,
                                                                                    LogicalBlockSize =
                                                                                        d.LogicalBlockSize,
-                                                                                   BlockSizes = d.BlockSizes.Object,
+                                                                                   BlockSizes = d.BlockSizes,
                                                                                    StorageInterface =
                                                                                        d.StorageInterface,
-                                                                                   TableOfContents =
-                                                                                       d.TableOfContents.Object
+                                                                                   TableOfContents = d.TableOfContents
                                                                                }).FirstOrDefaultAsync();
 
         public async Task UpdateAsync(MediaViewModel viewModel, string userId)

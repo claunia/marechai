@@ -33,5 +33,8 @@ namespace Marechai.Database.Models
         public virtual Filesystem Filesystem { get; set; }
         [Required]
         public virtual MediaFile File { get; set; }
+
+        public ulong FilesystemId { get; set; }
+        public ulong FileId       { get; set; }
     }
 }

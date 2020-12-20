@@ -23,9 +23,9 @@
 // Copyright © 2003-2020 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Aaru.CommonTypes;
 
 namespace Marechai.Database.Models
@@ -33,32 +33,34 @@ namespace Marechai.Database.Models
     public class Media : BaseModel<ulong>
     {
         [Required]
-        public string Title { get;                                              set; }
-        public         ushort?                         Sequence          { get; set; }
-        public         ushort?                         LastSequence      { get; set; }
-        public         MediaType                       Type              { get; set; }
-        public         int?                            WriteOffset       { get; set; }
-        public         ushort?                         Sides             { get; set; }
-        public         ushort?                         Layers            { get; set; }
-        public         ushort?                         Sessions          { get; set; }
-        public         ushort?                         Tracks            { get; set; }
-        public         ulong                           Sectors           { get; set; }
-        public         ulong                           Size              { get; set; }
-        public         string                          CopyProtection    { get; set; }
-        public         string                          PartNumber        { get; set; }
-        public         string                          SerialNumber      { get; set; }
-        public         string                          Barcode           { get; set; }
-        public         string                          CatalogueNumber   { get; set; }
-        public         string                          Manufacturer      { get; set; }
-        public         string                          Model             { get; set; }
-        public         string                          Revision          { get; set; }
-        public         string                          Firmware          { get; set; }
-        public         int?                            PhysicalBlockSize { get; set; }
-        public         int?                            LogicalBlockSize  { get; set; }
-        public         JsonObject<VariableBlockSize[]> BlockSizes        { get; set; }
-        public         StorageInterface?               StorageInterface  { get; set; }
-        public         JsonObject<OpticalDiscTrack[]>  TableOfContents   { get; set; }
-        public virtual MagazineIssue                   MagazineIssue     { get; set; }
+        public string Title { get;                set; }
+        public ushort?   Sequence          { get; set; }
+        public ushort?   LastSequence      { get; set; }
+        public MediaType Type              { get; set; }
+        public int?      WriteOffset       { get; set; }
+        public ushort?   Sides             { get; set; }
+        public ushort?   Layers            { get; set; }
+        public ushort?   Sessions          { get; set; }
+        public ushort?   Tracks            { get; set; }
+        public ulong     Sectors           { get; set; }
+        public ulong     Size              { get; set; }
+        public string    CopyProtection    { get; set; }
+        public string    PartNumber        { get; set; }
+        public string    SerialNumber      { get; set; }
+        public string    Barcode           { get; set; }
+        public string    CatalogueNumber   { get; set; }
+        public string    Manufacturer      { get; set; }
+        public string    Model             { get; set; }
+        public string    Revision          { get; set; }
+        public string    Firmware          { get; set; }
+        public int?      PhysicalBlockSize { get; set; }
+        public int?      LogicalBlockSize  { get; set; }
+        [Column(TypeName = "json")]
+        public VariableBlockSize[] BlockSizes { get;     set; }
+        public StorageInterface? StorageInterface { get; set; }
+        [Column(TypeName = "json")]
+        public OpticalDiscTrack[] TableOfContents { get;  set; }
+        public virtual MagazineIssue MagazineIssue { get; set; }
 
         public virtual ICollection<LogicalPartitionsByMedia> LogicalPartitions { get; set; }
         public virtual ICollection<MediaDump>                MediaDumps        { get; set; }

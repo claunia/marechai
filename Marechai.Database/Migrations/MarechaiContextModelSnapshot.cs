@@ -13,7 +13,7 @@ namespace Marechai.Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "3.1.6").HasAnnotation("Relational:MaxIdentifierLength", 64);
+            modelBuilder.HasAnnotation("Relational:MaxIdentifierLength", 64).HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("Marechai.Database.Models.ApplicationRole", b =>
             {
@@ -26,14 +26,14 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Description").HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                b.Property<string>("Name").HasColumnType("varchar(256) CHARACTER SET utf8mb4").HasMaxLength(256);
+                b.Property<string>("Name").HasMaxLength(256).HasColumnType("varchar(256) CHARACTER SET utf8mb4");
 
-                b.Property<string>("NormalizedName").HasColumnType("varchar(256) CHARACTER SET utf8mb4").
-                  HasMaxLength(256);
+                b.Property<string>("NormalizedName").HasMaxLength(256).
+                  HasColumnType("varchar(256) CHARACTER SET utf8mb4");
 
                 b.HasKey("Id");
 
-                b.HasIndex("NormalizedName").IsUnique().HasName("RoleNameIndex");
+                b.HasIndex("NormalizedName").IsUnique().HasDatabaseName("RoleNameIndex");
 
                 b.ToTable("AspNetRoles");
             });
@@ -47,7 +47,7 @@ namespace Marechai.Database.Migrations
                 b.Property<string>("ConcurrencyStamp").IsConcurrencyToken().
                   HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                b.Property<string>("Email").HasColumnType("varchar(256) CHARACTER SET utf8mb4").HasMaxLength(256);
+                b.Property<string>("Email").HasMaxLength(256).HasColumnType("varchar(256) CHARACTER SET utf8mb4");
 
                 b.Property<bool>("EmailConfirmed").HasColumnType("bit(1)");
 
@@ -55,11 +55,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTimeOffset?>("LockoutEnd").HasColumnType("datetime(6)");
 
-                b.Property<string>("NormalizedEmail").HasColumnType("varchar(256) CHARACTER SET utf8mb4").
-                  HasMaxLength(256);
+                b.Property<string>("NormalizedEmail").HasMaxLength(256).
+                  HasColumnType("varchar(256) CHARACTER SET utf8mb4");
 
-                b.Property<string>("NormalizedUserName").HasColumnType("varchar(256) CHARACTER SET utf8mb4").
-                  HasMaxLength(256);
+                b.Property<string>("NormalizedUserName").HasMaxLength(256).
+                  HasColumnType("varchar(256) CHARACTER SET utf8mb4");
 
                 b.Property<string>("PasswordHash").HasColumnType("longtext CHARACTER SET utf8mb4");
 
@@ -71,13 +71,13 @@ namespace Marechai.Database.Migrations
 
                 b.Property<bool>("TwoFactorEnabled").HasColumnType("bit(1)");
 
-                b.Property<string>("UserName").HasColumnType("varchar(256) CHARACTER SET utf8mb4").HasMaxLength(256);
+                b.Property<string>("UserName").HasMaxLength(256).HasColumnType("varchar(256) CHARACTER SET utf8mb4");
 
                 b.HasKey("Id");
 
-                b.HasIndex("NormalizedEmail").HasName("EmailIndex");
+                b.HasIndex("NormalizedEmail").HasDatabaseName("EmailIndex");
 
-                b.HasIndex("NormalizedUserName").IsUnique().HasName("UserNameIndex");
+                b.HasIndex("NormalizedUserName").IsUnique().HasDatabaseName("UserNameIndex");
 
                 b.ToTable("AspNetUsers");
             });
@@ -125,7 +125,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<int?>("Edition").HasColumnType("int");
 
-                b.Property<string>("Isbn").HasColumnType("varchar(13) CHARACTER SET utf8mb4").HasMaxLength(13);
+                b.Property<string>("Isbn").HasMaxLength(13).HasColumnType("varchar(13) CHARACTER SET utf8mb4");
 
                 b.Property<string>("NativeTitle").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -137,7 +137,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<long?>("SourceId").HasColumnType("bigint");
 
-                b.Property<string>("Synopsis").HasColumnType("longtext CHARACTER SET utf8mb4").HasMaxLength(262144);
+                b.Property<string>("Synopsis").HasMaxLength(262144).HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<string>("Title").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -292,71 +292,71 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.BrowserTest", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<sbyte>("Agif").ValueGeneratedOnAdd().HasColumnName("agif").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Agif").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("agif").
                   HasDefaultValueSql("'0'");
 
-                b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnName("browser").
-                  HasColumnType("varchar(64)").HasDefaultValueSql("''").HasMaxLength(64);
+                b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasMaxLength(64).
+                  HasColumnType("varchar(64)").HasColumnName("browser").HasDefaultValueSql("''");
 
-                b.Property<sbyte>("Colors").ValueGeneratedOnAdd().HasColumnName("colors").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Colors").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("colors").
                   HasDefaultValueSql("'0'");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<sbyte>("Flash").ValueGeneratedOnAdd().HasColumnName("flash").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Flash").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("flash").
                   HasDefaultValueSql("'0'");
 
-                b.Property<sbyte>("Frames").ValueGeneratedOnAdd().HasColumnName("frames").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Frames").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("frames").
                   HasDefaultValueSql("'0'");
 
-                b.Property<sbyte>("Gif87").ValueGeneratedOnAdd().HasColumnName("gif87").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Gif87").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("gif87").
                   HasDefaultValueSql("'0'");
 
-                b.Property<sbyte>("Gif89").ValueGeneratedOnAdd().HasColumnName("gif89").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Gif89").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("gif89").
                   HasDefaultValueSql("'0'");
 
-                b.Property<sbyte>("Jpeg").ValueGeneratedOnAdd().HasColumnName("jpeg").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Jpeg").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("jpeg").
                   HasDefaultValueSql("'0'");
 
-                b.Property<sbyte>("Js").ValueGeneratedOnAdd().HasColumnName("js").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Js").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("js").
                   HasDefaultValueSql("'0'");
 
-                b.Property<string>("Os").IsRequired().ValueGeneratedOnAdd().HasColumnName("os").
-                  HasColumnType("varchar(32)").HasDefaultValueSql("''").HasMaxLength(32);
+                b.Property<string>("Os").IsRequired().ValueGeneratedOnAdd().HasMaxLength(32).
+                  HasColumnType("varchar(32)").HasColumnName("os").HasDefaultValueSql("''");
 
-                b.Property<string>("Platform").IsRequired().ValueGeneratedOnAdd().HasColumnName("platform").
-                  HasColumnType("varchar(8)").HasDefaultValueSql("''").HasMaxLength(8);
+                b.Property<string>("Platform").IsRequired().ValueGeneratedOnAdd().HasMaxLength(8).
+                  HasColumnType("varchar(8)").HasColumnName("platform").HasDefaultValueSql("''");
 
-                b.Property<sbyte>("Png").ValueGeneratedOnAdd().HasColumnName("png").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Png").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("png").
                   HasDefaultValueSql("'0'");
 
-                b.Property<sbyte>("Pngt").ValueGeneratedOnAdd().HasColumnName("pngt").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Pngt").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("pngt").
                   HasDefaultValueSql("'0'");
 
-                b.Property<sbyte>("Table").ValueGeneratedOnAdd().HasColumnName("table").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Table").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("table").
                   HasDefaultValueSql("'0'");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
-                b.Property<string>("UserAgent").IsRequired().ValueGeneratedOnAdd().HasColumnName("user_agent").
-                  HasColumnType("varchar(128)").HasDefaultValueSql("''").HasMaxLength(128);
+                b.Property<string>("UserAgent").IsRequired().ValueGeneratedOnAdd().HasMaxLength(128).
+                  HasColumnType("varchar(128)").HasColumnName("user_agent").HasDefaultValueSql("''");
 
-                b.Property<string>("Version").IsRequired().ValueGeneratedOnAdd().HasColumnName("version").
-                  HasColumnType("varchar(16)").HasDefaultValueSql("''").HasMaxLength(16);
+                b.Property<string>("Version").IsRequired().ValueGeneratedOnAdd().HasMaxLength(16).
+                  HasColumnType("varchar(16)").HasColumnName("version").HasDefaultValueSql("''");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Browser").HasName("idx_browser_tests_browser");
+                b.HasIndex("Browser").HasDatabaseName("idx_browser_tests_browser");
 
-                b.HasIndex("Os").HasName("idx_browser_tests_os");
+                b.HasIndex("Os").HasDatabaseName("idx_browser_tests_os");
 
-                b.HasIndex("Platform").HasName("idx_browser_tests_platform");
+                b.HasIndex("Platform").HasDatabaseName("idx_browser_tests_platform");
 
-                b.HasIndex("UserAgent").HasName("idx_browser_tests_user_agent");
+                b.HasIndex("UserAgent").HasDatabaseName("idx_browser_tests_user_agent");
 
-                b.HasIndex("Version").HasName("idx_browser_tests_version");
+                b.HasIndex("Version").HasDatabaseName("idx_browser_tests_version");
 
                 b.ToTable("browser_tests");
             });
@@ -513,21 +513,21 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Company", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<string>("Address").HasColumnName("address").HasColumnType("varchar(80)").HasMaxLength(80);
+                b.Property<string>("Address").HasMaxLength(80).HasColumnType("varchar(80)").HasColumnName("address");
 
-                b.Property<string>("City").HasColumnName("city").HasColumnType("varchar(80)").HasMaxLength(80);
+                b.Property<string>("City").HasMaxLength(80).HasColumnType("varchar(80)").HasColumnName("city");
 
-                b.Property<short?>("CountryId").HasColumnName("country").HasColumnType("smallint(3)");
+                b.Property<short?>("CountryId").HasColumnType("smallint(3)").HasColumnName("country");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
                 b.Property<int?>("DocumentCompanyId").HasColumnType("int");
 
-                b.Property<string>("Facebook").HasColumnName("facebook").HasColumnType("varchar(45)").HasMaxLength(45);
+                b.Property<string>("Facebook").HasMaxLength(45).HasColumnType("varchar(45)").HasColumnName("facebook");
 
-                b.Property<DateTime?>("Founded").HasColumnName("founded").HasColumnType("datetime");
+                b.Property<DateTime?>("Founded").HasColumnType("datetime").HasColumnName("founded");
 
                 b.Property<bool>("FoundedDayIsUnknown").HasColumnType("bit(1)");
 
@@ -535,57 +535,57 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("LegalName").HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name").
-                  HasColumnType("varchar(128)").HasDefaultValueSql("''");
+                b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnType("varchar(128)").
+                  HasColumnName("name").HasDefaultValueSql("''");
 
-                b.Property<string>("PostalCode").HasColumnName("postal_code").HasColumnType("varchar(25)").
-                  HasMaxLength(25);
+                b.Property<string>("PostalCode").HasMaxLength(25).HasColumnType("varchar(25)").
+                  HasColumnName("postal_code");
 
-                b.Property<string>("Province").HasColumnName("province").HasColumnType("varchar(80)").HasMaxLength(80);
+                b.Property<string>("Province").HasMaxLength(80).HasColumnType("varchar(80)").HasColumnName("province");
 
-                b.Property<DateTime?>("Sold").HasColumnName("sold").HasColumnType("datetime");
+                b.Property<DateTime?>("Sold").HasColumnType("datetime").HasColumnName("sold");
 
                 b.Property<bool>("SoldDayIsUnknown").HasColumnType("bit(1)");
 
                 b.Property<bool>("SoldMonthIsUnknown").HasColumnType("bit(1)");
 
-                b.Property<int?>("SoldToId").HasColumnName("sold_to").HasColumnType("int(11)");
+                b.Property<int?>("SoldToId").HasColumnType("int(11)").HasColumnName("sold_to");
 
-                b.Property<int>("Status").HasColumnName("status").HasColumnType("int(11)");
+                b.Property<int>("Status").HasColumnType("int(11)").HasColumnName("status");
 
-                b.Property<string>("Twitter").HasColumnName("twitter").HasColumnType("varchar(45)").HasMaxLength(45);
+                b.Property<string>("Twitter").HasMaxLength(45).HasColumnType("varchar(45)").HasColumnName("twitter");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
-                b.Property<string>("Website").HasColumnName("website").HasColumnType("varchar(255)").HasMaxLength(255);
+                b.Property<string>("Website").HasMaxLength(255).HasColumnType("varchar(255)").HasColumnName("website");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Address").HasName("idx_companies_address");
+                b.HasIndex("Address").HasDatabaseName("idx_companies_address");
 
-                b.HasIndex("City").HasName("idx_companies_city");
+                b.HasIndex("City").HasDatabaseName("idx_companies_city");
 
-                b.HasIndex("CountryId").HasName("idx_companies_country");
+                b.HasIndex("CountryId").HasDatabaseName("idx_companies_country");
 
-                b.HasIndex("Facebook").HasName("idx_companies_facebook");
+                b.HasIndex("Facebook").HasDatabaseName("idx_companies_facebook");
 
-                b.HasIndex("Founded").HasName("idx_companies_founded");
+                b.HasIndex("Founded").HasDatabaseName("idx_companies_founded");
 
-                b.HasIndex("Name").HasName("idx_companies_name");
+                b.HasIndex("Name").HasDatabaseName("idx_companies_name");
 
-                b.HasIndex("PostalCode").HasName("idx_companies_postal_code");
+                b.HasIndex("PostalCode").HasDatabaseName("idx_companies_postal_code");
 
-                b.HasIndex("Province").HasName("idx_companies_province");
+                b.HasIndex("Province").HasDatabaseName("idx_companies_province");
 
-                b.HasIndex("Sold").HasName("idx_companies_sold");
+                b.HasIndex("Sold").HasDatabaseName("idx_companies_sold");
 
-                b.HasIndex("SoldToId").HasName("idx_companies_sold_to");
+                b.HasIndex("SoldToId").HasDatabaseName("idx_companies_sold_to");
 
-                b.HasIndex("Status").HasName("idx_companies_status");
+                b.HasIndex("Status").HasDatabaseName("idx_companies_status");
 
-                b.HasIndex("Twitter").HasName("idx_companies_twitter");
+                b.HasIndex("Twitter").HasDatabaseName("idx_companies_twitter");
 
-                b.HasIndex("Website").HasName("idx_companies_website");
+                b.HasIndex("Website").HasDatabaseName("idx_companies_website");
 
                 b.ToTable("companies");
             });
@@ -598,10 +598,10 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("Html").HasColumnType("longtext CHARACTER SET utf8mb4").HasMaxLength(262144);
+                b.Property<string>("Html").HasMaxLength(262144).HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                b.Property<string>("Text").IsRequired().HasColumnType("longtext CHARACTER SET utf8mb4").
-                  HasMaxLength(262144);
+                b.Property<string>("Text").IsRequired().HasMaxLength(262144).
+                  HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
@@ -616,25 +616,25 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.CompanyLogo", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<int>("CompanyId").HasColumnName("company_id").HasColumnType("int(11)");
+                b.Property<int>("CompanyId").HasColumnType("int(11)").HasColumnName("company_id");
 
-                b.Property<Guid>("Guid").HasColumnName("logo_guid").HasColumnType("char(36)");
+                b.Property<Guid>("Guid").HasColumnType("char(36)").HasColumnName("logo_guid");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
-                b.Property<int?>("Year").HasColumnName("year").HasColumnType("int(4)");
+                b.Property<int?>("Year").HasColumnType("int(4)").HasColumnName("year");
 
                 b.HasKey("Id", "CompanyId", "Guid");
 
-                b.HasIndex("CompanyId").HasName("idx_company_id");
+                b.HasIndex("CompanyId").HasDatabaseName("idx_company_id");
 
-                b.HasIndex("Guid").HasName("idx_guid");
+                b.HasIndex("Guid").HasDatabaseName("idx_guid");
 
-                b.HasIndex("Id").IsUnique().HasName("idx_id");
+                b.HasIndex("Id").IsUnique().HasDatabaseName("idx_id");
 
                 b.ToTable("company_logos");
             });
@@ -645,7 +645,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("CurrencyCode").HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+                b.Property<string>("CurrencyCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
 
                 b.Property<float>("Inflation").HasColumnType("float");
 
@@ -668,13 +668,13 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("DestinationCode").HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+                b.Property<string>("DestinationCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime?>("End").HasColumnType("datetime(6)");
 
                 b.Property<float>("Ratio").HasColumnType("float");
 
-                b.Property<string>("SourceCode").HasColumnType("varchar(3) CHARACTER SET utf8mb4");
+                b.Property<string>("SourceCode").IsRequired().HasColumnType("varchar(3) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime>("Start").HasColumnType("datetime(6)");
 
@@ -770,7 +770,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime?>("Published").HasColumnType("datetime(6)");
 
-                b.Property<string>("Synopsis").HasColumnType("longtext CHARACTER SET utf8mb4").HasMaxLength(262144);
+                b.Property<string>("Synopsis").HasMaxLength(262144).HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<string>("Title").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -1031,25 +1031,25 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Extents").IsRequired().HasColumnType("json");
 
-                b.Property<string>("Firmware").HasColumnType("varchar(32) CHARACTER SET utf8mb4").HasMaxLength(32);
+                b.Property<string>("Firmware").HasMaxLength(32).HasColumnType("varchar(32) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Manufacturer").HasColumnType("varchar(48) CHARACTER SET utf8mb4").HasMaxLength(48);
+                b.Property<string>("Manufacturer").HasMaxLength(48).HasColumnType("varchar(48) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Model").IsRequired().HasColumnType("varchar(48) CHARACTER SET utf8mb4").
-                  HasMaxLength(48);
+                b.Property<string>("Model").IsRequired().HasMaxLength(48).
+                  HasColumnType("varchar(48) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Revision").HasColumnType("varchar(48) CHARACTER SET utf8mb4").HasMaxLength(48);
+                b.Property<string>("Revision").HasMaxLength(48).HasColumnType("varchar(48) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Serial").HasColumnType("varchar(64) CHARACTER SET utf8mb4").HasMaxLength(64);
+                b.Property<string>("Serial").HasMaxLength(64).HasColumnType("varchar(64) CHARACTER SET utf8mb4");
 
-                b.Property<string>("SoftwareName").IsRequired().HasColumnType("varchar(64) CHARACTER SET utf8mb4").
-                  HasMaxLength(64);
+                b.Property<string>("SoftwareName").IsRequired().HasMaxLength(64).
+                  HasColumnType("varchar(64) CHARACTER SET utf8mb4");
 
-                b.Property<string>("SoftwareOperatingSystem").HasColumnType("varchar(64) CHARACTER SET utf8mb4").
-                  HasMaxLength(64);
+                b.Property<string>("SoftwareOperatingSystem").HasMaxLength(64).
+                  HasColumnType("varchar(64) CHARACTER SET utf8mb4");
 
-                b.Property<string>("SoftwareVersion").HasColumnType("varchar(32) CHARACTER SET utf8mb4").
-                  HasMaxLength(32);
+                b.Property<string>("SoftwareVersion").HasMaxLength(32).
+                  HasColumnType("varchar(32) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
@@ -1084,7 +1084,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<ulong>("FileId").HasColumnType("bigint unsigned");
 
-                b.Property<string>("Name").HasColumnType("varchar(255) CHARACTER SET utf8mb4").HasMaxLength(255);
+                b.Property<string>("Name").HasMaxLength(255).HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<ulong>("Size").HasColumnType("bigint unsigned");
 
@@ -1279,105 +1279,105 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Forbidden", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnName("browser").
-                  HasColumnType("char(128)").HasDefaultValueSql("''");
+                b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(128)").
+                  HasColumnName("browser").HasDefaultValueSql("''");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("Date").IsRequired().ValueGeneratedOnAdd().HasColumnName("date").
-                  HasColumnType("char(20)").HasDefaultValueSql("''");
+                b.Property<string>("Date").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(20)").
+                  HasColumnName("date").HasDefaultValueSql("''");
 
-                b.Property<string>("Ip").IsRequired().ValueGeneratedOnAdd().HasColumnName("ip").
-                  HasColumnType("char(16)").HasDefaultValueSql("''");
+                b.Property<string>("Ip").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(16)").
+                  HasColumnName("ip").HasDefaultValueSql("''");
 
-                b.Property<string>("Referer").IsRequired().ValueGeneratedOnAdd().HasColumnName("referer").
-                  HasColumnType("char(255)").HasDefaultValueSql("''");
+                b.Property<string>("Referer").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(255)").
+                  HasColumnName("referer").HasDefaultValueSql("''");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Browser").HasName("idx_forbidden_browser");
+                b.HasIndex("Browser").HasDatabaseName("idx_forbidden_browser");
 
-                b.HasIndex("Date").HasName("idx_forbidden_date");
+                b.HasIndex("Date").HasDatabaseName("idx_forbidden_date");
 
-                b.HasIndex("Ip").HasName("idx_forbidden_ip");
+                b.HasIndex("Ip").HasDatabaseName("idx_forbidden_ip");
 
-                b.HasIndex("Referer").HasName("idx_forbidden_referer");
+                b.HasIndex("Referer").HasDatabaseName("idx_forbidden_referer");
 
                 b.ToTable("forbidden");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Gpu", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
+                b.Property<int?>("CompanyId").HasColumnType("int(11)").HasColumnName("company");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<float?>("DieSize").HasColumnName("die_size").HasColumnType("float");
+                b.Property<float?>("DieSize").HasColumnType("float").HasColumnName("die_size");
 
-                b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
+                b.Property<DateTime?>("Introduced").HasColumnType("datetime").HasColumnName("introduced");
 
-                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)").
-                  HasMaxLength(45);
+                b.Property<string>("ModelCode").HasMaxLength(45).HasColumnType("varchar(45)").
+                  HasColumnName("model_code");
 
-                b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name").
-                  HasColumnType("char(128)").HasDefaultValueSql("''").HasMaxLength(128);
+                b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasMaxLength(128).
+                  HasColumnType("char(128)").HasColumnName("name").HasDefaultValueSql("''");
 
-                b.Property<string>("Package").HasColumnName("package").HasColumnType("varchar(45)").HasMaxLength(45);
+                b.Property<string>("Package").HasMaxLength(45).HasColumnType("varchar(45)").HasColumnName("package");
 
-                b.Property<string>("Process").HasColumnName("process").HasColumnType("varchar(45)").HasMaxLength(45);
+                b.Property<string>("Process").HasMaxLength(45).HasColumnType("varchar(45)").HasColumnName("process");
 
-                b.Property<float?>("ProcessNm").HasColumnName("process_nm").HasColumnType("float");
+                b.Property<float?>("ProcessNm").HasColumnType("float").HasColumnName("process_nm");
 
-                b.Property<long?>("Transistors").HasColumnName("transistors").HasColumnType("bigint(20)");
+                b.Property<long?>("Transistors").HasColumnType("bigint(20)").HasColumnName("transistors");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("CompanyId").HasName("idx_gpus_company");
+                b.HasIndex("CompanyId").HasDatabaseName("idx_gpus_company");
 
-                b.HasIndex("DieSize").HasName("idx_gpus_die_size");
+                b.HasIndex("DieSize").HasDatabaseName("idx_gpus_die_size");
 
-                b.HasIndex("Introduced").HasName("idx_gpus_introduced");
+                b.HasIndex("Introduced").HasDatabaseName("idx_gpus_introduced");
 
-                b.HasIndex("ModelCode").HasName("idx_gpus_model_code");
+                b.HasIndex("ModelCode").HasDatabaseName("idx_gpus_model_code");
 
-                b.HasIndex("Name").HasName("idx_gpus_name");
+                b.HasIndex("Name").HasDatabaseName("idx_gpus_name");
 
-                b.HasIndex("Package").HasName("idx_gpus_package");
+                b.HasIndex("Package").HasDatabaseName("idx_gpus_package");
 
-                b.HasIndex("Process").HasName("idx_gpus_process");
+                b.HasIndex("Process").HasDatabaseName("idx_gpus_process");
 
-                b.HasIndex("ProcessNm").HasName("idx_gpus_process_nm");
+                b.HasIndex("ProcessNm").HasDatabaseName("idx_gpus_process_nm");
 
-                b.HasIndex("Transistors").HasName("idx_gpus_transistors");
+                b.HasIndex("Transistors").HasDatabaseName("idx_gpus_transistors");
 
                 b.ToTable("gpus");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.GpusByMachine", b =>
             {
-                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint(20)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int>("GpuId").HasColumnName("gpu").HasColumnType("int(11)");
+                b.Property<int>("GpuId").HasColumnType("int(11)").HasColumnName("gpu");
 
-                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnType("int(11)").HasColumnName("machine");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("GpuId").HasName("idx_gpus_by_machine_gpus");
+                b.HasIndex("GpuId").HasDatabaseName("idx_gpus_by_machine_gpus");
 
-                b.HasIndex("MachineId").HasName("idx_gpus_by_machine_machine");
+                b.HasIndex("MachineId").HasDatabaseName("idx_gpus_by_machine_machine");
 
                 b.ToTable("gpus_by_machine");
             });
@@ -1434,12 +1434,12 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.InstructionSet", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("Name").IsRequired().HasColumnName("instruction_set").HasColumnType("varchar(45)").
-                  HasMaxLength(45);
+                b.Property<string>("Name").IsRequired().HasMaxLength(45).HasColumnType("varchar(45)").
+                  HasColumnName("instruction_set");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
@@ -1450,12 +1450,12 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.InstructionSetExtension", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("Extension").IsRequired().HasColumnName("extension").HasColumnType("varchar(45)").
-                  HasMaxLength(45);
+                b.Property<string>("Extension").IsRequired().HasMaxLength(45).HasColumnType("varchar(45)").
+                  HasColumnName("extension");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
@@ -1466,11 +1466,11 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.InstructionSetExtensionsByProcessor", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<int>("ProcessorId").HasColumnName("processor_id").HasColumnType("int(11)");
+                b.Property<int>("ProcessorId").HasColumnType("int(11)").HasColumnName("processor_id");
 
-                b.Property<int>("ExtensionId").HasColumnName("extension_id").HasColumnType("int(11)");
+                b.Property<int>("ExtensionId").HasColumnType("int(11)").HasColumnName("extension_id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
@@ -1478,9 +1478,9 @@ namespace Marechai.Database.Migrations
 
                 b.HasKey("Id", "ProcessorId", "ExtensionId");
 
-                b.HasIndex("ExtensionId").HasName("idx_setextension_extension");
+                b.HasIndex("ExtensionId").HasDatabaseName("idx_setextension_extension");
 
-                b.HasIndex("ProcessorId").HasName("idx_setextension_processor");
+                b.HasIndex("ProcessorId").HasDatabaseName("idx_setextension_processor");
 
                 b.ToTable("instruction_set_extensions_by_processor");
             });
@@ -1508,32 +1508,32 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Iso31661Numeric", b =>
             {
-                b.Property<short>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("smallint(3)");
+                b.Property<short>("Id").ValueGeneratedOnAdd().HasColumnType("smallint(3)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(64)").
-                  HasMaxLength(64);
+                b.Property<string>("Name").IsRequired().HasMaxLength(64).HasColumnType("varchar(64)").
+                  HasColumnName("name");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Name").HasName("idx_name");
+                b.HasIndex("Name").HasDatabaseName("idx_name");
 
                 b.ToTable("iso3166_1_numeric");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Iso4217", b =>
             {
-                b.Property<string>("Code").HasColumnType("varchar(3) CHARACTER SET utf8mb4").HasMaxLength(3);
+                b.Property<string>("Code").HasMaxLength(3).HasColumnType("varchar(3) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
                 b.Property<byte?>("MinorUnits").HasColumnType("tinyint unsigned");
 
-                b.Property<string>("Name").IsRequired().HasColumnType("varchar(150) CHARACTER SET utf8mb4").
-                  HasMaxLength(150);
+                b.Property<string>("Name").IsRequired().HasMaxLength(150).
+                  HasColumnType("varchar(150) CHARACTER SET utf8mb4");
 
                 b.Property<short>("Numeric").HasColumnType("smallint(3)");
 
@@ -1564,8 +1564,8 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("Part2T").HasColumnType("char(3)");
 
-                b.Property<string>("ReferenceName").IsRequired().HasColumnName("Ref_Name").
-                  HasColumnType("varchar(150)");
+                b.Property<string>("ReferenceName").IsRequired().HasColumnType("varchar(150)").
+                  HasColumnName("Ref_Name");
 
                 b.Property<string>("Scope").IsRequired().HasColumnType("char(1)");
 
@@ -1621,7 +1621,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<bool>("FsfApproved").HasColumnType("bit(1)");
 
-                b.Property<string>("Link").HasColumnType("varchar(512) CHARACTER SET utf8mb4").HasMaxLength(512);
+                b.Property<string>("Link").HasMaxLength(512).HasColumnType("varchar(512) CHARACTER SET utf8mb4");
 
                 b.Property<string>("Name").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -1629,7 +1629,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<string>("SPDX").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Text").HasColumnType("longtext").HasMaxLength(131072);
+                b.Property<string>("Text").HasMaxLength(131072).HasColumnType("longtext");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
@@ -1648,33 +1648,33 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Log", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnName("browser").
-                  HasColumnType("char(128)").HasDefaultValueSql("''");
+                b.Property<string>("Browser").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(128)").
+                  HasColumnName("browser").HasDefaultValueSql("''");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("Date").IsRequired().ValueGeneratedOnAdd().HasColumnName("date").
-                  HasColumnType("char(20)").HasDefaultValueSql("''");
+                b.Property<string>("Date").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(20)").
+                  HasColumnName("date").HasDefaultValueSql("''");
 
-                b.Property<string>("Ip").IsRequired().ValueGeneratedOnAdd().HasColumnName("ip").
-                  HasColumnType("char(16)").HasDefaultValueSql("''");
+                b.Property<string>("Ip").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(16)").
+                  HasColumnName("ip").HasDefaultValueSql("''");
 
-                b.Property<string>("Referer").IsRequired().ValueGeneratedOnAdd().HasColumnName("referer").
-                  HasColumnType("char(255)").HasDefaultValueSql("''");
+                b.Property<string>("Referer").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(255)").
+                  HasColumnName("referer").HasDefaultValueSql("''");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Browser").HasName("idx_log_browser");
+                b.HasIndex("Browser").HasDatabaseName("idx_log_browser");
 
-                b.HasIndex("Date").HasName("idx_log_date");
+                b.HasIndex("Date").HasDatabaseName("idx_log_date");
 
-                b.HasIndex("Ip").HasName("idx_log_ip");
+                b.HasIndex("Ip").HasDatabaseName("idx_log_ip");
 
-                b.HasIndex("Referer").HasName("idx_log_referer");
+                b.HasIndex("Referer").HasDatabaseName("idx_log_referer");
 
                 b.ToTable("log");
             });
@@ -1743,40 +1743,40 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Machine", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<int>("CompanyId").ValueGeneratedOnAdd().HasColumnName("company").HasColumnType("int(11)").
+                b.Property<int>("CompanyId").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("company").
                   HasDefaultValueSql("'0'");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int?>("FamilyId").HasColumnName("family").HasColumnType("int(11)");
+                b.Property<int?>("FamilyId").HasColumnType("int(11)").HasColumnName("family");
 
-                b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
+                b.Property<DateTime?>("Introduced").HasColumnType("datetime").HasColumnName("introduced");
 
-                b.Property<string>("Model").HasColumnName("model").HasColumnType("varchar(50)").HasMaxLength(50);
+                b.Property<string>("Model").HasMaxLength(50).HasColumnType("varchar(50)").HasColumnName("model");
 
-                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(255)").
-                  HasMaxLength(255);
+                b.Property<string>("Name").IsRequired().HasMaxLength(255).HasColumnType("varchar(255)").
+                  HasColumnName("name");
 
-                b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)").
+                b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("type").
                   HasDefaultValueSql("'0'");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("CompanyId").HasName("idx_machines_company");
+                b.HasIndex("CompanyId").HasDatabaseName("idx_machines_company");
 
-                b.HasIndex("FamilyId").HasName("idx_machines_family");
+                b.HasIndex("FamilyId").HasDatabaseName("idx_machines_family");
 
-                b.HasIndex("Introduced").HasName("idx_machines_introduced");
+                b.HasIndex("Introduced").HasDatabaseName("idx_machines_introduced");
 
-                b.HasIndex("Model").HasName("idx_machines_model");
+                b.HasIndex("Model").HasDatabaseName("idx_machines_model");
 
-                b.HasIndex("Name").HasName("idx_machines_name");
+                b.HasIndex("Name").HasDatabaseName("idx_machines_name");
 
-                b.HasIndex("Type").HasName("idx_machines_type");
+                b.HasIndex("Type").HasDatabaseName("idx_machines_type");
 
                 b.ToTable("machines");
             });
@@ -1804,22 +1804,22 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.MachineFamily", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<int>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
+                b.Property<int>("CompanyId").HasColumnType("int(11)").HasColumnName("company");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("Name").IsRequired().HasColumnName("name").HasColumnType("varchar(255)").
-                  HasMaxLength(255);
+                b.Property<string>("Name").IsRequired().HasMaxLength(255).HasColumnType("varchar(255)").
+                  HasColumnName("name");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("CompanyId").HasName("idx_machine_families_company");
+                b.HasIndex("CompanyId").HasDatabaseName("idx_machine_families_company");
 
-                b.HasIndex("Name").HasName("idx_machine_families_name");
+                b.HasIndex("Name").HasDatabaseName("idx_machine_families_name");
 
                 b.ToTable("machine_families");
             });
@@ -2017,13 +2017,13 @@ namespace Marechai.Database.Migrations
 
                 b.Property<DateTime?>("FirstPublication").HasColumnType("datetime(6)");
 
-                b.Property<string>("Issn").HasColumnType("varchar(8) CHARACTER SET utf8mb4").HasMaxLength(8);
+                b.Property<string>("Issn").HasMaxLength(8).HasColumnType("varchar(8) CHARACTER SET utf8mb4");
 
                 b.Property<string>("NativeTitle").HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime?>("Published").HasColumnType("datetime(6)");
 
-                b.Property<string>("Synopsis").HasColumnType("longtext CHARACTER SET utf8mb4").HasMaxLength(262144);
+                b.Property<string>("Synopsis").HasMaxLength(262144).HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<string>("Title").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
@@ -2064,7 +2064,7 @@ namespace Marechai.Database.Migrations
 
                 b.Property<short?>("Pages").HasColumnType("smallint");
 
-                b.Property<string>("ProductCode").HasColumnType("varchar(18) CHARACTER SET utf8mb4").HasMaxLength(18);
+                b.Property<string>("ProductCode").HasMaxLength(18).HasColumnType("varchar(18) CHARACTER SET utf8mb4");
 
                 b.Property<DateTime?>("Published").HasColumnType("datetime(6)");
 
@@ -2211,12 +2211,12 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.MarechaiDb", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<DateTimeOffset?>("Updated").ValueGeneratedOnAdd().HasColumnName("updated").
-                  HasColumnType("datetime").HasDefaultValueSql("CURRENT_TIMESTAMP");
+                b.Property<DateTimeOffset?>("Updated").ValueGeneratedOnAdd().HasColumnType("datetime").
+                  HasColumnName("updated").HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                b.Property<int>("Version").HasColumnName("version").HasColumnType("int(11)");
+                b.Property<int>("Version").HasColumnType("int(11)").HasColumnName("version");
 
                 b.HasKey("Id");
 
@@ -2599,11 +2599,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<ulong?>("Links").HasColumnType("bigint unsigned");
 
-                b.Property<string>("Name").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4").
-                  HasMaxLength(255);
+                b.Property<string>("Name").IsRequired().HasMaxLength(255).
+                  HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Path").IsRequired().HasColumnType("longtext CHARACTER SET utf8mb4").
-                  HasMaxLength(8192);
+                b.Property<string>("Path").IsRequired().HasMaxLength(8192).
+                  HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<string>("PathSeparator").IsRequired().HasColumnType("varchar(1) CHARACTER SET utf8mb4");
 
@@ -2667,35 +2667,35 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
             {
-                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint(20)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnType("int(11)").HasColumnName("machine");
 
-                b.Property<long?>("Size").HasColumnName("size").HasColumnType("bigint(20)");
+                b.Property<long?>("Size").HasColumnType("bigint(20)").HasColumnName("size");
 
-                b.Property<double?>("Speed").HasColumnName("speed").HasColumnType("double");
+                b.Property<double?>("Speed").HasColumnType("double").HasColumnName("speed");
 
-                b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)").
+                b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("type").
                   HasDefaultValueSql("'0'");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
-                b.Property<int>("Usage").ValueGeneratedOnAdd().HasColumnName("usage").HasColumnType("int(11)").
+                b.Property<int>("Usage").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("usage").
                   HasDefaultValueSql("'0'");
 
                 b.HasKey("Id");
 
-                b.HasIndex("MachineId").HasName("idx_memory_by_machine_machine");
+                b.HasIndex("MachineId").HasDatabaseName("idx_memory_by_machine_machine");
 
-                b.HasIndex("Size").HasName("idx_memory_by_machine_size");
+                b.HasIndex("Size").HasDatabaseName("idx_memory_by_machine_size");
 
-                b.HasIndex("Speed").HasName("idx_memory_by_machine_speed");
+                b.HasIndex("Speed").HasDatabaseName("idx_memory_by_machine_speed");
 
-                b.HasIndex("Type").HasName("idx_memory_by_machine_type");
+                b.HasIndex("Type").HasDatabaseName("idx_memory_by_machine_type");
 
-                b.HasIndex("Usage").HasName("idx_memory_by_machine_usage");
+                b.HasIndex("Usage").HasDatabaseName("idx_memory_by_machine_usage");
 
                 b.ToTable("memory_by_machine");
             });
@@ -2735,50 +2735,50 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.MoneyDonation", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<string>("Donator").IsRequired().ValueGeneratedOnAdd().HasColumnName("donator").
-                  HasColumnType("char(128)").HasDefaultValueSql("''");
+                b.Property<string>("Donator").IsRequired().ValueGeneratedOnAdd().HasColumnType("char(128)").
+                  HasColumnName("donator").HasDefaultValueSql("''");
 
-                b.Property<decimal>("Quantity").ValueGeneratedOnAdd().HasColumnName("quantity").
-                  HasColumnType("decimal(11,2)").HasDefaultValueSql("'0.00'");
+                b.Property<decimal>("Quantity").ValueGeneratedOnAdd().HasColumnType("decimal(11,2)").
+                  HasColumnName("quantity").HasDefaultValueSql("'0.00'");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Donator").HasName("idx_money_donations_donator");
+                b.HasIndex("Donator").HasDatabaseName("idx_money_donations_donator");
 
-                b.HasIndex("Quantity").HasName("idx_money_donations_quantity");
+                b.HasIndex("Quantity").HasDatabaseName("idx_money_donations_quantity");
 
                 b.ToTable("money_donations");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.News", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<int>("AddedId").ValueGeneratedOnAdd().HasColumnName("added_id").HasColumnType("int(11)").
+                b.Property<int>("AddedId").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("added_id").
                   HasDefaultValueSql("'0'");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<DateTime>("Date").HasColumnName("date").HasColumnType("datetime");
+                b.Property<DateTime>("Date").HasColumnType("datetime").HasColumnName("date");
 
-                b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)").
+                b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("type").
                   HasDefaultValueSql("'0'");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("AddedId").HasName("idx_news_ip");
+                b.HasIndex("AddedId").HasDatabaseName("idx_news_ip");
 
-                b.HasIndex("Date").HasName("idx_news_date");
+                b.HasIndex("Date").HasDatabaseName("idx_news_date");
 
-                b.HasIndex("Type").HasName("idx_news_type");
+                b.HasIndex("Type").HasDatabaseName("idx_news_type");
 
                 b.ToTable("news");
             });
@@ -3247,140 +3247,140 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Processor", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<int?>("AddrBus").HasColumnName("addr_bus").HasColumnType("int(11)");
+                b.Property<int?>("AddrBus").HasColumnType("int(11)").HasColumnName("addr_bus");
 
-                b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
+                b.Property<int?>("CompanyId").HasColumnType("int(11)").HasColumnName("company");
 
-                b.Property<int?>("Cores").HasColumnName("cores").HasColumnType("int(11)");
+                b.Property<int?>("Cores").HasColumnType("int(11)").HasColumnName("cores");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int?>("DataBus").HasColumnName("data_bus").HasColumnType("int(11)");
+                b.Property<int?>("DataBus").HasColumnType("int(11)").HasColumnName("data_bus");
 
-                b.Property<float?>("DieSize").HasColumnName("die_size").HasColumnType("float");
+                b.Property<float?>("DieSize").HasColumnType("float").HasColumnName("die_size");
 
-                b.Property<int?>("FprSize").HasColumnName("FPR_size").HasColumnType("int(11)");
+                b.Property<int?>("FprSize").HasColumnType("int(11)").HasColumnName("FPR_size");
 
-                b.Property<int?>("Fprs").HasColumnName("FPRs").HasColumnType("int(11)");
+                b.Property<int?>("Fprs").HasColumnType("int(11)").HasColumnName("FPRs");
 
-                b.Property<int?>("GprSize").HasColumnName("GPR_size").HasColumnType("int(11)");
+                b.Property<int?>("GprSize").HasColumnType("int(11)").HasColumnName("GPR_size");
 
-                b.Property<int?>("Gprs").HasColumnName("GPRs").HasColumnType("int(11)");
+                b.Property<int?>("Gprs").HasColumnType("int(11)").HasColumnName("GPRs");
 
-                b.Property<int?>("InstructionSetId").HasColumnName("instruction_set").HasColumnType("int(11)");
+                b.Property<int?>("InstructionSetId").HasColumnType("int(11)").HasColumnName("instruction_set");
 
-                b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
+                b.Property<DateTime?>("Introduced").HasColumnType("datetime").HasColumnName("introduced");
 
-                b.Property<float?>("L1Data").HasColumnName("L1_data").HasColumnType("float");
+                b.Property<float?>("L1Data").HasColumnType("float").HasColumnName("L1_data");
 
-                b.Property<float?>("L1Instruction").HasColumnName("L1_instruction").HasColumnType("float");
+                b.Property<float?>("L1Instruction").HasColumnType("float").HasColumnName("L1_instruction");
 
                 b.Property<float?>("L2").HasColumnType("float");
 
                 b.Property<float?>("L3").HasColumnType("float");
 
-                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)").
-                  HasMaxLength(45);
+                b.Property<string>("ModelCode").HasMaxLength(45).HasColumnType("varchar(45)").
+                  HasColumnName("model_code");
 
-                b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name").
-                  HasColumnType("char(50)").HasDefaultValueSql("''").HasMaxLength(50);
+                b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasMaxLength(50).
+                  HasColumnType("char(50)").HasColumnName("name").HasDefaultValueSql("''");
 
-                b.Property<string>("Package").HasColumnName("package").HasColumnType("varchar(45)").HasMaxLength(45);
+                b.Property<string>("Package").HasMaxLength(45).HasColumnType("varchar(45)").HasColumnName("package");
 
-                b.Property<string>("Process").HasColumnName("process").HasColumnType("varchar(45)").HasMaxLength(45);
+                b.Property<string>("Process").HasMaxLength(45).HasColumnType("varchar(45)").HasColumnName("process");
 
-                b.Property<float?>("ProcessNm").HasColumnName("process_nm").HasColumnType("float");
+                b.Property<float?>("ProcessNm").HasColumnType("float").HasColumnName("process_nm");
 
-                b.Property<int?>("SimdRegisters").HasColumnName("SIMD_registers").HasColumnType("int(11)");
+                b.Property<int?>("SimdRegisters").HasColumnType("int(11)").HasColumnName("SIMD_registers");
 
-                b.Property<int?>("SimdSize").HasColumnName("SIMD_size").HasColumnType("int(11)");
+                b.Property<int?>("SimdSize").HasColumnType("int(11)").HasColumnName("SIMD_size");
 
-                b.Property<double?>("Speed").HasColumnName("speed").HasColumnType("double");
+                b.Property<double?>("Speed").HasColumnType("double").HasColumnName("speed");
 
-                b.Property<int?>("ThreadsPerCore").HasColumnName("threads_per_core").HasColumnType("int(11)");
+                b.Property<int?>("ThreadsPerCore").HasColumnType("int(11)").HasColumnName("threads_per_core");
 
-                b.Property<long?>("Transistors").HasColumnName("transistors").HasColumnType("bigint(20)");
+                b.Property<long?>("Transistors").HasColumnType("bigint(20)").HasColumnName("transistors");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("AddrBus").HasName("idx_processors_addr_bus");
+                b.HasIndex("AddrBus").HasDatabaseName("idx_processors_addr_bus");
 
-                b.HasIndex("CompanyId").HasName("idx_processors_company");
+                b.HasIndex("CompanyId").HasDatabaseName("idx_processors_company");
 
-                b.HasIndex("Cores").HasName("idx_processors_cores");
+                b.HasIndex("Cores").HasDatabaseName("idx_processors_cores");
 
-                b.HasIndex("DataBus").HasName("idx_processors_data_bus");
+                b.HasIndex("DataBus").HasDatabaseName("idx_processors_data_bus");
 
-                b.HasIndex("DieSize").HasName("idx_processors_die_size");
+                b.HasIndex("DieSize").HasDatabaseName("idx_processors_die_size");
 
-                b.HasIndex("FprSize").HasName("idx_processors_FPR_size");
+                b.HasIndex("FprSize").HasDatabaseName("idx_processors_FPR_size");
 
-                b.HasIndex("Fprs").HasName("idx_processors_FPRs");
+                b.HasIndex("Fprs").HasDatabaseName("idx_processors_FPRs");
 
-                b.HasIndex("GprSize").HasName("idx_processors_GPR_size");
+                b.HasIndex("GprSize").HasDatabaseName("idx_processors_GPR_size");
 
-                b.HasIndex("Gprs").HasName("idx_processors_GPRs");
+                b.HasIndex("Gprs").HasDatabaseName("idx_processors_GPRs");
 
-                b.HasIndex("InstructionSetId").HasName("idx_processors_instruction_set");
+                b.HasIndex("InstructionSetId").HasDatabaseName("idx_processors_instruction_set");
 
-                b.HasIndex("Introduced").HasName("idx_processors_introduced");
+                b.HasIndex("Introduced").HasDatabaseName("idx_processors_introduced");
 
-                b.HasIndex("L1Data").HasName("idx_processors_L1_data");
+                b.HasIndex("L1Data").HasDatabaseName("idx_processors_L1_data");
 
-                b.HasIndex("L1Instruction").HasName("idx_processors_L1_instruction");
+                b.HasIndex("L1Instruction").HasDatabaseName("idx_processors_L1_instruction");
 
-                b.HasIndex("L2").HasName("idx_processors_L2");
+                b.HasIndex("L2").HasDatabaseName("idx_processors_L2");
 
-                b.HasIndex("L3").HasName("idx_processors_L3");
+                b.HasIndex("L3").HasDatabaseName("idx_processors_L3");
 
-                b.HasIndex("ModelCode").HasName("idx_processors_model_code");
+                b.HasIndex("ModelCode").HasDatabaseName("idx_processors_model_code");
 
-                b.HasIndex("Name").HasName("idx_processors_name");
+                b.HasIndex("Name").HasDatabaseName("idx_processors_name");
 
-                b.HasIndex("Package").HasName("idx_processors_package");
+                b.HasIndex("Package").HasDatabaseName("idx_processors_package");
 
-                b.HasIndex("Process").HasName("idx_processors_process");
+                b.HasIndex("Process").HasDatabaseName("idx_processors_process");
 
-                b.HasIndex("ProcessNm").HasName("idx_processors_process_nm");
+                b.HasIndex("ProcessNm").HasDatabaseName("idx_processors_process_nm");
 
-                b.HasIndex("SimdRegisters").HasName("idx_processors_SIMD_registers");
+                b.HasIndex("SimdRegisters").HasDatabaseName("idx_processors_SIMD_registers");
 
-                b.HasIndex("SimdSize").HasName("idx_processors_SIMD_size");
+                b.HasIndex("SimdSize").HasDatabaseName("idx_processors_SIMD_size");
 
-                b.HasIndex("Speed").HasName("idx_processors_speed");
+                b.HasIndex("Speed").HasDatabaseName("idx_processors_speed");
 
-                b.HasIndex("ThreadsPerCore").HasName("idx_processors_threads_per_core");
+                b.HasIndex("ThreadsPerCore").HasDatabaseName("idx_processors_threads_per_core");
 
-                b.HasIndex("Transistors").HasName("idx_processors_transistors");
+                b.HasIndex("Transistors").HasDatabaseName("idx_processors_transistors");
 
                 b.ToTable("processors");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.ProcessorsByMachine", b =>
             {
-                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint(20)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnType("int(11)").HasColumnName("machine");
 
-                b.Property<int>("ProcessorId").HasColumnName("processor").HasColumnType("int(11)");
+                b.Property<int>("ProcessorId").HasColumnType("int(11)").HasColumnName("processor");
 
-                b.Property<float?>("Speed").HasColumnName("speed").HasColumnType("float");
+                b.Property<float?>("Speed").HasColumnType("float").HasColumnName("speed");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("MachineId").HasName("idx_processors_by_machine_machine");
+                b.HasIndex("MachineId").HasDatabaseName("idx_processors_by_machine_machine");
 
-                b.HasIndex("ProcessorId").HasName("idx_processors_by_machine_processor");
+                b.HasIndex("ProcessorId").HasDatabaseName("idx_processors_by_machine_processor");
 
-                b.HasIndex("Speed").HasName("idx_processors_by_machine_speed");
+                b.HasIndex("Speed").HasDatabaseName("idx_processors_by_machine_speed");
 
                 b.ToTable("processors_by_machine");
             });
@@ -3487,64 +3487,64 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.Resolution", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<sbyte>("Chars").ValueGeneratedOnAdd().HasColumnName("chars").HasColumnType("tinyint(1)").
+                b.Property<sbyte>("Chars").ValueGeneratedOnAdd().HasColumnType("tinyint(1)").HasColumnName("chars").
                   HasDefaultValueSql("'0'");
 
-                b.Property<long?>("Colors").HasColumnName("colors").HasColumnType("bigint(20)");
+                b.Property<long?>("Colors").HasColumnType("bigint(20)").HasColumnName("colors");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
                 b.Property<bool>("Grayscale").HasColumnType("bit(1)");
 
-                b.Property<int>("Height").ValueGeneratedOnAdd().HasColumnName("height").HasColumnType("int(11)").
+                b.Property<int>("Height").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("height").
                   HasDefaultValueSql("'0'");
 
-                b.Property<long?>("Palette").HasColumnName("palette").HasColumnType("bigint(20)");
+                b.Property<long?>("Palette").HasColumnType("bigint(20)").HasColumnName("palette");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
-                b.Property<int>("Width").ValueGeneratedOnAdd().HasColumnName("width").HasColumnType("int(11)").
+                b.Property<int>("Width").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("width").
                   HasDefaultValueSql("'0'");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Colors").HasName("idx_resolutions_colors");
+                b.HasIndex("Colors").HasDatabaseName("idx_resolutions_colors");
 
-                b.HasIndex("Height").HasName("idx_resolutions_height");
+                b.HasIndex("Height").HasDatabaseName("idx_resolutions_height");
 
-                b.HasIndex("Palette").HasName("idx_resolutions_palette");
+                b.HasIndex("Palette").HasDatabaseName("idx_resolutions_palette");
 
-                b.HasIndex("Width").HasName("idx_resolutions_width");
+                b.HasIndex("Width").HasDatabaseName("idx_resolutions_width");
 
-                b.HasIndex("Width", "Height").HasName("idx_resolutions_resolution");
+                b.HasIndex("Width", "Height").HasDatabaseName("idx_resolutions_resolution");
 
-                b.HasIndex("Width", "Height", "Colors").HasName("idx_resolutions_resolution_with_color");
+                b.HasIndex("Width", "Height", "Colors").HasDatabaseName("idx_resolutions_resolution_with_color");
 
                 b.HasIndex("Width", "Height", "Colors", "Palette").
-                  HasName("idx_resolutions_resolution_with_color_and_palette");
+                  HasDatabaseName("idx_resolutions_resolution_with_color_and_palette");
 
                 b.ToTable("resolutions");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.ResolutionsByGpu", b =>
             {
-                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint(20)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int>("GpuId").HasColumnName("gpu").HasColumnType("int(11)");
+                b.Property<int>("GpuId").HasColumnType("int(11)").HasColumnName("gpu");
 
-                b.Property<int>("ResolutionId").HasColumnName("resolution").HasColumnType("int(11)");
+                b.Property<int>("ResolutionId").HasColumnType("int(11)").HasColumnName("resolution");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("GpuId").HasName("idx_resolutions_by_gpu_gpu");
+                b.HasIndex("GpuId").HasDatabaseName("idx_resolutions_by_gpu_gpu");
 
-                b.HasIndex("ResolutionId").HasName("idx_resolutions_by_gpu_resolution");
+                b.HasIndex("ResolutionId").HasDatabaseName("idx_resolutions_by_gpu_resolution");
 
                 b.ToTable("resolutions_by_gpu");
             });
@@ -3788,21 +3788,21 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.SoundByMachine", b =>
             {
-                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint(20)").HasColumnName("id");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnType("int(11)").HasColumnName("machine");
 
-                b.Property<int>("SoundSynthId").HasColumnName("sound_synth").HasColumnType("int(11)");
+                b.Property<int>("SoundSynthId").HasColumnType("int(11)").HasColumnName("sound_synth");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("MachineId").HasName("idx_sound_by_machine_machine");
+                b.HasIndex("MachineId").HasDatabaseName("idx_sound_by_machine_machine");
 
-                b.HasIndex("SoundSynthId").HasName("idx_sound_by_machine_sound_synth");
+                b.HasIndex("SoundSynthId").HasDatabaseName("idx_sound_by_machine_sound_synth");
 
                 b.ToTable("sound_by_machine");
             });
@@ -3851,55 +3851,55 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.SoundSynth", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("int(11)");
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("id");
 
-                b.Property<int?>("CompanyId").HasColumnName("company").HasColumnType("int(11)");
+                b.Property<int?>("CompanyId").HasColumnType("int(11)").HasColumnName("company");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int?>("Depth").HasColumnName("depth").HasColumnType("int(11)");
+                b.Property<int?>("Depth").HasColumnType("int(11)").HasColumnName("depth");
 
-                b.Property<double?>("Frequency").HasColumnName("frequency").HasColumnType("double");
+                b.Property<double?>("Frequency").HasColumnType("double").HasColumnName("frequency");
 
-                b.Property<DateTime?>("Introduced").HasColumnName("introduced").HasColumnType("datetime");
+                b.Property<DateTime?>("Introduced").HasColumnType("datetime").HasColumnName("introduced");
 
-                b.Property<string>("ModelCode").HasColumnName("model_code").HasColumnType("varchar(45)").
-                  HasMaxLength(45);
+                b.Property<string>("ModelCode").HasMaxLength(45).HasColumnType("varchar(45)").
+                  HasColumnName("model_code");
 
-                b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasColumnName("name").
-                  HasColumnType("char(50)").HasDefaultValueSql("''").HasMaxLength(50);
+                b.Property<string>("Name").IsRequired().ValueGeneratedOnAdd().HasMaxLength(50).
+                  HasColumnType("char(50)").HasColumnName("name").HasDefaultValueSql("''");
 
-                b.Property<int?>("SquareWave").HasColumnName("square_wave").HasColumnType("int(11)");
+                b.Property<int?>("SquareWave").HasColumnType("int(11)").HasColumnName("square_wave");
 
-                b.Property<int?>("Type").HasColumnName("type").HasColumnType("int(11)");
+                b.Property<int?>("Type").HasColumnType("int(11)").HasColumnName("type");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
-                b.Property<int?>("Voices").HasColumnName("voices").HasColumnType("int(11)");
+                b.Property<int?>("Voices").HasColumnType("int(11)").HasColumnName("voices");
 
-                b.Property<int?>("WhiteNoise").HasColumnName("white_noise").HasColumnType("int(11)");
+                b.Property<int?>("WhiteNoise").HasColumnType("int(11)").HasColumnName("white_noise");
 
                 b.HasKey("Id");
 
-                b.HasIndex("CompanyId").HasName("idx_sound_synths_company");
+                b.HasIndex("CompanyId").HasDatabaseName("idx_sound_synths_company");
 
-                b.HasIndex("Depth").HasName("idx_sound_synths_depth");
+                b.HasIndex("Depth").HasDatabaseName("idx_sound_synths_depth");
 
-                b.HasIndex("Frequency").HasName("idx_sound_synths_frequency");
+                b.HasIndex("Frequency").HasDatabaseName("idx_sound_synths_frequency");
 
-                b.HasIndex("Introduced").HasName("idx_sound_synths_introduced");
+                b.HasIndex("Introduced").HasDatabaseName("idx_sound_synths_introduced");
 
-                b.HasIndex("ModelCode").HasName("idx_sound_synths_model_code");
+                b.HasIndex("ModelCode").HasDatabaseName("idx_sound_synths_model_code");
 
-                b.HasIndex("Name").HasName("idx_sound_synths_name");
+                b.HasIndex("Name").HasDatabaseName("idx_sound_synths_name");
 
-                b.HasIndex("SquareWave").HasName("idx_sound_synths_square_wave");
+                b.HasIndex("SquareWave").HasDatabaseName("idx_sound_synths_square_wave");
 
-                b.HasIndex("Type").HasName("idx_sound_synths_type");
+                b.HasIndex("Type").HasDatabaseName("idx_sound_synths_type");
 
-                b.HasIndex("Voices").HasName("idx_sound_synths_voices");
+                b.HasIndex("Voices").HasDatabaseName("idx_sound_synths_voices");
 
-                b.HasIndex("WhiteNoise").HasName("idx_sound_synths_white_noise");
+                b.HasIndex("WhiteNoise").HasDatabaseName("idx_sound_synths_white_noise");
 
                 b.ToTable("sound_synths");
             });
@@ -3930,11 +3930,11 @@ namespace Marechai.Database.Migrations
 
                 b.Property<ulong?>("Links").HasColumnType("bigint unsigned");
 
-                b.Property<string>("Name").IsRequired().HasColumnType("varchar(255) CHARACTER SET utf8mb4").
-                  HasMaxLength(255);
+                b.Property<string>("Name").IsRequired().HasMaxLength(255).
+                  HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
-                b.Property<string>("Path").IsRequired().HasColumnType("longtext CHARACTER SET utf8mb4").
-                  HasMaxLength(8192);
+                b.Property<string>("Path").IsRequired().HasMaxLength(8192).
+                  HasColumnType("longtext CHARACTER SET utf8mb4");
 
                 b.Property<string>("PathSeparator").IsRequired().HasColumnType("varchar(1) CHARACTER SET utf8mb4");
 
@@ -3977,31 +3977,31 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.StorageByMachine", b =>
             {
-                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnName("id").HasColumnType("bigint(20)");
+                b.Property<long>("Id").ValueGeneratedOnAdd().HasColumnType("bigint(20)").HasColumnName("id");
 
-                b.Property<long?>("Capacity").HasColumnName("capacity").HasColumnType("bigint(20)");
+                b.Property<long?>("Capacity").HasColumnType("bigint(20)").HasColumnName("capacity");
 
                 b.Property<DateTime>("CreatedOn").ValueGeneratedOnAdd().HasColumnType("datetime(6)");
 
-                b.Property<int>("Interface").ValueGeneratedOnAdd().HasColumnName("interface").HasColumnType("int(11)").
+                b.Property<int>("Interface").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("interface").
                   HasDefaultValueSql("'0'");
 
-                b.Property<int>("MachineId").HasColumnName("machine").HasColumnType("int(11)");
+                b.Property<int>("MachineId").HasColumnType("int(11)").HasColumnName("machine");
 
-                b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnName("type").HasColumnType("int(11)").
+                b.Property<int>("Type").ValueGeneratedOnAdd().HasColumnType("int(11)").HasColumnName("type").
                   HasDefaultValueSql("'0'");
 
                 b.Property<DateTime>("UpdatedOn").ValueGeneratedOnAddOrUpdate().HasColumnType("datetime(6)");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Capacity").HasName("idx_storage_capacity");
+                b.HasIndex("Capacity").HasDatabaseName("idx_storage_capacity");
 
-                b.HasIndex("Interface").HasName("idx_storage_interface");
+                b.HasIndex("Interface").HasDatabaseName("idx_storage_interface");
 
-                b.HasIndex("MachineId").HasName("idx_storage_machine");
+                b.HasIndex("MachineId").HasDatabaseName("idx_storage_machine");
 
-                b.HasIndex("Type").HasName("idx_storage_type");
+                b.HasIndex("Type").HasDatabaseName("idx_storage_type");
 
                 b.ToTable("storage_by_machine");
             });
@@ -4118,6 +4118,8 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany().HasForeignKey("UserId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("User");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Book", b =>
@@ -4129,6 +4131,12 @@ namespace Marechai.Database.Migrations
                   HasForeignKey("Marechai.Database.Models.Book", "PreviousId");
 
                 b.HasOne("Marechai.Database.Models.Book", "Source").WithMany("Derivates").HasForeignKey("SourceId");
+
+                b.Navigation("Country");
+
+                b.Navigation("Previous");
+
+                b.Navigation("Source");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.BookScan", b =>
@@ -4138,6 +4146,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("BookScans").
                   HasForeignKey("UserId").OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Book");
+
+                b.Navigation("User");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.BooksByMachine", b =>
@@ -4147,6 +4159,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Machine", "Machine").WithMany("Books").HasForeignKey("MachineId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Book");
+
+                b.Navigation("Machine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.BooksByMachineFamily", b =>
@@ -4156,6 +4172,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MachineFamily", "MachineFamily").WithMany("Books").
                   HasForeignKey("MachineFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Book");
+
+                b.Navigation("MachineFamily");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CompaniesByBook", b =>
@@ -4168,6 +4188,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Book");
+
+                b.Navigation("Company");
+
+                b.Navigation("Role");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CompaniesByDocument", b =>
@@ -4180,6 +4206,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Company");
+
+                b.Navigation("Document");
+
+                b.Navigation("Role");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CompaniesByMagazine", b =>
@@ -4192,6 +4224,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Company");
+
+                b.Navigation("Magazine");
+
+                b.Navigation("Role");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CompaniesBySoftwareFamily", b =>
@@ -4204,6 +4242,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareFamily", "SoftwareFamily").WithMany("Companies").
                   HasForeignKey("SoftwareFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Company");
+
+                b.Navigation("Role");
+
+                b.Navigation("SoftwareFamily");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CompaniesBySoftwareVariant", b =>
@@ -4216,6 +4260,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Companies").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Company");
+
+                b.Navigation("Role");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CompaniesBySoftwareVersion", b =>
@@ -4228,6 +4278,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVersion", "SoftwareVersion").WithMany("Companies").
                   HasForeignKey("SoftwareVersionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Company");
+
+                b.Navigation("Role");
+
+                b.Navigation("SoftwareVersion");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Company", b =>
@@ -4237,24 +4293,34 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Company", "SoldTo").WithMany("InverseSoldToNavigation").
                   HasForeignKey("SoldToId").HasConstraintName("fk_companies_sold_to");
+
+                b.Navigation("Country");
+
+                b.Navigation("SoldTo");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CompanyDescription", b =>
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("Descriptions").
                   HasForeignKey("CompanyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Company");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CompanyLogo", b =>
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("Logos").HasForeignKey("CompanyId").
                   HasConstraintName("fk_company_logos_company1").IsRequired();
+
+                b.Navigation("Company");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CurrencyInflation", b =>
             {
                 b.HasOne("Marechai.Database.Models.Iso4217", "Currency").WithMany().HasForeignKey("CurrencyCode").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Currency");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.CurrencyPegging", b =>
@@ -4264,12 +4330,18 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Iso4217", "Source").WithMany().HasForeignKey("SourceCode").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Destination");
+
+                b.Navigation("Source");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Document", b =>
             {
                 b.HasOne("Marechai.Database.Models.Iso31661Numeric", "Country").WithMany("Documents").
                   HasForeignKey("CountryId");
+
+                b.Navigation("Country");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.DocumentCompany", b =>
@@ -4277,12 +4349,16 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithOne("DocumentCompany").
                   HasForeignKey("Marechai.Database.Models.DocumentCompany", "CompanyId").
                   OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Company");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.DocumentPerson", b =>
             {
                 b.HasOne("Marechai.Database.Models.Person", "Person").WithOne("DocumentPerson").
                   HasForeignKey("Marechai.Database.Models.DocumentPerson", "PersonId").OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Person");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.DocumentScan", b =>
@@ -4292,6 +4368,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("DocumentScans").
                   HasForeignKey("UserId").OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Document");
+
+                b.Navigation("User");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.DocumentsByMachine", b =>
@@ -4301,6 +4381,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Machine", "Machine").WithMany("Documents").
                   HasForeignKey("MachineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Document");
+
+                b.Navigation("Machine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.DocumentsByMachineFamily", b =>
@@ -4310,6 +4394,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MachineFamily", "MachineFamily").WithMany("Documents").
                   HasForeignKey("MachineFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Document");
+
+                b.Navigation("MachineFamily");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Dump", b =>
@@ -4322,18 +4410,28 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("Dumps").HasForeignKey("UserId").
                   OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Media");
+
+                b.Navigation("MediaDump");
+
+                b.Navigation("User");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.DumpHardware", b =>
             {
                 b.HasOne("Marechai.Database.Models.Dump", "Dump").WithMany("DumpHardware").HasForeignKey("DumpId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Dump");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.FileDataStream", b =>
             {
                 b.HasOne("Marechai.Database.Models.DbFile", "File").WithMany().HasForeignKey("FileId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("File");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.FileDataStreamsByMediaFile", b =>
@@ -4343,6 +4441,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MediaFile", "MediaFile").WithMany("DataStreams").
                   HasForeignKey("MediaFileId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("FileDataStream");
+
+                b.Navigation("MediaFile");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.FileDataStreamsByStandaloneFile", b =>
@@ -4352,6 +4454,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.StandaloneFile", "StandaloneFile").WithMany("DataStreams").
                   HasForeignKey("StandaloneFileId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("FileDataStream");
+
+                b.Navigation("StandaloneFile");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.FilesByFilesystem", b =>
@@ -4361,6 +4467,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Filesystem", "Filesystem").WithMany("Files").
                   HasForeignKey("FilesystemId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("File");
+
+                b.Navigation("Filesystem");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.FilesystemsByLogicalPartition", b =>
@@ -4370,6 +4480,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.LogicalPartition", "Partition").WithMany("Filesystems").
                   HasForeignKey("PartitionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Filesystem");
+
+                b.Navigation("Partition");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.FilesystemsByMediaDumpFile", b =>
@@ -4379,12 +4493,18 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MediaDumpFileImage", "MediaDumpFileImage").WithMany("Filesystems").
                   HasForeignKey("MediaDumpFileImageId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Filesystem");
+
+                b.Navigation("MediaDumpFileImage");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Gpu", b =>
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("Gpus").HasForeignKey("CompanyId").
                   HasConstraintName("fk_gpus_company");
+
+                b.Navigation("Company");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.GpusByMachine", b =>
@@ -4394,6 +4514,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Machine", "Machine").WithMany("Gpus").HasForeignKey("MachineId").
                   HasConstraintName("fk_gpus_by_machine_machine").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Gpu");
+
+                b.Navigation("Machine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.GpusByOwnedMachine", b =>
@@ -4403,6 +4527,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine").WithMany("Gpus").
                   HasForeignKey("OwnedMachineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Gpu");
+
+                b.Navigation("OwnedMachine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.GpusBySoftwareVariant", b =>
@@ -4412,6 +4540,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Gpus").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Gpu");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.InstructionSetExtensionsByProcessor", b =>
@@ -4422,6 +4554,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Processor", "Processor").WithMany("InstructionSetExtensions").
                   HasForeignKey("ProcessorId").HasConstraintName("fk_extension_processor_id").IsRequired();
+
+                b.Navigation("Extension");
+
+                b.Navigation("Processor");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.InstructionSetsBySoftwareVariant", b =>
@@ -4431,6 +4567,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Architectures").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("InstructionSet");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.LanguagesBySoftwareVariant", b =>
@@ -4440,6 +4580,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Languages").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Language");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.LogicalPartitionsByMedia", b =>
@@ -4449,6 +4593,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.LogicalPartition", "Partition").WithMany("Media").
                   HasForeignKey("PartitionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Media");
+
+                b.Navigation("Partition");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Machine", b =>
@@ -4458,6 +4606,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MachineFamily", "Family").WithMany("Machines").
                   HasForeignKey("FamilyId").HasConstraintName("fk_machines_family");
+
+                b.Navigation("Company");
+
+                b.Navigation("Family");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MachineFamiliesBySoftwareVariant", b =>
@@ -4467,6 +4619,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("MachineFamilies").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("MachineFamily");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MachineFamily", b =>
@@ -4474,6 +4630,8 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("MachineFamilies").
                   HasForeignKey("CompanyId").HasConstraintName("fk_machine_families_company").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Company");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MachinePhoto", b =>
@@ -4486,6 +4644,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("Photos").HasForeignKey("UserId").
                   OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("License");
+
+                b.Navigation("Machine");
+
+                b.Navigation("User");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MachinesBySoftwareVariant", b =>
@@ -4495,18 +4659,26 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Machines").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Machine");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Magazine", b =>
             {
                 b.HasOne("Marechai.Database.Models.Iso31661Numeric", "Country").WithMany("Magazines").
                   HasForeignKey("CountryId");
+
+                b.Navigation("Country");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MagazineIssue", b =>
             {
                 b.HasOne("Marechai.Database.Models.Magazine", "Magazine").WithMany("Issues").
                   HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Magazine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MagazineScan", b =>
@@ -4516,6 +4688,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("MagazineScans").
                   HasForeignKey("UserId").OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Magazine");
+
+                b.Navigation("User");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MagazinesByMachine", b =>
@@ -4525,6 +4701,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MagazineIssue", "Magazine").WithMany("Machines").
                   HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Machine");
+
+                b.Navigation("Magazine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MagazinesByMachineFamily", b =>
@@ -4534,18 +4714,26 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MagazineIssue", "Magazine").WithMany("MachineFamilies").
                   HasForeignKey("MagazineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("MachineFamily");
+
+                b.Navigation("Magazine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MasteringText", b =>
             {
                 b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("MasteringTexts").HasForeignKey("MediaId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Media");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Media", b =>
             {
                 b.HasOne("Marechai.Database.Models.MagazineIssue", "MagazineIssue").WithMany("Coverdiscs").
                   HasForeignKey("MagazineIssueId").OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("MagazineIssue");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaBySoftwareVariant", b =>
@@ -4555,18 +4743,26 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Media").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Media");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaDump", b =>
             {
                 b.HasOne("Marechai.Database.Models.Media", "Media").WithMany("MediaDumps").HasForeignKey("MediaId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Media");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaDumpFileImage", b =>
             {
                 b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Files").
                   HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("MediaDump");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaDumpImage", b =>
@@ -4574,6 +4770,8 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithOne("Image").
                   HasForeignKey("Marechai.Database.Models.MediaDumpImage", "MediaDumpId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("MediaDump");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaDumpSubchannelImage", b =>
@@ -4585,12 +4783,18 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.MediaDumpTrackImage", "Track").WithOne("Subchannel").
                   HasForeignKey("Marechai.Database.Models.MediaDumpSubchannelImage", "TrackId").
                   OnDelete(DeleteBehavior.Cascade);
+
+                b.Navigation("MediaDump");
+
+                b.Navigation("Track");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaDumpTrackImage", b =>
             {
                 b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Tracks").
                   HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade);
+
+                b.Navigation("MediaDump");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MediaTagDump", b =>
@@ -4600,18 +4804,26 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.MediaDump", "MediaDump").WithMany("Tags").
                   HasForeignKey("MediaDumpId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("File");
+
+                b.Navigation("MediaDump");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByMachine", b =>
             {
                 b.HasOne("Marechai.Database.Models.Machine", "Machine").WithMany("Memory").HasForeignKey("MachineId").
                   HasConstraintName("fk_memory_by_machine_machine").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Machine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.MemoryByOwnedMachine", b =>
             {
                 b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine").WithMany("Memory").
                   HasForeignKey("OwnedMachineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("OwnedMachine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.OwnedMachine", b =>
@@ -4621,6 +4833,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("OwnedMachines").
                   HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade);
+
+                b.Navigation("Machine");
+
+                b.Navigation("User");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.OwnedMachinePhoto", b =>
@@ -4633,6 +4849,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.ApplicationUser", "User").WithMany("OwnedMachinePhotos").
                   HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade);
+
+                b.Navigation("License");
+
+                b.Navigation("OwnedMachine");
+
+                b.Navigation("User");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.PeopleByBook", b =>
@@ -4645,6 +4867,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Book");
+
+                b.Navigation("Person");
+
+                b.Navigation("Role");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.PeopleByCompany", b =>
@@ -4654,6 +4882,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Person", "Person").WithMany("Companies").HasForeignKey("PersonId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Company");
+
+                b.Navigation("Person");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.PeopleByDocument", b =>
@@ -4666,6 +4898,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Document");
+
+                b.Navigation("Person");
+
+                b.Navigation("Role");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.PeopleByMagazine", b =>
@@ -4678,6 +4916,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.DocumentRole", "Role").WithMany().HasForeignKey("RoleId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Magazine");
+
+                b.Navigation("Person");
+
+                b.Navigation("Role");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.PeopleBySoftwareFamily", b =>
@@ -4690,6 +4934,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareFamily", "SoftwareFamily").WithMany("People").
                   HasForeignKey("SoftwareFamilyId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Person");
+
+                b.Navigation("Role");
+
+                b.Navigation("SoftwareFamily");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.PeopleBySoftwareVariant", b =>
@@ -4702,6 +4952,12 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("People").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Person");
+
+                b.Navigation("Role");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.PeopleBySoftwareVersion", b =>
@@ -4714,12 +4970,20 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVersion", "SoftwareVersion").WithMany("People").
                   HasForeignKey("SoftwareVersionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Person");
+
+                b.Navigation("Role");
+
+                b.Navigation("SoftwareVersion");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Person", b =>
             {
                 b.HasOne("Marechai.Database.Models.Iso31661Numeric", "CountryOfBirth").WithMany("People").
                   HasForeignKey("CountryOfBirthId");
+
+                b.Navigation("CountryOfBirth");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Processor", b =>
@@ -4729,6 +4993,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.InstructionSet", "InstructionSet").WithMany("Processors").
                   HasForeignKey("InstructionSetId").HasConstraintName("fk_processors_instruction_set");
+
+                b.Navigation("Company");
+
+                b.Navigation("InstructionSet");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.ProcessorsByMachine", b =>
@@ -4740,6 +5008,10 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.Processor", "Processor").WithMany("ProcessorsByMachine").
                   HasForeignKey("ProcessorId").HasConstraintName("fk_processors_by_machine_processor").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Machine");
+
+                b.Navigation("Processor");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.ProcessorsByOwnedMachine", b =>
@@ -4749,6 +5021,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Processor", "Processor").WithMany().HasForeignKey("ProcessorId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("OwnedMachine");
+
+                b.Navigation("Processor");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.ProcessorsBySoftwareVariant", b =>
@@ -4758,6 +5034,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Processors").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Processor");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.RequiredOperatingSystemsBySofwareVariant", b =>
@@ -4768,6 +5048,10 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").
                   WithMany("RequiredOperatingSystems").HasForeignKey("SoftwareVariantId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("OperatingSystem");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.RequiredSoftwareBySoftwareVariant", b =>
@@ -4777,6 +5061,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVersion", "SoftwareVersion").WithMany().
                   HasForeignKey("SoftwareVersionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("SoftwareVariant");
+
+                b.Navigation("SoftwareVersion");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.ResolutionsByGpu", b =>
@@ -4787,6 +5075,10 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.Resolution", "Resolution").WithMany("ResolutionsByGpu").
                   HasForeignKey("ResolutionId").HasConstraintName("fk_resolutions_by_gpu_resolution").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Gpu");
+
+                b.Navigation("Resolution");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.ResolutionsByScreen", b =>
@@ -4796,12 +5088,18 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Screen", "Screen").WithMany("Resolutions").HasForeignKey("ScreenId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Resolution");
+
+                b.Navigation("Screen");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.Screen", b =>
             {
                 b.HasOne("Marechai.Database.Models.Resolution", "NativeResolution").WithMany("Screens").
                   HasForeignKey("NativeResolutionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("NativeResolution");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.ScreensByMachine", b =>
@@ -4811,12 +5109,18 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.Screen", "Screen").WithMany("ScreensByMachines").
                   HasForeignKey("ScreenId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Machine");
+
+                b.Navigation("Screen");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareFamily", b =>
             {
                 b.HasOne("Marechai.Database.Models.SoftwareFamily", "Parent").WithMany("Children").
                   HasForeignKey("ParentId").OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Parent");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVariant", b =>
@@ -4826,6 +5130,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVersion", "SoftwareVersion").WithMany("Variants").
                   HasForeignKey("SoftwareVersionId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Parent");
+
+                b.Navigation("SoftwareVersion");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVariantByCompilationMedia", b =>
@@ -4835,6 +5143,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany().
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Media");
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
@@ -4847,6 +5159,12 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.SoftwareVersion", "Previous").WithOne("Next").
                   HasForeignKey("Marechai.Database.Models.SoftwareVersion", "PreviousId").
                   OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Family");
+
+                b.Navigation("License");
+
+                b.Navigation("Previous");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoundByMachine", b =>
@@ -4857,6 +5175,10 @@ namespace Marechai.Database.Migrations
                 b.HasOne("Marechai.Database.Models.SoundSynth", "SoundSynth").WithMany("SoundByMachine").
                   HasForeignKey("SoundSynthId").HasConstraintName("fk_sound_by_machine_sound_synth").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Machine");
+
+                b.Navigation("SoundSynth");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoundByOwnedMachine", b =>
@@ -4866,6 +5188,10 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoundSynth", "SoundSynth").WithMany().HasForeignKey("SoundSynthId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("OwnedMachine");
+
+                b.Navigation("SoundSynth");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoundBySoftwareVariant", b =>
@@ -4875,30 +5201,42 @@ namespace Marechai.Database.Migrations
 
                 b.HasOne("Marechai.Database.Models.SoundSynth", "SoundSynth").WithMany("Software").
                   HasForeignKey("SoundSynthId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("SoftwareVariant");
+
+                b.Navigation("SoundSynth");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.SoundSynth", b =>
             {
                 b.HasOne("Marechai.Database.Models.Company", "Company").WithMany("SoundSynths").
                   HasForeignKey("CompanyId").HasConstraintName("fk_sound_synths_company");
+
+                b.Navigation("Company");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.StandaloneFile", b =>
             {
                 b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant").WithMany("Files").
                   HasForeignKey("SoftwareVariantId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("SoftwareVariant");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.StorageByMachine", b =>
             {
                 b.HasOne("Marechai.Database.Models.Machine", "Machine").WithMany("Storage").HasForeignKey("MachineId").
                   HasConstraintName("fk_storage_by_machine_machine").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("Machine");
             });
 
             modelBuilder.Entity("Marechai.Database.Models.StorageByOwnedMachine", b =>
             {
                 b.HasOne("Marechai.Database.Models.OwnedMachine", "OwnedMachine").WithMany("Storage").
                   HasForeignKey("OwnedMachineId").OnDelete(DeleteBehavior.Cascade).IsRequired();
+
+                b.Navigation("OwnedMachine");
             });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -4932,6 +5270,386 @@ namespace Marechai.Database.Migrations
             {
                 b.HasOne("Marechai.Database.Models.ApplicationUser", null).WithMany().HasForeignKey("UserId").
                   OnDelete(DeleteBehavior.Cascade).IsRequired();
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.ApplicationUser", b =>
+            {
+                b.Navigation("BookScans");
+
+                b.Navigation("DocumentScans");
+
+                b.Navigation("Dumps");
+
+                b.Navigation("MagazineScans");
+
+                b.Navigation("OwnedMachinePhotos");
+
+                b.Navigation("OwnedMachines");
+
+                b.Navigation("Photos");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Book", b =>
+            {
+                b.Navigation("Companies");
+
+                b.Navigation("Derivates");
+
+                b.Navigation("MachineFamilies");
+
+                b.Navigation("Machines");
+
+                b.Navigation("Next");
+
+                b.Navigation("People");
+
+                b.Navigation("Scans");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Company", b =>
+            {
+                b.Navigation("Descriptions");
+
+                b.Navigation("DocumentCompany");
+
+                b.Navigation("Gpus");
+
+                b.Navigation("InverseSoldToNavigation");
+
+                b.Navigation("Logos");
+
+                b.Navigation("MachineFamilies");
+
+                b.Navigation("Machines");
+
+                b.Navigation("People");
+
+                b.Navigation("Processors");
+
+                b.Navigation("SoftwareFamilies");
+
+                b.Navigation("SoftwareVariants");
+
+                b.Navigation("SoftwareVersions");
+
+                b.Navigation("SoundSynths");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Document", b =>
+            {
+                b.Navigation("Companies");
+
+                b.Navigation("MachineFamilies");
+
+                b.Navigation("Machines");
+
+                b.Navigation("People");
+
+                b.Navigation("Scans");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.DocumentCompany", b =>
+            {
+                b.Navigation("Books");
+
+                b.Navigation("Documents");
+
+                b.Navigation("Magazines");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.DocumentPerson", b =>
+            {
+                b.Navigation("Books");
+
+                b.Navigation("Documents");
+
+                b.Navigation("Magazines");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Dump", b =>
+            {
+                b.Navigation("DumpHardware");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Filesystem", b =>
+            {
+                b.Navigation("Files");
+
+                b.Navigation("MediaDumpFileImages");
+
+                b.Navigation("Partitions");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Gpu", b =>
+            {
+                b.Navigation("GpusByMachine");
+
+                b.Navigation("ResolutionsByGpu");
+
+                b.Navigation("Software");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.InstructionSet", b =>
+            {
+                b.Navigation("Processors");
+
+                b.Navigation("Software");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.InstructionSetExtension", b =>
+            {
+                b.Navigation("InstructionSetExtensionsByProcessor");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Iso31661Numeric", b =>
+            {
+                b.Navigation("Books");
+
+                b.Navigation("Companies");
+
+                b.Navigation("Documents");
+
+                b.Navigation("Magazines");
+
+                b.Navigation("People");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Iso639", b =>
+            {
+                b.Navigation("Software");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.License", b =>
+            {
+                b.Navigation("OwnedMachinePhotos");
+
+                b.Navigation("Photos");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.LogicalPartition", b =>
+            {
+                b.Navigation("Filesystems");
+
+                b.Navigation("Media");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Machine", b =>
+            {
+                b.Navigation("Books");
+
+                b.Navigation("Documents");
+
+                b.Navigation("Gpus");
+
+                b.Navigation("Magazines");
+
+                b.Navigation("Memory");
+
+                b.Navigation("Photos");
+
+                b.Navigation("Processors");
+
+                b.Navigation("Screens");
+
+                b.Navigation("Software");
+
+                b.Navigation("Sound");
+
+                b.Navigation("Storage");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MachineFamily", b =>
+            {
+                b.Navigation("Books");
+
+                b.Navigation("Documents");
+
+                b.Navigation("Machines");
+
+                b.Navigation("Magazines");
+
+                b.Navigation("Software");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Magazine", b =>
+            {
+                b.Navigation("Companies");
+
+                b.Navigation("Issues");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MagazineIssue", b =>
+            {
+                b.Navigation("Coverdiscs");
+
+                b.Navigation("MachineFamilies");
+
+                b.Navigation("Machines");
+
+                b.Navigation("People");
+
+                b.Navigation("Scans");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Media", b =>
+            {
+                b.Navigation("Dumps");
+
+                b.Navigation("LogicalPartitions");
+
+                b.Navigation("MasteringTexts");
+
+                b.Navigation("MediaDumps");
+
+                b.Navigation("Software");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaDump", b =>
+            {
+                b.Navigation("Dumps");
+
+                b.Navigation("Files");
+
+                b.Navigation("Image");
+
+                b.Navigation("Subchannel");
+
+                b.Navigation("Tags");
+
+                b.Navigation("Tracks");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaDumpFileImage", b =>
+            {
+                b.Navigation("Filesystems");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaDumpTrackImage", b =>
+            {
+                b.Navigation("Subchannel");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.MediaFile", b =>
+            {
+                b.Navigation("DataStreams");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.OwnedMachine", b =>
+            {
+                b.Navigation("Gpus");
+
+                b.Navigation("Memory");
+
+                b.Navigation("Photos");
+
+                b.Navigation("Processors");
+
+                b.Navigation("Sound");
+
+                b.Navigation("Storage");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Person", b =>
+            {
+                b.Navigation("Companies");
+
+                b.Navigation("DocumentPerson");
+
+                b.Navigation("SoftwareFamilies");
+
+                b.Navigation("SoftwareVariants");
+
+                b.Navigation("SoftwareVersions");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Processor", b =>
+            {
+                b.Navigation("InstructionSetExtensions");
+
+                b.Navigation("ProcessorsByMachine");
+
+                b.Navigation("Software");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Resolution", b =>
+            {
+                b.Navigation("ResolutionsByGpu");
+
+                b.Navigation("ResolutionsByScreen");
+
+                b.Navigation("Screens");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.Screen", b =>
+            {
+                b.Navigation("Resolutions");
+
+                b.Navigation("ScreensByMachines");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareFamily", b =>
+            {
+                b.Navigation("Children");
+
+                b.Navigation("Companies");
+
+                b.Navigation("People");
+
+                b.Navigation("Versions");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareVariant", b =>
+            {
+                b.Navigation("Architectures");
+
+                b.Navigation("Companies");
+
+                b.Navigation("Derivates");
+
+                b.Navigation("Files");
+
+                b.Navigation("Gpus");
+
+                b.Navigation("Languages");
+
+                b.Navigation("MachineFamilies");
+
+                b.Navigation("Machines");
+
+                b.Navigation("Media");
+
+                b.Navigation("People");
+
+                b.Navigation("Processors");
+
+                b.Navigation("RequiredOperatingSystems");
+
+                b.Navigation("RequiredSoftware");
+
+                b.Navigation("SupportedSound");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
+            {
+                b.Navigation("Companies");
+
+                b.Navigation("Next");
+
+                b.Navigation("People");
+
+                b.Navigation("Variants");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoundSynth", b =>
+            {
+                b.Navigation("Software");
+
+                b.Navigation("SoundByMachine");
+            });
+
+            modelBuilder.Entity("Marechai.Database.Models.StandaloneFile", b =>
+            {
+                b.Navigation("DataStreams");
             });
             #pragma warning restore 612, 618
         }
