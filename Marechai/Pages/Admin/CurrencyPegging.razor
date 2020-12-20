@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -29,11 +29,11 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<CurrencyPeggingService>
 @inject IStringLocalizer<CurrencyPeggingService> L
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Currency pegging"]</h3>
-@if (_peggings is null)
+@if(_peggings is null)
 {
     <p>@L["Loading..."]</p>
 
@@ -64,7 +64,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in _peggings)
+    @foreach(var item in _peggings)
     {
         <tr>
             <td>
@@ -85,26 +85,25 @@
             <td>
                 <a class="btn btn-primary" href="/admin/currency_pegging/details/@item.Id">@L["Details"]</a>
                 <a class="btn btn-secondary" href="/admin/currency_pegging/edit/@item.Id">@L["Edit"]</a>
-                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
+                <Button Clicked="() => {ShowModal(item.Id);}" Color="Color.Danger">@L["Delete"]</Button>
             </td>
         </tr>
     }
     </tbody>
 </table>
-
-<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
-    <ModalBackdrop/>
+<Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
+    <ModalBackdrop />
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete currency pegging"]</ModalTitle>
-            <CloseButton Clicked="@HideModal"/>
+            <CloseButton Clicked="@HideModal" />
         </ModalHeader>
         <ModalBody>
-            <Text>@string.Format(@L["Are you sure you want to delete the pegging of {0:F} happened to currency {1} with currency {2} since {3}?"], _currentPegging?.Ratio, _currentPegging?.SourceName, _currentPegging?.DestinationName, _currentPegging?.Start.ToLongDateString())</Text>
+            <Text>@string.Format(L["Are you sure you want to delete the pegging of {0:F} happened to currency {1} with currency {2} since {3}?"], _currentPegging?.Ratio, _currentPegging?.SourceName, _currentPegging?.DestinationName, _currentPegging?.Start.ToLongDateString())</Text>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+            <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>

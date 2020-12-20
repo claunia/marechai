@@ -91,7 +91,7 @@ namespace Marechai.Database.Seeders
             }
 
             Dictionary<string, Models.Iso4217> existingCodes = context.Iso4217.ToDictionary(c => c.Code);
-            Dictionary<string, Models.Iso4217> newCodes      = new Dictionary<string, Models.Iso4217>();
+            Dictionary<string, Models.Iso4217> newCodes      = new();
 
             long modified = 0;
 

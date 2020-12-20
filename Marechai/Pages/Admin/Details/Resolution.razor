@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -32,24 +32,22 @@
 @inherits OwningComponentBase<ResolutionsService>
 @inject IStringLocalizer<ResolutionsService> L
 @inject NavigationManager NavigationManager
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Resolution details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <div>
     <Field>
         <FieldLabel>@L["Width (pixels or characters)"]</FieldLabel>
         <Validation Validator="@ValidateIntegerBiggerThanZero">
-            <NumericEdit Disabled="!_editing" TValue="int" @bind-Value="@_model.Width" >
+            <NumericEdit @bind-Value="@_model.Width" Disabled="!_editing" @TValue="int">
                 <Feedback>
                     <ValidationError>@L["Please enter a valid width in pixels or characters."]</ValidationError>
                 </Feedback>
@@ -59,71 +57,71 @@
     <Field>
         <FieldLabel>@L["Height (pixels or characters)"]</FieldLabel>
         <Validation Validator="@ValidateIntegerBiggerThanZero">
-            <NumericEdit Disabled="!_editing" TValue="int" @bind-Value="@_model.Height" >
+            <NumericEdit @bind-Value="@_model.Height" Disabled="!_editing" @TValue="int">
                 <Feedback>
                     <ValidationError>@L["Please enter a valid height in pixels or characters."]</ValidationError>
                 </Feedback>
             </NumericEdit>
         </Validation>
     </Field>
-    @if (_editing || _model.Colors.HasValue)
+    @if(_editing || _model.Colors.HasValue)
     {
         <Field>
             <FieldLabel>@L["Colors"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownColors">@L["Unknown (colors)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownColors)
+                <Check @bind-Checked="@_unknownColors" @TValue="bool">@L["Unknown (colors)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownColors)
             {
                 <Validation Validator="@ValidateLongBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="long?" Decimals="0" @bind-Value="@_model.Colors" >
+                    <NumericEdit @bind-Value="@_model.Colors" Decimals="0" Disabled="!_editing" @TValue="long?">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid number of colors."]</ValidationError>
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.Palette.HasValue)
+}
+    @if(_editing || _model.Palette.HasValue)
     {
         <Field>
             <FieldLabel>@L["Colors in palette"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownPalette">@L["Unknown (colors in palette)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownPalette)
+                <Check @bind-Checked="@_unknownPalette" @TValue="bool">@L["Unknown (colors in palette)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownPalette)
             {
                 <Validation Validator="@ValidateLongBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="long?" Decimals="0" @bind-Value="@_model.Palette" >
+                    <NumericEdit @bind-Value="@_model.Palette" Decimals="0" Disabled="!_editing" @TValue="long?">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid number of colors in palette."]</ValidationError>
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
+}
     <Field>
-        <Check Disabled="!_editing" TValue="bool" @bind-Checked="@_model.Chars">@L["Resolution is character based (text only)."]</Check>
+        <Check @bind-Checked="@_model.Chars" Disabled="!_editing" @TValue="bool">@L["Resolution is character based (text only)."]</Check>
     </Field>
     <Field>
-        <Check Disabled="!_editing" TValue="bool" @bind-Checked="@_model.Grayscale">@L["Resolution only has gray colors."]</Check>
+        <Check @bind-Checked="@_model.Grayscale" Disabled="!_editing" @TValue="bool">@L["Resolution only has gray colors."]</Check>
     </Field>
 </div>
 <div>
-    @if (!_editing)
+    @if(!_editing)
     {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
+}
     else
     {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/resolutions" class="btn btn-secondary">@L["Back to list"]</a>
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
+}
+    <a class="btn btn-secondary" href="/admin/resolutions">@L["Back to list"]</a>
 </div>

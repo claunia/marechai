@@ -1,5 +1,5 @@
 ﻿@{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -25,12 +25,11 @@
 *******************************************************************************/
 }
 @inject StringLocalizer<NavMenu> L
-
 <AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage">@string.Format(L["Hello {0}!"], @context.User.Identity.Name)</a>
-        <form method="post" action="Identity/Account/LogOut">
-            <button type="submit" class="nav-link btn btn-link">@L["Log out"]</button>
+        <a href="Identity/Account/Manage">@string.Format(L["Hello {0}!"], context.User.Identity.Name)</a>
+        <form action="Identity/Account/LogOut" method="post">
+            <button class="btn btn-link nav-link" type="submit">@L["Log out"]</button>
         </form>
     </Authorized>
     <NotAuthorized>

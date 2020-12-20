@@ -233,7 +233,7 @@ namespace Marechai.Pages.Admin.Details
                 {
                     await outFs.WriteAsync(buffer, 0, count);
 
-                    double progress = ((double)fs.Position * 100) / fs.Length;
+                    double progress = (double)fs.Position * 100 / fs.Length;
 
                     if(!(progress > lastProgress + 0.01))
                         continue;

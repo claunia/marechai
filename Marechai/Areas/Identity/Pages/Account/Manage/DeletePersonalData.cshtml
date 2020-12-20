@@ -13,7 +13,7 @@
 <div>
     <form class="form-group" id="delete-user" method="post">
         <div asp-validation-summary="All" class="text-danger"></div>
-        @if (Model.RequirePassword)
+        @if(Model.RequirePassword)
         {
             <div class="form-group">
                 <label asp-for="Input.Password"></label>

@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -29,13 +29,12 @@
 @inherits OwningComponentBase<ComputersService>
 @inject IStringLocalizer<ComputersService> L
 
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <p>
     @L["Here you can consult our database."]
     <br />
@@ -225,7 +224,7 @@
     @L["Search by year"]
     <br>
     @{ var counter = 0; }
-    @for (int i = _minYear; i <= _maxYear; i++)
+    @for(var i = _minYear; i <= _maxYear; i++)
     {
         {
             counter++;
@@ -233,7 +232,7 @@
         <a href="/computers/year/@i">
             @i
         </a>
-        if (counter % 8 == 0)
+        if(counter % 8 == 0)
         {
             <br />
         }

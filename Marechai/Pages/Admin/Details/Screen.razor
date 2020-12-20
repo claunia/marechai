@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -34,162 +34,160 @@
 @inject ResolutionsService ResolutionsService
 @inject NavigationManager NavigationManager
 @inject ResolutionsByScreenService ResolutionsByScreenService
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Screen details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <div>
-    @if (_editing || _model.Width.HasValue)
+    @if(_editing || _model.Width.HasValue)
     {
         <Field>
             <FieldLabel>@L["Width (mm)"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownWidth">@L["Unknown (width)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownWidth)
+                <Check @bind-Checked="@_unknownWidth" @TValue="bool">@L["Unknown (width)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownWidth)
             {
                 <Validation Validator="@ValidateDoubleBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="2" @bind-Value="@_model.Width" >
+                    <NumericEdit @bind-Value="@_model.Width" Decimals="2" Disabled="!_editing" @TValue="double?">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid width in millimeters."]</ValidationError>
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.Height.HasValue)
+}
+    @if(_editing || _model.Height.HasValue)
     {
         <Field>
             <FieldLabel>@L["Height (mm)"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownHeight">@L["Unknown (height)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownHeight)
+                <Check @bind-Checked="@_unknownHeight" @TValue="bool">@L["Unknown (height)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownHeight)
             {
                 <Validation Validator="@ValidateDoubleBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="2" @bind-Value="@_model.Height" >
+                    <NumericEdit @bind-Value="@_model.Height" Decimals="2" Disabled="!_editing" @TValue="double?">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid height in millimeters."]</ValidationError>
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
+}
     <Field>
         <FieldLabel>@L["Diagonal (inches)"]</FieldLabel>
         <Validation Validator="@ValidateDoubleBiggerThanZero">
-            <NumericEdit Disabled="!_editing" TValue="double" Decimals="2" @bind-Value="@_model.Diagonal" >
+            <NumericEdit @bind-Value="@_model.Diagonal" Decimals="2" Disabled="!_editing" @TValue="double">
                 <Feedback>
                     <ValidationError>@L["Please enter a correct diagonal size in inches."]</ValidationError>
                 </Feedback>
             </NumericEdit>
         </Validation>
     </Field>
-    @if (_editing || _model.EffectiveColors.HasValue)
+    @if(_editing || _model.EffectiveColors.HasValue)
     {
         <Field>
             <FieldLabel>@L["Effective colors"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownColors">@L["Unknown (effective colors)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownColors)
+                <Check @bind-Checked="@_unknownColors" @TValue="bool">@L["Unknown (effective colors)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownColors)
             {
                 <Validation Validator="@ValidateLongBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="long?" Decimals="0" @bind-Value="@_model.EffectiveColors" >
+                    <NumericEdit @bind-Value="@_model.EffectiveColors" Decimals="0" Disabled="!_editing" @TValue="long?">
                         <Feedback>
                             <ValidationError>@L["Please enter a number of effective colors."]</ValidationError>
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.Type != null)
+}
+    @if(_editing || _model.Type != null)
     {
         <Field>
             <FieldLabel>@L["Type"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownType">@L["Unknown (type)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownType)
+                <Check @bind-Checked="@_unknownType" @TValue="bool">@L["Unknown (type)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownType)
             {
                 <Validation Validator="@ValidateType">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Type">
+                    <TextEdit @bind-Text="@_model.Type" ReadOnly="!_editing">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid screen type."]</ValidationError>
                         </Feedback>
                     </TextEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
+}
     <Field>
         <FieldLabel>@L["Native resolution"]</FieldLabel>
-        <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@_model.NativeResolutionId">
-            @foreach (var resolution in _resolutions)
+        <Select @bind-SelectedValue="@_model.NativeResolutionId" Disabled="!_editing" @TValue="int">
+            @foreach(var resolution in _resolutions)
             {
-                <SelectItem TValue="int" Value="@resolution.Id">@resolution.ToString()</SelectItem>
-            }
+                <SelectItem @TValue="int" Value="@resolution.Id">@resolution.ToString()</SelectItem>
+}
         </Select>
     </Field>
 </div>
 <div>
-    @if (!_editing)
+    @if(!_editing)
     {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
+}
     else
     {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/screens" class="btn btn-secondary">@L["Back to list"]</a>
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
+}
+    <a class="btn btn-secondary" href="/admin/screens">@L["Back to list"]</a>
 </div>
-@if (!_editing)
+@if(!_editing)
 {
     <hr />
     <h3>@L["Resolutions supported by this screen"]</h3>
-    <Button Color="Color.Success" Clicked="OnAddResolutionClick" Disabled="_addingResolution">@L["Add new (resolution by screen)"]</Button>
-    @if (_addingResolution)
+    <Button Clicked="OnAddResolutionClick" Color="Color.Success" Disabled="_addingResolution">@L["Add new (resolution by screen)"]</Button>
+    @if(_addingResolution)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Resolutions"]</FieldLabel>
-                <Select Disabled="_savingResolution" TValue="int?" @bind-SelectedValue="@_addingResolutionId">
-                    @foreach (var resolution in _resolutions)
+                <Select @bind-SelectedValue="@_addingResolutionId" Disabled="_savingResolution" @TValue="int?">
+                    @foreach(var resolution in _resolutions)
                     {
-                        @if (resolution.Id != _model.NativeResolutionId &&
-                             _screenResolutions.All(r => r.ResolutionId != resolution.Id))
+                        @if(resolution.Id != _model.NativeResolutionId &&
+                            _screenResolutions.All(r => r.ResolutionId != resolution.Id))
                         {
-                            <SelectItem TValue="int?" Value="@resolution.Id">@resolution</SelectItem>
-                        }
+                            <SelectItem @TValue="int?" Value="@resolution.Id">@resolution</SelectItem>
+}
                     }
                 </Select>
-                <Button Color="Color.Primary" Clicked="@CancelAddResolution" Disabled="@_savingResolution">@L["Cancel"]</Button>
-                <Button Color="Color.Success" Clicked="@ConfirmAddResolution" Disabled="@_savingResolution">@L["Add"]</Button>
+                <Button Clicked="@CancelAddResolution" Color="Color.Primary" Disabled="@_savingResolution">@L["Cancel"]</Button>
+                <Button Clicked="@ConfirmAddResolution" Color="Color.Success" Disabled="@_savingResolution">@L["Add"]</Button>
             </Field>
         </div>
     }
-    @if (_screenResolutions?.Count > 0)
+    @if(_screenResolutions?.Count > 0)
     {
         <div>
             <table class="table table-striped">
@@ -217,7 +215,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var item in _screenResolutions)
+                @foreach(var item in _screenResolutions)
                 {
                     <tr>
                         <td>
@@ -239,7 +237,7 @@
                             @item.Resolution.Grayscale
                         </td>
                         <td>
-                            <Button Color="Color.Danger" Clicked="() => {ShowResolutionDeleteModal(item.Id);}" Disabled="@_addingResolution">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowResolutionDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingResolution">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -248,7 +246,7 @@
         </div>
     }
 
-    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+    <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
         <ModalBackdrop />
         <ModalContent Centered="true">
             <ModalHeader>
@@ -259,9 +257,8 @@
                 <Text>@_deleteText</Text>
             </ModalBody>
             <ModalFooter>
-                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+                <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
             </ModalFooter>
         </ModalContent>
-    </Modal>
-}
+    </Modal>}

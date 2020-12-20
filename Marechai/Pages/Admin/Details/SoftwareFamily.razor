@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -28,7 +28,6 @@
 @page "/admin/software_families/details/{Id:long}"
 @page "/admin/software_families/edit/{Id:long}"
 @page "/admin/software_families/create"
-@using Marechai.Database
 @using Marechai.Database.Models
 @inherits OwningComponentBase<SoftwareFamiliesService>
 @inject IStringLocalizer<SoftwareFamiliesService> L
@@ -38,116 +37,113 @@
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Host
 @inject IJSRuntime JSRuntime
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
-
-
 <h3>@L["Software family details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <div>
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
         <Validation Validator="@ValidateName">
-            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Name">
+            <TextEdit @bind-Text="@_model.Name" ReadOnly="!_editing">
                 <Feedback>
                     <ValidationError>@L["Please enter a valid name."]</ValidationError>
                 </Feedback>
             </TextEdit>
         </Validation>
     </Field>
-    @if (_editing || _model.Introduced != null)
+    @if(_editing || _model.Introduced != null)
     {
         <Field>
             <FieldLabel>@L["Introduced"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownIntroduced">@L["Unknown (introduction date)"]</Check>
-            }
-            @if (!_editing || !_unknownIntroduced)
+                <Check @bind-Checked="@_unknownIntroduced" @TValue="bool">@L["Unknown (introduction date)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownIntroduced)
             {
                 <Validation Validator="@ValidateIntroduced">
-                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.Introduced" >
+                    <DateEdit @bind-Date="@_model.Introduced" ReadOnly="!_editing" @TValue="DateTime?">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid introduction date."]</ValidationError>
                         </Feedback>
                     </DateEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.ParentId != null)
+}
+    @if(_editing || _model.ParentId != null)
     {
         <Field>
             <FieldLabel>@L["Parent software family"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownParent">@L["Unknown or none (parent software family)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownParent)
+                <Check @bind-Checked="@_unknownParent" @TValue="bool">@L["Unknown or none (parent software family)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownParent)
             {
-                <Select Disabled="!_editing" TValue="ulong?" @bind-SelectedValue="@_model.ParentId">
-                    @foreach (var family in _softwareFamilies)
+                <Select @bind-SelectedValue="@_model.ParentId" Disabled="!_editing" @TValue="ulong?">
+                    @foreach(var family in _softwareFamilies)
                     {
-                        <SelectItem TValue="ulong?" Value="@family.Id">@family.Name</SelectItem>
-                    }
+                        <SelectItem @TValue="ulong?" Value="@family.Id">@family.Name</SelectItem>
+}
                 </Select>
-            }
+}
         </Field>
-    }
+}
 </div>
 <div>
-    @if (!_editing)
+    @if(!_editing)
     {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
+}
     else
     {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/software_families" class="btn btn-secondary">@L["Back to list"]</a>
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
+}
+    <a class="btn btn-secondary" href="/admin/software_families">@L["Back to list"]</a>
 </div>
-@if (!_editing)
+@if(!_editing)
 {
     <hr />
     <h3>@L["Companies involved in this software family"]</h3>
-    <Button Color="Color.Success" Clicked="OnAddCompanyClick" Disabled="_addingCompany">@L["Add new (company)"]</Button>
-    @if (_addingCompany)
+    <Button Clicked="OnAddCompanyClick" Color="Color.Success" Disabled="_addingCompany">@L["Add new (company)"]</Button>
+    @if(_addingCompany)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Company"]</FieldLabel>
-                <Select Disabled="_savingCompany" TValue="int?" @bind-SelectedValue="@_addingCompanyId">
-                    @foreach (var company in _companies)
+                <Select @bind-SelectedValue="@_addingCompanyId" Disabled="_savingCompany" @TValue="int?">
+                    @foreach(var company in _companies)
                     {
-                        <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-                    }
+                        <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+}
                 </Select>
             </Field>
             <Field>
                 <FieldLabel>@L["Role"]</FieldLabel>
-                <Select Disabled="!_editing" TValue="string" @bind-SelectedValue="@_addingCompanyRoleId">
-                    @foreach (var role in _roles)
+                <Select @bind-SelectedValue="@_addingCompanyRoleId" Disabled="!_editing" @TValue="string">
+                    @foreach(var role in _roles)
                     {
-                        <SelectItem TValue="string" Value="@role.Id">@role.Name</SelectItem>
-                    }
+                        <SelectItem @TValue="string" Value="@role.Id">@role.Name</SelectItem>
+}
                 </Select>
             </Field>
-            <Button Color="Color.Primary" Clicked="@CancelAddCompany" Disabled="@_savingCompany">@L["Cancel"]</Button>
-            <Button Color="Color.Success" Clicked="@ConfirmAddCompany" Disabled="@_savingCompany">@L["Add"]</Button>
+            <Button Clicked="@CancelAddCompany" Color="Color.Primary" Disabled="@_savingCompany">@L["Cancel"]</Button>
+            <Button Clicked="@ConfirmAddCompany" Color="Color.Success" Disabled="@_savingCompany">@L["Add"]</Button>
         </div>
     }
-    @if (_softwareFamilyCompanies?.Count > 0)
+    @if(_softwareFamilyCompanies?.Count > 0)
     {
         <div>
             <table class="table table-striped">
@@ -163,7 +159,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var item in _softwareFamilyCompanies)
+                @foreach(var item in _softwareFamilyCompanies)
                 {
                     <tr>
                         <td>
@@ -173,7 +169,7 @@
                             @item.Role
                         </td>
                         <td>
-                            <Button Color="Color.Danger" Clicked="() => {ShowCompanyDeleteModal(item.Id);}" Disabled="@_addingCompany">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowCompanyDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingCompany">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -182,7 +178,7 @@
         </div>
     }
 
-    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+    <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
         <ModalBackdrop />
         <ModalContent Centered="true">
             <ModalHeader>
@@ -193,9 +189,8 @@
                 <Text>@_deleteText</Text>
             </ModalBody>
             <ModalFooter>
-                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+                <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
             </ModalFooter>
         </ModalContent>
-    </Modal>
-}
+    </Modal>}

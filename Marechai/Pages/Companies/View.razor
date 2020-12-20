@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -26,62 +26,60 @@
 }
 
 @page "/company/{Id:int}"
-@using Marechai.Database.Models
-@using Marechai.Database
 
+@using Marechai.Database
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
-@inject CompanyLogosService CompanyLogosService 
+@inject CompanyLogosService CompanyLogosService
 @inject IWebHostEnvironment Host
 
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
 
-@if (_company is null)
+@if(_company is null)
 {
     <p align="center">@L["Company not found."]</p>
 
     return;
 }
-
 <div class="container-fluid">
-<p align=center>
-    @if (_company.LastLogo != null &&
-         File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _company.LastLogo + ".svg")))
+<p align="center">
+    @if(_company.LastLogo != null &&
+        File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _company.LastLogo + ".svg")))
     {
         <picture>
-            <source type="image/svg+xml" srcset="/assets/logos/@(_company.LastLogo).svg">
-            <source type="image/webp" srcset="/assets/logos/webp/1x/@(_company.LastLogo).webp,
+            <source srcset="/assets/logos/@(_company.LastLogo).svg" type="image/svg+xml">
+            <source srcset="/assets/logos/webp/1x/@(_company.LastLogo).webp,
 /assets/logos/webp/2x/@(_company.LastLogo).webp 2x,
-/assets/logos/webp/3x/@(_company.LastLogo).webp 3x">
-            <img srcset="/assets/logos/png/1x/@(_company.LastLogo).png,
+/assets/logos/webp/3x/@(_company.LastLogo).webp 3x" type="image/webp">
+            <img alt="" height="auto" src="/assets/logos/png/1x/@(_company.LastLogo).png" srcset="/assets/logos/png/1x/@(_company.LastLogo).png,
                          /assets/logos/png/2x/@(_company.LastLogo).png 2x,
-                         /assets/logos/png/3x/@(_company.LastLogo).png 3x" src="/assets/logos/png/1x/@(_company.LastLogo).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                         /assets/logos/png/3x/@(_company.LastLogo).png 3x" style="max-height: 256px; max-width: 256px" width="auto" />
         </picture>
     }
 </p>
 <div class="row">
-@if (_logos != null &&
-     _logos.Count > 1)
+@if(_logos != null &&
+    _logos.Count > 1)
 {
     <div class="col-3">
-        <Carousel @bind-SelectedSlide="@_selectedSlide" ShowIndicators="true" ShowControls="true">
+        <Carousel @bind-SelectedSlide="@_selectedSlide" ShowControls="true" ShowIndicators="true">
             @foreach(var logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
             {
                 <CarouselSlide Name="@logo.Guid.ToString()">
                     <div style="width: 256px; height: 256px; margin: auto;">
                         <picture>
-                            <source type="image/svg+xml" srcset="/assets/logos/@(logo.Guid).svg">
-                            <source type="image/webp" srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
+                            <source srcset="/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
+                            <source srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
     /assets/logos/webp/1x/@(logo.Guid).webp 2x,
-    /assets/logos/webp/1x/@(logo.Guid).webp 3x">
-                            <img class="d-block w-100" srcset="/assets/logos/png/1x/@(logo.Guid).png,
+    /assets/logos/webp/1x/@(logo.Guid).webp 3x" type="image/webp">
+                            <img alt="" class="d-block w-100" height="auto" src="/assets/logos/png/1x/@(logo.Guid).png" srcset="/assets/logos/png/1x/@(logo.Guid).png,
                              /assets/logos/png/1x/@(logo.Guid).png 2x,
-                             /assets/logos/png/1x/@(logo.Guid).webp 3x" src="/assets/logos/png/1x/@(logo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                             /assets/logos/png/1x/@(logo.Guid).webp 3x" style="max-height: 256px; max-width: 256px" width="auto" />
                         </picture>
                     </div>
                     @if(logo.Year.HasValue)
@@ -89,248 +87,255 @@
                         <div style="text-align: center;">@(string.Format(L["in use since {0}"], logo.Year))</div>
                     }
                 </CarouselSlide>
-            }
+}
         </Carousel>
     </div>
 }
 <div class="col-6">
-    <table class="table">
-        <tr>
-            <th colspan="2" class="text-center">
-                <b>@_company.Name</b>
-            </th>
-        </tr>
-        @if (_company.Founded.HasValue)
+<table class="table">
+<tr>
+    <th class="text-center" colspan="2">
+        <b>@_company.Name</b>
+    </th>
+</tr>
+@if(_company.Founded.HasValue)
+{
+    <tr>
+        <th class="text-right">@L["Founded"]</th>
+        @if(_company.FoundedMonthIsUnknown)
         {
-            <tr>
-                <th class="text-right">@L["Founded"]</th>
-                @if(_company.FoundedMonthIsUnknown)
-                {
-                    <td>@_company.Founded.Value.Year.</td>
-                }
-                else if(_company.FoundedDayIsUnknown)
-                {
-                    <td>@($"{_company.Founded.Value:Y}").</td>
-                }
-                else
-                {
-                    <td>@_company.Founded.Value.ToLongDateString().</td>
-                }
-            </tr>
+            <td>@_company.Founded.Value.Year.</td>
         }
-        @if(!string.IsNullOrEmpty(_company.LegalName))
+        else if(_company.FoundedDayIsUnknown)
         {
-            <tr>
-                <th class="text-right">@L["Legal name"]</th>
-                <td>@_company.LegalName</td>
-            </tr>
+            <td>@($"{_company.Founded.Value:Y}").</td>
         }
-        <tr>
-            <th class="text-right">@L["Country"]</th>
-            <td>
-                @if (_company.Country != null)
+        else
+        {
+            <td>@_company.Founded.Value.ToLongDateString().</td>
+        }
+    </tr>
+}
+@if(!string.IsNullOrEmpty(_company.LegalName))
+{
+    <tr>
+        <th class="text-right">@L["Legal name"]</th>
+        <td>@_company.LegalName</td>
+    </tr>
+}
+<tr>
+    <th class="text-right">@L["Country"]</th>
+    <td>
+        @if(_company.Country != null)
+        {
+            <a href="/companies/country/@_company.CountryId">
+                @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{_company.CountryId:D3}.svg")))
                 {
-                    <a href="/companies/country/@_company.CountryId">
-                        @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{_company.CountryId:D3}.svg")))
-                        {
-                            <picture>
-                                <source type="image/svg+xml" srcset="/assets/flags/countries/@($"{_company.CountryId:D3}").svg">
-                                <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp,
+                    <picture>
+                        <source srcset="/assets/flags/countries/@($"{_company.CountryId:D3}").svg" type="image/svg+xml">
+                        <source srcset="/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp,
         /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 2x,
-        /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 3x">
-                                <img srcset="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png,
+        /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 3x" type="image/webp">
+                        <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png" srcset="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png,
                                  /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png 2x,
-                                 /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").webp 3x" src="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png" alt="" height="32" />
-                            </picture>
-                        }
-                        @L[_company.Country]
-                    </a>
+                                 /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").webp 3x" />
+                    </picture>
+                }
+                @L[_company.Country]
+            </a>
+        }
+        else
+        {
+            @L["Unknown (country)"]
+        }
+    </td>
+</tr>
+<tr>
+    <th class="text-right">@L["Status"]</th>
+    @switch(_company.Status)
+    {
+        case CompanyStatus.Unknown:
+            <td>@L["Current company status is unknown."]</td>
+            break;
+        case CompanyStatus.Active:
+            <td>@L["Company is active."]</td>
+            break;
+        case CompanyStatus.Sold:
+            if(_company.Sold != null)
+            {
+                if(_soldTo != null)
+                {
+                    <td>
+                        <a href="/company/@_soldTo.Id">
+                            @string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())
+                        </a>
+                    </td>
                 }
                 else
                 {
-                    @L["Unknown (country)"]
+                    <td>@string.Format(L["Company sold on {0} to an unknown company."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
                 }
-            </td>
-        </tr>
-        <tr>
-            <th class="text-right">@L["Status"]</th>
-            @switch (_company.Status)
-            {
-                case CompanyStatus.Unknown:
-                    <td>@L["Current company status is unknown."]</td>
-                    break;
-                case CompanyStatus.Active:
-                    <td>@L["Company is active."]</td>
-                    break;
-                case CompanyStatus.Sold:
-                    if (_company.Sold != null)
-                    {
-                        if (_soldTo != null)
-                        {
-                            <td>
-                                <a href="/company/@_soldTo.Id">
-                                    @string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>@string.Format(L["Company sold on {0} to an unknown company."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
-                        }
-                    }
-                    else
-                    {
-                        if (_soldTo != null)
-                        {
-                            <td>
-                                <a href="/company/@_soldTo.Id">
-                                    @string.Format(L["Company sold to {0} on an unknown date."], _soldTo.Name)</a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>@L["Company was sold to an unknown company on an unknown date."]</td>
-                        }
-                    }
-                    break;
-                case CompanyStatus.Merged:
-                    if (_company.Sold != null)
-                    {
-                        if (_soldTo != null)
-                        {
-                            <td>
-                                <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString(), _soldTo.Name)</a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>@string.Format(L["Company merged on {0} to form an unknown company."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
-                        }
-                    }
-                    else
-                    {
-                        if (_soldTo != null)
-                        {
-                            <td>
-                                <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on an unknown date to form {0}."], _soldTo.Name)</a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>@L["Company merged to form an unknown company on an unknown date."]</td>
-                        }
-                    }
-                    break;
-                case CompanyStatus.Bankrupt:
-                    if (_company.Sold != null)
-                    {
-                        <td>@string.Format(L["Company declared bankruptcy on {0}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
-                    }
-                    else
-                    {
-                        <td>@L["Company declared bankruptcy on an unknown date."]</td>
-                    }
-                    break;
-                case CompanyStatus.Defunct:
-                    if (_company.Sold != null)
-                    {
-                        <td>@string.Format(L["Company ceased operations on {0}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
-                    }
-                    else
-                    {
-                        <td>@L["Company ceased operations on an unknown date."]</td>
-                    }
-                    break;
-                case CompanyStatus.Renamed:
-                    if (_company.Sold != null)
-                    {
-                        if (_soldTo != null)
-                        {
-                            <td>
-                                <a href="/company/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>@string.Format(L["Company was renamed on {0} to an unknown name."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
-                        }
-                    }
-                    else
-                    {
-                        if (_soldTo != null)
-                        {
-                            <td>
-                                <a href="/company/@_soldTo.Id">
-                                    @string.Format(L["Company renamed to {0} on an unknown date."], _soldTo.Name)</a> 
-                            </td>
-                        }
-                        else
-                        {
-                            <td>@L["Company renamed to an unknown name on an unknown date."]</td>
-                        }
-                    }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
-        </tr>
-        <tr>
-            <th class="text-right">@L["Address"]</th>
-            <td>
-                @_company.Address<br>
-                @if (_company.City != _company.Province)
+            else
+            {
+                if(_soldTo != null)
                 {
-                    @_company.City<br>
+                    <td>
+                        <a href="/company/@_soldTo.Id">
+                            @string.Format(L["Company sold to {0} on an unknown date."], _soldTo.Name)
+                        </a>
+                    </td>
                 }
-                @_company.PostalCode @_company.Province</td>
-        </tr>
-        @if (!string.IsNullOrEmpty(_company.Website) ||
-             !string.IsNullOrEmpty(_company.Twitter) ||
-             !string.IsNullOrEmpty(_company.Facebook))
+                else
+                {
+                    <td>@L["Company was sold to an unknown company on an unknown date."]</td>
+                }
+            }
+            break;
+        case CompanyStatus.Merged:
+            if(_company.Sold != null)
+            {
+                if(_soldTo != null)
+                {
+                    <td>
+                        <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString(), _soldTo.Name)</a>
+                    </td>
+                }
+                else
+                {
+                    <td>@string.Format(L["Company merged on {0} to form an unknown company."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
+                }
+            }
+            else
+            {
+                if(_soldTo != null)
+                {
+                    <td>
+                        <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on an unknown date to form {0}."], _soldTo.Name)</a>
+                    </td>
+                }
+                else
+                {
+                    <td>@L["Company merged to form an unknown company on an unknown date."]</td>
+                }
+            }
+            break;
+        case CompanyStatus.Bankrupt:
+            if(_company.Sold != null)
+            {
+                <td>@string.Format(L["Company declared bankruptcy on {0}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
+            }
+            else
+            {
+                <td>@L["Company declared bankruptcy on an unknown date."]</td>
+            }
+            break;
+        case CompanyStatus.Defunct:
+            if(_company.Sold != null)
+            {
+                <td>@string.Format(L["Company ceased operations on {0}."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
+            }
+            else
+            {
+                <td>@L["Company ceased operations on an unknown date."]</td>
+            }
+            break;
+        case CompanyStatus.Renamed:
+            if(_company.Sold != null)
+            {
+                if(_soldTo != null)
+                {
+                    <td>
+                        <a href="/company/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</a>
+                    </td>
+                }
+                else
+                {
+                    <td>@string.Format(L["Company was renamed on {0} to an unknown name."], _company.SoldMonthIsUnknown ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.ToLongDateString())</td>
+                }
+            }
+            else
+            {
+                if(_soldTo != null)
+                {
+                    <td>
+                        <a href="/company/@_soldTo.Id">
+                            @string.Format(L["Company renamed to {0} on an unknown date."], _soldTo.Name)
+                        </a>
+                    </td>
+                }
+                else
+                {
+                    <td>@L["Company renamed to an unknown name on an unknown date."]</td>
+                }
+            }
+            break;
+        default:
+            throw new ArgumentOutOfRangeException();
+    }
+</tr>
+<tr>
+    <th class="text-right">@L["Address"]</th>
+    <td>
+        @_company.Address
+        <br>
+        @if(_company.City != _company.Province)
         {
-            <tr>
-                <th class="text-right">@L["Links"]</th>
-                <td>
-                    @if (!string.IsNullOrEmpty(_company.Website))
-                    {
-                        <a href="@_company.Website">@L["Website"]</a>
-                        <br />
-                    }
-                    @if (!string.IsNullOrEmpty(_company.Twitter))
-                    {
-                        <a href="https://www.twitter.com/@_company.Twitter">Twitter</a>
-                        <br />
-                    }
-                    @if (!string.IsNullOrEmpty(_company.Facebook))
-                    {
-                        <a href="https://www.facebook.com/@_company.Facebook">Facebook</a>
-                        <br />
-                    }
-                </td>
-            </tr>
+            @_company.City
+            <br>
         }
-    </table>
+        @_company.PostalCode @_company.Province
+    </td>
+</tr>
+@if(!string.IsNullOrEmpty(_company.Website) ||
+    !string.IsNullOrEmpty(_company.Twitter) ||
+    !string.IsNullOrEmpty(_company.Facebook))
+{
+    <tr>
+        <th class="text-right">@L["Links"]</th>
+        <td>
+            @if(!string.IsNullOrEmpty(_company.Website))
+            {
+                <a href="@_company.Website">@L["Website"]</a>
+                <br />
+            }
+            @if(!string.IsNullOrEmpty(_company.Twitter))
+            {
+                <a href="https://www.twitter.com/@_company.Twitter">Twitter</a>
+                <br />
+            }
+            @if(!string.IsNullOrEmpty(_company.Facebook))
+            {
+                <a href="https://www.facebook.com/@_company.Facebook">Facebook</a>
+                <br />
+            }
+        </td>
+    </tr>
+}
+</table>
 </div>
 </div>
-@{ 
+@{
     // TODO: Accordion
 }
 <div class="row" id="itemsAccordion">
     <div class="card">
-        @if (_computers.Count > 0)
+        @if(_computers.Count > 0)
         {
             <div class="card-header" id="headingComputers">
                 <h5 class="mb-0">
                     <button aria-controls="collapseComputers" aria-expanded="false" class="btn btn-info" data-target="#collapseComputers" data-toggle="collapse" @onclick="@CollapseComputers">
-                        @((MarkupString)string.Format(@L["<ok>{0}</ok> computers known."], _computers.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>","</span>"))
+                        @((MarkupString)string.Format(L["<ok>{0}</ok> computers known."], _computers.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>", "</span>"))
                     </button>
                 </h5>
             </div>
             <div aria-labelledby="headingComputers" class="@(ComputersCollapsed ? "collapse" : "")" data-parent="#itemsAccordion" id="collapseComputers">
                 <div class="card-body">
-                    @foreach (var computer in _computers)
+                    @foreach(var computer in _computers)
                     {
                         <a href="/machine/@computer.Id">
-                            @computer.Name</a>
+                            @computer.Name
+                        </a>
                         <br />
                     }
                 </div>
@@ -341,26 +346,27 @@
             <div class="card-header" id="headingComputers">
                 <h5 class="mb-0">
                     <button class="btn btn-info">
-                        @((MarkupString)L["<red>No</red> computers known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>","</span>"))
+                        @((MarkupString)L["<red>No</red> computers known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>", "</span>"))
                     </button>
                 </h5>
             </div>
         }
-        @if (_consoles.Count > 0)
+        @if(_consoles.Count > 0)
         {
             <div class="card-header" id="headingConsoles">
                 <h5 class="mb-0">
                     <button aria-controls="collapseConsoles" aria-expanded="false" class="btn btn-info" data-target="#collapseConsoles" data-toggle="collapse" @onclick="@CollapseConsoles">
-                        @((MarkupString)string.Format(@L["<ok>{0}</ok> videogame consoles known."], _consoles.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>","</span>"))
+                        @((MarkupString)string.Format(L["<ok>{0}</ok> videogame consoles known."], _consoles.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>", "</span>"))
                     </button>
                 </h5>
             </div>
-            <div aria-labelledby="headingConsoles" class="@(ConsolesCollapsed ? "collapse" : "")"  data-parent="#itemsAccordion" id="collapseConsoles">
+            <div aria-labelledby="headingConsoles" class="@(ConsolesCollapsed ? "collapse" : "")" data-parent="#itemsAccordion" id="collapseConsoles">
                 <div class="card-body">
-                    @foreach (var console in _consoles)
+                    @foreach(var console in _consoles)
                     {
                         <a href="/machine/@console.Id">
-                            @console.Name</a>
+                            @console.Name
+                        </a>
                         <br />
                     }
                 </div>
@@ -371,22 +377,21 @@
             <div class="card-header" id="headingComputers">
                 <h5 class="mb-0">
                     <button class="btn btn-info">
-                        @((MarkupString)L["<red>No</red> videogame consoles known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>","</span>"))
+                        @((MarkupString)L["<red>No</red> videogame consoles known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>", "</span>"))
                     </button>
                 </h5>
             </div>
         }
     </div>
 </div>
-@if (_description != null)
+@if(_description != null)
 {
-    <hr/>
+    <hr />
     <div class="container">
         @((MarkupString)_description)
     </div>
 }
 </div>
-
 <style>
     .carousel-indicators {
         position: absolute;

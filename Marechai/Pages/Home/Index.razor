@@ -1,5 +1,5 @@
 ﻿@{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -27,17 +27,15 @@
 @page "/"
 @inherits OwningComponentBase<NewsService>
 @inject IStringLocalizer<NewsService> L
-
 <h2>@L["News"]</h2>
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
 
-@foreach (var news in _news)
+@foreach(var news in _news)
 {
     <table border="0" width="100%">
         <tr>

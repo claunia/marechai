@@ -38,8 +38,7 @@ namespace Marechai.Database.Models
     public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         readonly ValueConverter<string, byte[]> hexToBytesConverter =
-            new ValueConverter<string, byte[]>(v => HexStringToBytesConverter.StringToHex(v),
-                                               v => HexStringToBytesConverter.HexToString(v));
+            new(v => HexStringToBytesConverter.StringToHex(v), v => HexStringToBytesConverter.HexToString(v));
 
         public MarechaiContext() {}
 
@@ -142,13 +141,17 @@ namespace Marechai.Database.Models
 
             IConfigurationBuilder builder       = new ConfigurationBuilder().AddJsonFile("appsettings.json");
             IConfigurationRoot    configuration = builder.Build();
-            optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection"), new MariaDbServerVersion(new Version(10, 5, 0)), b=> b.UseMicrosoftJson()).UseLazyLoadingProxies();
+
+            optionsBuilder.
+                UseMySql(configuration.GetConnectionString("DefaultConnection"),
+                         new MariaDbServerVersion(new Version(10, 5, 0)), b => b.UseMicrosoftJson()).
+                UseLazyLoadingProxies();
         }
 
         public async Task<int> SaveChangesWithUserAsync(string userId)
         {
             ChangeTracker.DetectChanges();
-            List<Audit> audits = new List<Audit>();
+            List<Audit> audits = new();
 
             foreach(EntityEntry entry in ChangeTracker.Entries())
             {
@@ -161,10 +164,10 @@ namespace Marechai.Database.Models
                 audit.UserId = userId;
                 audit.Table  = entry.Metadata.GetTableName();
 
-                Dictionary<string, object> keys    = new Dictionary<string, object>();
-                Dictionary<string, object> olds    = new Dictionary<string, object>();
-                Dictionary<string, object> news    = new Dictionary<string, object>();
-                List<string>               columns = new List<string>();
+                Dictionary<string, object> keys    = new();
+                Dictionary<string, object> olds    = new();
+                Dictionary<string, object> news    = new();
+                List<string>               columns = new();
 
                 foreach(PropertyEntry property in entry.Properties)
                 {

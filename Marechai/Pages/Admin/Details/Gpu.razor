@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -35,236 +35,234 @@
 @inject NavigationManager NavigationManager
 @inject ResolutionsService ResolutionsService
 @inject ResolutionsByGpuService ResolutionsByGpuService
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Graphical processing unit details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
-<p align="center">@L["Loading..."]</p>
-   
+    <p align="center">@L["Loading..."]</p>
+
     return;
 }
-
 <div>
-    @if (_editing || _model.CompanyId != null)
+    @if(_editing || _model.CompanyId != null)
     {
         <Field>
             <FieldLabel>@L["Company"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownCompany">@L["Unknown (company)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownCompany)
+                <Check @bind-Checked="@_unknownCompany" @TValue="bool">@L["Unknown (company)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownCompany)
             {
-                <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.CompanyId">
-                    @foreach (var company in _companies)
+                <Select @bind-SelectedValue="@_model.CompanyId" Disabled="!_editing" @TValue="int?">
+                    @foreach(var company in _companies)
                     {
-                        <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-                    }
+                        <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+}
                 </Select>
-            }
+}
         </Field>
-    }
+}
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
         <Validation Validator="@ValidateName">
-            <TextEdit Disabled="!_editing" @bind-Text="@_model.Name">
+            <TextEdit @bind-Text="@_model.Name" Disabled="!_editing">
                 <Feedback>
                     <ValidationError>@L["Please enter a valid name."]</ValidationError>
                 </Feedback>
             </TextEdit>
         </Validation>
     </Field>
-    @if (_editing || _model.ModelCode != null)
+    @if(_editing || _model.ModelCode != null)
     {
         <Field>
             <FieldLabel>@L["Model code"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownModelCode">@L["Unknown (model code)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownModelCode)
+                <Check @bind-Checked="@_unknownModelCode" @TValue="bool">@L["Unknown (model code)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownModelCode)
             {
                 <Validation Validator="@ValidateModelCode">
-                    <TextEdit Disabled="!_editing" @bind-Text="@_model.ModelCode">
+                    <TextEdit @bind-Text="@_model.ModelCode" Disabled="!_editing">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid model code."]</ValidationError>
                         </Feedback>
                     </TextEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.Introduced.HasValue)
+}
+    @if(_editing || _model.Introduced.HasValue)
     {
         <Field>
             <FieldLabel>@L["Introduced"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" Disabled="_prototype" @bind-Checked="@_unknownIntroduced">@L["Unknown (introduction date)"]</Check>
-                <Check TValue="bool" Disabled="_unknownIntroduced" @bind-Checked="@_prototype">@L["Prototype"]</Check>
-            }
-            @if (!_editing ||
-                 (!_prototype && !_unknownIntroduced))
+                <Check @bind-Checked="@_unknownIntroduced" Disabled="_prototype" @TValue="bool">@L["Unknown (introduction date)"]</Check>
+                <Check @bind-Checked="@_prototype" Disabled="_unknownIntroduced" @TValue="bool">@L["Prototype"]</Check>
+}
+            @if(!_editing ||
+                !_prototype && !_unknownIntroduced)
             {
                 <Validation Validator="@ValidateIntroduced">
-                    <DateEdit Disabled="!_editing" TValue="DateTime?" @bind-Date="@_model.Introduced">
+                    <DateEdit @bind-Date="@_model.Introduced" Disabled="!_editing" @TValue="DateTime?">
                         <Feedback>
                             <ValidationError>@L["Please enter an introduction date."]</ValidationError>
                         </Feedback>
                     </DateEdit>
                 </Validation>
-            }
-            </Field>
-    }
-    @if (_editing || _model.Package != null)
+}
+        </Field>
+}
+    @if(_editing || _model.Package != null)
     {
         <Field>
             <FieldLabel>@L["Package"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownPackage">@L["Unknown (package)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownPackage)
+                <Check @bind-Checked="@_unknownPackage" @TValue="bool">@L["Unknown (package)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownPackage)
             {
                 <Validation Validator="@ValidatePackage">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Package">
+                    <TextEdit @bind-Text="@_model.Package" ReadOnly="!_editing">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid package."]</ValidationError>
                         </Feedback>
                     </TextEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.Process != null)
+}
+    @if(_editing || _model.Process != null)
     {
         <Field>
             <FieldLabel>@L["Process"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownProcess">@L["Unknown (process)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownProcess)
+                <Check @bind-Checked="@_unknownProcess" @TValue="bool">@L["Unknown (process)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownProcess)
             {
                 <Validation Validator="@ValidateProcess">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Process">
+                    <TextEdit @bind-Text="@_model.Process" ReadOnly="!_editing">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid process."]</ValidationError>
                         </Feedback>
                     </TextEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.ProcessNm.HasValue)
+}
+    @if(_editing || _model.ProcessNm.HasValue)
     {
         <Field>
             <FieldLabel>@L["Process (nm)"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownProcessNm">@L["Unknown (process size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownProcessNm)
+                <Check @bind-Checked="@_unknownProcessNm" @TValue="bool">@L["Unknown (process size)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownProcessNm)
             {
                 <Validation Validator="@ValidateFloatBiggerThanOne">
-                    <NumericEdit Disabled="!_editing" TValue="float?" Decimals="2" @bind-Value="@_model.ProcessNm">
+                    <NumericEdit @bind-Value="@_model.ProcessNm" Decimals="2" Disabled="!_editing" @TValue="float?">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid process size in nanometers."]</ValidationError>
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.DieSize.HasValue)
+}
+    @if(_editing || _model.DieSize.HasValue)
     {
         <Field>
             <FieldLabel>@L["Die size (mm²)"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownDieSize">@L["Unknown (die size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownDieSize)
+                <Check @bind-Checked="@_unknownDieSize" @TValue="bool">@L["Unknown (die size)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownDieSize)
             {
                 <Validation Validator="@ValidateFloatBiggerThanOne">
-                    <NumericEdit Disabled="!_editing" TValue="float?" Decimals="2" @bind-Value="@_model.DieSize">
+                    <NumericEdit @bind-Value="@_model.DieSize" Decimals="2" Disabled="!_editing" @TValue="float?">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid die size in square millimeters."]</ValidationError>
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.Transistors.HasValue)
+}
+    @if(_editing || _model.Transistors.HasValue)
     {
         <Field>
             <FieldLabel>@L["Transistors"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownTransistors">@L["Unknown (transistors)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownTransistors)
+                <Check @bind-Checked="@_unknownTransistors" @TValue="bool">@L["Unknown (transistors)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownTransistors)
             {
                 <Validation Validator="@ValidateLongBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="long?" Decimals="0" @bind-Value="@_model.Transistors">
+                    <NumericEdit @bind-Value="@_model.Transistors" Decimals="0" Disabled="!_editing" @TValue="long?">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid number of transistors."]</ValidationError>
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
+}
 </div>
 <div>
-    @if (!_editing)
+    @if(!_editing)
     {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
+}
     else
     {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/gpus" class="btn btn-secondary">@L["Back to list"]</a>
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
+}
+    <a class="btn btn-secondary" href="/admin/gpus">@L["Back to list"]</a>
 </div>
-@if (!_editing)
+@if(!_editing)
 {
     <hr />
     <h3>@L["Resolutions supported by this graphical processing unit"]</h3>
-    <Button Color="Color.Success" Clicked="OnAddResolutionClick" Disabled="_addingResolution">@L["Add new (resolution by gpu)"]</Button>
-    @if (_addingResolution)
+    <Button Clicked="OnAddResolutionClick" Color="Color.Success" Disabled="_addingResolution">@L["Add new (resolution by gpu)"]</Button>
+    @if(_addingResolution)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Resolutions"]</FieldLabel>
-                <Select Disabled="_savingResolution" TValue="int?" @bind-SelectedValue="@_addingResolutionId">
-                    @foreach (var resolution in _resolutions)
+                <Select @bind-SelectedValue="@_addingResolutionId" Disabled="_savingResolution" @TValue="int?">
+                    @foreach(var resolution in _resolutions)
                     {
-                        @if (_gpuResolutions.All(r => r.ResolutionId != resolution.Id))
+                        @if(_gpuResolutions.All(r => r.ResolutionId != resolution.Id))
                         {
-                            <SelectItem TValue="int?" Value="@resolution.Id">@resolution</SelectItem>
-                        }
+                            <SelectItem @TValue="int?" Value="@resolution.Id">@resolution</SelectItem>
+}
                     }
                 </Select>
-                <Button Color="Color.Primary" Clicked="@CancelAddResolution" Disabled="@_savingResolution">@L["Cancel"]</Button>
-                <Button Color="Color.Success" Clicked="@ConfirmAddResolution" Disabled="@_savingResolution">@L["Add"]</Button>
+                <Button Clicked="@CancelAddResolution" Color="Color.Primary" Disabled="@_savingResolution">@L["Cancel"]</Button>
+                <Button Clicked="@ConfirmAddResolution" Color="Color.Success" Disabled="@_savingResolution">@L["Add"]</Button>
             </Field>
         </div>
     }
-    @if (_gpuResolutions?.Count > 0)
+    @if(_gpuResolutions?.Count > 0)
     {
         <div>
             <table class="table table-striped">
@@ -292,7 +290,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var item in _gpuResolutions)
+                @foreach(var item in _gpuResolutions)
                 {
                     <tr>
                         <td>
@@ -314,7 +312,7 @@
                             @item.Resolution.Grayscale
                         </td>
                         <td>
-                            <Button Color="Color.Danger" Clicked="() => {ShowResolutionDeleteModal(item.Id);}" Disabled="@_addingResolution">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowResolutionDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingResolution">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -323,7 +321,7 @@
         </div>
     }
 
-    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+    <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
         <ModalBackdrop />
         <ModalContent Centered="true">
             <ModalHeader>
@@ -334,9 +332,8 @@
                 <Text>@_deleteText</Text>
             </ModalBody>
             <ModalFooter>
-                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+                <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
             </ModalFooter>
         </ModalContent>
-    </Modal>
-}
+    </Modal>}

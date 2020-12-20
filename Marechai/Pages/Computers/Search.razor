@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -31,46 +31,46 @@
 @inherits OwningComponentBase<ComputersService>
 @inject IStringLocalizer<ComputersService> L
 
-@if (_computers is null)
+@if(_computers is null)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <p>@L["Search results:"]</p>
 <p align="center">
-    @if (_character.HasValue)
+    @if(_character.HasValue)
     {
         <b>@string.Format(L["Computers starting with {0}"], _character)</b>
         <br />
     }
-    else if (Year.HasValue)
+    else if(Year.HasValue)
     {
         <b>@string.Format(L["Computers introduced in {0}"], Year)</b>
         <br />
     }
 
-    @if (_computers?.Count > 0)
+    @if(_computers?.Count > 0)
     {
         <p>
             @string.Format(L["{0} computers found in the database."], _computers.Count)
             <br />
-            @foreach (var computer in _computers)
+            @foreach(var computer in _computers)
             {
                 <a href="/machine/@computer.Id">
-                    @computer.Company @computer.Name</a>
+                    @computer.Company @computer.Name
+                </a>
                 <br />
             }
         </p>
     }
     else
     {
-        @if (_character.HasValue)
+        @if(_character.HasValue)
         {
             <p>@L["There are no computers found in the database that start with this letter."]</p>
         }
-        else if (Year.HasValue)
+        else if(Year.HasValue)
         {
             <p>@L["There are no computers found introduced this year."]</p>
         }

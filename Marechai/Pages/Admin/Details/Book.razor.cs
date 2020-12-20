@@ -309,7 +309,7 @@ namespace Marechai.Pages.Admin.Details
                 newIsbn[1] = '7';
                 newIsbn[2] = '8';
 
-                int sum = (newIsbn[0] - 0x30) + ((newIsbn[1] - 0x30) * 3) + (newIsbn[2] - 0x30) +
+                int sum = newIsbn[0] - 0x30 + ((newIsbn[1] - 0x30) * 3) + (newIsbn[2] - 0x30) +
                           ((newIsbn[3] - 0x30) * 3) + (newIsbn[4] - 0x30) + ((newIsbn[5] - 0x30) * 3) +
                           (newIsbn[6] - 0x30) + ((newIsbn[7] - 0x30) * 3) + (newIsbn[8] - 0x30) +
                           ((newIsbn[9] - 0x30) * 3) + (newIsbn[10] - 0x30) + ((newIsbn[11] - 0x30) * 3);
@@ -869,7 +869,7 @@ namespace Marechai.Pages.Admin.Details
                 {
                     await outFs.WriteAsync(buffer, 0, count);
 
-                    double progress = ((double)fs.Position * 100) / fs.Length;
+                    double progress = (double)fs.Position * 100 / fs.Length;
 
                     if(!(progress > lastProgress + 0.01))
                         continue;
@@ -1465,4 +1465,6 @@ namespace Marechai.Pages.Admin.Details
             StateHasChanged();
         }
     }
+
+    class BookImpl : Book {}
 }

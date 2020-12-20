@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -32,69 +32,70 @@
 @inject IStringLocalizer<CompaniesService> L
 @inject IWebHostEnvironment Host
 
-@if (_companies is null)
+@if(_companies is null)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
 
-@if (CountryId.HasValue)
+@if(CountryId.HasValue)
 {
     <p align="center">
         <b>@string.Format(L["Companies founded in {0}."], L[_countryName])</b>
-        @if (File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{CountryId:D3}.svg")))
+        @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{CountryId:D3}.svg")))
         {
-        <picture>
-            <source type="image/svg+xml" srcset="/assets/flags/countries/@($"{CountryId:D3}").svg">
-            <source type="image/webp" srcset="/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
+            <picture>
+                <source srcset="/assets/flags/countries/@($"{CountryId:D3}").svg" type="image/svg+xml">
+                <source srcset="/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
         /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 2x,
-        /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 3x">
-            <img srcset="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
+        /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 3x" type="image/webp">
+                <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png" srcset="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
                                  /assets/flags/countries/png/1x/@($"{CountryId:D3}").png 2x,
-                                 /assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x" src="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png" alt="" height="32" />
-        </picture>
+                                 /assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x" />
+            </picture>
         }
     </p>
 }
 
-@if (_character.HasValue)
+@if(_character.HasValue)
 {
     <p align="center">
         <b>@string.Format(L["Companies which name starts with {0}."], _character)</b>
     </p>
 }
 
-@if (_companies.Any())
+@if(_companies.Any())
 {
     <div class="container">
         <span class="align-content-center">@string.Format(L["{0} companies found in the database."], _companies.Count())</span>
-        <hr/>
+        <hr />
         <table>
-        @foreach (var company in _companies)
-        {
-            <tr>
-                <td class="text-right">
-            <a href="/company/@company.Id">
-                @if (company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
-                {
-                    <picture>
-                        <source type="image/svg+xml" srcset="/assets/logos/@(company.LastLogo).svg">
-                        <source type="image/webp" srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
+            @foreach(var company in _companies)
+            {
+                <tr>
+                    <td class="text-right">
+                        <a href="/company/@company.Id">
+                            @if(company.LastLogo != null &&
+                                File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
+                            {
+                                <picture>
+                                    <source srcset="/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
+                                    <source srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
 /assets/logos/thumbs/webp/2x/@(company.LastLogo).webp 2x,
-/assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x">
-                        <img srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
+/assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x" type="image/webp">
+                                    <img alt="" height="auto" src="/assets/logos/thumbs/png/1x/@(company.LastLogo).png" srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
                      /assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
-                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" src="/assets/logos/thumbs/png/1x/@(company.LastLogo).png" alt="" height="auto" width="auto" style="max-height: 32px; max-width: 128px" />
-                    </picture>
-                }
-            </a>
-                </td>
-                <td>
-                    <a href="/company/@company.Id">@company.Name</a>
-                </td>
-            </tr>
-        }
+                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 32px; max-width: 128px" width="auto" />
+                                </picture>
+                            }
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/company/@company.Id">@company.Name</a>
+                    </td>
+                </tr>
+            }
         </table>
     </div>
 }

@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -33,23 +33,21 @@
 @inject IStringLocalizer<InstructionSetExtensionsService> L
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 @inject NavigationManager NavigationManager
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 <h3>@L["Instruction set extension details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <div>
     <Field>
         <FieldLabel>@L["Extension"]</FieldLabel>
         <Validation Validator="@ValidateName">
-            <TextEdit Disabled="!_editing" @bind-Text="@_model.Extension">
+            <TextEdit @bind-Text="@_model.Extension" Disabled="!_editing">
                 <Feedback>
                     <ValidationError>@L["Please enter a valid extension name."]</ValidationError>
                 </Feedback>
@@ -58,14 +56,14 @@
     </Field>
 </div>
 <div>
-    @if (!_editing)
+    @if(!_editing)
     {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
+}
     else
     {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/instruction_set_extensions" class="btn btn-secondary">@L["Back to list"]</a>
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
+}
+    <a class="btn btn-secondary" href="/admin/instruction_set_extensions">@L["Back to list"]</a>
 </div>

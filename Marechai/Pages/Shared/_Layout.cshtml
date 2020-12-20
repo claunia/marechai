@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Hosting
 @using Microsoft.AspNetCore.Mvc.ViewEngines
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -49,7 +49,7 @@
                 @{
                     var result = Engine.FindView(ViewContext, "_LoginPartial", false);
                 }
-                @if (result.Success)
+                @if(result.Success)
                 {
                     await Html.RenderPartialAsync("_LoginPartial");
                 }

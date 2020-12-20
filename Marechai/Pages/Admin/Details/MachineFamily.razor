@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -33,53 +33,51 @@
 @inject IStringLocalizer<MachineFamiliesService> L
 @inject CompaniesService CompaniesService
 @inject NavigationManager NavigationManager
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine family details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <div>
     <Field>
         <FieldLabel>@L["Company"]</FieldLabel>
-        <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@_model.CompanyId">
-            @foreach (var company in _companies)
+        <Select @bind-SelectedValue="@_model.CompanyId" Disabled="!_editing" @TValue="int">
+            @foreach(var company in _companies)
             {
-                <SelectItem TValue="int" Value="@company.Id">@company.Name</SelectItem>
-            }
+                <SelectItem @TValue="int" Value="@company.Id">@company.Name</SelectItem>
+}
         </Select>
     </Field>
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
         <Validation Validator="@ValidateName">
-            <TextEdit Disabled="!_editing" @bind-Text="@_model.Name">
+            <TextEdit @bind-Text="@_model.Name" Disabled="!_editing">
                 <Feedback>
                     <ValidationError>@L["Please enter a valid name."]</ValidationError>
                 </Feedback>
             </TextEdit>
         </Validation>
-        @if (_editing)
+        @if(_editing)
         {
             <FieldHelp>@L["Must not contain \"family\" or \"series\". Different regional names should be separated with /. Different numbers should be separated with comma."]</FieldHelp>
-        }
+}
     </Field>
 </div>
 <div>
-    @if (!_editing)
+    @if(!_editing)
     {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
+}
     else
     {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/machine_families" class="btn btn-secondary">@L["Back to list"]</a>
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
+}
+    <a class="btn btn-secondary" href="/admin/machine_families">@L["Back to list"]</a>
 </div>

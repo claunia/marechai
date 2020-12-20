@@ -56,7 +56,7 @@ namespace Marechai.Services
 
         public List<NewsViewModel> GetNews()
         {
-            List<NewsViewModel> news = new List<NewsViewModel>();
+            List<NewsViewModel> news = new();
 
             foreach(News @new in _context.News.OrderByDescending(t => t.Date).Take(10).ToList())
             {

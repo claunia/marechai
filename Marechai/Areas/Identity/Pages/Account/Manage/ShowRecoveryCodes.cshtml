@@ -4,7 +4,7 @@
     ViewData["Title"] = "Recovery codes";
     ViewData["ActivePage"] = "TwoFactorAuthentication";
 }
-<partial name="_StatusMessage" for="StatusMessage" />
+<partial for="StatusMessage" name="_StatusMessage" />
 <h4>@ViewData["Title"]</h4>
 <div class="alert alert-warning" role="alert">
     <p>
@@ -16,7 +16,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
+        @for(var row = 0; row < Model.RecoveryCodes.Length; row += 2)
         {
             <code class="recovery-code">@Model.RecoveryCodes[row]</code>
             <text>&nbsp;</text>

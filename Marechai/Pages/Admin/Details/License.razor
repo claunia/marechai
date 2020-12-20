@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -32,24 +32,22 @@
 @inherits OwningComponentBase<LicensesService>
 @inject IStringLocalizer<LicensesService> L
 @inject NavigationManager NavigationManager
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["License details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <div>
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
         <Validation Validator="@ValidateName">
-            <TextEdit Disabled="!_editing" @bind-Text="@_model.Name">
+            <TextEdit @bind-Text="@_model.Name" Disabled="!_editing">
                 <Feedback>
                     <ValidationError>@L["Please enter a valid name."]</ValidationError>
                 </Feedback>
@@ -59,7 +57,7 @@
     <Field>
         <FieldLabel>@L["SPDX identifier"]</FieldLabel>
         <Validation Validator="@ValidateSpdx">
-            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.SPDX">
+            <TextEdit @bind-Text="@_model.SPDX" ReadOnly="!_editing">
                 <Feedback>
                     <ValidationError>@L["Please enter a valid SPDX identifier."]</ValidationError>
                 </Feedback>
@@ -68,64 +66,64 @@
     </Field>
     <Field>
         <FieldLabel>@L["FSF approved"]</FieldLabel>
-        <Check TValue="bool" Disabled="!_editing" @bind-Checked="@_model.FsfApproved"/>
+        <Check @bind-Checked="@_model.FsfApproved" Disabled="!_editing" @TValue="bool" />
     </Field>
     <Field>
         <FieldLabel>@L["OSI approved"]</FieldLabel>
-        <Check TValue="bool" Disabled="!_editing" @bind-Checked="@_model.OsiApproved"/>
+        <Check @bind-Checked="@_model.OsiApproved" Disabled="!_editing" @TValue="bool" />
     </Field>
-    @if (_editing || _model.Link != null)
+    @if(_editing || _model.Link != null)
     {
         <Field>
             <FieldLabel>@L["License text link"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownLink">@L["Unknown or none (text link)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownLink)
+                <Check @bind-Checked="@_unknownLink" @TValue="bool">@L["Unknown or none (text link)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownLink)
             {
                 <Validation Validator="@ValidateLink">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Link">
+                    <TextEdit @bind-Text="@_model.Link" ReadOnly="!_editing">
                         <Feedback>
                             <ValidationError>@L["Please enter a license text link."]</ValidationError>
                         </Feedback>
                     </TextEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
-    @if (_editing || _model.Text != null)
+}
+    @if(_editing || _model.Text != null)
     {
         <Field>
             <FieldLabel>@L["License text"]</FieldLabel>
-            @if (_editing)
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownText">@L["Unknown (license text)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownText)
+                <Check @bind-Checked="@_unknownText" @TValue="bool">@L["Unknown (license text)"]</Check>
+}
+            @if(!_editing ||
+                !_unknownText)
             {
                 <Validation Validator="@ValidateText">
-                    <MemoEdit Rows="200" Plaintext="true" ReadOnly="!_editing" @bind-Text="@_model.Text">
+                    <MemoEdit @bind-Text="@_model.Text" Plaintext="true" ReadOnly="!_editing" @Rows="200">
                         <Feedback>
                             <ValidationError>@L["Please enter a valid license text."]</ValidationError>
                         </Feedback>
                     </MemoEdit>
                 </Validation>
-            }
+}
         </Field>
-    }
+}
 </div>
 <div>
-    @if (!_editing)
+    @if(!_editing)
     {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
+}
     else
     {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/licenses" class="btn btn-secondary">@L["Back to list"]</a>
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
+}
+    <a class="btn btn-secondary" href="/admin/licenses">@L["Back to list"]</a>
 </div>

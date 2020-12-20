@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -26,7 +26,6 @@
 }
 
 @page "/admin/machines/photo/create/{MachineId:int}"
-@using Marechai.Database
 @using Marechai.Database.Models
 @inherits OwningComponentBase<MachinePhotosService>
 @inject IStringLocalizer<MachinePhotosService> L
@@ -34,40 +33,39 @@
 @inject LicensesService LicensesService
 @inject IFileReaderService FileReaderService;
 @inject MachinesService MachinesService;
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IWebHostEnvironment Host
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <h3>@string.Format(L["Upload photo for machine {0} manufactured by {1}"], _machine.Name, _machine.Company)</h3>
 <hr />
-
 @if(!_uploaded)
 {
     @if(!_uploading)
     {
         <FieldLabel>@L["Choose photo file"]</FieldLabel>
-        <input type="file" @ref=_inputUpload /><br/>
+        <input ref=_inputUpload @type="file" />
+        <br />
         <Field>
             <FieldLabel>@L["License"]</FieldLabel>
-            <Select TValue="int" @bind-SelectedValue="@_licenseId">
-                @foreach (var license in _licenses)
+            <Select @bind-SelectedValue="@_licenseId" @TValue="int">
+                @foreach(var license in _licenses)
                 {
-                    <SelectItem TValue="int" Value="@license.Id">@license.Name</SelectItem>
-                }
+                    <SelectItem @TValue="int" Value="@license.Id">@license.Name</SelectItem>
+}
             </Select>
         </Field>
         <Field>
             <FieldLabel>@L["Source URL"]</FieldLabel>
-            <Check TValue="bool" @bind-Checked="@_unknownSource">@L["Unknown (source url)"]</Check>
-            @if (!_unknownSource)
+            <Check @bind-Checked="@_unknownSource" @TValue="bool">@L["Unknown (source url)"]</Check>
+            @if(!_unknownSource)
             {
                 <Validation Validator="@ValidateSource">
                     <TextEdit @bind-Text="@_sourceUrl">
@@ -76,16 +74,16 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-            }
+}
         </Field>
         <div>TODO: Put legal disclaimer here</div>
-        <Button Color="Color.Success" Clicked="@UploadFile" Disabled="@_uploading">@L["Upload"]</Button><br/>
+        <Button Clicked="@UploadFile" Color="Color.Success" Disabled="@_uploading">@L["Upload"]</Button>        <br />
     }
     else
     {
         @L["Uploading..."]
         <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width: @(_progressValue)%;" aria-valuenow="@_progressValue" aria-valuemin="0" aria-valuemax="100">@($"{_progressValue:F2}")%</div>
+            <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="@_progressValue" class="progress-bar" role="progressbar" style="width: @(_progressValue)%;">@($"{_progressValue:F2}")%</div>
         </div>
     }
     @if(_uploadError)
@@ -96,756 +94,755 @@
 else
 {
     <h5>@string.Format(L["Image format recognized as {0}"], _imageFormat)</h5>
-    @if (_allFinished)
+    @if(_allFinished)
     {
         <span class="text-success">@L["All finished!"]</span>
         <a class="btn btn-success" href="/admin/machines/photo/details/@_model.Id">@L["Go to photo details"]</a>
     }
     <table>
-        <tr>
-            <td>
-                @L["Extracting Exif information..."]
-            </td>
-            <td>
-                @if(_extractExif == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_extractExif == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Moving file to proper place..."]
-            </td>
-            <td>
-                @if(_moveFile == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_moveFile == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_moveFile == true)
-                {
-                    <a href="/assets/photos/machines/originals/@($"{_model.Id}{_model.OriginalExtension}")" target="_blank">
-                        <img src="/assets/photos/machines/originals/@($"{_model.Id}{_model.OriginalExtension}")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG with an HD resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertJpegHdTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJpegHdTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJpegHdTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/jpeg/hd/{_model.Id}.jpg")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/jpeg/hd/{_model.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG with a 1440p resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertJpeg1440Th == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJpeg1440Th == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJpeg1440Th == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/jpeg/1440p/{_model.Id}.jpg")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/jpeg/1440p/{_model.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG with a 4K resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertJpeg4kTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJpeg4kTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJpeg4kTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/jpeg/4k/{_model.Id}.jpg")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/jpeg/4k/{_model.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG with an HD resolution..."]
-            </td>
-            <td>
-                @if(_convertJpegHd == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJpegHd == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJpegHd == true)
-                {
-                    <a href="@($"/assets/photos/machines/jpeg/hd/{_model.Id}.jpg")" target="_blank">
-                        <img src="@($"/assets/photos/machines/jpeg/hd/{_model.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG with a 1440p resolution..."]
-            </td>
-            <td>
-                @if(_convertJpeg1440 == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJpeg1440 == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJpeg1440 == true)
-                {
-                    <a href="@($"/assets/photos/machines/jpeg/1440p/{_model.Id}.jpg")" target="_blank">
-                        <img src="@($"/assets/photos/machines/jpeg/1440p/{_model.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG with a 4K resolution..."]
-            </td>
-            <td>
-                @if(_convertJpeg4k == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJpeg4k == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJpeg4k == true)
-                {
-                    <a href="@($"/assets/photos/machines/jpeg/4k/{_model.Id}.jpg")" target="_blank">
-                        <img src="@($"/assets/photos/machines/jpeg/4k/{_model.Id}.jpg")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG2000 with an HD resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertJp2kHdTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJp2kHdTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJp2kHdTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/jp2k/hd/{_model.Id}.jp2")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/jp2k/hd/{_model.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG2000 with a 1440p resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertJp2k1440Th == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJp2k1440Th == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJp2k1440Th == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/jp2k/1440p/{_model.Id}.jp2")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/jp2k/1440p/{_model.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG2000 with a 4K resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertJp2k4kTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJp2k4kTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJp2k4kTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/jp2k/4k/{_model.Id}.jp2")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/jp2k/4k/{_model.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG2000 with an HD resolution..."]
-            </td>
-            <td>
-                @if(_convertJp2kHd == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJp2kHd == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJp2kHd == true)
-                {
-                    <a href="@($"/assets/photos/machines/jp2k/hd/{_model.Id}.jp2")" target="_blank">
-                        <img src="@($"/assets/photos/machines/jp2k/hd/{_model.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG2000 with a 1440p resolution..."]
-            </td>
-            <td>
-                @if(_convertJp2k1440 == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJp2k1440 == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJp2k1440 == true)
-                {
-                    <a href="@($"/assets/photos/machines/jp2k/1440p/{_model.Id}.jp2")" target="_blank">
-                        <img src="@($"/assets/photos/machines/jp2k/1440p/{_model.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to JPEG2000 with a 4K resolution..."]
-            </td>
-            <td>
-                @if(_convertJp2k4k == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertJp2k4k == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertJp2k4k == true)
-                {
-                    <a href="@($"/assets/photos/machines/jp2k/4k/{_model.Id}.jp2")" target="_blank">
-                        <img src="@($"/assets/photos/machines/jp2k/4k/{_model.Id}.jp2")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to WebP with an HD resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertWebpHdTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertWebpHdTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertWebpHdTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/webp/hd/{_model.Id}.webp")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/webp/hd/{_model.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to WebP with a 1440p resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertWebp1440Th == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertWebp1440Th == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertWebp1440Th == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/webp/1440p/{_model.Id}.webp")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/webp/1440p/{_model.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to WebP with a 4K resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertWebp4kTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertWebp4kTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertWebp4kTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/webp/4k/{_model.Id}.webp")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/webp/4k/{_model.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to WebP with an HD resolution..."]
-            </td>
-            <td>
-                @if(_convertWebpHd == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertWebpHd == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertWebpHd == true)
-                {
-                    <a href="@($"/assets/photos/machines/webp/hd/{_model.Id}.webp")" target="_blank">
-                        <img src="@($"/assets/photos/machines/webp/hd/{_model.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to WebP with a 1440p resolution..."]
-            </td>
-            <td>
-                @if(_convertWebp1440 == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertWebp1440 == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertWebp1440 == true)
-                {
-                    <a href="@($"/assets/photos/machines/webp/1440p/{_model.Id}.webp")" target="_blank">
-                        <img src="@($"/assets/photos/machines/webp/1440p/{_model.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to WebP with a 4K resolution..."]
-            </td>
-            <td>
-                @if(_convertWebp4k == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertWebp4k == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertWebp4k == true)
-                {
-                    <a href="@($"/assets/photos/machines/webp/4k/{_model.Id}.webp")" target="_blank">
-                        <img src="@($"/assets/photos/machines/webp/4k/{_model.Id}.webp")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to HEIF with an HD resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertHeifHdTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertHeifHdTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertHeifHdTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/heif/hd/{_model.Id}.heic")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/heif/hd/{_model.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to HEIF with a 1440p resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertHeif1440Th == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertHeif1440Th == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertHeif1440Th == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/heif/1440p/{_model.Id}.heic")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/heif/1440p/{_model.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to HEIF with a 4K resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertHeif4kTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertHeif4kTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertHeif4kTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/heif/4k/{_model.Id}.heic")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/heif/4k/{_model.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to HEIF with an HD resolution..."]
-            </td>
-            <td>
-                @if(_convertHeifHd == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertHeifHd == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertHeifHd == true)
-                {
-                    <a href="@($"/assets/photos/machines/heif/hd/{_model.Id}.heic")" target="_blank">
-                        <img src="@($"/assets/photos/machines/heif/hd/{_model.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to HEIF with a 1440p resolution..."]
-            </td>
-            <td>
-                @if(_convertHeif1440 == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertHeif1440 == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertHeif1440 == true)
-                {
-                    <a href="@($"/assets/photos/machines/heif/1440p/{_model.Id}.heic")" target="_blank">
-                        <img src="@($"/assets/photos/machines/heif/1440p/{_model.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to HEIF with a 4K resolution..."]
-            </td>
-            <td>
-                @if(_convertHeif4k == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertHeif4k == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertHeif4k == true)
-                {
-                    <a href="@($"/assets/photos/machines/heif/4k/{_model.Id}.heic")" target="_blank">
-                        <img src="@($"/assets/photos/machines/heif/4k/{_model.Id}.heic")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to AV1F with an HD resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertAvifHdTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertAvifHdTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertAvifHdTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/avif/hd/{_model.Id}.avif")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/avif/hd/{_model.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to AV1F with a 1440p resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertAvif1440Th == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertAvif1440Th == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertAvif1440Th == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/avif/1440p/{_model.Id}.avif")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/avif/1440p/{_model.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to AV1F with a 4K resolution (thumbnail)..."]
-            </td>
-            <td>
-                @if(_convertAvif4kTh == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertAvif4kTh == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertAvif4kTh == true)
-                {
-                    <a href="@($"/assets/photos/machines/thumbs/avif/4k/{_model.Id}.avif")" target="_blank">
-                        <img src="@($"/assets/photos/machines/thumbs/avif/4k/{_model.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to AV1F with an HD resolution..."]
-            </td>
-            <td>
-                @if(_convertAvifHd == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertAvifHd == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertAvifHd == true)
-                {
-                    <a href="@($"/assets/photos/machines/avif/hd/{_model.Id}.avif")" target="_blank">
-                        <img src="@($"/assets/photos/machines/avif/hd/{_model.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to AV1F with a 1440p resolution..."]
-            </td>
-            <td>
-                @if(_convertAvif1440 == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertAvif1440 == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertAvif1440 == true)
-                {
-                    <a href="@($"/assets/photos/machines/avif/1440p/{_model.Id}.avif")" target="_blank">
-                        <img src="@($"/assets/photos/machines/avif/1440p/{_model.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Converting photo to AV1F with a 4K resolution..."]
-            </td>
-            <td>
-                @if(_convertAvif4k == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_convertAvif4k == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-                @if(_convertAvif4k == true)
-                {
-                    <a href="@($"/assets/photos/machines/avif/4k/{_model.Id}.avif")" target="_blank">
-                        <img src="@($"/assets/photos/machines/avif/4k/{_model.Id}.avif")" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                    </a>
-                }
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @L["Adding photo to database..."]
-            </td>
-            <td>
-                @if(_addToDatabase == true)
-                {
-                    <span class="text-success">@L["OK!"]</span>
-                }
-                else if(_addToDatabase == false)
-                {
-                    <span class="text-danger">@L["Error!"]</span>
-                }
-            </td>
-            <td>
-            </td>
-        </tr>
-    </table>
-}
+    <tr>
+        <td>
+            @L["Extracting Exif information..."]
+        </td>
+        <td>
+            @if(_extractExif == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_extractExif == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Moving file to proper place..."]
+        </td>
+        <td>
+            @if(_moveFile == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_moveFile == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_moveFile == true)
+            {
+                <a href="/assets/photos/machines/originals/@($"{_model.Id}{_model.OriginalExtension}")" target="_blank">
+                    <img alt="" height="auto" src="/assets/photos/machines/originals/@($"{_model.Id}{_model.OriginalExtension}")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG with an HD resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertJpegHdTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJpegHdTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJpegHdTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/jpeg/hd/{_model.Id}.jpg")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/jpeg/hd/{_model.Id}.jpg")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG with a 1440p resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertJpeg1440Th == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJpeg1440Th == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJpeg1440Th == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/jpeg/1440p/{_model.Id}.jpg")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/jpeg/1440p/{_model.Id}.jpg")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG with a 4K resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertJpeg4kTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJpeg4kTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJpeg4kTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/jpeg/4k/{_model.Id}.jpg")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/jpeg/4k/{_model.Id}.jpg")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG with an HD resolution..."]
+        </td>
+        <td>
+            @if(_convertJpegHd == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJpegHd == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJpegHd == true)
+            {
+                <a href="@($"/assets/photos/machines/jpeg/hd/{_model.Id}.jpg")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/jpeg/hd/{_model.Id}.jpg")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG with a 1440p resolution..."]
+        </td>
+        <td>
+            @if(_convertJpeg1440 == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJpeg1440 == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJpeg1440 == true)
+            {
+                <a href="@($"/assets/photos/machines/jpeg/1440p/{_model.Id}.jpg")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/jpeg/1440p/{_model.Id}.jpg")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG with a 4K resolution..."]
+        </td>
+        <td>
+            @if(_convertJpeg4k == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJpeg4k == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJpeg4k == true)
+            {
+                <a href="@($"/assets/photos/machines/jpeg/4k/{_model.Id}.jpg")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/jpeg/4k/{_model.Id}.jpg")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG2000 with an HD resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertJp2kHdTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJp2kHdTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJp2kHdTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/jp2k/hd/{_model.Id}.jp2")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/jp2k/hd/{_model.Id}.jp2")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG2000 with a 1440p resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertJp2k1440Th == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJp2k1440Th == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJp2k1440Th == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/jp2k/1440p/{_model.Id}.jp2")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/jp2k/1440p/{_model.Id}.jp2")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG2000 with a 4K resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertJp2k4kTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJp2k4kTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJp2k4kTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/jp2k/4k/{_model.Id}.jp2")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/jp2k/4k/{_model.Id}.jp2")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG2000 with an HD resolution..."]
+        </td>
+        <td>
+            @if(_convertJp2kHd == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJp2kHd == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJp2kHd == true)
+            {
+                <a href="@($"/assets/photos/machines/jp2k/hd/{_model.Id}.jp2")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/jp2k/hd/{_model.Id}.jp2")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG2000 with a 1440p resolution..."]
+        </td>
+        <td>
+            @if(_convertJp2k1440 == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJp2k1440 == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJp2k1440 == true)
+            {
+                <a href="@($"/assets/photos/machines/jp2k/1440p/{_model.Id}.jp2")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/jp2k/1440p/{_model.Id}.jp2")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to JPEG2000 with a 4K resolution..."]
+        </td>
+        <td>
+            @if(_convertJp2k4k == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertJp2k4k == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertJp2k4k == true)
+            {
+                <a href="@($"/assets/photos/machines/jp2k/4k/{_model.Id}.jp2")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/jp2k/4k/{_model.Id}.jp2")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to WebP with an HD resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertWebpHdTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertWebpHdTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertWebpHdTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/webp/hd/{_model.Id}.webp")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/webp/hd/{_model.Id}.webp")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to WebP with a 1440p resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertWebp1440Th == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertWebp1440Th == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertWebp1440Th == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/webp/1440p/{_model.Id}.webp")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/webp/1440p/{_model.Id}.webp")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to WebP with a 4K resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertWebp4kTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertWebp4kTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertWebp4kTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/webp/4k/{_model.Id}.webp")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/webp/4k/{_model.Id}.webp")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to WebP with an HD resolution..."]
+        </td>
+        <td>
+            @if(_convertWebpHd == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertWebpHd == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertWebpHd == true)
+            {
+                <a href="@($"/assets/photos/machines/webp/hd/{_model.Id}.webp")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/webp/hd/{_model.Id}.webp")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to WebP with a 1440p resolution..."]
+        </td>
+        <td>
+            @if(_convertWebp1440 == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertWebp1440 == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertWebp1440 == true)
+            {
+                <a href="@($"/assets/photos/machines/webp/1440p/{_model.Id}.webp")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/webp/1440p/{_model.Id}.webp")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to WebP with a 4K resolution..."]
+        </td>
+        <td>
+            @if(_convertWebp4k == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertWebp4k == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertWebp4k == true)
+            {
+                <a href="@($"/assets/photos/machines/webp/4k/{_model.Id}.webp")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/webp/4k/{_model.Id}.webp")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to HEIF with an HD resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertHeifHdTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertHeifHdTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertHeifHdTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/heif/hd/{_model.Id}.heic")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/heif/hd/{_model.Id}.heic")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to HEIF with a 1440p resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertHeif1440Th == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertHeif1440Th == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertHeif1440Th == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/heif/1440p/{_model.Id}.heic")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/heif/1440p/{_model.Id}.heic")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to HEIF with a 4K resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertHeif4kTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertHeif4kTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertHeif4kTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/heif/4k/{_model.Id}.heic")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/heif/4k/{_model.Id}.heic")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to HEIF with an HD resolution..."]
+        </td>
+        <td>
+            @if(_convertHeifHd == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertHeifHd == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertHeifHd == true)
+            {
+                <a href="@($"/assets/photos/machines/heif/hd/{_model.Id}.heic")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/heif/hd/{_model.Id}.heic")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to HEIF with a 1440p resolution..."]
+        </td>
+        <td>
+            @if(_convertHeif1440 == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertHeif1440 == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertHeif1440 == true)
+            {
+                <a href="@($"/assets/photos/machines/heif/1440p/{_model.Id}.heic")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/heif/1440p/{_model.Id}.heic")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to HEIF with a 4K resolution..."]
+        </td>
+        <td>
+            @if(_convertHeif4k == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertHeif4k == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertHeif4k == true)
+            {
+                <a href="@($"/assets/photos/machines/heif/4k/{_model.Id}.heic")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/heif/4k/{_model.Id}.heic")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to AV1F with an HD resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertAvifHdTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertAvifHdTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertAvifHdTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/avif/hd/{_model.Id}.avif")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/avif/hd/{_model.Id}.avif")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to AV1F with a 1440p resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertAvif1440Th == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertAvif1440Th == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertAvif1440Th == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/avif/1440p/{_model.Id}.avif")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/avif/1440p/{_model.Id}.avif")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to AV1F with a 4K resolution (thumbnail)..."]
+        </td>
+        <td>
+            @if(_convertAvif4kTh == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertAvif4kTh == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertAvif4kTh == true)
+            {
+                <a href="@($"/assets/photos/machines/thumbs/avif/4k/{_model.Id}.avif")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/thumbs/avif/4k/{_model.Id}.avif")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to AV1F with an HD resolution..."]
+        </td>
+        <td>
+            @if(_convertAvifHd == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertAvifHd == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertAvifHd == true)
+            {
+                <a href="@($"/assets/photos/machines/avif/hd/{_model.Id}.avif")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/avif/hd/{_model.Id}.avif")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to AV1F with a 1440p resolution..."]
+        </td>
+        <td>
+            @if(_convertAvif1440 == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertAvif1440 == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertAvif1440 == true)
+            {
+                <a href="@($"/assets/photos/machines/avif/1440p/{_model.Id}.avif")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/avif/1440p/{_model.Id}.avif")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Converting photo to AV1F with a 4K resolution..."]
+        </td>
+        <td>
+            @if(_convertAvif4k == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_convertAvif4k == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+            @if(_convertAvif4k == true)
+            {
+                <a href="@($"/assets/photos/machines/avif/4k/{_model.Id}.avif")" target="_blank">
+                    <img alt="" height="auto" src="@($"/assets/photos/machines/avif/4k/{_model.Id}.avif")" style="max-height: 256px; max-width: 256px" width="auto" />
+                </a>
+            }
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @L["Adding photo to database..."]
+        </td>
+        <td>
+            @if(_addToDatabase == true)
+            {
+                <span class="text-success">@L["OK!"]</span>
+            }
+            else if(_addToDatabase == false)
+            {
+                <span class="text-danger">@L["Error!"]</span>
+            }
+        </td>
+        <td>
+        </td>
+    </tr>
+    </table>}

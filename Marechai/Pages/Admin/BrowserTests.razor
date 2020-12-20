@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -30,7 +30,7 @@
 @inject IStringLocalizer<BrowserTestsService> L
 @attribute [Authorize(Roles = "UberAdmin")]
 <h3>@L["Browser tests"]</h3>
-@if (_tests is null)
+@if(_tests is null)
 {
     <p>@L["Loading..."]</p>
 
@@ -90,7 +90,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in _tests)
+    @foreach(var item in _tests)
     {
         <tr>
             <td>

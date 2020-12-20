@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -51,13 +51,13 @@
         File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _machine.CompanyLogo + ".svg")))
     {
         <picture>
-            <source type="image/svg+xml" srcset="/assets/logos/@(_machine.CompanyLogo).svg">
-            <source type="image/webp" srcset="/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
+            <source srcset="/assets/logos/@(_machine.CompanyLogo).svg" type="image/svg+xml">
+            <source srcset="/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
     /assets/logos/webp/2x/@(_machine.CompanyLogo).webp 2x,
-    /assets/logos/webp/3x/@(_machine.CompanyLogo).webp 3x">
-            <img srcset="/assets/logos/png/1x/@(_machine.CompanyLogo).png,
+    /assets/logos/webp/3x/@(_machine.CompanyLogo).webp 3x" type="image/webp">
+            <img alt="" height="auto" src="/assets/logos/png/1x/@(_machine.CompanyLogo).png" srcset="/assets/logos/png/1x/@(_machine.CompanyLogo).png,
                              /assets/logos/png/2x/@(_machine.CompanyLogo).png 2x,
-                             /assets/logos/png/3x/@(_machine.CompanyLogo).png 3x" src="/assets/logos/png/1x/@(_machine.CompanyLogo).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                             /assets/logos/png/3x/@(_machine.CompanyLogo).png 3x" style="max-height: 256px; max-width: 256px" width="auto" />
         </picture>
     }
 </p>
@@ -143,7 +143,7 @@
         <CollapseHeader>
             @if(processor.Speed > 0)
             {
-                @(processor.GprSize > 0 ? string.Format(L["{0} @ {1}MHz ({2} bits)"], processor.Name, processor.Speed, processor.GprSize) : string.Format(L["{0} @ {1}MHz"], processor.Name, processor.Speed))
+                @(processor.GprSize > 0 ? string.Format(L["{0} @{1}MHz ({2} bits)"], processor.Name, processor.Speed, processor.GprSize) : string.Format(L["{0} @{1}MHz"], processor.Name, processor.Speed))
             }
             else
             {
@@ -368,11 +368,11 @@
                     {
                         if(processor.ProcessNm > 100)
                         {
-                            @(string.Format(L["{0} @ {1}µm"], processor.Process, processor.ProcessNm / 100))
+                            @(string.Format(L["{0} @{1}µm"], processor.Process, processor.ProcessNm / 100))
                         }
                         else
                         {
-                            @(string.Format(L["{0} @ {1}nm"], processor.Process, processor.ProcessNm))
+                            @(string.Format(L["{0} @{1}nm"], processor.Process, processor.ProcessNm))
                         }
                     }
                     else if(processor.ProcessNm > 0)
@@ -564,11 +564,11 @@
                                                     {
                                                         if(gpu.ProcessNm > 100)
                                                         {
-                                                            @(string.Format(L["{0} @ {1}µm"], gpu.Process, gpu.ProcessNm / 100))
+                                                            @(string.Format(L["{0} @{1}µm"], gpu.Process, gpu.ProcessNm / 100))
                                                         }
                                                         else
                                                         {
-                                                            @(string.Format(L["{0} @ {1}nm"], gpu.Process, gpu.ProcessNm))
+                                                            @(string.Format(L["{0} @{1}nm"], gpu.Process, gpu.ProcessNm))
                                                         }
                                                     }
                                                     else if(gpu.ProcessNm > 0)
@@ -868,11 +868,11 @@
         <div class="col-md-2">
             <figure class="figure">
                 <picture>
-                    <source type="image/avif" srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x">
-                    <source type="image/heic" srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x">
-                    <source type="image/webp" srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x">
-                    <source type="image/jp2" srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x">
-                    <img class="figure-img img-fluid rounded" srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x" src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                    <source srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
+                    <source srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
+                    <source srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
+                    <source srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x" type="image/jp2">
+                    <img alt="" class="figure-img img-fluid rounded" height="auto" src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg" srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x" style="max-height: 256px; max-width: 256px" width="auto" />
                 </picture>
                 <figcaption class="figure-caption">
                     <a href="/machines/photo/@photo" target="_blank">@L["Details"]</a>
@@ -884,7 +884,7 @@
 
 @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/photos/computers", _machine.Id + ".jpg")))
 {
-    <img src="@Path.Combine("/assets/photos/computers", _machine.Id + ".jpg")" alt="">
+    <img alt="" src="@Path.Combine("/assets/photos/computers", _machine.Id + ".jpg")">
 }
 <style>
 .card {

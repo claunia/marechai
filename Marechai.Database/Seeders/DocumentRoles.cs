@@ -37,7 +37,7 @@ namespace Marechai.Database.Seeders
         public static void Seed(MarechaiContext context)
         {
             List<DocumentRole> existingRoles             = context.DocumentRoles.ToList();
-            List<DocumentRole> newDocumentRoles          = new List<DocumentRole>();
+            List<DocumentRole> newDocumentRoles          = new();
             int                updatedDocumentRolesCount = 0;
 
             foreach(DocumentRole role in new[]

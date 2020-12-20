@@ -365,7 +365,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Getting all items from `console_company`");
 
-            Dictionary<int, string> consoleCompanies = new Dictionary<int, string>();
+            Dictionary<int, string> consoleCompanies = new();
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from console_company";
@@ -376,7 +376,7 @@ namespace Marechai.Database
             foreach(DataRow dataRow in dataSet.Tables[0].Rows)
                 consoleCompanies.Add(int.Parse(dataRow["id"].ToString()), dataRow["company"].ToString());
 
-            Dictionary<int, int> conversionEquivalents = new Dictionary<int, int>();
+            Dictionary<int, int> conversionEquivalents = new();
             IDbTransaction       trans;
 
             Console.WriteLine("Converting all items from `console_company` to `companies`");
@@ -417,7 +417,7 @@ namespace Marechai.Database
             }
 
             Console.WriteLine("Getting all items from `consoles`");
-            Dictionary<int, int> consoleIdAndCompanyId = new Dictionary<int, int>();
+            Dictionary<int, int> consoleIdAndCompanyId = new();
             dbCmd                     = dbCon.CreateCommand();
             dataAdapter               = dbCore.GetNewDataAdapter();
             dbCmd.CommandText         = "SELECT id,company from consoles";
@@ -1309,7 +1309,7 @@ namespace Marechai.Database
 
             Console.WriteLine("Getting all items from `music_synths`");
 
-            Dictionary<int, string> musicSynths = new Dictionary<int, string>();
+            Dictionary<int, string> musicSynths = new();
             dbCmd = dbCon.CreateCommand();
             IDbDataAdapter dataAdapter = dbCore.GetNewDataAdapter();
             dbCmd.CommandText = "SELECT * from music_synths";
@@ -1320,7 +1320,7 @@ namespace Marechai.Database
             foreach(DataRow dataRow in dataSet.Tables[0].Rows)
                 musicSynths.Add(int.Parse(dataRow["id"].ToString()), dataRow["name"].ToString());
 
-            Dictionary<int, int> conversionEquivalents = new Dictionary<int, int>();
+            Dictionary<int, int> conversionEquivalents = new();
 
             Console.WriteLine("Converting all items from `music_synths` to `sound_synths`");
 
@@ -1359,7 +1359,7 @@ namespace Marechai.Database
             }
 
             Console.WriteLine("Getting all items from `consoles`");
-            Dictionary<int, int> consoleIdAndMusicSynthId = new Dictionary<int, int>();
+            Dictionary<int, int> consoleIdAndMusicSynthId = new();
             dbCmd                     = dbCon.CreateCommand();
             dataAdapter               = dbCore.GetNewDataAdapter();
             dbCmd.CommandText         = "SELECT id,music_synth from consoles";
@@ -1391,7 +1391,7 @@ namespace Marechai.Database
             trans.Commit();
 
             Console.WriteLine("Getting all items from `computers`");
-            Dictionary<int, int> computerIdAndMusicSynthId = new Dictionary<int, int>();
+            Dictionary<int, int> computerIdAndMusicSynthId = new();
             dbCmd                     = dbCon.CreateCommand();
             dataAdapter               = dbCore.GetNewDataAdapter();
             dbCmd.CommandText         = "SELECT id,music_synth from computers";

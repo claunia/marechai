@@ -37,7 +37,7 @@ namespace Marechai.Areas.Identity.Pages.Account.Manage
                                    _userManager.GetUserId(User));
 
             // Only include personal data for download
-            Dictionary<string, string> personalData = new Dictionary<string, string>();
+            Dictionary<string, string> personalData = new();
 
             IEnumerable<PropertyInfo> personalDataProps = typeof(ApplicationUser).GetProperties().
                 Where(prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));

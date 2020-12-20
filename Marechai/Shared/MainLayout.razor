@@ -1,5 +1,5 @@
 ﻿@{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -26,18 +26,15 @@
 }
 @inherits LayoutComponentBase
 @inject StringLocalizer<NavMenu> L
-
 <div class="sidebar">
     <NavMenu />
 </div>
-
 <div class="main">
-    <div class="top-row px-4 auth">
-        <LoginDisplay/>
+    <div class="auth px-4 top-row">
+        <LoginDisplay />
         <a href="/about" target="_blank">@L["About"]</a>
         <a href="/contact" target="_blank">@L["Contact"]</a>
     </div>
-
     <div class="content px-4">
         @Body
     </div>

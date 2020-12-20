@@ -1,6 +1,7 @@
 ﻿@page "/"
+@using Microsoft.ApplicationInsights.AspNetCore
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -27,7 +28,7 @@
 }
 @namespace Marechai.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@inject JavaScriptSnippet JavaScriptSnippet
 @{
     Layout = null;
 }

@@ -221,7 +221,7 @@ space_after_last_attribute=false
 space_before_self_closing=true
 attribute_style=on_single_line
 attribute_indent=align_by_first_attribute
-sort_attributes=true
+sort_attributes=false
 sort_class_selectors=true
 max_blank_lines_between_tags=0
 linebreak_before_all_elements=true
@@ -630,3 +630,10 @@ indent_type_constraints=true
 [*.{js,js.map,ts}]
 quote_style=doublequoted
 termination_style=ensure_semicolon
+
+[*.razor]
+razor_always_use_end_of_line_brace_style=false
+blank_lines_around_razor_sections=true
+blank_lines_around_razor_helpers=true
+blank_lines_around_razor_functions=true
+sort_attributes=false

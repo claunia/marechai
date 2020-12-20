@@ -36,7 +36,7 @@ namespace Marechai.Database.Seeders
         public static void Seed(MarechaiContext context)
         {
             List<Models.License> existingLicenses     = context.Licenses.ToList();
-            List<Models.License> newLicenses          = new List<Models.License>();
+            List<Models.License> newLicenses          = new();
             int                  updatedLicencesCount = 0;
 
             foreach(Models.License license in new[]

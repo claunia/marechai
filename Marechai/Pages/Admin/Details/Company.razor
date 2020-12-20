@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -28,8 +28,8 @@
 @page "/admin/companies/details/{Id:int}"
 @page "/admin/companies/edit/{Id:int}"
 @page "/admin/companies/create"
-@using Marechai.Database
 @using Marechai.Database.Models
+@using Marechai.Database
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
 @inject Iso31661NumericService CountriesService
@@ -38,344 +38,298 @@
 @inject IWebHostEnvironment Host
 @inject IFileReaderService FileReaderService;
 @inject IJSRuntime JSRuntime
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
-
-
 <h3>@L["Company details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <div>
+<Field>
+    <FieldLabel>@L["Common name (as usually displayed publicly)"]</FieldLabel>
+    <Validation Validator="@ValidateName">
+        <TextEdit @bind-Text="@_model.Name" ReadOnly="!_editing">
+            <Feedback>
+                <ValidationError>@L["Please enter a valid name."]</ValidationError>
+            </Feedback>
+        </TextEdit>
+    </Validation>
+</Field>
+@if(_editing || _model.LegalName != null)
+{
     <Field>
-        <FieldLabel>@L["Common name (as usually displayed publicly)"]</FieldLabel>
-        <Validation Validator="@ValidateName">
-            <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Name">
-                <Feedback>
-                    <ValidationError>@L["Please enter a valid name."]</ValidationError>
-                </Feedback>
-            </TextEdit>
-        </Validation>
-    </Field>
-    @if (_editing || _model.LegalName != null)
+        <FieldLabel>@L["Legal name (as shown in governmental registries including \"Inc.\", \"Corp.\", \"gmbH\", etc...)"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownLegalName" @TValue="bool">@L["Unknown (legal name)"]</Check>        }
+        @if(!_editing ||
+            !_unknownLegalName)
+        {
+            <Validation Validator="@ValidateLegalName">
+                <TextEdit @bind-Text="@_model.LegalName" Disabled="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid legal name."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>        }
+    </Field>}
+<Field>
+    <FieldLabel>@L["Status"]</FieldLabel>
+    <Select @bind-SelectedValue="@Status" Disabled="!_editing" @TValue="int">
+        @foreach(int status in Enum.GetValues(typeof(CompanyStatus)))
+        {
+            <SelectItem @TValue="int" Value="@status">@(((CompanyStatus)status).ToString())</SelectItem>        }
+    </Select>
+</Field>
+@if(_editing || _model.Founded != null)
+{
+    <Field>
+        <FieldLabel>@L["Founded"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownFounded" @TValue="bool">@L["Unknown (foundation date)"]</Check>        }
+        @if(!_editing ||
+            !_unknownFounded)
+        {
+            <Check @bind-Checked="@_model.FoundedMonthIsUnknown" Disabled="!_editing" @TValue="bool">@L["Unknown foundation month"]</Check>
+            <Check @bind-Checked="@_model.FoundedDayIsUnknown" Disabled="_model.FoundedMonthIsUnknown || !_editing" @TValue="bool">@L["Unknown foundation day"]</Check>
+            @L["If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored."]
+            <Validation Validator="@ValidateFounded">
+                <DateEdit @bind-Date="@_model.Founded" ReadOnly="!_editing" @TValue="DateTime?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid foundation date."]</ValidationError>
+                    </Feedback>
+                </DateEdit>
+            </Validation>        }
+    </Field>}
+@if(_editing || _model.Website != null)
+{
+    <Field>
+        <FieldLabel>@L["Website"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownWebsite" @TValue="bool">@L["Unknown (website)"]</Check>        }
+        @if(!_editing ||
+            !_unknownWebsite)
+        {
+            <Validation Validator="@ValidateWebsite">
+                <TextEdit @bind-Text="@_model.Website" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid website."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>        }
+    </Field>}
+@if(_editing || _model.Twitter != null)
+{
+    <Field>
+        <FieldLabel>@L["Twitter"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownTwitter" @TValue="bool">@L["Unknown (twitter)"]</Check>        }
+        @if(!_editing ||
+            !_unknownTwitter)
+        {
+            <Validation Validator="@ValidateTwitter">
+                <TextEdit @bind-Text="@_model.Twitter" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid Twitter handle."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>        }
+    </Field>}
+@if(_editing || _model.Facebook != null)
+{
+    <Field>
+        <FieldLabel>@L["Facebook"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownFacebook" @TValue="bool">@L["Unknown (facebook)"]</Check>        }
+        @if(!_editing ||
+            !_unknownFacebook)
+        {
+            <Validation Validator="@ValidateFacebook">
+                <TextEdit @bind-Text="@_model.Facebook" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid Facebook user name."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>        }
+    </Field>}
+@if(_editing || _model.Address != null)
+{
+    <Field>
+        <FieldLabel>@L["Address"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownAddress" @TValue="bool">@L["Unknown (address)"]</Check>        }
+        @if(!_editing ||
+            !_unknownAddress)
+        {
+            <Validation Validator="@ValidateAddress">
+                <TextEdit @bind-Text="@_model.Address" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid address."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>        }
+    </Field>}
+@if(_editing || _model.City != null)
+{
+    <Field>
+        <FieldLabel>@L["City"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownCity" @TValue="bool">@L["Unknown (city)"]</Check>        }
+        @if(!_editing ||
+            !_unknownCity)
+        {
+            <Validation Validator="@ValidateCity">
+                <TextEdit @bind-Text="@_model.City" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid city."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>        }
+    </Field>}
+@if(_editing || _model.Province != null)
+{
+    <Field>
+        <FieldLabel>@L["Province"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownProvince" @TValue="bool">@L["Unknown (province)"]</Check>        }
+        @if(!_editing ||
+            !_unknownProvince)
+        {
+            <Validation Validator="@ValidateProvince">
+                <TextEdit @bind-Text="@_model.Province" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid province."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>        }
+    </Field>}
+@if(_editing || _model.PostalCode != null)
+{
+    <Field>
+        <FieldLabel>@L["Postal code"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownPostalCode" @TValue="bool">@L["Unknown (postal code)"]</Check>        }
+        @if(!_editing ||
+            !_unknownPostalCode)
+        {
+            <Validation Validator="@ValidatePostalCode">
+                <TextEdit @bind-Text="@_model.PostalCode" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid postal code."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>        }
+    </Field>}
+@if(_editing || _model.CountryId != null)
+{
+    <Field>
+        <FieldLabel>@L["Country"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownCountry" @TValue="bool">@L["Unknown (country)"]</Check>        }
+        @if(!_editing ||
+            !_unknownCountry)
+        {
+            <Select @bind-SelectedValue="@_model.CountryId" Disabled="!_editing" @TValue="short?">
+                @foreach(var country in _countries)
+                {
+                    <SelectItem @TValue="short?" Value="@country.Id">@country.Name</SelectItem>                }
+            </Select>        }
+    </Field>}
+@if((int)_model.Status > 1)
+{
+    @if(_editing || _model.Sold != null)
     {
         <Field>
-            <FieldLabel>@L["Legal name (as shown in governmental registries including \"Inc.\", \"Corp.\", \"gmbH\", etc...)"]</FieldLabel>
-            @if (_editing)
+            <FieldLabel>@L["Sold"]</FieldLabel>
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownLegalName">@L["Unknown (legal name)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownLegalName)
+                <Check @bind-Checked="@_unknownSold" @TValue="bool">@L["Unknown (sold/merged/bankrupt date)"]</Check>            }
+            @if(!_editing ||
+                !_unknownSold)
             {
-                <Validation Validator="@ValidateLegalName">
-                    <TextEdit Disabled="!_editing" @bind-Text="@_model.LegalName">
+                <Check @bind-Checked="@_model.SoldMonthIsUnknown" Disabled="!_editing" @TValue="bool">@L["Unknown sold/merge/bankruptcy month"]</Check>
+                <Check @bind-Checked="@_model.SoldDayIsUnknown" Disabled="_model.SoldMonthIsUnknown || !_editing" @TValue="bool">@L["Unknown sold/merge/bankruptcy day"]</Check>
+                @L["If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored."]
+                <Validation Validator="@ValidateSold">
+                    <DateEdit @bind-Date="@_model.Sold" ReadOnly="!_editing" @TValue="DateTime?">
                         <Feedback>
-                            <ValidationError>@L["Please enter a valid legal name."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    <Field>
-        <FieldLabel>@L["Status"]</FieldLabel>
-        <Select Disabled="!_editing" TValue="int" @bind-SelectedValue="@Status">
-            @foreach (int status in Enum.GetValues(typeof(CompanyStatus)))
-            {
-                <SelectItem TValue="int" Value="@status">@(((CompanyStatus)status).ToString())</SelectItem>
-            }
-        </Select>
-    </Field>
-    @if (_editing || _model.Founded != null)
-    {
-        <Field>
-            <FieldLabel>@L["Founded"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownFounded">@L["Unknown (foundation date)"]</Check>
-            }
-            @if (!_editing || !_unknownFounded)
-            {
-                <Check TValue="bool" @bind-Checked="@_model.FoundedMonthIsUnknown" Disabled="!_editing">@L["Unknown foundation month"]</Check>
-                <Check TValue="bool" @bind-Checked="@_model.FoundedDayIsUnknown" Disabled="_model.FoundedMonthIsUnknown || !_editing">@L["Unknown foundation day"]</Check>
-                @L["If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored."]
-                <Validation Validator="@ValidateFounded">
-                    <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.Founded" >
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid foundation date."]</ValidationError>
+                            <ValidationError>@L["Please enter a valid sold/merge/bankruptcy date."]</ValidationError>
                         </Feedback>
                     </DateEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Website != null)
+                </Validation>            }
+        </Field>    }
+    @if(_editing || _model.SoldToId != null)
     {
         <Field>
-            <FieldLabel>@L["Website"]</FieldLabel>
-            @if (_editing)
+            <FieldLabel>@L["Sold to"]</FieldLabel>
+            @if(_editing)
             {
-                <Check TValue="bool" @bind-Checked="@_unknownWebsite">@L["Unknown (website)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownWebsite)
+                <Check @bind-Checked="@_unknownSoldTo" @TValue="bool">@L["Unknown (sold to)"]</Check>            }
+            @if(!_editing ||
+                !_unknownSoldTo)
             {
-                <Validation Validator="@ValidateWebsite">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Website">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid website."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Twitter != null)
-    {
-        <Field>
-            <FieldLabel>@L["Twitter"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownTwitter">@L["Unknown (twitter)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownTwitter)
-            {
-                <Validation Validator="@ValidateTwitter">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Twitter">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid Twitter handle."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Facebook != null)
-    {
-        <Field>
-            <FieldLabel>@L["Facebook"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownFacebook">@L["Unknown (facebook)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownFacebook)
-            {
-                <Validation Validator="@ValidateFacebook">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Facebook">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid Facebook user name."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Address != null)
-    {
-        <Field>
-            <FieldLabel>@L["Address"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownAddress">@L["Unknown (address)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownAddress)
-            {
-                <Validation Validator="@ValidateAddress">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Address">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid address."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.City != null)
-    {
-        <Field>
-            <FieldLabel>@L["City"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownCity">@L["Unknown (city)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownCity)
-            {
-                <Validation Validator="@ValidateCity">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.City">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid city."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Province != null)
-    {
-        <Field>
-            <FieldLabel>@L["Province"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownProvince">@L["Unknown (province)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownProvince)
-            {
-                <Validation Validator="@ValidateProvince">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Province">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid province."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.PostalCode != null)
-    {
-        <Field>
-            <FieldLabel>@L["Postal code"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownPostalCode">@L["Unknown (postal code)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownPostalCode)
-            {
-                <Validation Validator="@ValidatePostalCode">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.PostalCode">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid postal code."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.CountryId != null)
-    {
-        <Field>
-            <FieldLabel>@L["Country"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownCountry">@L["Unknown (country)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownCountry)
-            {
-                <Select Disabled="!_editing" TValue="short?" @bind-SelectedValue="@_model.CountryId">
-                    @foreach (var country in _countries)
+                <Select @bind-SelectedValue="@_model.SoldToId" Disabled="!_editing" @TValue="int?">
+                    @foreach(var company in _companies)
                     {
-                        <SelectItem TValue="short?" Value="@country.Id">@country.Name</SelectItem>
-                    }
-                </Select>
-            }
-        </Field>
-    }
-    @if (((int)_model.Status) > 1)
-    {
-        @if (_editing || _model.Sold != null)
-        {
-            <Field>
-                <FieldLabel>@L["Sold"]</FieldLabel>
-                @if (_editing)
-                {
-                    <Check TValue="bool" @bind-Checked="@_unknownSold">@L["Unknown (sold/merged/bankrupt date)"]</Check>
-                }
-                @if (!_editing ||
-                     !_unknownSold)
-                {
-                    <Check TValue="bool" @bind-Checked="@_model.SoldMonthIsUnknown" Disabled="!_editing">@L["Unknown sold/merge/bankruptcy month"]</Check>
-                    <Check TValue="bool" @bind-Checked="@_model.SoldDayIsUnknown" Disabled="_model.SoldMonthIsUnknown || !_editing">@L["Unknown sold/merge/bankruptcy day"]</Check>
-                    @L["If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored."]
-                    <Validation Validator="@ValidateSold">
-                        <DateEdit TValue="DateTime?" ReadOnly="!_editing" @bind-Date="@_model.Sold">
-                            <Feedback>
-                                <ValidationError>@L["Please enter a valid sold/merge/bankruptcy date."]</ValidationError>
-                            </Feedback>
-                        </DateEdit>
-                    </Validation>
-                }
-            </Field>
-        }
-        @if (_editing || _model.SoldToId != null)
-        {
-            <Field>
-                <FieldLabel>@L["Sold to"]</FieldLabel>
-                @if (_editing)
-                {
-                    <Check TValue="bool" @bind-Checked="@_unknownSoldTo">@L["Unknown (sold to)"]</Check>
-                }
-                @if (!_editing ||
-                     !_unknownSoldTo)
-                {
-                    <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.SoldToId">
-                        @foreach (var company in _companies)
-                        {
-                            <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-                        }
-                    </Select>
-                }
-            </Field>
-        }
-    }
-</div>
-<div>
-    @if (!_editing)
-    {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
-    else
-    {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/companies" class="btn btn-secondary">@L["Back to list"]</a>
-@if (!_editing)
-{
-    <Button Color="Color.Success" Clicked="@ShowUploadModal">@L["Upload new logo"]</Button>
+                        <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>                    }
+                </Select>            }
+        </Field>    }
 }
 </div>
-@if (_logos.Count > 0)
+<div>
+    @if(!_editing)
+    {
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>    }
+    else
+    {
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>    }
+    <a class="btn btn-secondary" href="/admin/companies">@L["Back to list"]</a>
+    @if(!_editing)
+    {
+        <Button Clicked="@ShowUploadModal" Color="Color.Success">@L["Upload new logo"]</Button>    }
+</div>
+@if(_logos.Count > 0)
 {
     <h4>@L["Logos"]</h4>
     <table class="table table-striped">
         <thead>
-            <tr>
-                <th>
-                    @L["Logo"]
-                </th>
-                <th>
-                    @L["Year logo came in use"]
-                </th>
-                <th></th>
-            </tr>
+        <tr>
+            <th>
+                @L["Logo"]
+            </th>
+            <th>
+                @L["Year logo came in use"]
+            </th>
+            <th></th>
+        </tr>
         </thead>
         <tbody>
-        @foreach (var logo in _logos)
+        @foreach(var logo in _logos)
         {
-            bool logoFound = File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"));
+            var logoFound = File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"));
             <tr>
                 <td>
-                    @if (logoFound)
+                    @if(logoFound)
                     {
                         <picture>
-                            <source type="image/svg+xml" srcset="/assets/logos/@(logo.Guid).svg">
-                            <source type="image/webp" srcset="/assets/logos/webp/1x/@(logo.Guid).webp, /assets/logos/webp/2x/@(logo.Guid).webp 2x, /assets/logos/webp/3x/@(logo.Guid).webp 3x">
-                            <img srcset="/assets/logos/png/1x/@(logo.Guid).png, /assets/logos/png/2x/@(logo.Guid).png 2x, /assets/logos/png/3x/@(logo.Guid).png 3x"
-                                 src="/assets/logos/png/1x/@(logo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                            <source srcset="/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
+                            <source srcset="/assets/logos/webp/1x/@(logo.Guid).webp, /assets/logos/webp/2x/@(logo.Guid).webp 2x, /assets/logos/webp/3x/@(logo.Guid).webp 3x" type="image/webp">
+                            <img alt="" height="auto" src="/assets/logos/png/1x/@(logo.Guid).png" srcset="/assets/logos/png/1x/@(logo.Guid).png, /assets/logos/png/2x/@(logo.Guid).png 2x, /assets/logos/png/3x/@(logo.Guid).png 3x" style="max-height: 256px; max-width: 256px" width="auto" />
                         </picture>
                     }
                     else
@@ -384,7 +338,7 @@
                     }
                 </td>
                 <td>
-                    @if (logo.Year.HasValue)
+                    @if(logo.Year.HasValue)
                     {
                         @logo.Year
                     }
@@ -394,110 +348,101 @@
                     }
                 </td>
                 <td>
-                    @if (logoFound)
+                    @if(logoFound)
                     {
-                        <Button Color="Color.Success" Clicked="() => {ShowLogoYearModal(logo.Id);}">@L["Change year"]</Button>
-                    }
-                    <Button Color="Color.Danger" Clicked="() => {ShowDeleteModal(logo.Id);}">@L["Delete"]</Button>
+                        <Button Clicked="() => {ShowLogoYearModal(logo.Id);}" Color="Color.Success">@L["Change year"]</Button>                    }
+                    <Button Clicked="() => {ShowDeleteModal(logo.Id);}" Color="Color.Danger">@L["Delete"]</Button>
                 </td>
             </tr>
         }
         </tbody>
-    </table>
-}
-
-<Modal @ref="_frmDelete" IsCentered="true" Closing="@DeleteModalClosing"> 
-    <ModalBackdrop/>
+    </table>}
+<Modal Closing="@DeleteModalClosing" IsCentered="true" ref="_frmDelete">
+    <ModalBackdrop />
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete logo"]</ModalTitle>
-            <CloseButton Clicked="@HideDeleteModal"/>
+            <CloseButton Clicked="@HideDeleteModal" />
         </ModalHeader>
         <ModalBody>
-            @if (_currentLogo?.Year != null)
+            @if(_currentLogo?.Year != null)
             {
-                <Text>@string.Format(L["Are you sure you want to delete the company logo introduced in {0}?"], _currentLogo?.Year)</Text>
-            }
+                <Text>@string.Format(L["Are you sure you want to delete the company logo introduced in {0}?"], _currentLogo?.Year)</Text>            }
             else
             {
-                <Text>@L["Are you sure you want to delete the company logo you selected?"]</Text>
-            }
+                <Text>@L["Are you sure you want to delete the company logo you selected?"]</Text>            }
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@HideDeleteModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+            <Button Clicked="@HideDeleteModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
-
-<Modal @ref="_frmLogoYear" IsCentered="true" Closing="@LogoYearModalClosing"> 
-    <ModalBackdrop/>
+<Modal Closing="@LogoYearModalClosing" IsCentered="true" ref="_frmLogoYear">
+    <ModalBackdrop />
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Change logo year"]</ModalTitle>
-            <CloseButton Clicked="@HideLogoYearModal"/>
+            <CloseButton Clicked="@HideLogoYearModal" />
         </ModalHeader>
         <ModalBody>
-            @if (_currentLogo != null)
+            @if(_currentLogo != null)
             {
                 <div class="text-center">
                     <picture>
-                        <source type="image/svg+xml" srcset="/assets/logos/@(_currentLogo.Guid).svg">
-                        <source type="image/webp" srcset="/assets/logos/webp/1x/@(_currentLogo.Guid).webp, /assets/logos/webp/2x/@(_currentLogo.Guid).webp 2x, /assets/logos/webp/3x/@(_currentLogo.Guid).webp 3x">
-                        <img srcset="/assets/logos/png/1x/@(_currentLogo.Guid).png, /assets/logos/png/2x/@(_currentLogo.Guid).png 2x, /assets/logos/png/3x/@(_currentLogo.Guid).png 3x" src="/assets/logos/png/1x/@(_currentLogo.Guid).png" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
+                        <source srcset="/assets/logos/@(_currentLogo.Guid).svg" type="image/svg+xml">
+                        <source srcset="/assets/logos/webp/1x/@(_currentLogo.Guid).webp, /assets/logos/webp/2x/@(_currentLogo.Guid).webp 2x, /assets/logos/webp/3x/@(_currentLogo.Guid).webp 3x" type="image/webp">
+                        <img alt="" height="auto" src="/assets/logos/png/1x/@(_currentLogo.Guid).png" srcset="/assets/logos/png/1x/@(_currentLogo.Guid).png, /assets/logos/png/2x/@(_currentLogo.Guid).png 2x, /assets/logos/png/3x/@(_currentLogo.Guid).png 3x" style="max-height: 256px; max-width: 256px" width="auto" />
                     </picture>
                 </div>
                 <Field>
                     <FieldLabel>@L["Year logo came in use"]</FieldLabel>
-                    <Check TValue="bool" @bind-Checked="@_unknownLogoYear">@L["Unknown (logo year)"]</Check>
-                    @if (!_unknownLogoYear)
+                    <Check @bind-Checked="@_unknownLogoYear" @TValue="bool">@L["Unknown (logo year)"]</Check>
+                    @if(!_unknownLogoYear)
                     {
                         <Validation Validator="@ValidateLogoYear">
-                            <NumericEdit TValue="int?" Decimals="0" @bind-Value="@_currentLogoYear">
+                            <NumericEdit @bind-Value="@_currentLogoYear" Decimals="0" @TValue="int?">
                                 <Feedback>
                                     <ValidationError>@L["Please enter a valid year."]</ValidationError>
                                 </Feedback>
                             </NumericEdit>
-                        </Validation>
-                    }
-                </Field>
-            }
+                        </Validation>                    }
+                </Field>            }
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@HideLogoYearModal" Disabled="@_yearChangeInProgress">@L["Cancel"]</Button>
-            @if (_currentLogo != null)
+            <Button Clicked="@HideLogoYearModal" Color="Color.Primary" Disabled="@_yearChangeInProgress">@L["Cancel"]</Button>
+            @if(_currentLogo != null)
             {
-                <Button Color="Color.Success" Clicked="@ConfirmLogoYear" Disabled="@_yearChangeInProgress">@L["Save"]</Button>
-            }
+                <Button Clicked="@ConfirmLogoYear" Color="Color.Success" Disabled="@_yearChangeInProgress">@L["Save"]</Button>            }
         </ModalFooter>
     </ModalContent>
 </Modal>
-
-<Modal @ref="_frmUpload" IsCentered="true" Closing="@UploadModalClosing"> 
-    <ModalBackdrop/>
+<Modal Closing="@UploadModalClosing" IsCentered="true" ref="_frmUpload">
+    <ModalBackdrop />
     <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>@L["Upload new logo"]</ModalTitle>
-            <CloseButton Clicked="@HideUploadModal"/>
+            <CloseButton Clicked="@HideUploadModal" />
         </ModalHeader>
         <ModalBody>
             <Field>
-                @if (!_uploaded)
+                @if(!_uploaded)
                 {
-                    @if (!_uploading)
+                    @if(!_uploading)
                     {
                         <FieldLabel>@L["Choose SVG (version 1.1 or lower) logo file"]</FieldLabel>
-                        <input type="file" @ref=_inputUpload Accept=".svg" /><br/>
-                        <Button Color="Color.Success" Clicked="@UploadFile" Disabled="@_uploading">@L["Upload"]</Button><br/>
+                        <input Accept=".svg" @ref=_inputUpload type="file" />
+                        <br />
+                        <Button Clicked="@UploadFile" Color="Color.Success" Disabled="@_uploading">@L["Upload"]</Button>                        <br />
                     }
                     else
                     {
                         @L["Uploading..."]
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: @(_progressValue)%;" aria-valuenow="@_progressValue" aria-valuemin="0" aria-valuemax="100">@($"{_progressValue:F2}")%</div>
+                            <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="@_progressValue" class="progress-bar" role="progressbar" style="width: @(_progressValue)%;">@($"{_progressValue:F2}")%</div>
                         </div>
                     }
-                    @if (_uploadError)
+                    @if(_uploadError)
                     {
                         <span class="text-danger">@_uploadErrorMessage</span>
                     }
@@ -516,69 +461,63 @@
                         <tr>
                             <td>
                                 <span class="text-warning">@L["May not show properly"]</span>
-                            </td>                                
-                            <td></td>                                
+                            </td>
+                            <td></td>
                             <td>
                                 <span class="text-warning">@L["May not show properly"]</span>
-                            </td>                                
+                            </td>
                         </tr>
                         <tr>
                             <td>
-                                <img src="@_uploadedSvgData" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                            </td>                                
+                                <img alt="" height="auto" src="@_uploadedSvgData" style="max-height: 256px; max-width: 256px" width="auto" />
+                            </td>
                             <td>
-                                <img src="@_uploadedPngData" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                            </td>                                
+                                <img alt="" height="auto" src="@_uploadedPngData" style="max-height: 256px; max-width: 256px" width="auto" />
+                            </td>
                             <td>
-                                <img src="@_uploadedWebpData" alt="" height="auto" width="auto" style="max-height: 256px; max-width: 256px" />
-                            </td>                                
+                                <img alt="" height="auto" src="@_uploadedWebpData" style="max-height: 256px; max-width: 256px" width="auto" />
+                            </td>
                         </tr>
                         </tbody>
                     </table>
                     <Field>
                         <FieldLabel>@L["Year logo came in use"]</FieldLabel>
-                        <Check TValue="bool" @bind-Checked="@_unknownLogoYear">@L["Unknown (logo year)"]</Check>
-                        @if (!_unknownLogoYear)
+                        <Check @bind-Checked="@_unknownLogoYear" @TValue="bool">@L["Unknown (logo year)"]</Check>
+                        @if(!_unknownLogoYear)
                         {
                             <Validation Validator="@ValidateLogoYear">
-                                <NumericEdit TValue="int?" Decimals="0" @bind-Value="@_currentLogoYear">
+                                <NumericEdit @bind-Value="@_currentLogoYear" Decimals="0" @TValue="int?">
                                     <Feedback>
                                         <ValidationError>@L["Please enter a valid year."]</ValidationError>
                                     </Feedback>
                                 </NumericEdit>
-                            </Validation>
-                        }
-                    </Field>
-                }
+                            </Validation>                        }
+                    </Field>                }
             </Field>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@HideUploadModal" Disabled="_uploading || _savingLogo">@L["Cancel"]</Button>
-            <Button Color="Color.Success" Clicked="@ConfirmUpload" Disabled="!_uploaded || _savingLogo">@L["Save"]</Button>
+            <Button Clicked="@HideUploadModal" Color="Color.Primary" Disabled="_uploading || _savingLogo">@L["Cancel"]</Button>
+            <Button Clicked="@ConfirmUpload" Color="Color.Success" Disabled="!_uploaded || _savingLogo">@L["Save"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
-
-<hr/>
+<hr />
 <div class="container">
     <h4>@L["Company description"]</h4>
-    <hr/>
-    @if (_readonlyDescription &&
-         _description is null)
+    <hr />
+    @if(_readonlyDescription && _description is null)
     {
-        <Button Color="Color.Success" Clicked="@AddNewDescription">@L["Add new description"]</Button>
-    }
-    @if (!_readonlyDescription || _description != null)
+        <Button Clicked="@AddNewDescription" Color="Color.Success">@L["Add new description"]</Button>    }
+    @if(!_readonlyDescription ||
+        _description != null)
     {
-        if (_readonlyDescription)
+        if(_readonlyDescription)
         {
-            <Button Color="Color.Success" Clicked="@EditDescription">@L["Edit"]</Button>
-        }
+            <Button Clicked="@EditDescription" Color="Color.Success">@L["Edit"]</Button>        }
         else
         {
-            <Button Color="Color.Primary" Clicked="@CancelDescription">@L["Cancel"]</Button>
-            <Button Color="Color.Success" Clicked="@SaveDescription">@L["Save"]</Button>
-        }
+            <Button Clicked="@CancelDescription" Color="Color.Primary">@L["Cancel"]</Button>
+            <Button Clicked="@SaveDescription" Color="Color.Success">@L["Save"]</Button>        }
         <Tabs SelectedTab="@_selectedDescriptionTab" SelectedTabChanged="@OnSelectedDescriptionTabChanged">
             <Items>
                 <Tab Name="markdown">Markdown</Tab>
@@ -586,12 +525,11 @@
             </Items>
             <Content>
                 <TabPanel Name="markdown">
-                    <textarea onchange="OnCompanyMarkdownChanged()" class="form-control" rows="200" id="txtCompanyDescriptionMarkdown" readonly="@_readonlyDescription">@_description.Markdown</textarea>
+                    <textarea class="form-control" id="txtCompanyDescriptionMarkdown" onchange="OnCompanyMarkdownChanged()" readonly="@_readonlyDescription" rows="200">@_description.Markdown</textarea>
                 </TabPanel>
                 <TabPanel Name="preview">
                     @((MarkupString)_description.Html)
                 </TabPanel>
             </Content>
-        </Tabs>
-    }
+        </Tabs>    }
 </div>

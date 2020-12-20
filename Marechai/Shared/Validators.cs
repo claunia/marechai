@@ -197,8 +197,8 @@ namespace Marechai.Shared
                (isbn[1] != '8' && isbn[1] != '9'))
                 return;
 
-            sum = (isbn[0] - 0x30) + ((isbn[1] - 0x30) * 3) + (isbn[2]  - 0x30) + ((isbn[3]  - 0x30) * 3) +
-                  (isbn[4] - 0x30) + ((isbn[5] - 0x30) * 3) + (isbn[6]  - 0x30) + ((isbn[7]  - 0x30) * 3) +
+            sum = isbn[0] - 0x30 + ((isbn[1] - 0x30) * 3) + (isbn[2] - 0x30) + ((isbn[3] - 0x30) * 3) +
+                  (isbn[4] - 0x30) + ((isbn[5] - 0x30) * 3) + (isbn[6] - 0x30) + ((isbn[7] - 0x30) * 3) +
                   (isbn[8] - 0x30) + ((isbn[9] - 0x30) * 3) + (isbn[10] - 0x30) + ((isbn[11] - 0x30) * 3);
 
             modulo = sum % 10;

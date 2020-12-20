@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -36,579 +36,553 @@
 @inject NavigationManager NavigationManager
 @inject InstructionSetExtensionsByProcessorService InstructionSetExtensionsByProcessorService
 @inject InstructionSetExtensionsService InstructionSetExtensionsService
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Processor details"]</h3>
 <hr />
-
-@if (!_loaded)
+@if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
 
     return;
 }
-
 <div>
-    @if (_editing || _model.CompanyId != null)
-    {
-        <Field>
-            <FieldLabel>@L["Company"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownCompany">@L["Unknown (company)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownCompany)
-            {
-                <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.CompanyId">
-                    @foreach (var company in _companies)
-                    {
-                        <SelectItem TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-                    }
-                </Select>
-            }
-        </Field>
-    }
+@if(_editing || _model.CompanyId != null)
+{
     <Field>
-        <FieldLabel>@L["Name"]</FieldLabel>
-        <Validation Validator="@ValidateName">
-            <TextEdit Disabled="!_editing" @bind-Text="@_model.Name">
-                <Feedback>
-                    <ValidationError>@L["Please enter a valid name."]</ValidationError>
-                </Feedback>
-            </TextEdit>
-        </Validation>
-    </Field>
-    @if (_editing || _model.ModelCode != null)
-    {
-        <Field>
-            <FieldLabel>@L["Model code"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownModelCode">@L["Unknown (model code)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownModelCode)
-            {
-                <Validation Validator="@ValidateModelCode">
-                    <TextEdit Disabled="!_editing" @bind-Text="@_model.ModelCode">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid model code."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Introduced.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Introduced"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" Disabled="_prototype" @bind-Checked="@_unknownIntroduced">@L["Unknown (introduction date)"]</Check>
-                <Check TValue="bool" Disabled="_unknownIntroduced" @bind-Checked="@_prototype">@L["Prototype"]</Check>
-            }
-            @if (!_editing ||
-                 (!_prototype && !_unknownIntroduced))
-            {
-                <Validation Validator="@ValidateIntroduced">
-                    <DateEdit Disabled="!_editing" TValue="DateTime?" @bind-Date="@_model.Introduced">
-                        <Feedback>
-                            <ValidationError>@L["Please enter an introduction date."]</ValidationError>
-                        </Feedback>
-                    </DateEdit>
-                </Validation>
-            }
-            </Field>
-    }
-    @if (_editing || _model.InstructionSetId != null)
-    {
-        <Field>
-            <FieldLabel>@L["Instruction set"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownInstructionSet">@L["Unknown (instruction set)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownInstructionSet)
-            {
-                <Select Disabled="!_editing" TValue="int?" @bind-SelectedValue="@_model.InstructionSetId">
-                    @foreach (var instructionSet in _instructionSets)
-                    {
-                        <SelectItem TValue="int?" Value="@instructionSet.Id">@instructionSet.Name</SelectItem>
-                    }
-                </Select>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Speed.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Nominal speed (MHz)"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownSpeed">@L["Unknown (nominal speed)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownSpeed)
-            {
-                <Validation Validator="@ValidateDoubleBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="double?" Decimals="3" @bind-Value="@_model.Speed">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid nominal speed."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Package != null)
-    {
-        <Field>
-            <FieldLabel>@L["Package"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownPackage">@L["Unknown (package)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownPackage)
-            {
-                <Validation Validator="@ValidatePackage">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Package">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid package."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Gprs.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["General Purpose Registers"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownGprs">@L["Unknown (general purpose registers)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownGprs)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Gprs">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid number of general purpose registers."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.GprSize.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["General Purpose Register size"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownGprSize">@L["Unknown (general purpose register size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownGprSize)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.GprSize">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid general purpose register size."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Fprs.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Floating Point Registers"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownFprs">@L["Unknown (floating point registers)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownFprs)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Fprs">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid number of floating point registers."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-            @if (_editing)
-            {
-                <FieldHelp>@L["If set to zero, but with a size, indicates floating point instructions use the general purpose registers."]</FieldHelp>
-            }
-        </Field>
-    }
-    @if (_editing || _model.FprSize.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Floating Point Register size"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownFprSize">@L["Unknown (floating point register size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownFprSize)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.FprSize">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid floating point register size."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.SimdRegisters.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["SIMD Registers"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownSimdRegisters">@L["Unknown (simd registers)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownSimdRegisters)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.SimdRegisters">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid number of SIMD registers."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-            @if (_editing)
-            {
-                <FieldHelp>@L["If set to zero, but with a size, indicates SIMD instructions use the floating point registers. If they are also set to zero with a size, it means SIMD instructions use the general purpose registers."]</FieldHelp>
-            }
-        </Field>
-    }
-    @if (_editing || _model.SimdSize.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["SIMD Register size"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownSimdSize">@L["Unknown (simd register size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownSimdSize)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.SimdSize">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid SIMD register size."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Cores.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Cores"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownCores">@L["Unknown (cores)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownCores)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanOne">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.Cores">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid number of cores."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.ThreadsPerCore.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Threads per core"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownThreadsPerCore">@L["Unknown (threads per core)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownThreadsPerCore)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanOne">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.ThreadsPerCore">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid number of threads per core."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Process != null)
-    {
-        <Field>
-            <FieldLabel>@L["Process"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownProcess">@L["Unknown (process)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownProcess)
-            {
-                <Validation Validator="@ValidateProcess">
-                    <TextEdit ReadOnly="!_editing" @bind-Text="@_model.Process">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid process."]</ValidationError>
-                        </Feedback>
-                    </TextEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.ProcessNm.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Process (nm)"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownProcessNm">@L["Unknown (process size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownProcessNm)
-            {
-                <Validation Validator="@ValidateFloatBiggerThanOne">
-                    <NumericEdit Disabled="!_editing" TValue="float?" Decimals="2" @bind-Value="@_model.ProcessNm">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid process size in nanometers."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.DieSize.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Die size (mm²)"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownDieSize">@L["Unknown (die size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownDieSize)
-            {
-                <Validation Validator="@ValidateFloatBiggerThanOne">
-                    <NumericEdit Disabled="!_editing" TValue="float?" Decimals="2" @bind-Value="@_model.DieSize">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid die size in square millimeters."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.Transistors.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Transistors"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownTransistors">@L["Unknown (transistors)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownTransistors)
-            {
-                <Validation Validator="@ValidateLongBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="long?" Decimals="0" @bind-Value="@_model.Transistors">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid number of transistors."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.DataBus.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Data bus size"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownDataBus">@L["Unknown (data bus size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownDataBus)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanOne">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.DataBus">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid data bus size in bits."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.AddrBus.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["Address bus size"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownAddressBus">@L["Unknown (address bus size)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownAddressBus)
-            {
-                <Validation Validator="@ValidateIntegerBiggerThanOne">
-                    <NumericEdit Disabled="!_editing" TValue="int?" Decimals="0" @bind-Value="@_model.AddrBus">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid address bus size in bits."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.L1Instruction.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["L1 instruction cache (KiB)"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownL1Instruction">@L["Unknown (L1 instruction cache)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownL1Instruction)
-            {
-                <Validation Validator="@ValidateFloatBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="float?" Decimals="3" @bind-Value="@_model.L1Instruction">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid L1 instruction cache size in kibibytes."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.L1Data.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["L1 data cache (KiB)"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownL1Data">@L["Unknown (L1 data cache)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownL1Data)
-            {
-                <Validation Validator="@ValidateFloatBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="float?" Decimals="3" @bind-Value="@_model.L1Data">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid L1 data cache size in kibibytes."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.L2.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["L2 cache (KiB)"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownL2">@L["Unknown (L2 cache)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownL2)
-            {
-                <Validation Validator="@ValidateFloatBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="float?" Decimals="3" @bind-Value="@_model.L2">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid L2 cache size in kibibytes."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
-    @if (_editing || _model.L3.HasValue)
-    {
-        <Field>
-            <FieldLabel>@L["L3 cache (KiB)"]</FieldLabel>
-            @if (_editing)
-            {
-                <Check TValue="bool" @bind-Checked="@_unknownL3">@L["Unknown (L3 cache)"]</Check>
-            }
-            @if (!_editing ||
-                 !_unknownL3)
-            {
-                <Validation Validator="@ValidateFloatBiggerThanZero">
-                    <NumericEdit Disabled="!_editing" TValue="float?" Decimals="3" @bind-Value="@_model.L3">
-                        <Feedback>
-                            <ValidationError>@L["Please enter a valid L3 cache size in kibibytes."]</ValidationError>
-                        </Feedback>
-                    </NumericEdit>
-                </Validation>
-            }
-        </Field>
-    }
+        <FieldLabel>@L["Company"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownCompany" @TValue="bool">@L["Unknown (company)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownCompany)
+        {
+            <Select @bind-SelectedValue="@_model.CompanyId" Disabled="!_editing" @TValue="int?">
+                @foreach(var company in _companies)
+                {
+                    <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
+}
+            </Select>
+}
+    </Field>}
+<Field>
+    <FieldLabel>@L["Name"]</FieldLabel>
+    <Validation Validator="@ValidateName">
+        <TextEdit @bind-Text="@_model.Name" Disabled="!_editing">
+            <Feedback>
+                <ValidationError>@L["Please enter a valid name."]</ValidationError>
+            </Feedback>
+        </TextEdit>
+    </Validation>
+</Field>
+@if(_editing || _model.ModelCode != null)
+{
+    <Field>
+        <FieldLabel>@L["Model code"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownModelCode" @TValue="bool">@L["Unknown (model code)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownModelCode)
+        {
+            <Validation Validator="@ValidateModelCode">
+                <TextEdit @bind-Text="@_model.ModelCode" Disabled="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid model code."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.Introduced.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Introduced"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownIntroduced" Disabled="_prototype" @TValue="bool">@L["Unknown (introduction date)"]</Check>
+            <Check @bind-Checked="@_prototype" Disabled="_unknownIntroduced" @TValue="bool">@L["Prototype"]</Check>
+}
+        @if(!_editing ||
+            !_prototype && !_unknownIntroduced)
+        {
+            <Validation Validator="@ValidateIntroduced">
+                <DateEdit @bind-Date="@_model.Introduced" Disabled="!_editing" @TValue="DateTime?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter an introduction date."]</ValidationError>
+                    </Feedback>
+                </DateEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.InstructionSetId != null)
+{
+    <Field>
+        <FieldLabel>@L["Instruction set"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownInstructionSet" @TValue="bool">@L["Unknown (instruction set)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownInstructionSet)
+        {
+            <Select @bind-SelectedValue="@_model.InstructionSetId" Disabled="!_editing" @TValue="int?">
+                @foreach(var instructionSet in _instructionSets)
+                {
+                    <SelectItem @TValue="int?" Value="@instructionSet.Id">@instructionSet.Name</SelectItem>
+}
+            </Select>
+}
+    </Field>}
+@if(_editing || _model.Speed.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Nominal speed (MHz)"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownSpeed" @TValue="bool">@L["Unknown (nominal speed)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownSpeed)
+        {
+            <Validation Validator="@ValidateDoubleBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.Speed" Decimals="3" Disabled="!_editing" @TValue="double?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid nominal speed."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.Package != null)
+{
+    <Field>
+        <FieldLabel>@L["Package"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownPackage" @TValue="bool">@L["Unknown (package)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownPackage)
+        {
+            <Validation Validator="@ValidatePackage">
+                <TextEdit @bind-Text="@_model.Package" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid package."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.Gprs.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["General Purpose Registers"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownGprs" @TValue="bool">@L["Unknown (general purpose registers)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownGprs)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.Gprs" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid number of general purpose registers."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.GprSize.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["General Purpose Register size"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownGprSize" @TValue="bool">@L["Unknown (general purpose register size)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownGprSize)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.GprSize" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid general purpose register size."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.Fprs.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Floating Point Registers"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownFprs" @TValue="bool">@L["Unknown (floating point registers)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownFprs)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.Fprs" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid number of floating point registers."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+        @if(_editing)
+        {
+            <FieldHelp>@L["If set to zero, but with a size, indicates floating point instructions use the general purpose registers."]</FieldHelp>
+}
+    </Field>}
+@if(_editing || _model.FprSize.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Floating Point Register size"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownFprSize" @TValue="bool">@L["Unknown (floating point register size)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownFprSize)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.FprSize" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid floating point register size."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.SimdRegisters.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["SIMD Registers"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownSimdRegisters" @TValue="bool">@L["Unknown (simd registers)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownSimdRegisters)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.SimdRegisters" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid number of SIMD registers."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+        @if(_editing)
+        {
+            <FieldHelp>@L["If set to zero, but with a size, indicates SIMD instructions use the floating point registers. If they are also set to zero with a size, it means SIMD instructions use the general purpose registers."]</FieldHelp>
+}
+    </Field>}
+@if(_editing || _model.SimdSize.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["SIMD Register size"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownSimdSize" @TValue="bool">@L["Unknown (simd register size)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownSimdSize)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.SimdSize" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid SIMD register size."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.Cores.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Cores"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownCores" @TValue="bool">@L["Unknown (cores)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownCores)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanOne">
+                <NumericEdit @bind-Value="@_model.Cores" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid number of cores."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.ThreadsPerCore.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Threads per core"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownThreadsPerCore" @TValue="bool">@L["Unknown (threads per core)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownThreadsPerCore)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanOne">
+                <NumericEdit @bind-Value="@_model.ThreadsPerCore" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid number of threads per core."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.Process != null)
+{
+    <Field>
+        <FieldLabel>@L["Process"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownProcess" @TValue="bool">@L["Unknown (process)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownProcess)
+        {
+            <Validation Validator="@ValidateProcess">
+                <TextEdit @bind-Text="@_model.Process" ReadOnly="!_editing">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid process."]</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.ProcessNm.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Process (nm)"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownProcessNm" @TValue="bool">@L["Unknown (process size)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownProcessNm)
+        {
+            <Validation Validator="@ValidateFloatBiggerThanOne">
+                <NumericEdit @bind-Value="@_model.ProcessNm" Decimals="2" Disabled="!_editing" @TValue="float?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid process size in nanometers."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.DieSize.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Die size (mm²)"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownDieSize" @TValue="bool">@L["Unknown (die size)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownDieSize)
+        {
+            <Validation Validator="@ValidateFloatBiggerThanOne">
+                <NumericEdit @bind-Value="@_model.DieSize" Decimals="2" Disabled="!_editing" @TValue="float?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid die size in square millimeters."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.Transistors.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Transistors"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownTransistors" @TValue="bool">@L["Unknown (transistors)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownTransistors)
+        {
+            <Validation Validator="@ValidateLongBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.Transistors" Decimals="0" Disabled="!_editing" @TValue="long?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid number of transistors."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.DataBus.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Data bus size"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownDataBus" @TValue="bool">@L["Unknown (data bus size)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownDataBus)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanOne">
+                <NumericEdit @bind-Value="@_model.DataBus" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid data bus size in bits."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.AddrBus.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["Address bus size"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownAddressBus" @TValue="bool">@L["Unknown (address bus size)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownAddressBus)
+        {
+            <Validation Validator="@ValidateIntegerBiggerThanOne">
+                <NumericEdit @bind-Value="@_model.AddrBus" Decimals="0" Disabled="!_editing" @TValue="int?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid address bus size in bits."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.L1Instruction.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["L1 instruction cache (KiB)"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownL1Instruction" @TValue="bool">@L["Unknown (L1 instruction cache)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownL1Instruction)
+        {
+            <Validation Validator="@ValidateFloatBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.L1Instruction" Decimals="3" Disabled="!_editing" @TValue="float?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid L1 instruction cache size in kibibytes."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.L1Data.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["L1 data cache (KiB)"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownL1Data" @TValue="bool">@L["Unknown (L1 data cache)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownL1Data)
+        {
+            <Validation Validator="@ValidateFloatBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.L1Data" Decimals="3" Disabled="!_editing" @TValue="float?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid L1 data cache size in kibibytes."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.L2.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["L2 cache (KiB)"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownL2" @TValue="bool">@L["Unknown (L2 cache)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownL2)
+        {
+            <Validation Validator="@ValidateFloatBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.L2" Decimals="3" Disabled="!_editing" @TValue="float?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid L2 cache size in kibibytes."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
+@if(_editing || _model.L3.HasValue)
+{
+    <Field>
+        <FieldLabel>@L["L3 cache (KiB)"]</FieldLabel>
+        @if(_editing)
+        {
+            <Check @bind-Checked="@_unknownL3" @TValue="bool">@L["Unknown (L3 cache)"]</Check>
+}
+        @if(!_editing ||
+            !_unknownL3)
+        {
+            <Validation Validator="@ValidateFloatBiggerThanZero">
+                <NumericEdit @bind-Value="@_model.L3" Decimals="3" Disabled="!_editing" @TValue="float?">
+                    <Feedback>
+                        <ValidationError>@L["Please enter a valid L3 cache size in kibibytes."]</ValidationError>
+                    </Feedback>
+                </NumericEdit>
+            </Validation>
+}
+    </Field>}
 </div>
 <div>
-    @if (!_editing)
+    @if(!_editing)
     {
-        <Button Color="Color.Primary" Clicked="@OnEditClicked">@L["Edit"]</Button>
-    }
+        <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
+}
     else
     {
-        <Button Color="Color.Success" Clicked="@OnSaveClicked">@L["Save"]</Button>
-        <Button Color="Color.Danger" Clicked="@OnCancelClicked">@L["Cancel"]</Button>
-    }
-    <a href="/admin/processors" class="btn btn-secondary">@L["Back to list"]</a>
+        <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+        <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
+}
+    <a class="btn btn-secondary" href="/admin/processors">@L["Back to list"]</a>
 </div>
-@if (!_editing)
+@if(!_editing)
 {
     <hr />
     <h3>@L["Instruction set extensions implemented by this processor"]</h3>
-    <Button Color="Color.Success" Clicked="OnAddExtensionClick" Disabled="_addingExtension">@L["Add new (instruction set extension)"]</Button>
-    @if (_addingExtension)
+    <Button Clicked="OnAddExtensionClick" Color="Color.Success" Disabled="_addingExtension">@L["Add new (instruction set extension)"]</Button>
+    @if(_addingExtension)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Instruction set extensions"]</FieldLabel>
-                <Select Disabled="_savingExtension" TValue="int?" @bind-SelectedValue="@_addingExtensionId">
-                    @foreach (var extension in _instructionSetExtensions)
+                <Select @bind-SelectedValue="@_addingExtensionId" Disabled="_savingExtension" @TValue="int?">
+                    @foreach(var extension in _instructionSetExtensions)
                     {
-                        if (_processorExtensions.All(s => s.ExtensionId != extension.Id))
+                        if(_processorExtensions.All(s => s.ExtensionId != extension.Id))
                         {
-                            <SelectItem TValue="int?" Value="@extension.Id">@extension.Extension</SelectItem>
-                        }
+                            <SelectItem @TValue="int?" Value="@extension.Id">@extension.Extension</SelectItem>
+}
                     }
                 </Select>
-                <Button Color="Color.Primary" Clicked="@CancelAddExtension" Disabled="@_savingExtension">@L["Cancel"]</Button>
-                <Button Color="Color.Success" Clicked="@ConfirmAddExtension" Disabled="@_savingExtension">@L["Add"]</Button>
+                <Button Clicked="@CancelAddExtension" Color="Color.Primary" Disabled="@_savingExtension">@L["Cancel"]</Button>
+                <Button Clicked="@ConfirmAddExtension" Color="Color.Success" Disabled="@_savingExtension">@L["Add"]</Button>
             </Field>
         </div>
     }
-    @if (_processorExtensions?.Count > 0)
+    @if(_processorExtensions?.Count > 0)
     {
         <div>
             <table class="table table-striped">
@@ -621,14 +595,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var item in _processorExtensions)
+                @foreach(var item in _processorExtensions)
                 {
                     <tr>
                         <td>
                             @item.Extension
                         </td>
                         <td>
-                            <Button Color="Color.Danger" Clicked="() => {ShowExtensionDeleteModal(item.Id);}" Disabled="@_addingExtension">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowExtensionDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingExtension">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -637,7 +611,7 @@
         </div>
     }
 
-    <Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing">
+    <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
         <ModalBackdrop />
         <ModalContent Centered="true">
             <ModalHeader>
@@ -648,9 +622,8 @@
                 <Text>@_deleteText</Text>
             </ModalBody>
             <ModalFooter>
-                <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-                <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+                <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+                <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
             </ModalFooter>
         </ModalContent>
-    </Modal>
-}
+    </Modal>}

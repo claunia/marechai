@@ -1,5 +1,5 @@
 @{
-/******************************************************************************
+    /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -29,11 +29,11 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<CurrencyInflationService>
 @inject IStringLocalizer<CurrencyInflationService> L
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Currency inflation"]</h3>
-@if (_inflations is null)
+@if(_inflations is null)
 {
     <p>@L["Loading..."]</p>
 
@@ -58,7 +58,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in _inflations)
+    @foreach(var item in _inflations)
     {
         <tr>
             <td>
@@ -73,26 +73,25 @@
             <td>
                 <a class="btn btn-primary" href="/admin/currency_inflation/details/@item.Id">@L["Details"]</a>
                 <a class="btn btn-secondary" href="/admin/currency_inflation/edit/@item.Id">@L["Edit"]</a>
-                <Button Color="Color.Danger" Clicked="() => {ShowModal(item.Id);}">@L["Delete"]</Button>
+                <Button Clicked="() => {ShowModal(item.Id);}" Color="Color.Danger">@L["Delete"]</Button>
             </td>
         </tr>
     }
     </tbody>
 </table>
-
-<Modal @ref="_frmDelete" IsCentered="true" Closing="@ModalClosing"> 
-    <ModalBackdrop/>
+<Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
+    <ModalBackdrop />
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete currency inflation"]</ModalTitle>
-            <CloseButton Clicked="@HideModal"/>
+            <CloseButton Clicked="@HideModal" />
         </ModalHeader>
         <ModalBody>
-            <Text>@string.Format(@L["Are you sure you want to delete the inflation of {0:F} happened to currency {1} on {2}?"], _currentInflation?.Inflation, _currentInflation?.CurrencyName, _currentInflation?.Year)</Text>
+            <Text>@string.Format(L["Are you sure you want to delete the inflation of {0:F} happened to currency {1} on {2}?"], _currentInflation?.Inflation, _currentInflation?.CurrencyName, _currentInflation?.Year)</Text>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@HideModal" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-            <Button Color="Color.Danger" Clicked="@ConfirmDelete" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+            <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
+            <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>

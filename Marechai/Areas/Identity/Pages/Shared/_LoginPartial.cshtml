@@ -3,7 +3,7 @@
 @inject UserManager<ApplicationUser> UserManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
+    @if(SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
             <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link text-dark" title="Manage">Hello @User.Identity.Name!</a>

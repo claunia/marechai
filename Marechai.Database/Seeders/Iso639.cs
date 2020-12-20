@@ -43,7 +43,7 @@ namespace Marechai.Database.Seeders
             IEnumerable<string> files    = Directory.EnumerateFiles("iso639", "iso-639-3_*.tab");
             long                modified = 0;
 
-            List<Models.Iso639> codes = new List<Models.Iso639>();
+            List<Models.Iso639> codes = new();
 
             foreach(string file in files)
             {
@@ -121,7 +121,7 @@ namespace Marechai.Database.Seeders
             }
 
             List<Models.Iso639> existingCodes = context.Iso639.ToList();
-            List<Models.Iso639> newCodes      = new List<Models.Iso639>();
+            List<Models.Iso639> newCodes      = new();
 
             foreach(Models.Iso639 code in codes)
             {

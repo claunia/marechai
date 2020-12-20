@@ -150,11 +150,11 @@
     <value>Procesadores</value>
     <comment>General purpose processors or coprocessors, including math ones, not including graphical or sound oriented ones</comment>
   </data>
-  <data name="{0} @ {1}MHz ({2} bits)" xml:space="preserve">
+  <data name="{0} @{1}MHz ({2} bits)" xml:space="preserve">
     <value>{0} a {1}Mhz ({2} bits)</value>
     <comment>{0} name, {1} speed in megahertz, {2} general purpose registers size in bits</comment>
   </data>
-  <data name="{0} @ {1}MHz" xml:space="preserve">
+  <data name="{0} @{1}MHz" xml:space="preserve">
     <value>{0} a {1}MHz</value>
     <comment>AAAA</comment>
   </data>
@@ -270,11 +270,11 @@
     <value>Proceso de fabricación</value>
     <comment>Chip manufacturing process</comment>
   </data>
-  <data name="{0} @ {1}µm" xml:space="preserve">
+  <data name="{0} @{1}µm" xml:space="preserve">
     <value>{0} en {1}µm</value>
     <comment>{0} is manufacturing process and {1} is micrometers</comment>
   </data>
-  <data name="{0} @ {1}nm" xml:space="preserve">
+  <data name="{0} @{1}nm" xml:space="preserve">
     <value>{0} en {1}nm</value>
     <comment>{0} is manufacturing process and {1} is nanometers</comment>
   </data>
