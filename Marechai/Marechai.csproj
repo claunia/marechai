@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <Version>4.0.0.1836</Version>
     <Company>Canary Islands Computer Museum</Company>
-    <Copyright>Copyright © 2003-2020 Natalia Portillo</Copyright>
+    <Copyright>Copyright © 2003-2021 Natalia Portillo</Copyright>
     <Product>Canary Islands Computer Museum Website</Product>
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <RootNamespace>Marechai</RootNamespace>
