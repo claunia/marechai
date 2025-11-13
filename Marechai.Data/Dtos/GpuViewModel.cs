@@ -23,9 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-using System;
-
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public class GpuViewModel : BaseViewModel<int>
 {

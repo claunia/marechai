@@ -1,6 +1,4 @@
-using System;
-
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public abstract class DocumentBaseViewModel : BaseViewModel<long>
 {

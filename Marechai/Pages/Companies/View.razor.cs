@@ -27,9 +27,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data.Dtos;
 using Marechai.Database;
 using Marechai.Database.Models;
-using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Companies;

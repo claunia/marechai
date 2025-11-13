@@ -25,7 +25,7 @@
 
 using Marechai.Database;
 
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public class MemoryViewModel
 {

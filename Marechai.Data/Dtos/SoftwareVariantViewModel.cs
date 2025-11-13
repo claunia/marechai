@@ -23,10 +23,9 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using Marechai.Database;
 
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public class SoftwareVariantViewModel : BaseViewModel<ulong>
 {

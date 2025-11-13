@@ -28,9 +28,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
+using Marechai.Data.Dtos;
 using Marechai.Database;
 using Marechai.Shared;
-using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 

@@ -28,8 +28,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Marechai.Data.Dtos;
 using Marechai.Database;
-using Marechai.ViewModels;
 
 namespace Marechai.Helpers;
 

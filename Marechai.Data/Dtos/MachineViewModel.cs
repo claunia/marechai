@@ -23,11 +23,9 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
 using Marechai.Database;
 
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public class MachineViewModel : BaseViewModel<int>
 {

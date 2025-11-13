@@ -24,7 +24,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
-using Marechai.ViewModels;
+using Marechai.Data.Dtos;
 
 namespace Marechai.Pages.Home;
 

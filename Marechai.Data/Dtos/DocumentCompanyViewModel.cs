@@ -25,7 +25,7 @@
 
 using System.ComponentModel;
 
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public class DocumentCompanyViewModel : BaseViewModel<int>
 {

@@ -23,7 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public class GpuByMachineViewModel : BaseViewModel<long>
 {

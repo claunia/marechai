@@ -26,8 +26,8 @@
 using System;
 using System.Threading.Tasks;
 using Blazorise;
+using Marechai.Data.Dtos;
 using Marechai.Shared;
-using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 

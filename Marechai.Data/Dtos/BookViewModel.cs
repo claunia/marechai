@@ -1,4 +1,4 @@
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public class BookViewModel : DocumentBaseViewModel
 {

@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
-using Marechai.ViewModels;
+using Marechai.Data.Dtos;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Marechai.Pages.Admin;

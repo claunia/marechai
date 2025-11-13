@@ -27,7 +27,7 @@ using Aaru.CommonTypes;
 using Marechai.Database;
 using Marechai.Database.Models;
 
-namespace Marechai.ViewModels;
+namespace Marechai.Data.Dtos;
 
 public class MediaViewModel : BaseViewModel<ulong>
 {

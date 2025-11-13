@@ -26,7 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.ViewModels;
+using Marechai.Data.Dtos;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Machines;

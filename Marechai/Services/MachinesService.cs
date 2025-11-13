@@ -27,9 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data.Dtos;
 using Marechai.Database;
 using Marechai.Database.Models;
-using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
