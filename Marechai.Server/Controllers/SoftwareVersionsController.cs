@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,47 +44,45 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareVersionDto>> GetAsync() => await context.SoftwareVersions
-                                                                                 .OrderBy(b => b.Family.Name)
-                                                                                 .ThenBy(b => b.Version)
-                                                                                 .ThenBy(b => b.Introduced)
-                                                                                 .Select(b => new SoftwareVersionDto
-                                                                                  {
-                                                                                      Id         = b.Id,
-                                                                                      Family     = b.Family.Name,
-                                                                                      Name       = b.Name,
-                                                                                      Codename   = b.Codename,
-                                                                                      Version    = b.Version,
-                                                                                      Introduced = b.Introduced,
-                                                                                      Previous   = b.Previous.Name,
-                                                                                      License    = b.License.Name,
-                                                                                      FamilyId   = b.FamilyId,
-                                                                                      LicenseId  = b.LicenseId,
-                                                                                      PreviousId = b.PreviousId
-                                                                                  })
-                                                                                 .ToListAsync();
+    public Task<List<SoftwareVersionDto>> GetAsync() => context.SoftwareVersions.OrderBy(b => b.Family.Name)
+                                                               .ThenBy(b => b.Version)
+                                                               .ThenBy(b => b.Introduced)
+                                                               .Select(b => new SoftwareVersionDto
+                                                                {
+                                                                    Id         = b.Id,
+                                                                    Family     = b.Family.Name,
+                                                                    Name       = b.Name,
+                                                                    Codename   = b.Codename,
+                                                                    Version    = b.Version,
+                                                                    Introduced = b.Introduced,
+                                                                    Previous   = b.Previous.Name,
+                                                                    License    = b.License.Name,
+                                                                    FamilyId   = b.FamilyId,
+                                                                    LicenseId  = b.LicenseId,
+                                                                    PreviousId = b.PreviousId
+                                                                })
+                                                               .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<SoftwareVersionDto> GetAsync(ulong id) => await context.SoftwareVersions
-                                                                         .Where(b => b.Id == id)
-                                                                         .Select(b => new SoftwareVersionDto
-                                                                          {
-                                                                              Id         = b.Id,
-                                                                              Family     = b.Family.Name,
-                                                                              Name       = b.Name,
-                                                                              Codename   = b.Codename,
-                                                                              Version    = b.Version,
-                                                                              Introduced = b.Introduced,
-                                                                              Previous   = b.Previous.Name,
-                                                                              License    = b.License.Name,
-                                                                              FamilyId   = b.FamilyId,
-                                                                              LicenseId  = b.LicenseId,
-                                                                              PreviousId = b.PreviousId
-                                                                          })
-                                                                         .FirstOrDefaultAsync();
+    public Task<SoftwareVersionDto> GetAsync(ulong id) => context.SoftwareVersions.Where(b => b.Id == id)
+                                                                 .Select(b => new SoftwareVersionDto
+                                                                  {
+                                                                      Id         = b.Id,
+                                                                      Family     = b.Family.Name,
+                                                                      Name       = b.Name,
+                                                                      Codename   = b.Codename,
+                                                                      Version    = b.Version,
+                                                                      Introduced = b.Introduced,
+                                                                      Previous   = b.Previous.Name,
+                                                                      License    = b.License.Name,
+                                                                      FamilyId   = b.FamilyId,
+                                                                      LicenseId  = b.LicenseId,
+                                                                      PreviousId = b.PreviousId
+                                                                  })
+                                                                 .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -95,6 +91,7 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
     public async Task UpdateAsync(SoftwareVersionDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoftwareVersion model = await context.SoftwareVersions.FindAsync(dto.Id);
 
@@ -117,7 +114,9 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
     public async Task<ulong> CreateAsync(SoftwareVersionDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new SoftwareVersion
         {
             Name       = dto.Name,
@@ -142,6 +141,7 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
     public async Task DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoftwareVersion item = await context.SoftwareVersions.FindAsync(id);
 

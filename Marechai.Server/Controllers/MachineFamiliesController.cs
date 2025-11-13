@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,30 +44,29 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MachineFamilyDto>> GetAsync() => await context.MachineFamilies
-                                                                               .OrderBy(m => m.Company.Name)
-                                                                               .ThenBy(m => m.Name)
-                                                                               .Select(m => new MachineFamilyDto
-                                                                                {
-                                                                                    Id      = m.Id,
-                                                                                    Company = m.Company.Name,
-                                                                                    Name    = m.Name
-                                                                                })
-                                                                               .OrderBy(m => m.Name)
-                                                                               .ToListAsync();
+    public Task<List<MachineFamilyDto>> GetAsync() => context.MachineFamilies.OrderBy(m => m.Company.Name)
+                                                             .ThenBy(m => m.Name)
+                                                             .Select(m => new MachineFamilyDto
+                                                              {
+                                                                  Id      = m.Id,
+                                                                  Company = m.Company.Name,
+                                                                  Name    = m.Name
+                                                              })
+                                                             .OrderBy(m => m.Name)
+                                                             .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<MachineFamilyDto> GetAsync(int id) => await context.MachineFamilies.Where(f => f.Id == id)
-                                                                     .Select(m => new MachineFamilyDto
-                                                                      {
-                                                                          Id        = m.Id,
-                                                                          CompanyId = m.CompanyId,
-                                                                          Name      = m.Name
-                                                                      })
-                                                                     .FirstOrDefaultAsync();
+    public Task<MachineFamilyDto> GetAsync(int id) => context.MachineFamilies.Where(f => f.Id == id)
+                                                             .Select(m => new MachineFamilyDto
+                                                              {
+                                                                  Id        = m.Id,
+                                                                  CompanyId = m.CompanyId,
+                                                                  Name      = m.Name
+                                                              })
+                                                             .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -78,6 +75,7 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(MachineFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MachineFamily model = await context.MachineFamilies.FindAsync(dto.Id);
 
@@ -96,7 +94,9 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(MachineFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new MachineFamily
         {
             Name      = dto.Name,
@@ -116,6 +116,7 @@ public class MachineFamiliesController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MachineFamily item = await context.MachineFamilies.FindAsync(id);
 

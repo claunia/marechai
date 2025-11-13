@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,41 +44,40 @@ public class ResolutionsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ResolutionDto>> GetAsync() => await context.Resolutions
-                                                                            .Select(r => new ResolutionDto
-                                                                             {
-                                                                                 Id        = r.Id,
-                                                                                 Width     = r.Width,
-                                                                                 Height    = r.Height,
-                                                                                 Colors    = r.Colors,
-                                                                                 Palette   = r.Palette,
-                                                                                 Chars     = r.Chars,
-                                                                                 Grayscale = r.Grayscale
-                                                                             })
-                                                                            .OrderBy(r => r.Width)
-                                                                            .ThenBy(r => r.Height)
-                                                                            .ThenBy(r => r.Chars)
-                                                                            .ThenBy(r => r.Grayscale)
-                                                                            .ThenBy(r => r.Colors)
-                                                                            .ThenBy(r => r.Palette)
-                                                                            .ToListAsync();
+    public Task<List<ResolutionDto>> GetAsync() => context.Resolutions.Select(r => new ResolutionDto
+                                                           {
+                                                               Id        = r.Id,
+                                                               Width     = r.Width,
+                                                               Height    = r.Height,
+                                                               Colors    = r.Colors,
+                                                               Palette   = r.Palette,
+                                                               Chars     = r.Chars,
+                                                               Grayscale = r.Grayscale
+                                                           })
+                                                          .OrderBy(r => r.Width)
+                                                          .ThenBy(r => r.Height)
+                                                          .ThenBy(r => r.Chars)
+                                                          .ThenBy(r => r.Grayscale)
+                                                          .ThenBy(r => r.Colors)
+                                                          .ThenBy(r => r.Palette)
+                                                          .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ResolutionDto> GetAsync(int id) => await context.Resolutions.Where(r => r.Id == id)
-                                                                             .Select(r => new ResolutionDto
-                                                                              {
-                                                                                  Id        = r.Id,
-                                                                                  Width     = r.Width,
-                                                                                  Height    = r.Height,
-                                                                                  Colors    = r.Colors,
-                                                                                  Palette   = r.Palette,
-                                                                                  Chars     = r.Chars,
-                                                                                  Grayscale = r.Grayscale
-                                                                              })
-                                                                             .FirstOrDefaultAsync();
+    public Task<ResolutionDto> GetAsync(int id) => context.Resolutions.Where(r => r.Id == id)
+                                                          .Select(r => new ResolutionDto
+                                                           {
+                                                               Id        = r.Id,
+                                                               Width     = r.Width,
+                                                               Height    = r.Height,
+                                                               Colors    = r.Colors,
+                                                               Palette   = r.Palette,
+                                                               Chars     = r.Chars,
+                                                               Grayscale = r.Grayscale
+                                                           })
+                                                          .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -89,6 +86,7 @@ public class ResolutionsController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(ResolutionDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Resolution model = await context.Resolutions.FindAsync(dto.Id);
 
@@ -111,7 +109,9 @@ public class ResolutionsController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(ResolutionDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Resolution
         {
             Chars     = dto.Chars,
@@ -135,6 +135,7 @@ public class ResolutionsController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Resolution item = await context.Resolutions.FindAsync(id);
 

@@ -34,7 +34,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -53,57 +52,53 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<MachinePhotoDto> GetAsync(Guid id) => await context.MachinePhotos.Where(p => p.Id == id)
-                                                                     .Select(p => new MachinePhotoDto
-                                                                      {
-                                                                          Aperture           = p.Aperture,
-                                                                          Author             = p.Author,
-                                                                          CameraManufacturer = p.CameraManufacturer,
-                                                                          CameraModel        = p.CameraModel,
-                                                                          ColorSpace         = p.ColorSpace,
-                                                                          Comments           = p.Comments,
-                                                                          Contrast           = p.Contrast,
-                                                                          CreationDate       = p.CreationDate,
-                                                                          DigitalZoomRatio   = p.DigitalZoomRatio,
-                                                                          ExifVersion        = p.ExifVersion,
-                                                                          ExposureTime       = p.ExposureTime,
-                                                                          ExposureMethod     = p.ExposureMethod,
-                                                                          ExposureProgram    = p.ExposureProgram,
-                                                                          Flash              = p.Flash,
-                                                                          Focal              = p.Focal,
-                                                                          FocalLength        = p.FocalLength,
-                                                                          FocalLengthEquivalent =
-                                                                              p.FocalLengthEquivalent,
-                                                                          HorizontalResolution =
-                                                                              p.HorizontalResolution,
-                                                                          Id          = p.Id,
-                                                                          IsoRating   = p.IsoRating,
-                                                                          Lens        = p.Lens,
-                                                                          LicenseId   = p.LicenseId,
-                                                                          LicenseName = p.License.Name,
-                                                                          LightSource = p.LightSource,
-                                                                          MachineCompanyName =
-                                                                              p.Machine.Company.Name,
-                                                                          MachineId        = p.MachineId,
-                                                                          MachineName      = p.Machine.Name,
-                                                                          MeteringMode     = p.MeteringMode,
-                                                                          ResolutionUnit   = p.ResolutionUnit,
-                                                                          Orientation      = p.Orientation,
-                                                                          Saturation       = p.Saturation,
-                                                                          SceneCaptureType = p.SceneCaptureType,
-                                                                          SensingMethod    = p.SensingMethod,
-                                                                          Sharpness        = p.Sharpness,
-                                                                          SoftwareUsed     = p.SoftwareUsed,
-                                                                          Source           = p.Source,
-                                                                          SubjectDistanceRange =
-                                                                              p.SubjectDistanceRange,
-                                                                          UploadDate         = p.UploadDate,
-                                                                          UserId             = p.UserId,
-                                                                          VerticalResolution = p.VerticalResolution,
-                                                                          WhiteBalance       = p.WhiteBalance,
-                                                                          OriginalExtension  = p.OriginalExtension
-                                                                      })
-                                                                     .FirstOrDefaultAsync();
+    public Task<MachinePhotoDto> GetAsync(Guid id) => context.MachinePhotos.Where(p => p.Id == id)
+                                                             .Select(p => new MachinePhotoDto
+                                                              {
+                                                                  Aperture              = p.Aperture,
+                                                                  Author                = p.Author,
+                                                                  CameraManufacturer    = p.CameraManufacturer,
+                                                                  CameraModel           = p.CameraModel,
+                                                                  ColorSpace            = p.ColorSpace,
+                                                                  Comments              = p.Comments,
+                                                                  Contrast              = p.Contrast,
+                                                                  CreationDate          = p.CreationDate,
+                                                                  DigitalZoomRatio      = p.DigitalZoomRatio,
+                                                                  ExifVersion           = p.ExifVersion,
+                                                                  ExposureTime          = p.ExposureTime,
+                                                                  ExposureMethod        = p.ExposureMethod,
+                                                                  ExposureProgram       = p.ExposureProgram,
+                                                                  Flash                 = p.Flash,
+                                                                  Focal                 = p.Focal,
+                                                                  FocalLength           = p.FocalLength,
+                                                                  FocalLengthEquivalent = p.FocalLengthEquivalent,
+                                                                  HorizontalResolution  = p.HorizontalResolution,
+                                                                  Id                    = p.Id,
+                                                                  IsoRating             = p.IsoRating,
+                                                                  Lens                  = p.Lens,
+                                                                  LicenseId             = p.LicenseId,
+                                                                  LicenseName           = p.License.Name,
+                                                                  LightSource           = p.LightSource,
+                                                                  MachineCompanyName    = p.Machine.Company.Name,
+                                                                  MachineId             = p.MachineId,
+                                                                  MachineName           = p.Machine.Name,
+                                                                  MeteringMode          = p.MeteringMode,
+                                                                  ResolutionUnit        = p.ResolutionUnit,
+                                                                  Orientation           = p.Orientation,
+                                                                  Saturation            = p.Saturation,
+                                                                  SceneCaptureType      = p.SceneCaptureType,
+                                                                  SensingMethod         = p.SensingMethod,
+                                                                  Sharpness             = p.Sharpness,
+                                                                  SoftwareUsed          = p.SoftwareUsed,
+                                                                  Source                = p.Source,
+                                                                  SubjectDistanceRange  = p.SubjectDistanceRange,
+                                                                  UploadDate            = p.UploadDate,
+                                                                  UserId                = p.UserId,
+                                                                  VerticalResolution    = p.VerticalResolution,
+                                                                  WhiteBalance          = p.WhiteBalance,
+                                                                  OriginalExtension     = p.OriginalExtension
+                                                              })
+                                                             .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -112,6 +107,7 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(MachinePhotoDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MachinePhoto model = await context.MachinePhotos.FindAsync(dto.Id);
 
@@ -162,7 +158,9 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
     public async Task<Guid> CreateAsync(MachinePhotoDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new MachinePhoto
         {
             Aperture              = dto.Aperture,

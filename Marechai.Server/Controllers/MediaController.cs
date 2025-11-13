@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,85 +44,85 @@ public class MediaController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MediaDto>> GetAsync() => await context.Media.OrderBy(d => d.Title)
-                                                                       .Select(d => new MediaDto
-                                                                        {
-                                                                            Id                = d.Id,
-                                                                            Title             = d.Title,
-                                                                            Sequence          = d.Sequence,
-                                                                            LastSequence      = d.LastSequence,
-                                                                            Type              = d.Type,
-                                                                            WriteOffset       = d.WriteOffset,
-                                                                            Sides             = d.Sides,
-                                                                            Layers            = d.Layers,
-                                                                            Sessions          = d.Sessions,
-                                                                            Tracks            = d.Tracks,
-                                                                            Sectors           = d.Sectors,
-                                                                            Size              = d.Size,
-                                                                            CopyProtection    = d.CopyProtection,
-                                                                            PartNumber        = d.PartNumber,
-                                                                            SerialNumber      = d.SerialNumber,
-                                                                            Barcode           = d.Barcode,
-                                                                            CatalogueNumber   = d.CatalogueNumber,
-                                                                            Manufacturer      = d.Manufacturer,
-                                                                            Model             = d.Model,
-                                                                            Revision          = d.Revision,
-                                                                            Firmware          = d.Firmware,
-                                                                            PhysicalBlockSize = d.PhysicalBlockSize,
-                                                                            LogicalBlockSize  = d.LogicalBlockSize,
-                                                                            BlockSizes        = d.BlockSizes,
-                                                                            StorageInterface  = d.StorageInterface,
-                                                                            TableOfContents   = d.TableOfContents
-                                                                        })
-                                                                       .ToListAsync();
+    public Task<List<MediaDto>> GetAsync() => context.Media.OrderBy(d => d.Title)
+                                                     .Select(d => new MediaDto
+                                                      {
+                                                          Id                = d.Id,
+                                                          Title             = d.Title,
+                                                          Sequence          = d.Sequence,
+                                                          LastSequence      = d.LastSequence,
+                                                          Type              = d.Type,
+                                                          WriteOffset       = d.WriteOffset,
+                                                          Sides             = d.Sides,
+                                                          Layers            = d.Layers,
+                                                          Sessions          = d.Sessions,
+                                                          Tracks            = d.Tracks,
+                                                          Sectors           = d.Sectors,
+                                                          Size              = d.Size,
+                                                          CopyProtection    = d.CopyProtection,
+                                                          PartNumber        = d.PartNumber,
+                                                          SerialNumber      = d.SerialNumber,
+                                                          Barcode           = d.Barcode,
+                                                          CatalogueNumber   = d.CatalogueNumber,
+                                                          Manufacturer      = d.Manufacturer,
+                                                          Model             = d.Model,
+                                                          Revision          = d.Revision,
+                                                          Firmware          = d.Firmware,
+                                                          PhysicalBlockSize = d.PhysicalBlockSize,
+                                                          LogicalBlockSize  = d.LogicalBlockSize,
+                                                          BlockSizes        = d.BlockSizes,
+                                                          StorageInterface  = d.StorageInterface,
+                                                          TableOfContents   = d.TableOfContents
+                                                      })
+                                                     .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MediaDto>> GetTitlesAsync() => await context.Media.OrderBy(d => d.Title)
-                                                                              .Select(d => new MediaDto
-                                                                               {
-                                                                                   Id    = d.Id,
-                                                                                   Title = d.Title
-                                                                               })
-                                                                              .ToListAsync();
+    public Task<List<MediaDto>> GetTitlesAsync() => context.Media.OrderBy(d => d.Title)
+                                                           .Select(d => new MediaDto
+                                                            {
+                                                                Id    = d.Id,
+                                                                Title = d.Title
+                                                            })
+                                                           .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<MediaDto> GetAsync(ulong id) => await context.Media.Where(d => d.Id == id)
-                                                                          .Select(d => new MediaDto
-                                                                           {
-                                                                               Id                = d.Id,
-                                                                               Title             = d.Title,
-                                                                               Sequence          = d.Sequence,
-                                                                               LastSequence      = d.LastSequence,
-                                                                               Type              = d.Type,
-                                                                               WriteOffset       = d.WriteOffset,
-                                                                               Sides             = d.Sides,
-                                                                               Layers            = d.Layers,
-                                                                               Sessions          = d.Sessions,
-                                                                               Tracks            = d.Tracks,
-                                                                               Sectors           = d.Sectors,
-                                                                               Size              = d.Size,
-                                                                               CopyProtection    = d.CopyProtection,
-                                                                               PartNumber        = d.PartNumber,
-                                                                               SerialNumber      = d.SerialNumber,
-                                                                               Barcode           = d.Barcode,
-                                                                               CatalogueNumber   = d.CatalogueNumber,
-                                                                               Manufacturer      = d.Manufacturer,
-                                                                               Model             = d.Model,
-                                                                               Revision          = d.Revision,
-                                                                               Firmware          = d.Firmware,
-                                                                               PhysicalBlockSize = d.PhysicalBlockSize,
-                                                                               LogicalBlockSize  = d.LogicalBlockSize,
-                                                                               BlockSizes        = d.BlockSizes,
-                                                                               StorageInterface  = d.StorageInterface,
-                                                                               TableOfContents   = d.TableOfContents
-                                                                           })
-                                                                          .FirstOrDefaultAsync();
+    public Task<MediaDto> GetAsync(ulong id) => context.Media.Where(d => d.Id == id)
+                                                       .Select(d => new MediaDto
+                                                        {
+                                                            Id                = d.Id,
+                                                            Title             = d.Title,
+                                                            Sequence          = d.Sequence,
+                                                            LastSequence      = d.LastSequence,
+                                                            Type              = d.Type,
+                                                            WriteOffset       = d.WriteOffset,
+                                                            Sides             = d.Sides,
+                                                            Layers            = d.Layers,
+                                                            Sessions          = d.Sessions,
+                                                            Tracks            = d.Tracks,
+                                                            Sectors           = d.Sectors,
+                                                            Size              = d.Size,
+                                                            CopyProtection    = d.CopyProtection,
+                                                            PartNumber        = d.PartNumber,
+                                                            SerialNumber      = d.SerialNumber,
+                                                            Barcode           = d.Barcode,
+                                                            CatalogueNumber   = d.CatalogueNumber,
+                                                            Manufacturer      = d.Manufacturer,
+                                                            Model             = d.Model,
+                                                            Revision          = d.Revision,
+                                                            Firmware          = d.Firmware,
+                                                            PhysicalBlockSize = d.PhysicalBlockSize,
+                                                            LogicalBlockSize  = d.LogicalBlockSize,
+                                                            BlockSizes        = d.BlockSizes,
+                                                            StorageInterface  = d.StorageInterface,
+                                                            TableOfContents   = d.TableOfContents
+                                                        })
+                                                       .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -133,6 +131,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(MediaDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Media model = await context.Media.FindAsync(dto.Id);
 
@@ -173,7 +172,9 @@ public class MediaController(MarechaiContext context) : ControllerBase
     public async Task<ulong> CreateAsync(MediaDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new Media
         {
             Title             = dto.Title,
@@ -216,6 +217,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Media item = await context.Media.FindAsync(id);
 

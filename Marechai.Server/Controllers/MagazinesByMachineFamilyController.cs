@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,17 +44,17 @@ public class MagazinesByMachineFamilyController(MarechaiContext context) : Contr
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MagazineByMachineFamilyDto>> GetByMagazine(long bookId) => await context
-                                                                                                 .MagazinesByMachinesFamilies.Where(p => p.MagazineId == bookId)
-                                                                                                 .Select(p => new MagazineByMachineFamilyDto
-                                                                                                  {
-                                                                                                      Id              = p.Id,
-                                                                                                      MagazineId      = p.MagazineId,
-                                                                                                      MachineFamilyId = p.MachineFamilyId,
-                                                                                                      MachineFamily   = p.MachineFamily.Name
-                                                                                                  })
-                                                                                                 .OrderBy(p => p.MachineFamily)
-                                                                                                 .ToListAsync();
+    public Task<List<MagazineByMachineFamilyDto>> GetByMagazine(long bookId) => context.MagazinesByMachinesFamilies
+       .Where(p => p.MagazineId == bookId)
+       .Select(p => new MagazineByMachineFamilyDto
+        {
+            Id              = p.Id,
+            MagazineId      = p.MagazineId,
+            MachineFamilyId = p.MachineFamilyId,
+            MachineFamily   = p.MachineFamily.Name
+        })
+       .OrderBy(p => p.MachineFamily)
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -65,6 +63,7 @@ public class MagazinesByMachineFamilyController(MarechaiContext context) : Contr
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MagazinesByMachineFamily item = await context.MagazinesByMachinesFamilies.FindAsync(id);
 
@@ -82,7 +81,9 @@ public class MagazinesByMachineFamilyController(MarechaiContext context) : Contr
     public async Task<long> CreateAsync(int machineFamilyId, long bookId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var item = new MagazinesByMachineFamily
         {
             MachineFamilyId = machineFamilyId,

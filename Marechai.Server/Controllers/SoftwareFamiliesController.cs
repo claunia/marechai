@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,32 +44,31 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareFamilyDto>> GetAsync() => await context.SoftwareFamilies.OrderBy(b => b.Name)
-                                                                                .Select(b => new SoftwareFamilyDto
-                                                                                 {
-                                                                                     Id         = b.Id,
-                                                                                     Name       = b.Name,
-                                                                                     Parent     = b.Parent.Name,
-                                                                                     Introduced = b.Introduced,
-                                                                                     ParentId   = b.ParentId
-                                                                                 })
-                                                                                .ToListAsync();
+    public Task<List<SoftwareFamilyDto>> GetAsync() => context.SoftwareFamilies.OrderBy(b => b.Name)
+                                                              .Select(b => new SoftwareFamilyDto
+                                                               {
+                                                                   Id         = b.Id,
+                                                                   Name       = b.Name,
+                                                                   Parent     = b.Parent.Name,
+                                                                   Introduced = b.Introduced,
+                                                                   ParentId   = b.ParentId
+                                                               })
+                                                              .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<SoftwareFamilyDto> GetAsync(ulong id) => await context.SoftwareFamilies
-                                                                        .Where(b => b.Id == id)
-                                                                        .Select(b => new SoftwareFamilyDto
-                                                                         {
-                                                                             Id         = b.Id,
-                                                                             Name       = b.Name,
-                                                                             Parent     = b.Parent.Name,
-                                                                             Introduced = b.Introduced,
-                                                                             ParentId   = b.ParentId
-                                                                         })
-                                                                        .FirstOrDefaultAsync();
+    public Task<SoftwareFamilyDto> GetAsync(ulong id) => context.SoftwareFamilies.Where(b => b.Id == id)
+                                                                .Select(b => new SoftwareFamilyDto
+                                                                 {
+                                                                     Id         = b.Id,
+                                                                     Name       = b.Name,
+                                                                     Parent     = b.Parent.Name,
+                                                                     Introduced = b.Introduced,
+                                                                     ParentId   = b.ParentId
+                                                                 })
+                                                                .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -80,6 +77,7 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
     public async Task UpdateAsync(SoftwareFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoftwareFamily model = await context.SoftwareFamilies.FindAsync(dto.Id);
 
@@ -98,7 +96,9 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
     public async Task<ulong> CreateAsync(SoftwareFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new SoftwareFamily
         {
             Name       = dto.Name,
@@ -119,6 +119,7 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
     public async Task DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoftwareFamily item = await context.SoftwareFamilies.FindAsync(id);
 

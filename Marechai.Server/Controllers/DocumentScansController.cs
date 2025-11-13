@@ -34,7 +34,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -53,29 +52,29 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<DocumentScanDto> GetAsync(Guid id) => await context.DocumentScans.Where(p => p.Id == id)
-                                                                     .Select(p => new DocumentScanDto
-                                                                      {
-                                                                          Author               = p.Author,
-                                                                          DocumentId           = p.Document.Id,
-                                                                          ColorSpace           = p.ColorSpace,
-                                                                          Comments             = p.Comments,
-                                                                          CreationDate         = p.CreationDate,
-                                                                          ExifVersion          = p.ExifVersion,
-                                                                          HorizontalResolution = p.HorizontalResolution,
-                                                                          Id                   = p.Id,
-                                                                          ResolutionUnit       = p.ResolutionUnit,
-                                                                          Page                 = p.Page,
-                                                                          ScannerManufacturer  = p.ScannerManufacturer,
-                                                                          ScannerModel         = p.ScannerModel,
-                                                                          SoftwareUsed         = p.SoftwareUsed,
-                                                                          Type                 = p.Type,
-                                                                          UploadDate           = p.UploadDate,
-                                                                          UserId               = p.UserId,
-                                                                          VerticalResolution   = p.VerticalResolution,
-                                                                          OriginalExtension    = p.OriginalExtension
-                                                                      })
-                                                                     .FirstOrDefaultAsync();
+    public Task<DocumentScanDto> GetAsync(Guid id) => context.DocumentScans.Where(p => p.Id == id)
+                                                             .Select(p => new DocumentScanDto
+                                                              {
+                                                                  Author               = p.Author,
+                                                                  DocumentId           = p.Document.Id,
+                                                                  ColorSpace           = p.ColorSpace,
+                                                                  Comments             = p.Comments,
+                                                                  CreationDate         = p.CreationDate,
+                                                                  ExifVersion          = p.ExifVersion,
+                                                                  HorizontalResolution = p.HorizontalResolution,
+                                                                  Id                   = p.Id,
+                                                                  ResolutionUnit       = p.ResolutionUnit,
+                                                                  Page                 = p.Page,
+                                                                  ScannerManufacturer  = p.ScannerManufacturer,
+                                                                  ScannerModel         = p.ScannerModel,
+                                                                  SoftwareUsed         = p.SoftwareUsed,
+                                                                  Type                 = p.Type,
+                                                                  UploadDate           = p.UploadDate,
+                                                                  UserId               = p.UserId,
+                                                                  VerticalResolution   = p.VerticalResolution,
+                                                                  OriginalExtension    = p.OriginalExtension
+                                                              })
+                                                             .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -84,6 +83,7 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(DocumentScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         DocumentScan model = await context.DocumentScans.FindAsync(dto.Id);
 
@@ -113,7 +113,9 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
     public async Task<Guid> CreateAsync(DocumentScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new DocumentScan
         {
             Author               = dto.Author,
@@ -149,6 +151,7 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(Guid id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         DocumentScan item = await context.DocumentScans.FindAsync(id);
 

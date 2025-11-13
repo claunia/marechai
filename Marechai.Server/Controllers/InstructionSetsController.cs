@@ -28,13 +28,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,25 +44,25 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<InstructionSet>> GetAsync() => await context.InstructionSets.OrderBy(e => e.Name)
-                                                                       .Select(e => new InstructionSet
-                                                                        {
-                                                                            Name = e.Name,
-                                                                            Id   = e.Id
-                                                                        })
-                                                                       .ToListAsync();
+    public Task<List<InstructionSet>> GetAsync() => context.InstructionSets.OrderBy(e => e.Name)
+                                                           .Select(e => new InstructionSet
+                                                            {
+                                                                Name = e.Name,
+                                                                Id   = e.Id
+                                                            })
+                                                           .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<InstructionSet> GetAsync(int id) => await context.InstructionSets.Where(e => e.Id == id)
-                                                                        .Select(e => new InstructionSet
-                                                                         {
-                                                                             Name = e.Name,
-                                                                             Id   = e.Id
-                                                                         })
-                                                                        .FirstOrDefaultAsync();
+    public Task<InstructionSet> GetAsync(int id) => context.InstructionSets.Where(e => e.Id == id)
+                                                           .Select(e => new InstructionSet
+                                                            {
+                                                                Name = e.Name,
+                                                                Id   = e.Id
+                                                            })
+                                                           .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -73,6 +71,7 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(InstructionSet viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         InstructionSet model = await context.InstructionSets.FindAsync(viewModel.Id);
 
@@ -90,7 +89,9 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(InstructionSet viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new InstructionSet
         {
             Name = viewModel.Name
@@ -109,6 +110,7 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         InstructionSet item = await context.InstructionSets.FindAsync(id);
 

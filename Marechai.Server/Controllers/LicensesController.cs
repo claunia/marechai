@@ -23,18 +23,15 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,34 +43,34 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<License>> GetAsync() => await context.Licenses.OrderBy(l => l.Name)
-                                                                .Select(l => new License
-                                                                 {
-                                                                     FsfApproved = l.FsfApproved,
-                                                                     Id          = l.Id,
-                                                                     Link        = l.Link,
-                                                                     Name        = l.Name,
-                                                                     OsiApproved = l.OsiApproved,
-                                                                     SPDX        = l.SPDX
-                                                                 })
-                                                                .ToListAsync();
+    public Task<List<License>> GetAsync() => context.Licenses.OrderBy(l => l.Name)
+                                                    .Select(l => new License
+                                                     {
+                                                         FsfApproved = l.FsfApproved,
+                                                         Id          = l.Id,
+                                                         Link        = l.Link,
+                                                         Name        = l.Name,
+                                                         OsiApproved = l.OsiApproved,
+                                                         SPDX        = l.SPDX
+                                                     })
+                                                    .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<License> GetAsync(int id) => await context.Licenses.Where(l => l.Id == id)
-                                                                 .Select(l => new License
-                                                                  {
-                                                                      FsfApproved = l.FsfApproved,
-                                                                      Id          = l.Id,
-                                                                      Link        = l.Link,
-                                                                      Name        = l.Name,
-                                                                      OsiApproved = l.OsiApproved,
-                                                                      SPDX        = l.SPDX,
-                                                                      Text        = l.Text
-                                                                  })
-                                                                 .FirstOrDefaultAsync();
+    public Task<License> GetAsync(int id) => context.Licenses.Where(l => l.Id == id)
+                                                    .Select(l => new License
+                                                     {
+                                                         FsfApproved = l.FsfApproved,
+                                                         Id          = l.Id,
+                                                         Link        = l.Link,
+                                                         Name        = l.Name,
+                                                         OsiApproved = l.OsiApproved,
+                                                         SPDX        = l.SPDX,
+                                                         Text        = l.Text
+                                                     })
+                                                    .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -82,6 +79,7 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(License viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         License model = await context.Licenses.FindAsync(viewModel.Id);
 
@@ -104,7 +102,9 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(License viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new License
         {
             FsfApproved = viewModel.FsfApproved,
@@ -128,6 +128,7 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         License item = await context.Licenses.FindAsync(id);
 

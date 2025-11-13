@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,63 +44,63 @@ public class GpusController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<GpuDto>> GetAsync() => await context.Gpus.OrderBy(g => g.Company.Name)
-                                                                     .ThenBy(g => g.Name)
-                                                                     .ThenBy(g => g.Introduced)
-                                                                     .Select(g => new GpuDto
-                                                                      {
-                                                                          Id         = g.Id,
-                                                                          Company    = g.Company.Name,
-                                                                          Introduced = g.Introduced,
-                                                                          ModelCode  = g.ModelCode,
-                                                                          Name       = g.Name
-                                                                      })
-                                                                     .ToListAsync();
+    public Task<List<GpuDto>> GetAsync() => context.Gpus.OrderBy(g => g.Company.Name)
+                                                   .ThenBy(g => g.Name)
+                                                   .ThenBy(g => g.Introduced)
+                                                   .Select(g => new GpuDto
+                                                    {
+                                                        Id         = g.Id,
+                                                        Company    = g.Company.Name,
+                                                        Introduced = g.Introduced,
+                                                        ModelCode  = g.ModelCode,
+                                                        Name       = g.Name
+                                                    })
+                                                   .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<GpuDto>> GetByMachineAsync(int machineId) => await context.GpusByMachine
-                                                                                 .Where(g => g.MachineId == machineId)
-                                                                                 .Select(g => g.Gpu)
-                                                                                 .OrderBy(g => g.Company.Name)
-                                                                                 .ThenBy(g => g.Name)
-                                                                                 .Select(g => new GpuDto
-                                                                                  {
-                                                                                      Id          = g.Id,
-                                                                                      Name        = g.Name,
-                                                                                      Company     = g.Company.Name,
-                                                                                      CompanyId   = g.Company.Id,
-                                                                                      ModelCode   = g.ModelCode,
-                                                                                      Introduced  = g.Introduced,
-                                                                                      Package     = g.Package,
-                                                                                      Process     = g.Process,
-                                                                                      ProcessNm   = g.ProcessNm,
-                                                                                      DieSize     = g.DieSize,
-                                                                                      Transistors = g.Transistors
-                                                                                  })
-                                                                                 .ToListAsync();
+    public Task<List<GpuDto>> GetByMachineAsync(int machineId) => context.GpusByMachine
+                                                                         .Where(g => g.MachineId == machineId)
+                                                                         .Select(g => g.Gpu)
+                                                                         .OrderBy(g => g.Company.Name)
+                                                                         .ThenBy(g => g.Name)
+                                                                         .Select(g => new GpuDto
+                                                                          {
+                                                                              Id          = g.Id,
+                                                                              Name        = g.Name,
+                                                                              Company     = g.Company.Name,
+                                                                              CompanyId   = g.Company.Id,
+                                                                              ModelCode   = g.ModelCode,
+                                                                              Introduced  = g.Introduced,
+                                                                              Package     = g.Package,
+                                                                              Process     = g.Process,
+                                                                              ProcessNm   = g.ProcessNm,
+                                                                              DieSize     = g.DieSize,
+                                                                              Transistors = g.Transistors
+                                                                          })
+                                                                         .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<GpuDto> GetAsync(int id) => await context.Gpus.Where(g => g.Id == id)
-                                                                      .Select(g => new GpuDto
-                                                                       {
-                                                                           Id          = g.Id,
-                                                                           Name        = g.Name,
-                                                                           CompanyId   = g.Company.Id,
-                                                                           ModelCode   = g.ModelCode,
-                                                                           Introduced  = g.Introduced,
-                                                                           Package     = g.Package,
-                                                                           Process     = g.Process,
-                                                                           ProcessNm   = g.ProcessNm,
-                                                                           DieSize     = g.DieSize,
-                                                                           Transistors = g.Transistors
-                                                                       })
-                                                                      .FirstOrDefaultAsync();
+    public Task<GpuDto> GetAsync(int id) => context.Gpus.Where(g => g.Id == id)
+                                                   .Select(g => new GpuDto
+                                                    {
+                                                        Id          = g.Id,
+                                                        Name        = g.Name,
+                                                        CompanyId   = g.Company.Id,
+                                                        ModelCode   = g.ModelCode,
+                                                        Introduced  = g.Introduced,
+                                                        Package     = g.Package,
+                                                        Process     = g.Process,
+                                                        ProcessNm   = g.ProcessNm,
+                                                        DieSize     = g.DieSize,
+                                                        Transistors = g.Transistors
+                                                    })
+                                                   .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -111,6 +109,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(GpuDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Gpu model = await context.Gpus.FindAsync(dto.Id);
 
@@ -136,7 +135,9 @@ public class GpusController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(GpuDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Gpu
         {
             Name        = dto.Name,
@@ -163,6 +164,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Gpu item = await context.Gpus.FindAsync(id);
 

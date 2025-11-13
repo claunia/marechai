@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,64 +44,62 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoftwareVariantDto>> GetAsync() => await context.SoftwareVariants
-                                                                                 .OrderBy(b => b.SoftwareVersion.Family.Name)
-                                                                                 .ThenBy(b => b.SoftwareVersion.Version)
-                                                                                 .ThenBy(b => b.Name)
-                                                                                 .ThenBy(b => b.Version)
-                                                                                 .ThenBy(b => b.Introduced)
-                                                                                 .Select(b => new SoftwareVariantDto
-                                                                                  {
-                                                                                      Id = b.Id,
-                                                                                      Name = b.Name,
-                                                                                      Version = b.Version,
-                                                                                      Introduced = b.Introduced,
-                                                                                      ParentId = b.ParentId,
-                                                                                      Parent = b.Parent.Name ?? b.Parent.Version,
-                                                                                      SoftwareVersionId = b.SoftwareVersionId,
-                                                                                      SoftwareVersion =
-                                                                                          b.SoftwareVersion.Name ??
-                                                                                          b.SoftwareVersion.Version,
-                                                                                      MinimumMemory     = b.MinimumMemory,
-                                                                                      RecommendedMemory = b.RecommendedMemory,
-                                                                                      RequiredStorage   = b.RequiredStorage,
-                                                                                      PartNumber        = b.PartNumber,
-                                                                                      SerialNumber      = b.SerialNumber,
-                                                                                      ProductCode       = b.ProductCode,
-                                                                                      CatalogueNumber   = b.CatalogueNumber,
-                                                                                      DistributionMode  = b.DistributionMode
-                                                                                  })
-                                                                                 .ToListAsync();
+    public Task<List<SoftwareVariantDto>> GetAsync() => context.SoftwareVariants
+                                                               .OrderBy(b => b.SoftwareVersion.Family.Name)
+                                                               .ThenBy(b => b.SoftwareVersion.Version)
+                                                               .ThenBy(b => b.Name)
+                                                               .ThenBy(b => b.Version)
+                                                               .ThenBy(b => b.Introduced)
+                                                               .Select(b => new SoftwareVariantDto
+                                                                {
+                                                                    Id = b.Id,
+                                                                    Name = b.Name,
+                                                                    Version = b.Version,
+                                                                    Introduced = b.Introduced,
+                                                                    ParentId = b.ParentId,
+                                                                    Parent = b.Parent.Name ?? b.Parent.Version,
+                                                                    SoftwareVersionId = b.SoftwareVersionId,
+                                                                    SoftwareVersion =
+                                                                        b.SoftwareVersion.Name ??
+                                                                        b.SoftwareVersion.Version,
+                                                                    MinimumMemory     = b.MinimumMemory,
+                                                                    RecommendedMemory = b.RecommendedMemory,
+                                                                    RequiredStorage   = b.RequiredStorage,
+                                                                    PartNumber        = b.PartNumber,
+                                                                    SerialNumber      = b.SerialNumber,
+                                                                    ProductCode       = b.ProductCode,
+                                                                    CatalogueNumber   = b.CatalogueNumber,
+                                                                    DistributionMode  = b.DistributionMode
+                                                                })
+                                                               .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<SoftwareVariantDto> GetAsync(ulong id) => await context.SoftwareVariants
-                                                                         .Where(b => b.Id == id)
-                                                                         .Select(b => new SoftwareVariantDto
-                                                                          {
-                                                                              Id         = b.Id,
-                                                                              Name       = b.Name,
-                                                                              Version    = b.Version,
-                                                                              Introduced = b.Introduced,
-                                                                              ParentId   = b.ParentId,
-                                                                              Parent =
-                                                                                  b.Parent.Name ?? b.Parent.Version,
-                                                                              SoftwareVersionId = b.SoftwareVersionId,
-                                                                              SoftwareVersion =
-                                                                                  b.SoftwareVersion.Name ??
-                                                                                  b.SoftwareVersion.Version,
-                                                                              MinimumMemory     = b.MinimumMemory,
-                                                                              RecommendedMemory = b.RecommendedMemory,
-                                                                              RequiredStorage   = b.RequiredStorage,
-                                                                              PartNumber        = b.PartNumber,
-                                                                              SerialNumber      = b.SerialNumber,
-                                                                              ProductCode       = b.ProductCode,
-                                                                              CatalogueNumber   = b.CatalogueNumber,
-                                                                              DistributionMode  = b.DistributionMode
-                                                                          })
-                                                                         .FirstOrDefaultAsync();
+    public Task<SoftwareVariantDto> GetAsync(ulong id) => context.SoftwareVariants.Where(b => b.Id == id)
+                                                                 .Select(b => new SoftwareVariantDto
+                                                                  {
+                                                                      Id         = b.Id,
+                                                                      Name       = b.Name,
+                                                                      Version    = b.Version,
+                                                                      Introduced = b.Introduced,
+                                                                      ParentId   = b.ParentId,
+                                                                      Parent =
+                                                                          b.Parent.Name ?? b.Parent.Version,
+                                                                      SoftwareVersionId = b.SoftwareVersionId,
+                                                                      SoftwareVersion = b.SoftwareVersion.Name ??
+                                                                          b.SoftwareVersion.Version,
+                                                                      MinimumMemory     = b.MinimumMemory,
+                                                                      RecommendedMemory = b.RecommendedMemory,
+                                                                      RequiredStorage   = b.RequiredStorage,
+                                                                      PartNumber        = b.PartNumber,
+                                                                      SerialNumber      = b.SerialNumber,
+                                                                      ProductCode       = b.ProductCode,
+                                                                      CatalogueNumber   = b.CatalogueNumber,
+                                                                      DistributionMode  = b.DistributionMode
+                                                                  })
+                                                                 .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -112,6 +108,7 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
     public async Task UpdateAsync(SoftwareVariantDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoftwareVariant model = await context.SoftwareVariants.FindAsync(dto.Id);
 
@@ -141,7 +138,9 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
     public async Task<ulong> CreateAsync(SoftwareVariantDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new SoftwareVariant
         {
             Name              = dto.Name,
@@ -172,6 +171,7 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
     public async Task DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoftwareVariant item = await context.SoftwareVariants.FindAsync(id);
 

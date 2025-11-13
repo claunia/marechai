@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,42 +44,41 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MagazineIssueDto>> GetAsync() => await context.MagazineIssues
-                                                                               .OrderBy(b => b.Magazine.Title)
-                                                                               .ThenBy(b => b.Published)
-                                                                               .ThenBy(b => b.Caption)
-                                                                               .Select(b => new MagazineIssueDto
-                                                                                {
-                                                                                    Id            = b.Id,
-                                                                                    MagazineId    = b.MagazineId,
-                                                                                    MagazineTitle = b.Magazine.Title,
-                                                                                    Caption       = b.Caption,
-                                                                                    NativeCaption = b.NativeCaption,
-                                                                                    Published     = b.Published,
-                                                                                    ProductCode   = b.ProductCode,
-                                                                                    Pages         = b.Pages,
-                                                                                    IssueNumber   = b.IssueNumber
-                                                                                })
-                                                                               .ToListAsync();
+    public Task<List<MagazineIssueDto>> GetAsync() => context.MagazineIssues.OrderBy(b => b.Magazine.Title)
+                                                             .ThenBy(b => b.Published)
+                                                             .ThenBy(b => b.Caption)
+                                                             .Select(b => new MagazineIssueDto
+                                                              {
+                                                                  Id            = b.Id,
+                                                                  MagazineId    = b.MagazineId,
+                                                                  MagazineTitle = b.Magazine.Title,
+                                                                  Caption       = b.Caption,
+                                                                  NativeCaption = b.NativeCaption,
+                                                                  Published     = b.Published,
+                                                                  ProductCode   = b.ProductCode,
+                                                                  Pages         = b.Pages,
+                                                                  IssueNumber   = b.IssueNumber
+                                                              })
+                                                             .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<MagazineIssueDto> GetAsync(long id) => await context.MagazineIssues.Where(b => b.Id == id)
-                                                                      .Select(b => new MagazineIssueDto
-                                                                       {
-                                                                           Id            = b.Id,
-                                                                           MagazineId    = b.MagazineId,
-                                                                           MagazineTitle = b.Magazine.Title,
-                                                                           Caption       = b.Caption,
-                                                                           NativeCaption = b.NativeCaption,
-                                                                           Published     = b.Published,
-                                                                           ProductCode   = b.ProductCode,
-                                                                           Pages         = b.Pages,
-                                                                           IssueNumber   = b.IssueNumber
-                                                                       })
-                                                                      .FirstOrDefaultAsync();
+    public Task<MagazineIssueDto> GetAsync(long id) => context.MagazineIssues.Where(b => b.Id == id)
+                                                              .Select(b => new MagazineIssueDto
+                                                               {
+                                                                   Id            = b.Id,
+                                                                   MagazineId    = b.MagazineId,
+                                                                   MagazineTitle = b.Magazine.Title,
+                                                                   Caption       = b.Caption,
+                                                                   NativeCaption = b.NativeCaption,
+                                                                   Published     = b.Published,
+                                                                   ProductCode   = b.ProductCode,
+                                                                   Pages         = b.Pages,
+                                                                   IssueNumber   = b.IssueNumber
+                                                               })
+                                                              .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -90,6 +87,7 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(MagazineIssueDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MagazineIssue model = await context.MagazineIssues.FindAsync(dto.Id);
 
@@ -112,7 +110,9 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
     public async Task<long> CreateAsync(MagazineIssueDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new MagazineIssue
         {
             MagazineId    = dto.MagazineId,
@@ -137,6 +137,7 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MagazineIssue item = await context.MagazineIssues.FindAsync(id);
 

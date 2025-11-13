@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,19 +44,19 @@ public class SoundSynthsByMachineController(MarechaiContext context) : Controlle
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoundSynthByMachineDto>> GetByMachine(int machineId) => await context.SoundByMachine
-                                                                                                      .Where(g => g.MachineId == machineId)
-                                                                                                      .Select(g => new SoundSynthByMachineDto
-                                                                                                       {
-                                                                                                           Id           = g.Id,
-                                                                                                           Name         = g.SoundSynth.Name,
-                                                                                                           CompanyName  = g.SoundSynth.Company.Name,
-                                                                                                           SoundSynthId = g.SoundSynthId,
-                                                                                                           MachineId    = g.MachineId
-                                                                                                       })
-                                                                                                      .OrderBy(g => g.CompanyName)
-                                                                                                      .ThenBy(g => g.Name)
-                                                                                                      .ToListAsync();
+    public Task<List<SoundSynthByMachineDto>> GetByMachine(int machineId) => context.SoundByMachine
+       .Where(g => g.MachineId == machineId)
+       .Select(g => new SoundSynthByMachineDto
+        {
+            Id           = g.Id,
+            Name         = g.SoundSynth.Name,
+            CompanyName  = g.SoundSynth.Company.Name,
+            SoundSynthId = g.SoundSynthId,
+            MachineId    = g.MachineId
+        })
+       .OrderBy(g => g.CompanyName)
+       .ThenBy(g => g.Name)
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -67,6 +65,7 @@ public class SoundSynthsByMachineController(MarechaiContext context) : Controlle
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoundByMachine item = await context.SoundByMachine.FindAsync(id);
 
@@ -84,7 +83,9 @@ public class SoundSynthsByMachineController(MarechaiContext context) : Controlle
     public async Task<long> CreateAsync(int soundSynthId, int machineId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var item = new SoundByMachine
         {
             SoundSynthId = soundSynthId,

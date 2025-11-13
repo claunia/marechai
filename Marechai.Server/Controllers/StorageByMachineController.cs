@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,20 +44,20 @@ public class StorageByMachineController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<StorageByMachineDto>> GetByMachine(int machineId) => await context.StorageByMachine
-                                                                                                   .Where(s => s.MachineId == machineId)
-                                                                                                   .Select(s => new StorageByMachineDto
-                                                                                                    {
-                                                                                                        Id        = s.Id,
-                                                                                                        Type      = s.Type,
-                                                                                                        Interface = s.Interface,
-                                                                                                        Capacity  = s.Capacity,
-                                                                                                        MachineId = s.MachineId
-                                                                                                    })
-                                                                                                   .OrderBy(s => s.Type)
-                                                                                                   .ThenBy(s => s.Interface)
-                                                                                                   .ThenBy(s => s.Capacity)
-                                                                                                   .ToListAsync();
+    public Task<List<StorageByMachineDto>> GetByMachine(int machineId) => context.StorageByMachine
+       .Where(s => s.MachineId == machineId)
+       .Select(s => new StorageByMachineDto
+        {
+            Id        = s.Id,
+            Type      = s.Type,
+            Interface = s.Interface,
+            Capacity  = s.Capacity,
+            MachineId = s.MachineId
+        })
+       .OrderBy(s => s.Type)
+       .ThenBy(s => s.Interface)
+       .ThenBy(s => s.Capacity)
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -68,6 +66,7 @@ public class StorageByMachineController(MarechaiContext context) : ControllerBas
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         StorageByMachine item = await context.StorageByMachine.FindAsync(id);
 
@@ -82,10 +81,12 @@ public class StorageByMachineController(MarechaiContext context) : ControllerBas
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(int    machineId, StorageType type, StorageInterface @interface, long? capacity)
+    public async Task<long> CreateAsync(int machineId, StorageType type, StorageInterface @interface, long? capacity)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var item = new StorageByMachine
         {
             MachineId = machineId,

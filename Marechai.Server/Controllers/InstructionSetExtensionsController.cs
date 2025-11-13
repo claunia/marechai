@@ -28,13 +28,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,27 +44,25 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<InstructionSetExtension>> GetAsync() => await context.InstructionSetExtensions
-                                                                                .OrderBy(e => e.Extension)
-                                                                                .Select(e => new InstructionSetExtension
-                                                                                 {
-                                                                                     Extension = e.Extension,
-                                                                                     Id        = e.Id
-                                                                                 })
-                                                                                .ToListAsync();
+    public Task<List<InstructionSetExtension>> GetAsync() => context.InstructionSetExtensions.OrderBy(e => e.Extension)
+                                                                    .Select(e => new InstructionSetExtension
+                                                                     {
+                                                                         Extension = e.Extension,
+                                                                         Id        = e.Id
+                                                                     })
+                                                                    .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<InstructionSetExtension> GetAsync(int id) => await context.InstructionSetExtensions
-                                                                      .Where(e => e.Id == id)
-                                                                      .Select(e => new InstructionSetExtension
-                                                                       {
-                                                                           Extension = e.Extension,
-                                                                           Id        = e.Id
-                                                                       })
-                                                                      .FirstOrDefaultAsync();
+    public Task<InstructionSetExtension> GetAsync(int id) => context.InstructionSetExtensions.Where(e => e.Id == id)
+                                                                    .Select(e => new InstructionSetExtension
+                                                                     {
+                                                                         Extension = e.Extension,
+                                                                         Id        = e.Id
+                                                                     })
+                                                                    .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -75,6 +71,7 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     public async Task UpdateAsync(InstructionSetExtension viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         InstructionSetExtension model = await context.InstructionSetExtensions.FindAsync(viewModel.Id);
 
@@ -92,7 +89,9 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     public async Task<int> CreateAsync(InstructionSetExtension viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new InstructionSetExtension
         {
             Extension = viewModel.Extension
@@ -111,6 +110,7 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         InstructionSetExtension item = await context.InstructionSetExtensions.FindAsync(id);
 
@@ -127,6 +127,6 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public bool VerifyUnique(string extension) =>
         !context.InstructionSetExtensions.Any(i => string.Equals(i.Extension,
-                                                                  extension,
-                                                                  StringComparison.InvariantCultureIgnoreCase));
+                                                                 extension,
+                                                                 StringComparison.InvariantCultureIgnoreCase));
 }

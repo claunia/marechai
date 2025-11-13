@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -46,15 +45,15 @@ public class NewsController(MarechaiContext context, IStringLocalizer<NewsServic
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<NewsDto>> GetAsync() => await context.News.OrderByDescending(n => n.Date)
-                                                                      .Select(n => new NewsDto
-                                                                       {
-                                                                           Id         = n.Id,
-                                                                           Timestamp  = n.Date,
-                                                                           Type       = n.Type,
-                                                                           AffectedId = n.AddedId
-                                                                       })
-                                                                      .ToListAsync();
+    public Task<List<NewsDto>> GetAsync() => context.News.OrderByDescending(n => n.Date)
+                                                    .Select(n => new NewsDto
+                                                     {
+                                                         Id         = n.Id,
+                                                         Timestamp  = n.Date,
+                                                         Type       = n.Type,
+                                                         AffectedId = n.AddedId
+                                                     })
+                                                    .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
@@ -74,72 +73,72 @@ public class NewsController(MarechaiContext context, IStringLocalizer<NewsServic
             {
                 case NewsType.NewComputerInDb:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["New computer in database"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["New computer in database"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
                 case NewsType.NewConsoleInDb:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["New console in database"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["New console in database"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.NewComputerInCollection:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["New computer in collection"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["New computer in collection"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.NewConsoleInCollection:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["New console in collection"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["New console in collection"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.UpdatedComputerInDb:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["Updated computer in database"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["Updated computer in database"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.UpdatedConsoleInDb:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["Updated console in database"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["Updated console in database"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.UpdatedComputerInCollection:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["Updated computer in collection"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["Updated computer in collection"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.UpdatedConsoleInCollection:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["Updated console in collection"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["Updated console in collection"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
@@ -162,6 +161,7 @@ public class NewsController(MarechaiContext context, IStringLocalizer<NewsServic
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         News item = await context.News.FindAsync(id);
 

@@ -34,7 +34,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -53,34 +52,29 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<BookScanDto> GetAsync(Guid id) => await context.BookScans.Where(p => p.Id == id)
-                                                                            .Select(p => new BookScanDto
-                                                                             {
-                                                                                 Author       = p.Author,
-                                                                                 BookId       = p.Book.Id,
-                                                                                 ColorSpace   = p.ColorSpace,
-                                                                                 Comments     = p.Comments,
-                                                                                 CreationDate = p.CreationDate,
-                                                                                 ExifVersion  = p.ExifVersion,
-                                                                                 HorizontalResolution =
-                                                                                     p.HorizontalResolution,
-                                                                                 Id = p.Id,
-                                                                                 ResolutionUnit =
-                                                                                     p.ResolutionUnit,
-                                                                                 Page = p.Page,
-                                                                                 ScannerManufacturer =
-                                                                                     p.ScannerManufacturer,
-                                                                                 ScannerModel = p.ScannerModel,
-                                                                                 SoftwareUsed = p.SoftwareUsed,
-                                                                                 Type         = p.Type,
-                                                                                 UploadDate   = p.UploadDate,
-                                                                                 UserId       = p.UserId,
-                                                                                 VerticalResolution =
-                                                                                     p.VerticalResolution,
-                                                                                 OriginalExtension =
-                                                                                     p.OriginalExtension
-                                                                             })
-                                                                            .FirstOrDefaultAsync();
+    public Task<BookScanDto> GetAsync(Guid id) => context.BookScans.Where(p => p.Id == id)
+                                                         .Select(p => new BookScanDto
+                                                          {
+                                                              Author               = p.Author,
+                                                              BookId               = p.Book.Id,
+                                                              ColorSpace           = p.ColorSpace,
+                                                              Comments             = p.Comments,
+                                                              CreationDate         = p.CreationDate,
+                                                              ExifVersion          = p.ExifVersion,
+                                                              HorizontalResolution = p.HorizontalResolution,
+                                                              Id                   = p.Id,
+                                                              ResolutionUnit       = p.ResolutionUnit,
+                                                              Page                 = p.Page,
+                                                              ScannerManufacturer  = p.ScannerManufacturer,
+                                                              ScannerModel         = p.ScannerModel,
+                                                              SoftwareUsed         = p.SoftwareUsed,
+                                                              Type                 = p.Type,
+                                                              UploadDate           = p.UploadDate,
+                                                              UserId               = p.UserId,
+                                                              VerticalResolution   = p.VerticalResolution,
+                                                              OriginalExtension    = p.OriginalExtension
+                                                          })
+                                                         .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -89,6 +83,7 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(BookScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         BookScan model = await context.BookScans.FindAsync(dto.Id);
 
@@ -118,7 +113,9 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     public async Task<Guid> CreateAsync(BookScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new BookScan
         {
             Author               = dto.Author,
@@ -154,6 +151,7 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(Guid id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         BookScan item = await context.BookScans.FindAsync(id);
 

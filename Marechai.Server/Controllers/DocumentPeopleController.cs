@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,35 +44,34 @@ public class DocumentPeopleController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<DocumentPersonDto>> GetAsync() => await context.DocumentPeople
-                                                                                .OrderBy(d => d.DisplayName)
-                                                                                .ThenBy(d => d.Alias)
-                                                                                .ThenBy(d => d.Name)
-                                                                                .ThenBy(d => d.Surname)
-                                                                                .Select(d => new DocumentPersonDto
-                                                                                 {
-                                                                                     Id       = d.Id,
-                                                                                     Name     = d.FullName,
-                                                                                     Person   = d.Person.FullName,
-                                                                                     PersonId = d.PersonId
-                                                                                 })
-                                                                                .ToListAsync();
+    public Task<List<DocumentPersonDto>> GetAsync() => context.DocumentPeople.OrderBy(d => d.DisplayName)
+                                                              .ThenBy(d => d.Alias)
+                                                              .ThenBy(d => d.Name)
+                                                              .ThenBy(d => d.Surname)
+                                                              .Select(d => new DocumentPersonDto
+                                                               {
+                                                                   Id       = d.Id,
+                                                                   Name     = d.FullName,
+                                                                   Person   = d.Person.FullName,
+                                                                   PersonId = d.PersonId
+                                                               })
+                                                              .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<DocumentPersonDto> GetAsync(int id) => await context.DocumentPeople.Where(p => p.Id == id)
-                                                                      .Select(d => new DocumentPersonDto
-                                                                       {
-                                                                           Id          = d.Id,
-                                                                           Alias       = d.Alias,
-                                                                           Name        = d.Name,
-                                                                           Surname     = d.Surname,
-                                                                           DisplayName = d.DisplayName,
-                                                                           PersonId    = d.PersonId
-                                                                       })
-                                                                      .FirstOrDefaultAsync();
+    public Task<DocumentPersonDto> GetAsync(int id) => context.DocumentPeople.Where(p => p.Id == id)
+                                                              .Select(d => new DocumentPersonDto
+                                                               {
+                                                                   Id          = d.Id,
+                                                                   Alias       = d.Alias,
+                                                                   Name        = d.Name,
+                                                                   Surname     = d.Surname,
+                                                                   DisplayName = d.DisplayName,
+                                                                   PersonId    = d.PersonId
+                                                               })
+                                                              .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -83,6 +80,7 @@ public class DocumentPeopleController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(DocumentPersonDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         DocumentPerson model = await context.DocumentPeople.FindAsync(dto.Id);
 
@@ -104,7 +102,9 @@ public class DocumentPeopleController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(DocumentPersonDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new DocumentPerson
         {
             Alias       = dto.Alias,
@@ -127,6 +127,7 @@ public class DocumentPeopleController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         DocumentPerson item = await context.DocumentPeople.FindAsync(id);
 

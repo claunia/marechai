@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,22 +44,22 @@ public class MemoriesByMachineController(MarechaiContext context) : ControllerBa
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MemoryByMachineDto>> GetByMachine(int machineId) => await context.MemoryByMachine
-                                                                                                  .Where(m => m.MachineId == machineId)
-                                                                                                  .Select(m => new MemoryByMachineDto
-                                                                                                   {
-                                                                                                       Id        = m.Id,
-                                                                                                       Type      = m.Type,
-                                                                                                       Usage     = m.Usage,
-                                                                                                       Size      = m.Size,
-                                                                                                       Speed     = m.Speed,
-                                                                                                       MachineId = m.MachineId
-                                                                                                   })
-                                                                                                  .OrderBy(m => m.Type)
-                                                                                                  .ThenBy(m => m.Usage)
-                                                                                                  .ThenBy(m => m.Size)
-                                                                                                  .ThenBy(m => m.Speed)
-                                                                                                  .ToListAsync();
+    public Task<List<MemoryByMachineDto>> GetByMachine(int machineId) => context.MemoryByMachine
+       .Where(m => m.MachineId == machineId)
+       .Select(m => new MemoryByMachineDto
+        {
+            Id        = m.Id,
+            Type      = m.Type,
+            Usage     = m.Usage,
+            Size      = m.Size,
+            Speed     = m.Speed,
+            MachineId = m.MachineId
+        })
+       .OrderBy(m => m.Type)
+       .ThenBy(m => m.Usage)
+       .ThenBy(m => m.Size)
+       .ThenBy(m => m.Speed)
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -70,6 +68,7 @@ public class MemoriesByMachineController(MarechaiContext context) : ControllerBa
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MemoryByMachine item = await context.MemoryByMachine.FindAsync(id);
 
@@ -84,10 +83,12 @@ public class MemoriesByMachineController(MarechaiContext context) : ControllerBa
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(int    machineId, MemoryType type, MemoryUsage usage, long? size, double? speed)
+    public async Task<long> CreateAsync(int machineId, MemoryType type, MemoryUsage usage, long? size, double? speed)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var item = new MemoryByMachine
         {
             MachineId = machineId,

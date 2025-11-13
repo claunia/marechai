@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,37 +44,37 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<DocumentDto>> GetAsync() => await context.Documents.OrderBy(b => b.NativeTitle)
-                                                                          .ThenBy(b => b.Published)
-                                                                          .ThenBy(b => b.Title)
-                                                                          .Select(b => new DocumentDto
-                                                                           {
-                                                                               Id          = b.Id,
-                                                                               Title       = b.Title,
-                                                                               NativeTitle = b.NativeTitle,
-                                                                               Published   = b.Published,
-                                                                               Synopsis    = b.Synopsis,
-                                                                               CountryId   = b.CountryId,
-                                                                               Country     = b.Country.Name
-                                                                           })
-                                                                          .ToListAsync();
+    public Task<List<DocumentDto>> GetAsync() => context.Documents.OrderBy(b => b.NativeTitle)
+                                                        .ThenBy(b => b.Published)
+                                                        .ThenBy(b => b.Title)
+                                                        .Select(b => new DocumentDto
+                                                         {
+                                                             Id          = b.Id,
+                                                             Title       = b.Title,
+                                                             NativeTitle = b.NativeTitle,
+                                                             Published   = b.Published,
+                                                             Synopsis    = b.Synopsis,
+                                                             CountryId   = b.CountryId,
+                                                             Country     = b.Country.Name
+                                                         })
+                                                        .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<DocumentDto> GetAsync(long id) => await context.Documents.Where(b => b.Id == id)
-                                                                            .Select(b => new DocumentDto
-                                                                             {
-                                                                                 Id          = b.Id,
-                                                                                 Title       = b.Title,
-                                                                                 NativeTitle = b.NativeTitle,
-                                                                                 Published   = b.Published,
-                                                                                 Synopsis    = b.Synopsis,
-                                                                                 CountryId   = b.CountryId,
-                                                                                 Country     = b.Country.Name
-                                                                             })
-                                                                            .FirstOrDefaultAsync();
+    public Task<DocumentDto> GetAsync(long id) => context.Documents.Where(b => b.Id == id)
+                                                         .Select(b => new DocumentDto
+                                                          {
+                                                              Id          = b.Id,
+                                                              Title       = b.Title,
+                                                              NativeTitle = b.NativeTitle,
+                                                              Published   = b.Published,
+                                                              Synopsis    = b.Synopsis,
+                                                              CountryId   = b.CountryId,
+                                                              Country     = b.Country.Name
+                                                          })
+                                                         .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -85,6 +83,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(DocumentDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Document model = await context.Documents.FindAsync(dto.Id);
 
@@ -105,7 +104,9 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     public async Task<long> CreateAsync(DocumentDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Document
         {
             Title       = dto.Title,
@@ -135,6 +136,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Document item = await context.Documents.FindAsync(id);
 

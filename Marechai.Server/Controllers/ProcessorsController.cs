@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,83 +44,79 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ProcessorDto>> GetAsync() => await context.Processors
-                                                                           .Select(p => new ProcessorDto
-                                                                            {
-                                                                                Name           = p.Name,
-                                                                                CompanyName    = p.Company.Name,
-                                                                                CompanyId      = p.Company.Id,
-                                                                                ModelCode      = p.ModelCode,
-                                                                                Introduced     = p.Introduced,
-                                                                                Speed          = p.Speed,
-                                                                                Package        = p.Package,
-                                                                                Gprs           = p.Gprs,
-                                                                                GprSize        = p.GprSize,
-                                                                                Fprs           = p.Fprs,
-                                                                                FprSize        = p.FprSize,
-                                                                                Cores          = p.Cores,
-                                                                                ThreadsPerCore = p.ThreadsPerCore,
-                                                                                Process        = p.Process,
-                                                                                ProcessNm      = p.ProcessNm,
-                                                                                DieSize        = p.DieSize,
-                                                                                Transistors    = p.Transistors,
-                                                                                DataBus        = p.DataBus,
-                                                                                AddrBus        = p.AddrBus,
-                                                                                SimdRegisters  = p.SimdRegisters,
-                                                                                SimdSize       = p.SimdSize,
-                                                                                L1Instruction  = p.L1Instruction,
-                                                                                L1Data         = p.L1Data,
-                                                                                L2             = p.L2,
-                                                                                L3             = p.L3,
-                                                                                InstructionSet = p.InstructionSet.Name,
-                                                                                Id             = p.Id,
-                                                                                InstructionSetExtensions =
-                                                                                    p.InstructionSetExtensions
-                                                                                     .Select(e => e.Extension
-                                                                                                   .Extension)
-                                                                                     .ToList()
-                                                                            })
-                                                                           .OrderBy(p => p.CompanyName)
-                                                                           .ThenBy(p => p.Name)
-                                                                           .ToListAsync();
+    public Task<List<ProcessorDto>> GetAsync() => context.Processors.Select(p => new ProcessorDto
+                                                          {
+                                                              Name           = p.Name,
+                                                              CompanyName    = p.Company.Name,
+                                                              CompanyId      = p.Company.Id,
+                                                              ModelCode      = p.ModelCode,
+                                                              Introduced     = p.Introduced,
+                                                              Speed          = p.Speed,
+                                                              Package        = p.Package,
+                                                              Gprs           = p.Gprs,
+                                                              GprSize        = p.GprSize,
+                                                              Fprs           = p.Fprs,
+                                                              FprSize        = p.FprSize,
+                                                              Cores          = p.Cores,
+                                                              ThreadsPerCore = p.ThreadsPerCore,
+                                                              Process        = p.Process,
+                                                              ProcessNm      = p.ProcessNm,
+                                                              DieSize        = p.DieSize,
+                                                              Transistors    = p.Transistors,
+                                                              DataBus        = p.DataBus,
+                                                              AddrBus        = p.AddrBus,
+                                                              SimdRegisters  = p.SimdRegisters,
+                                                              SimdSize       = p.SimdSize,
+                                                              L1Instruction  = p.L1Instruction,
+                                                              L1Data         = p.L1Data,
+                                                              L2             = p.L2,
+                                                              L3             = p.L3,
+                                                              InstructionSet = p.InstructionSet.Name,
+                                                              Id             = p.Id,
+                                                              InstructionSetExtensions = p.InstructionSetExtensions
+                                                                 .Select(e => e.Extension.Extension)
+                                                                 .ToList()
+                                                          })
+                                                         .OrderBy(p => p.CompanyName)
+                                                         .ThenBy(p => p.Name)
+                                                         .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ProcessorDto>> GetByMachineAsync(int machineId) => await context.ProcessorsByMachine
+    public Task<List<ProcessorDto>> GetByMachineAsync(int machineId) => context.ProcessorsByMachine
        .Where(p => p.MachineId == machineId)
        .Select(p => new ProcessorDto
         {
-            Name           = p.Processor.Name,
-            CompanyName    = p.Processor.Company.Name,
-            CompanyId      = p.Processor.Company.Id,
-            ModelCode      = p.Processor.ModelCode,
-            Introduced     = p.Processor.Introduced,
-            Speed          = p.Speed,
-            Package        = p.Processor.Package,
-            Gprs           = p.Processor.Gprs,
-            GprSize        = p.Processor.GprSize,
-            Fprs           = p.Processor.Fprs,
-            FprSize        = p.Processor.FprSize,
-            Cores          = p.Processor.Cores,
-            ThreadsPerCore = p.Processor.ThreadsPerCore,
-            Process        = p.Processor.Process,
-            ProcessNm      = p.Processor.ProcessNm,
-            DieSize        = p.Processor.DieSize,
-            Transistors    = p.Processor.Transistors,
-            DataBus        = p.Processor.DataBus,
-            AddrBus        = p.Processor.AddrBus,
-            SimdRegisters  = p.Processor.SimdRegisters,
-            SimdSize       = p.Processor.SimdSize,
-            L1Instruction  = p.Processor.L1Instruction,
-            L1Data         = p.Processor.L1Data,
-            L2             = p.Processor.L2,
-            L3             = p.Processor.L3,
-            InstructionSet = p.Processor.InstructionSet.Name,
-            Id             = p.Processor.Id,
-            InstructionSetExtensions =
-                p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
+            Name                     = p.Processor.Name,
+            CompanyName              = p.Processor.Company.Name,
+            CompanyId                = p.Processor.Company.Id,
+            ModelCode                = p.Processor.ModelCode,
+            Introduced               = p.Processor.Introduced,
+            Speed                    = p.Speed,
+            Package                  = p.Processor.Package,
+            Gprs                     = p.Processor.Gprs,
+            GprSize                  = p.Processor.GprSize,
+            Fprs                     = p.Processor.Fprs,
+            FprSize                  = p.Processor.FprSize,
+            Cores                    = p.Processor.Cores,
+            ThreadsPerCore           = p.Processor.ThreadsPerCore,
+            Process                  = p.Processor.Process,
+            ProcessNm                = p.Processor.ProcessNm,
+            DieSize                  = p.Processor.DieSize,
+            Transistors              = p.Processor.Transistors,
+            DataBus                  = p.Processor.DataBus,
+            AddrBus                  = p.Processor.AddrBus,
+            SimdRegisters            = p.Processor.SimdRegisters,
+            SimdSize                 = p.Processor.SimdSize,
+            L1Instruction            = p.Processor.L1Instruction,
+            L1Data                   = p.Processor.L1Data,
+            L2                       = p.Processor.L2,
+            L3                       = p.Processor.L3,
+            InstructionSet           = p.Processor.InstructionSet.Name,
+            Id                       = p.Processor.Id,
+            InstructionSetExtensions = p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
         })
        .OrderBy(p => p.CompanyName)
        .ThenBy(p => p.Name)
@@ -132,39 +126,38 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ProcessorDto> GetAsync(int id) => await context.Processors.Where(p => p.Id == id)
-                                                                            .Select(p => new ProcessorDto
-                                                                             {
-                                                                                 Name           = p.Name,
-                                                                                 CompanyName    = p.Company.Name,
-                                                                                 CompanyId      = p.Company.Id,
-                                                                                 ModelCode      = p.ModelCode,
-                                                                                 Introduced     = p.Introduced,
-                                                                                 Speed          = p.Speed,
-                                                                                 Package        = p.Package,
-                                                                                 Gprs           = p.Gprs,
-                                                                                 GprSize        = p.GprSize,
-                                                                                 Fprs           = p.Fprs,
-                                                                                 FprSize        = p.FprSize,
-                                                                                 Cores          = p.Cores,
-                                                                                 ThreadsPerCore = p.ThreadsPerCore,
-                                                                                 Process        = p.Process,
-                                                                                 ProcessNm      = p.ProcessNm,
-                                                                                 DieSize        = p.DieSize,
-                                                                                 Transistors    = p.Transistors,
-                                                                                 DataBus        = p.DataBus,
-                                                                                 AddrBus        = p.AddrBus,
-                                                                                 SimdRegisters  = p.SimdRegisters,
-                                                                                 SimdSize       = p.SimdSize,
-                                                                                 L1Instruction  = p.L1Instruction,
-                                                                                 L1Data         = p.L1Data,
-                                                                                 L2             = p.L2,
-                                                                                 L3             = p.L3,
-                                                                                 InstructionSet =
-                                                                                     p.InstructionSet.Name,
-                                                                                 InstructionSetId = p.InstructionSetId
-                                                                             })
-                                                                            .FirstOrDefaultAsync();
+    public Task<ProcessorDto> GetAsync(int id) => context.Processors.Where(p => p.Id == id)
+                                                         .Select(p => new ProcessorDto
+                                                          {
+                                                              Name             = p.Name,
+                                                              CompanyName      = p.Company.Name,
+                                                              CompanyId        = p.Company.Id,
+                                                              ModelCode        = p.ModelCode,
+                                                              Introduced       = p.Introduced,
+                                                              Speed            = p.Speed,
+                                                              Package          = p.Package,
+                                                              Gprs             = p.Gprs,
+                                                              GprSize          = p.GprSize,
+                                                              Fprs             = p.Fprs,
+                                                              FprSize          = p.FprSize,
+                                                              Cores            = p.Cores,
+                                                              ThreadsPerCore   = p.ThreadsPerCore,
+                                                              Process          = p.Process,
+                                                              ProcessNm        = p.ProcessNm,
+                                                              DieSize          = p.DieSize,
+                                                              Transistors      = p.Transistors,
+                                                              DataBus          = p.DataBus,
+                                                              AddrBus          = p.AddrBus,
+                                                              SimdRegisters    = p.SimdRegisters,
+                                                              SimdSize         = p.SimdSize,
+                                                              L1Instruction    = p.L1Instruction,
+                                                              L1Data           = p.L1Data,
+                                                              L2               = p.L2,
+                                                              L3               = p.L3,
+                                                              InstructionSet   = p.InstructionSet.Name,
+                                                              InstructionSetId = p.InstructionSetId
+                                                          })
+                                                         .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -173,6 +166,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(ProcessorDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Processor model = await context.Processors.FindAsync(dto.Id);
 
@@ -214,7 +208,9 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(ProcessorDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Processor
         {
             AddrBus          = dto.AddrBus,
@@ -257,6 +253,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Processor item = await context.Processors.FindAsync(id);
 

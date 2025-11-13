@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,52 +44,52 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MagazineDto>> GetAsync() => await context.Magazines.OrderBy(b => b.NativeTitle)
-                                                                          .ThenBy(b => b.FirstPublication)
-                                                                          .ThenBy(b => b.Title)
-                                                                          .Select(b => new MagazineDto
-                                                                           {
-                                                                               Id               = b.Id,
-                                                                               Title            = b.Title,
-                                                                               NativeTitle      = b.NativeTitle,
-                                                                               FirstPublication = b.FirstPublication,
-                                                                               Synopsis         = b.Synopsis,
-                                                                               Issn             = b.Issn,
-                                                                               CountryId        = b.CountryId,
-                                                                               Country          = b.Country.Name
-                                                                           })
-                                                                          .ToListAsync();
+    public Task<List<MagazineDto>> GetAsync() => context.Magazines.OrderBy(b => b.NativeTitle)
+                                                        .ThenBy(b => b.FirstPublication)
+                                                        .ThenBy(b => b.Title)
+                                                        .Select(b => new MagazineDto
+                                                         {
+                                                             Id               = b.Id,
+                                                             Title            = b.Title,
+                                                             NativeTitle      = b.NativeTitle,
+                                                             FirstPublication = b.FirstPublication,
+                                                             Synopsis         = b.Synopsis,
+                                                             Issn             = b.Issn,
+                                                             CountryId        = b.CountryId,
+                                                             Country          = b.Country.Name
+                                                         })
+                                                        .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MagazineDto>> GetTitlesAsync() => await context.Magazines.OrderBy(b => b.Title)
-                                                                      .ThenBy(b => b.FirstPublication)
-                                                                      .Select(b => new MagazineDto
-                                                                       {
-                                                                           Id    = b.Id,
-                                                                           Title = $"{b.Title} ({b.Country.Name}"
-                                                                       })
-                                                                      .ToListAsync();
+    public Task<List<MagazineDto>> GetTitlesAsync() => context.Magazines.OrderBy(b => b.Title)
+                                                              .ThenBy(b => b.FirstPublication)
+                                                              .Select(b => new MagazineDto
+                                                               {
+                                                                   Id    = b.Id,
+                                                                   Title = $"{b.Title} ({b.Country.Name}"
+                                                               })
+                                                              .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<MagazineDto> GetAsync(long id) => await context.Magazines.Where(b => b.Id == id)
-                                                                            .Select(b => new MagazineDto
-                                                                             {
-                                                                                 Id               = b.Id,
-                                                                                 Title            = b.Title,
-                                                                                 NativeTitle      = b.NativeTitle,
-                                                                                 FirstPublication = b.FirstPublication,
-                                                                                 Synopsis         = b.Synopsis,
-                                                                                 Issn             = b.Issn,
-                                                                                 CountryId        = b.CountryId,
-                                                                                 Country          = b.Country.Name
-                                                                             })
-                                                                            .FirstOrDefaultAsync();
+    public Task<MagazineDto> GetAsync(long id) => context.Magazines.Where(b => b.Id == id)
+                                                         .Select(b => new MagazineDto
+                                                          {
+                                                              Id               = b.Id,
+                                                              Title            = b.Title,
+                                                              NativeTitle      = b.NativeTitle,
+                                                              FirstPublication = b.FirstPublication,
+                                                              Synopsis         = b.Synopsis,
+                                                              Issn             = b.Issn,
+                                                              CountryId        = b.CountryId,
+                                                              Country          = b.Country.Name
+                                                          })
+                                                         .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -100,6 +98,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(MagazineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Magazine model = await context.Magazines.FindAsync(dto.Id);
 
@@ -121,7 +120,9 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     public async Task<long> CreateAsync(MagazineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Magazine
         {
             Title            = dto.Title,
@@ -152,6 +153,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Magazine item = await context.Magazines.FindAsync(id);
 

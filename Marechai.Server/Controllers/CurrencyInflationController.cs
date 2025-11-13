@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,34 +44,32 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<CurrencyInflationDto>> GetAsync() => await context.CurrenciesInflation
-                                                                                   .OrderBy(i => i.Currency.Name)
-                                                                                   .ThenBy(i => i.Year)
-                                                                                   .Select(i => new CurrencyInflationDto
-                                                                                    {
-                                                                                        Id           = i.Id,
-                                                                                        CurrencyCode = i.Currency.Code,
-                                                                                        CurrencyName = i.Currency.Name,
-                                                                                        Year         = i.Year,
-                                                                                        Inflation    = i.Inflation
-                                                                                    })
-                                                                                   .ToListAsync();
+    public Task<List<CurrencyInflationDto>> GetAsync() => context.CurrenciesInflation.OrderBy(i => i.Currency.Name)
+                                                                 .ThenBy(i => i.Year)
+                                                                 .Select(i => new CurrencyInflationDto
+                                                                  {
+                                                                      Id           = i.Id,
+                                                                      CurrencyCode = i.Currency.Code,
+                                                                      CurrencyName = i.Currency.Name,
+                                                                      Year         = i.Year,
+                                                                      Inflation    = i.Inflation
+                                                                  })
+                                                                 .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<CurrencyInflationDto> GetAsync(int id) => await context.CurrenciesInflation
-                                                                         .Where(b => b.Id == id)
-                                                                         .Select(i => new CurrencyInflationDto
-                                                                          {
-                                                                              Id           = i.Id,
-                                                                              CurrencyCode = i.Currency.Code,
-                                                                              CurrencyName = i.Currency.Name,
-                                                                              Year         = i.Year,
-                                                                              Inflation    = i.Inflation
-                                                                          })
-                                                                         .FirstOrDefaultAsync();
+    public Task<CurrencyInflationDto> GetAsync(int id) => context.CurrenciesInflation.Where(b => b.Id == id)
+                                                                 .Select(i => new CurrencyInflationDto
+                                                                  {
+                                                                      Id           = i.Id,
+                                                                      CurrencyCode = i.Currency.Code,
+                                                                      CurrencyName = i.Currency.Name,
+                                                                      Year         = i.Year,
+                                                                      Inflation    = i.Inflation
+                                                                  })
+                                                                 .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -82,6 +78,7 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
     public async Task UpdateAsync(CurrencyInflationDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         CurrencyInflation model = await context.CurrenciesInflation.FindAsync(dto.Id);
 
@@ -100,7 +97,9 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
     public async Task<int> CreateAsync(CurrencyInflationDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new CurrencyInflation
         {
             CurrencyCode = dto.CurrencyCode,
@@ -121,6 +120,7 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         CurrencyInflation item = await context.CurrenciesInflation.FindAsync(id);
 

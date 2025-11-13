@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,20 +44,20 @@ public class CompaniesByMagazineController(MarechaiContext context) : Controller
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<CompanyByMagazineDto>> GetByMagazine(long magazineId) => await context
-                                                                                               .CompaniesByMagazines.Where(p => p.MagazineId == magazineId)
-                                                                                               .Select(p => new CompanyByMagazineDto
-                                                                                                {
-                                                                                                    Id         = p.Id,
-                                                                                                    Company    = p.Company.Name,
-                                                                                                    CompanyId  = p.CompanyId,
-                                                                                                    RoleId     = p.RoleId,
-                                                                                                    Role       = p.Role.Name,
-                                                                                                    MagazineId = p.MagazineId
-                                                                                                })
-                                                                                               .OrderBy(p => p.Company)
-                                                                                               .ThenBy(p => p.Role)
-                                                                                               .ToListAsync();
+    public Task<List<CompanyByMagazineDto>> GetByMagazine(long magazineId) => context.CompaniesByMagazines
+       .Where(p => p.MagazineId == magazineId)
+       .Select(p => new CompanyByMagazineDto
+        {
+            Id         = p.Id,
+            Company    = p.Company.Name,
+            CompanyId  = p.CompanyId,
+            RoleId     = p.RoleId,
+            Role       = p.Role.Name,
+            MagazineId = p.MagazineId
+        })
+       .OrderBy(p => p.Company)
+       .ThenBy(p => p.Role)
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -68,6 +66,7 @@ public class CompaniesByMagazineController(MarechaiContext context) : Controller
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         CompaniesByMagazine item = await context.CompaniesByMagazines.FindAsync(id);
 
@@ -85,7 +84,9 @@ public class CompaniesByMagazineController(MarechaiContext context) : Controller
     public async Task<long> CreateAsync(int companyId, long magazineId, string roleId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var item = new CompaniesByMagazine
         {
             CompanyId  = companyId,

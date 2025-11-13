@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,42 +44,42 @@ public class DumpsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<DumpDto>> GetAsync() => await context.Dumps.OrderBy(d => d.Dumper)
-                                                                      .ThenBy(d => d.DumpingGroup)
-                                                                      .ThenBy(b => b.Media.Title)
-                                                                      .ThenBy(d => d.DumpDate)
-                                                                      .Select(d => new DumpDto
-                                                                       {
-                                                                           Id           = d.Id,
-                                                                           Dumper       = d.Dumper,
-                                                                           UserId       = d.UserId,
-                                                                           DumpingGroup = d.DumpingGroup,
-                                                                           DumpDate     = d.DumpDate,
-                                                                           UserName     = d.User.UserName,
-                                                                           MediaId      = d.MediaId,
-                                                                           MediaTitle   = d.Media.Title,
-                                                                           MediaDumpId  = d.MediaDumpId
-                                                                       })
-                                                                      .ToListAsync();
+    public Task<List<DumpDto>> GetAsync() => context.Dumps.OrderBy(d => d.Dumper)
+                                                    .ThenBy(d => d.DumpingGroup)
+                                                    .ThenBy(b => b.Media.Title)
+                                                    .ThenBy(d => d.DumpDate)
+                                                    .Select(d => new DumpDto
+                                                     {
+                                                         Id           = d.Id,
+                                                         Dumper       = d.Dumper,
+                                                         UserId       = d.UserId,
+                                                         DumpingGroup = d.DumpingGroup,
+                                                         DumpDate     = d.DumpDate,
+                                                         UserName     = d.User.UserName,
+                                                         MediaId      = d.MediaId,
+                                                         MediaTitle   = d.Media.Title,
+                                                         MediaDumpId  = d.MediaDumpId
+                                                     })
+                                                    .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<DumpDto> GetAsync(ulong id) => await context.Dumps.Where(d => d.Id == id)
-                                                                         .Select(d => new DumpDto
-                                                                          {
-                                                                              Id           = d.Id,
-                                                                              Dumper       = d.Dumper,
-                                                                              UserId       = d.User.Id,
-                                                                              DumpingGroup = d.DumpingGroup,
-                                                                              DumpDate     = d.DumpDate,
-                                                                              UserName     = d.User.UserName,
-                                                                              MediaId      = d.MediaId,
-                                                                              MediaTitle   = d.Media.Title,
-                                                                              MediaDumpId  = d.MediaDumpId
-                                                                          })
-                                                                         .FirstOrDefaultAsync();
+    public Task<DumpDto> GetAsync(ulong id) => context.Dumps.Where(d => d.Id == id)
+                                                      .Select(d => new DumpDto
+                                                       {
+                                                           Id           = d.Id,
+                                                           Dumper       = d.Dumper,
+                                                           UserId       = d.User.Id,
+                                                           DumpingGroup = d.DumpingGroup,
+                                                           DumpDate     = d.DumpDate,
+                                                           UserName     = d.User.UserName,
+                                                           MediaId      = d.MediaId,
+                                                           MediaTitle   = d.Media.Title,
+                                                           MediaDumpId  = d.MediaDumpId
+                                                       })
+                                                      .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -90,6 +88,7 @@ public class DumpsController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(DumpDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Dump model = await context.Dumps.FindAsync(dto.Id);
 
@@ -111,7 +110,9 @@ public class DumpsController(MarechaiContext context) : ControllerBase
     public async Task<ulong> CreateAsync(DumpDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new Dump
         {
             Dumper       = dto.Dumper,
@@ -135,6 +136,7 @@ public class DumpsController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Dump item = await context.Dumps.FindAsync(id);
 

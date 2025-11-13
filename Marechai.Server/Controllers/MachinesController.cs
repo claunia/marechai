@@ -40,48 +40,51 @@ namespace Marechai.Server.Controllers;
 
 [Route("/machines")]
 [ApiController]
-public class MachinesController(MarechaiContext                   context,
+public class MachinesController
+(
+    MarechaiContext                   context,
     IStringLocalizer<MachinesService> localizer,
     GpusService                       gpusService,
     ProcessorsService                 processorsService,
-    SoundSynthsService                soundSynthsService) : ControllerBase
+    SoundSynthsService                soundSynthsService
+) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MachineDto>> GetAsync() => await context.Machines.OrderBy(m => m.Company.Name)
-                                                                         .ThenBy(m => m.Name)
-                                                                         .ThenBy(m => m.Family.Name)
-                                                                         .Select(m => new MachineDto
-                                                                          {
-                                                                              Id         = m.Id,
-                                                                              Company    = m.Company.Name,
-                                                                              Name       = m.Name,
-                                                                              Model      = m.Model,
-                                                                              Introduced = m.Introduced,
-                                                                              Type       = m.Type,
-                                                                              Family     = m.Family.Name
-                                                                          })
-                                                                         .ToListAsync();
+    public Task<List<MachineDto>> GetAsync() => context.Machines.OrderBy(m => m.Company.Name)
+                                                       .ThenBy(m => m.Name)
+                                                       .ThenBy(m => m.Family.Name)
+                                                       .Select(m => new MachineDto
+                                                        {
+                                                            Id         = m.Id,
+                                                            Company    = m.Company.Name,
+                                                            Name       = m.Name,
+                                                            Model      = m.Model,
+                                                            Introduced = m.Introduced,
+                                                            Type       = m.Type,
+                                                            Family     = m.Family.Name
+                                                        })
+                                                       .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<MachineDto> GetAsync(int id) => await context.Machines.Where(m => m.Id == id)
-                                                                          .Select(m => new MachineDto
-                                                                           {
-                                                                               Id         = m.Id,
-                                                                               Company    = m.Company.Name,
-                                                                               CompanyId  = m.CompanyId,
-                                                                               Name       = m.Name,
-                                                                               Model      = m.Model,
-                                                                               Introduced = m.Introduced,
-                                                                               Type       = m.Type,
-                                                                               FamilyId   = m.FamilyId
-                                                                           })
-                                                                          .FirstOrDefaultAsync();
+    public Task<MachineDto> GetAsync(int id) => context.Machines.Where(m => m.Id == id)
+                                                       .Select(m => new MachineDto
+                                                        {
+                                                            Id         = m.Id,
+                                                            Company    = m.Company.Name,
+                                                            CompanyId  = m.CompanyId,
+                                                            Name       = m.Name,
+                                                            Model      = m.Model,
+                                                            Introduced = m.Introduced,
+                                                            Type       = m.Type,
+                                                            FamilyId   = m.FamilyId
+                                                        })
+                                                       .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -90,6 +93,7 @@ public class MachinesController(MarechaiContext                   context,
     public async Task UpdateAsync(MachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Machine model = await context.Machines.FindAsync(dto.Id);
 
@@ -136,7 +140,9 @@ public class MachinesController(MarechaiContext                   context,
     public async Task<int> CreateAsync(MachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Machine
         {
             CompanyId  = dto.CompanyId,
@@ -209,9 +215,7 @@ public class MachinesController(MarechaiContext                   context,
             IQueryable<CompanyLogo> logos = context.CompanyLogos.Where(l => l.CompanyId == company.Id);
 
             if(model.Introduced.HasValue)
-            {
                 model.CompanyLogo = (await logos.FirstOrDefaultAsync(l => l.Year >= model.Introduced.Value.Year))?.Guid;
-            }
 
             if(model.CompanyLogo is null && logos.Any()) model.CompanyLogo = (await logos.FirstAsync())?.Guid;
         }
@@ -227,27 +231,27 @@ public class MachinesController(MarechaiContext                   context,
         model.Gpus = await gpusService.GetByMachineAsync(machine.Id);
 
         model.Memory = await context.MemoryByMachine.Where(m => m.MachineId == machine.Id)
-                                     .Select(m => new MemoryDto
-                                      {
-                                          Type  = m.Type,
-                                          Usage = m.Usage,
-                                          Size  = m.Size,
-                                          Speed = m.Speed
-                                      })
-                                     .ToListAsync();
+                                    .Select(m => new MemoryDto
+                                     {
+                                         Type  = m.Type,
+                                         Usage = m.Usage,
+                                         Size  = m.Size,
+                                         Speed = m.Speed
+                                     })
+                                    .ToListAsync();
 
         model.Processors = await processorsService.GetByMachineAsync(machine.Id);
 
         model.SoundSynthesizers = await soundSynthsService.GetByMachineAsync(machine.Id);
 
         model.Storage = await context.StorageByMachine.Where(s => s.MachineId == machine.Id)
-                                      .Select(s => new StorageDto
-                                       {
-                                           Type      = s.Type,
-                                           Interface = s.Interface,
-                                           Capacity  = s.Capacity
-                                       })
-                                      .ToListAsync();
+                                     .Select(s => new StorageDto
+                                      {
+                                          Type      = s.Type,
+                                          Interface = s.Interface,
+                                          Capacity  = s.Capacity
+                                      })
+                                     .ToListAsync();
 
         return model;
     }
@@ -259,6 +263,7 @@ public class MachinesController(MarechaiContext                   context,
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Machine item = await context.Machines.FindAsync(id);
 

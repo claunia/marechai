@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,47 +44,47 @@ public class BooksController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<BookDto>> GetAsync() => await context.Books.OrderBy(b => b.NativeTitle)
-                                                                      .ThenBy(b => b.Published)
-                                                                      .ThenBy(b => b.Title)
-                                                                      .Select(b => new BookDto
-                                                                       {
-                                                                           Id          = b.Id,
-                                                                           Title       = b.Title,
-                                                                           NativeTitle = b.NativeTitle,
-                                                                           Published   = b.Published,
-                                                                           Synopsis    = b.Synopsis,
-                                                                           Isbn        = b.Isbn,
-                                                                           CountryId   = b.CountryId,
-                                                                           Pages       = b.Pages,
-                                                                           Edition     = b.Edition,
-                                                                           PreviousId  = b.PreviousId,
-                                                                           SourceId    = b.SourceId,
-                                                                           Country     = b.Country.Name
-                                                                       })
-                                                                      .ToListAsync();
+    public Task<List<BookDto>> GetAsync() => context.Books.OrderBy(b => b.NativeTitle)
+                                                    .ThenBy(b => b.Published)
+                                                    .ThenBy(b => b.Title)
+                                                    .Select(b => new BookDto
+                                                     {
+                                                         Id          = b.Id,
+                                                         Title       = b.Title,
+                                                         NativeTitle = b.NativeTitle,
+                                                         Published   = b.Published,
+                                                         Synopsis    = b.Synopsis,
+                                                         Isbn        = b.Isbn,
+                                                         CountryId   = b.CountryId,
+                                                         Pages       = b.Pages,
+                                                         Edition     = b.Edition,
+                                                         PreviousId  = b.PreviousId,
+                                                         SourceId    = b.SourceId,
+                                                         Country     = b.Country.Name
+                                                     })
+                                                    .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<BookDto> GetAsync(long id) => await context.Books.Where(b => b.Id == id)
-                                                                        .Select(b => new BookDto
-                                                                         {
-                                                                             Id          = b.Id,
-                                                                             Title       = b.Title,
-                                                                             NativeTitle = b.NativeTitle,
-                                                                             Published   = b.Published,
-                                                                             Synopsis    = b.Synopsis,
-                                                                             Isbn        = b.Isbn,
-                                                                             CountryId   = b.CountryId,
-                                                                             Pages       = b.Pages,
-                                                                             Edition     = b.Edition,
-                                                                             PreviousId  = b.PreviousId,
-                                                                             SourceId    = b.SourceId,
-                                                                             Country     = b.Country.Name
-                                                                         })
-                                                                        .FirstOrDefaultAsync();
+    public Task<BookDto> GetAsync(long id) => context.Books.Where(b => b.Id == id)
+                                                     .Select(b => new BookDto
+                                                      {
+                                                          Id          = b.Id,
+                                                          Title       = b.Title,
+                                                          NativeTitle = b.NativeTitle,
+                                                          Published   = b.Published,
+                                                          Synopsis    = b.Synopsis,
+                                                          Isbn        = b.Isbn,
+                                                          CountryId   = b.CountryId,
+                                                          Pages       = b.Pages,
+                                                          Edition     = b.Edition,
+                                                          PreviousId  = b.PreviousId,
+                                                          SourceId    = b.SourceId,
+                                                          Country     = b.Country.Name
+                                                      })
+                                                     .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -95,6 +93,7 @@ public class BooksController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(BookDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Book model = await context.Books.FindAsync(dto.Id);
 
@@ -120,7 +119,9 @@ public class BooksController(MarechaiContext context) : ControllerBase
     public async Task<long> CreateAsync(BookDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Book
         {
             Title       = dto.Title,
@@ -155,6 +156,7 @@ public class BooksController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Book item = await context.Books.FindAsync(id);
 

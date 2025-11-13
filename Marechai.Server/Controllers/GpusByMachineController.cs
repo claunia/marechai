@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,19 +44,19 @@ public class GpusByMachineController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<GpuByMachineDto>> GetByMachine(int machineId) => await context.GpusByMachine
-                                                                                               .Where(g => g.MachineId == machineId)
-                                                                                               .Select(g => new GpuByMachineDto
-                                                                                                {
-                                                                                                    Id          = g.Id,
-                                                                                                    Name        = g.Gpu.Name,
-                                                                                                    CompanyName = g.Gpu.Company.Name,
-                                                                                                    GpuId       = g.GpuId,
-                                                                                                    MachineId   = g.MachineId
-                                                                                                })
-                                                                                               .OrderBy(g => g.CompanyName)
-                                                                                               .ThenBy(g => g.Name)
-                                                                                               .ToListAsync();
+    public Task<List<GpuByMachineDto>> GetByMachine(int machineId) => context.GpusByMachine
+                                                                             .Where(g => g.MachineId == machineId)
+                                                                             .Select(g => new GpuByMachineDto
+                                                                              {
+                                                                                  Id          = g.Id,
+                                                                                  Name        = g.Gpu.Name,
+                                                                                  CompanyName = g.Gpu.Company.Name,
+                                                                                  GpuId       = g.GpuId,
+                                                                                  MachineId   = g.MachineId
+                                                                              })
+                                                                             .OrderBy(g => g.CompanyName)
+                                                                             .ThenBy(g => g.Name)
+                                                                             .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -67,6 +65,7 @@ public class GpusByMachineController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         GpusByMachine item = await context.GpusByMachine.FindAsync(id);
 
@@ -84,7 +83,9 @@ public class GpusByMachineController(MarechaiContext context) : ControllerBase
     public async Task<long> CreateAsync(int gpuId, int machineId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var item = new GpusByMachine
         {
             GpuId     = gpuId,

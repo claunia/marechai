@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,30 +44,28 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<DocumentCompanyDto>> GetAsync() => await context.DocumentCompanies
-                                                                                 .OrderBy(c => c.Name)
-                                                                                 .Select(d => new DocumentCompanyDto
-                                                                                  {
-                                                                                      Id        = d.Id,
-                                                                                      Name      = d.Name,
-                                                                                      Company   = d.Company.Name,
-                                                                                      CompanyId = d.CompanyId
-                                                                                  })
-                                                                                 .ToListAsync();
+    public Task<List<DocumentCompanyDto>> GetAsync() => context.DocumentCompanies.OrderBy(c => c.Name)
+                                                               .Select(d => new DocumentCompanyDto
+                                                                {
+                                                                    Id        = d.Id,
+                                                                    Name      = d.Name,
+                                                                    Company   = d.Company.Name,
+                                                                    CompanyId = d.CompanyId
+                                                                })
+                                                               .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<DocumentCompanyDto> GetAsync(int id) => await context.DocumentCompanies
-                                                                       .Where(d => d.Id == id)
-                                                                       .Select(d => new DocumentCompanyDto
-                                                                        {
-                                                                            Id        = d.Id,
-                                                                            Name      = d.Name,
-                                                                            CompanyId = d.CompanyId
-                                                                        })
-                                                                       .FirstOrDefaultAsync();
+    public Task<DocumentCompanyDto> GetAsync(int id) => context.DocumentCompanies.Where(d => d.Id == id)
+                                                               .Select(d => new DocumentCompanyDto
+                                                                {
+                                                                    Id        = d.Id,
+                                                                    Name      = d.Name,
+                                                                    CompanyId = d.CompanyId
+                                                                })
+                                                               .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -78,6 +74,7 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
     public async Task UpdateAsync(DocumentCompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         DocumentCompany model = await context.DocumentCompanies.FindAsync(dto.Id);
 
@@ -96,7 +93,9 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
     public async Task<int> CreateAsync(DocumentCompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new DocumentCompany
         {
             CompanyId = dto.CompanyId,
@@ -116,6 +115,7 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         DocumentCompany item = await context.DocumentCompanies.FindAsync(id);
 

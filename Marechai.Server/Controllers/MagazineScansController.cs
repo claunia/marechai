@@ -34,7 +34,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -53,29 +52,29 @@ public class MagazineScansController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<MagazineScanDto> GetAsync(Guid id) => await context.MagazineScans.Where(p => p.Id == id)
-                                                                     .Select(p => new MagazineScanDto
-                                                                      {
-                                                                          Author               = p.Author,
-                                                                          MagazineId           = p.Magazine.Id,
-                                                                          ColorSpace           = p.ColorSpace,
-                                                                          Comments             = p.Comments,
-                                                                          CreationDate         = p.CreationDate,
-                                                                          ExifVersion          = p.ExifVersion,
-                                                                          HorizontalResolution = p.HorizontalResolution,
-                                                                          Id                   = p.Id,
-                                                                          ResolutionUnit       = p.ResolutionUnit,
-                                                                          Page                 = p.Page,
-                                                                          ScannerManufacturer  = p.ScannerManufacturer,
-                                                                          ScannerModel         = p.ScannerModel,
-                                                                          SoftwareUsed         = p.SoftwareUsed,
-                                                                          Type                 = p.Type,
-                                                                          UploadDate           = p.UploadDate,
-                                                                          UserId               = p.UserId,
-                                                                          VerticalResolution   = p.VerticalResolution,
-                                                                          OriginalExtension    = p.OriginalExtension
-                                                                      })
-                                                                     .FirstOrDefaultAsync();
+    public Task<MagazineScanDto> GetAsync(Guid id) => context.MagazineScans.Where(p => p.Id == id)
+                                                             .Select(p => new MagazineScanDto
+                                                              {
+                                                                  Author               = p.Author,
+                                                                  MagazineId           = p.Magazine.Id,
+                                                                  ColorSpace           = p.ColorSpace,
+                                                                  Comments             = p.Comments,
+                                                                  CreationDate         = p.CreationDate,
+                                                                  ExifVersion          = p.ExifVersion,
+                                                                  HorizontalResolution = p.HorizontalResolution,
+                                                                  Id                   = p.Id,
+                                                                  ResolutionUnit       = p.ResolutionUnit,
+                                                                  Page                 = p.Page,
+                                                                  ScannerManufacturer  = p.ScannerManufacturer,
+                                                                  ScannerModel         = p.ScannerModel,
+                                                                  SoftwareUsed         = p.SoftwareUsed,
+                                                                  Type                 = p.Type,
+                                                                  UploadDate           = p.UploadDate,
+                                                                  UserId               = p.UserId,
+                                                                  VerticalResolution   = p.VerticalResolution,
+                                                                  OriginalExtension    = p.OriginalExtension
+                                                              })
+                                                             .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -84,6 +83,7 @@ public class MagazineScansController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(MagazineScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MagazineScan model = await context.MagazineScans.FindAsync(dto.Id);
 
@@ -113,7 +113,9 @@ public class MagazineScansController(MarechaiContext context) : ControllerBase
     public async Task<Guid> CreateAsync(MagazineScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return null;
+
         var model = new MagazineScan
         {
             Author               = dto.Author,
@@ -149,6 +151,7 @@ public class MagazineScansController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(Guid id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         MagazineScan item = await context.MagazineScans.FindAsync(id);
 

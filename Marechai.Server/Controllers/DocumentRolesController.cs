@@ -23,10 +23,8 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
@@ -34,7 +32,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,40 +43,39 @@ public class DocumentRolesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<DocumentRoleDto>> GetAsync() => await context.DocumentRoles.OrderBy(c => c.Name)
-                                                                              .Select(c => new DocumentRoleDto
-                                                                               {
-                                                                                   Id      = c.Id,
-                                                                                   Name    = c.Name,
-                                                                                   Enabled = c.Enabled
-                                                                               })
-                                                                              .ToListAsync();
+    public Task<List<DocumentRoleDto>> GetAsync() => context.DocumentRoles.OrderBy(c => c.Name)
+                                                            .Select(c => new DocumentRoleDto
+                                                             {
+                                                                 Id      = c.Id,
+                                                                 Name    = c.Name,
+                                                                 Enabled = c.Enabled
+                                                             })
+                                                            .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<DocumentRoleDto>> GetEnabledAsync() => await context.DocumentRoles
-                                                                           .Where(c => c.Enabled)
-                                                                           .OrderBy(c => c.Name)
-                                                                           .Select(c => new DocumentRoleDto
-                                                                            {
-                                                                                Id      = c.Id,
-                                                                                Name    = c.Name,
-                                                                                Enabled = c.Enabled
-                                                                            })
-                                                                           .ToListAsync();
+    public Task<List<DocumentRoleDto>> GetEnabledAsync() => context.DocumentRoles.Where(c => c.Enabled)
+                                                                   .OrderBy(c => c.Name)
+                                                                   .Select(c => new DocumentRoleDto
+                                                                    {
+                                                                        Id      = c.Id,
+                                                                        Name    = c.Name,
+                                                                        Enabled = c.Enabled
+                                                                    })
+                                                                   .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<DocumentRoleDto> GetAsync(string id) => await context.DocumentRoles.Where(c => c.Id == id)
-                                                                       .Select(c => new DocumentRoleDto
-                                                                        {
-                                                                            Id      = c.Id,
-                                                                            Name    = c.Name,
-                                                                            Enabled = c.Enabled
-                                                                        })
-                                                                       .FirstOrDefaultAsync();
+    public Task<DocumentRoleDto> GetAsync(string id) => context.DocumentRoles.Where(c => c.Id == id)
+                                                               .Select(c => new DocumentRoleDto
+                                                                {
+                                                                    Id      = c.Id,
+                                                                    Name    = c.Name,
+                                                                    Enabled = c.Enabled
+                                                                })
+                                                               .FirstOrDefaultAsync();
 }

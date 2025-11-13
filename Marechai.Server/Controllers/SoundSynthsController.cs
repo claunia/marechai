@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,31 +44,31 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoundSynthDto>> GetAsync() => await context.SoundSynths.OrderBy(s => s.Company.Name)
-                                                                            .ThenBy(s => s.Name)
-                                                                            .ThenBy(s => s.ModelCode)
-                                                                            .Select(s => new SoundSynthDto
-                                                                             {
-                                                                                 Id          = s.Id,
-                                                                                 Name        = s.Name,
-                                                                                 CompanyId   = s.Company.Id,
-                                                                                 CompanyName = s.Company.Name,
-                                                                                 ModelCode   = s.ModelCode,
-                                                                                 Introduced  = s.Introduced,
-                                                                                 Voices      = s.Voices,
-                                                                                 Frequency   = s.Frequency,
-                                                                                 Depth       = s.Depth,
-                                                                                 SquareWave  = s.SquareWave,
-                                                                                 WhiteNoise  = s.WhiteNoise,
-                                                                                 Type        = s.Type
-                                                                             })
-                                                                            .ToListAsync();
+    public Task<List<SoundSynthDto>> GetAsync() => context.SoundSynths.OrderBy(s => s.Company.Name)
+                                                          .ThenBy(s => s.Name)
+                                                          .ThenBy(s => s.ModelCode)
+                                                          .Select(s => new SoundSynthDto
+                                                           {
+                                                               Id          = s.Id,
+                                                               Name        = s.Name,
+                                                               CompanyId   = s.Company.Id,
+                                                               CompanyName = s.Company.Name,
+                                                               ModelCode   = s.ModelCode,
+                                                               Introduced  = s.Introduced,
+                                                               Voices      = s.Voices,
+                                                               Frequency   = s.Frequency,
+                                                               Depth       = s.Depth,
+                                                               SquareWave  = s.SquareWave,
+                                                               WhiteNoise  = s.WhiteNoise,
+                                                               Type        = s.Type
+                                                           })
+                                                          .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<SoundSynthDto>> GetByMachineAsync(int machineId) => await context.SoundByMachine
+    public Task<List<SoundSynthDto>> GetByMachineAsync(int machineId) => context.SoundByMachine
        .Where(s => s.MachineId == machineId)
        .Select(s => s.SoundSynth)
        .OrderBy(s => s.Company.Name)
@@ -97,23 +95,23 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<SoundSynthDto> GetAsync(int id) => await context.SoundSynths.Where(s => s.Id == id)
-                                                                             .Select(s => new SoundSynthDto
-                                                                              {
-                                                                                  Id          = s.Id,
-                                                                                  Name        = s.Name,
-                                                                                  CompanyId   = s.Company.Id,
-                                                                                  CompanyName = s.Company.Name,
-                                                                                  ModelCode   = s.ModelCode,
-                                                                                  Introduced  = s.Introduced,
-                                                                                  Voices      = s.Voices,
-                                                                                  Frequency   = s.Frequency,
-                                                                                  Depth       = s.Depth,
-                                                                                  SquareWave  = s.SquareWave,
-                                                                                  WhiteNoise  = s.WhiteNoise,
-                                                                                  Type        = s.Type
-                                                                              })
-                                                                             .FirstOrDefaultAsync();
+    public Task<SoundSynthDto> GetAsync(int id) => context.SoundSynths.Where(s => s.Id == id)
+                                                          .Select(s => new SoundSynthDto
+                                                           {
+                                                               Id          = s.Id,
+                                                               Name        = s.Name,
+                                                               CompanyId   = s.Company.Id,
+                                                               CompanyName = s.Company.Name,
+                                                               ModelCode   = s.ModelCode,
+                                                               Introduced  = s.Introduced,
+                                                               Voices      = s.Voices,
+                                                               Frequency   = s.Frequency,
+                                                               Depth       = s.Depth,
+                                                               SquareWave  = s.SquareWave,
+                                                               WhiteNoise  = s.WhiteNoise,
+                                                               Type        = s.Type
+                                                           })
+                                                          .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -122,6 +120,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(SoundSynthDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoundSynth model = await context.SoundSynths.FindAsync(dto.Id);
 
@@ -148,7 +147,9 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(SoundSynthDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new SoundSynth
         {
             Depth      = dto.Depth,
@@ -176,6 +177,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         SoundSynth item = await context.SoundSynths.FindAsync(id);
 

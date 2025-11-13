@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,48 +44,48 @@ public class PeopleController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<PersonDto>> GetAsync() => await context.People.OrderBy(p => p.DisplayName)
-                                                                        .ThenBy(p => p.Alias)
-                                                                        .ThenBy(p => p.Name)
-                                                                        .ThenBy(p => p.Surname)
-                                                                        .Select(p => new PersonDto
-                                                                         {
-                                                                             Id             = p.Id,
-                                                                             Name           = p.Name,
-                                                                             Surname        = p.Surname,
-                                                                             CountryOfBirth = p.CountryOfBirth.Name,
-                                                                             BirthDate      = p.BirthDate,
-                                                                             DeathDate      = p.DeathDate,
-                                                                             Webpage        = p.Webpage,
-                                                                             Twitter        = p.Twitter,
-                                                                             Facebook       = p.Facebook,
-                                                                             Photo          = p.Photo,
-                                                                             Alias          = p.Alias,
-                                                                             DisplayName    = p.DisplayName
-                                                                         })
-                                                                        .ToListAsync();
+    public Task<List<PersonDto>> GetAsync() => context.People.OrderBy(p => p.DisplayName)
+                                                      .ThenBy(p => p.Alias)
+                                                      .ThenBy(p => p.Name)
+                                                      .ThenBy(p => p.Surname)
+                                                      .Select(p => new PersonDto
+                                                       {
+                                                           Id             = p.Id,
+                                                           Name           = p.Name,
+                                                           Surname        = p.Surname,
+                                                           CountryOfBirth = p.CountryOfBirth.Name,
+                                                           BirthDate      = p.BirthDate,
+                                                           DeathDate      = p.DeathDate,
+                                                           Webpage        = p.Webpage,
+                                                           Twitter        = p.Twitter,
+                                                           Facebook       = p.Facebook,
+                                                           Photo          = p.Photo,
+                                                           Alias          = p.Alias,
+                                                           DisplayName    = p.DisplayName
+                                                       })
+                                                      .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<PersonDto> GetAsync(int id) => await context.People.Where(p => p.Id == id)
-                                                                         .Select(p => new PersonDto
-                                                                          {
-                                                                              Id               = p.Id,
-                                                                              Name             = p.Name,
-                                                                              Surname          = p.Surname,
-                                                                              CountryOfBirthId = p.CountryOfBirthId,
-                                                                              BirthDate        = p.BirthDate,
-                                                                              DeathDate        = p.DeathDate,
-                                                                              Webpage          = p.Webpage,
-                                                                              Twitter          = p.Twitter,
-                                                                              Facebook         = p.Facebook,
-                                                                              Photo            = p.Photo,
-                                                                              Alias            = p.Alias,
-                                                                              DisplayName      = p.DisplayName
-                                                                          })
-                                                                         .FirstOrDefaultAsync();
+    public Task<PersonDto> GetAsync(int id) => context.People.Where(p => p.Id == id)
+                                                      .Select(p => new PersonDto
+                                                       {
+                                                           Id               = p.Id,
+                                                           Name             = p.Name,
+                                                           Surname          = p.Surname,
+                                                           CountryOfBirthId = p.CountryOfBirthId,
+                                                           BirthDate        = p.BirthDate,
+                                                           DeathDate        = p.DeathDate,
+                                                           Webpage          = p.Webpage,
+                                                           Twitter          = p.Twitter,
+                                                           Facebook         = p.Facebook,
+                                                           Photo            = p.Photo,
+                                                           Alias            = p.Alias,
+                                                           DisplayName      = p.DisplayName
+                                                       })
+                                                      .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -96,6 +94,7 @@ public class PeopleController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(PersonDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Person model = await context.People.FindAsync(dto.Id);
 
@@ -123,7 +122,9 @@ public class PeopleController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(PersonDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Person
         {
             Name             = dto.Name,
@@ -152,6 +153,7 @@ public class PeopleController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Person item = await context.People.FindAsync(id);
 

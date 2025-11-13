@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -47,69 +45,58 @@ public class ScreensController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<ScreenDto>> GetAsync() => (await context.Screens.Select(s => new ScreenDto
-                                                                          {
-                                                                              Diagonal        = s.Diagonal,
-                                                                              EffectiveColors = s.EffectiveColors,
-                                                                              Height          = s.Height,
-                                                                              Id              = s.Id,
-                                                                              Type            = s.Type,
-                                                                              Width           = s.Width,
-                                                                              NativeResolutionId =
-                                                                                  s.NativeResolutionId,
-                                                                              NativeResolution =
-                                                                                  new ResolutionDto
-                                                                                  {
-                                                                                      Chars = s.NativeResolution
-                                                                                               .Chars,
-                                                                                      Colors = s.NativeResolution
-                                                                                                .Colors,
-                                                                                      Grayscale = s.NativeResolution
-                                                                                                   .Grayscale,
-                                                                                      Height = s.NativeResolution
-                                                                                                .Height,
-                                                                                      Id =
-                                                                                          s.NativeResolution.Id,
-                                                                                      Palette = s.NativeResolution
-                                                                                                 .Palette,
-                                                                                      Width = s.NativeResolution
-                                                                                               .Width
-                                                                                  }
-                                                                          })
-                                                                         .ToListAsync()).OrderBy(s => s.Diagonal)
-                                                                                        .ThenBy(s => s.EffectiveColors)
-                                                                                        .ThenBy(s => s.NativeResolution.ToString())
-                                                                                        .ThenBy(s => s.Type)
-                                                                                        .ThenBy(s => s.Size)
-                                                                                        .ToList();
+                                                                    {
+                                                                        Diagonal           = s.Diagonal,
+                                                                        EffectiveColors    = s.EffectiveColors,
+                                                                        Height             = s.Height,
+                                                                        Id                 = s.Id,
+                                                                        Type               = s.Type,
+                                                                        Width              = s.Width,
+                                                                        NativeResolutionId = s.NativeResolutionId,
+                                                                        NativeResolution = new ResolutionDto
+                                                                        {
+                                                                            Chars     = s.NativeResolution.Chars,
+                                                                            Colors    = s.NativeResolution.Colors,
+                                                                            Grayscale = s.NativeResolution.Grayscale,
+                                                                            Height    = s.NativeResolution.Height,
+                                                                            Id        = s.NativeResolution.Id,
+                                                                            Palette   = s.NativeResolution.Palette,
+                                                                            Width     = s.NativeResolution.Width
+                                                                        }
+                                                                    })
+                                                                   .ToListAsync()).OrderBy(s => s.Diagonal)
+       .ThenBy(s => s.EffectiveColors)
+       .ThenBy(s => s.NativeResolution.ToString())
+       .ThenBy(s => s.Type)
+       .ThenBy(s => s.Size)
+       .ToList();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ScreenDto> GetAsync(int id) => await context.Screens.Where(s => s.Id == id)
-                                                                         .Select(s => new ScreenDto
-                                                                          {
-                                                                              Diagonal        = s.Diagonal,
-                                                                              EffectiveColors = s.EffectiveColors,
-                                                                              Height          = s.Height,
-                                                                              Id              = s.Id,
-                                                                              NativeResolution = new ResolutionDto
-                                                                              {
-                                                                                  Chars  = s.NativeResolution.Chars,
-                                                                                  Colors = s.NativeResolution.Colors,
-                                                                                  Grayscale = s.NativeResolution
-                                                                                     .Grayscale,
-                                                                                  Height = s.NativeResolution.Height,
-                                                                                  Id     = s.NativeResolution.Id,
-                                                                                  Palette =
-                                                                                      s.NativeResolution.Palette,
-                                                                                  Width = s.NativeResolution.Width
-                                                                              },
-                                                                              NativeResolutionId = s.NativeResolutionId,
-                                                                              Type               = s.Type,
-                                                                              Width              = s.Width
-                                                                          })
-                                                                         .FirstOrDefaultAsync();
+    public Task<ScreenDto> GetAsync(int id) => context.Screens.Where(s => s.Id == id)
+                                                      .Select(s => new ScreenDto
+                                                       {
+                                                           Diagonal        = s.Diagonal,
+                                                           EffectiveColors = s.EffectiveColors,
+                                                           Height          = s.Height,
+                                                           Id              = s.Id,
+                                                           NativeResolution = new ResolutionDto
+                                                           {
+                                                               Chars     = s.NativeResolution.Chars,
+                                                               Colors    = s.NativeResolution.Colors,
+                                                               Grayscale = s.NativeResolution.Grayscale,
+                                                               Height    = s.NativeResolution.Height,
+                                                               Id        = s.NativeResolution.Id,
+                                                               Palette   = s.NativeResolution.Palette,
+                                                               Width     = s.NativeResolution.Width
+                                                           },
+                                                           NativeResolutionId = s.NativeResolutionId,
+                                                           Type               = s.Type,
+                                                           Width              = s.Width
+                                                       })
+                                                      .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -118,6 +105,7 @@ public class ScreensController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(ScreenDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Screen model = await context.Screens.FindAsync(dto.Id);
 
@@ -144,7 +132,9 @@ public class ScreensController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(ScreenDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Screen
         {
             Diagonal           = dto.Diagonal,
@@ -168,6 +158,7 @@ public class ScreensController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Screen item = await context.Screens.FindAsync(id);
 

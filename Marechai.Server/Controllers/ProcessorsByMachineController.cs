@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,20 +44,20 @@ public class ProcessorsByMachineController(MarechaiContext context) : Controller
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ProcessorByMachineDto>> GetByMachine(int machineId) => await context
-                                                                                             .ProcessorsByMachine.Where(p => p.MachineId == machineId)
-                                                                                             .Select(p => new ProcessorByMachineDto
-                                                                                              {
-                                                                                                  Id          = p.Id,
-                                                                                                  Name        = p.Processor.Name,
-                                                                                                  CompanyName = p.Processor.Company.Name,
-                                                                                                  ProcessorId = p.ProcessorId,
-                                                                                                  MachineId   = p.MachineId,
-                                                                                                  Speed       = p.Speed
-                                                                                              })
-                                                                                             .OrderBy(p => p.CompanyName)
-                                                                                             .ThenBy(p => p.Name)
-                                                                                             .ToListAsync();
+    public Task<List<ProcessorByMachineDto>> GetByMachine(int machineId) => context.ProcessorsByMachine
+       .Where(p => p.MachineId == machineId)
+       .Select(p => new ProcessorByMachineDto
+        {
+            Id          = p.Id,
+            Name        = p.Processor.Name,
+            CompanyName = p.Processor.Company.Name,
+            ProcessorId = p.ProcessorId,
+            MachineId   = p.MachineId,
+            Speed       = p.Speed
+        })
+       .OrderBy(p => p.CompanyName)
+       .ThenBy(p => p.Name)
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -68,6 +66,7 @@ public class ProcessorsByMachineController(MarechaiContext context) : Controller
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         ProcessorsByMachine item = await context.ProcessorsByMachine.FindAsync(id);
 
@@ -85,7 +84,9 @@ public class ProcessorsByMachineController(MarechaiContext context) : Controller
     public async Task<long> CreateAsync(int processorId, int machineId, float? speed)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var item = new ProcessorsByMachine
         {
             ProcessorId = processorId,

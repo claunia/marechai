@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,42 +44,40 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<CurrencyPeggingDto>> GetAsync() => await context.CurrenciesPegging
-                                                                                 .OrderBy(i => i.Source.Name)
-                                                                                 .ThenBy(i => i.Destination.Name)
-                                                                                 .ThenBy(i => i.Start)
-                                                                                 .ThenBy(i => i.End)
-                                                                                 .Select(i => new CurrencyPeggingDto
-                                                                                  {
-                                                                                      Id              = i.Id,
-                                                                                      SourceCode      = i.Source.Code,
-                                                                                      SourceName      = i.Source.Name,
-                                                                                      DestinationCode = i.Source.Code,
-                                                                                      DestinationName = i.Source.Name,
-                                                                                      Ratio           = i.Ratio,
-                                                                                      Start           = i.Start,
-                                                                                      End             = i.End
-                                                                                  })
-                                                                                 .ToListAsync();
+    public Task<List<CurrencyPeggingDto>> GetAsync() => context.CurrenciesPegging.OrderBy(i => i.Source.Name)
+                                                               .ThenBy(i => i.Destination.Name)
+                                                               .ThenBy(i => i.Start)
+                                                               .ThenBy(i => i.End)
+                                                               .Select(i => new CurrencyPeggingDto
+                                                                {
+                                                                    Id              = i.Id,
+                                                                    SourceCode      = i.Source.Code,
+                                                                    SourceName      = i.Source.Name,
+                                                                    DestinationCode = i.Source.Code,
+                                                                    DestinationName = i.Source.Name,
+                                                                    Ratio           = i.Ratio,
+                                                                    Start           = i.Start,
+                                                                    End             = i.End
+                                                                })
+                                                               .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<CurrencyPeggingDto> GetAsync(int id) => await context.CurrenciesPegging
-                                                                       .Where(b => b.Id == id)
-                                                                       .Select(i => new CurrencyPeggingDto
-                                                                        {
-                                                                            Id              = i.Id,
-                                                                            SourceCode      = i.Source.Code,
-                                                                            SourceName      = i.Source.Name,
-                                                                            DestinationCode = i.Destination.Code,
-                                                                            DestinationName = i.Destination.Name,
-                                                                            Ratio           = i.Ratio,
-                                                                            Start           = i.Start,
-                                                                            End             = i.End
-                                                                        })
-                                                                       .FirstOrDefaultAsync();
+    public Task<CurrencyPeggingDto> GetAsync(int id) => context.CurrenciesPegging.Where(b => b.Id == id)
+                                                               .Select(i => new CurrencyPeggingDto
+                                                                {
+                                                                    Id              = i.Id,
+                                                                    SourceCode      = i.Source.Code,
+                                                                    SourceName      = i.Source.Name,
+                                                                    DestinationCode = i.Destination.Code,
+                                                                    DestinationName = i.Destination.Name,
+                                                                    Ratio           = i.Ratio,
+                                                                    Start           = i.Start,
+                                                                    End             = i.End
+                                                                })
+                                                               .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -90,6 +86,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
     public async Task UpdateAsync(CurrencyPeggingDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         CurrencyPegging model = await context.CurrenciesPegging.FindAsync(dto.Id);
 
@@ -110,7 +107,9 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
     public async Task<int> CreateAsync(CurrencyPeggingDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new CurrencyPegging
         {
             SourceCode      = dto.SourceCode,
@@ -133,6 +132,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         CurrencyPegging item = await context.CurrenciesPegging.FindAsync(id);
 

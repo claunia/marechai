@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,35 +44,35 @@ public class ScreensByMachineController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ScreenByMachineDto>> GetByMachine(int machineId) => await context.ScreensByMachine
-                                                                                                  .Where(s => s.MachineId == machineId)
-                                                                                                  .Select(s => new ScreenByMachineDto
-                                                                                                   {
-                                                                                                       Id        = s.Id,
-                                                                                                       ScreenId  = s.ScreenId,
-                                                                                                       MachineId = s.MachineId,
-                                                                                                       Screen = new ScreenDto
-                                                                                                       {
-                                                                                                           Diagonal        = s.Screen.Diagonal,
-                                                                                                           EffectiveColors = s.Screen.EffectiveColors,
-                                                                                                           Height          = s.Screen.Height,
-                                                                                                           Id              = s.Screen.Id,
-                                                                                                           NativeResolution = new ResolutionDto
-                                                                                                           {
-                                                                                                               Chars     = s.Screen.NativeResolution.Chars,
-                                                                                                               Colors    = s.Screen.NativeResolution.Colors,
-                                                                                                               Grayscale = s.Screen.NativeResolution.Grayscale,
-                                                                                                               Height    = s.Screen.NativeResolution.Height,
-                                                                                                               Id        = s.Screen.NativeResolutionId,
-                                                                                                               Palette   = s.Screen.NativeResolution.Palette,
-                                                                                                               Width     = s.Screen.NativeResolution.Width
-                                                                                                           },
-                                                                                                           NativeResolutionId = s.Screen.NativeResolutionId,
-                                                                                                           Type               = s.Screen.Type,
-                                                                                                           Width              = s.Screen.Width
-                                                                                                       }
-                                                                                                   })
-                                                                                                  .ToListAsync();
+    public Task<List<ScreenByMachineDto>> GetByMachine(int machineId) => context.ScreensByMachine
+       .Where(s => s.MachineId == machineId)
+       .Select(s => new ScreenByMachineDto
+        {
+            Id        = s.Id,
+            ScreenId  = s.ScreenId,
+            MachineId = s.MachineId,
+            Screen = new ScreenDto
+            {
+                Diagonal        = s.Screen.Diagonal,
+                EffectiveColors = s.Screen.EffectiveColors,
+                Height          = s.Screen.Height,
+                Id              = s.Screen.Id,
+                NativeResolution = new ResolutionDto
+                {
+                    Chars     = s.Screen.NativeResolution.Chars,
+                    Colors    = s.Screen.NativeResolution.Colors,
+                    Grayscale = s.Screen.NativeResolution.Grayscale,
+                    Height    = s.Screen.NativeResolution.Height,
+                    Id        = s.Screen.NativeResolutionId,
+                    Palette   = s.Screen.NativeResolution.Palette,
+                    Width     = s.Screen.NativeResolution.Width
+                },
+                NativeResolutionId = s.Screen.NativeResolutionId,
+                Type               = s.Screen.Type,
+                Width              = s.Screen.Width
+            }
+        })
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -83,6 +81,7 @@ public class ScreensByMachineController(MarechaiContext context) : ControllerBas
     public async Task DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         ScreensByMachine item = await context.ScreensByMachine.FindAsync(id);
 
@@ -100,6 +99,7 @@ public class ScreensByMachineController(MarechaiContext context) : ControllerBas
     public async Task<long> CreateAsync(int machineId, int screenId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
         if(context.ScreensByMachine.Any(s => s.MachineId == machineId && s.ScreenId == screenId)) return 0;
 

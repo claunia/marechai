@@ -23,10 +23,7 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
@@ -34,7 +31,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -54,68 +50,71 @@ public class ComputersController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<int> GetMinimumYearAsync() => context.Machines
-                                                      .Where(t => t.Type == MachineType.Computer &&
-                                                                  t.Introduced.HasValue          &&
-                                                                  t.Introduced.Value.Year > 1000)
-                                                      .MinAsync(t => t.Introduced.Value.Year);
+                                                     .Where(t => t.Type == MachineType.Computer &&
+                                                                 t.Introduced.HasValue          &&
+                                                                 t.Introduced.Value.Year > 1000)
+                                                     .MinAsync(t => t.Introduced.Value.Year);
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<int> GetMaximumYearAsync() => context.Machines
-                                                      .Where(t => t.Type == MachineType.Computer &&
-                                                                  t.Introduced.HasValue          &&
-                                                                  t.Introduced.Value.Year > 1000)
-                                                      .MaxAsync(t => t.Introduced.Value.Year);
+                                                     .Where(t => t.Type == MachineType.Computer &&
+                                                                 t.Introduced.HasValue          &&
+                                                                 t.Introduced.Value.Year > 1000)
+                                                     .MaxAsync(t => t.Introduced.Value.Year);
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MachineDto>> GetComputersByLetterAsync(char c) => await context.Machines
-       .Include(m => m.Company)
-       .Where(m => m.Type == MachineType.Computer && EF.Functions.Like(m.Name, $"{c}%"))
-       .OrderBy(m => m.Company.Name)
-       .ThenBy(m => m.Name)
-       .Select(m => new MachineDto
-        {
-            Id      = m.Id,
-            Name    = m.Name,
-            Company = m.Company.Name
-        })
-       .ToListAsync();
+    public Task<List<MachineDto>> GetComputersByLetterAsync(char c) => context.Machines.Include(m => m.Company)
+                                                                              .Where(m =>
+                                                                                   m.Type == MachineType.Computer &&
+                                                                                   EF.Functions.Like(m.Name, $"{c}%"))
+                                                                              .OrderBy(m => m.Company.Name)
+                                                                              .ThenBy(m => m.Name)
+                                                                              .Select(m => new MachineDto
+                                                                               {
+                                                                                   Id      = m.Id,
+                                                                                   Name    = m.Name,
+                                                                                   Company = m.Company.Name
+                                                                               })
+                                                                              .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MachineDto>> GetComputersByYearAsync(int year) => await context.Machines
-       .Include(m => m.Company)
-       .Where(m => m.Type == MachineType.Computer && m.Introduced != null && m.Introduced.Value.Year == year)
-       .OrderBy(m => m.Company.Name)
-       .ThenBy(m => m.Name)
-       .Select(m => new MachineDto
-        {
-            Id      = m.Id,
-            Name    = m.Name,
-            Company = m.Company.Name
-        })
-       .ToListAsync();
+    public Task<List<MachineDto>> GetComputersByYearAsync(int year) => context.Machines.Include(m => m.Company)
+                                                                              .Where(m =>
+                                                                                   m.Type == MachineType.Computer &&
+                                                                                   m.Introduced != null &&
+                                                                                   m.Introduced.Value.Year == year)
+                                                                              .OrderBy(m => m.Company.Name)
+                                                                              .ThenBy(m => m.Name)
+                                                                              .Select(m => new MachineDto
+                                                                               {
+                                                                                   Id      = m.Id,
+                                                                                   Name    = m.Name,
+                                                                                   Company = m.Company.Name
+                                                                               })
+                                                                              .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<MachineDto>> GetComputersAsync() => await context.Machines.Include(m => m.Company)
-                                                                        .Where(m => m.Type == MachineType.Computer)
-                                                                        .OrderBy(m => m.Company.Name)
-                                                                        .ThenBy(m => m.Name)
-                                                                        .Select(m => new MachineDto
-                                                                         {
-                                                                             Id      = m.Id,
-                                                                             Name    = m.Name,
-                                                                             Company = m.Company.Name
-                                                                         })
-                                                                        .ToListAsync();
+    public Task<List<MachineDto>> GetComputersAsync() => context.Machines.Include(m => m.Company)
+                                                                .Where(m => m.Type == MachineType.Computer)
+                                                                .OrderBy(m => m.Company.Name)
+                                                                .ThenBy(m => m.Name)
+                                                                .Select(m => new MachineDto
+                                                                 {
+                                                                     Id      = m.Id,
+                                                                     Name    = m.Name,
+                                                                     Company = m.Company.Name
+                                                                 })
+                                                                .ToListAsync();
 }

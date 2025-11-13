@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -46,80 +45,70 @@ public class CompaniesController(MarechaiContext context, IStringLocalizer<Compa
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<CompanyDto>> GetAsync() => await context.Companies.Include(c => c.Logos)
-                                                                          .OrderBy(c => c.Name)
-                                                                          .Select(c => new CompanyDto
-                                                                           {
-                                                                               Id = c.Id,
-                                                                               LastLogo =
-                                                                                   c.Logos
-                                                                                    .OrderByDescending(l => l.Year)
-                                                                                    .FirstOrDefault()
-                                                                                    .Guid,
-                                                                               Name       = c.Name,
-                                                                               Founded    = c.Founded,
-                                                                               Sold       = c.Sold,
-                                                                               SoldToId   = c.SoldToId,
-                                                                               CountryId  = c.CountryId,
-                                                                               Status     = c.Status,
-                                                                               Website    = c.Website,
-                                                                               Twitter    = c.Twitter,
-                                                                               Facebook   = c.Facebook,
-                                                                               Address    = c.Address,
-                                                                               City       = c.City,
-                                                                               Province   = c.Province,
-                                                                               PostalCode = c.PostalCode,
-                                                                               Country    = c.Country.Name,
-                                                                               FoundedDayIsUnknown =
-                                                                                   c.FoundedDayIsUnknown,
-                                                                               FoundedMonthIsUnknown =
-                                                                                   c.FoundedMonthIsUnknown,
-                                                                               SoldDayIsUnknown =
-                                                                                   c.SoldDayIsUnknown,
-                                                                               SoldMonthIsUnknown =
-                                                                                   c.SoldMonthIsUnknown,
-                                                                               LegalName = c.LegalName
-                                                                           })
-                                                                          .ToListAsync();
+    public Task<List<CompanyDto>> GetAsync() => context.Companies.Include(c => c.Logos)
+                                                       .OrderBy(c => c.Name)
+                                                       .Select(c => new CompanyDto
+                                                        {
+                                                            Id = c.Id,
+                                                            LastLogo =
+                                                                c.Logos.OrderByDescending(l => l.Year)
+                                                                 .FirstOrDefault()
+                                                                 .Guid,
+                                                            Name                  = c.Name,
+                                                            Founded               = c.Founded,
+                                                            Sold                  = c.Sold,
+                                                            SoldToId              = c.SoldToId,
+                                                            CountryId             = c.CountryId,
+                                                            Status                = c.Status,
+                                                            Website               = c.Website,
+                                                            Twitter               = c.Twitter,
+                                                            Facebook              = c.Facebook,
+                                                            Address               = c.Address,
+                                                            City                  = c.City,
+                                                            Province              = c.Province,
+                                                            PostalCode            = c.PostalCode,
+                                                            Country               = c.Country.Name,
+                                                            FoundedDayIsUnknown   = c.FoundedDayIsUnknown,
+                                                            FoundedMonthIsUnknown = c.FoundedMonthIsUnknown,
+                                                            SoldDayIsUnknown      = c.SoldDayIsUnknown,
+                                                            SoldMonthIsUnknown    = c.SoldMonthIsUnknown,
+                                                            LegalName             = c.LegalName
+                                                        })
+                                                       .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<CompanyDto> GetAsync(int id) => await context.Companies.Where(c => c.Id == id)
-                                                                          .Select(c => new CompanyDto
-                                                                           {
-                                                                               Id = c.Id,
-                                                                               LastLogo =
-                                                                                   c.Logos
-                                                                                      .OrderByDescending(l => l.Year)
-                                                                                      .FirstOrDefault()
-                                                                                      .Guid,
-                                                                               Name       = c.Name,
-                                                                               Founded    = c.Founded,
-                                                                               Sold       = c.Sold,
-                                                                               SoldToId   = c.SoldToId,
-                                                                               CountryId  = c.CountryId,
-                                                                               Status     = c.Status,
-                                                                               Website    = c.Website,
-                                                                               Twitter    = c.Twitter,
-                                                                               Facebook   = c.Facebook,
-                                                                               Address    = c.Address,
-                                                                               City       = c.City,
-                                                                               Province   = c.Province,
-                                                                               PostalCode = c.PostalCode,
-                                                                               Country    = c.Country.Name,
-                                                                               FoundedDayIsUnknown =
-                                                                                   c.FoundedDayIsUnknown,
-                                                                               FoundedMonthIsUnknown =
-                                                                                   c.FoundedMonthIsUnknown,
-                                                                               SoldDayIsUnknown =
-                                                                                   c.SoldDayIsUnknown,
-                                                                               SoldMonthIsUnknown =
-                                                                                   c.SoldMonthIsUnknown,
-                                                                               LegalName = c.LegalName
-                                                                           })
-                                                                          .FirstOrDefaultAsync();
+    public Task<CompanyDto> GetAsync(int id) => context.Companies.Where(c => c.Id == id)
+                                                       .Select(c => new CompanyDto
+                                                        {
+                                                            Id = c.Id,
+                                                            LastLogo =
+                                                                c.Logos.OrderByDescending(l => l.Year)
+                                                                 .FirstOrDefault()
+                                                                 .Guid,
+                                                            Name                  = c.Name,
+                                                            Founded               = c.Founded,
+                                                            Sold                  = c.Sold,
+                                                            SoldToId              = c.SoldToId,
+                                                            CountryId             = c.CountryId,
+                                                            Status                = c.Status,
+                                                            Website               = c.Website,
+                                                            Twitter               = c.Twitter,
+                                                            Facebook              = c.Facebook,
+                                                            Address               = c.Address,
+                                                            City                  = c.City,
+                                                            Province              = c.Province,
+                                                            PostalCode            = c.PostalCode,
+                                                            Country               = c.Country.Name,
+                                                            FoundedDayIsUnknown   = c.FoundedDayIsUnknown,
+                                                            FoundedMonthIsUnknown = c.FoundedMonthIsUnknown,
+                                                            SoldDayIsUnknown      = c.SoldDayIsUnknown,
+                                                            SoldMonthIsUnknown    = c.SoldMonthIsUnknown,
+                                                            LegalName             = c.LegalName
+                                                        })
+                                                       .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -128,6 +117,7 @@ public class CompaniesController(MarechaiContext context, IStringLocalizer<Compa
     public async Task UpdateAsync(CompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Company model = await context.Companies.FindAsync(dto.Id);
 
@@ -161,7 +151,9 @@ public class CompaniesController(MarechaiContext context, IStringLocalizer<Compa
     public async Task<int> CreateAsync(CompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
+
         var model = new Company
         {
             Name                  = dto.Name,
@@ -194,15 +186,15 @@ public class CompaniesController(MarechaiContext context, IStringLocalizer<Compa
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<Machine>> GetMachinesAsync(int id) => await context.Machines.Where(m => m.CompanyId == id)
-                                                                    .OrderBy(m => m.Name)
-                                                                    .Select(m => new Machine
-                                                                     {
-                                                                         Id   = m.Id,
-                                                                         Name = m.Name,
-                                                                         Type = m.Type
-                                                                     })
-                                                                    .ToListAsync();
+    public Task<List<Machine>> GetMachinesAsync(int id) => context.Machines.Where(m => m.CompanyId == id)
+                                                                  .OrderBy(m => m.Name)
+                                                                  .Select(m => new Machine
+                                                                   {
+                                                                       Id   = m.Id,
+                                                                       Name = m.Name,
+                                                                       Type = m.Type
+                                                                   })
+                                                                  .ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
@@ -219,12 +211,12 @@ public class CompaniesController(MarechaiContext context, IStringLocalizer<Compa
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Company> GetSoldToAsync(int? id) => await context.Companies.Select(c => new Company
-                                                                         {
-                                                                             Id   = c.Id,
-                                                                             Name = c.Name
-                                                                         })
-                                                                        .FirstOrDefaultAsync(c => c.Id == id);
+    public Task<Company> GetSoldToAsync(int? id) => context.Companies.Select(c => new Company
+                                                            {
+                                                                Id   = c.Id,
+                                                                Name = c.Name
+                                                            })
+                                                           .FirstOrDefaultAsync(c => c.Id == id);
 
     [HttpGet]
     [AllowAnonymous]
@@ -237,8 +229,7 @@ public class CompaniesController(MarechaiContext context, IStringLocalizer<Compa
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<CompanyDto>> GetCompaniesByCountryAsync(int countryId) => context.Companies
-       .Include(c => c.Logos)
+    public Task<List<CompanyDto>> GetCompaniesByCountryAsync(int countryId) => context.Companies.Include(c => c.Logos)
        .Where(c => c.CountryId == countryId)
        .OrderBy(c => c.Name)
        .Select(c => new CompanyDto
@@ -271,6 +262,7 @@ public class CompaniesController(MarechaiContext context, IStringLocalizer<Compa
     public async Task DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return;
         Company item = await context.Companies.FindAsync(id);
 
@@ -285,24 +277,25 @@ public class CompaniesController(MarechaiContext context, IStringLocalizer<Compa
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<CompanyDescriptionDto> GetDescriptionAsync(int id) => await context.CompanyDescriptions
-       .Where(d => d.CompanyId == id)
-       .Select(d => new CompanyDescriptionDto
-        {
-            Id        = d.Id,
-            CompanyId = d.CompanyId,
-            Html      = d.Html,
-            Markdown  = d.Text
-        })
-       .FirstOrDefaultAsync();
+    public Task<CompanyDescriptionDto> GetDescriptionAsync(int id) => context.CompanyDescriptions
+                                                                             .Where(d => d.CompanyId == id)
+                                                                             .Select(d => new CompanyDescriptionDto
+                                                                              {
+                                                                                  Id        = d.Id,
+                                                                                  CompanyId = d.CompanyId,
+                                                                                  Html      = d.Html,
+                                                                                  Markdown  = d.Text
+                                                                              })
+                                                                             .FirstOrDefaultAsync();
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateOrUpdateDescriptionAsync(int    id, CompanyDescriptionDto description)
+    public async Task<int> CreateOrUpdateDescriptionAsync(int id, CompanyDescriptionDto description)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
+
         if(userId is null) return 0;
         CompanyDescription current = await context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id);
 
