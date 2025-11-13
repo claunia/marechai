@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,18 +37,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/company-logos")]
+[Route("/companies/logos")]
 [ApiController]
 public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment host) : ControllerBase
 {
-    [HttpGet]
+    readonly string _webRootPath = host.WebRootPath;
+
+    [HttpGet("/companies/{companyId:int}/logos")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<CompanyLogo>> GetByCompany(int companyId) =>
-        await context.CompanyLogos.Where(l => l.CompanyId == companyId).OrderBy(l => l.Year).ToListAsync();
+    public Task<List<CompanyLogo>> GetByCompany(int companyId) => context.CompanyLogos
+                                                                         .Where(l => l.CompanyId == companyId)
+                                                                         .OrderBy(l => l.Year)
+                                                                         .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -68,56 +71,59 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
         await context.SaveChangesWithUserAsync(userId);
 
         if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg"));
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png"));
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png"));
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png"));
+
+        return Ok();
     }
 
-    [HttpGet]
+    [HttpPut("change-year/{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> ChangeYearAsync(int id, int? year)
+    public async Task<ActionResult> ChangeYearAsync(int id, [FromBody] int? year)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CompanyLogo logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
 
         if(logo is null) return NotFound();
@@ -133,7 +139,7 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(int companyId, Guid guid, int? year)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] CompanyLogo dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -141,9 +147,9 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
 
         var logo = new CompanyLogo
         {
-            Guid      = guid,
-            Year      = year,
-            CompanyId = companyId
+            Guid      = dto.Guid,
+            Year      = dto.Year,
+            CompanyId = dto.CompanyId
         };
 
         await context.CompanyLogos.AddAsync(logo);
