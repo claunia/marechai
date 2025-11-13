@@ -83,7 +83,7 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
 
         if(userId is null) return Unauthorized();
 
-        CurrencyInflation model = await context.CurrenciesInflation.FindAsync(dto.Id);
+        CurrencyInflation model = await context.CurrenciesInflation.FindAsync(id);
 
         if(model is null) return NotFound();
 

@@ -87,18 +87,18 @@ public class MachinesController
                                                         })
                                                        .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] MachineDto dto)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] MachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        Machine model = await context.Machines.FindAsync(dto.Id);
+        Machine model = await context.Machines.FindAsync(id);
 
         if(model is null) return NotFound();
 

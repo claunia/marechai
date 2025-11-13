@@ -91,18 +91,18 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                           })
                                                          .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] MagazineDto dto)
+    public async Task<ActionResult> UpdateAsync(long id, [FromBody] MagazineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        Magazine model = await context.Magazines.FindAsync(dto.Id);
+        Magazine model = await context.Magazines.FindAsync(id);
 
         if(model is null) return NotFound();
 

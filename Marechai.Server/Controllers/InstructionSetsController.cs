@@ -64,13 +64,13 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
                                                             })
                                                            .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] InstructionSet viewModel)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] InstructionSet viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

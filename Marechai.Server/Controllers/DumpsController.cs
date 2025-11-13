@@ -81,18 +81,18 @@ public class DumpsController(MarechaiContext context) : ControllerBase
                                                        })
                                                       .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:ulong}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] DumpDto dto)
+    public async Task<ActionResult> UpdateAsync(ulong id, [FromBody] DumpDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        Dump model = await context.Dumps.FindAsync(dto.Id);
+        Dump model = await context.Dumps.FindAsync(id);
 
         if(model is null) return NotFound();
 

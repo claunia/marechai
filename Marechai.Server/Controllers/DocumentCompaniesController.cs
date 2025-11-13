@@ -36,7 +36,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/document-companies")]
+[Route("/documents/companies")]
 [ApiController]
 public class DocumentCompaniesController(MarechaiContext context) : ControllerBase
 {
@@ -67,18 +67,18 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
                                                                 })
                                                                .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] DocumentCompanyDto dto)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] DocumentCompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        DocumentCompany model = await context.DocumentCompanies.FindAsync(dto.Id);
+        DocumentCompany model = await context.DocumentCompanies.FindAsync(id);
 
         if(model is null) return NotFound();
 

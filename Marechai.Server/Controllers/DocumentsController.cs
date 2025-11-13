@@ -76,18 +76,18 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                                                           })
                                                          .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] DocumentDto dto)
+    public async Task<ActionResult> UpdateAsync(long id, [FromBody] DocumentDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        Document model = await context.Documents.FindAsync(dto.Id);
+        Document model = await context.Documents.FindAsync(id);
 
         if(model is null) return NotFound();
 

@@ -79,18 +79,18 @@ public class ResolutionsController(MarechaiContext context) : ControllerBase
                                                            })
                                                           .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] ResolutionDto dto)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] ResolutionDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        Resolution model = await context.Resolutions.FindAsync(dto.Id);
+        Resolution model = await context.Resolutions.FindAsync(id);
 
         if(model is null) return NotFound();
 

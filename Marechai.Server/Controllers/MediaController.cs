@@ -124,18 +124,18 @@ public class MediaController(MarechaiContext context) : ControllerBase
                                                         })
                                                        .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:ulong}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] MediaDto dto)
+    public async Task<ActionResult> UpdateAsync(ulong id, [FromBody] MediaDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        Media model = await context.Media.FindAsync(dto.Id);
+        Media model = await context.Media.FindAsync(id);
 
         if(model is null) return NotFound();
 

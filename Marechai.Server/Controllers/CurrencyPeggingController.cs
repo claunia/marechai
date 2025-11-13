@@ -91,7 +91,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
 
         if(userId is null) return Unauthorized();
 
-        CurrencyPegging model = await context.CurrenciesPegging.FindAsync(dto.Id);
+        CurrencyPegging model = await context.CurrenciesPegging.FindAsync(id);
 
         if(model is null) return NotFound();
 

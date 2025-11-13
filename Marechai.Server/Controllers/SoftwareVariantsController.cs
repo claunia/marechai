@@ -101,18 +101,18 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
                                                                   })
                                                                  .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:ulong}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync([FromBody] SoftwareVariantDto dto)
+    public async Task<ActionResult> UpdateAsync(ulong id, [FromBody] SoftwareVariantDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        SoftwareVariant model = await context.SoftwareVariants.FindAsync(dto.Id);
+        SoftwareVariant model = await context.SoftwareVariants.FindAsync(id);
 
         if(model is null) return NotFound();
 
