@@ -64,7 +64,7 @@ public class BooksController(MarechaiContext context) : ControllerBase
                                                      })
                                                     .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:long}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,18 +86,19 @@ public class BooksController(MarechaiContext context) : ControllerBase
                                                       })
                                                      .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(BookDto dto)
+    public async Task<ActionResult> UpdateAsync(long id, [FromBody] BookDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        Book model = await context.Books.FindAsync(dto.Id);
+
+        Book model = await context.Books.FindAsync(id);
 
         if(model is null) return NotFound();
 
@@ -121,11 +122,11 @@ public class BooksController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<long> CreateAsync(BookDto dto)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] BookDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var model = new Book
         {
@@ -147,14 +148,14 @@ public class BooksController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpGet]
+    [HttpGet("{id:long}/synopsis")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<string> GetSynopsisTextAsync(int id) =>
+    public async Task<string> GetSynopsisTextAsync(long id) =>
         (await context.Books.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -165,6 +166,7 @@ public class BooksController(MarechaiContext context) : ControllerBase
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         Book item = await context.Books.FindAsync(id);
 
         if(item is null) return NotFound();
