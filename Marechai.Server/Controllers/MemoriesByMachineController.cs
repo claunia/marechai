@@ -28,7 +28,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
-using Marechai.Database;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -89,8 +88,7 @@ public class MemoriesByMachineController(MarechaiContext context) : ControllerBa
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int     machineId, MemoryType type, MemoryUsage usage, long? size,
-                                                      double? speed)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] MemoryByMachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -98,11 +96,11 @@ public class MemoriesByMachineController(MarechaiContext context) : ControllerBa
 
         var item = new MemoryByMachine
         {
-            MachineId = machineId,
-            Type      = type,
-            Usage     = usage,
-            Size      = size,
-            Speed     = speed
+            MachineId = dto.MachineId,
+            Type      = dto.Type,
+            Usage     = dto.Usage,
+            Size      = dto.Size,
+            Speed     = dto.Speed
         };
 
         await context.MemoryByMachine.AddAsync(item);

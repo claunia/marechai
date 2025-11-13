@@ -97,7 +97,7 @@ public class ResolutionsByScreenController(MarechaiContext context) : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int resolutionId, int screenId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] ResolutionByScreenDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -105,8 +105,8 @@ public class ResolutionsByScreenController(MarechaiContext context) : Controller
 
         var item = new ResolutionsByScreen
         {
-            ScreenId     = screenId,
-            ResolutionId = resolutionId
+            ScreenId     = dto.ScreenId,
+            ResolutionId = dto.ResolutionId
         };
 
         await context.ResolutionsByScreen.AddAsync(item);

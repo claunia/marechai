@@ -124,7 +124,7 @@ public class PeopleController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(PersonDto dto)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] PersonDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

@@ -85,7 +85,7 @@ public class GpusByMachineController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int gpuId, int machineId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] GpuByMachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -93,8 +93,8 @@ public class GpusByMachineController(MarechaiContext context) : ControllerBase
 
         var item = new GpusByMachine
         {
-            GpuId     = gpuId,
-            MachineId = machineId
+            GpuId     = dto.GpuId,
+            MachineId = dto.MachineId
         };
 
         await context.GpusByMachine.AddAsync(item);

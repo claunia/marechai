@@ -85,7 +85,7 @@ public class SoundSynthsByMachineController(MarechaiContext context) : Controlle
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int soundSynthId, int machineId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] SoundSynthByMachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -93,8 +93,8 @@ public class SoundSynthsByMachineController(MarechaiContext context) : Controlle
 
         var item = new SoundByMachine
         {
-            SoundSynthId = soundSynthId,
-            MachineId    = machineId
+            SoundSynthId = dto.SoundSynthId,
+            MachineId    = dto.MachineId
         };
 
         await context.SoundByMachine.AddAsync(item);

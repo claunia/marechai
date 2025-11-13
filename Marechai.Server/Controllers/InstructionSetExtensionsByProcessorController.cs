@@ -84,7 +84,7 @@ public class InstructionSetExtensionsByProcessorController(MarechaiContext conte
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(int processorId, int extensionId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] InstructionSetExtensionByProcessorDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -92,8 +92,8 @@ public class InstructionSetExtensionsByProcessorController(MarechaiContext conte
 
         var item = new InstructionSetExtensionsByProcessor
         {
-            ProcessorId = processorId,
-            ExtensionId = extensionId
+            ProcessorId = dto.ProcessorId,
+            ExtensionId = dto.ExtensionId
         };
 
         await context.InstructionSetExtensionsByProcessor.AddAsync(item);

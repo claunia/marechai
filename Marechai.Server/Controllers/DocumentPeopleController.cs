@@ -79,7 +79,7 @@ public class DocumentPeopleController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(DocumentPersonDto dto)
+    public async Task<ActionResult> UpdateAsync([FromBody] DocumentPersonDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -104,7 +104,7 @@ public class DocumentPeopleController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(DocumentPersonDto dto)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] DocumentPersonDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

@@ -143,7 +143,7 @@ public class MachinesController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(MachineDto dto)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] MachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

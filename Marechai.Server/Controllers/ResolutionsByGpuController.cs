@@ -101,7 +101,7 @@ public class ResolutionsByGpuController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int resolutionId, int gpuId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] ResolutionByGpuDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -109,8 +109,8 @@ public class ResolutionsByGpuController(MarechaiContext context) : ControllerBas
 
         var item = new ResolutionsByGpu
         {
-            GpuId        = gpuId,
-            ResolutionId = resolutionId
+            GpuId        = dto.GpuId,
+            ResolutionId = dto.ResolutionId
         };
 
         await context.ResolutionsByGpu.AddAsync(item);

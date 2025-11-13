@@ -86,7 +86,7 @@ public class ProcessorsByMachineController(MarechaiContext context) : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int processorId, int machineId, float? speed)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] ProcessorByMachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -94,9 +94,9 @@ public class ProcessorsByMachineController(MarechaiContext context) : Controller
 
         var item = new ProcessorsByMachine
         {
-            ProcessorId = processorId,
-            MachineId   = machineId,
-            Speed       = speed
+            ProcessorId = dto.ProcessorId,
+            MachineId   = dto.MachineId,
+            Speed       = dto.Speed
         };
 
         await context.ProcessorsByMachine.AddAsync(item);

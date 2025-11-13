@@ -82,7 +82,7 @@ public class DocumentsByMachineFamilyController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int machineFamilyId, long bookId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] DocumentByMachineFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -90,8 +90,8 @@ public class DocumentsByMachineFamilyController(MarechaiContext context) : Contr
 
         var item = new DocumentsByMachineFamily
         {
-            MachineFamilyId = machineFamilyId,
-            DocumentId      = bookId
+            MachineFamilyId = dto.MachineFamilyId,
+            DocumentId      = dto.DocumentId
         };
 
         await context.DocumentsByMachineFamilies.AddAsync(item);

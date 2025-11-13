@@ -87,7 +87,7 @@ public class DumpsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(DumpDto dto)
+    public async Task<ActionResult> UpdateAsync([FromBody] DumpDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -112,7 +112,7 @@ public class DumpsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ulong>> CreateAsync(DumpDto dto)
+    public async Task<ActionResult<ulong>> CreateAsync([FromBody] DumpDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

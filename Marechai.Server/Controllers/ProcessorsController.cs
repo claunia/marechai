@@ -210,7 +210,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(ProcessorDto dto)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] ProcessorDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

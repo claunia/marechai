@@ -28,7 +28,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
-using Marechai.Database;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -87,8 +86,7 @@ public class StorageByMachineController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int   machineId, StorageType type, StorageInterface @interface,
-                                                      long? capacity)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] StorageByMachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -96,10 +94,10 @@ public class StorageByMachineController(MarechaiContext context) : ControllerBas
 
         var item = new StorageByMachine
         {
-            MachineId = machineId,
-            Type      = type,
-            Interface = @interface,
-            Capacity  = capacity
+            MachineId = dto.MachineId,
+            Type      = dto.Type,
+            Interface = dto.Interface,
+            Capacity  = dto.Capacity
         };
 
         await context.StorageByMachine.AddAsync(item);

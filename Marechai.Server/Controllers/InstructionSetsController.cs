@@ -91,7 +91,7 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(InstructionSet viewModel)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] InstructionSet viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

@@ -101,17 +101,17 @@ public class ScreensByMachineController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int machineId, int screenId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] ScreenByMachineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        if(context.ScreensByMachine.Any(s => s.MachineId == machineId && s.ScreenId == screenId)) return 0;
+        if(context.ScreensByMachine.Any(s => s.MachineId == dto.MachineId && s.ScreenId == dto.ScreenId)) return 0;
 
         var item = new ScreensByMachine
         {
-            ScreenId  = screenId,
-            MachineId = machineId
+            ScreenId  = dto.ScreenId,
+            MachineId = dto.MachineId
         };
 
         await context.ScreensByMachine.AddAsync(item);

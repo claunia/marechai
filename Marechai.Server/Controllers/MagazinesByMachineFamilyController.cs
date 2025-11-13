@@ -83,7 +83,7 @@ public class MagazinesByMachineFamilyController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int machineFamilyId, long bookId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] MagazineByMachineFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -91,8 +91,8 @@ public class MagazinesByMachineFamilyController(MarechaiContext context) : Contr
 
         var item = new MagazinesByMachineFamily
         {
-            MachineFamilyId = machineFamilyId,
-            MagazineId      = bookId
+            MachineFamilyId = dto.MachineFamilyId,
+            MagazineId      = dto.MagazineId
         };
 
         await context.MagazinesByMachinesFamilies.AddAsync(item);

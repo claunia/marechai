@@ -89,7 +89,7 @@ public class PeopleByMagazineController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int personId, long magazineId, string roleId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] PersonByMagazineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -97,9 +97,9 @@ public class PeopleByMagazineController(MarechaiContext context) : ControllerBas
 
         var item = new PeopleByMagazine
         {
-            PersonId   = personId,
-            MagazineId = magazineId,
-            RoleId     = roleId
+            PersonId   = dto.PersonId,
+            MagazineId = dto.MagazineId,
+            RoleId     = dto.RoleId
         };
 
         await context.PeopleByMagazines.AddAsync(item);

@@ -116,7 +116,7 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ulong>> CreateAsync(SoftwareVersionDto dto)
+    public async Task<ActionResult<ulong>> CreateAsync([FromBody] SoftwareVersionDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
