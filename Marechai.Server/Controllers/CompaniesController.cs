@@ -75,7 +75,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                                                         })
                                                        .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -109,18 +109,18 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                                                         })
                                                        .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(CompanyDto dto)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] CompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        Company model = await context.Companies.FindAsync(dto.Id);
+        Company model = await context.Companies.FindAsync(id);
 
         if(model is null) return NotFound();
 
@@ -152,7 +152,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(CompanyDto dto)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] CompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -186,7 +186,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpGet]
+    [HttpGet("{id:int}/machines")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -200,7 +200,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                                                                    })
                                                                   .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:int}/description/text")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -211,7 +211,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         return description?.Html ?? description?.Text;
     }
 
-    [HttpGet]
+    [HttpGet("{id:int}/soldto")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -222,14 +222,14 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                                                             })
                                                            .FirstOrDefaultAsync(c => c.Id == id);
 
-    [HttpGet]
+    [HttpGet("/countries/{id:int}/name")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<string> GetCountryNameAsync(int id) =>
         (await context.Iso31661Numeric.FirstOrDefaultAsync(c => c.Id == id))?.Name;
 
-    [HttpGet]
+    [HttpGet("/countries/{id:int}/companies")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -244,7 +244,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         })
        .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("/companies/letter/{id:char}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -259,7 +259,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         })
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -281,7 +281,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet("{id:int}/description")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -296,12 +296,13 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                                                                               })
                                                                              .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPost("{id:int}/description")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateOrUpdateDescriptionAsync(int id, CompanyDescriptionDto description)
+    public async Task<ActionResult<int>> CreateOrUpdateDescriptionAsync(
+        int id, [FromBody] CompanyDescriptionDto description)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
