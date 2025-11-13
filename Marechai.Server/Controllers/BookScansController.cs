@@ -45,8 +45,8 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<Guid>> GetGuidsByBookAsync(long bookId) =>
-        await context.BookScans.Where(p => p.BookId == bookId).Select(p => p.Id).ToListAsync();
+    public Task<List<Guid>> GetGuidsByBookAsync(long bookId) =>
+         context.BookScans.Where(p => p.BookId == bookId).Select(p => p.Id).ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]

@@ -46,6 +46,6 @@ public class Iso31661NumericController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<Iso31661Numeric>> GetAsync() =>
-        await context.Iso31661Numeric.OrderBy(c => c.Name).ToListAsync();
+    public Task<List<Iso31661Numeric>> GetAsync() =>
+         context.Iso31661Numeric.OrderBy(c => c.Name).ToListAsync();
 }
