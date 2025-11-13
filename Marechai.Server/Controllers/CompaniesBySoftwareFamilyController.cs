@@ -36,15 +36,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/companies-by-software-family")]
+[Route("/software/families/companies")]
 [ApiController]
 public class CompaniesBySoftwareFamilyController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/software/families/{softwareFamilyId:ulong}/companies")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<CompanyBySoftwareFamilyDto>> GetBySoftwareFamily(ulong softwareFamilyId) => await context
+    public Task<List<CompanyBySoftwareFamilyDto>> GetBySoftwareFamily(ulong softwareFamilyId) => context
        .CompaniesBySoftwareFamilies.Where(p => p.SoftwareFamilyId == softwareFamilyId)
        .Select(p => new CompanyBySoftwareFamilyDto
         {
@@ -59,7 +59,7 @@ public class CompaniesBySoftwareFamilyController(MarechaiContext context) : Cont
        .ThenBy(p => p.Role)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:ulong}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -70,6 +70,7 @@ public class CompaniesBySoftwareFamilyController(MarechaiContext context) : Cont
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CompaniesBySoftwareFamily item = await context.CompaniesBySoftwareFamilies.FindAsync(id);
 
         if(item is null) return NotFound();
@@ -86,7 +87,7 @@ public class CompaniesBySoftwareFamilyController(MarechaiContext context) : Cont
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ulong>> CreateAsync(int companyId, ulong softwareFamilyId, string roleId)
+    public async Task<ActionResult<ulong>> CreateAsync([FromBody] CompanyBySoftwareFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -94,9 +95,9 @@ public class CompaniesBySoftwareFamilyController(MarechaiContext context) : Cont
 
         var item = new CompaniesBySoftwareFamily
         {
-            CompanyId        = companyId,
-            SoftwareFamilyId = softwareFamilyId,
-            RoleId           = roleId
+            CompanyId        = dto.CompanyId,
+            SoftwareFamilyId = dto.SoftwareFamilyId,
+            RoleId           = dto.RoleId
         };
 
         await context.CompaniesBySoftwareFamilies.AddAsync(item);
