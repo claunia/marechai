@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text.Json;
 using Aaru.CommonTypes.Interop;
 using Marechai.Database;
 using Marechai.Database.Models;
@@ -144,8 +145,13 @@ file class Program
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+               .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new IsoDateTimeConverter());
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.WriteIndented        = true;
+                });
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
