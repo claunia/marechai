@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -8,6 +8,10 @@ namespace Marechai.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Ensure database and table use correct charset/collation for foreign key compatibility
+            migrationBuilder.Sql("ALTER DATABASE `marechai` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;");
+            migrationBuilder.Sql("ALTER TABLE `AspNetUsers` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;");
+
             migrationBuilder.CreateTable("BookScans", table => new
             {
                 Id = table.Column<Guid>(nullable: false),
@@ -32,7 +36,7 @@ namespace Marechai.Database.Migrations
                                               MySqlValueGenerationStrategy.ComputedColumn),
                 VerticalResolution = table.Column<double>(nullable: true),
                 OriginalExtension  = table.Column<string>(nullable: true),
-                UserId             = table.Column<string>(nullable: true),
+                UserId             = table.Column<string>("varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", nullable: true),
                 Type               = table.Column<uint>(nullable: false),
                 Page               = table.Column<uint>(nullable: true),
                 BookId             = table.Column<long>(nullable: false)
@@ -71,7 +75,7 @@ namespace Marechai.Database.Migrations
                                               MySqlValueGenerationStrategy.ComputedColumn),
                 VerticalResolution = table.Column<double>(nullable: true),
                 OriginalExtension  = table.Column<string>(nullable: true),
-                UserId             = table.Column<string>(nullable: true),
+                UserId             = table.Column<string>("varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", nullable: true),
                 Type               = table.Column<uint>(nullable: false),
                 Page               = table.Column<uint>(nullable: true),
                 DocumentId         = table.Column<long>(nullable: false)
@@ -110,7 +114,7 @@ namespace Marechai.Database.Migrations
                                               MySqlValueGenerationStrategy.ComputedColumn),
                 VerticalResolution = table.Column<double>(nullable: true),
                 OriginalExtension  = table.Column<string>(nullable: true),
-                UserId             = table.Column<string>(nullable: true),
+                UserId             = table.Column<string>("varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", nullable: true),
                 Type               = table.Column<uint>(nullable: false),
                 Page               = table.Column<uint>(nullable: true),
                 MagazineId         = table.Column<long>(nullable: false)
