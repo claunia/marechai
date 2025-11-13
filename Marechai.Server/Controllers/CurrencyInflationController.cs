@@ -36,7 +36,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/currency-inflation")]
+[Route("/currencies/inflation")]
 [ApiController]
 public class CurrencyInflationController(MarechaiContext context) : ControllerBase
 {
@@ -56,7 +56,7 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
                                                                   })
                                                                  .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -71,17 +71,18 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
                                                                   })
                                                                  .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(CurrencyInflationDto dto)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] CurrencyInflationDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CurrencyInflation model = await context.CurrenciesInflation.FindAsync(dto.Id);
 
         if(model is null) return NotFound();
@@ -99,7 +100,7 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(CurrencyInflationDto dto)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] CurrencyInflationDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -118,7 +119,7 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -129,6 +130,7 @@ public class CurrencyInflationController(MarechaiContext context) : ControllerBa
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CurrencyInflation item = await context.CurrenciesInflation.FindAsync(id);
 
         if(item is null) return NotFound();
