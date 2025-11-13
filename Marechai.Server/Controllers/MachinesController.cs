@@ -35,7 +35,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -43,11 +42,10 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class MachinesController
 (
-    MarechaiContext                   context,
-    IStringLocalizer<MachinesService> localizer,
-    GpusService                       gpusService,
-    ProcessorsService                 processorsService,
-    SoundSynthsService                soundSynthsService
+    MarechaiContext       context,
+    GpusController        gpusController,
+    ProcessorsController  processorsController,
+    SoundSynthsController soundSynthsController
 ) : ControllerBase
 {
     [HttpGet]
@@ -69,7 +67,7 @@ public class MachinesController
                                                         })
                                                        .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -193,7 +191,7 @@ public class MachinesController
         return model.Id;
     }
 
-    [HttpGet]
+    [HttpGet("{id:int}/full")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -234,7 +232,7 @@ public class MachinesController
             model.FamilyId   = family.Id;
         }
 
-        model.Gpus = await gpusService.GetByMachineAsync(machine.Id);
+        model.Gpus = await gpusController.GetByMachineAsync(machine.Id);
 
         model.Memory = await context.MemoryByMachine.Where(m => m.MachineId == machine.Id)
                                     .Select(m => new MemoryDto
@@ -246,9 +244,9 @@ public class MachinesController
                                      })
                                     .ToListAsync();
 
-        model.Processors = await processorsService.GetByMachineAsync(machine.Id);
+        model.Processors = await processorsController.GetByMachineAsync(machine.Id);
 
-        model.SoundSynthesizers = await soundSynthsService.GetByMachineAsync(machine.Id);
+        model.SoundSynthesizers = await soundSynthsController.GetByMachineAsync(machine.Id);
 
         model.Storage = await context.StorageByMachine.Where(s => s.MachineId == machine.Id)
                                      .Select(s => new StorageDto
@@ -262,7 +260,7 @@ public class MachinesController
         return model;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
