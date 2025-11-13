@@ -36,7 +36,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/currency-pegging")]
+[Route("/currencies/pegging")]
 [ApiController]
 public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
 {
@@ -61,7 +61,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
                                                                 })
                                                                .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -79,17 +79,18 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
                                                                 })
                                                                .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(CurrencyPeggingDto dto)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] CurrencyPeggingDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CurrencyPegging model = await context.CurrenciesPegging.FindAsync(dto.Id);
 
         if(model is null) return NotFound();
@@ -109,7 +110,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync(CurrencyPeggingDto dto)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] CurrencyPeggingDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -130,7 +131,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -141,6 +142,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CurrencyPegging item = await context.CurrenciesPegging.FindAsync(id);
 
         if(item is null) return NotFound();
