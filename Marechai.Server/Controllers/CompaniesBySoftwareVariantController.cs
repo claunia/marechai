@@ -1,0 +1,101 @@
+/*******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ---------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] -----------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ---------------------------------------------------------------------------
+// Copyright © 2003-2025 Natalia Portillo
+*******************************************************************************/
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Marechai.Data.Dtos;
+using Marechai.Database.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+
+namespace Marechai.Server.Controllers;
+
+[Route("/companies-by-software-variant")]
+[ApiController]
+public class CompaniesBySoftwareVariantController(MarechaiContext context) : ControllerBase
+{
+    [HttpGet]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<CompanyBySoftwareVariantDto>> GetBySoftwareVariant(ulong softwareVariantId) =>
+        await context.CompaniesBySoftwareVariants.Where(p => p.SoftwareVariantId == softwareVariantId)
+                      .Select(p => new CompanyBySoftwareVariantDto
+                       {
+                           Id                = p.Id,
+                           Company           = p.Company.Name,
+                           CompanyId         = p.CompanyId,
+                           RoleId            = p.RoleId,
+                           Role              = p.Role.Name,
+                           SoftwareVariantId = p.SoftwareVariantId
+                       })
+                      .OrderBy(p => p.Company)
+                      .ThenBy(p => p.Role)
+                      .ToListAsync();
+
+    [HttpDelete]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task DeleteAsync(ulong id)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return;
+        CompaniesBySoftwareVariant item = await context.CompaniesBySoftwareVariants.FindAsync(id);
+
+        if(item is null) return;
+
+        context.CompaniesBySoftwareVariants.Remove(item);
+
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ulong> CreateAsync(int companyId, ulong softwareVariantId, string roleId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        if(userId is null) return null;
+        var item = new CompaniesBySoftwareVariant
+        {
+            CompanyId         = companyId,
+            SoftwareVariantId = softwareVariantId,
+            RoleId            = roleId
+        };
+
+        await context.CompaniesBySoftwareVariants.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return item.Id;
+    }
+}
