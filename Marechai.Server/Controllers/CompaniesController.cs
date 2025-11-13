@@ -39,7 +39,7 @@ namespace Marechai.Server.Controllers;
 
 [Route("/companies")]
 [ApiController]
-public class CompaniesController(MarechaiContext context, IStringLocalizer<CompaniesService> localizer) : ControllerBase
+public class CompaniesController(MarechaiContext context) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]

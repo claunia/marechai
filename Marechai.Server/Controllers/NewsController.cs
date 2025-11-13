@@ -39,7 +39,7 @@ namespace Marechai.Server.Controllers;
 
 [Route("/news")]
 [ApiController]
-public class NewsController(MarechaiContext context, IStringLocalizer<NewsService> localizer) : ControllerBase
+public class NewsController(MarechaiContext context) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
