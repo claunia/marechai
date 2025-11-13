@@ -36,11 +36,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/gpus-by-machine")]
+[Route("/machines/gpus")]
 [ApiController]
 public class GpusByMachineController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/machines/gpus/by-machine/{machineId:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,7 +58,7 @@ public class GpusByMachineController(MarechaiContext context) : ControllerBase
                                                                              .ThenBy(g => g.Name)
                                                                              .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

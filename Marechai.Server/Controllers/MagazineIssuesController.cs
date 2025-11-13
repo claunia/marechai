@@ -36,7 +36,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/magazine-issues")]
+[Route("/magazines/issues")]
 [ApiController]
 public class MagazineIssuesController(MarechaiContext context) : ControllerBase
 {
@@ -61,7 +61,7 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
                                                               })
                                                              .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:long}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -135,7 +135,7 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

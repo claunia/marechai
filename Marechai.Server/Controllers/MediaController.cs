@@ -36,7 +36,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/media")]
+[Route("/medias")]
 [ApiController]
 public class MediaController(MarechaiContext context) : ControllerBase
 {
@@ -76,7 +76,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
                                                       })
                                                      .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("titles")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -88,7 +88,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
                                                             })
                                                            .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:ulong}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -215,7 +215,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

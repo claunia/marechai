@@ -40,12 +40,12 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class ResolutionsByScreenController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/screens/{screenId:int}/resolutions")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ResolutionByScreenDto>> GetByScreen(int resolutionId) => (await context.ResolutionsByScreen
-                   .Where(r => r.ResolutionId == resolutionId)
+    public async Task<List<ResolutionByScreenDto>> GetByScreen(int screenId) => (await context.ResolutionsByScreen
+                   .Where(r => r.ScreenId == screenId)
                    .Select(r => new ResolutionByScreenDto
                     {
                         Id       = r.Id,
@@ -70,7 +70,7 @@ public class ResolutionsByScreenController(MarechaiContext context) : Controller
                                   .ThenBy(r => r.Resolution.Palette)
                                   .ToList();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

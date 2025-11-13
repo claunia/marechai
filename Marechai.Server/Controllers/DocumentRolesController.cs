@@ -35,7 +35,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/document-roles")]
+[Route("/documents/roles")]
 [ApiController]
 public class DocumentRolesController(MarechaiContext context) : ControllerBase
 {
@@ -52,7 +52,7 @@ public class DocumentRolesController(MarechaiContext context) : ControllerBase
                                                              })
                                                             .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("enabled")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +66,7 @@ public class DocumentRolesController(MarechaiContext context) : ControllerBase
                                                                     })
                                                                    .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

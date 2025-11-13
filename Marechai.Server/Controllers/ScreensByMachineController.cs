@@ -40,7 +40,7 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class ScreensByMachineController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/machines/{machineId:int}/screens")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -74,7 +74,7 @@ public class ScreensByMachineController(MarechaiContext context) : ControllerBas
         })
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

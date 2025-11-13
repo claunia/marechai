@@ -37,18 +37,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/document-scans")]
+[Route("/documents/scans")]
 [ApiController]
 public class DocumentScansController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/documents/{documentId:long}/scans")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<Guid>> GetGuidsByDocumentAsync(long bookId) =>
-        await context.DocumentScans.Where(p => p.DocumentId == bookId).Select(p => p.Id).ToListAsync();
+    public Task<List<Guid>> GetGuidsByDocumentAsync(long documentId) => context.DocumentScans
+       .Where(p => p.DocumentId == documentId)
+       .Select(p => p.Id)
+       .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:Guid}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -149,7 +151,7 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:Guid}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

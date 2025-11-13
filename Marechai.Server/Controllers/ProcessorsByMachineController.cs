@@ -40,7 +40,7 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class ProcessorsByMachineController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("by-machine/{machineId:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,7 +59,7 @@ public class ProcessorsByMachineController(MarechaiContext context) : Controller
        .ThenBy(p => p.Name)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

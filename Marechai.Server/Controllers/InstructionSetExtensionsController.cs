@@ -52,7 +52,7 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
                                                                      })
                                                                     .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -108,7 +108,7 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -130,12 +130,12 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet("verify-unique/{extension}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public bool VerifyUnique(string extension) =>
         !context.InstructionSetExtensions.Any(i => string.Equals(i.Extension,
                                                                  extension,
-                                                                 StringComparison.InvariantCultureIgnoreCase));
+                                                                 StringComparison.OrdinalIgnoreCase));
 }

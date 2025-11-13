@@ -54,7 +54,7 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
                                                                 })
                                                                .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -113,7 +113,7 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

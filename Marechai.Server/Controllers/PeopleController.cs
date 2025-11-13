@@ -23,6 +23,7 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -65,7 +66,7 @@ public class PeopleController(MarechaiContext context) : ControllerBase
                                                        })
                                                       .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -110,7 +111,7 @@ public class PeopleController(MarechaiContext context) : ControllerBase
         model.Webpage          = dto.Webpage;
         model.Twitter          = dto.Twitter;
         model.Facebook         = dto.Facebook;
-        model.Photo            = dto.Photo;
+        model.Photo            = dto.Photo ?? Guid.Empty;
         model.Alias            = dto.Alias;
         model.DisplayName      = dto.DisplayName;
 
@@ -140,7 +141,7 @@ public class PeopleController(MarechaiContext context) : ControllerBase
             Webpage          = dto.Webpage,
             Twitter          = dto.Twitter,
             Facebook         = dto.Facebook,
-            Photo            = dto.Photo,
+            Photo            = dto.Photo ?? Guid.Empty,
             Alias            = dto.Alias,
             DisplayName      = dto.DisplayName
         };
@@ -151,7 +152,7 @@ public class PeopleController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

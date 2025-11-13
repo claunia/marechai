@@ -59,7 +59,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                                                          })
                                                         .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:long}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -127,14 +127,14 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpGet]
+    [HttpGet("{id:long}/synopsis")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<string> GetSynopsisTextAsync(int id) =>
+    public async Task<string> GetSynopsisTextAsync(long id) =>
         (await context.Documents.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

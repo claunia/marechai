@@ -40,7 +40,7 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class SoundSynthsByMachineController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("by-machine/{machineId:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,7 +58,7 @@ public class SoundSynthsByMachineController(MarechaiContext context) : Controlle
        .ThenBy(g => g.Name)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -40,11 +40,11 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class InstructionSetExtensionsByProcessorController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/processor/{processorId:int}/instruction-set-extensions")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<InstructionSetExtensionByProcessorDto>> GetByProcessor(int processorId) => await context
+    public Task<List<InstructionSetExtensionByProcessorDto>> GetByProcessor(int processorId) => context
        .InstructionSetExtensionsByProcessor.Where(e => e.ProcessorId == processorId)
        .Select(e => new InstructionSetExtensionByProcessorDto
         {
@@ -57,7 +57,7 @@ public class InstructionSetExtensionsByProcessorController(MarechaiContext conte
        .OrderBy(e => e.Extension)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

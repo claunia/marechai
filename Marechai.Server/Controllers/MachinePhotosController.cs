@@ -37,18 +37,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/machine-photos")]
+[Route("/machines/photos")]
 [ApiController]
 public class MachinePhotosController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/machines/{machineId:int}/photos")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<Guid>> GetGuidsByMachineAsync(int machineId) =>
-        await context.MachinePhotos.Where(p => p.MachineId == machineId).Select(p => p.Id).ToListAsync();
+    public Task<List<Guid>> GetGuidsByMachineAsync(int machineId) => context.MachinePhotos
+                                                                            .Where(p => p.MachineId == machineId)
+                                                                            .Select(p => p.Id)
+                                                                            .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:Guid}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

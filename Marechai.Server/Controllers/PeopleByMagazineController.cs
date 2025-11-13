@@ -40,7 +40,7 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class PeopleByMagazineController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/magazines/{magazineId:long}/people")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -62,7 +62,7 @@ public class PeopleByMagazineController(MarechaiContext context) : ControllerBas
                                   .ThenBy(p => p.Role)
                                   .ToList();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

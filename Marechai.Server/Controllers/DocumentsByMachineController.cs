@@ -36,16 +36,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/documents-by-machine")]
+[Route("/machines/documents")]
 [ApiController]
 public class DocumentsByMachineController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/documents/{documentId:long}/machines")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<DocumentByMachineDto>> GetByDocument(long bookId) => context.DocumentsByMachines
-       .Where(p => p.DocumentId == bookId)
+    public Task<List<DocumentByMachineDto>> GetByDocument(long documentId) => context.DocumentsByMachines
+       .Where(p => p.DocumentId == documentId)
        .Select(p => new DocumentByMachineDto
         {
             Id         = p.Id,
@@ -56,7 +56,7 @@ public class DocumentsByMachineController(MarechaiContext context) : ControllerB
        .OrderBy(p => p.Machine)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

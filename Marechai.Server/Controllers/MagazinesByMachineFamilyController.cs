@@ -40,12 +40,12 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class MagazinesByMachineFamilyController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/magazines/{magazineId:long}/machine-families")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MagazineByMachineFamilyDto>> GetByMagazine(long bookId) => context.MagazinesByMachinesFamilies
-       .Where(p => p.MagazineId == bookId)
+    public Task<List<MagazineByMachineFamilyDto>> GetByMagazine(long magazineId) => context.MagazinesByMachinesFamilies
+       .Where(p => p.MagazineId == magazineId)
        .Select(p => new MagazineByMachineFamilyDto
         {
             Id              = p.Id,
@@ -56,7 +56,7 @@ public class MagazinesByMachineFamilyController(MarechaiContext context) : Contr
        .OrderBy(p => p.MachineFamily)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

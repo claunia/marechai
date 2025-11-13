@@ -60,7 +60,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                          })
                                                         .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("titles")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -73,7 +73,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                                })
                                                               .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:long}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -144,14 +144,14 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpGet]
+    [HttpGet("{id:int}/synopsis")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<string> GetSynopsisTextAsync(int id) =>
         (await context.Magazines.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

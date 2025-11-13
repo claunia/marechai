@@ -40,7 +40,7 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class ResolutionsByGpuController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("gpus/{gpuId:int}/resolutions")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -74,7 +74,7 @@ public class ResolutionsByGpuController(MarechaiContext context) : ControllerBas
                                                                              .ThenBy(r => r.Resolution.Palette)
                                                                              .ToList();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

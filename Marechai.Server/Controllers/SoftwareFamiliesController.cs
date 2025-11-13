@@ -36,7 +36,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/software-families")]
+[Route("/software/families")]
 [ApiController]
 public class SoftwareFamiliesController(MarechaiContext context) : ControllerBase
 {
@@ -55,7 +55,7 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
                                                                })
                                                               .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:ulong}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -117,7 +117,7 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -36,7 +36,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/software-versions")]
+[Route("/software/versions")]
 [ApiController]
 public class SoftwareVersionsController(MarechaiContext context) : ControllerBase
 {
@@ -63,7 +63,7 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
                                                                 })
                                                                .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:ulong}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -139,7 +139,7 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:ulong}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

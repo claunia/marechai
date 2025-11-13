@@ -34,12 +34,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/news")]
 [ApiController]
-public class NewsController(MarechaiContext context) : ControllerBase
+public class NewsController(MarechaiContext context, IStringLocalizer<NewsController> localizer) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
@@ -55,17 +56,30 @@ public class NewsController(MarechaiContext context) : ControllerBase
                                                      })
                                                     .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("latest")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public List<NewsDto> GetNews()
     {
-        List<NewsDto> news = new();
+        List<NewsDto> news = [];
 
-        foreach(News @new in context.News.OrderByDescending(t => t.Date).Take(10).ToList())
+        var newsWithMachines = context.News.OrderByDescending(t => t.Date)
+                                      .Take(10)
+                                      .Join(context.Machines.Include(m => m.Company),
+                                            n => n.AddedId,
+                                            m => m.Id,
+                                            (n, m) => new
+                                            {
+                                                News    = n,
+                                                Machine = m
+                                            })
+                                      .ToList();
+
+        foreach(var item in newsWithMachines)
         {
-            Machine machine = context.Machines.Find(@new.AddedId);
+            News    @new    = item.News;
+            Machine machine = item.Machine;
 
             if(machine is null) continue;
 
@@ -75,7 +89,7 @@ public class NewsController(MarechaiContext context) : ControllerBase
                     news.Add(new NewsDto(@new.AddedId,
                                          localizer["New computer in database"],
                                          @new.Date,
-                                         "machine",
+                                         "computers",
                                          $"{machine.Company.Name} {machine.Name}"));
 
                     break;
@@ -83,7 +97,7 @@ public class NewsController(MarechaiContext context) : ControllerBase
                     news.Add(new NewsDto(@new.AddedId,
                                          localizer["New console in database"],
                                          @new.Date,
-                                         "machine",
+                                         "consoles",
                                          $"{machine.Company.Name} {machine.Name}"));
 
                     break;
@@ -92,7 +106,7 @@ public class NewsController(MarechaiContext context) : ControllerBase
                     news.Add(new NewsDto(@new.AddedId,
                                          localizer["New computer in collection"],
                                          @new.Date,
-                                         "machine",
+                                         "computers",
                                          $"{machine.Company.Name} {machine.Name}"));
 
                     break;
@@ -101,7 +115,7 @@ public class NewsController(MarechaiContext context) : ControllerBase
                     news.Add(new NewsDto(@new.AddedId,
                                          localizer["New console in collection"],
                                          @new.Date,
-                                         "machine",
+                                         "consoles",
                                          $"{machine.Company.Name} {machine.Name}"));
 
                     break;
@@ -110,7 +124,7 @@ public class NewsController(MarechaiContext context) : ControllerBase
                     news.Add(new NewsDto(@new.AddedId,
                                          localizer["Updated computer in database"],
                                          @new.Date,
-                                         "machine",
+                                         "computers",
                                          $"{machine.Company.Name} {machine.Name}"));
 
                     break;
@@ -119,7 +133,7 @@ public class NewsController(MarechaiContext context) : ControllerBase
                     news.Add(new NewsDto(@new.AddedId,
                                          localizer["Updated console in database"],
                                          @new.Date,
-                                         "machine",
+                                         "consoles",
                                          $"{machine.Company.Name} {machine.Name}"));
 
                     break;
@@ -128,7 +142,7 @@ public class NewsController(MarechaiContext context) : ControllerBase
                     news.Add(new NewsDto(@new.AddedId,
                                          localizer["Updated computer in collection"],
                                          @new.Date,
-                                         "machine",
+                                         "computers",
                                          $"{machine.Company.Name} {machine.Name}"));
 
                     break;
@@ -137,7 +151,7 @@ public class NewsController(MarechaiContext context) : ControllerBase
                     news.Add(new NewsDto(@new.AddedId,
                                          localizer["Updated console in collection"],
                                          @new.Date,
-                                         "machine",
+                                         "consoles",
                                          $"{machine.Company.Name} {machine.Name}"));
 
                     break;
