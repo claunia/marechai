@@ -36,15 +36,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/companies-by-software-variant")]
+[Route("/software/variants/companies")]
 [ApiController]
 public class CompaniesBySoftwareVariantController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/software/variants/{softwareVariantId:ulong}/companies")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<CompanyBySoftwareVariantDto>> GetBySoftwareVariant(ulong softwareVariantId) => await context
+    public Task<List<CompanyBySoftwareVariantDto>> GetBySoftwareVariant(ulong softwareVariantId) => context
        .CompaniesBySoftwareVariants.Where(p => p.SoftwareVariantId == softwareVariantId)
        .Select(p => new CompanyBySoftwareVariantDto
         {
@@ -59,7 +59,7 @@ public class CompaniesBySoftwareVariantController(MarechaiContext context) : Con
        .ThenBy(p => p.Role)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:ulong}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -70,6 +70,7 @@ public class CompaniesBySoftwareVariantController(MarechaiContext context) : Con
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CompaniesBySoftwareVariant item = await context.CompaniesBySoftwareVariants.FindAsync(id);
 
         if(item is null) return NotFound();
@@ -86,7 +87,7 @@ public class CompaniesBySoftwareVariantController(MarechaiContext context) : Con
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ulong>> CreateAsync(int companyId, ulong softwareVariantId, string roleId)
+    public async Task<ActionResult<ulong>> CreateAsync([FromBody] CompanyBySoftwareVariantDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -94,9 +95,9 @@ public class CompaniesBySoftwareVariantController(MarechaiContext context) : Con
 
         var item = new CompaniesBySoftwareVariant
         {
-            CompanyId         = companyId,
-            SoftwareVariantId = softwareVariantId,
-            RoleId            = roleId
+            CompanyId         = dto.CompanyId,
+            SoftwareVariantId = dto.SoftwareVariantId,
+            RoleId            = dto.RoleId
         };
 
         await context.CompaniesBySoftwareVariants.AddAsync(item);
