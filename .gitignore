@@ -442,6 +442,8 @@ $RECYCLE.BIN/
 
 
 # Assets
+Marechai/originals
+Marechai/wwwroot/assets/photos
 Marechai/wwwroot/assets/**/*.jpeg
 Marechai/wwwroot/assets/**/*.svg
 Marechai/wwwroot/assets/**/*.png
