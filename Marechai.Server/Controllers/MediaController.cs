@@ -129,6 +129,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> UpdateAsync(MediaDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -172,6 +173,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ulong>> CreateAsync(MediaDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -218,6 +220,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

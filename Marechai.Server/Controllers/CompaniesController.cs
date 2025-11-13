@@ -114,6 +114,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> UpdateAsync(CompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -150,6 +151,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<int>> CreateAsync(CompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -262,6 +264,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -297,6 +300,7 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<int>> CreateOrUpdateDescriptionAsync(int id, CompanyDescriptionDto description)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

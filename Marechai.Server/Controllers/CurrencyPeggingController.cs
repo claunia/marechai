@@ -84,6 +84,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> UpdateAsync(CurrencyPeggingDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -107,6 +108,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<int>> CreateAsync(CurrencyPeggingDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -133,6 +135,7 @@ public class CurrencyPeggingController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

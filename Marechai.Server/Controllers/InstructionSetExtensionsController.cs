@@ -69,6 +69,7 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> UpdateAsync(InstructionSetExtension viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -89,6 +90,7 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<int>> CreateAsync(InstructionSetExtension viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -111,6 +113,7 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

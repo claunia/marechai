@@ -118,6 +118,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> UpdateAsync(SoundSynthDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -147,6 +148,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<int>> CreateAsync(SoundSynthDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -178,6 +180,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

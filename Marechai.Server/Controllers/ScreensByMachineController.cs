@@ -79,6 +79,7 @@ public class ScreensByMachineController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -99,6 +100,7 @@ public class ScreensByMachineController(MarechaiContext context) : ControllerBas
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<long>> CreateAsync(int machineId, int screenId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

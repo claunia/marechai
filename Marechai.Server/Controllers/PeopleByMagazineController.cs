@@ -67,6 +67,7 @@ public class PeopleByMagazineController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -87,6 +88,7 @@ public class PeopleByMagazineController(MarechaiContext context) : ControllerBas
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<long>> CreateAsync(int personId, long magazineId, string roleId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

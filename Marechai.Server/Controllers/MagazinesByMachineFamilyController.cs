@@ -61,6 +61,7 @@ public class MagazinesByMachineFamilyController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -81,6 +82,7 @@ public class MagazinesByMachineFamilyController(MarechaiContext context) : Contr
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<long>> CreateAsync(int machineFamilyId, long bookId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

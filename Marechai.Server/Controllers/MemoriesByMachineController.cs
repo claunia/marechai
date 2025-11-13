@@ -67,6 +67,7 @@ public class MemoriesByMachineController(MarechaiContext context) : ControllerBa
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -87,6 +88,7 @@ public class MemoriesByMachineController(MarechaiContext context) : ControllerBa
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<long>> CreateAsync(int     machineId, MemoryType type, MemoryUsage usage, long? size,
                                                       double? speed)
     {

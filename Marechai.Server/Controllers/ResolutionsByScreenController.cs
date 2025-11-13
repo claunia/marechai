@@ -75,6 +75,7 @@ public class ResolutionsByScreenController(MarechaiContext context) : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -95,6 +96,7 @@ public class ResolutionsByScreenController(MarechaiContext context) : Controller
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<long>> CreateAsync(int resolutionId, int screenId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
