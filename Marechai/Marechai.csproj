@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj"/>
+    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\**\*.es.resx"/>
