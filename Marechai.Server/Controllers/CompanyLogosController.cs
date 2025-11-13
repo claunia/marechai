@@ -53,6 +53,7 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -109,6 +110,7 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> ChangeYearAsync(int id, int? year)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);

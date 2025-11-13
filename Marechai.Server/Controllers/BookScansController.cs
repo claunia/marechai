@@ -46,7 +46,7 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<Guid>> GetGuidsByBookAsync(long bookId) =>
-         context.BookScans.Where(p => p.BookId == bookId).Select(p => p.Id).ToListAsync();
+        context.BookScans.Where(p => p.BookId == bookId).Select(p => p.Id).ToListAsync();
 
     [HttpGet]
     [AllowAnonymous]
@@ -80,6 +80,7 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> UpdateAsync(BookScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
@@ -150,6 +151,7 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteAsync(Guid id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
