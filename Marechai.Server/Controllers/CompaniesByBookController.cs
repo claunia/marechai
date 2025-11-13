@@ -36,11 +36,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/companies-by-book")]
+[Route("/books/companies")]
 [ApiController]
 public class CompaniesByBookController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/books/{bookId:long}/companies")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,7 +59,7 @@ public class CompaniesByBookController(MarechaiContext context) : ControllerBase
                                                                          .ThenBy(p => p.Role)
                                                                          .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,7 +86,7 @@ public class CompaniesByBookController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int companyId, long bookId, string roleId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] CompanyByBookDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -94,9 +94,9 @@ public class CompaniesByBookController(MarechaiContext context) : ControllerBase
 
         var item = new CompaniesByBook
         {
-            CompanyId = companyId,
-            BookId    = bookId,
-            RoleId    = roleId
+            CompanyId = dto.CompanyId,
+            BookId    = dto.BookId,
+            RoleId    = dto.RoleId
         };
 
         await context.CompaniesByBooks.AddAsync(item);
