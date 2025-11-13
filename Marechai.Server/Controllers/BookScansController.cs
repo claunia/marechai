@@ -37,18 +37,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/book-scans")]
+[Route("/books/scans")]
 [ApiController]
 public class BookScansController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/books/{bookId:long}/scans")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<Guid>> GetGuidsByBookAsync(long bookId) =>
         context.BookScans.Where(p => p.BookId == bookId).Select(p => p.Id).ToListAsync();
 
-    [HttpGet]
+    [HttpGet("{id:Guid}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -76,18 +76,19 @@ public class BookScansController(MarechaiContext context) : ControllerBase
                                                           })
                                                          .FirstOrDefaultAsync();
 
-    [HttpPost]
+    [HttpPut("{id:Guid}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(BookScanDto dto)
+    public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] BookScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        BookScan model = await context.BookScans.FindAsync(dto.Id);
+
+        BookScan model = await context.BookScans.FindAsync(id);
 
         if(model is null) return NotFound();
 
@@ -115,7 +116,7 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<Guid>> CreateAsync(BookScanDto dto)
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] BookScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -149,7 +150,7 @@ public class BookScansController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:Guid}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -160,6 +161,7 @@ public class BookScansController(MarechaiContext context) : ControllerBase
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         BookScan item = await context.BookScans.FindAsync(id);
 
         if(item is null) return NotFound();
