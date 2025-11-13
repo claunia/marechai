@@ -36,11 +36,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/companies-by-document")]
+[Route("/documents/companies")]
 [ApiController]
 public class CompaniesByDocumentController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/documents/{documentId:long}/companies")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,7 +59,7 @@ public class CompaniesByDocumentController(MarechaiContext context) : Controller
        .ThenBy(p => p.Role)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -70,6 +70,7 @@ public class CompaniesByDocumentController(MarechaiContext context) : Controller
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CompaniesByDocument item = await context.CompaniesByDocuments.FindAsync(id);
 
         if(item is null) return NotFound();
@@ -86,7 +87,7 @@ public class CompaniesByDocumentController(MarechaiContext context) : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int companyId, long documentId, string roleId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] CompanyByDocumentDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -94,9 +95,9 @@ public class CompaniesByDocumentController(MarechaiContext context) : Controller
 
         var item = new CompaniesByDocument
         {
-            CompanyId  = companyId,
-            DocumentId = documentId,
-            RoleId     = roleId
+            CompanyId  = dto.CompanyId,
+            DocumentId = dto.DocumentId,
+            RoleId     = dto.RoleId
         };
 
         await context.CompaniesByDocuments.AddAsync(item);
