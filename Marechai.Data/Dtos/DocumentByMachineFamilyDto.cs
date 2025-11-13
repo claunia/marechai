@@ -23,12 +23,18 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class DocumentByMachineFamilyDto : BaseDto<long>
 {
-    public long   DocumentId      { get; set; }
-    public string Document        { get; set; }
-    public int    MachineFamilyId { get; set; }
-    public string MachineFamily   { get; set; }
+    [JsonPropertyName("document_id")]
+    public long DocumentId { get; set; }
+    [JsonPropertyName("document")]
+    public string Document { get; set; }
+    [JsonPropertyName("machine_family_id")]
+    public int MachineFamilyId { get; set; }
+    [JsonPropertyName("machine_family")]
+    public string MachineFamily { get; set; }
 }

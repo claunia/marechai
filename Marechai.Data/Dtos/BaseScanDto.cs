@@ -23,24 +23,39 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
 using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
 public class BaseScanDto : BaseDto<Guid>
 {
-    public string          Author               { get; set; }
-    public ColorSpace?     ColorSpace           { get; set; }
-    public string          Comments             { get; set; }
-    public DateTime?       CreationDate         { get; set; }
-    public string          ExifVersion          { get; set; }
-    public double?         HorizontalResolution { get; set; }
-    public ResolutionUnit? ResolutionUnit       { get; set; }
-    public string          ScannerManufacturer  { get; set; }
-    public string          ScannerModel         { get; set; }
-    public string          SoftwareUsed         { get; set; }
-    public DateTime        UploadDate           { get; set; }
-    public double?         VerticalResolution   { get; set; }
-    public string          OriginalExtension    { get; set; }
-    public string          UserId               { get; set; }
+    [JsonPropertyName("author")]
+    public string Author { get; set; }
+    [JsonPropertyName("colorspace")]
+    public ColorSpace? ColorSpace { get; set; }
+    [JsonPropertyName("comments")]
+    public string Comments { get; set; }
+    [JsonPropertyName("creation_date")]
+    public DateTime? CreationDate { get; set; }
+    [JsonPropertyName("exif_version")]
+    public string ExifVersion { get; set; }
+    [JsonPropertyName("horizontal_resolution")]
+    public double? HorizontalResolution { get; set; }
+    [JsonPropertyName("resolution_unit")]
+    public ResolutionUnit? ResolutionUnit { get; set; }
+    [JsonPropertyName("scanner_manufacturer")]
+    public string ScannerManufacturer { get; set; }
+    [JsonPropertyName("scanner_model")]
+    public string ScannerModel { get; set; }
+    [JsonPropertyName("software")]
+    public string SoftwareUsed { get; set; }
+    [JsonPropertyName("upload_date")]
+    public DateTime UploadDate { get; set; }
+    [JsonPropertyName("vertical_resolution")]
+    public double? VerticalResolution { get; set; }
+    [JsonPropertyName("original_extension")]
+    public string OriginalExtension { get; set; }
+    [JsonPropertyName("user_id")]
+    public string UserId { get; set; }
 }

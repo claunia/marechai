@@ -23,13 +23,20 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class CompanyBySoftwareVersionDto : BaseDto<ulong>
 {
-    public int    CompanyId         { get; set; }
-    public ulong  SoftwareVersionId { get; set; }
-    public string RoleId            { get; set; }
-    public string Company           { get; set; }
-    public string Role              { get; set; }
+    [JsonPropertyName("company_id")]
+    public int CompanyId { get; set; }
+    [JsonPropertyName("software_version_id")]
+    public ulong SoftwareVersionId { get; set; }
+    [JsonPropertyName("role_id")]
+    public string RoleId { get; set; }
+    [JsonPropertyName("company")]
+    public string Company { get; set; }
+    [JsonPropertyName("role")]
+    public string Role { get; set; }
 }

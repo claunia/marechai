@@ -23,34 +23,58 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
 public class CompanyDto : BaseDto<int>
 {
-    public string        Name                  { get; set; }
-    public DateTime?     Founded               { get; set; }
-    public string        Website               { get; set; }
-    public string        Twitter               { get; set; }
-    public string        Facebook              { get; set; }
-    public DateTime?     Sold                  { get; set; }
-    public int?          SoldToId              { get; set; }
-    public string        Address               { get; set; }
-    public string        City                  { get; set; }
-    public string        Province              { get; set; }
-    public string        PostalCode            { get; set; }
-    public short?        CountryId             { get; set; }
-    public CompanyStatus Status                { get; set; }
-    public Guid?         LastLogo              { get; set; }
-    public string        SoldTo                { get; set; }
-    public string        Country               { get; set; }
-    public bool          FoundedDayIsUnknown   { get; set; }
-    public bool          FoundedMonthIsUnknown { get; set; }
-    public bool          SoldDayIsUnknown      { get; set; }
-    public bool          SoldMonthIsUnknown    { get; set; }
-    public string        LegalName             { get; set; }
-
+    [JsonPropertyName("name")]
+    [Required]
+    public string Name { get; set; }
+    [JsonPropertyName("founded")]
+    public DateTime? Founded { get; set; }
+    [JsonPropertyName("website")]
+    public string Website { get; set; }
+    [JsonPropertyName("twitter")]
+    public string Twitter { get; set; }
+    [JsonPropertyName("facebook")]
+    public string Facebook { get; set; }
+    [JsonPropertyName("sold")]
+    public DateTime? Sold { get; set; }
+    [JsonPropertyName("sold_to_id")]
+    public int? SoldToId { get; set; }
+    [JsonPropertyName("address")]
+    public string Address { get; set; }
+    [JsonPropertyName("city")]
+    public string City { get; set; }
+    [JsonPropertyName("province")]
+    public string Province { get; set; }
+    [JsonPropertyName("postal_code")]
+    public string PostalCode { get; set; }
+    [JsonPropertyName("country_id")]
+    public short? CountryId { get; set; }
+    [JsonPropertyName("status")]
+    public CompanyStatus Status { get; set; }
+    [JsonPropertyName("last_logo")]
+    public Guid? LastLogo { get; set; }
+    [JsonPropertyName("sold_to")]
+    public string SoldTo { get; set; }
+    [JsonPropertyName("country")]
+    public string Country { get; set; }
+    [JsonPropertyName("founded_day_is_unknown")]
+    public bool FoundedDayIsUnknown { get; set; }
+    [JsonPropertyName("founded_month_is_unknown")]
+    public bool FoundedMonthIsUnknown { get; set; }
+    [JsonPropertyName("sold_day_is_unknown")]
+    public bool SoldDayIsUnknown { get; set; }
+    [JsonPropertyName("sold_month_is_unknown")]
+    public bool SoldMonthIsUnknown { get; set; }
+    [JsonPropertyName("legal_name")]
+    public string LegalName { get; set; }
+    [JsonIgnore]
     public string SoldView => Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
                                   ? Sold?.ToShortDateString() ?? "Unknown"
                                   : Sold?.ToShortDateString() ?? (SoldTo is null ? "" : "Unknown");

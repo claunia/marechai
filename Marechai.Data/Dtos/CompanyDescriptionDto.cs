@@ -23,11 +23,16 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class CompanyDescriptionDto : BaseDto<int>
 {
-    public string Markdown  { get; set; }
-    public string Html      { get; set; }
-    public int    CompanyId { get; set; }
+    [JsonPropertyName("markdown")]
+    public string Markdown { get; set; }
+    [JsonPropertyName("html")]
+    public string Html { get; set; }
+    [JsonPropertyName("company_id")]
+    public int CompanyId { get; set; }
 }

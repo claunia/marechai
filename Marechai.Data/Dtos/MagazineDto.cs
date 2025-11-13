@@ -23,10 +23,14 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class MagazineDto : DocumentBaseDto
 {
-    public string    Issn             { get; set; }
+    [JsonPropertyName("issn")]
+    public string Issn { get; set; }
+    [JsonPropertyName("first_publication")]
     public DateTime? FirstPublication { get; set; }
 }

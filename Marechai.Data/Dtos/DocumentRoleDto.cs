@@ -23,10 +23,14 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class DocumentRoleDto : BaseDto<string>
 {
-    public string Name    { get; set; }
-    public bool   Enabled { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+    [JsonPropertyName("enabled")]
+    public bool Enabled { get; set; }
 }

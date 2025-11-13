@@ -23,9 +23,14 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class BaseDto<TKey>
 {
-    public TKey Id;
+    [JsonPropertyName("id")]
+    [Required]
+    public TKey Id { get; set; }
 }

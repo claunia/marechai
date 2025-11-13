@@ -23,13 +23,17 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
 using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
 public class StorageDto
 {
-    public StorageType      Type      { get; set; }
+    [JsonPropertyName("type")]
+    public StorageType Type { get; set; }
+    [JsonPropertyName("interface")]
     public StorageInterface Interface { get; set; }
-    public long?            Capacity  { get; set; }
+    [JsonPropertyName("capacity")]
+    public long? Capacity { get; set; }
 }

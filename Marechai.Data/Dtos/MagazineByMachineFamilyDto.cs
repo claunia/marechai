@@ -23,12 +23,18 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class MagazineByMachineFamilyDto : BaseDto<long>
 {
-    public long   MagazineId      { get; set; }
-    public string Magazine        { get; set; }
-    public int    MachineFamilyId { get; set; }
-    public string MachineFamily   { get; set; }
+    [JsonPropertyName("magazine_id")]
+    public long MagazineId { get; set; }
+    [JsonPropertyName("magazine")]
+    public string Magazine { get; set; }
+    [JsonPropertyName("machine_family_id")]
+    public int MachineFamilyId { get; set; }
+    [JsonPropertyName("machine_family")]
+    public string MachineFamily { get; set; }
 }

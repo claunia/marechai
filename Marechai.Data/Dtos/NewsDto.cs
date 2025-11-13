@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
 using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
@@ -40,10 +41,16 @@ public sealed class NewsDto : BaseDto<int>
         ItemName   = itemName;
     }
 
-    public NewsType Type       { get; set; }
-    public int      AffectedId { get; set; }
-    public string   Controller { get; }
-    public string   ItemName   { get; }
-    public string   Text       { get; }
-    public DateTime Timestamp  { get; set; }
+    [JsonPropertyName("type")]
+    public NewsType Type { get; set; }
+    [JsonPropertyName("affected_id")]
+    public int AffectedId { get; set; }
+    [JsonPropertyName("controller")]
+    public string Controller { get; }
+    [JsonPropertyName("item_name")]
+    public string ItemName { get; }
+    [JsonPropertyName("text")]
+    public string Text { get; }
+    [JsonPropertyName("timestamp")]
+    public DateTime Timestamp { get; set; }
 }

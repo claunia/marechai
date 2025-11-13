@@ -23,21 +23,34 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class SoundSynthDto : BaseDto<int>
 {
-    public string    Name        { get; set; }
-    public string    CompanyName { get; set; }
-    public int?      CompanyId   { get; set; }
-    public string    ModelCode   { get; set; }
-    public DateTime? Introduced  { get; set; }
-    public int?      Voices      { get; set; }
-    public double?   Frequency   { get; set; }
-    public int?      Depth       { get; set; }
-    public int?      SquareWave  { get; set; }
-    public int?      WhiteNoise  { get; set; }
-    public int?      Type        { get; set; }
-
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+    [JsonPropertyName("company")]
+    public string CompanyName { get; set; }
+    [JsonPropertyName("company_id")]
+    public int? CompanyId { get; set; }
+    [JsonPropertyName("model_code")]
+    public string ModelCode { get; set; }
+    [JsonPropertyName("introduced")]
+    public DateTime? Introduced { get; set; }
+    [JsonPropertyName("voices")]
+    public int? Voices { get; set; }
+    [JsonPropertyName("frequency")]
+    public double? Frequency { get; set; }
+    [JsonPropertyName("depth")]
+    public int? Depth { get; set; }
+    [JsonPropertyName("square_wave")]
+    public int? SquareWave { get; set; }
+    [JsonPropertyName("white_noise")]
+    public int? WhiteNoise { get; set; }
+    [JsonPropertyName("type")]
+    public int? Type { get; set; }
+    [JsonIgnore]
     public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
 }

@@ -24,13 +24,17 @@
 *******************************************************************************/
 
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
 
 public class DocumentCompanyDto : BaseDto<int>
 {
+    [JsonPropertyName("name")]
     public string Name { get; set; }
     [DisplayName("Linked company")]
+    [JsonPropertyName("company")]
     public string Company { get; set; }
+    [JsonPropertyName("company_id")]
     public int? CompanyId { get; set; }
 }

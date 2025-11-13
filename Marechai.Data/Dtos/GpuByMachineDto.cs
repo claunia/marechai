@@ -23,12 +23,18 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class GpuByMachineDto : BaseDto<long>
 {
-    public int    GpuId       { get; set; }
-    public int    MachineId   { get; set; }
+    [JsonPropertyName("gpu_id")]
+    public int GpuId { get; set; }
+    [JsonPropertyName("machine_id")]
+    public int MachineId { get; set; }
+    [JsonPropertyName("company")]
     public string CompanyName { get; set; }
-    public string Name        { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
 }

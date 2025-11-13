@@ -23,12 +23,15 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
 using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
 public class DocumentScanBaseDto : BaseScanDto
 {
+    [JsonPropertyName("type")]
     public DocumentScanType Type { get; set; }
-    public uint?            Page { get; set; }
+    [JsonPropertyName("page")]
+    public uint? Page { get; set; }
 }

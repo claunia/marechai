@@ -23,18 +23,28 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class PersonByBookDto : BaseDto<long>
 {
-    public int    PersonId    { get; set; }
-    public long   BookId      { get; set; }
-    public string RoleId      { get; set; }
-    public string Role        { get; set; }
-    public string Name        { get; set; }
-    public string Alias       { get; set; }
-    public string Surname     { get; set; }
+    [JsonPropertyName("person_id")]
+    public int PersonId { get; set; }
+    [JsonPropertyName("book_id")]
+    public long BookId { get; set; }
+    [JsonPropertyName("role_id")]
+    public string RoleId { get; set; }
+    [JsonPropertyName("role")]
+    public string Role { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+    [JsonPropertyName("alias")]
+    public string Alias { get; set; }
+    [JsonPropertyName("surname")]
+    public string Surname { get; set; }
+    [JsonPropertyName("display_name")]
     public string DisplayName { get; set; }
-
+    [JsonIgnore]
     public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 }

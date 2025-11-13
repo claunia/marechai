@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
 using Marechai.Database;
 using Marechai.Database.Models;
@@ -31,29 +32,54 @@ namespace Marechai.Data.Dtos;
 
 public class MediaDto : BaseDto<ulong>
 {
-    public string              Title             { get; set; }
-    public ushort?             Sequence          { get; set; }
-    public ushort?             LastSequence      { get; set; }
-    public MediaType           Type              { get; set; }
-    public int?                WriteOffset       { get; set; }
-    public ushort?             Sides             { get; set; }
-    public ushort?             Layers            { get; set; }
-    public ushort?             Sessions          { get; set; }
-    public ushort?             Tracks            { get; set; }
-    public ulong               Sectors           { get; set; }
-    public ulong               Size              { get; set; }
-    public string              CopyProtection    { get; set; }
-    public string              PartNumber        { get; set; }
-    public string              SerialNumber      { get; set; }
-    public string              Barcode           { get; set; }
-    public string              CatalogueNumber   { get; set; }
-    public string              Manufacturer      { get; set; }
-    public string              Model             { get; set; }
-    public string              Revision          { get; set; }
-    public string              Firmware          { get; set; }
-    public int?                PhysicalBlockSize { get; set; }
-    public int?                LogicalBlockSize  { get; set; }
-    public VariableBlockSize[] BlockSizes        { get; set; }
-    public StorageInterface?   StorageInterface  { get; set; }
-    public OpticalDiscTrack[]  TableOfContents   { get; set; }
+    [JsonPropertyName("title")]
+    public string Title { get; set; }
+    [JsonPropertyName("sequence")]
+    public ushort? Sequence { get; set; }
+    [JsonPropertyName("last_sequence")]
+    public ushort? LastSequence { get; set; }
+    [JsonPropertyName("type")]
+    public MediaType Type { get; set; }
+    [JsonPropertyName("write_offset")]
+    public int? WriteOffset { get; set; }
+    [JsonPropertyName("sides")]
+    public ushort? Sides { get; set; }
+    [JsonPropertyName("layers")]
+    public ushort? Layers { get; set; }
+    [JsonPropertyName("sessions")]
+    public ushort? Sessions { get; set; }
+    [JsonPropertyName("tracks")]
+    public ushort? Tracks { get; set; }
+    [JsonPropertyName("sectors")]
+    public ulong Sectors { get; set; }
+    [JsonPropertyName("size")]
+    public ulong Size { get; set; }
+    [JsonPropertyName("copy_protection")]
+    public string CopyProtection { get; set; }
+    [JsonPropertyName("part_number")]
+    public string PartNumber { get; set; }
+    [JsonPropertyName("serial_number")]
+    public string SerialNumber { get; set; }
+    [JsonPropertyName("barcode")]
+    public string Barcode { get; set; }
+    [JsonPropertyName("catalogue_number")]
+    public string CatalogueNumber { get; set; }
+    [JsonPropertyName("manufacturer")]
+    public string Manufacturer { get; set; }
+    [JsonPropertyName("model")]
+    public string Model { get; set; }
+    [JsonPropertyName("revision")]
+    public string Revision { get; set; }
+    [JsonPropertyName("firmware")]
+    public string Firmware { get; set; }
+    [JsonPropertyName("physical_block_size")]
+    public int? PhysicalBlockSize { get; set; }
+    [JsonPropertyName("logical_block_size")]
+    public int? LogicalBlockSize { get; set; }
+    [JsonPropertyName("block_sizes")]
+    public VariableBlockSize[] BlockSizes { get; set; }
+    [JsonPropertyName("storage_interface")]
+    public StorageInterface? StorageInterface { get; set; }
+    [JsonPropertyName("table_of_contents")]
+    public OpticalDiscTrack[] TableOfContents { get; set; }
 }

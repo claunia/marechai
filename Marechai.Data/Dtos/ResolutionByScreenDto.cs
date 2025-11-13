@@ -23,11 +23,16 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class ResolutionByScreenDto : BaseDto<long>
 {
-    public int                 ResolutionId { get; set; }
-    public int                 ScreenId     { get; set; }
-    public ResolutionDto Resolution   { get; set; }
+    [JsonPropertyName("resolution_id")]
+    public int ResolutionId { get; set; }
+    [JsonPropertyName("screen_id")]
+    public int ScreenId { get; set; }
+    [JsonPropertyName("resolution")]
+    public ResolutionDto Resolution { get; set; }
 }

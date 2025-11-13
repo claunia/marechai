@@ -23,27 +23,39 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
 using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
 public class MachineDto : BaseDto<int>
 {
-    public string                    Name              { get; set; }
-    public string                    Model             { get; set; }
-    public int                       CompanyId         { get; set; }
-    public Guid?                     CompanyLogo       { get; set; }
-    public DateTime?                 Introduced        { get; set; }
-    public int?                      FamilyId          { get; set; }
-    public string                    FamilyName        { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+    [JsonPropertyName("model")]
+    public string Model { get; set; }
+    [JsonPropertyName("company_id")]
+    public int CompanyId { get; set; }
+    [JsonPropertyName("company_logo")]
+    public Guid? CompanyLogo { get; set; }
+    [JsonPropertyName("introduced")]
+    public DateTime? Introduced { get; set; }
+    [JsonPropertyName("family_id")]
+    public int? FamilyId { get; set; }
+    [JsonPropertyName("family_name")]
+    public string FamilyName { get;                     set; }
     public List<GpuDto>        Gpus              { get; set; }
     public List<MemoryDto>     Memory            { get; set; }
     public List<ProcessorDto>  Processors        { get; set; }
     public List<SoundSynthDto> SoundSynthesizers { get; set; }
     public List<StorageDto>    Storage           { get; set; }
-    public string                    Company           { get; set; }
-    public MachineType               Type              { get; set; }
-    public string                    Family            { get; set; }
+    [JsonPropertyName("company")]
+    public string Company { get; set; }
+    [JsonPropertyName("type")]
+    public MachineType Type { get; set; }
+    [JsonPropertyName("family")]
+    public string Family { get; set; }
+    [JsonIgnore]
     public string IntroducedView =>
         Introduced?.Year == 1000 ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
 }

@@ -23,14 +23,19 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
 using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
 public class MemoryDto
 {
-    public MemoryType  Type  { get; set; }
+    [JsonPropertyName("type")]
+    public MemoryType Type { get; set; }
+    [JsonPropertyName("usage")]
     public MemoryUsage Usage { get; set; }
-    public long?       Size  { get; set; }
-    public double?     Speed { get; set; }
+    [JsonPropertyName("size")]
+    public long? Size { get; set; }
+    [JsonPropertyName("speed")]
+    public double? Speed { get; set; }
 }

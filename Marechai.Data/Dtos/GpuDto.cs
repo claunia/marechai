@@ -23,20 +23,32 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.Text.Json.Serialization;
+
 namespace Marechai.Data.Dtos;
 
 public class GpuDto : BaseDto<int>
 {
-    public string    Name        { get; set; }
-    public int?      CompanyId   { get; set; }
-    public string    Company     { get; set; }
-    public string    ModelCode   { get; set; }
-    public DateTime? Introduced  { get; set; }
-    public string    Package     { get; set; }
-    public string    Process     { get; set; }
-    public float?    ProcessNm   { get; set; }
-    public float?    DieSize     { get; set; }
-    public long?     Transistors { get; set; }
-
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+    [JsonPropertyName("company_id")]
+    public int? CompanyId { get; set; }
+    [JsonPropertyName("company")]
+    public string Company { get; set; }
+    [JsonPropertyName("model_code")]
+    public string ModelCode { get; set; }
+    [JsonPropertyName("introduced")]
+    public DateTime? Introduced { get; set; }
+    [JsonPropertyName("package")]
+    public string Package { get; set; }
+    [JsonPropertyName("process")]
+    public string Process { get; set; }
+    [JsonPropertyName("process_nm")]
+    public float? ProcessNm { get; set; }
+    [JsonPropertyName("die_size")]
+    public float? DieSize { get; set; }
+    [JsonPropertyName("transistors")]
+    public long? Transistors { get; set; }
+    [JsonIgnore]
     public string IntroducedView => Introduced?.ToShortDateString() ?? "Unknown";
 }
