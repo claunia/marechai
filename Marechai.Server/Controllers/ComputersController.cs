@@ -40,14 +40,13 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class ComputersController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> GetComputersCountAsync() =>
-        await context.Machines.CountAsync(c => c.Type == MachineType.Computer);
+    public Task<int> GetComputersCountAsync() => context.Machines.CountAsync(c => c.Type == MachineType.Computer);
 
-    [HttpGet]
+    [HttpGet("/minimum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -57,7 +56,7 @@ public class ComputersController(MarechaiContext context) : ControllerBase
                                                                  t.Introduced.Value.Year > 1000)
                                                      .MinAsync(t => t.Introduced.Value.Year);
 
-    [HttpGet]
+    [HttpGet("/maximum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,7 +66,7 @@ public class ComputersController(MarechaiContext context) : ControllerBase
                                                                  t.Introduced.Value.Year > 1000)
                                                      .MaxAsync(t => t.Introduced.Value.Year);
 
-    [HttpGet]
+    [HttpGet("/by-letter/{c}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -85,7 +84,7 @@ public class ComputersController(MarechaiContext context) : ControllerBase
                                                                                })
                                                                               .ToListAsync();
 
-    [HttpGet]
+    [HttpGet("/by-year/{year:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
