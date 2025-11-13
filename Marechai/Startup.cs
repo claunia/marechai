@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -31,6 +31,7 @@ using Blazorise.Icons.FontAwesome;
 using Marechai.Areas.Identity;
 using Marechai.Database.Models;
 using Marechai.Database.Seeders;
+using Marechai.Helpers;
 using Marechai.Services;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Builder;
@@ -64,6 +65,9 @@ namespace Marechai
             services.AddBlazorise(options => options.ChangeTextOnKeyPress = true).AddBootstrapProviders().
                      AddFontAwesomeIcons();
 
+            // Add credential encryption support using ASP.NET Core Data Protection API (DPAPI)
+            ConnectionStringManager.AddConnectionStringManagement(services);
+
             services.AddDbContext<MarechaiContext>(options => options.UseLazyLoadingProxies().
                                                                       UseMySql(Configuration.GetConnectionString("DefaultConnection"),
                                                                                new MariaDbServerVersion(new Version(10,
@@ -72,9 +76,6 @@ namespace Marechai
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).
                      AddRoles<ApplicationRole>().AddEntityFrameworkStores<MarechaiContext>();
-
-            // The following line enables Application Insights telemetry collection.
-            services.AddApplicationInsightsTelemetry();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
