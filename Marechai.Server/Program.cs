@@ -6,12 +6,15 @@ using Marechai.Database;
 using Marechai.Database.Models;
 using Marechai.Helpers;
 using Marechai.Server.Helpers;
+using Marechai.Server.Services;
 using Markdig;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Version = Marechai.Server.Interop.Version;
 
 namespace Marechai.Server;
@@ -156,6 +159,32 @@ file class Program
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
+        builder.Services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme             = JwtBearerDefaults.AuthenticationScheme;
+                })
+               .AddJwtBearer(options =>
+                {
+                    options.SaveToken = true;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ClockSkew                = TimeSpan.Zero,
+                        ValidateIssuer           = true,
+                        ValidateAudience         = true,
+                        ValidateLifetime         = false,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer              = "apiWithAuthBackend",
+                        ValidAudience            = "apiWithAuthBackend",
+                        IssuerSigningKey =
+                            new
+                                SymmetricSecurityKey("!SomethingSecret!!SomethingSecret!!SomethingSecret!!SomethingSecret!"u8
+                                                        .ToArray())
+                    };
+                });
+
         builder.Services.AddDbContextFactory<MarechaiContext>(options => options.UseLazyLoadingProxies()
                                                                  .UseMySql(builder.Configuration
                                                                               .GetConnectionString("DefaultConnection"),
@@ -164,6 +193,12 @@ file class Program
                                                                                    Version(10, 5, 0)),
                                                                            b => b.UseMicrosoftJson()));
 
+        builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+               .AddRoles<ApplicationRole>()
+               .AddEntityFrameworkStores<MarechaiContext>();
+
+        builder.Services.AddScoped<TokenService, TokenService>();
+
         WebApplication app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -171,6 +206,7 @@ file class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
