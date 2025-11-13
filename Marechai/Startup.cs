@@ -32,6 +32,7 @@ using Marechai.Areas.Identity;
 using Marechai.Database.Models;
 using Marechai.Database.Seeders;
 using Marechai.Services;
+using Marechai.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -119,6 +120,9 @@ namespace Marechai
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // Add other security headers
+            app.UseMiddleware<SecurityHeadersMiddleware>();
 
             app.UseRouting();
 
