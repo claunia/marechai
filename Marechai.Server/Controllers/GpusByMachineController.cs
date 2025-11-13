@@ -62,29 +62,31 @@ public class GpusByMachineController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         GpusByMachine item = await context.GpusByMachine.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.GpusByMachine.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(int gpuId, int machineId)
+    public async Task<ActionResult<long>> CreateAsync(int gpuId, int machineId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var item = new GpusByMachine
         {

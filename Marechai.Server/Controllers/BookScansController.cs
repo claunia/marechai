@@ -80,14 +80,14 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(BookScanDto dto)
+    public async Task<ActionResult> UpdateAsync(BookScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         BookScan model = await context.BookScans.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Author               = dto.Author;
         model.ColorSpace           = dto.ColorSpace;
@@ -104,17 +104,19 @@ public class BookScansController(MarechaiContext context) : ControllerBase
         model.VerticalResolution   = dto.VerticalResolution;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Guid> CreateAsync(BookScanDto dto)
+    public async Task<ActionResult<Guid>> CreateAsync(BookScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return null;
+        if(userId is null) return Unauthorized();
 
         var model = new BookScan
         {
@@ -148,17 +150,19 @@ public class BookScansController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(Guid id)
+    public async Task<ActionResult> DeleteAsync(Guid id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         BookScan item = await context.BookScans.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.BookScans.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

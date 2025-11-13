@@ -80,14 +80,14 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(DocumentDto dto)
+    public async Task<ActionResult> UpdateAsync(DocumentDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         Document model = await context.Documents.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Title       = dto.Title;
         model.NativeTitle = dto.NativeTitle;
@@ -95,17 +95,19 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
         model.Synopsis    = dto.Synopsis;
         model.CountryId   = dto.CountryId;
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(DocumentDto dto)
+    public async Task<ActionResult<long>> CreateAsync(DocumentDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var model = new Document
         {
@@ -133,17 +135,19 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         Document item = await context.Documents.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.Documents.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

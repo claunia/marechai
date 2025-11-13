@@ -80,14 +80,14 @@ public class MagazineScansController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(MagazineScanDto dto)
+    public async Task<ActionResult> UpdateAsync(MagazineScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         MagazineScan model = await context.MagazineScans.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Author               = dto.Author;
         model.ColorSpace           = dto.ColorSpace;
@@ -104,17 +104,19 @@ public class MagazineScansController(MarechaiContext context) : ControllerBase
         model.VerticalResolution   = dto.VerticalResolution;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Guid> CreateAsync(MagazineScanDto dto)
+    public async Task<ActionResult<Guid>> CreateAsync(MagazineScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return null;
+        if(userId is null) return Unauthorized();
 
         var model = new MagazineScan
         {
@@ -148,17 +150,19 @@ public class MagazineScansController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(Guid id)
+    public async Task<ActionResult> DeleteAsync(Guid id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         MagazineScan item = await context.MagazineScans.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.MagazineScans.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

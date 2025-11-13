@@ -128,14 +128,14 @@ public class MediaController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(MediaDto dto)
+    public async Task<ActionResult> UpdateAsync(MediaDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         Media model = await context.Media.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Title             = dto.Title;
         model.Sequence          = dto.Sequence;
@@ -163,17 +163,19 @@ public class MediaController(MarechaiContext context) : ControllerBase
         model.StorageInterface  = dto.StorageInterface;
         model.TableOfContents   = dto.TableOfContents;
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ulong> CreateAsync(MediaDto dto)
+    public async Task<ActionResult<ulong>> CreateAsync(MediaDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return null;
+        if(userId is null) return Unauthorized();
 
         var model = new Media
         {
@@ -214,17 +216,19 @@ public class MediaController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(ulong id)
+    public async Task<ActionResult> DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         Media item = await context.Media.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.Media.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

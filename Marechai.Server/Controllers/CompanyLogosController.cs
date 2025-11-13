@@ -25,16 +25,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -53,18 +53,19 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(int id)
+    public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return;
+
+        if(userId is null) return Unauthorized();
         CompanyLogo logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
 
-        if(logo is null) return;
+        if(logo is null) return NotFound();
 
         context.CompanyLogos.Remove(logo);
         await context.SaveChangesWithUserAsync(userId);
 
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg")))
+        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg")))
             File.Delete(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg"));
 
         if(File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp")))
@@ -108,26 +109,31 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task ChangeYearAsync(int id, int? year)
+    public async Task<ActionResult> ChangeYearAsync(int id, int? year)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return;
+
+        if(userId is null) return Unauthorized();
         CompanyLogo logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
 
-        if(logo is null) return;
+        if(logo is null) return NotFound();
 
         logo.Year = year;
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateAsync(int companyId, Guid guid, int? year)
+    public async Task<ActionResult<int>> CreateAsync(int companyId, Guid guid, int? year)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return 0;
+
+        if(userId is null) return Unauthorized();
+
         var logo = new CompanyLogo
         {
             Guid      = guid,

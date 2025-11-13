@@ -85,14 +85,14 @@ public class DumpsController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(DumpDto dto)
+    public async Task<ActionResult> UpdateAsync(DumpDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         Dump model = await context.Dumps.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Dumper       = dto.Dumper;
         model.UserId       = dto.UserId;
@@ -101,17 +101,19 @@ public class DumpsController(MarechaiContext context) : ControllerBase
         model.MediaId      = dto.MediaId;
         model.MediaDumpId  = dto.MediaDumpId;
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ulong> CreateAsync(DumpDto dto)
+    public async Task<ActionResult<ulong>> CreateAsync(DumpDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return null;
+        if(userId is null) return Unauthorized();
 
         var model = new Dump
         {
@@ -133,17 +135,19 @@ public class DumpsController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(ulong id)
+    public async Task<ActionResult> DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         Dump item = await context.Dumps.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.Dumps.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

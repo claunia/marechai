@@ -60,29 +60,31 @@ public class DocumentsByMachineFamilyController(MarechaiContext context) : Contr
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         DocumentsByMachineFamily item = await context.DocumentsByMachineFamilies.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.DocumentsByMachineFamilies.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(int machineFamilyId, long bookId)
+    public async Task<ActionResult<long>> CreateAsync(int machineFamilyId, long bookId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var item = new DocumentsByMachineFamily
         {

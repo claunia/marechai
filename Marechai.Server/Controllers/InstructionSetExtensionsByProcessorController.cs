@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,44 +44,49 @@ public class InstructionSetExtensionsByProcessorController(MarechaiContext conte
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<InstructionSetExtensionByProcessorDto>> GetByProcessor(int processorId) =>
-        await context.InstructionSetExtensionsByProcessor.Where(e => e.ProcessorId == processorId)
-                      .Select(e => new InstructionSetExtensionByProcessorDto
-                       {
-                           Id          = e.Id,
-                           Extension   = e.Extension.Extension,
-                           Processor   = e.Processor.Name,
-                           ProcessorId = e.ProcessorId,
-                           ExtensionId = e.ExtensionId
-                       })
-                      .OrderBy(e => e.Extension)
-                      .ToListAsync();
+    public async Task<List<InstructionSetExtensionByProcessorDto>> GetByProcessor(int processorId) => await context
+       .InstructionSetExtensionsByProcessor.Where(e => e.ProcessorId == processorId)
+       .Select(e => new InstructionSetExtensionByProcessorDto
+        {
+            Id          = e.Id,
+            Extension   = e.Extension.Extension,
+            Processor   = e.Processor.Name,
+            ProcessorId = e.ProcessorId,
+            ExtensionId = e.ExtensionId
+        })
+       .OrderBy(e => e.Extension)
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(int id)
+    public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return;
+
+        if(userId is null) return Unauthorized();
         InstructionSetExtensionsByProcessor item = await context.InstructionSetExtensionsByProcessor.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.InstructionSetExtensionsByProcessor.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateAsync(int processorId, int extensionId)
+    public async Task<ActionResult<int>> CreateAsync(int processorId, int extensionId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return 0;
+
+        if(userId is null) return Unauthorized();
+
         var item = new InstructionSetExtensionsByProcessor
         {
             ProcessorId = processorId,

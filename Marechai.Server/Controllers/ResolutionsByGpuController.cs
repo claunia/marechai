@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -47,56 +45,65 @@ public class ResolutionsByGpuController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<ResolutionByGpuDto>> GetByGpu(int resolutionId) => (await context.ResolutionsByGpu
-                                                                                                  .Where(r => r.ResolutionId == resolutionId)
-                                                                                                  .Select(r => new ResolutionByGpuDto
-                                                                                                   {
-                                                                                                       Id    = r.Id,
-                                                                                                       GpuId = r.GpuId,
-                                                                                                       Resolution = new ResolutionDto
-                                                                                                       {
-                                                                                                           Id        = r.Resolution.Id,
-                                                                                                           Width     = r.Resolution.Width,
-                                                                                                           Height    = r.Resolution.Height,
-                                                                                                           Colors    = r.Resolution.Colors,
-                                                                                                           Palette   = r.Resolution.Palette,
-                                                                                                           Chars     = r.Resolution.Chars,
-                                                                                                           Grayscale = r.Resolution.Grayscale
-                                                                                                       },
-                                                                                                       ResolutionId = r.ResolutionId
-                                                                                                   })
-                                                                                                  .ToListAsync()).OrderBy(r => r.Resolution.Width)
-                                                                                                                 .ThenBy(r => r.Resolution.Height)
-                                                                                                                 .ThenBy(r => r.Resolution.Chars)
-                                                                                                                 .ThenBy(r => r.Resolution.Grayscale)
-                                                                                                                 .ThenBy(r => r.Resolution.Colors)
-                                                                                                                 .ThenBy(r => r.Resolution.Palette)
-                                                                                                                 .ToList();
+                                                                                  .Where(r => r.ResolutionId ==
+                                                                                       resolutionId)
+                                                                                  .Select(r => new ResolutionByGpuDto
+                                                                                   {
+                                                                                       Id    = r.Id,
+                                                                                       GpuId = r.GpuId,
+                                                                                       Resolution = new ResolutionDto
+                                                                                       {
+                                                                                           Id     = r.Resolution.Id,
+                                                                                           Width  = r.Resolution.Width,
+                                                                                           Height = r.Resolution.Height,
+                                                                                           Colors = r.Resolution.Colors,
+                                                                                           Palette = r.Resolution
+                                                                                              .Palette,
+                                                                                           Chars = r.Resolution.Chars,
+                                                                                           Grayscale = r.Resolution
+                                                                                              .Grayscale
+                                                                                       },
+                                                                                       ResolutionId = r.ResolutionId
+                                                                                   })
+                                                                                  .ToListAsync())
+                                                                             .OrderBy(r => r.Resolution.Width)
+                                                                             .ThenBy(r => r.Resolution.Height)
+                                                                             .ThenBy(r => r.Resolution.Chars)
+                                                                             .ThenBy(r => r.Resolution.Grayscale)
+                                                                             .ThenBy(r => r.Resolution.Colors)
+                                                                             .ThenBy(r => r.Resolution.Palette)
+                                                                             .ToList();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return;
+
+        if(userId is null) return Unauthorized();
         ResolutionsByGpu item = await context.ResolutionsByGpu.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.ResolutionsByGpu.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(int resolutionId, int gpuId)
+    public async Task<ActionResult<long>> CreateAsync(int resolutionId, int gpuId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return 0;
+
+        if(userId is null) return Unauthorized();
+
         var item = new ResolutionsByGpu
         {
             GpuId        = gpuId,

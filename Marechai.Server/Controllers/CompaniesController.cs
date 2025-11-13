@@ -33,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -114,14 +113,14 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(CompanyDto dto)
+    public async Task<ActionResult> UpdateAsync(CompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         Company model = await context.Companies.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Name                  = dto.Name;
         model.Founded               = dto.Founded;
@@ -142,17 +141,19 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         model.SoldMonthIsUnknown    = dto.SoldMonthIsUnknown;
         model.LegalName             = dto.LegalName;
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateAsync(CompanyDto dto)
+    public async Task<ActionResult<int>> CreateAsync(CompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var model = new Company
         {
@@ -259,18 +260,20 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(int id)
+    public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         Company item = await context.Companies.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.Companies.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpGet]
@@ -292,11 +295,11 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateOrUpdateDescriptionAsync(int id, CompanyDescriptionDto description)
+    public async Task<ActionResult<int>> CreateOrUpdateDescriptionAsync(int id, CompanyDescriptionDto description)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
         CompanyDescription current = await context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id);
 
         if(current is null)

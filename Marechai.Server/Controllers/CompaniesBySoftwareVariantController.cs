@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,46 +44,51 @@ public class CompaniesBySoftwareVariantController(MarechaiContext context) : Con
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<CompanyBySoftwareVariantDto>> GetBySoftwareVariant(ulong softwareVariantId) =>
-        await context.CompaniesBySoftwareVariants.Where(p => p.SoftwareVariantId == softwareVariantId)
-                      .Select(p => new CompanyBySoftwareVariantDto
-                       {
-                           Id                = p.Id,
-                           Company           = p.Company.Name,
-                           CompanyId         = p.CompanyId,
-                           RoleId            = p.RoleId,
-                           Role              = p.Role.Name,
-                           SoftwareVariantId = p.SoftwareVariantId
-                       })
-                      .OrderBy(p => p.Company)
-                      .ThenBy(p => p.Role)
-                      .ToListAsync();
+    public async Task<List<CompanyBySoftwareVariantDto>> GetBySoftwareVariant(ulong softwareVariantId) => await context
+       .CompaniesBySoftwareVariants.Where(p => p.SoftwareVariantId == softwareVariantId)
+       .Select(p => new CompanyBySoftwareVariantDto
+        {
+            Id                = p.Id,
+            Company           = p.Company.Name,
+            CompanyId         = p.CompanyId,
+            RoleId            = p.RoleId,
+            Role              = p.Role.Name,
+            SoftwareVariantId = p.SoftwareVariantId
+        })
+       .OrderBy(p => p.Company)
+       .ThenBy(p => p.Role)
+       .ToListAsync();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(ulong id)
+    public async Task<ActionResult> DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return;
+
+        if(userId is null) return Unauthorized();
         CompaniesBySoftwareVariant item = await context.CompaniesBySoftwareVariants.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.CompaniesBySoftwareVariants.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ulong> CreateAsync(int companyId, ulong softwareVariantId, string roleId)
+    public async Task<ActionResult<ulong>> CreateAsync(int companyId, ulong softwareVariantId, string roleId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return null;
+
+        if(userId is null) return Unauthorized();
+
         var item = new CompaniesBySoftwareVariant
         {
             CompanyId         = companyId,

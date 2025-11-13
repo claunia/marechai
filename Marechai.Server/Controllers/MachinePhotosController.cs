@@ -104,14 +104,14 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(MachinePhotoDto dto)
+    public async Task<ActionResult> UpdateAsync(MachinePhotoDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         MachinePhoto model = await context.MachinePhotos.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Aperture              = dto.Aperture;
         model.Author                = dto.Author;
@@ -149,17 +149,19 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
         model.WhiteBalance          = dto.WhiteBalance;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Guid> CreateAsync(MachinePhotoDto dto)
+    public async Task<ActionResult<Guid>> CreateAsync(MachinePhotoDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return null;
+        if(userId is null) return Unauthorized();
 
         var model = new MachinePhoto
         {

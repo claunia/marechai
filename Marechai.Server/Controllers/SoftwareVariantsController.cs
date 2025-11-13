@@ -105,14 +105,14 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(SoftwareVariantDto dto)
+    public async Task<ActionResult> UpdateAsync(SoftwareVariantDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         SoftwareVariant model = await context.SoftwareVariants.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Name              = dto.Name;
         model.Version           = dto.Version;
@@ -129,17 +129,19 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
         model.DistributionMode  = dto.DistributionMode;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ulong> CreateAsync(SoftwareVariantDto dto)
+    public async Task<ActionResult<ulong>> CreateAsync(SoftwareVariantDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return null;
+        if(userId is null) return Unauthorized();
 
         var model = new SoftwareVariant
         {
@@ -168,17 +170,19 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(ulong id)
+    public async Task<ActionResult> DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         SoftwareVariant item = await context.SoftwareVariants.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.SoftwareVariants.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

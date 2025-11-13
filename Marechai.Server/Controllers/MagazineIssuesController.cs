@@ -84,14 +84,14 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(MagazineIssueDto dto)
+    public async Task<ActionResult> UpdateAsync(MagazineIssueDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         MagazineIssue model = await context.MagazineIssues.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.MagazineId    = dto.MagazineId;
         model.Caption       = dto.Caption;
@@ -101,17 +101,19 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
         model.Pages         = dto.Pages;
         model.IssueNumber   = dto.IssueNumber;
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(MagazineIssueDto dto)
+    public async Task<ActionResult<long>> CreateAsync(MagazineIssueDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var model = new MagazineIssue
         {
@@ -134,17 +136,19 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         MagazineIssue item = await context.MagazineIssues.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.MagazineIssues.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

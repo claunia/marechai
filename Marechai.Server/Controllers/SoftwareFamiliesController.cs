@@ -74,30 +74,32 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(SoftwareFamilyDto dto)
+    public async Task<ActionResult> UpdateAsync(SoftwareFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         SoftwareFamily model = await context.SoftwareFamilies.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Name       = dto.Name;
         model.ParentId   = dto.ParentId;
         model.Introduced = dto.Introduced;
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ulong> CreateAsync(SoftwareFamilyDto dto)
+    public async Task<ActionResult<ulong>> CreateAsync(SoftwareFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return null;
+        if(userId is null) return Unauthorized();
 
         var model = new SoftwareFamily
         {
@@ -116,17 +118,19 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(ulong id)
+    public async Task<ActionResult> DeleteAsync(ulong id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         SoftwareFamily item = await context.SoftwareFamilies.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.SoftwareFamilies.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

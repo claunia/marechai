@@ -76,14 +76,14 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(License viewModel)
+    public async Task<ActionResult> UpdateAsync(License viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         License model = await context.Licenses.FindAsync(viewModel.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.FsfApproved = viewModel.FsfApproved;
         model.Link        = viewModel.Link;
@@ -93,17 +93,19 @@ public class LicensesController(MarechaiContext context) : ControllerBase
         model.Text        = viewModel.Text;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateAsync(License viewModel)
+    public async Task<ActionResult<int>> CreateAsync(License viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var model = new License
         {
@@ -125,17 +127,19 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(int id)
+    public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         License item = await context.Licenses.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.Licenses.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

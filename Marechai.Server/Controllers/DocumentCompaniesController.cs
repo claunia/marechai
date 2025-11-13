@@ -71,30 +71,32 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(DocumentCompanyDto dto)
+    public async Task<ActionResult> UpdateAsync(DocumentCompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         DocumentCompany model = await context.DocumentCompanies.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.CompanyId = dto.CompanyId;
         model.Name      = dto.Name;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateAsync(DocumentCompanyDto dto)
+    public async Task<ActionResult<int>> CreateAsync(DocumentCompanyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var model = new DocumentCompany
         {
@@ -112,17 +114,19 @@ public class DocumentCompaniesController(MarechaiContext context) : ControllerBa
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(int id)
+    public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         DocumentCompany item = await context.DocumentCompanies.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.DocumentCompanies.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

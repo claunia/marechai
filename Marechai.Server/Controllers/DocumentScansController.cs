@@ -80,14 +80,14 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(DocumentScanDto dto)
+    public async Task<ActionResult> UpdateAsync(DocumentScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         DocumentScan model = await context.DocumentScans.FindAsync(dto.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Author               = dto.Author;
         model.ColorSpace           = dto.ColorSpace;
@@ -104,17 +104,19 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
         model.VerticalResolution   = dto.VerticalResolution;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<Guid> CreateAsync(DocumentScanDto dto)
+    public async Task<ActionResult<Guid>> CreateAsync(DocumentScanDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return null;
+        if(userId is null) return Unauthorized();
 
         var model = new DocumentScan
         {
@@ -148,17 +150,19 @@ public class DocumentScansController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(Guid id)
+    public async Task<ActionResult> DeleteAsync(Guid id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         DocumentScan item = await context.DocumentScans.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.DocumentScans.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

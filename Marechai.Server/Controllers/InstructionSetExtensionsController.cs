@@ -68,29 +68,31 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(InstructionSetExtension viewModel)
+    public async Task<ActionResult> UpdateAsync(InstructionSetExtension viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         InstructionSetExtension model = await context.InstructionSetExtensions.FindAsync(viewModel.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Extension = viewModel.Extension;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateAsync(InstructionSetExtension viewModel)
+    public async Task<ActionResult<int>> CreateAsync(InstructionSetExtension viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var model = new InstructionSetExtension
         {
@@ -107,18 +109,20 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(int id)
+    public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         InstructionSetExtension item = await context.InstructionSetExtensions.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.InstructionSetExtensions.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpGet]

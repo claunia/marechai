@@ -68,29 +68,31 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task UpdateAsync(InstructionSet viewModel)
+    public async Task<ActionResult> UpdateAsync(InstructionSet viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         InstructionSet model = await context.InstructionSets.FindAsync(viewModel.Id);
 
-        if(model is null) return;
+        if(model is null) return NotFound();
 
         model.Name = viewModel.Name;
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<int> CreateAsync(InstructionSet viewModel)
+    public async Task<ActionResult<int>> CreateAsync(InstructionSet viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var model = new InstructionSet
         {
@@ -107,18 +109,20 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(int id)
+    public async Task<ActionResult> DeleteAsync(int id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         InstructionSet item = await context.InstructionSets.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.InstructionSets.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpGet]

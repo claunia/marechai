@@ -23,7 +23,6 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -34,7 +33,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -47,50 +45,53 @@ public class PeopleByBookController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<List<PersonByBookDto>> GetByBook(long bookId) => (await context.PeopleByBooks
-                                                                                           .Where(p => p.BookId == bookId)
-                                                                                           .Select(p => new PersonByBookDto
-                                                                                            {
-                                                                                                Id      = p.Id,
-                                                                                                Name    = p.Person.Name,
-                                                                                                Surname = p.Person.Surname,
-                                                                                                Alias   = p.Person.Alias,
-                                                                                                DisplayName =
-                                                                                                    p.Person.DisplayName,
-                                                                                                PersonId = p.PersonId,
-                                                                                                RoleId   = p.RoleId,
-                                                                                                Role     = p.Role.Name,
-                                                                                                BookId   = p.BookId
-                                                                                            })
-                                                                                           .ToListAsync())
-                                                                            .OrderBy(p => p.FullName)
-                                                                            .ThenBy(p => p.Role)
-                                                                            .ToList();
+                                                                           .Where(p => p.BookId == bookId)
+                                                                           .Select(p => new PersonByBookDto
+                                                                            {
+                                                                                Id          = p.Id,
+                                                                                Name        = p.Person.Name,
+                                                                                Surname     = p.Person.Surname,
+                                                                                Alias       = p.Person.Alias,
+                                                                                DisplayName = p.Person.DisplayName,
+                                                                                PersonId    = p.PersonId,
+                                                                                RoleId      = p.RoleId,
+                                                                                Role        = p.Role.Name,
+                                                                                BookId      = p.BookId
+                                                                            })
+                                                                           .ToListAsync()).OrderBy(p => p.FullName)
+       .ThenBy(p => p.Role)
+       .ToList();
 
     [HttpDelete]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return;
+
+        if(userId is null) return Unauthorized();
         PeopleByBook item = await context.PeopleByBooks.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.PeopleByBooks.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(int personId, long bookId, string roleId)
+    public async Task<ActionResult<long>> CreateAsync(int personId, long bookId, string roleId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
-        if(userId is null) return 0;
+
+        if(userId is null) return Unauthorized();
+
         var item = new PeopleByBook
         {
             PersonId = personId,

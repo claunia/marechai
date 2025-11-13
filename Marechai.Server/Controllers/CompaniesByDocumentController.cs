@@ -63,29 +63,31 @@ public class CompaniesByDocumentController(MarechaiContext context) : Controller
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task DeleteAsync(long id)
+    public async Task<ActionResult> DeleteAsync(long id)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return;
+        if(userId is null) return Unauthorized();
         CompaniesByDocument item = await context.CompaniesByDocuments.FindAsync(id);
 
-        if(item is null) return;
+        if(item is null) return NotFound();
 
         context.CompaniesByDocuments.Remove(item);
 
         await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<long> CreateAsync(int companyId, long documentId, string roleId)
+    public async Task<ActionResult<long>> CreateAsync(int companyId, long documentId, string roleId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return 0;
+        if(userId is null) return Unauthorized();
 
         var item = new CompaniesByDocument
         {
