@@ -86,7 +86,7 @@ public class MagazineIssuesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(MagazineIssueDto dto)
+    public async Task<ActionResult> UpdateAsync([FromBody] MagazineIssueDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

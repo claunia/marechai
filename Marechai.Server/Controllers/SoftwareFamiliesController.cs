@@ -76,7 +76,7 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(SoftwareFamilyDto dto)
+    public async Task<ActionResult> UpdateAsync([FromBody] SoftwareFamilyDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

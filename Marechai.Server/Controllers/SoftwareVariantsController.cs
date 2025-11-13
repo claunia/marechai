@@ -107,7 +107,7 @@ public class SoftwareVariantsController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(SoftwareVariantDto dto)
+    public async Task<ActionResult> UpdateAsync([FromBody] SoftwareVariantDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

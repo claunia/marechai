@@ -130,7 +130,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(MediaDto dto)
+    public async Task<ActionResult> UpdateAsync([FromBody] MediaDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

@@ -119,7 +119,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(SoundSynthDto dto)
+    public async Task<ActionResult> UpdateAsync([FromBody] SoundSynthDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 

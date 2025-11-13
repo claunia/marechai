@@ -70,7 +70,7 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(InstructionSetExtension viewModel)
+    public async Task<ActionResult> UpdateAsync([FromBody] InstructionSetExtension viewModel)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
