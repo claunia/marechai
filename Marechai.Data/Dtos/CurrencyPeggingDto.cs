@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class CurrencyPeggingViewModel : BaseViewModel<int>
+public class CurrencyPeggingDto : BaseDto<int>
 {
     public string    SourceCode      { get; set; }
     public string    DestinationCode { get; set; }

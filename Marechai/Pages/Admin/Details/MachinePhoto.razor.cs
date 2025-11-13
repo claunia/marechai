@@ -44,7 +44,7 @@ public partial class MachinePhoto
     bool                          _editing;
     List<Database.Models.License> _licenses;
     bool                          _loaded;
-    MachinePhotoViewModel         _model;
+    MachinePhotoDto         _model;
     bool                          _unknownAperture;
     bool                          _unknownAuthor;
     bool                          _unknownCameraManufacturer;

@@ -36,8 +36,8 @@ public partial class Gpus
 {
     bool               _deleteInProgress;
     Modal              _frmDelete;
-    GpuViewModel       _gpu;
-    List<GpuViewModel> _gpus;
+    GpuDto       _gpu;
+    List<GpuDto> _gpus;
     bool               _loaded;
 
     void ShowModal(int itemId)

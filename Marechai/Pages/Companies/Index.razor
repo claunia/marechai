@@ -74,7 +74,7 @@
             class="align-content-center">@string.Format(L["{0} companies found in the database."], _companies.Count())</span>
         <hr/>
         <table>
-            @foreach(CompanyViewModel company in _companies)
+            @foreach(CompanyDto company in _companies)
             {
                 <tr>
                     <td class="text-right">

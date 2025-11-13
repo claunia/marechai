@@ -156,7 +156,7 @@
             <Field>
                 <FieldLabel>@L["Company"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyId" Disabled="_savingCompany" @TValue="int?">
-                    @foreach(DocumentCompanyViewModel company in _companies)
+                    @foreach(DocumentCompanyDto company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
                     }
@@ -165,7 +165,7 @@
             <Field>
                 <FieldLabel>@L["Role"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyRoleId" Disabled="!_editing" @TValue="string">
-                    @foreach(DocumentRoleViewModel role in _roles)
+                    @foreach(DocumentRoleDto role in _roles)
                     {
                         <SelectItem @TValue="string" Value="@role.Id">@role.Name</SelectItem>
                     }
@@ -192,7 +192,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(CompanyByDocumentViewModel item in _documentCompanies)
+                @foreach(CompanyByDocumentDto item in _documentCompanies)
                 {
                     <tr>
                         <td>
@@ -223,7 +223,7 @@
             <Field>
                 <FieldLabel>@L["Person"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingPersonId" Disabled="_savingPerson" @TValue="int?">
-                    @foreach(DocumentPersonViewModel person in _people)
+                    @foreach(DocumentPersonDto person in _people)
                     {
                         <SelectItem @TValue="int?" Value="@person.Id">@person.FullName</SelectItem>
                     }
@@ -232,7 +232,7 @@
             <Field>
                 <FieldLabel>@L["Role"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingPersonRoleId" Disabled="!_editing" @TValue="string">
-                    @foreach(DocumentRoleViewModel role in _roles)
+                    @foreach(DocumentRoleDto role in _roles)
                     {
                         <SelectItem @TValue="string" Value="@role.Id">@role.Name</SelectItem>
                     }
@@ -259,7 +259,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(PersonByDocumentViewModel item in _documentPeople)
+                @foreach(PersonByDocumentDto item in _documentPeople)
                 {
                     <tr>
                         <td>
@@ -291,7 +291,7 @@
             <Field>
                 <FieldLabel>@L["Family"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingMachineFamilyId" Disabled="_savingMachineFamily" @TValue="int?">
-                    @foreach(MachineFamilyViewModel family in _machineFamilies)
+                    @foreach(MachineFamilyDto family in _machineFamilies)
                     {
                         <SelectItem @TValue="int?" Value="@family.Id">@family.Name</SelectItem>
                     }
@@ -317,7 +317,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(DocumentByMachineFamilyViewModel item in _documentMachineFamilies)
+                @foreach(DocumentByMachineFamilyDto item in _documentMachineFamilies)
                 {
                     <tr>
                         <td>
@@ -345,7 +345,7 @@
             <Field>
                 <FieldLabel>@L[""]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingMachineId" Disabled="_savingMachine" @TValue="int?">
-                    @foreach(MachineViewModel machine in _machines)
+                    @foreach(MachineDto machine in _machines)
                     {
                         <SelectItem @TValue="int?" Value="@machine.Id">@machine.Name</SelectItem>
                     }
@@ -369,7 +369,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(DocumentByMachineViewModel item in _documentMachines)
+                @foreach(DocumentByMachineDto item in _documentMachines)
                 {
                     <tr>
                         <td>

@@ -40,19 +40,19 @@ public partial class Gpu
     bool                           _addingResolution;
     int?                           _addingResolutionId;
     AuthenticationState            _authState;
-    List<CompanyViewModel>         _companies;
+    List<CompanyDto>         _companies;
     bool                           _creating;
-    ResolutionByGpuViewModel       _currentResolution;
+    ResolutionByGpuDto       _currentResolution;
     bool                           _deleteInProgress;
     string                         _deleteText;
     string                         _deleteTitle;
     bool                           _editing;
     Modal                          _frmDelete;
-    List<ResolutionByGpuViewModel> _gpuResolutions;
+    List<ResolutionByGpuDto> _gpuResolutions;
     bool                           _loaded;
-    GpuViewModel                   _model;
+    GpuDto                   _model;
     bool                           _prototype;
-    List<ResolutionViewModel>      _resolutions;
+    List<ResolutionDto>      _resolutions;
     bool                           _savingResolution;
     bool                           _unknownCompany;
     bool                           _unknownDieSize;
@@ -78,7 +78,7 @@ public partial class Gpu
         if(Id <= 0 && !_creating) return;
 
         _companies      = await CompaniesService.GetAsync();
-        _model          = _creating ? new GpuViewModel() : await Service.GetAsync(Id);
+        _model          = _creating ? new GpuDto() : await Service.GetAsync(Id);
         _resolutions    = await ResolutionsService.GetAsync();
         _gpuResolutions = await ResolutionsByGpuService.GetByGpu(Id);
         _authState      = await AuthenticationStateProvider.GetAuthenticationStateAsync();

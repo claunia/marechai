@@ -42,9 +42,9 @@ public partial class SoftwareVariant
     int?                                    _addingCompanyId;
     string                                  _addingCompanyRoleId;
     AuthenticationState                     _authState;
-    List<CompanyViewModel>                  _companies;
+    List<CompanyDto>                  _companies;
     bool                                    _creating;
-    CompanyBySoftwareVariantViewModel       _currentCompanyBySoftwareVariant;
+    CompanyBySoftwareVariantDto       _currentCompanyBySoftwareVariant;
     bool                                    _deleteInProgress;
     string                                  _deleteText;
     string                                  _deleteTitle;
@@ -52,12 +52,12 @@ public partial class SoftwareVariant
     bool                                    _editing;
     Modal                                   _frmDelete;
     bool                                    _loaded;
-    SoftwareVariantViewModel                _model;
-    List<DocumentRoleViewModel>             _roles;
+    SoftwareVariantDto                _model;
+    List<DocumentRoleDto>             _roles;
     bool                                    _savingCompany;
-    List<CompanyBySoftwareVariantViewModel> _softwareVariantCompanies;
-    List<SoftwareVariantViewModel>          _softwareVariants;
-    List<SoftwareVersionViewModel>          _softwareVersions;
+    List<CompanyBySoftwareVariantDto> _softwareVariantCompanies;
+    List<SoftwareVariantDto>          _softwareVariants;
+    List<SoftwareVersionDto>          _softwareVersions;
     bool                                    _unknownCatalogueNumber;
     bool                                    _unknownIntroduced;
     bool                                    _unknownMinimumMemory;
@@ -95,7 +95,7 @@ public partial class SoftwareVariant
         _softwareVersions         = await SoftwareVersionsService.GetAsync();
         _companies                = await CompaniesService.GetAsync();
         _roles                    = await DocumentRolesService.GetEnabledAsync();
-        _model                    = _creating ? new SoftwareVariantViewModel() : await Service.GetAsync(Id);
+        _model                    = _creating ? new SoftwareVariantDto() : await Service.GetAsync(Id);
         _authState                = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _addingCompanyRoleId      = _roles.First().Id;
         _softwareVariantCompanies = await CompaniesBySoftwareVariantService.GetBySoftwareVariant(Id);

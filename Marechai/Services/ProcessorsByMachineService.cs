@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class ProcessorsByMachineService(MarechaiContext context)
 {
-    public async Task<List<ProcessorByMachineViewModel>> GetByMachine(int machineId) => await context
+    public async Task<List<ProcessorByMachineDto>> GetByMachine(int machineId) => await context
                                                                                              .ProcessorsByMachine.Where(p => p.MachineId == machineId)
-                                                                                             .Select(p => new ProcessorByMachineViewModel
+                                                                                             .Select(p => new ProcessorByMachineDto
                                                                                               {
                                                                                                   Id          = p.Id,
                                                                                                   Name        = p.Processor.Name,

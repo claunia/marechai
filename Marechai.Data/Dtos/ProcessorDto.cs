@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class ProcessorViewModel : BaseViewModel<int>
+public class ProcessorDto : BaseDto<int>
 {
     public string       Name                     { get; set; }
     public string       CompanyName              { get; set; }

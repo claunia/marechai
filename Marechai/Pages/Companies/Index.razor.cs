@@ -33,7 +33,7 @@ namespace Marechai.Pages.Companies;
 public partial class Index
 {
     char?                  _character;
-    List<CompanyViewModel> _companies;
+    List<CompanyDto> _companies;
     int?                   _countryId;
     string                 _countryName;
     bool                   _loaded;

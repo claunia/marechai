@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class StorageViewModel
+public class StorageDto
 {
     public StorageType      Type      { get; set; }
     public StorageInterface Interface { get; set; }

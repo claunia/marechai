@@ -42,10 +42,10 @@ public partial class Magazine
     int?                             _addingCompanyId;
     string                           _addingCompanyRoleId;
     AuthenticationState              _authState;
-    List<DocumentCompanyViewModel>   _companies;
+    List<DocumentCompanyDto>   _companies;
     List<Iso31661Numeric>            _countries;
     bool                             _creating;
-    CompanyByMagazineViewModel       _currentCompanyByMagazine;
+    CompanyByMagazineDto       _currentCompanyByMagazine;
     bool                             _deleteInProgress;
     string                           _deleteText;
     string                           _deleteTitle;
@@ -53,9 +53,9 @@ public partial class Magazine
     bool                             _editing;
     Modal                            _frmDelete;
     bool                             _loaded;
-    List<CompanyByMagazineViewModel> _magazineCompanies;
-    MagazineViewModel                _model;
-    List<DocumentRoleViewModel>      _roles;
+    List<CompanyByMagazineDto> _magazineCompanies;
+    MagazineDto                _model;
+    List<DocumentRoleDto>      _roles;
     bool                             _savingCompany;
     bool                             _unknownCountry;
     bool                             _unknownFirstPublication;
@@ -80,7 +80,7 @@ public partial class Magazine
         _countries           = await CountriesService.GetAsync();
         _companies           = await CompaniesService.GetAsync();
         _roles               = await DocumentRolesService.GetEnabledAsync();
-        _model               = _creating ? new MagazineViewModel() : await Service.GetAsync(Id);
+        _model               = _creating ? new MagazineDto() : await Service.GetAsync(Id);
         _authState           = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _addingCompanyRoleId = _roles.First().Id;
         _magazineCompanies   = await CompaniesByMagazineService.GetByMagazine(Id);

@@ -34,11 +34,11 @@ namespace Marechai.Services;
 
 public class DumpsService(MarechaiContext context)
 {
-    public async Task<List<DumpViewModel>> GetAsync() => await context.Dumps.OrderBy(d => d.Dumper)
+    public async Task<List<DumpDto>> GetAsync() => await context.Dumps.OrderBy(d => d.Dumper)
                                                                       .ThenBy(d => d.DumpingGroup)
                                                                       .ThenBy(b => b.Media.Title)
                                                                       .ThenBy(d => d.DumpDate)
-                                                                      .Select(d => new DumpViewModel
+                                                                      .Select(d => new DumpDto
                                                                        {
                                                                            Id           = d.Id,
                                                                            Dumper       = d.Dumper,
@@ -52,8 +52,8 @@ public class DumpsService(MarechaiContext context)
                                                                        })
                                                                       .ToListAsync();
 
-    public async Task<DumpViewModel> GetAsync(ulong id) => await context.Dumps.Where(d => d.Id == id)
-                                                                         .Select(d => new DumpViewModel
+    public async Task<DumpDto> GetAsync(ulong id) => await context.Dumps.Where(d => d.Id == id)
+                                                                         .Select(d => new DumpDto
                                                                           {
                                                                               Id           = d.Id,
                                                                               Dumper       = d.Dumper,
@@ -67,31 +67,31 @@ public class DumpsService(MarechaiContext context)
                                                                           })
                                                                          .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(DumpViewModel viewModel, string userId)
+    public async Task UpdateAsync(DumpDto dto, string userId)
     {
-        Dump model = await context.Dumps.FindAsync(viewModel.Id);
+        Dump model = await context.Dumps.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Dumper       = viewModel.Dumper;
-        model.UserId       = viewModel.UserId;
-        model.DumpingGroup = viewModel.DumpingGroup;
-        model.DumpDate     = viewModel.DumpDate;
-        model.MediaId      = viewModel.MediaId;
-        model.MediaDumpId  = viewModel.MediaDumpId;
+        model.Dumper       = dto.Dumper;
+        model.UserId       = dto.UserId;
+        model.DumpingGroup = dto.DumpingGroup;
+        model.DumpDate     = dto.DumpDate;
+        model.MediaId      = dto.MediaId;
+        model.MediaDumpId  = dto.MediaDumpId;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<ulong> CreateAsync(DumpViewModel viewModel, string userId)
+    public async Task<ulong> CreateAsync(DumpDto dto, string userId)
     {
         var model = new Dump
         {
-            Dumper       = viewModel.Dumper,
-            UserId       = viewModel.UserId,
-            DumpingGroup = viewModel.DumpingGroup,
-            DumpDate     = viewModel.DumpDate,
-            MediaId      = viewModel.MediaId,
-            MediaDumpId  = viewModel.MediaDumpId
+            Dumper       = dto.Dumper,
+            UserId       = dto.UserId,
+            DumpingGroup = dto.DumpingGroup,
+            DumpDate     = dto.DumpDate,
+            MediaId      = dto.MediaId,
+            MediaDumpId  = dto.MediaDumpId
         };
 
         await context.Dumps.AddAsync(model);

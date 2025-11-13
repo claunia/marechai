@@ -37,8 +37,8 @@ public partial class Screens
     bool                  _deleteInProgress;
     Modal                 _frmDelete;
     bool                  _loaded;
-    ScreenViewModel       _screen;
-    List<ScreenViewModel> _screens;
+    ScreenDto       _screen;
+    List<ScreenDto> _screens;
 
     void ShowModal(int itemId)
     {

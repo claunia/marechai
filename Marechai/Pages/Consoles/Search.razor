@@ -56,7 +56,7 @@
     <p>
         @string.Format(L["{0} videogame consoles found in the database."], _consoles.Count)
         <br/>
-        @foreach(MachineViewModel console in _consoles)
+        @foreach(MachineDto console in _consoles)
         {
             <a href="/machine/@console.Id">
                 @console.Company @console.Name

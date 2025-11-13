@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class PersonByBookViewModel : BaseViewModel<long>
+public class PersonByBookDto : BaseDto<long>
 {
     public int    PersonId    { get; set; }
     public long   BookId      { get; set; }

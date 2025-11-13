@@ -41,9 +41,9 @@ public partial class SoftwareFamily
     int?                                   _addingCompanyId;
     string                                 _addingCompanyRoleId;
     AuthenticationState                    _authState;
-    List<CompanyViewModel>                 _companies;
+    List<CompanyDto>                 _companies;
     bool                                   _creating;
-    CompanyBySoftwareFamilyViewModel       _currentCompanyBySoftwareFamily;
+    CompanyBySoftwareFamilyDto       _currentCompanyBySoftwareFamily;
     bool                                   _deleteInProgress;
     string                                 _deleteText;
     string                                 _deleteTitle;
@@ -51,11 +51,11 @@ public partial class SoftwareFamily
     bool                                   _editing;
     Modal                                  _frmDelete;
     bool                                   _loaded;
-    SoftwareFamilyViewModel                _model;
-    List<DocumentRoleViewModel>            _roles;
+    SoftwareFamilyDto                _model;
+    List<DocumentRoleDto>            _roles;
     bool                                   _savingCompany;
-    List<SoftwareFamilyViewModel>          _softwareFamilies;
-    List<CompanyBySoftwareFamilyViewModel> _softwareFamilyCompanies;
+    List<SoftwareFamilyDto>          _softwareFamilies;
+    List<CompanyBySoftwareFamilyDto> _softwareFamilyCompanies;
     bool                                   _unknownIntroduced;
     bool                                   _unknownParent;
 
@@ -77,7 +77,7 @@ public partial class SoftwareFamily
         _softwareFamilies        = await Service.GetAsync();
         _companies               = await CompaniesService.GetAsync();
         _roles                   = await DocumentRolesService.GetEnabledAsync();
-        _model                   = _creating ? new SoftwareFamilyViewModel() : await Service.GetAsync(Id);
+        _model                   = _creating ? new SoftwareFamilyDto() : await Service.GetAsync(Id);
         _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _addingCompanyRoleId     = _roles.First().Id;
         _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);

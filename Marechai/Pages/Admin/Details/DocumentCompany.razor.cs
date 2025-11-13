@@ -37,11 +37,11 @@ namespace Marechai.Pages.Admin.Details;
 public partial class DocumentCompany
 {
     AuthenticationState      _authState;
-    List<CompanyViewModel>   _companies;
+    List<CompanyDto>   _companies;
     bool                     _creating;
     bool                     _editing;
     bool                     _loaded;
-    DocumentCompanyViewModel _model;
+    DocumentCompanyDto _model;
     bool                     _noLinkedCompany;
     bool                     _unknownName;
 
@@ -61,7 +61,7 @@ public partial class DocumentCompany
         if(Id <= 0 && !_creating) return;
 
         _companies = await CompaniesService.GetAsync();
-        _model     = _creating ? new DocumentCompanyViewModel() : await Service.GetAsync(Id);
+        _model     = _creating ? new DocumentCompanyDto() : await Service.GetAsync(Id);
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _editing = _creating ||

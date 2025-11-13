@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class BasePhotoViewModel : BaseViewModel<Guid>
+public class BasePhotoDto : BaseDto<Guid>
 {
     public double?               Aperture              { get; set; }
     public string                Author                { get; set; }

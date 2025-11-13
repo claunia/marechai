@@ -25,9 +25,9 @@
 
 namespace Marechai.Data.Dtos;
 
-public class ResolutionByScreenViewModel : BaseViewModel<long>
+public class ResolutionByScreenDto : BaseDto<long>
 {
     public int                 ResolutionId { get; set; }
     public int                 ScreenId     { get; set; }
-    public ResolutionViewModel Resolution   { get; set; }
+    public ResolutionDto Resolution   { get; set; }
 }

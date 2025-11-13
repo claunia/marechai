@@ -38,8 +38,8 @@ public class MagazineScansService(MarechaiContext context)
     public async Task<List<Guid>> GetGuidsByMagazineAsync(long bookId) =>
         await context.MagazineScans.Where(p => p.MagazineId == bookId).Select(p => p.Id).ToListAsync();
 
-    public async Task<MagazineScanViewModel> GetAsync(Guid id) => await context.MagazineScans.Where(p => p.Id == id)
-                                                                     .Select(p => new MagazineScanViewModel
+    public async Task<MagazineScanDto> GetAsync(Guid id) => await context.MagazineScans.Where(p => p.Id == id)
+                                                                     .Select(p => new MagazineScanDto
                                                                       {
                                                                           Author               = p.Author,
                                                                           MagazineId           = p.Magazine.Id,
@@ -62,51 +62,51 @@ public class MagazineScansService(MarechaiContext context)
                                                                       })
                                                                      .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(MagazineScanViewModel viewModel, string userId)
+    public async Task UpdateAsync(MagazineScanDto dto, string userId)
     {
-        MagazineScan model = await context.MagazineScans.FindAsync(viewModel.Id);
+        MagazineScan model = await context.MagazineScans.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Author               = viewModel.Author;
-        model.ColorSpace           = viewModel.ColorSpace;
-        model.Comments             = viewModel.Comments;
-        model.CreationDate         = viewModel.CreationDate;
-        model.ExifVersion          = viewModel.ExifVersion;
-        model.HorizontalResolution = viewModel.HorizontalResolution;
-        model.ResolutionUnit       = viewModel.ResolutionUnit;
-        model.Page                 = viewModel.Page;
-        model.ScannerManufacturer  = viewModel.ScannerManufacturer;
-        model.ScannerModel         = viewModel.ScannerModel;
-        model.Type                 = viewModel.Type;
-        model.SoftwareUsed         = viewModel.SoftwareUsed;
-        model.VerticalResolution   = viewModel.VerticalResolution;
+        model.Author               = dto.Author;
+        model.ColorSpace           = dto.ColorSpace;
+        model.Comments             = dto.Comments;
+        model.CreationDate         = dto.CreationDate;
+        model.ExifVersion          = dto.ExifVersion;
+        model.HorizontalResolution = dto.HorizontalResolution;
+        model.ResolutionUnit       = dto.ResolutionUnit;
+        model.Page                 = dto.Page;
+        model.ScannerManufacturer  = dto.ScannerManufacturer;
+        model.ScannerModel         = dto.ScannerModel;
+        model.Type                 = dto.Type;
+        model.SoftwareUsed         = dto.SoftwareUsed;
+        model.VerticalResolution   = dto.VerticalResolution;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<Guid> CreateAsync(MagazineScanViewModel viewModel, string userId)
+    public async Task<Guid> CreateAsync(MagazineScanDto dto, string userId)
     {
         var model = new MagazineScan
         {
-            Author               = viewModel.Author,
-            MagazineId           = viewModel.MagazineId,
-            ColorSpace           = viewModel.ColorSpace,
-            Comments             = viewModel.Comments,
-            CreationDate         = viewModel.CreationDate,
-            ExifVersion          = viewModel.ExifVersion,
-            HorizontalResolution = viewModel.HorizontalResolution,
-            Id                   = viewModel.Id,
-            ResolutionUnit       = viewModel.ResolutionUnit,
-            Page                 = viewModel.Page,
-            ScannerManufacturer  = viewModel.ScannerManufacturer,
-            ScannerModel         = viewModel.ScannerModel,
-            Type                 = viewModel.Type,
-            SoftwareUsed         = viewModel.SoftwareUsed,
-            UploadDate           = viewModel.UploadDate,
-            UserId               = viewModel.UserId,
-            VerticalResolution   = viewModel.VerticalResolution,
-            OriginalExtension    = viewModel.OriginalExtension
+            Author               = dto.Author,
+            MagazineId           = dto.MagazineId,
+            ColorSpace           = dto.ColorSpace,
+            Comments             = dto.Comments,
+            CreationDate         = dto.CreationDate,
+            ExifVersion          = dto.ExifVersion,
+            HorizontalResolution = dto.HorizontalResolution,
+            Id                   = dto.Id,
+            ResolutionUnit       = dto.ResolutionUnit,
+            Page                 = dto.Page,
+            ScannerManufacturer  = dto.ScannerManufacturer,
+            ScannerModel         = dto.ScannerModel,
+            Type                 = dto.Type,
+            SoftwareUsed         = dto.SoftwareUsed,
+            UploadDate           = dto.UploadDate,
+            UserId               = dto.UserId,
+            VerticalResolution   = dto.VerticalResolution,
+            OriginalExtension    = dto.OriginalExtension
         };
 
         await context.MagazineScans.AddAsync(model);

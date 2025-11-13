@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class CompanyViewModel : BaseViewModel<int>
+public class CompanyDto : BaseDto<int>
 {
     public string        Name                  { get; set; }
     public DateTime?     Founded               { get; set; }

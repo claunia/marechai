@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class CompaniesBySoftwareVariantService(MarechaiContext context)
 {
-    public async Task<List<CompanyBySoftwareVariantViewModel>> GetBySoftwareVariant(ulong softwareVariantId) =>
+    public async Task<List<CompanyBySoftwareVariantDto>> GetBySoftwareVariant(ulong softwareVariantId) =>
         await context.CompaniesBySoftwareVariants.Where(p => p.SoftwareVariantId == softwareVariantId)
-                      .Select(p => new CompanyBySoftwareVariantViewModel
+                      .Select(p => new CompanyBySoftwareVariantDto
                        {
                            Id                = p.Id,
                            Company           = p.Company.Name,

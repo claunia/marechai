@@ -320,7 +320,7 @@
                 @if(!_editing || !_unknownSoldTo)
                 {
                     <Select @bind-SelectedValue="@_model.SoldToId" Disabled="!_editing" @TValue="int?">
-                        @foreach(CompanyViewModel company in _companies)
+                        @foreach(CompanyDto company in _companies)
                         {
                             <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
                         }

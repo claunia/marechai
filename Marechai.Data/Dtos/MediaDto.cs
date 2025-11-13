@@ -29,7 +29,7 @@ using Marechai.Database.Models;
 
 namespace Marechai.Data.Dtos;
 
-public class MediaViewModel : BaseViewModel<ulong>
+public class MediaDto : BaseDto<ulong>
 {
     public string              Title             { get; set; }
     public ushort?             Sequence          { get; set; }

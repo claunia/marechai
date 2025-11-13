@@ -37,8 +37,8 @@ public partial class SoundSynths
     bool                      _deleteInProgress;
     Modal                     _frmDelete;
     bool                      _loaded;
-    SoundSynthViewModel       _soundSynth;
-    List<SoundSynthViewModel> _soundSynths;
+    SoundSynthDto       _soundSynth;
+    List<SoundSynthDto> _soundSynths;
 
     void ShowModal(int itemId)
     {

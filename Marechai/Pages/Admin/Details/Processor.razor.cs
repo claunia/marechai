@@ -40,9 +40,9 @@ public partial class Processor
     bool                                              _addingExtension;
     int?                                              _addingExtensionId;
     AuthenticationState                               _authState;
-    List<CompanyViewModel>                            _companies;
+    List<CompanyDto>                            _companies;
     bool                                              _creating;
-    InstructionSetExtensionByProcessorViewModel       _currentInstructionByMachine;
+    InstructionSetExtensionByProcessorDto       _currentInstructionByMachine;
     bool                                              _deleteInProgress;
     string                                            _deleteText;
     string                                            _deleteTitle;
@@ -51,8 +51,8 @@ public partial class Processor
     List<Database.Models.InstructionSetExtension>     _instructionSetExtensions;
     List<Database.Models.InstructionSet>              _instructionSets;
     bool                                              _loaded;
-    ProcessorViewModel                                _model;
-    List<InstructionSetExtensionByProcessorViewModel> _processorExtensions;
+    ProcessorDto                                _model;
+    List<InstructionSetExtensionByProcessorDto> _processorExtensions;
     bool                                              _prototype;
     bool                                              _savingExtension;
     bool                                              _unknownAddressBus;
@@ -96,7 +96,7 @@ public partial class Processor
 
         _companies                = await CompaniesService.GetAsync();
         _instructionSets          = await InstructionSetsService.GetAsync();
-        _model                    = _creating ? new ProcessorViewModel() : await Service.GetAsync(Id);
+        _model                    = _creating ? new ProcessorDto() : await Service.GetAsync(Id);
         _instructionSetExtensions = await InstructionSetExtensionsService.GetAsync();
         _processorExtensions      = await InstructionSetExtensionsByProcessorService.GetByProcessor(Id);
         _authState                = await AuthenticationStateProvider.GetAuthenticationStateAsync();

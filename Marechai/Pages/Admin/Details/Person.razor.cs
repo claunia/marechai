@@ -42,7 +42,7 @@ public partial class Person
     bool                  _creating;
     bool                  _editing;
     bool                  _loaded;
-    PersonViewModel       _model;
+    PersonDto       _model;
     bool                  _unknownAlias;
     bool                  _unknownCountry;
     bool                  _unknownDeathDate;
@@ -68,7 +68,7 @@ public partial class Person
         if(Id <= 0 && !_creating) return;
 
         _countries = await CountriesService.GetAsync();
-        _model     = _creating ? new PersonViewModel() : await Service.GetAsync(Id);
+        _model     = _creating ? new PersonDto() : await Service.GetAsync(Id);
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _editing = _creating ||

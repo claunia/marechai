@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class CompanyBySoftwareVersionViewModel : BaseViewModel<ulong>
+public class CompanyBySoftwareVersionDto : BaseDto<ulong>
 {
     public int    CompanyId         { get; set; }
     public ulong  SoftwareVersionId { get; set; }

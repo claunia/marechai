@@ -34,13 +34,13 @@ namespace Marechai.Services;
 
 public class ResolutionsByScreenService(MarechaiContext context)
 {
-    public async Task<List<ResolutionByScreenViewModel>> GetByScreen(int resolutionId) => (await context
+    public async Task<List<ResolutionByScreenDto>> GetByScreen(int resolutionId) => (await context
                                                                                                 .ResolutionsByScreen.Where(r => r.ResolutionId == resolutionId)
-                                                                                                .Select(r => new ResolutionByScreenViewModel
+                                                                                                .Select(r => new ResolutionByScreenDto
                                                                                                  {
                                                                                                      Id       = r.Id,
                                                                                                      ScreenId = r.ScreenId,
-                                                                                                     Resolution = new ResolutionViewModel
+                                                                                                     Resolution = new ResolutionDto
                                                                                                      {
                                                                                                          Id        = r.Resolution.Id,
                                                                                                          Width     = r.Resolution.Width,

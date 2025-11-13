@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class PeopleByDocumentService(MarechaiContext context)
 {
-    public async Task<List<PersonByDocumentViewModel>> GetByDocument(long documentId) => (await context
+    public async Task<List<PersonByDocumentDto>> GetByDocument(long documentId) => (await context
                                                                                                .PeopleByDocuments.Where(p => p.DocumentId == documentId)
-                                                                                               .Select(p => new PersonByDocumentViewModel
+                                                                                               .Select(p => new PersonByDocumentDto
                                                                                                 {
                                                                                                     Id          = p.Id,
                                                                                                     Name        = p.Person.Name,

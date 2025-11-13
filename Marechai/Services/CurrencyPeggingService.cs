@@ -34,12 +34,12 @@ namespace Marechai.Services;
 
 public class CurrencyPeggingService(MarechaiContext context)
 {
-    public async Task<List<CurrencyPeggingViewModel>> GetAsync() => await context.CurrenciesPegging
+    public async Task<List<CurrencyPeggingDto>> GetAsync() => await context.CurrenciesPegging
                                                                                  .OrderBy(i => i.Source.Name)
                                                                                  .ThenBy(i => i.Destination.Name)
                                                                                  .ThenBy(i => i.Start)
                                                                                  .ThenBy(i => i.End)
-                                                                                 .Select(i => new CurrencyPeggingViewModel
+                                                                                 .Select(i => new CurrencyPeggingDto
                                                                                   {
                                                                                       Id              = i.Id,
                                                                                       SourceCode      = i.Source.Code,
@@ -52,9 +52,9 @@ public class CurrencyPeggingService(MarechaiContext context)
                                                                                   })
                                                                                  .ToListAsync();
 
-    public async Task<CurrencyPeggingViewModel> GetAsync(int id) => await context.CurrenciesPegging
+    public async Task<CurrencyPeggingDto> GetAsync(int id) => await context.CurrenciesPegging
                                                                        .Where(b => b.Id == id)
-                                                                       .Select(i => new CurrencyPeggingViewModel
+                                                                       .Select(i => new CurrencyPeggingDto
                                                                         {
                                                                             Id              = i.Id,
                                                                             SourceCode      = i.Source.Code,
@@ -67,29 +67,29 @@ public class CurrencyPeggingService(MarechaiContext context)
                                                                         })
                                                                        .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(CurrencyPeggingViewModel viewModel, string userId)
+    public async Task UpdateAsync(CurrencyPeggingDto dto, string userId)
     {
-        CurrencyPegging model = await context.CurrenciesPegging.FindAsync(viewModel.Id);
+        CurrencyPegging model = await context.CurrenciesPegging.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.SourceCode      = viewModel.SourceCode;
-        model.DestinationCode = viewModel.DestinationCode;
-        model.Ratio           = viewModel.Ratio;
-        model.Start           = viewModel.Start;
-        model.End             = viewModel.End;
+        model.SourceCode      = dto.SourceCode;
+        model.DestinationCode = dto.DestinationCode;
+        model.Ratio           = dto.Ratio;
+        model.Start           = dto.Start;
+        model.End             = dto.End;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(CurrencyPeggingViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(CurrencyPeggingDto dto, string userId)
     {
         var model = new CurrencyPegging
         {
-            SourceCode      = viewModel.SourceCode,
-            DestinationCode = viewModel.DestinationCode,
-            Ratio           = viewModel.Ratio,
-            Start           = viewModel.Start,
-            End             = viewModel.End
+            SourceCode      = dto.SourceCode,
+            DestinationCode = dto.DestinationCode,
+            Ratio           = dto.Ratio,
+            Start           = dto.Start,
+            End             = dto.End
         };
 
         await context.CurrenciesPegging.AddAsync(model);

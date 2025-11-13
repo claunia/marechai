@@ -33,7 +33,7 @@ namespace Marechai.Pages.Computers;
 public partial class Search
 {
     char?                  _character;
-    List<MachineViewModel> _computers;
+    List<MachineDto> _computers;
     bool                   _loaded;
     string                 _startingCharacter;
     int?                   _year;

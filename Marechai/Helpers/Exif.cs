@@ -74,7 +74,7 @@ public class Exif
     public WhiteBalance?         WhiteBalance            { get; set; }
     public double?               ApertureValue           { get; set; }
 
-    public void ToViewModel(BasePhotoViewModel model)
+    public void ToViewModel(BasePhotoDto model)
     {
         model.CameraManufacturer    = Make;
         model.CameraModel           = Model;
@@ -110,7 +110,7 @@ public class Exif
         model.Comments              = Description;
     }
 
-    public void ToViewModel(BaseScanViewModel model)
+    public void ToViewModel(BaseScanDto model)
     {
         model.ScannerManufacturer  = Make;
         model.ScannerModel         = Model;

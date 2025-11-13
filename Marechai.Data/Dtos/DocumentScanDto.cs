@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class DocumentScanViewModel : DocumentScanBaseViewModel
+public class DocumentScanDto : DocumentScanBaseDto
 {
     public long   DocumentId { get; set; }
     public string Document   { get; set; }

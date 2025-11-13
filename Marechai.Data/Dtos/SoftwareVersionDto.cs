@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class SoftwareVersionViewModel : BaseViewModel<ulong>
+public class SoftwareVersionDto : BaseDto<ulong>
 {
     public string    Family     { get; set; }
     public string    Name       { get; set; }

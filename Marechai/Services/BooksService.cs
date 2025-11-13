@@ -34,10 +34,10 @@ namespace Marechai.Services;
 
 public class BooksService(MarechaiContext context)
 {
-    public async Task<List<BookViewModel>> GetAsync() => await context.Books.OrderBy(b => b.NativeTitle)
+    public async Task<List<BookDto>> GetAsync() => await context.Books.OrderBy(b => b.NativeTitle)
                                                                       .ThenBy(b => b.Published)
                                                                       .ThenBy(b => b.Title)
-                                                                      .Select(b => new BookViewModel
+                                                                      .Select(b => new BookDto
                                                                        {
                                                                            Id          = b.Id,
                                                                            Title       = b.Title,
@@ -54,8 +54,8 @@ public class BooksService(MarechaiContext context)
                                                                        })
                                                                       .ToListAsync();
 
-    public async Task<BookViewModel> GetAsync(long id) => await context.Books.Where(b => b.Id == id)
-                                                                        .Select(b => new BookViewModel
+    public async Task<BookDto> GetAsync(long id) => await context.Books.Where(b => b.Id == id)
+                                                                        .Select(b => new BookDto
                                                                          {
                                                                              Id          = b.Id,
                                                                              Title       = b.Title,
@@ -72,39 +72,39 @@ public class BooksService(MarechaiContext context)
                                                                          })
                                                                         .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(BookViewModel viewModel, string userId)
+    public async Task UpdateAsync(BookDto dto, string userId)
     {
-        Book model = await context.Books.FindAsync(viewModel.Id);
+        Book model = await context.Books.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Title       = viewModel.Title;
-        model.NativeTitle = viewModel.NativeTitle;
-        model.Published   = viewModel.Published;
-        model.Synopsis    = viewModel.Synopsis;
-        model.CountryId   = viewModel.CountryId;
-        model.Isbn        = viewModel.Isbn;
-        model.Pages       = viewModel.Pages;
-        model.Edition     = viewModel.Edition;
-        model.PreviousId  = viewModel.PreviousId;
-        model.SourceId    = viewModel.SourceId;
+        model.Title       = dto.Title;
+        model.NativeTitle = dto.NativeTitle;
+        model.Published   = dto.Published;
+        model.Synopsis    = dto.Synopsis;
+        model.CountryId   = dto.CountryId;
+        model.Isbn        = dto.Isbn;
+        model.Pages       = dto.Pages;
+        model.Edition     = dto.Edition;
+        model.PreviousId  = dto.PreviousId;
+        model.SourceId    = dto.SourceId;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<long> CreateAsync(BookViewModel viewModel, string userId)
+    public async Task<long> CreateAsync(BookDto dto, string userId)
     {
         var model = new Book
         {
-            Title       = viewModel.Title,
-            NativeTitle = viewModel.NativeTitle,
-            Published   = viewModel.Published,
-            Synopsis    = viewModel.Synopsis,
-            CountryId   = viewModel.CountryId,
-            Isbn        = viewModel.Isbn,
-            Pages       = viewModel.Pages,
-            Edition     = viewModel.Edition,
-            PreviousId  = viewModel.PreviousId,
-            SourceId    = viewModel.SourceId
+            Title       = dto.Title,
+            NativeTitle = dto.NativeTitle,
+            Published   = dto.Published,
+            Synopsis    = dto.Synopsis,
+            CountryId   = dto.CountryId,
+            Isbn        = dto.Isbn,
+            Pages       = dto.Pages,
+            Edition     = dto.Edition,
+            PreviousId  = dto.PreviousId,
+            SourceId    = dto.SourceId
         };
 
         await context.Books.AddAsync(model);

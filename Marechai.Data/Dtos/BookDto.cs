@@ -1,6 +1,6 @@
 namespace Marechai.Data.Dtos;
 
-public class BookViewModel : DocumentBaseViewModel
+public class BookDto : DocumentBaseDto
 {
     public string Isbn       { get; set; }
     public short? Pages      { get; set; }

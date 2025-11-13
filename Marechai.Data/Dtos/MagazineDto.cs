@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class MagazineViewModel : DocumentBaseViewModel
+public class MagazineDto : DocumentBaseDto
 {
     public string    Issn             { get; set; }
     public DateTime? FirstPublication { get; set; }

@@ -34,10 +34,10 @@ namespace Marechai.Services;
 
 public class MagazinesService(MarechaiContext context)
 {
-    public async Task<List<MagazineViewModel>> GetAsync() => await context.Magazines.OrderBy(b => b.NativeTitle)
+    public async Task<List<MagazineDto>> GetAsync() => await context.Magazines.OrderBy(b => b.NativeTitle)
                                                                           .ThenBy(b => b.FirstPublication)
                                                                           .ThenBy(b => b.Title)
-                                                                          .Select(b => new MagazineViewModel
+                                                                          .Select(b => new MagazineDto
                                                                            {
                                                                                Id               = b.Id,
                                                                                Title            = b.Title,
@@ -50,17 +50,17 @@ public class MagazinesService(MarechaiContext context)
                                                                            })
                                                                           .ToListAsync();
 
-    public async Task<List<MagazineViewModel>> GetTitlesAsync() => await context.Magazines.OrderBy(b => b.Title)
+    public async Task<List<MagazineDto>> GetTitlesAsync() => await context.Magazines.OrderBy(b => b.Title)
                                                                       .ThenBy(b => b.FirstPublication)
-                                                                      .Select(b => new MagazineViewModel
+                                                                      .Select(b => new MagazineDto
                                                                        {
                                                                            Id    = b.Id,
                                                                            Title = $"{b.Title} ({b.Country.Name}"
                                                                        })
                                                                       .ToListAsync();
 
-    public async Task<MagazineViewModel> GetAsync(long id) => await context.Magazines.Where(b => b.Id == id)
-                                                                            .Select(b => new MagazineViewModel
+    public async Task<MagazineDto> GetAsync(long id) => await context.Magazines.Where(b => b.Id == id)
+                                                                            .Select(b => new MagazineDto
                                                                              {
                                                                                  Id               = b.Id,
                                                                                  Title            = b.Title,
@@ -73,31 +73,31 @@ public class MagazinesService(MarechaiContext context)
                                                                              })
                                                                             .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(MagazineViewModel viewModel, string userId)
+    public async Task UpdateAsync(MagazineDto dto, string userId)
     {
-        Magazine model = await context.Magazines.FindAsync(viewModel.Id);
+        Magazine model = await context.Magazines.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Title            = viewModel.Title;
-        model.NativeTitle      = viewModel.NativeTitle;
-        model.FirstPublication = viewModel.FirstPublication;
-        model.Synopsis         = viewModel.Synopsis;
-        model.CountryId        = viewModel.CountryId;
-        model.Issn             = viewModel.Issn;
+        model.Title            = dto.Title;
+        model.NativeTitle      = dto.NativeTitle;
+        model.FirstPublication = dto.FirstPublication;
+        model.Synopsis         = dto.Synopsis;
+        model.CountryId        = dto.CountryId;
+        model.Issn             = dto.Issn;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<long> CreateAsync(MagazineViewModel viewModel, string userId)
+    public async Task<long> CreateAsync(MagazineDto dto, string userId)
     {
         var model = new Magazine
         {
-            Title            = viewModel.Title,
-            NativeTitle      = viewModel.NativeTitle,
-            FirstPublication = viewModel.FirstPublication,
-            Synopsis         = viewModel.Synopsis,
-            CountryId        = viewModel.CountryId,
-            Issn             = viewModel.Issn
+            Title            = dto.Title,
+            NativeTitle      = dto.NativeTitle,
+            FirstPublication = dto.FirstPublication,
+            Synopsis         = dto.Synopsis,
+            CountryId        = dto.CountryId,
+            Issn             = dto.Issn
         };
 
         await context.Magazines.AddAsync(model);

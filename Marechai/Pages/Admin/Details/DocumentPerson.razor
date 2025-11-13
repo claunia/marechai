@@ -137,7 +137,7 @@
             @if(!_editing || !_noLinkedPerson)
             {
                 <Select @bind-SelectedValue="@_model.PersonId" Disabled="!_editing" @TValue="int?">
-                    @foreach(PersonViewModel person in _people)
+                    @foreach(PersonDto person in _people)
                     {
                         <SelectItem @TValue="int?" Value="@person.Id">@person.DisplayName</SelectItem>
                     }

@@ -56,7 +56,7 @@
     <p>
         @string.Format(L["{0} computers found in the database."], _computers.Count)
         <br/>
-        @foreach(MachineViewModel computer in _computers)
+        @foreach(MachineDto computer in _computers)
         {
             <a href="/machine/@computer.Id">
                 @computer.Company @computer.Name

@@ -36,7 +36,7 @@ public partial class View
     bool[]           _gpuVisible;
     int              _id;
     bool             _loaded;
-    MachineViewModel _machine;
+    MachineDto _machine;
     List<Guid>       _photos;
     bool[]           _processorVisible;
     bool[]           _soundVisible;

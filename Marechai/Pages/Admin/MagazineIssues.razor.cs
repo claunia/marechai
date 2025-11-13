@@ -34,11 +34,11 @@ namespace Marechai.Pages.Admin;
 
 public partial class MagazineIssues
 {
-    MagazineIssueViewModel       _currentMagazineIssue;
+    MagazineIssueDto       _currentMagazineIssue;
     bool                         _deleteInProgress;
     Modal                        _frmDelete;
     bool                         _loaded;
-    List<MagazineIssueViewModel> _magazineIssues;
+    List<MagazineIssueDto> _magazineIssues;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

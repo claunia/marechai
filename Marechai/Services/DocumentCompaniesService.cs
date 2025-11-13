@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class DocumentCompaniesService(MarechaiContext context)
 {
-    public async Task<List<DocumentCompanyViewModel>> GetAsync() => await context.DocumentCompanies
+    public async Task<List<DocumentCompanyDto>> GetAsync() => await context.DocumentCompanies
                                                                                  .OrderBy(c => c.Name)
-                                                                                 .Select(d => new DocumentCompanyViewModel
+                                                                                 .Select(d => new DocumentCompanyDto
                                                                                   {
                                                                                       Id        = d.Id,
                                                                                       Name      = d.Name,
@@ -45,9 +45,9 @@ public class DocumentCompaniesService(MarechaiContext context)
                                                                                   })
                                                                                  .ToListAsync();
 
-    public async Task<DocumentCompanyViewModel> GetAsync(int id) => await context.DocumentCompanies
+    public async Task<DocumentCompanyDto> GetAsync(int id) => await context.DocumentCompanies
                                                                        .Where(d => d.Id == id)
-                                                                       .Select(d => new DocumentCompanyViewModel
+                                                                       .Select(d => new DocumentCompanyDto
                                                                         {
                                                                             Id        = d.Id,
                                                                             Name      = d.Name,
@@ -55,24 +55,24 @@ public class DocumentCompaniesService(MarechaiContext context)
                                                                         })
                                                                        .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(DocumentCompanyViewModel viewModel, string userId)
+    public async Task UpdateAsync(DocumentCompanyDto dto, string userId)
     {
-        DocumentCompany model = await context.DocumentCompanies.FindAsync(viewModel.Id);
+        DocumentCompany model = await context.DocumentCompanies.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.CompanyId = viewModel.CompanyId;
-        model.Name      = viewModel.Name;
+        model.CompanyId = dto.CompanyId;
+        model.Name      = dto.Name;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(DocumentCompanyViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(DocumentCompanyDto dto, string userId)
     {
         var model = new DocumentCompany
         {
-            CompanyId = viewModel.CompanyId,
-            Name      = viewModel.Name
+            CompanyId = dto.CompanyId,
+            Name      = dto.Name
         };
 
         await context.DocumentCompanies.AddAsync(model);

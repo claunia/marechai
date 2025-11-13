@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class InstructionSetExtensionByProcessorViewModel : BaseViewModel<int>
+public class InstructionSetExtensionByProcessorDto : BaseDto<int>
 {
     public string Extension   { get; set; }
     public string Processor   { get; set; }

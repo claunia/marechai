@@ -60,7 +60,7 @@ public partial class Document
     bool?                                  _addToDatabase;
     bool                                   _allFinished;
     AuthenticationState                    _authState;
-    List<DocumentCompanyViewModel>         _companies;
+    List<DocumentCompanyDto>         _companies;
     bool?                                  _convertAvif1440;
     bool?                                  _convertAvif1440Th;
     bool?                                  _convertAvif4k;
@@ -93,10 +93,10 @@ public partial class Document
     bool?                                  _convertWebpHdTh;
     List<Iso31661Numeric>                  _countries;
     bool                                   _creating;
-    CompanyByDocumentViewModel             _currentCompanyByDocument;
-    DocumentByMachineViewModel             _currentDocumentByMachine;
-    DocumentByMachineFamilyViewModel       _currentDocumentByMachineFamily;
-    PersonByDocumentViewModel              _currentPersonByDocument;
+    CompanyByDocumentDto             _currentCompanyByDocument;
+    DocumentByMachineDto             _currentDocumentByMachine;
+    DocumentByMachineFamilyDto       _currentDocumentByMachineFamily;
+    PersonByDocumentDto              _currentPersonByDocument;
     bool                                   _deleteInProgress;
     string                                 _deleteText;
     string                                 _deleteTitle;
@@ -105,10 +105,10 @@ public partial class Document
     bool                                   _deletingDocumentByMachineFamily;
     bool                                   _deletingPersonByDocument;
     bool                                   _deletingScan;
-    List<CompanyByDocumentViewModel>       _documentCompanies;
-    List<DocumentByMachineFamilyViewModel> _documentMachineFamilies;
-    List<DocumentByMachineViewModel>       _documentMachines;
-    List<PersonByDocumentViewModel>        _documentPeople;
+    List<CompanyByDocumentDto>       _documentCompanies;
+    List<DocumentByMachineFamilyDto> _documentMachineFamilies;
+    List<DocumentByMachineDto>       _documentMachines;
+    List<PersonByDocumentDto>        _documentPeople;
     bool                                   _editing;
     bool                                   _editingScan;
     bool?                                  _extractExif;
@@ -116,20 +116,20 @@ public partial class Document
     string                                 _imageFormat;
     ElementReference                       _inputUpload;
     bool                                   _loaded;
-    List<MachineFamilyViewModel>           _machineFamilies;
-    List<MachineViewModel>                 _machines;
-    DocumentViewModel                      _model;
+    List<MachineFamilyDto>           _machineFamilies;
+    List<MachineDto>                 _machines;
+    DocumentDto                      _model;
     bool?                                  _moveFile;
-    List<DocumentPersonViewModel>          _people;
+    List<DocumentPersonDto>          _people;
     double                                 _progressValue;
-    List<DocumentRoleViewModel>            _roles;
+    List<DocumentRoleDto>            _roles;
     bool                                   _savingCompany;
     bool                                   _savingMachine;
     bool                                   _savingMachineFamily;
     bool                                   _savingPerson;
     List<Guid>                             _scans;
     ApplicationUser                        _scanUser;
-    DocumentScanViewModel                  _selectedScan;
+    DocumentScanDto                  _selectedScan;
     bool                                   _unknownCountry;
     bool                                   _unknownNativeTitle;
     bool                                   _unknownPublished;
@@ -205,7 +205,7 @@ public partial class Document
         _roles                   = await DocumentRolesService.GetEnabledAsync();
         _machineFamilies         = await MachineFamiliesService.GetAsync();
         _machines                = await MachinesService.GetAsync();
-        _model                   = _creating ? new DocumentViewModel() : await Service.GetAsync(Id);
+        _model                   = _creating ? new DocumentDto() : await Service.GetAsync(Id);
         _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _addingCompanyRoleId     = _roles.First().Id;
         _documentCompanies       = await CompaniesByDocumentService.GetByDocument(Id);
@@ -885,7 +885,7 @@ public partial class Document
         _imageFormat = pieces[0];
         _uploaded    = true;
 
-        _selectedScan = new DocumentScanViewModel
+        _selectedScan = new DocumentScanDto
         {
             UserId            = (await UserManager.GetUserAsync(_authState.User)).Id,
             DocumentId        = Id,

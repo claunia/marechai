@@ -34,8 +34,8 @@ namespace Marechai.Services;
 
 public class ProcessorsService(MarechaiContext context)
 {
-    public async Task<List<ProcessorViewModel>> GetAsync() => await context.Processors
-                                                                           .Select(p => new ProcessorViewModel
+    public async Task<List<ProcessorDto>> GetAsync() => await context.Processors
+                                                                           .Select(p => new ProcessorDto
                                                                             {
                                                                                 Name           = p.Name,
                                                                                 CompanyName    = p.Company.Name,
@@ -74,9 +74,9 @@ public class ProcessorsService(MarechaiContext context)
                                                                            .ThenBy(p => p.Name)
                                                                            .ToListAsync();
 
-    public async Task<List<ProcessorViewModel>> GetByMachineAsync(int machineId) => await context.ProcessorsByMachine
+    public async Task<List<ProcessorDto>> GetByMachineAsync(int machineId) => await context.ProcessorsByMachine
        .Where(p => p.MachineId == machineId)
-       .Select(p => new ProcessorViewModel
+       .Select(p => new ProcessorDto
         {
             Name           = p.Processor.Name,
             CompanyName    = p.Processor.Company.Name,
@@ -112,8 +112,8 @@ public class ProcessorsService(MarechaiContext context)
        .ThenBy(p => p.Name)
        .ToListAsync();
 
-    public async Task<ProcessorViewModel> GetAsync(int id) => await context.Processors.Where(p => p.Id == id)
-                                                                            .Select(p => new ProcessorViewModel
+    public async Task<ProcessorDto> GetAsync(int id) => await context.Processors.Where(p => p.Id == id)
+                                                                            .Select(p => new ProcessorDto
                                                                              {
                                                                                  Name           = p.Name,
                                                                                  CompanyName    = p.Company.Name,
@@ -146,70 +146,70 @@ public class ProcessorsService(MarechaiContext context)
                                                                              })
                                                                             .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(ProcessorViewModel viewModel, string userId)
+    public async Task UpdateAsync(ProcessorDto dto, string userId)
     {
-        Processor model = await context.Processors.FindAsync(viewModel.Id);
+        Processor model = await context.Processors.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.AddrBus          = viewModel.AddrBus;
-        model.CompanyId        = viewModel.CompanyId;
-        model.Cores            = viewModel.Cores;
-        model.DataBus          = viewModel.DataBus;
-        model.DieSize          = viewModel.DieSize;
-        model.Fprs             = viewModel.Fprs;
-        model.FprSize          = viewModel.FprSize;
-        model.Gprs             = viewModel.Gprs;
-        model.GprSize          = viewModel.GprSize;
-        model.InstructionSetId = viewModel.InstructionSetId;
-        model.Introduced       = viewModel.Introduced;
-        model.L1Data           = viewModel.L1Data;
-        model.L1Instruction    = viewModel.L1Instruction;
-        model.L2               = viewModel.L2;
-        model.L3               = viewModel.L3;
-        model.ModelCode        = viewModel.ModelCode;
-        model.Name             = viewModel.Name;
-        model.Package          = viewModel.Package;
-        model.Process          = viewModel.Process;
-        model.ProcessNm        = viewModel.ProcessNm;
-        model.SimdRegisters    = viewModel.SimdRegisters;
-        model.SimdSize         = viewModel.SimdSize;
-        model.Speed            = viewModel.Speed;
-        model.ThreadsPerCore   = viewModel.ThreadsPerCore;
-        model.Transistors      = viewModel.Transistors;
+        model.AddrBus          = dto.AddrBus;
+        model.CompanyId        = dto.CompanyId;
+        model.Cores            = dto.Cores;
+        model.DataBus          = dto.DataBus;
+        model.DieSize          = dto.DieSize;
+        model.Fprs             = dto.Fprs;
+        model.FprSize          = dto.FprSize;
+        model.Gprs             = dto.Gprs;
+        model.GprSize          = dto.GprSize;
+        model.InstructionSetId = dto.InstructionSetId;
+        model.Introduced       = dto.Introduced;
+        model.L1Data           = dto.L1Data;
+        model.L1Instruction    = dto.L1Instruction;
+        model.L2               = dto.L2;
+        model.L3               = dto.L3;
+        model.ModelCode        = dto.ModelCode;
+        model.Name             = dto.Name;
+        model.Package          = dto.Package;
+        model.Process          = dto.Process;
+        model.ProcessNm        = dto.ProcessNm;
+        model.SimdRegisters    = dto.SimdRegisters;
+        model.SimdSize         = dto.SimdSize;
+        model.Speed            = dto.Speed;
+        model.ThreadsPerCore   = dto.ThreadsPerCore;
+        model.Transistors      = dto.Transistors;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(ProcessorViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(ProcessorDto dto, string userId)
     {
         var model = new Processor
         {
-            AddrBus          = viewModel.AddrBus,
-            CompanyId        = viewModel.CompanyId,
-            Cores            = viewModel.Cores,
-            DataBus          = viewModel.DataBus,
-            DieSize          = viewModel.DieSize,
-            Fprs             = viewModel.Fprs,
-            FprSize          = viewModel.FprSize,
-            Gprs             = viewModel.Gprs,
-            GprSize          = viewModel.GprSize,
-            InstructionSetId = viewModel.InstructionSetId,
-            Introduced       = viewModel.Introduced,
-            L1Data           = viewModel.L1Data,
-            L1Instruction    = viewModel.L1Instruction,
-            L2               = viewModel.L2,
-            L3               = viewModel.L3,
-            ModelCode        = viewModel.ModelCode,
-            Name             = viewModel.Name,
-            Package          = viewModel.Package,
-            Process          = viewModel.Process,
-            ProcessNm        = viewModel.ProcessNm,
-            SimdRegisters    = viewModel.SimdRegisters,
-            SimdSize         = viewModel.SimdSize,
-            Speed            = viewModel.Speed,
-            ThreadsPerCore   = viewModel.ThreadsPerCore,
-            Transistors      = viewModel.Transistors
+            AddrBus          = dto.AddrBus,
+            CompanyId        = dto.CompanyId,
+            Cores            = dto.Cores,
+            DataBus          = dto.DataBus,
+            DieSize          = dto.DieSize,
+            Fprs             = dto.Fprs,
+            FprSize          = dto.FprSize,
+            Gprs             = dto.Gprs,
+            GprSize          = dto.GprSize,
+            InstructionSetId = dto.InstructionSetId,
+            Introduced       = dto.Introduced,
+            L1Data           = dto.L1Data,
+            L1Instruction    = dto.L1Instruction,
+            L2               = dto.L2,
+            L3               = dto.L3,
+            ModelCode        = dto.ModelCode,
+            Name             = dto.Name,
+            Package          = dto.Package,
+            Process          = dto.Process,
+            ProcessNm        = dto.ProcessNm,
+            SimdRegisters    = dto.SimdRegisters,
+            SimdSize         = dto.SimdSize,
+            Speed            = dto.Speed,
+            ThreadsPerCore   = dto.ThreadsPerCore,
+            Transistors      = dto.Transistors
         };
 
         await context.Processors.AddAsync(model);

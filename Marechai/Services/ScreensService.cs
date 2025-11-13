@@ -34,7 +34,7 @@ namespace Marechai.Services;
 
 public class ScreensService(MarechaiContext context)
 {
-    public async Task<List<ScreenViewModel>> GetAsync() => (await context.Screens.Select(s => new ScreenViewModel
+    public async Task<List<ScreenDto>> GetAsync() => (await context.Screens.Select(s => new ScreenDto
                                                                           {
                                                                               Diagonal        = s.Diagonal,
                                                                               EffectiveColors = s.EffectiveColors,
@@ -45,7 +45,7 @@ public class ScreensService(MarechaiContext context)
                                                                               NativeResolutionId =
                                                                                   s.NativeResolutionId,
                                                                               NativeResolution =
-                                                                                  new ResolutionViewModel
+                                                                                  new ResolutionDto
                                                                                   {
                                                                                       Chars = s.NativeResolution
                                                                                                .Chars,
@@ -70,14 +70,14 @@ public class ScreensService(MarechaiContext context)
                                                                                         .ThenBy(s => s.Size)
                                                                                         .ToList();
 
-    public async Task<ScreenViewModel> GetAsync(int id) => await context.Screens.Where(s => s.Id == id)
-                                                                         .Select(s => new ScreenViewModel
+    public async Task<ScreenDto> GetAsync(int id) => await context.Screens.Where(s => s.Id == id)
+                                                                         .Select(s => new ScreenDto
                                                                           {
                                                                               Diagonal        = s.Diagonal,
                                                                               EffectiveColors = s.EffectiveColors,
                                                                               Height          = s.Height,
                                                                               Id              = s.Id,
-                                                                              NativeResolution = new ResolutionViewModel
+                                                                              NativeResolution = new ResolutionDto
                                                                               {
                                                                                   Chars  = s.NativeResolution.Chars,
                                                                                   Colors = s.NativeResolution.Colors,
@@ -95,36 +95,36 @@ public class ScreensService(MarechaiContext context)
                                                                           })
                                                                          .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(ScreenViewModel viewModel, string userId)
+    public async Task UpdateAsync(ScreenDto dto, string userId)
     {
-        Screen model = await context.Screens.FindAsync(viewModel.Id);
+        Screen model = await context.Screens.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        Resolution nativeResolution = await context.Resolutions.FindAsync(viewModel.NativeResolutionId);
+        Resolution nativeResolution = await context.Resolutions.FindAsync(dto.NativeResolutionId);
 
         if(nativeResolution is null) return;
 
-        model.Diagonal           = viewModel.Diagonal;
-        model.EffectiveColors    = viewModel.EffectiveColors;
-        model.Height             = viewModel.Height;
-        model.NativeResolutionId = viewModel.NativeResolutionId;
-        model.Type               = viewModel.Type;
-        model.Width              = viewModel.Width;
+        model.Diagonal           = dto.Diagonal;
+        model.EffectiveColors    = dto.EffectiveColors;
+        model.Height             = dto.Height;
+        model.NativeResolutionId = dto.NativeResolutionId;
+        model.Type               = dto.Type;
+        model.Width              = dto.Width;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(ScreenViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(ScreenDto dto, string userId)
     {
         var model = new Screen
         {
-            Diagonal           = viewModel.Diagonal,
-            EffectiveColors    = viewModel.EffectiveColors,
-            Height             = viewModel.Height,
-            NativeResolutionId = viewModel.NativeResolutionId,
-            Type               = viewModel.Type,
-            Width              = viewModel.Width
+            Diagonal           = dto.Diagonal,
+            EffectiveColors    = dto.EffectiveColors,
+            Height             = dto.Height,
+            NativeResolutionId = dto.NativeResolutionId,
+            Type               = dto.Type,
+            Width              = dto.Width
         };
 
         await context.Screens.AddAsync(model);

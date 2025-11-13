@@ -50,12 +50,12 @@ public class ComputersService(MarechaiContext context)
                                                                   t.Introduced.Value.Year > 1000)
                                                       .MaxAsync(t => t.Introduced.Value.Year);
 
-    public async Task<List<MachineViewModel>> GetComputersByLetterAsync(char c) => await context.Machines
+    public async Task<List<MachineDto>> GetComputersByLetterAsync(char c) => await context.Machines
        .Include(m => m.Company)
        .Where(m => m.Type == MachineType.Computer && EF.Functions.Like(m.Name, $"{c}%"))
        .OrderBy(m => m.Company.Name)
        .ThenBy(m => m.Name)
-       .Select(m => new MachineViewModel
+       .Select(m => new MachineDto
         {
             Id      = m.Id,
             Name    = m.Name,
@@ -63,12 +63,12 @@ public class ComputersService(MarechaiContext context)
         })
        .ToListAsync();
 
-    public async Task<List<MachineViewModel>> GetComputersByYearAsync(int year) => await context.Machines
+    public async Task<List<MachineDto>> GetComputersByYearAsync(int year) => await context.Machines
        .Include(m => m.Company)
        .Where(m => m.Type == MachineType.Computer && m.Introduced != null && m.Introduced.Value.Year == year)
        .OrderBy(m => m.Company.Name)
        .ThenBy(m => m.Name)
-       .Select(m => new MachineViewModel
+       .Select(m => new MachineDto
         {
             Id      = m.Id,
             Name    = m.Name,
@@ -76,11 +76,11 @@ public class ComputersService(MarechaiContext context)
         })
        .ToListAsync();
 
-    public async Task<List<MachineViewModel>> GetComputersAsync() => await context.Machines.Include(m => m.Company)
+    public async Task<List<MachineDto>> GetComputersAsync() => await context.Machines.Include(m => m.Company)
                                                                         .Where(m => m.Type == MachineType.Computer)
                                                                         .OrderBy(m => m.Company.Name)
                                                                         .ThenBy(m => m.Name)
-                                                                        .Select(m => new MachineViewModel
+                                                                        .Select(m => new MachineDto
                                                                          {
                                                                              Id      = m.Id,
                                                                              Name    = m.Name,

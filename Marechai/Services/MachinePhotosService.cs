@@ -39,8 +39,8 @@ public class MachinePhotosService(MarechaiContext context)
         await context.MachinePhotos.Where(p => p.MachineId == machineId).Select(p => p.Id).ToListAsync();
 
     // TODO: Get only the needed parts of ApplicationUser
-    public async Task<MachinePhotoViewModel> GetAsync(Guid id) => await context.MachinePhotos.Where(p => p.Id == id)
-                                                                     .Select(p => new MachinePhotoViewModel
+    public async Task<MachinePhotoDto> GetAsync(Guid id) => await context.MachinePhotos.Where(p => p.Id == id)
+                                                                     .Select(p => new MachinePhotoDto
                                                                       {
                                                                           Aperture           = p.Aperture,
                                                                           Author             = p.Author,
@@ -91,93 +91,93 @@ public class MachinePhotosService(MarechaiContext context)
                                                                       })
                                                                      .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(MachinePhotoViewModel viewModel, string userId)
+    public async Task UpdateAsync(MachinePhotoDto dto, string userId)
     {
-        MachinePhoto model = await context.MachinePhotos.FindAsync(viewModel.Id);
+        MachinePhoto model = await context.MachinePhotos.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Aperture              = viewModel.Aperture;
-        model.Author                = viewModel.Author;
-        model.CameraManufacturer    = viewModel.CameraManufacturer;
-        model.CameraModel           = viewModel.CameraModel;
-        model.ColorSpace            = viewModel.ColorSpace;
-        model.Comments              = viewModel.Comments;
-        model.Contrast              = viewModel.Contrast;
-        model.CreationDate          = viewModel.CreationDate;
-        model.DigitalZoomRatio      = viewModel.DigitalZoomRatio;
-        model.ExifVersion           = viewModel.ExifVersion;
-        model.ExposureTime          = viewModel.ExposureTime;
-        model.ExposureMethod        = viewModel.ExposureMethod;
-        model.ExposureProgram       = viewModel.ExposureProgram;
-        model.Flash                 = viewModel.Flash;
-        model.Focal                 = viewModel.Focal;
-        model.FocalLength           = viewModel.FocalLength;
-        model.FocalLengthEquivalent = viewModel.FocalLengthEquivalent;
-        model.HorizontalResolution  = viewModel.HorizontalResolution;
-        model.IsoRating             = viewModel.IsoRating;
-        model.Lens                  = viewModel.Lens;
-        model.LicenseId             = viewModel.LicenseId;
-        model.LightSource           = viewModel.LightSource;
-        model.MeteringMode          = viewModel.MeteringMode;
-        model.ResolutionUnit        = viewModel.ResolutionUnit;
-        model.Orientation           = viewModel.Orientation;
-        model.Saturation            = viewModel.Saturation;
-        model.SceneCaptureType      = viewModel.SceneCaptureType;
-        model.SensingMethod         = viewModel.SensingMethod;
-        model.Sharpness             = viewModel.Sharpness;
-        model.SoftwareUsed          = viewModel.SoftwareUsed;
-        model.Source                = viewModel.Source;
-        model.SubjectDistanceRange  = viewModel.SubjectDistanceRange;
-        model.VerticalResolution    = viewModel.VerticalResolution;
-        model.WhiteBalance          = viewModel.WhiteBalance;
+        model.Aperture              = dto.Aperture;
+        model.Author                = dto.Author;
+        model.CameraManufacturer    = dto.CameraManufacturer;
+        model.CameraModel           = dto.CameraModel;
+        model.ColorSpace            = dto.ColorSpace;
+        model.Comments              = dto.Comments;
+        model.Contrast              = dto.Contrast;
+        model.CreationDate          = dto.CreationDate;
+        model.DigitalZoomRatio      = dto.DigitalZoomRatio;
+        model.ExifVersion           = dto.ExifVersion;
+        model.ExposureTime          = dto.ExposureTime;
+        model.ExposureMethod        = dto.ExposureMethod;
+        model.ExposureProgram       = dto.ExposureProgram;
+        model.Flash                 = dto.Flash;
+        model.Focal                 = dto.Focal;
+        model.FocalLength           = dto.FocalLength;
+        model.FocalLengthEquivalent = dto.FocalLengthEquivalent;
+        model.HorizontalResolution  = dto.HorizontalResolution;
+        model.IsoRating             = dto.IsoRating;
+        model.Lens                  = dto.Lens;
+        model.LicenseId             = dto.LicenseId;
+        model.LightSource           = dto.LightSource;
+        model.MeteringMode          = dto.MeteringMode;
+        model.ResolutionUnit        = dto.ResolutionUnit;
+        model.Orientation           = dto.Orientation;
+        model.Saturation            = dto.Saturation;
+        model.SceneCaptureType      = dto.SceneCaptureType;
+        model.SensingMethod         = dto.SensingMethod;
+        model.Sharpness             = dto.Sharpness;
+        model.SoftwareUsed          = dto.SoftwareUsed;
+        model.Source                = dto.Source;
+        model.SubjectDistanceRange  = dto.SubjectDistanceRange;
+        model.VerticalResolution    = dto.VerticalResolution;
+        model.WhiteBalance          = dto.WhiteBalance;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<Guid> CreateAsync(MachinePhotoViewModel viewModel, string userId)
+    public async Task<Guid> CreateAsync(MachinePhotoDto dto, string userId)
     {
         var model = new MachinePhoto
         {
-            Aperture              = viewModel.Aperture,
-            Author                = viewModel.Author,
-            CameraManufacturer    = viewModel.CameraManufacturer,
-            CameraModel           = viewModel.CameraModel,
-            ColorSpace            = viewModel.ColorSpace,
-            Comments              = viewModel.Comments,
-            Contrast              = viewModel.Contrast,
-            CreationDate          = viewModel.CreationDate,
-            DigitalZoomRatio      = viewModel.DigitalZoomRatio,
-            ExifVersion           = viewModel.ExifVersion,
-            ExposureTime          = viewModel.ExposureTime,
-            ExposureMethod        = viewModel.ExposureMethod,
-            ExposureProgram       = viewModel.ExposureProgram,
-            Flash                 = viewModel.Flash,
-            Focal                 = viewModel.Focal,
-            FocalLength           = viewModel.FocalLength,
-            FocalLengthEquivalent = viewModel.FocalLengthEquivalent,
-            HorizontalResolution  = viewModel.HorizontalResolution,
-            Id                    = viewModel.Id,
-            IsoRating             = viewModel.IsoRating,
-            Lens                  = viewModel.Lens,
-            LicenseId             = viewModel.LicenseId,
-            LightSource           = viewModel.LightSource,
-            MachineId             = viewModel.MachineId,
-            MeteringMode          = viewModel.MeteringMode,
-            ResolutionUnit        = viewModel.ResolutionUnit,
-            Orientation           = viewModel.Orientation,
-            Saturation            = viewModel.Saturation,
-            SceneCaptureType      = viewModel.SceneCaptureType,
-            SensingMethod         = viewModel.SensingMethod,
-            Sharpness             = viewModel.Sharpness,
-            SoftwareUsed          = viewModel.SoftwareUsed,
-            Source                = viewModel.Source,
-            SubjectDistanceRange  = viewModel.SubjectDistanceRange,
-            UploadDate            = viewModel.UploadDate,
-            UserId                = viewModel.UserId,
-            VerticalResolution    = viewModel.VerticalResolution,
-            WhiteBalance          = viewModel.WhiteBalance,
-            OriginalExtension     = viewModel.OriginalExtension
+            Aperture              = dto.Aperture,
+            Author                = dto.Author,
+            CameraManufacturer    = dto.CameraManufacturer,
+            CameraModel           = dto.CameraModel,
+            ColorSpace            = dto.ColorSpace,
+            Comments              = dto.Comments,
+            Contrast              = dto.Contrast,
+            CreationDate          = dto.CreationDate,
+            DigitalZoomRatio      = dto.DigitalZoomRatio,
+            ExifVersion           = dto.ExifVersion,
+            ExposureTime          = dto.ExposureTime,
+            ExposureMethod        = dto.ExposureMethod,
+            ExposureProgram       = dto.ExposureProgram,
+            Flash                 = dto.Flash,
+            Focal                 = dto.Focal,
+            FocalLength           = dto.FocalLength,
+            FocalLengthEquivalent = dto.FocalLengthEquivalent,
+            HorizontalResolution  = dto.HorizontalResolution,
+            Id                    = dto.Id,
+            IsoRating             = dto.IsoRating,
+            Lens                  = dto.Lens,
+            LicenseId             = dto.LicenseId,
+            LightSource           = dto.LightSource,
+            MachineId             = dto.MachineId,
+            MeteringMode          = dto.MeteringMode,
+            ResolutionUnit        = dto.ResolutionUnit,
+            Orientation           = dto.Orientation,
+            Saturation            = dto.Saturation,
+            SceneCaptureType      = dto.SceneCaptureType,
+            SensingMethod         = dto.SensingMethod,
+            Sharpness             = dto.Sharpness,
+            SoftwareUsed          = dto.SoftwareUsed,
+            Source                = dto.Source,
+            SubjectDistanceRange  = dto.SubjectDistanceRange,
+            UploadDate            = dto.UploadDate,
+            UserId                = dto.UserId,
+            VerticalResolution    = dto.VerticalResolution,
+            WhiteBalance          = dto.WhiteBalance,
+            OriginalExtension     = dto.OriginalExtension
         };
 
         await context.MachinePhotos.AddAsync(model);

@@ -41,9 +41,9 @@ public partial class SoftwareVersion
     int?                                    _addingCompanyId;
     string                                  _addingCompanyRoleId;
     AuthenticationState                     _authState;
-    List<CompanyViewModel>                  _companies;
+    List<CompanyDto>                  _companies;
     bool                                    _creating;
-    CompanyBySoftwareVersionViewModel       _currentCompanyBySoftwareVersion;
+    CompanyBySoftwareVersionDto       _currentCompanyBySoftwareVersion;
     bool                                    _deleteInProgress;
     string                                  _deleteText;
     string                                  _deleteTitle;
@@ -52,12 +52,12 @@ public partial class SoftwareVersion
     Modal                                   _frmDelete;
     List<Database.Models.License>           _licenses;
     bool                                    _loaded;
-    SoftwareVersionViewModel                _model;
-    List<DocumentRoleViewModel>             _roles;
+    SoftwareVersionDto                _model;
+    List<DocumentRoleDto>             _roles;
     bool                                    _savingCompany;
-    List<SoftwareFamilyViewModel>           _softwareFamilies;
-    List<CompanyBySoftwareVersionViewModel> _softwareVersionCompanies;
-    List<SoftwareVersionViewModel>          _softwareVersions;
+    List<SoftwareFamilyDto>           _softwareFamilies;
+    List<CompanyBySoftwareVersionDto> _softwareVersionCompanies;
+    List<SoftwareVersionDto>          _softwareVersions;
     bool                                    _unknownCodename;
     bool                                    _unknownIntroduced;
     bool                                    _unknownLicense;
@@ -84,7 +84,7 @@ public partial class SoftwareVersion
         _licenses                 = await LicensesService.GetAsync();
         _companies                = await CompaniesService.GetAsync();
         _roles                    = await DocumentRolesService.GetEnabledAsync();
-        _model                    = _creating ? new SoftwareVersionViewModel() : await Service.GetAsync(Id);
+        _model                    = _creating ? new SoftwareVersionDto() : await Service.GetAsync(Id);
         _authState                = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _addingCompanyRoleId      = _roles.First().Id;
         _softwareVersionCompanies = await CompaniesBySoftwareVersionService.GetBySoftwareVersion(Id);

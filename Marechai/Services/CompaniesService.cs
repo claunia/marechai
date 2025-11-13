@@ -37,9 +37,9 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
 {
     readonly IStringLocalizer<CompaniesService> _l       = localizer;
 
-    public async Task<List<CompanyViewModel>> GetAsync() => await context.Companies.Include(c => c.Logos)
+    public async Task<List<CompanyDto>> GetAsync() => await context.Companies.Include(c => c.Logos)
                                                                           .OrderBy(c => c.Name)
-                                                                          .Select(c => new CompanyViewModel
+                                                                          .Select(c => new CompanyDto
                                                                            {
                                                                                Id = c.Id,
                                                                                LastLogo =
@@ -73,8 +73,8 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
                                                                            })
                                                                           .ToListAsync();
 
-    public async Task<CompanyViewModel> GetAsync(int id) => await context.Companies.Where(c => c.Id == id)
-                                                                          .Select(c => new CompanyViewModel
+    public async Task<CompanyDto> GetAsync(int id) => await context.Companies.Where(c => c.Id == id)
+                                                                          .Select(c => new CompanyDto
                                                                            {
                                                                                Id = c.Id,
                                                                                LastLogo =
@@ -108,55 +108,55 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
                                                                            })
                                                                           .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(CompanyViewModel viewModel, string userId)
+    public async Task UpdateAsync(CompanyDto dto, string userId)
     {
-        Company model = await context.Companies.FindAsync(viewModel.Id);
+        Company model = await context.Companies.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Name                  = viewModel.Name;
-        model.Founded               = viewModel.Founded;
-        model.Sold                  = viewModel.Sold;
-        model.SoldToId              = viewModel.SoldToId;
-        model.CountryId             = viewModel.CountryId;
-        model.Status                = viewModel.Status;
-        model.Website               = viewModel.Website;
-        model.Twitter               = viewModel.Twitter;
-        model.Facebook              = viewModel.Facebook;
-        model.Address               = viewModel.Address;
-        model.City                  = viewModel.City;
-        model.Province              = viewModel.Province;
-        model.PostalCode            = viewModel.PostalCode;
-        model.FoundedDayIsUnknown   = viewModel.FoundedDayIsUnknown;
-        model.FoundedMonthIsUnknown = viewModel.FoundedMonthIsUnknown;
-        model.SoldDayIsUnknown      = viewModel.SoldDayIsUnknown;
-        model.SoldMonthIsUnknown    = viewModel.SoldMonthIsUnknown;
-        model.LegalName             = viewModel.LegalName;
+        model.Name                  = dto.Name;
+        model.Founded               = dto.Founded;
+        model.Sold                  = dto.Sold;
+        model.SoldToId              = dto.SoldToId;
+        model.CountryId             = dto.CountryId;
+        model.Status                = dto.Status;
+        model.Website               = dto.Website;
+        model.Twitter               = dto.Twitter;
+        model.Facebook              = dto.Facebook;
+        model.Address               = dto.Address;
+        model.City                  = dto.City;
+        model.Province              = dto.Province;
+        model.PostalCode            = dto.PostalCode;
+        model.FoundedDayIsUnknown   = dto.FoundedDayIsUnknown;
+        model.FoundedMonthIsUnknown = dto.FoundedMonthIsUnknown;
+        model.SoldDayIsUnknown      = dto.SoldDayIsUnknown;
+        model.SoldMonthIsUnknown    = dto.SoldMonthIsUnknown;
+        model.LegalName             = dto.LegalName;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(CompanyViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(CompanyDto dto, string userId)
     {
         var model = new Company
         {
-            Name                  = viewModel.Name,
-            Founded               = viewModel.Founded,
-            Sold                  = viewModel.Sold,
-            SoldToId              = viewModel.SoldToId,
-            CountryId             = viewModel.CountryId,
-            Status                = viewModel.Status,
-            Website               = viewModel.Website,
-            Twitter               = viewModel.Twitter,
-            Facebook              = viewModel.Facebook,
-            Address               = viewModel.Address,
-            City                  = viewModel.City,
-            Province              = viewModel.Province,
-            PostalCode            = viewModel.PostalCode,
-            FoundedDayIsUnknown   = viewModel.FoundedDayIsUnknown,
-            FoundedMonthIsUnknown = viewModel.FoundedMonthIsUnknown,
-            SoldDayIsUnknown      = viewModel.SoldDayIsUnknown,
-            SoldMonthIsUnknown    = viewModel.SoldMonthIsUnknown,
-            LegalName             = viewModel.LegalName
+            Name                  = dto.Name,
+            Founded               = dto.Founded,
+            Sold                  = dto.Sold,
+            SoldToId              = dto.SoldToId,
+            CountryId             = dto.CountryId,
+            Status                = dto.Status,
+            Website               = dto.Website,
+            Twitter               = dto.Twitter,
+            Facebook              = dto.Facebook,
+            Address               = dto.Address,
+            City                  = dto.City,
+            Province              = dto.Province,
+            PostalCode            = dto.PostalCode,
+            FoundedDayIsUnknown   = dto.FoundedDayIsUnknown,
+            FoundedMonthIsUnknown = dto.FoundedMonthIsUnknown,
+            SoldDayIsUnknown      = dto.SoldDayIsUnknown,
+            SoldMonthIsUnknown    = dto.SoldMonthIsUnknown,
+            LegalName             = dto.LegalName
         };
 
         await context.Companies.AddAsync(model);
@@ -192,11 +192,11 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
     public async Task<string> GetCountryNameAsync(int id) =>
         (await context.Iso31661Numeric.FirstOrDefaultAsync(c => c.Id == id))?.Name;
 
-    public Task<List<CompanyViewModel>> GetCompaniesByCountryAsync(int countryId) => context.Companies
+    public Task<List<CompanyDto>> GetCompaniesByCountryAsync(int countryId) => context.Companies
        .Include(c => c.Logos)
        .Where(c => c.CountryId == countryId)
        .OrderBy(c => c.Name)
-       .Select(c => new CompanyViewModel
+       .Select(c => new CompanyDto
         {
             Id       = c.Id,
             LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
@@ -204,10 +204,10 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
         })
        .ToListAsync();
 
-    public Task<List<CompanyViewModel>> GetCompaniesByLetterAsync(char id) => context.Companies.Include(c => c.Logos)
+    public Task<List<CompanyDto>> GetCompaniesByLetterAsync(char id) => context.Companies.Include(c => c.Logos)
        .Where(c => EF.Functions.Like(c.Name, $"{id}%"))
        .OrderBy(c => c.Name)
-       .Select(c => new CompanyViewModel
+       .Select(c => new CompanyDto
         {
             Id       = c.Id,
             LastLogo = c.Logos.OrderByDescending(l => l.Year).FirstOrDefault().Guid,
@@ -226,9 +226,9 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<CompanyDescriptionViewModel> GetDescriptionAsync(int id) => await context.CompanyDescriptions
+    public async Task<CompanyDescriptionDto> GetDescriptionAsync(int id) => await context.CompanyDescriptions
        .Where(d => d.CompanyId == id)
-       .Select(d => new CompanyDescriptionViewModel
+       .Select(d => new CompanyDescriptionDto
         {
             Id        = d.Id,
             CompanyId = d.CompanyId,
@@ -237,7 +237,7 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
         })
        .FirstOrDefaultAsync();
 
-    public async Task<int> CreateOrUpdateDescriptionAsync(int    id, CompanyDescriptionViewModel description,
+    public async Task<int> CreateOrUpdateDescriptionAsync(int    id, CompanyDescriptionDto description,
                                                           string userId)
     {
         CompanyDescription current = await context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id);

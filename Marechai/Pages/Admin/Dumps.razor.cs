@@ -34,9 +34,9 @@ namespace Marechai.Pages.Admin;
 
 public partial class Dumps
 {
-    DumpViewModel       _currentDump;
+    DumpDto       _currentDump;
     bool                _deleteInProgress;
-    List<DumpViewModel> _dumps;
+    List<DumpDto> _dumps;
     Modal               _frmDelete;
     bool                _loaded;
 

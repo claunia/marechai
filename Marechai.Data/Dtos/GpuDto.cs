@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class GpuViewModel : BaseViewModel<int>
+public class GpuDto : BaseDto<int>
 {
     public string    Name        { get; set; }
     public int?      CompanyId   { get; set; }

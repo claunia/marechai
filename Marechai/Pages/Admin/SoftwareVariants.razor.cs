@@ -34,11 +34,11 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareVariants
 {
-    SoftwareVariantViewModel       _currentSoftwareVariant;
+    SoftwareVariantDto       _currentSoftwareVariant;
     bool                           _deleteInProgress;
     Modal                          _frmDelete;
     bool                           _loaded;
-    List<SoftwareVariantViewModel> _softwareVariants;
+    List<SoftwareVariantDto> _softwareVariants;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

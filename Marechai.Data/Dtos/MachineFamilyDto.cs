@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class MachineFamilyViewModel : BaseViewModel<int>
+public class MachineFamilyDto : BaseDto<int>
 {
     public string Company   { get; set; }
     public string Name      { get; set; }

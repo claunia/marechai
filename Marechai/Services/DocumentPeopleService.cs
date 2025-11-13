@@ -34,12 +34,12 @@ namespace Marechai.Services;
 
 public class DocumentPeopleService(MarechaiContext context)
 {
-    public async Task<List<DocumentPersonViewModel>> GetAsync() => await context.DocumentPeople
+    public async Task<List<DocumentPersonDto>> GetAsync() => await context.DocumentPeople
                                                                                 .OrderBy(d => d.DisplayName)
                                                                                 .ThenBy(d => d.Alias)
                                                                                 .ThenBy(d => d.Name)
                                                                                 .ThenBy(d => d.Surname)
-                                                                                .Select(d => new DocumentPersonViewModel
+                                                                                .Select(d => new DocumentPersonDto
                                                                                  {
                                                                                      Id       = d.Id,
                                                                                      Name     = d.FullName,
@@ -48,8 +48,8 @@ public class DocumentPeopleService(MarechaiContext context)
                                                                                  })
                                                                                 .ToListAsync();
 
-    public async Task<DocumentPersonViewModel> GetAsync(int id) => await context.DocumentPeople.Where(p => p.Id == id)
-                                                                      .Select(d => new DocumentPersonViewModel
+    public async Task<DocumentPersonDto> GetAsync(int id) => await context.DocumentPeople.Where(p => p.Id == id)
+                                                                      .Select(d => new DocumentPersonDto
                                                                        {
                                                                            Id          = d.Id,
                                                                            Alias       = d.Alias,
@@ -60,30 +60,30 @@ public class DocumentPeopleService(MarechaiContext context)
                                                                        })
                                                                       .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(DocumentPersonViewModel viewModel, string userId)
+    public async Task UpdateAsync(DocumentPersonDto dto, string userId)
     {
-        DocumentPerson model = await context.DocumentPeople.FindAsync(viewModel.Id);
+        DocumentPerson model = await context.DocumentPeople.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Alias       = viewModel.Alias;
-        model.Name        = viewModel.Name;
-        model.Surname     = viewModel.Surname;
-        model.DisplayName = viewModel.DisplayName;
-        model.PersonId    = viewModel.PersonId;
+        model.Alias       = dto.Alias;
+        model.Name        = dto.Name;
+        model.Surname     = dto.Surname;
+        model.DisplayName = dto.DisplayName;
+        model.PersonId    = dto.PersonId;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(DocumentPersonViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(DocumentPersonDto dto, string userId)
     {
         var model = new DocumentPerson
         {
-            Alias       = viewModel.Alias,
-            Name        = viewModel.Name,
-            Surname     = viewModel.Surname,
-            DisplayName = viewModel.DisplayName,
-            PersonId    = viewModel.PersonId
+            Alias       = dto.Alias,
+            Name        = dto.Name,
+            Surname     = dto.Surname,
+            DisplayName = dto.DisplayName,
+            PersonId    = dto.PersonId
         };
 
         await context.AddAsync(model);

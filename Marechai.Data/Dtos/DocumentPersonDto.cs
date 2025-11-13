@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class DocumentPersonViewModel : BaseViewModel<int>
+public class DocumentPersonDto : BaseDto<int>
 {
     public string Name        { get; set; }
     public string Person      { get; set; }

@@ -34,11 +34,11 @@ namespace Marechai.Pages.Admin;
 
 public partial class SoftwareFamilies
 {
-    SoftwareFamilyViewModel       _currentSoftwareFamily;
+    SoftwareFamilyDto       _currentSoftwareFamily;
     bool                          _deleteInProgress;
     Modal                         _frmDelete;
     bool                          _loaded;
-    List<SoftwareFamilyViewModel> _softwareFamilies;
+    List<SoftwareFamilyDto> _softwareFamilies;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

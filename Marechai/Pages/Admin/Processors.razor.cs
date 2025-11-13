@@ -37,8 +37,8 @@ public partial class Processors
     bool                     _deleteInProgress;
     Modal                    _frmDelete;
     bool                     _loaded;
-    ProcessorViewModel       _processor;
-    List<ProcessorViewModel> _processors;
+    ProcessorDto       _processor;
+    List<ProcessorDto> _processors;
 
     void ShowModal(int itemId)
     {

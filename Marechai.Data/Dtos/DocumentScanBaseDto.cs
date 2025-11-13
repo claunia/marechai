@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class DocumentScanBaseViewModel : BaseScanViewModel
+public class DocumentScanBaseDto : BaseScanDto
 {
     public DocumentScanType Type { get; set; }
     public uint?            Page { get; set; }

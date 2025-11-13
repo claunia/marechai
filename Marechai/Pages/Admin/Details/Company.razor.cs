@@ -50,13 +50,13 @@ public partial class Company
     const int                   _maxUploadSize = 5 * 1048576;
     bool                        _addingDescription;
     AuthenticationState         _authState;
-    List<CompanyViewModel>      _companies;
+    List<CompanyDto>      _companies;
     List<Iso31661Numeric>       _countries;
     bool                        _creating;
     CompanyLogo                 _currentLogo;
     int?                        _currentLogoYear;
     bool                        _deleteInProgress;
-    CompanyDescriptionViewModel _description;
+    CompanyDescriptionDto _description;
     bool                        _editing;
     Modal                       _frmDelete;
     Modal                       _frmLogoYear;
@@ -64,7 +64,7 @@ public partial class Company
     ElementReference            _inputUpload;
     bool                        _loaded;
     List<CompanyLogo>           _logos;
-    CompanyViewModel            _model;
+    CompanyDto            _model;
     MarkdownPipeline            _pipeline;
     double                      _progressValue;
     bool                        _readonlyDescription;
@@ -116,7 +116,7 @@ public partial class Company
 
         _countries              = await CountriesService.GetAsync();
         _companies              = await Service.GetAsync();
-        _model                  = _creating ? new CompanyViewModel() : await Service.GetAsync(Id);
+        _model                  = _creating ? new CompanyDto() : await Service.GetAsync(Id);
         _logos                  = await CompanyLogosService.GetByCompany(Id);
         _description            = await Service.GetDescriptionAsync(Id);
         _selectedDescriptionTab = "markdown";
@@ -614,7 +614,7 @@ public partial class Company
 
     void AddNewDescription()
     {
-        _description           = new CompanyDescriptionViewModel();
+        _description           = new CompanyDescriptionDto();
         _description.CompanyId = Id;
         _readonlyDescription   = false;
         _addingDescription     = true;

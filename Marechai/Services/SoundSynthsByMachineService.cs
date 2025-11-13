@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class SoundSynthsByMachineService(MarechaiContext context)
 {
-    public async Task<List<SoundSynthByMachineViewModel>> GetByMachine(int machineId) => await context.SoundByMachine
+    public async Task<List<SoundSynthByMachineDto>> GetByMachine(int machineId) => await context.SoundByMachine
                                                                                                       .Where(g => g.MachineId == machineId)
-                                                                                                      .Select(g => new SoundSynthByMachineViewModel
+                                                                                                      .Select(g => new SoundSynthByMachineDto
                                                                                                        {
                                                                                                            Id           = g.Id,
                                                                                                            Name         = g.SoundSynth.Name,

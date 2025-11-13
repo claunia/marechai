@@ -37,8 +37,8 @@ public partial class MachineFamilies
     bool                         _deleteInProgress;
     Modal                        _frmDelete;
     bool                         _loaded;
-    List<MachineFamilyViewModel> _machineFamilies;
-    MachineFamilyViewModel       _machineFamily;
+    List<MachineFamilyDto> _machineFamilies;
+    MachineFamilyDto       _machineFamily;
 
     void ShowModal(int itemId)
     {

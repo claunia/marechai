@@ -34,11 +34,11 @@ namespace Marechai.Services;
 
 public class MagazineIssuesService(MarechaiContext context)
 {
-    public async Task<List<MagazineIssueViewModel>> GetAsync() => await context.MagazineIssues
+    public async Task<List<MagazineIssueDto>> GetAsync() => await context.MagazineIssues
                                                                                .OrderBy(b => b.Magazine.Title)
                                                                                .ThenBy(b => b.Published)
                                                                                .ThenBy(b => b.Caption)
-                                                                               .Select(b => new MagazineIssueViewModel
+                                                                               .Select(b => new MagazineIssueDto
                                                                                 {
                                                                                     Id            = b.Id,
                                                                                     MagazineId    = b.MagazineId,
@@ -52,8 +52,8 @@ public class MagazineIssuesService(MarechaiContext context)
                                                                                 })
                                                                                .ToListAsync();
 
-    public async Task<MagazineIssueViewModel> GetAsync(long id) => await context.MagazineIssues.Where(b => b.Id == id)
-                                                                      .Select(b => new MagazineIssueViewModel
+    public async Task<MagazineIssueDto> GetAsync(long id) => await context.MagazineIssues.Where(b => b.Id == id)
+                                                                      .Select(b => new MagazineIssueDto
                                                                        {
                                                                            Id            = b.Id,
                                                                            MagazineId    = b.MagazineId,
@@ -67,33 +67,33 @@ public class MagazineIssuesService(MarechaiContext context)
                                                                        })
                                                                       .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(MagazineIssueViewModel viewModel, string userId)
+    public async Task UpdateAsync(MagazineIssueDto dto, string userId)
     {
-        MagazineIssue model = await context.MagazineIssues.FindAsync(viewModel.Id);
+        MagazineIssue model = await context.MagazineIssues.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.MagazineId    = viewModel.MagazineId;
-        model.Caption       = viewModel.Caption;
-        model.NativeCaption = viewModel.NativeCaption;
-        model.Published     = viewModel.Published;
-        model.ProductCode   = viewModel.ProductCode;
-        model.Pages         = viewModel.Pages;
-        model.IssueNumber   = viewModel.IssueNumber;
+        model.MagazineId    = dto.MagazineId;
+        model.Caption       = dto.Caption;
+        model.NativeCaption = dto.NativeCaption;
+        model.Published     = dto.Published;
+        model.ProductCode   = dto.ProductCode;
+        model.Pages         = dto.Pages;
+        model.IssueNumber   = dto.IssueNumber;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<long> CreateAsync(MagazineIssueViewModel viewModel, string userId)
+    public async Task<long> CreateAsync(MagazineIssueDto dto, string userId)
     {
         var model = new MagazineIssue
         {
-            MagazineId    = viewModel.MagazineId,
-            Caption       = viewModel.Caption,
-            NativeCaption = viewModel.NativeCaption,
-            Published     = viewModel.Published,
-            ProductCode   = viewModel.ProductCode,
-            Pages         = viewModel.Pages,
-            IssueNumber   = viewModel.IssueNumber
+            MagazineId    = dto.MagazineId,
+            Caption       = dto.Caption,
+            NativeCaption = dto.NativeCaption,
+            Published     = dto.Published,
+            ProductCode   = dto.ProductCode,
+            Pages         = dto.Pages,
+            IssueNumber   = dto.IssueNumber
         };
 
         await context.MagazineIssues.AddAsync(model);

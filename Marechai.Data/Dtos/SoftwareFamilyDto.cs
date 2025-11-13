@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class SoftwareFamilyViewModel : BaseViewModel<ulong>
+public class SoftwareFamilyDto : BaseDto<ulong>
 {
     public string    Name       { get; set; }
     public DateTime? Introduced { get; set; }

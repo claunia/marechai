@@ -34,8 +34,8 @@ namespace Marechai.Services;
 
 public class ResolutionsService(MarechaiContext context)
 {
-    public async Task<List<ResolutionViewModel>> GetAsync() => await context.Resolutions
-                                                                            .Select(r => new ResolutionViewModel
+    public async Task<List<ResolutionDto>> GetAsync() => await context.Resolutions
+                                                                            .Select(r => new ResolutionDto
                                                                              {
                                                                                  Id        = r.Id,
                                                                                  Width     = r.Width,
@@ -53,8 +53,8 @@ public class ResolutionsService(MarechaiContext context)
                                                                             .ThenBy(r => r.Palette)
                                                                             .ToListAsync();
 
-    public async Task<ResolutionViewModel> GetAsync(int id) => await context.Resolutions.Where(r => r.Id == id)
-                                                                             .Select(r => new ResolutionViewModel
+    public async Task<ResolutionDto> GetAsync(int id) => await context.Resolutions.Where(r => r.Id == id)
+                                                                             .Select(r => new ResolutionDto
                                                                               {
                                                                                   Id        = r.Id,
                                                                                   Width     = r.Width,
@@ -66,32 +66,32 @@ public class ResolutionsService(MarechaiContext context)
                                                                               })
                                                                              .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(ResolutionViewModel viewModel, string userId)
+    public async Task UpdateAsync(ResolutionDto dto, string userId)
     {
-        Resolution model = await context.Resolutions.FindAsync(viewModel.Id);
+        Resolution model = await context.Resolutions.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Chars     = viewModel.Chars;
-        model.Colors    = viewModel.Colors;
-        model.Grayscale = viewModel.Grayscale;
-        model.Height    = viewModel.Height;
-        model.Palette   = viewModel.Palette;
-        model.Width     = viewModel.Width;
+        model.Chars     = dto.Chars;
+        model.Colors    = dto.Colors;
+        model.Grayscale = dto.Grayscale;
+        model.Height    = dto.Height;
+        model.Palette   = dto.Palette;
+        model.Width     = dto.Width;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(ResolutionViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(ResolutionDto dto, string userId)
     {
         var model = new Resolution
         {
-            Chars     = viewModel.Chars,
-            Colors    = viewModel.Colors,
-            Grayscale = viewModel.Grayscale,
-            Height    = viewModel.Height,
-            Palette   = viewModel.Palette,
-            Width     = viewModel.Width
+            Chars     = dto.Chars,
+            Colors    = dto.Colors,
+            Grayscale = dto.Grayscale,
+            Height    = dto.Height,
+            Palette   = dto.Palette,
+            Width     = dto.Width
         };
 
         await context.Resolutions.AddAsync(model);

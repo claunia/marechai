@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class PeopleByBookService(MarechaiContext context)
 {
-    public async Task<List<PersonByBookViewModel>> GetByBook(long bookId) => (await context.PeopleByBooks
+    public async Task<List<PersonByBookDto>> GetByBook(long bookId) => (await context.PeopleByBooks
                                                                                            .Where(p => p.BookId == bookId)
-                                                                                           .Select(p => new PersonByBookViewModel
+                                                                                           .Select(p => new PersonByBookDto
                                                                                             {
                                                                                                 Id      = p.Id,
                                                                                                 Name    = p.Person.Name,

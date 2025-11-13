@@ -35,9 +35,9 @@ namespace Marechai.Services;
 
 public class StorageByMachineService(MarechaiContext context)
 {
-    public async Task<List<StorageByMachineViewModel>> GetByMachine(int machineId) => await context.StorageByMachine
+    public async Task<List<StorageByMachineDto>> GetByMachine(int machineId) => await context.StorageByMachine
                                                                                                    .Where(s => s.MachineId == machineId)
-                                                                                                   .Select(s => new StorageByMachineViewModel
+                                                                                                   .Select(s => new StorageByMachineDto
                                                                                                     {
                                                                                                         Id        = s.Id,
                                                                                                         Type      = s.Type,

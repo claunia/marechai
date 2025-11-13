@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class MachineViewModel : BaseViewModel<int>
+public class MachineDto : BaseDto<int>
 {
     public string                    Name              { get; set; }
     public string                    Model             { get; set; }
@@ -36,11 +36,11 @@ public class MachineViewModel : BaseViewModel<int>
     public DateTime?                 Introduced        { get; set; }
     public int?                      FamilyId          { get; set; }
     public string                    FamilyName        { get; set; }
-    public List<GpuViewModel>        Gpus              { get; set; }
-    public List<MemoryViewModel>     Memory            { get; set; }
-    public List<ProcessorViewModel>  Processors        { get; set; }
-    public List<SoundSynthViewModel> SoundSynthesizers { get; set; }
-    public List<StorageViewModel>    Storage           { get; set; }
+    public List<GpuDto>        Gpus              { get; set; }
+    public List<MemoryDto>     Memory            { get; set; }
+    public List<ProcessorDto>  Processors        { get; set; }
+    public List<SoundSynthDto> SoundSynthesizers { get; set; }
+    public List<StorageDto>    Storage           { get; set; }
     public string                    Company           { get; set; }
     public MachineType               Type              { get; set; }
     public string                    Family            { get; set; }

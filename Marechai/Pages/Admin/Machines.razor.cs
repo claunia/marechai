@@ -37,8 +37,8 @@ public partial class Machines
     bool                   _deleteInProgress;
     Modal                  _frmDelete;
     bool                   _loaded;
-    MachineViewModel       _machine;
-    List<MachineViewModel> _machines;
+    MachineDto       _machine;
+    List<MachineDto> _machines;
 
     void ShowModal(int itemId)
     {

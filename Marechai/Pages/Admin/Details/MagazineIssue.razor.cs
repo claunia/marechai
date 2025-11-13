@@ -88,9 +88,9 @@ public partial class MagazineIssue
     bool?                                  _convertWebpHd;
     bool?                                  _convertWebpHdTh;
     bool                                   _creating;
-    MagazineByMachineViewModel             _currentMagazineByMachine;
-    MagazineByMachineFamilyViewModel       _currentMagazineByMachineFamily;
-    PersonByMagazineViewModel              _currentPersonByMagazine;
+    MagazineByMachineDto             _currentMagazineByMachine;
+    MagazineByMachineFamilyDto       _currentMagazineByMachineFamily;
+    PersonByMagazineDto              _currentPersonByMagazine;
     bool                                   _deleteInProgress;
     string                                 _deleteText;
     string                                 _deleteTitle;
@@ -105,23 +105,23 @@ public partial class MagazineIssue
     string                                 _imageFormat;
     ElementReference                       _inputUpload;
     bool                                   _loaded;
-    List<MachineFamilyViewModel>           _machineFamilies;
-    List<MachineViewModel>                 _machines;
-    List<MagazineByMachineFamilyViewModel> _magazineMachineFamilies;
-    List<MagazineByMachineViewModel>       _magazineMachines;
-    List<PersonByMagazineViewModel>        _magazinePeople;
-    List<MagazineViewModel>                _magazines;
-    MagazineIssueViewModel                 _model;
+    List<MachineFamilyDto>           _machineFamilies;
+    List<MachineDto>                 _machines;
+    List<MagazineByMachineFamilyDto> _magazineMachineFamilies;
+    List<MagazineByMachineDto>       _magazineMachines;
+    List<PersonByMagazineDto>        _magazinePeople;
+    List<MagazineDto>                _magazines;
+    MagazineIssueDto                 _model;
     bool?                                  _moveFile;
-    List<DocumentPersonViewModel>          _people;
+    List<DocumentPersonDto>          _people;
     double                                 _progressValue;
-    List<DocumentRoleViewModel>            _roles;
+    List<DocumentRoleDto>            _roles;
     bool                                   _savingMachine;
     bool                                   _savingMachineFamily;
     bool                                   _savingPerson;
     List<Guid>                             _scans;
     ApplicationUser                        _scanUser;
-    MagazineScanViewModel                  _selectedScan;
+    MagazineScanDto                  _selectedScan;
     bool                                   _unknownIssueNumber;
     bool                                   _unknownNativeCaption;
     bool                                   _unknownPages;
@@ -198,7 +198,7 @@ public partial class MagazineIssue
         _machineFamilies         = await MachineFamiliesService.GetAsync();
         _machines                = await MachinesService.GetAsync();
         _roles                   = await DocumentRolesService.GetEnabledAsync();
-        _model                   = _creating ? new MagazineIssueViewModel() : await Service.GetAsync(Id);
+        _model                   = _creating ? new MagazineIssueDto() : await Service.GetAsync(Id);
         _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _addingMachineFamilyId   = _machineFamilies.First().Id;
         _magazineMachineFamilies = await MagazinesByMachineFamilyService.GetByMagazine(Id);
@@ -807,7 +807,7 @@ public partial class MagazineIssue
         _imageFormat = pieces[0];
         _uploaded    = true;
 
-        _selectedScan = new MagazineScanViewModel
+        _selectedScan = new MagazineScanDto
         {
             UserId            = (await UserManager.GetUserAsync(_authState.User)).Id,
             MagazineId        = Id,

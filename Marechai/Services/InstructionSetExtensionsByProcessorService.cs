@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class InstructionSetExtensionsByProcessorService(MarechaiContext context)
 {
-    public async Task<List<InstructionSetExtensionByProcessorViewModel>> GetByProcessor(int processorId) =>
+    public async Task<List<InstructionSetExtensionByProcessorDto>> GetByProcessor(int processorId) =>
         await context.InstructionSetExtensionsByProcessor.Where(e => e.ProcessorId == processorId)
-                      .Select(e => new InstructionSetExtensionByProcessorViewModel
+                      .Select(e => new InstructionSetExtensionByProcessorDto
                        {
                            Id          = e.Id,
                            Extension   = e.Extension.Extension,

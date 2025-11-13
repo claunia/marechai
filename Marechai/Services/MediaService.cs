@@ -34,8 +34,8 @@ namespace Marechai.Services;
 
 public class MediaService(MarechaiContext context)
 {
-    public async Task<List<MediaViewModel>> GetAsync() => await context.Media.OrderBy(d => d.Title)
-                                                                       .Select(d => new MediaViewModel
+    public async Task<List<MediaDto>> GetAsync() => await context.Media.OrderBy(d => d.Title)
+                                                                       .Select(d => new MediaDto
                                                                         {
                                                                             Id                = d.Id,
                                                                             Title             = d.Title,
@@ -66,16 +66,16 @@ public class MediaService(MarechaiContext context)
                                                                         })
                                                                        .ToListAsync();
 
-    public async Task<List<MediaViewModel>> GetTitlesAsync() => await context.Media.OrderBy(d => d.Title)
-                                                                              .Select(d => new MediaViewModel
+    public async Task<List<MediaDto>> GetTitlesAsync() => await context.Media.OrderBy(d => d.Title)
+                                                                              .Select(d => new MediaDto
                                                                                {
                                                                                    Id    = d.Id,
                                                                                    Title = d.Title
                                                                                })
                                                                               .ToListAsync();
 
-    public async Task<MediaViewModel> GetAsync(ulong id) => await context.Media.Where(d => d.Id == id)
-                                                                          .Select(d => new MediaViewModel
+    public async Task<MediaDto> GetAsync(ulong id) => await context.Media.Where(d => d.Id == id)
+                                                                          .Select(d => new MediaDto
                                                                            {
                                                                                Id                = d.Id,
                                                                                Title             = d.Title,
@@ -106,69 +106,69 @@ public class MediaService(MarechaiContext context)
                                                                            })
                                                                           .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(MediaViewModel viewModel, string userId)
+    public async Task UpdateAsync(MediaDto dto, string userId)
     {
-        Media model = await context.Media.FindAsync(viewModel.Id);
+        Media model = await context.Media.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Title             = viewModel.Title;
-        model.Sequence          = viewModel.Sequence;
-        model.LastSequence      = viewModel.LastSequence;
-        model.Type              = viewModel.Type;
-        model.WriteOffset       = viewModel.WriteOffset;
-        model.Sides             = viewModel.Sides;
-        model.Layers            = viewModel.Layers;
-        model.Sessions          = viewModel.Sessions;
-        model.Tracks            = viewModel.Tracks;
-        model.Sectors           = viewModel.Sectors;
-        model.Size              = viewModel.Size;
-        model.CopyProtection    = viewModel.CopyProtection;
-        model.PartNumber        = viewModel.PartNumber;
-        model.SerialNumber      = viewModel.SerialNumber;
-        model.Barcode           = viewModel.Barcode;
-        model.CatalogueNumber   = viewModel.CatalogueNumber;
-        model.Manufacturer      = viewModel.Manufacturer;
-        model.Model             = viewModel.Model;
-        model.Revision          = viewModel.Revision;
-        model.Firmware          = viewModel.Firmware;
-        model.PhysicalBlockSize = viewModel.PhysicalBlockSize;
-        model.LogicalBlockSize  = viewModel.LogicalBlockSize;
-        model.BlockSizes        = viewModel.BlockSizes;
-        model.StorageInterface  = viewModel.StorageInterface;
-        model.TableOfContents   = viewModel.TableOfContents;
+        model.Title             = dto.Title;
+        model.Sequence          = dto.Sequence;
+        model.LastSequence      = dto.LastSequence;
+        model.Type              = dto.Type;
+        model.WriteOffset       = dto.WriteOffset;
+        model.Sides             = dto.Sides;
+        model.Layers            = dto.Layers;
+        model.Sessions          = dto.Sessions;
+        model.Tracks            = dto.Tracks;
+        model.Sectors           = dto.Sectors;
+        model.Size              = dto.Size;
+        model.CopyProtection    = dto.CopyProtection;
+        model.PartNumber        = dto.PartNumber;
+        model.SerialNumber      = dto.SerialNumber;
+        model.Barcode           = dto.Barcode;
+        model.CatalogueNumber   = dto.CatalogueNumber;
+        model.Manufacturer      = dto.Manufacturer;
+        model.Model             = dto.Model;
+        model.Revision          = dto.Revision;
+        model.Firmware          = dto.Firmware;
+        model.PhysicalBlockSize = dto.PhysicalBlockSize;
+        model.LogicalBlockSize  = dto.LogicalBlockSize;
+        model.BlockSizes        = dto.BlockSizes;
+        model.StorageInterface  = dto.StorageInterface;
+        model.TableOfContents   = dto.TableOfContents;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<ulong> CreateAsync(MediaViewModel viewModel, string userId)
+    public async Task<ulong> CreateAsync(MediaDto dto, string userId)
     {
         var model = new Media
         {
-            Title             = viewModel.Title,
-            Sequence          = viewModel.Sequence,
-            LastSequence      = viewModel.LastSequence,
-            Type              = viewModel.Type,
-            WriteOffset       = viewModel.WriteOffset,
-            Sides             = viewModel.Sides,
-            Layers            = viewModel.Layers,
-            Sessions          = viewModel.Sessions,
-            Tracks            = viewModel.Tracks,
-            Sectors           = viewModel.Sectors,
-            Size              = viewModel.Size,
-            CopyProtection    = viewModel.CopyProtection,
-            PartNumber        = viewModel.PartNumber,
-            SerialNumber      = viewModel.SerialNumber,
-            Barcode           = viewModel.Barcode,
-            CatalogueNumber   = viewModel.CatalogueNumber,
-            Manufacturer      = viewModel.Manufacturer,
-            Model             = viewModel.Model,
-            Revision          = viewModel.Revision,
-            Firmware          = viewModel.Firmware,
-            PhysicalBlockSize = viewModel.PhysicalBlockSize,
-            LogicalBlockSize  = viewModel.LogicalBlockSize,
-            BlockSizes        = viewModel.BlockSizes,
-            StorageInterface  = viewModel.StorageInterface,
-            TableOfContents   = viewModel.TableOfContents
+            Title             = dto.Title,
+            Sequence          = dto.Sequence,
+            LastSequence      = dto.LastSequence,
+            Type              = dto.Type,
+            WriteOffset       = dto.WriteOffset,
+            Sides             = dto.Sides,
+            Layers            = dto.Layers,
+            Sessions          = dto.Sessions,
+            Tracks            = dto.Tracks,
+            Sectors           = dto.Sectors,
+            Size              = dto.Size,
+            CopyProtection    = dto.CopyProtection,
+            PartNumber        = dto.PartNumber,
+            SerialNumber      = dto.SerialNumber,
+            Barcode           = dto.Barcode,
+            CatalogueNumber   = dto.CatalogueNumber,
+            Manufacturer      = dto.Manufacturer,
+            Model             = dto.Model,
+            Revision          = dto.Revision,
+            Firmware          = dto.Firmware,
+            PhysicalBlockSize = dto.PhysicalBlockSize,
+            LogicalBlockSize  = dto.LogicalBlockSize,
+            BlockSizes        = dto.BlockSizes,
+            StorageInterface  = dto.StorageInterface,
+            TableOfContents   = dto.TableOfContents
         };
 
         await context.Media.AddAsync(model);

@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class BooksByMachineService(MarechaiContext context)
 {
-    public async Task<List<BookByMachineViewModel>> GetByBook(long bookId) => await context.BooksByMachines
+    public async Task<List<BookByMachineDto>> GetByBook(long bookId) => await context.BooksByMachines
                                                                                            .Where(p => p.BookId == bookId)
-                                                                                           .Select(p => new BookByMachineViewModel
+                                                                                           .Select(p => new BookByMachineDto
                                                                                             {
                                                                                                 Id        = p.Id,
                                                                                                 BookId    = p.BookId,

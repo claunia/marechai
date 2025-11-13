@@ -42,8 +42,8 @@ public partial class Dump
     bool                  _creating;
     bool                  _editing;
     bool                  _loaded;
-    List<MediaViewModel>  _medias;
-    DumpViewModel         _model;
+    List<MediaDto>  _medias;
+    DumpDto         _model;
     bool                  _unknownDumpDate;
     bool                  _unknownDumpingGroup;
     bool                  _unknownUser;
@@ -65,7 +65,7 @@ public partial class Dump
         if(Id <= 0 && !_creating) return;
 
         _medias    = await MediaService.GetTitlesAsync();
-        _model     = _creating ? new DumpViewModel() : await Service.GetAsync(Id);
+        _model     = _creating ? new DumpDto() : await Service.GetAsync(Id);
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _users = UserManager.Users.Select(u => new ApplicationUser

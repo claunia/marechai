@@ -61,7 +61,7 @@
     <Field>
         <FieldLabel>@L["Magazine"]</FieldLabel>
         <Select @bind-SelectedValue="@_model.MagazineId" Disabled="!_editing" @TValue="long">
-            @foreach(MagazineViewModel magazine in _magazines)
+            @foreach(MagazineDto magazine in _magazines)
             {
                 <SelectItem @TValue="long" Value="@magazine.Id">@magazine.Title</SelectItem>
             }
@@ -206,7 +206,7 @@
             <Field>
                 <FieldLabel>@L["Person"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingPersonId" Disabled="_savingPerson" @TValue="int?">
-                    @foreach(DocumentPersonViewModel person in _people)
+                    @foreach(DocumentPersonDto person in _people)
                     {
                         <SelectItem @TValue="int?" Value="@person.Id">@person.FullName</SelectItem>
                     }
@@ -215,7 +215,7 @@
             <Field>
                 <FieldLabel>@L["Role"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingPersonRoleId" Disabled="!_editing" @TValue="string">
-                    @foreach(DocumentRoleViewModel role in _roles)
+                    @foreach(DocumentRoleDto role in _roles)
                     {
                         <SelectItem @TValue="string" Value="@role.Id">@role.Name</SelectItem>
                     }
@@ -242,7 +242,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(PersonByMagazineViewModel item in _magazinePeople)
+                @foreach(PersonByMagazineDto item in _magazinePeople)
                 {
                     <tr>
                         <td>
@@ -274,7 +274,7 @@
             <Field>
                 <FieldLabel>@L["Family"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingMachineFamilyId" Disabled="_savingMachineFamily" @TValue="int?">
-                    @foreach(MachineFamilyViewModel family in _machineFamilies)
+                    @foreach(MachineFamilyDto family in _machineFamilies)
                     {
                         <SelectItem @TValue="int?" Value="@family.Id">@family.Name</SelectItem>
                     }
@@ -300,7 +300,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(MagazineByMachineFamilyViewModel item in _magazineMachineFamilies)
+                @foreach(MagazineByMachineFamilyDto item in _magazineMachineFamilies)
                 {
                     <tr>
                         <td>
@@ -328,7 +328,7 @@
             <Field>
                 <FieldLabel>@L[""]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingMachineId" Disabled="_savingMachine" @TValue="int?">
-                    @foreach(MachineViewModel machine in _machines)
+                    @foreach(MachineDto machine in _machines)
                     {
                         <SelectItem @TValue="int?" Value="@machine.Id">@machine.Name</SelectItem>
                     }
@@ -352,7 +352,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(MagazineByMachineViewModel item in _magazineMachines)
+                @foreach(MagazineByMachineDto item in _magazineMachines)
                 {
                     <tr>
                         <td>

@@ -34,10 +34,10 @@ namespace Marechai.Services;
 
 public class SoundSynthsService(MarechaiContext context)
 {
-    public async Task<List<SoundSynthViewModel>> GetAsync() => await context.SoundSynths.OrderBy(s => s.Company.Name)
+    public async Task<List<SoundSynthDto>> GetAsync() => await context.SoundSynths.OrderBy(s => s.Company.Name)
                                                                             .ThenBy(s => s.Name)
                                                                             .ThenBy(s => s.ModelCode)
-                                                                            .Select(s => new SoundSynthViewModel
+                                                                            .Select(s => new SoundSynthDto
                                                                              {
                                                                                  Id          = s.Id,
                                                                                  Name        = s.Name,
@@ -54,13 +54,13 @@ public class SoundSynthsService(MarechaiContext context)
                                                                              })
                                                                             .ToListAsync();
 
-    public async Task<List<SoundSynthViewModel>> GetByMachineAsync(int machineId) => await context.SoundByMachine
+    public async Task<List<SoundSynthDto>> GetByMachineAsync(int machineId) => await context.SoundByMachine
        .Where(s => s.MachineId == machineId)
        .Select(s => s.SoundSynth)
        .OrderBy(s => s.Company.Name)
        .ThenBy(s => s.Name)
        .ThenBy(s => s.ModelCode)
-       .Select(s => new SoundSynthViewModel
+       .Select(s => new SoundSynthDto
         {
             Id          = s.Id,
             Name        = s.Name,
@@ -77,8 +77,8 @@ public class SoundSynthsService(MarechaiContext context)
         })
        .ToListAsync();
 
-    public async Task<SoundSynthViewModel> GetAsync(int id) => await context.SoundSynths.Where(s => s.Id == id)
-                                                                             .Select(s => new SoundSynthViewModel
+    public async Task<SoundSynthDto> GetAsync(int id) => await context.SoundSynths.Where(s => s.Id == id)
+                                                                             .Select(s => new SoundSynthDto
                                                                               {
                                                                                   Id          = s.Id,
                                                                                   Name        = s.Name,
@@ -95,40 +95,40 @@ public class SoundSynthsService(MarechaiContext context)
                                                                               })
                                                                              .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(SoundSynthViewModel viewModel, string userId)
+    public async Task UpdateAsync(SoundSynthDto dto, string userId)
     {
-        SoundSynth model = await context.SoundSynths.FindAsync(viewModel.Id);
+        SoundSynth model = await context.SoundSynths.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Depth      = viewModel.Depth;
-        model.Frequency  = viewModel.Frequency;
-        model.Introduced = viewModel.Introduced;
-        model.Name       = viewModel.Name;
-        model.Type       = viewModel.Type;
-        model.Voices     = viewModel.Voices;
-        model.CompanyId  = viewModel.CompanyId;
-        model.ModelCode  = viewModel.ModelCode;
-        model.SquareWave = viewModel.SquareWave;
-        model.WhiteNoise = viewModel.WhiteNoise;
+        model.Depth      = dto.Depth;
+        model.Frequency  = dto.Frequency;
+        model.Introduced = dto.Introduced;
+        model.Name       = dto.Name;
+        model.Type       = dto.Type;
+        model.Voices     = dto.Voices;
+        model.CompanyId  = dto.CompanyId;
+        model.ModelCode  = dto.ModelCode;
+        model.SquareWave = dto.SquareWave;
+        model.WhiteNoise = dto.WhiteNoise;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(SoundSynthViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(SoundSynthDto dto, string userId)
     {
         var model = new SoundSynth
         {
-            Depth      = viewModel.Depth,
-            Frequency  = viewModel.Frequency,
-            Introduced = viewModel.Introduced,
-            Name       = viewModel.Name,
-            Type       = viewModel.Type,
-            Voices     = viewModel.Voices,
-            CompanyId  = viewModel.CompanyId,
-            ModelCode  = viewModel.ModelCode,
-            SquareWave = viewModel.SquareWave,
-            WhiteNoise = viewModel.WhiteNoise
+            Depth      = dto.Depth,
+            Frequency  = dto.Frequency,
+            Introduced = dto.Introduced,
+            Name       = dto.Name,
+            Type       = dto.Type,
+            Voices     = dto.Voices,
+            CompanyId  = dto.CompanyId,
+            ModelCode  = dto.ModelCode,
+            SquareWave = dto.SquareWave,
+            WhiteNoise = dto.WhiteNoise
         };
 
         await context.SoundSynths.AddAsync(model);

@@ -34,10 +34,10 @@ namespace Marechai.Services;
 
 public class CurrencyInflationService(MarechaiContext context)
 {
-    public async Task<List<CurrencyInflationViewModel>> GetAsync() => await context.CurrenciesInflation
+    public async Task<List<CurrencyInflationDto>> GetAsync() => await context.CurrenciesInflation
                                                                                    .OrderBy(i => i.Currency.Name)
                                                                                    .ThenBy(i => i.Year)
-                                                                                   .Select(i => new CurrencyInflationViewModel
+                                                                                   .Select(i => new CurrencyInflationDto
                                                                                     {
                                                                                         Id           = i.Id,
                                                                                         CurrencyCode = i.Currency.Code,
@@ -47,9 +47,9 @@ public class CurrencyInflationService(MarechaiContext context)
                                                                                     })
                                                                                    .ToListAsync();
 
-    public async Task<CurrencyInflationViewModel> GetAsync(int id) => await context.CurrenciesInflation
+    public async Task<CurrencyInflationDto> GetAsync(int id) => await context.CurrenciesInflation
                                                                          .Where(b => b.Id == id)
-                                                                         .Select(i => new CurrencyInflationViewModel
+                                                                         .Select(i => new CurrencyInflationDto
                                                                           {
                                                                               Id           = i.Id,
                                                                               CurrencyCode = i.Currency.Code,
@@ -59,25 +59,25 @@ public class CurrencyInflationService(MarechaiContext context)
                                                                           })
                                                                          .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(CurrencyInflationViewModel viewModel, string userId)
+    public async Task UpdateAsync(CurrencyInflationDto dto, string userId)
     {
-        CurrencyInflation model = await context.CurrenciesInflation.FindAsync(viewModel.Id);
+        CurrencyInflation model = await context.CurrenciesInflation.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.CurrencyCode = viewModel.CurrencyCode;
-        model.Year         = viewModel.Year;
-        model.Inflation    = viewModel.Inflation;
+        model.CurrencyCode = dto.CurrencyCode;
+        model.Year         = dto.Year;
+        model.Inflation    = dto.Inflation;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(CurrencyInflationViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(CurrencyInflationDto dto, string userId)
     {
         var model = new CurrencyInflation
         {
-            CurrencyCode = viewModel.CurrencyCode,
-            Year         = viewModel.Year,
-            Inflation    = viewModel.Inflation
+            CurrencyCode = dto.CurrencyCode,
+            Year         = dto.Year,
+            Inflation    = dto.Inflation
         };
 
         await context.CurrenciesInflation.AddAsync(model);

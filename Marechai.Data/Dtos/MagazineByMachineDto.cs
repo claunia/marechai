@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class MagazineByMachineViewModel : BaseViewModel<long>
+public class MagazineByMachineDto : BaseDto<long>
 {
     public long   MagazineId { get; set; }
     public string Magazine   { get; set; }

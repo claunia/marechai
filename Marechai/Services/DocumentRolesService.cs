@@ -34,8 +34,8 @@ namespace Marechai.Services;
 
 public class DocumentRolesService(MarechaiContext context)
 {
-    public async Task<List<DocumentRoleViewModel>> GetAsync() => await context.DocumentRoles.OrderBy(c => c.Name)
-                                                                              .Select(c => new DocumentRoleViewModel
+    public async Task<List<DocumentRoleDto>> GetAsync() => await context.DocumentRoles.OrderBy(c => c.Name)
+                                                                              .Select(c => new DocumentRoleDto
                                                                                {
                                                                                    Id      = c.Id,
                                                                                    Name    = c.Name,
@@ -43,10 +43,10 @@ public class DocumentRolesService(MarechaiContext context)
                                                                                })
                                                                               .ToListAsync();
 
-    public async Task<List<DocumentRoleViewModel>> GetEnabledAsync() => await context.DocumentRoles
+    public async Task<List<DocumentRoleDto>> GetEnabledAsync() => await context.DocumentRoles
                                                                            .Where(c => c.Enabled)
                                                                            .OrderBy(c => c.Name)
-                                                                           .Select(c => new DocumentRoleViewModel
+                                                                           .Select(c => new DocumentRoleDto
                                                                             {
                                                                                 Id      = c.Id,
                                                                                 Name    = c.Name,
@@ -54,8 +54,8 @@ public class DocumentRolesService(MarechaiContext context)
                                                                             })
                                                                            .ToListAsync();
 
-    public async Task<DocumentRoleViewModel> GetAsync(string id) => await context.DocumentRoles.Where(c => c.Id == id)
-                                                                       .Select(c => new DocumentRoleViewModel
+    public async Task<DocumentRoleDto> GetAsync(string id) => await context.DocumentRoles.Where(c => c.Id == id)
+                                                                       .Select(c => new DocumentRoleDto
                                                                         {
                                                                             Id      = c.Id,
                                                                             Name    = c.Name,

@@ -37,8 +37,8 @@ public partial class Resolutions
     bool                      _deleteInProgress;
     Modal                     _frmDelete;
     bool                      _loaded;
-    ResolutionViewModel       _resolution;
-    List<ResolutionViewModel> _resolutions;
+    ResolutionDto       _resolution;
+    List<ResolutionDto> _resolutions;
 
     void ShowModal(int itemId)
     {

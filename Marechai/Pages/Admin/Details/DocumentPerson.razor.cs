@@ -40,9 +40,9 @@ public partial class DocumentPerson
     bool                    _creating;
     bool                    _editing;
     bool                    _loaded;
-    DocumentPersonViewModel _model;
+    DocumentPersonDto _model;
     bool                    _noLinkedPerson;
-    List<PersonViewModel>   _people;
+    List<PersonDto>   _people;
     bool                    _unknownAlias;
     bool                    _unknownDisplayName;
     bool                    _unknownName;
@@ -64,7 +64,7 @@ public partial class DocumentPerson
         if(Id <= 0 && !_creating) return;
 
         _people    = await PeopleService.GetAsync();
-        _model     = _creating ? new DocumentPersonViewModel() : await Service.GetAsync(Id);
+        _model     = _creating ? new DocumentPersonDto() : await Service.GetAsync(Id);
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _editing = _creating ||

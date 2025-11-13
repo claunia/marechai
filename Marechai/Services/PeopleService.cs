@@ -34,11 +34,11 @@ namespace Marechai.Services;
 
 public class PeopleService(MarechaiContext context)
 {
-    public async Task<List<PersonViewModel>> GetAsync() => await context.People.OrderBy(p => p.DisplayName)
+    public async Task<List<PersonDto>> GetAsync() => await context.People.OrderBy(p => p.DisplayName)
                                                                         .ThenBy(p => p.Alias)
                                                                         .ThenBy(p => p.Name)
                                                                         .ThenBy(p => p.Surname)
-                                                                        .Select(p => new PersonViewModel
+                                                                        .Select(p => new PersonDto
                                                                          {
                                                                              Id             = p.Id,
                                                                              Name           = p.Name,
@@ -55,8 +55,8 @@ public class PeopleService(MarechaiContext context)
                                                                          })
                                                                         .ToListAsync();
 
-    public async Task<PersonViewModel> GetAsync(int id) => await context.People.Where(p => p.Id == id)
-                                                                         .Select(p => new PersonViewModel
+    public async Task<PersonDto> GetAsync(int id) => await context.People.Where(p => p.Id == id)
+                                                                         .Select(p => new PersonDto
                                                                           {
                                                                               Id               = p.Id,
                                                                               Name             = p.Name,
@@ -73,42 +73,42 @@ public class PeopleService(MarechaiContext context)
                                                                           })
                                                                          .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(PersonViewModel viewModel, string userId)
+    public async Task UpdateAsync(PersonDto dto, string userId)
     {
-        Person model = await context.People.FindAsync(viewModel.Id);
+        Person model = await context.People.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Name             = viewModel.Name;
-        model.Surname          = viewModel.Surname;
-        model.CountryOfBirthId = viewModel.CountryOfBirthId;
-        model.BirthDate        = viewModel.BirthDate;
-        model.DeathDate        = viewModel.DeathDate;
-        model.Webpage          = viewModel.Webpage;
-        model.Twitter          = viewModel.Twitter;
-        model.Facebook         = viewModel.Facebook;
-        model.Photo            = viewModel.Photo;
-        model.Alias            = viewModel.Alias;
-        model.DisplayName      = viewModel.DisplayName;
+        model.Name             = dto.Name;
+        model.Surname          = dto.Surname;
+        model.CountryOfBirthId = dto.CountryOfBirthId;
+        model.BirthDate        = dto.BirthDate;
+        model.DeathDate        = dto.DeathDate;
+        model.Webpage          = dto.Webpage;
+        model.Twitter          = dto.Twitter;
+        model.Facebook         = dto.Facebook;
+        model.Photo            = dto.Photo;
+        model.Alias            = dto.Alias;
+        model.DisplayName      = dto.DisplayName;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(PersonViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(PersonDto dto, string userId)
     {
         var model = new Person
         {
-            Name             = viewModel.Name,
-            Surname          = viewModel.Surname,
-            CountryOfBirthId = viewModel.CountryOfBirthId,
-            BirthDate        = viewModel.BirthDate,
-            DeathDate        = viewModel.DeathDate,
-            Webpage          = viewModel.Webpage,
-            Twitter          = viewModel.Twitter,
-            Facebook         = viewModel.Facebook,
-            Photo            = viewModel.Photo,
-            Alias            = viewModel.Alias,
-            DisplayName      = viewModel.DisplayName
+            Name             = dto.Name,
+            Surname          = dto.Surname,
+            CountryOfBirthId = dto.CountryOfBirthId,
+            BirthDate        = dto.BirthDate,
+            DeathDate        = dto.DeathDate,
+            Webpage          = dto.Webpage,
+            Twitter          = dto.Twitter,
+            Facebook         = dto.Facebook,
+            Photo            = dto.Photo,
+            Alias            = dto.Alias,
+            DisplayName      = dto.DisplayName
         };
 
         await context.People.AddAsync(model);

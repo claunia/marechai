@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class CompanyDescriptionViewModel : BaseViewModel<int>
+public class CompanyDescriptionDto : BaseDto<int>
 {
     public string Markdown  { get; set; }
     public string Html      { get; set; }

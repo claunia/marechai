@@ -34,11 +34,11 @@ namespace Marechai.Pages.Admin;
 
 public partial class News
 {
-    NewsViewModel       _currentNews;
+    NewsDto       _currentNews;
     bool                _deleteInProgress;
     Modal               _frmDelete;
     bool                _loaded;
-    List<NewsViewModel> _news;
+    List<NewsDto> _news;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

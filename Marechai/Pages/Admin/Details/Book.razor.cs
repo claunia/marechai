@@ -60,11 +60,11 @@ public partial class Book
     bool?                              _addToDatabase;
     bool                               _allFinished;
     AuthenticationState                _authState;
-    List<CompanyByBookViewModel>       _bookCompanies;
-    List<BookByMachineFamilyViewModel> _bookMachineFamilies;
-    List<BookByMachineViewModel>       _bookMachines;
-    List<PersonByBookViewModel>        _bookPeople;
-    List<DocumentCompanyViewModel>     _companies;
+    List<CompanyByBookDto>       _bookCompanies;
+    List<BookByMachineFamilyDto> _bookMachineFamilies;
+    List<BookByMachineDto>       _bookMachines;
+    List<PersonByBookDto>        _bookPeople;
+    List<DocumentCompanyDto>     _companies;
     bool?                              _convertAvif1440;
     bool?                              _convertAvif1440Th;
     bool?                              _convertAvif4K;
@@ -97,10 +97,10 @@ public partial class Book
     bool?                              _convertWebpHdTh;
     List<Iso31661Numeric>              _countries;
     bool                               _creating;
-    BookByMachineViewModel             _currentBookByMachine;
-    BookByMachineFamilyViewModel       _currentBookByMachineFamily;
-    CompanyByBookViewModel             _currentCompanyByBook;
-    PersonByBookViewModel              _currentPersonByBook;
+    BookByMachineDto             _currentBookByMachine;
+    BookByMachineFamilyDto       _currentBookByMachineFamily;
+    CompanyByBookDto             _currentCompanyByBook;
+    PersonByBookDto              _currentPersonByBook;
     bool                               _deleteInProgress;
     string                             _deleteText;
     string                             _deleteTitle;
@@ -116,20 +116,20 @@ public partial class Book
     string                             _imageFormat;
     ElementReference                   _inputUpload;
     bool                               _loaded;
-    List<MachineFamilyViewModel>       _machineFamilies;
-    List<MachineViewModel>             _machines;
-    BookViewModel                      _model;
+    List<MachineFamilyDto>       _machineFamilies;
+    List<MachineDto>             _machines;
+    BookDto                      _model;
     bool?                              _moveFile;
-    List<DocumentPersonViewModel>      _people;
+    List<DocumentPersonDto>      _people;
     double                             _progressValue;
-    List<DocumentRoleViewModel>        _roles;
+    List<DocumentRoleDto>        _roles;
     bool                               _savingCompany;
     bool                               _savingMachine;
     bool                               _savingMachineFamily;
     bool                               _savingPerson;
     List<Guid>                         _scans;
     ApplicationUser                    _scanUser;
-    BookScanViewModel                  _selectedScan;
+    BookScanDto                  _selectedScan;
     bool                               _unknownCountry;
     bool                               _unknownEdition;
     bool                               _unknownIsbn;
@@ -208,7 +208,7 @@ public partial class Book
         _roles                 = await DocumentRolesService.GetEnabledAsync();
         _machineFamilies       = await MachineFamiliesService.GetAsync();
         _machines              = await MachinesService.GetAsync();
-        _model                 = _creating ? new BookViewModel() : await Service.GetAsync(Id);
+        _model                 = _creating ? new BookDto() : await Service.GetAsync(Id);
         _authState             = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _addingCompanyRoleId   = _roles.First().Id;
         _bookCompanies         = await CompaniesByBookService.GetByBook(Id);
@@ -939,7 +939,7 @@ public partial class Book
         _imageFormat = pieces[0];
         _uploaded    = true;
 
-        _selectedScan = new BookScanViewModel
+        _selectedScan = new BookScanDto
         {
             UserId            = (await UserManager.GetUserAsync(_authState.User)).Id,
             BookId            = Id,

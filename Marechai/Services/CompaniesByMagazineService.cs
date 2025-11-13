@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class CompaniesByMagazineService(MarechaiContext context)
 {
-    public async Task<List<CompanyByMagazineViewModel>> GetByMagazine(long magazineId) => await context
+    public async Task<List<CompanyByMagazineDto>> GetByMagazine(long magazineId) => await context
                                                                                                .CompaniesByMagazines.Where(p => p.MagazineId == magazineId)
-                                                                                               .Select(p => new CompanyByMagazineViewModel
+                                                                                               .Select(p => new CompanyByMagazineDto
                                                                                                 {
                                                                                                     Id         = p.Id,
                                                                                                     Company    = p.Company.Name,

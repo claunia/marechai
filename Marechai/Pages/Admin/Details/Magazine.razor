@@ -168,7 +168,7 @@
             <Field>
                 <FieldLabel>@L["Company"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyId" Disabled="_savingCompany" @TValue="int?">
-                    @foreach(DocumentCompanyViewModel company in _companies)
+                    @foreach(DocumentCompanyDto company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
                     }
@@ -177,7 +177,7 @@
             <Field>
                 <FieldLabel>@L["Role"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyRoleId" Disabled="!_editing" @TValue="string">
-                    @foreach(DocumentRoleViewModel role in _roles)
+                    @foreach(DocumentRoleDto role in _roles)
                     {
                         <SelectItem @TValue="string" Value="@role.Id">@role.Name</SelectItem>
                     }
@@ -204,7 +204,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(CompanyByMagazineViewModel item in _magazineCompanies)
+                @foreach(CompanyByMagazineDto item in _magazineCompanies)
                 {
                     <tr>
                         <td>

@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class SoundSynthByMachineViewModel : BaseViewModel<long>
+public class SoundSynthByMachineDto : BaseDto<long>
 {
     public int    SoundSynthId { get; set; }
     public int    MachineId    { get; set; }

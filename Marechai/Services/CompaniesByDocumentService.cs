@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class CompaniesByDocumentService(MarechaiContext context)
 {
-    public async Task<List<CompanyByDocumentViewModel>> GetByDocument(long documentId) => await context
+    public async Task<List<CompanyByDocumentDto>> GetByDocument(long documentId) => await context
                                                                                                .CompaniesByDocuments.Where(p => p.DocumentId == documentId)
-                                                                                               .Select(p => new CompanyByDocumentViewModel
+                                                                                               .Select(p => new CompanyByDocumentDto
                                                                                                 {
                                                                                                     Id         = p.Id,
                                                                                                     Company    = p.Company.Name,

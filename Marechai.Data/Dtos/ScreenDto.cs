@@ -25,13 +25,13 @@
 
 namespace Marechai.Data.Dtos;
 
-public class ScreenViewModel : BaseViewModel<int>
+public class ScreenDto : BaseDto<int>
 {
     public double?             Width              { get; set; }
     public double?             Height             { get; set; }
     public double              Diagonal           { get; set; }
     public int                 NativeResolutionId { get; set; }
-    public ResolutionViewModel NativeResolution   { get; set; }
+    public ResolutionDto NativeResolution   { get; set; }
     public long?               EffectiveColors    { get; set; }
     public string              Type               { get; set; }
 

@@ -83,8 +83,8 @@ public partial class CreateMachinePhoto
     int                           _licenseId;
     List<Database.Models.License> _licenses;
     bool                          _loaded;
-    MachineViewModel              _machine;
-    MachinePhotoViewModel         _model;
+    MachineDto              _machine;
+    MachinePhotoDto         _model;
     bool?                         _moveFile;
     double                        _progressValue;
     string                        _sourceUrl;
@@ -310,7 +310,7 @@ public partial class CreateMachinePhoto
         _imageFormat = pieces[0];
         _uploaded    = true;
 
-        _model = new MachinePhotoViewModel
+        _model = new MachinePhotoDto
         {
             UserId            = (await UserManager.GetUserAsync(_authState.User)).Id,
             MachineId         = MachineId,

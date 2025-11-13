@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class GpuByMachineViewModel : BaseViewModel<long>
+public class GpuByMachineDto : BaseDto<long>
 {
     public int    GpuId       { get; set; }
     public int    MachineId   { get; set; }

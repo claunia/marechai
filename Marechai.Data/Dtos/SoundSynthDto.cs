@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class SoundSynthViewModel : BaseViewModel<int>
+public class SoundSynthDto : BaseDto<int>
 {
     public string    Name        { get; set; }
     public string    CompanyName { get; set; }

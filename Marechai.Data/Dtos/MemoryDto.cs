@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class MemoryViewModel
+public class MemoryDto
 {
     public MemoryType  Type  { get; set; }
     public MemoryUsage Usage { get; set; }

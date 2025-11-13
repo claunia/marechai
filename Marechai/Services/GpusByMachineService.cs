@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class GpusByMachineService(MarechaiContext context)
 {
-    public async Task<List<GpuByMachineViewModel>> GetByMachine(int machineId) => await context.GpusByMachine
+    public async Task<List<GpuByMachineDto>> GetByMachine(int machineId) => await context.GpusByMachine
                                                                                                .Where(g => g.MachineId == machineId)
-                                                                                               .Select(g => new GpuByMachineViewModel
+                                                                                               .Select(g => new GpuByMachineDto
                                                                                                 {
                                                                                                     Id          = g.Id,
                                                                                                     Name        = g.Gpu.Name,

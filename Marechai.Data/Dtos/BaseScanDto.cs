@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class BaseScanViewModel : BaseViewModel<Guid>
+public class BaseScanDto : BaseDto<Guid>
 {
     public string          Author               { get; set; }
     public ColorSpace?     ColorSpace           { get; set; }

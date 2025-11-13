@@ -34,11 +34,11 @@ namespace Marechai.Services;
 
 public class SoftwareVersionsService(MarechaiContext context)
 {
-    public async Task<List<SoftwareVersionViewModel>> GetAsync() => await context.SoftwareVersions
+    public async Task<List<SoftwareVersionDto>> GetAsync() => await context.SoftwareVersions
                                                                                  .OrderBy(b => b.Family.Name)
                                                                                  .ThenBy(b => b.Version)
                                                                                  .ThenBy(b => b.Introduced)
-                                                                                 .Select(b => new SoftwareVersionViewModel
+                                                                                 .Select(b => new SoftwareVersionDto
                                                                                   {
                                                                                       Id         = b.Id,
                                                                                       Family     = b.Family.Name,
@@ -54,9 +54,9 @@ public class SoftwareVersionsService(MarechaiContext context)
                                                                                   })
                                                                                  .ToListAsync();
 
-    public async Task<SoftwareVersionViewModel> GetAsync(ulong id) => await context.SoftwareVersions
+    public async Task<SoftwareVersionDto> GetAsync(ulong id) => await context.SoftwareVersions
                                                                          .Where(b => b.Id == id)
-                                                                         .Select(b => new SoftwareVersionViewModel
+                                                                         .Select(b => new SoftwareVersionDto
                                                                           {
                                                                               Id         = b.Id,
                                                                               Family     = b.Family.Name,
@@ -72,33 +72,33 @@ public class SoftwareVersionsService(MarechaiContext context)
                                                                           })
                                                                          .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(SoftwareVersionViewModel viewModel, string userId)
+    public async Task UpdateAsync(SoftwareVersionDto dto, string userId)
     {
-        SoftwareVersion model = await context.SoftwareVersions.FindAsync(viewModel.Id);
+        SoftwareVersion model = await context.SoftwareVersions.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Name       = viewModel.Name;
-        model.Codename   = viewModel.Codename;
-        model.Version    = viewModel.Version;
-        model.Introduced = viewModel.Introduced;
-        model.FamilyId   = viewModel.FamilyId;
-        model.LicenseId  = viewModel.LicenseId;
-        model.PreviousId = viewModel.PreviousId;
+        model.Name       = dto.Name;
+        model.Codename   = dto.Codename;
+        model.Version    = dto.Version;
+        model.Introduced = dto.Introduced;
+        model.FamilyId   = dto.FamilyId;
+        model.LicenseId  = dto.LicenseId;
+        model.PreviousId = dto.PreviousId;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<ulong> CreateAsync(SoftwareVersionViewModel viewModel, string userId)
+    public async Task<ulong> CreateAsync(SoftwareVersionDto dto, string userId)
     {
         var model = new SoftwareVersion
         {
-            Name       = viewModel.Name,
-            Codename   = viewModel.Codename,
-            Version    = viewModel.Version,
-            Introduced = viewModel.Introduced,
-            FamilyId   = viewModel.FamilyId,
-            LicenseId  = viewModel.LicenseId,
-            PreviousId = viewModel.PreviousId
+            Name       = dto.Name,
+            Codename   = dto.Codename,
+            Version    = dto.Version,
+            Introduced = dto.Introduced,
+            FamilyId   = dto.FamilyId,
+            LicenseId  = dto.LicenseId,
+            PreviousId = dto.PreviousId
         };
 
         await context.SoftwareVersions.AddAsync(model);

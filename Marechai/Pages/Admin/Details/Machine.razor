@@ -62,7 +62,7 @@
     <Field>
         <FieldLabel>@L["Company"]</FieldLabel>
         <Select @bind-SelectedValue="@_model.CompanyId" Disabled="!_editing" @TValue="int">
-            @foreach(CompanyViewModel company in _companies)
+            @foreach(CompanyDto company in _companies)
             {
                 <SelectItem @TValue="int" Value="@company.Id">@company.Name</SelectItem>
             }
@@ -141,7 +141,7 @@
             @if(!_editing || !_noFamily)
             {
                 <Select @bind-SelectedValue="@_model.FamilyId" Disabled="!_editing" @TValue="int?">
-                    @foreach(MachineFamilyViewModel family in _families)
+                    @foreach(MachineFamilyDto family in _families)
                     {
                         <SelectItem @TValue="int?" Value="@family.Id">@family.Name</SelectItem>
                     }
@@ -176,7 +176,7 @@
             <Field>
                 <FieldLabel>@L["Graphical processing units"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingGpuId" Disabled="_savingGpu" @TValue="int?">
-                    @foreach(GpuViewModel gpu in _gpus)
+                    @foreach(GpuDto gpu in _gpus)
                     {
                         <SelectItem @TValue="int?" Value="@gpu.Id">@gpu.Company - @gpu.Name</SelectItem>
                     }
@@ -203,7 +203,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(GpuByMachineViewModel item in _machineGpus)
+                @foreach(GpuByMachineDto item in _machineGpus)
                 {
                     <tr>
                         <td>
@@ -235,7 +235,7 @@
             <Field>
                 <FieldLabel>@L["Sound synthesizers"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingSoundId" Disabled="_savingSound" @TValue="int?">
-                    @foreach(SoundSynthViewModel soundSynth in _soundSynths)
+                    @foreach(SoundSynthDto soundSynth in _soundSynths)
                     {
                         <SelectItem @TValue="int?"
                                     Value="@soundSynth.Id">@soundSynth.CompanyName - @soundSynth.Name</SelectItem>
@@ -263,7 +263,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(SoundSynthByMachineViewModel item in _machineSound)
+                @foreach(SoundSynthByMachineDto item in _machineSound)
                 {
                     <tr>
                         <td>
@@ -295,7 +295,7 @@
             <Field>
                 <FieldLabel>@L["Processors"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCpuId" Disabled="_savingCpu" @TValue="int?">
-                    @foreach(ProcessorViewModel cpu in _cpus)
+                    @foreach(ProcessorDto cpu in _cpus)
                     {
                         <SelectItem @TValue="int?" Value="@cpu.Id">@cpu.CompanyName - @cpu.Name</SelectItem>
                     }
@@ -340,7 +340,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(ProcessorByMachineViewModel item in _machineCpus)
+                @foreach(ProcessorByMachineDto item in _machineCpus)
                 {
                     <tr>
                         <td>
@@ -446,7 +446,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(MemoryByMachineViewModel item in _machineMemories)
+                @foreach(MemoryByMachineDto item in _machineMemories)
                 {
                     <tr>
                         <td>
@@ -552,7 +552,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(StorageByMachineViewModel item in _machineStorage)
+                @foreach(StorageByMachineDto item in _machineStorage)
                 {
                     <tr>
                         <td>
@@ -594,7 +594,7 @@
             <Field>
                 <FieldLabel>@L["Screens"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingScreenId" Disabled="_savingScreen" @TValue="int?">
-                    @foreach(ScreenViewModel screen in _screens)
+                    @foreach(ScreenDto screen in _screens)
                     {
                         if(_machineScreens.All(s => s.ScreenId != screen.Id))
                         {
@@ -637,7 +637,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(ScreenByMachineViewModel item in _machineScreens)
+                @foreach(ScreenByMachineDto item in _machineScreens)
                 {
                     <tr>
                         <td>

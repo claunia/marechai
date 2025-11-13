@@ -25,9 +25,9 @@
 
 namespace Marechai.Data.Dtos;
 
-public class ScreenByMachineViewModel : BaseViewModel<long>
+public class ScreenByMachineDto : BaseDto<long>
 {
     public int             MachineId { get; set; }
-    public ScreenViewModel Screen    { get; set; }
+    public ScreenDto Screen    { get; set; }
     public int             ScreenId  { get; set; }
 }

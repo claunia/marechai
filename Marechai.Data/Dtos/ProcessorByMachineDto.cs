@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class ProcessorByMachineViewModel : BaseViewModel<long>
+public class ProcessorByMachineDto : BaseDto<long>
 {
     public int    ProcessorId { get; set; }
     public int    MachineId   { get; set; }

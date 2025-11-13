@@ -60,7 +60,7 @@
             @if(!_editing || !_unknownCompany)
             {
                 <Select @bind-SelectedValue="@_model.CompanyId" Disabled="!_editing" @TValue="int?">
-                    @foreach(CompanyViewModel company in _companies)
+                    @foreach(CompanyDto company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
                     }
@@ -608,7 +608,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(InstructionSetExtensionByProcessorViewModel item in _processorExtensions)
+                @foreach(InstructionSetExtensionByProcessorDto item in _processorExtensions)
                 {
                     <tr>
                         <td>

@@ -39,7 +39,7 @@ public partial class Resolution
     bool                _creating;
     bool                _editing;
     bool                _loaded;
-    ResolutionViewModel _model;
+    ResolutionDto _model;
     bool                _unknownColors;
     bool                _unknownPalette;
     [Parameter]
@@ -57,7 +57,7 @@ public partial class Resolution
 
         if(Id <= 0 && !_creating) return;
 
-        _model     = _creating ? new ResolutionViewModel() : await Service.GetAsync(Id);
+        _model     = _creating ? new ResolutionDto() : await Service.GetAsync(Id);
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _editing = _creating ||

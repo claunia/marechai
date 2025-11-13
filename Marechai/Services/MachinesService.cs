@@ -46,10 +46,10 @@ public class MachinesService
 {
     readonly IStringLocalizer<MachinesService> _l                  = localizer;
 
-    public async Task<List<MachineViewModel>> GetAsync() => await context.Machines.OrderBy(m => m.Company.Name)
+    public async Task<List<MachineDto>> GetAsync() => await context.Machines.OrderBy(m => m.Company.Name)
                                                                          .ThenBy(m => m.Name)
                                                                          .ThenBy(m => m.Family.Name)
-                                                                         .Select(m => new MachineViewModel
+                                                                         .Select(m => new MachineDto
                                                                           {
                                                                               Id         = m.Id,
                                                                               Company    = m.Company.Name,
@@ -61,8 +61,8 @@ public class MachinesService
                                                                           })
                                                                          .ToListAsync();
 
-    public async Task<MachineViewModel> GetAsync(int id) => await context.Machines.Where(m => m.Id == id)
-                                                                          .Select(m => new MachineViewModel
+    public async Task<MachineDto> GetAsync(int id) => await context.Machines.Where(m => m.Id == id)
+                                                                          .Select(m => new MachineDto
                                                                            {
                                                                                Id         = m.Id,
                                                                                Company    = m.Company.Name,
@@ -75,18 +75,18 @@ public class MachinesService
                                                                            })
                                                                           .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(MachineViewModel viewModel, string userId)
+    public async Task UpdateAsync(MachineDto dto, string userId)
     {
-        Machine model = await context.Machines.FindAsync(viewModel.Id);
+        Machine model = await context.Machines.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.CompanyId  = viewModel.CompanyId;
-        model.Name       = viewModel.Name;
-        model.Model      = viewModel.Model;
-        model.Introduced = viewModel.Introduced;
-        model.Type       = viewModel.Type;
-        model.FamilyId   = viewModel.FamilyId;
+        model.CompanyId  = dto.CompanyId;
+        model.Name       = dto.Name;
+        model.Model      = dto.Model;
+        model.Introduced = dto.Introduced;
+        model.Type       = dto.Type;
+        model.FamilyId   = dto.FamilyId;
 
         var news = new News
         {
@@ -115,16 +115,16 @@ public class MachinesService
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(MachineViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(MachineDto dto, string userId)
     {
         var model = new Machine
         {
-            CompanyId  = viewModel.CompanyId,
-            Name       = viewModel.Name,
-            Model      = viewModel.Model,
-            Introduced = viewModel.Introduced,
-            Type       = viewModel.Type,
-            FamilyId   = viewModel.FamilyId
+            CompanyId  = dto.CompanyId,
+            Name       = dto.Name,
+            Model      = dto.Model,
+            Introduced = dto.Introduced,
+            Type       = dto.Type,
+            FamilyId   = dto.FamilyId
         };
 
         await context.Machines.AddAsync(model);
@@ -161,13 +161,13 @@ public class MachinesService
         return model.Id;
     }
 
-    public async Task<MachineViewModel> GetMachine(int id)
+    public async Task<MachineDto> GetMachine(int id)
     {
         Machine machine = await context.Machines.FindAsync(id);
 
         if(machine is null) return null;
 
-        var model = new MachineViewModel
+        var model = new MachineDto
         {
             Introduced = machine.Introduced,
             Name       = machine.Name,
@@ -203,7 +203,7 @@ public class MachinesService
         model.Gpus = await gpusService.GetByMachineAsync(machine.Id);
 
         model.Memory = await context.MemoryByMachine.Where(m => m.MachineId == machine.Id)
-                                     .Select(m => new MemoryViewModel
+                                     .Select(m => new MemoryDto
                                       {
                                           Type  = m.Type,
                                           Usage = m.Usage,
@@ -217,7 +217,7 @@ public class MachinesService
         model.SoundSynthesizers = await soundSynthsService.GetByMachineAsync(machine.Id);
 
         model.Storage = await context.StorageByMachine.Where(s => s.MachineId == machine.Id)
-                                      .Select(s => new StorageViewModel
+                                      .Select(s => new StorageDto
                                        {
                                            Type      = s.Type,
                                            Interface = s.Interface,

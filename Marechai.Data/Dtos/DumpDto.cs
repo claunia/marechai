@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class DumpViewModel : BaseViewModel<ulong>
+public class DumpDto : BaseDto<ulong>
 {
     public string    Dumper       { get; set; }
     public string    UserId       { get; set; }

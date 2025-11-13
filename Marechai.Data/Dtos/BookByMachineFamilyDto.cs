@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class BookByMachineFamilyViewModel : BaseViewModel<long>
+public class BookByMachineFamilyDto : BaseDto<long>
 {
     public long   BookId          { get; set; }
     public string Book            { get; set; }

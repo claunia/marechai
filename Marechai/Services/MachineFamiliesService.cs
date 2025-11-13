@@ -34,10 +34,10 @@ namespace Marechai.Services;
 
 public class MachineFamiliesService(MarechaiContext context)
 {
-    public async Task<List<MachineFamilyViewModel>> GetAsync() => await context.MachineFamilies
+    public async Task<List<MachineFamilyDto>> GetAsync() => await context.MachineFamilies
                                                                                .OrderBy(m => m.Company.Name)
                                                                                .ThenBy(m => m.Name)
-                                                                               .Select(m => new MachineFamilyViewModel
+                                                                               .Select(m => new MachineFamilyDto
                                                                                 {
                                                                                     Id      = m.Id,
                                                                                     Company = m.Company.Name,
@@ -46,8 +46,8 @@ public class MachineFamiliesService(MarechaiContext context)
                                                                                .OrderBy(m => m.Name)
                                                                                .ToListAsync();
 
-    public async Task<MachineFamilyViewModel> GetAsync(int id) => await context.MachineFamilies.Where(f => f.Id == id)
-                                                                     .Select(m => new MachineFamilyViewModel
+    public async Task<MachineFamilyDto> GetAsync(int id) => await context.MachineFamilies.Where(f => f.Id == id)
+                                                                     .Select(m => new MachineFamilyDto
                                                                       {
                                                                           Id        = m.Id,
                                                                           CompanyId = m.CompanyId,
@@ -55,24 +55,24 @@ public class MachineFamiliesService(MarechaiContext context)
                                                                       })
                                                                      .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(MachineFamilyViewModel viewModel, string userId)
+    public async Task UpdateAsync(MachineFamilyDto dto, string userId)
     {
-        MachineFamily model = await context.MachineFamilies.FindAsync(viewModel.Id);
+        MachineFamily model = await context.MachineFamilies.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Name      = viewModel.Name;
-        model.CompanyId = viewModel.CompanyId;
+        model.Name      = dto.Name;
+        model.CompanyId = dto.CompanyId;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<int> CreateAsync(MachineFamilyViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(MachineFamilyDto dto, string userId)
     {
         var model = new MachineFamily
         {
-            Name      = viewModel.Name,
-            CompanyId = viewModel.CompanyId
+            Name      = dto.Name,
+            CompanyId = dto.CompanyId
         };
 
         await context.MachineFamilies.AddAsync(model);

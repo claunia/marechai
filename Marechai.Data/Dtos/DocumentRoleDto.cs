@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class DocumentRoleViewModel : BaseViewModel<string>
+public class DocumentRoleDto : BaseDto<string>
 {
     public string Name    { get; set; }
     public bool   Enabled { get; set; }

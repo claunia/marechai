@@ -31,7 +31,7 @@ namespace Marechai.Pages.Home;
 public partial class Index
 {
     bool                _loaded;
-    List<NewsViewModel> _news;
+    List<NewsDto> _news;
 
     protected override void OnAfterRender(bool firstRender)
     {

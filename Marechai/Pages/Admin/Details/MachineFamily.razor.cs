@@ -37,11 +37,11 @@ namespace Marechai.Pages.Admin.Details;
 public partial class MachineFamily
 {
     AuthenticationState    _authState;
-    List<CompanyViewModel> _companies;
+    List<CompanyDto> _companies;
     bool                   _creating;
     bool                   _editing;
     bool                   _loaded;
-    MachineFamilyViewModel _model;
+    MachineFamilyDto _model;
     [Parameter]
     public int Id { get; set; }
 
@@ -58,7 +58,7 @@ public partial class MachineFamily
         if(Id <= 0 && !_creating) return;
 
         _companies = await CompaniesService.GetAsync();
-        _model     = _creating ? new MachineFamilyViewModel() : await Service.GetAsync(Id);
+        _model     = _creating ? new MachineFamilyDto() : await Service.GetAsync(Id);
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _editing = _creating ||

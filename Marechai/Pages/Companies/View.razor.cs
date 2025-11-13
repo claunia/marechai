@@ -36,7 +36,7 @@ namespace Marechai.Pages.Companies;
 
 public partial class View
 {
-    CompanyViewModel  _company;
+    CompanyDto  _company;
     List<Machine>     _computers;
     List<Machine>     _consoles;
     string            _description;

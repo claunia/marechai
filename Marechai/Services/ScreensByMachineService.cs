@@ -34,20 +34,20 @@ namespace Marechai.Services;
 
 public class ScreensByMachineService(MarechaiContext context)
 {
-    public async Task<List<ScreenByMachineViewModel>> GetByMachine(int machineId) => await context.ScreensByMachine
+    public async Task<List<ScreenByMachineDto>> GetByMachine(int machineId) => await context.ScreensByMachine
                                                                                                   .Where(s => s.MachineId == machineId)
-                                                                                                  .Select(s => new ScreenByMachineViewModel
+                                                                                                  .Select(s => new ScreenByMachineDto
                                                                                                    {
                                                                                                        Id        = s.Id,
                                                                                                        ScreenId  = s.ScreenId,
                                                                                                        MachineId = s.MachineId,
-                                                                                                       Screen = new ScreenViewModel
+                                                                                                       Screen = new ScreenDto
                                                                                                        {
                                                                                                            Diagonal        = s.Screen.Diagonal,
                                                                                                            EffectiveColors = s.Screen.EffectiveColors,
                                                                                                            Height          = s.Screen.Height,
                                                                                                            Id              = s.Screen.Id,
-                                                                                                           NativeResolution = new ResolutionViewModel
+                                                                                                           NativeResolution = new ResolutionDto
                                                                                                            {
                                                                                                                Chars     = s.Screen.NativeResolution.Chars,
                                                                                                                Colors    = s.Screen.NativeResolution.Colors,

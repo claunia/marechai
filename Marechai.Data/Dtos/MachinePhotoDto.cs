@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class MachinePhotoViewModel : BasePhotoViewModel
+public class MachinePhotoDto : BasePhotoDto
 {
     public string Source             { get; set; }
     public string MachineName        { get; set; }

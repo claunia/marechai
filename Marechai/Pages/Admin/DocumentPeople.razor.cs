@@ -37,8 +37,8 @@ public partial class DocumentPeople
     bool                          _deleteInProgress;
     Modal                         _frmDelete;
     bool                          _loaded;
-    List<DocumentPersonViewModel> _people;
-    DocumentPersonViewModel       _person;
+    List<DocumentPersonDto> _people;
+    DocumentPersonDto       _person;
 
     void ShowModal(int itemId)
     {

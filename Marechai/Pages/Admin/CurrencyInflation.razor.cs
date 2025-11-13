@@ -34,10 +34,10 @@ namespace Marechai.Pages.Admin;
 
 public partial class CurrencyInflation
 {
-    CurrencyInflationViewModel       _currentInflation;
+    CurrencyInflationDto       _currentInflation;
     bool                             _deleteInProgress;
     Modal                            _frmDelete;
-    List<CurrencyInflationViewModel> _inflations;
+    List<CurrencyInflationDto> _inflations;
     bool                             _loaded;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

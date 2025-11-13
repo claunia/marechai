@@ -37,11 +37,11 @@ namespace Marechai.Pages.Admin.Details;
 public partial class SoundSynth
 {
     AuthenticationState    _authState;
-    List<CompanyViewModel> _companies;
+    List<CompanyDto> _companies;
     bool                   _creating;
     bool                   _editing;
     bool                   _loaded;
-    SoundSynthViewModel    _model;
+    SoundSynthDto    _model;
     bool                   _prototype;
     bool                   _unknownCompany;
     bool                   _unknownIntroduced;
@@ -68,7 +68,7 @@ public partial class SoundSynth
         if(Id <= 0 && !_creating) return;
 
         _companies = await CompaniesService.GetAsync();
-        _model     = _creating ? new SoundSynthViewModel() : await Service.GetAsync(Id);
+        _model     = _creating ? new SoundSynthDto() : await Service.GetAsync(Id);
         _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _editing = _creating ||

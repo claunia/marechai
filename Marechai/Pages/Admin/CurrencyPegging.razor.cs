@@ -34,11 +34,11 @@ namespace Marechai.Pages.Admin;
 
 public partial class CurrencyPegging
 {
-    CurrencyPeggingViewModel       _currentPegging;
+    CurrencyPeggingDto       _currentPegging;
     bool                           _deleteInProgress;
     Modal                          _frmDelete;
     bool                           _loaded;
-    List<CurrencyPeggingViewModel> _peggings;
+    List<CurrencyPeggingDto> _peggings;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

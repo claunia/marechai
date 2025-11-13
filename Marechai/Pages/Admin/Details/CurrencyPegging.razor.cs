@@ -41,7 +41,7 @@ public partial class CurrencyPegging
     List<Iso4217>            _currencies;
     bool                     _editing;
     bool                     _loaded;
-    CurrencyPeggingViewModel _model;
+    CurrencyPeggingDto _model;
     bool                     _unknownEnd;
 
     [Parameter]
@@ -60,7 +60,7 @@ public partial class CurrencyPegging
         if(Id <= 0 && !_creating) return;
 
         _currencies = await CurrenciesService.GetAsync();
-        _model      = _creating ? new CurrencyPeggingViewModel() : await Service.GetAsync(Id);
+        _model      = _creating ? new CurrencyPeggingDto() : await Service.GetAsync(Id);
         _authState  = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _editing = _creating ||

@@ -41,17 +41,17 @@ public partial class Screen
     int?                              _addingResolutionId;
     AuthenticationState               _authState;
     bool                              _creating;
-    ResolutionByScreenViewModel       _currentResolution;
+    ResolutionByScreenDto       _currentResolution;
     bool                              _deleteInProgress;
     string                            _deleteText;
     string                            _deleteTitle;
     bool                              _editing;
     Modal                             _frmDelete;
     bool                              _loaded;
-    ScreenViewModel                   _model;
-    List<ResolutionViewModel>         _resolutions;
+    ScreenDto                   _model;
+    List<ResolutionDto>         _resolutions;
     bool                              _savingResolution;
-    List<ResolutionByScreenViewModel> _screenResolutions;
+    List<ResolutionByScreenDto> _screenResolutions;
     bool                              _unknownColors;
     bool                              _unknownHeight;
     bool                              _unknownType;
@@ -72,7 +72,7 @@ public partial class Screen
         if(Id <= 0 && !_creating) return;
 
         _resolutions       = await ResolutionsService.GetAsync();
-        _model             = _creating ? new ScreenViewModel() : await Service.GetAsync(Id);
+        _model             = _creating ? new ScreenDto() : await Service.GetAsync(Id);
         _screenResolutions = await ResolutionsByScreenService.GetByScreen(Id);
         _authState         = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 

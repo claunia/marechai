@@ -141,7 +141,7 @@
     <Field>
         <FieldLabel>@L["Native resolution"]</FieldLabel>
         <Select @bind-SelectedValue="@_model.NativeResolutionId" Disabled="!_editing" @TValue="int">
-            @foreach(ResolutionViewModel resolution in _resolutions)
+            @foreach(ResolutionDto resolution in _resolutions)
             {
                 <SelectItem @TValue="int" Value="@resolution.Id">@resolution.ToString()</SelectItem>
             }
@@ -175,7 +175,7 @@
             <Field>
                 <FieldLabel>@L["Resolutions"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingResolutionId" Disabled="_savingResolution" @TValue="int?">
-                    @foreach(ResolutionViewModel resolution in _resolutions)
+                    @foreach(ResolutionDto resolution in _resolutions)
                     {
                         @if(resolution.Id != _model.NativeResolutionId && _screenResolutions.All(r => r.ResolutionId != resolution.Id))
                         {
@@ -219,7 +219,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(ResolutionByScreenViewModel item in _screenResolutions)
+                @foreach(ResolutionByScreenDto item in _screenResolutions)
                 {
                     <tr>
                         <td>

@@ -33,7 +33,7 @@ namespace Marechai.Pages.Consoles;
 public partial class Search
 {
     char?                  _character;
-    List<MachineViewModel> _consoles;
+    List<MachineDto> _consoles;
     bool                   _loaded;
     string                 _startingCharacter;
     int?                   _year;

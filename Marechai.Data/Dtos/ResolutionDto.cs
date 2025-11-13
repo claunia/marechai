@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class ResolutionViewModel : BaseViewModel<int>
+public class ResolutionDto : BaseDto<int>
 {
     public int   Width     { get; set; }
     public int   Height    { get; set; }

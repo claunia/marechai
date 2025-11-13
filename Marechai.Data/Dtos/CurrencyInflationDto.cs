@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class CurrencyInflationViewModel : BaseViewModel<int>
+public class CurrencyInflationDto : BaseDto<int>
 {
     public string CurrencyCode { get; set; }
     public string CurrencyName { get; set; }

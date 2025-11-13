@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class StorageByMachineViewModel : BaseViewModel<long>
+public class StorageByMachineDto : BaseDto<long>
 {
     public int              MachineId { get; set; }
     public StorageType      Type      { get; set; }

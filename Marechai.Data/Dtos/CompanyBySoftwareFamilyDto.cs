@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class CompanyBySoftwareFamilyViewModel : BaseViewModel<ulong>
+public class CompanyBySoftwareFamilyDto : BaseDto<ulong>
 {
     public int    CompanyId        { get; set; }
     public ulong  SoftwareFamilyId { get; set; }

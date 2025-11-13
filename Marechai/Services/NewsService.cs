@@ -36,8 +36,8 @@ namespace Marechai.Services;
 
 public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> localizer)
 {
-    public async Task<List<NewsViewModel>> GetAsync() => await context.News.OrderByDescending(n => n.Date)
-                                                                      .Select(n => new NewsViewModel
+    public async Task<List<NewsDto>> GetAsync() => await context.News.OrderByDescending(n => n.Date)
+                                                                      .Select(n => new NewsDto
                                                                        {
                                                                            Id         = n.Id,
                                                                            Timestamp  = n.Date,
@@ -46,9 +46,9 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                                                        })
                                                                       .ToListAsync();
 
-    public List<NewsViewModel> GetNews()
+    public List<NewsDto> GetNews()
     {
-        List<NewsViewModel> news = new();
+        List<NewsDto> news = new();
 
         foreach(News @new in context.News.OrderByDescending(t => t.Date).Take(10).ToList())
         {
@@ -59,7 +59,7 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
             switch(@new.Type)
             {
                 case NewsType.NewComputerInDb:
-                    news.Add(new NewsViewModel(@new.AddedId,
+                    news.Add(new NewsDto(@new.AddedId,
                                                localizer["New computer in database"],
                                                @new.Date,
                                                "machine",
@@ -67,7 +67,7 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
 
                     break;
                 case NewsType.NewConsoleInDb:
-                    news.Add(new NewsViewModel(@new.AddedId,
+                    news.Add(new NewsDto(@new.AddedId,
                                                localizer["New console in database"],
                                                @new.Date,
                                                "machine",
@@ -76,7 +76,7 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                     break;
 
                 case NewsType.NewComputerInCollection:
-                    news.Add(new NewsViewModel(@new.AddedId,
+                    news.Add(new NewsDto(@new.AddedId,
                                                localizer["New computer in collection"],
                                                @new.Date,
                                                "machine",
@@ -85,7 +85,7 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                     break;
 
                 case NewsType.NewConsoleInCollection:
-                    news.Add(new NewsViewModel(@new.AddedId,
+                    news.Add(new NewsDto(@new.AddedId,
                                                localizer["New console in collection"],
                                                @new.Date,
                                                "machine",
@@ -94,7 +94,7 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                     break;
 
                 case NewsType.UpdatedComputerInDb:
-                    news.Add(new NewsViewModel(@new.AddedId,
+                    news.Add(new NewsDto(@new.AddedId,
                                                localizer["Updated computer in database"],
                                                @new.Date,
                                                "machine",
@@ -103,7 +103,7 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                     break;
 
                 case NewsType.UpdatedConsoleInDb:
-                    news.Add(new NewsViewModel(@new.AddedId,
+                    news.Add(new NewsDto(@new.AddedId,
                                                localizer["Updated console in database"],
                                                @new.Date,
                                                "machine",
@@ -112,7 +112,7 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                     break;
 
                 case NewsType.UpdatedComputerInCollection:
-                    news.Add(new NewsViewModel(@new.AddedId,
+                    news.Add(new NewsDto(@new.AddedId,
                                                localizer["Updated computer in collection"],
                                                @new.Date,
                                                "machine",
@@ -121,7 +121,7 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                     break;
 
                 case NewsType.UpdatedConsoleInCollection:
-                    news.Add(new NewsViewModel(@new.AddedId,
+                    news.Add(new NewsDto(@new.AddedId,
                                                localizer["Updated console in collection"],
                                                @new.Date,
                                                "machine",

@@ -1,3 +1,3 @@
 namespace Marechai.Data.Dtos;
 
-public class DocumentViewModel : DocumentBaseViewModel {}
+public class DocumentDto : DocumentBaseDto {}

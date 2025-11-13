@@ -34,13 +34,13 @@ namespace Marechai.Services;
 
 public class SoftwareVariantsService(MarechaiContext context)
 {
-    public async Task<List<SoftwareVariantViewModel>> GetAsync() => await context.SoftwareVariants
+    public async Task<List<SoftwareVariantDto>> GetAsync() => await context.SoftwareVariants
                                                                                  .OrderBy(b => b.SoftwareVersion.Family.Name)
                                                                                  .ThenBy(b => b.SoftwareVersion.Version)
                                                                                  .ThenBy(b => b.Name)
                                                                                  .ThenBy(b => b.Version)
                                                                                  .ThenBy(b => b.Introduced)
-                                                                                 .Select(b => new SoftwareVariantViewModel
+                                                                                 .Select(b => new SoftwareVariantDto
                                                                                   {
                                                                                       Id = b.Id,
                                                                                       Name = b.Name,
@@ -63,9 +63,9 @@ public class SoftwareVariantsService(MarechaiContext context)
                                                                                   })
                                                                                  .ToListAsync();
 
-    public async Task<SoftwareVariantViewModel> GetAsync(ulong id) => await context.SoftwareVariants
+    public async Task<SoftwareVariantDto> GetAsync(ulong id) => await context.SoftwareVariants
                                                                          .Where(b => b.Id == id)
-                                                                         .Select(b => new SoftwareVariantViewModel
+                                                                         .Select(b => new SoftwareVariantDto
                                                                           {
                                                                               Id         = b.Id,
                                                                               Name       = b.Name,
@@ -89,46 +89,46 @@ public class SoftwareVariantsService(MarechaiContext context)
                                                                           })
                                                                          .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(SoftwareVariantViewModel viewModel, string userId)
+    public async Task UpdateAsync(SoftwareVariantDto dto, string userId)
     {
-        SoftwareVariant model = await context.SoftwareVariants.FindAsync(viewModel.Id);
+        SoftwareVariant model = await context.SoftwareVariants.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Name              = viewModel.Name;
-        model.Version           = viewModel.Version;
-        model.Introduced        = viewModel.Introduced;
-        model.ParentId          = viewModel.ParentId;
-        model.SoftwareVersionId = viewModel.SoftwareVersionId;
-        model.MinimumMemory     = viewModel.MinimumMemory;
-        model.RecommendedMemory = viewModel.RecommendedMemory;
-        model.RequiredStorage   = viewModel.RequiredStorage;
-        model.PartNumber        = viewModel.PartNumber;
-        model.SerialNumber      = viewModel.SerialNumber;
-        model.ProductCode       = viewModel.ProductCode;
-        model.CatalogueNumber   = viewModel.CatalogueNumber;
-        model.DistributionMode  = viewModel.DistributionMode;
+        model.Name              = dto.Name;
+        model.Version           = dto.Version;
+        model.Introduced        = dto.Introduced;
+        model.ParentId          = dto.ParentId;
+        model.SoftwareVersionId = dto.SoftwareVersionId;
+        model.MinimumMemory     = dto.MinimumMemory;
+        model.RecommendedMemory = dto.RecommendedMemory;
+        model.RequiredStorage   = dto.RequiredStorage;
+        model.PartNumber        = dto.PartNumber;
+        model.SerialNumber      = dto.SerialNumber;
+        model.ProductCode       = dto.ProductCode;
+        model.CatalogueNumber   = dto.CatalogueNumber;
+        model.DistributionMode  = dto.DistributionMode;
 
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<ulong> CreateAsync(SoftwareVariantViewModel viewModel, string userId)
+    public async Task<ulong> CreateAsync(SoftwareVariantDto dto, string userId)
     {
         var model = new SoftwareVariant
         {
-            Name              = viewModel.Name,
-            Version           = viewModel.Version,
-            Introduced        = viewModel.Introduced,
-            ParentId          = viewModel.ParentId,
-            SoftwareVersionId = viewModel.SoftwareVersionId,
-            MinimumMemory     = viewModel.MinimumMemory,
-            RecommendedMemory = viewModel.RecommendedMemory,
-            RequiredStorage   = viewModel.RequiredStorage,
-            PartNumber        = viewModel.PartNumber,
-            SerialNumber      = viewModel.SerialNumber,
-            ProductCode       = viewModel.ProductCode,
-            CatalogueNumber   = viewModel.CatalogueNumber,
-            DistributionMode  = viewModel.DistributionMode
+            Name              = dto.Name,
+            Version           = dto.Version,
+            Introduced        = dto.Introduced,
+            ParentId          = dto.ParentId,
+            SoftwareVersionId = dto.SoftwareVersionId,
+            MinimumMemory     = dto.MinimumMemory,
+            RecommendedMemory = dto.RecommendedMemory,
+            RequiredStorage   = dto.RequiredStorage,
+            PartNumber        = dto.PartNumber,
+            SerialNumber      = dto.SerialNumber,
+            ProductCode       = dto.ProductCode,
+            CatalogueNumber   = dto.CatalogueNumber,
+            DistributionMode  = dto.DistributionMode
         };
 
         await context.SoftwareVariants.AddAsync(model);

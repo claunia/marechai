@@ -55,7 +55,7 @@
     <Field>
         <FieldLabel>@L["Software family"]</FieldLabel>
         <Select @bind-SelectedValue="@_model.FamilyId" Disabled="!_editing" @TValue="ulong">
-            @foreach(SoftwareFamilyViewModel family in _softwareFamilies)
+            @foreach(SoftwareFamilyDto family in _softwareFamilies)
             {
                 <SelectItem @TValue="ulong" Value="@family.Id">@family.Name</SelectItem>
             }
@@ -161,7 +161,7 @@
             @if(!_editing || !_unknownPrevious)
             {
                 <Select @bind-SelectedValue="@_model.PreviousId" Disabled="!_editing" @TValue="ulong?">
-                    @foreach(SoftwareVersionViewModel version in _softwareVersions)
+                    @foreach(SoftwareVersionDto version in _softwareVersions)
                     {
                         <SelectItem @TValue="ulong?" Value="@version.Id">@version.Name ?? @version.Version</SelectItem>
                     }
@@ -196,7 +196,7 @@
             <Field>
                 <FieldLabel>@L["Company"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyId" Disabled="_savingCompany" @TValue="int?">
-                    @foreach(CompanyViewModel company in _companies)
+                    @foreach(CompanyDto company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
                     }
@@ -205,7 +205,7 @@
             <Field>
                 <FieldLabel>@L["Role"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyRoleId" Disabled="!_editing" @TValue="string">
-                    @foreach(DocumentRoleViewModel role in _roles)
+                    @foreach(DocumentRoleDto role in _roles)
                     {
                         <SelectItem @TValue="string" Value="@role.Id">@role.Name</SelectItem>
                     }
@@ -232,7 +232,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(CompanyBySoftwareVersionViewModel item in _softwareVersionCompanies)
+                @foreach(CompanyBySoftwareVersionDto item in _softwareVersionCompanies)
                 {
                     <tr>
                         <td>

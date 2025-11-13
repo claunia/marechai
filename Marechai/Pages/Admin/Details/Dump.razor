@@ -120,7 +120,7 @@
     <Field>
         <FieldLabel>@L["Media"]</FieldLabel>
         <Select @bind-SelectedValue="@_model.MediaId" Disabled="!_editing" @TValue="ulong">
-            @foreach(MediaViewModel media in _medias)
+            @foreach(MediaDto media in _medias)
             {
                 <SelectItem @TValue="ulong" Value="@media.Id">@media.Title</SelectItem>
             }

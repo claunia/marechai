@@ -25,7 +25,7 @@
 
 namespace Marechai.Data.Dtos;
 
-public class BaseViewModel<TKey>
+public class BaseDto<TKey>
 {
     public TKey Id;
 }

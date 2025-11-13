@@ -34,13 +34,13 @@ namespace Marechai.Services;
 
 public class ResolutionsByGpuService(MarechaiContext context)
 {
-    public async Task<List<ResolutionByGpuViewModel>> GetByGpu(int resolutionId) => (await context.ResolutionsByGpu
+    public async Task<List<ResolutionByGpuDto>> GetByGpu(int resolutionId) => (await context.ResolutionsByGpu
                                                                                                   .Where(r => r.ResolutionId == resolutionId)
-                                                                                                  .Select(r => new ResolutionByGpuViewModel
+                                                                                                  .Select(r => new ResolutionByGpuDto
                                                                                                    {
                                                                                                        Id    = r.Id,
                                                                                                        GpuId = r.GpuId,
-                                                                                                       Resolution = new ResolutionViewModel
+                                                                                                       Resolution = new ResolutionDto
                                                                                                        {
                                                                                                            Id        = r.Resolution.Id,
                                                                                                            Width     = r.Resolution.Width,

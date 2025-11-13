@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class CompaniesBySoftwareFamilyService(MarechaiContext context)
 {
-    public async Task<List<CompanyBySoftwareFamilyViewModel>> GetBySoftwareFamily(ulong softwareFamilyId) =>
+    public async Task<List<CompanyBySoftwareFamilyDto>> GetBySoftwareFamily(ulong softwareFamilyId) =>
         await context.CompaniesBySoftwareFamilies.Where(p => p.SoftwareFamilyId == softwareFamilyId)
-                      .Select(p => new CompanyBySoftwareFamilyViewModel
+                      .Select(p => new CompanyBySoftwareFamilyDto
                        {
                            Id               = p.Id,
                            Company          = p.Company.Name,

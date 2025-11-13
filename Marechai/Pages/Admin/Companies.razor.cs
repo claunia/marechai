@@ -34,8 +34,8 @@ namespace Marechai.Pages.Admin;
 
 public partial class Companies
 {
-    List<CompanyViewModel> _companies;
-    CompanyViewModel       _currentCompany;
+    List<CompanyDto> _companies;
+    CompanyDto       _currentCompany;
     bool                   _deleteInProgress;
     Modal                  _frmDelete;
     bool                   _loaded;

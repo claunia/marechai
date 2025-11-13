@@ -27,7 +27,7 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public class SoftwareVariantViewModel : BaseViewModel<ulong>
+public class SoftwareVariantDto : BaseDto<ulong>
 {
     public string           Name              { get; set; }
     public string           Version           { get; set; }

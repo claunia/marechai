@@ -34,10 +34,10 @@ namespace Marechai.Services;
 
 public class DocumentsService(MarechaiContext context)
 {
-    public async Task<List<DocumentViewModel>> GetAsync() => await context.Documents.OrderBy(b => b.NativeTitle)
+    public async Task<List<DocumentDto>> GetAsync() => await context.Documents.OrderBy(b => b.NativeTitle)
                                                                           .ThenBy(b => b.Published)
                                                                           .ThenBy(b => b.Title)
-                                                                          .Select(b => new DocumentViewModel
+                                                                          .Select(b => new DocumentDto
                                                                            {
                                                                                Id          = b.Id,
                                                                                Title       = b.Title,
@@ -49,8 +49,8 @@ public class DocumentsService(MarechaiContext context)
                                                                            })
                                                                           .ToListAsync();
 
-    public async Task<DocumentViewModel> GetAsync(long id) => await context.Documents.Where(b => b.Id == id)
-                                                                            .Select(b => new DocumentViewModel
+    public async Task<DocumentDto> GetAsync(long id) => await context.Documents.Where(b => b.Id == id)
+                                                                            .Select(b => new DocumentDto
                                                                              {
                                                                                  Id          = b.Id,
                                                                                  Title       = b.Title,
@@ -62,29 +62,29 @@ public class DocumentsService(MarechaiContext context)
                                                                              })
                                                                             .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(DocumentViewModel viewModel, string userId)
+    public async Task UpdateAsync(DocumentDto dto, string userId)
     {
-        Document model = await context.Documents.FindAsync(viewModel.Id);
+        Document model = await context.Documents.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Title       = viewModel.Title;
-        model.NativeTitle = viewModel.NativeTitle;
-        model.Published   = viewModel.Published;
-        model.Synopsis    = viewModel.Synopsis;
-        model.CountryId   = viewModel.CountryId;
+        model.Title       = dto.Title;
+        model.NativeTitle = dto.NativeTitle;
+        model.Published   = dto.Published;
+        model.Synopsis    = dto.Synopsis;
+        model.CountryId   = dto.CountryId;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<long> CreateAsync(DocumentViewModel viewModel, string userId)
+    public async Task<long> CreateAsync(DocumentDto dto, string userId)
     {
         var model = new Document
         {
-            Title       = viewModel.Title,
-            NativeTitle = viewModel.NativeTitle,
-            Published   = viewModel.Published,
-            Synopsis    = viewModel.Synopsis,
-            CountryId   = viewModel.CountryId
+            Title       = dto.Title,
+            NativeTitle = dto.NativeTitle,
+            Published   = dto.Published,
+            Synopsis    = dto.Synopsis,
+            CountryId   = dto.CountryId
         };
 
         await context.Documents.AddAsync(model);

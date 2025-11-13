@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class CompaniesBySoftwareVersionService(MarechaiContext context)
 {
-    public async Task<List<CompanyBySoftwareVersionViewModel>> GetBySoftwareVersion(ulong softwareVersionId) =>
+    public async Task<List<CompanyBySoftwareVersionDto>> GetBySoftwareVersion(ulong softwareVersionId) =>
         await context.CompaniesBySoftwareVersions.Where(p => p.SoftwareVersionId == softwareVersionId)
-                      .Select(p => new CompanyBySoftwareVersionViewModel
+                      .Select(p => new CompanyBySoftwareVersionDto
                        {
                            Id                = p.Id,
                            Company           = p.Company.Name,

@@ -1,6 +1,6 @@
 namespace Marechai.Data.Dtos;
 
-public abstract class DocumentBaseViewModel : BaseViewModel<long>
+public abstract class DocumentBaseDto : BaseDto<long>
 {
     public string    Title       { get; set; }
     public string    NativeTitle { get; set; }

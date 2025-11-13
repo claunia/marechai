@@ -34,9 +34,9 @@ namespace Marechai.Services;
 
 public class PeopleByMagazineService(MarechaiContext context)
 {
-    public async Task<List<PersonByMagazineViewModel>> GetByMagazine(long magazineId) => (await context
+    public async Task<List<PersonByMagazineDto>> GetByMagazine(long magazineId) => (await context
                                                                                                .PeopleByMagazines.Where(p => p.MagazineId == magazineId)
-                                                                                               .Select(p => new PersonByMagazineViewModel
+                                                                                               .Select(p => new PersonByMagazineDto
                                                                                                 {
                                                                                                     Id          = p.Id,
                                                                                                     Name        = p.Person.Name,

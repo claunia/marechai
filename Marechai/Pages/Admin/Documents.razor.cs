@@ -34,9 +34,9 @@ namespace Marechai.Pages.Admin;
 
 public partial class Documents
 {
-    DocumentViewModel       _currentDocument;
+    DocumentDto       _currentDocument;
     bool                    _deleteInProgress;
-    List<DocumentViewModel> _documents;
+    List<DocumentDto> _documents;
     Modal                   _frmDelete;
     bool                    _loaded;
 

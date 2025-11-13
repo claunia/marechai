@@ -27,11 +27,11 @@ using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 
-public sealed class NewsViewModel : BaseViewModel<int>
+public sealed class NewsDto : BaseDto<int>
 {
-    public NewsViewModel() {}
+    public NewsDto() {}
 
-    public NewsViewModel(int affectedId, string text, DateTime timestamp, string controller, string itemName)
+    public NewsDto(int affectedId, string text, DateTime timestamp, string controller, string itemName)
     {
         AffectedId = affectedId;
         Text       = text;

@@ -41,7 +41,7 @@ public partial class CurrencyInflation
     List<Iso4217>              _currencies;
     bool                       _editing;
     bool                       _loaded;
-    CurrencyInflationViewModel _model;
+    CurrencyInflationDto _model;
 
     [Parameter]
     public int Id { get; set; }
@@ -59,7 +59,7 @@ public partial class CurrencyInflation
         if(Id <= 0 && !_creating) return;
 
         _currencies = await CurrenciesService.GetAsync();
-        _model      = _creating ? new CurrencyInflationViewModel() : await Service.GetAsync(Id);
+        _model      = _creating ? new CurrencyInflationDto() : await Service.GetAsync(Id);
         _authState  = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         _editing = _creating ||

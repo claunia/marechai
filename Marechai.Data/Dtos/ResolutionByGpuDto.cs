@@ -25,9 +25,9 @@
 
 namespace Marechai.Data.Dtos;
 
-public class ResolutionByGpuViewModel : BaseViewModel<long>
+public class ResolutionByGpuDto : BaseDto<long>
 {
     public int                 ResolutionId { get; set; }
     public int                 GpuId        { get; set; }
-    public ResolutionViewModel Resolution   { get; set; }
+    public ResolutionDto Resolution   { get; set; }
 }

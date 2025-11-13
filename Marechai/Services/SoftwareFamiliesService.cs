@@ -34,8 +34,8 @@ namespace Marechai.Services;
 
 public class SoftwareFamiliesService(MarechaiContext context)
 {
-    public async Task<List<SoftwareFamilyViewModel>> GetAsync() => await context.SoftwareFamilies.OrderBy(b => b.Name)
-                                                                                .Select(b => new SoftwareFamilyViewModel
+    public async Task<List<SoftwareFamilyDto>> GetAsync() => await context.SoftwareFamilies.OrderBy(b => b.Name)
+                                                                                .Select(b => new SoftwareFamilyDto
                                                                                  {
                                                                                      Id         = b.Id,
                                                                                      Name       = b.Name,
@@ -45,9 +45,9 @@ public class SoftwareFamiliesService(MarechaiContext context)
                                                                                  })
                                                                                 .ToListAsync();
 
-    public async Task<SoftwareFamilyViewModel> GetAsync(ulong id) => await context.SoftwareFamilies
+    public async Task<SoftwareFamilyDto> GetAsync(ulong id) => await context.SoftwareFamilies
                                                                         .Where(b => b.Id == id)
-                                                                        .Select(b => new SoftwareFamilyViewModel
+                                                                        .Select(b => new SoftwareFamilyDto
                                                                          {
                                                                              Id         = b.Id,
                                                                              Name       = b.Name,
@@ -57,25 +57,25 @@ public class SoftwareFamiliesService(MarechaiContext context)
                                                                          })
                                                                         .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(SoftwareFamilyViewModel viewModel, string userId)
+    public async Task UpdateAsync(SoftwareFamilyDto dto, string userId)
     {
-        SoftwareFamily model = await context.SoftwareFamilies.FindAsync(viewModel.Id);
+        SoftwareFamily model = await context.SoftwareFamilies.FindAsync(dto.Id);
 
         if(model is null) return;
 
-        model.Name       = viewModel.Name;
-        model.ParentId   = viewModel.ParentId;
-        model.Introduced = viewModel.Introduced;
+        model.Name       = dto.Name;
+        model.ParentId   = dto.ParentId;
+        model.Introduced = dto.Introduced;
         await context.SaveChangesWithUserAsync(userId);
     }
 
-    public async Task<ulong> CreateAsync(SoftwareFamilyViewModel viewModel, string userId)
+    public async Task<ulong> CreateAsync(SoftwareFamilyDto dto, string userId)
     {
         var model = new SoftwareFamily
         {
-            Name       = viewModel.Name,
-            ParentId   = viewModel.ParentId,
-            Introduced = viewModel.Introduced
+            Name       = dto.Name,
+            ParentId   = dto.ParentId,
+            Introduced = dto.Introduced
         };
 
         await context.SoftwareFamilies.AddAsync(model);

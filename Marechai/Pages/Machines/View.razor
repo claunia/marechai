@@ -133,7 +133,7 @@
             <td style="width: 67%;">
                 <table class="table table-borderless">
                     @{ counter = 0; }
-                    @foreach(ProcessorViewModel processor in _machine.Processors)
+                    @foreach(ProcessorDto processor in _machine.Processors)
                     {
                         int currentCounter = counter;
 
@@ -415,7 +415,7 @@
             </th>
             <td style="width: 67%;">
                 <table class="table table-borderless">
-                    @foreach(MemoryViewModel memory in _machine.Memory)
+                    @foreach(MemoryDto memory in _machine.Memory)
                     {
                         string memValue;
 
@@ -480,7 +480,7 @@
             <td style="width: 67%;">
                 <table class="table table-borderless">
                     @{ counter = 0; }
-                    @foreach(GpuViewModel gpu in _machine.Gpus)
+                    @foreach(GpuDto gpu in _machine.Gpus)
                     {
                         int currentCounter = counter;
 
@@ -614,7 +614,7 @@
             <td style="width: 67%;">
                 <table class="table table-borderless">
                     @{ counter = 0; }
-                    @foreach(SoundSynthViewModel sound in _machine.SoundSynthesizers)
+                    @foreach(SoundSynthDto sound in _machine.SoundSynthesizers)
                     {
                         int currentCounter = counter;
 
@@ -780,7 +780,7 @@
             </th>
             <td style="width: 67%;">
                 <table class="table table-borderless">
-                    @foreach(StorageViewModel storage in _machine.Storage)
+                    @foreach(StorageDto storage in _machine.Storage)
                     {
                         string capString = null;
 

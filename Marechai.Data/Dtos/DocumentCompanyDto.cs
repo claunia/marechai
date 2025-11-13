@@ -27,7 +27,7 @@ using System.ComponentModel;
 
 namespace Marechai.Data.Dtos;
 
-public class DocumentCompanyViewModel : BaseViewModel<int>
+public class DocumentCompanyDto : BaseDto<int>
 {
     public string Name { get; set; }
     [DisplayName("Linked company")]

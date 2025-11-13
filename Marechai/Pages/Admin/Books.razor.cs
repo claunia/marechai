@@ -34,8 +34,8 @@ namespace Marechai.Pages.Admin;
 
 public partial class Books
 {
-    List<BookViewModel> _books;
-    BookViewModel       _currentBook;
+    List<BookDto> _books;
+    BookDto       _currentBook;
     bool                _deleteInProgress;
     Modal               _frmDelete;
     bool                _loaded;
