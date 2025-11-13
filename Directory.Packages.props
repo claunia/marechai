@@ -28,5 +28,7 @@
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft" Version="9.0.0" />
     <!-- Build infrastructure -->
     <PackageVersion Include="Packaging.Targets" Version="0.1.189" />
+    <!-- Unique to Marechai.Server.csproj -->
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
   </ItemGroup>
 </Project>
