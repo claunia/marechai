@@ -41,7 +41,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Interop;
+namespace Marechai.Server.Interop;
 
 public static class DetectOS
 {

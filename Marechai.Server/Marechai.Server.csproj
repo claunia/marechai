@@ -1,11 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aaru.CommonTypes"/>
+    <PackageReference Include="Markdig"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+    <PackageReference Include="Svg.Skia"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj"/>
+  </ItemGroup>
 
 </Project>

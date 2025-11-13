@@ -36,7 +36,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Interop;
+namespace Marechai.Server.Interop;
 
 /// <summary>Contains an arbitrary list of OSes, even if .NET does not run on them</summary>
 public enum PlatformID

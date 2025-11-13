@@ -1,3 +1,5 @@
+using System;
+
 namespace Marechai.Server;
 
 public class WeatherForecast

@@ -40,7 +40,7 @@ using System;
 using System.Reflection;
 using System.Runtime;
 
-namespace DiscImageChef.Interop;
+namespace Marechai.Server.Interop;
 
 public static class Version
 {
@@ -52,10 +52,7 @@ public static class Version
     {
         Assembly assembly = typeof(GCSettings).Assembly;
 
-        string[] assemblyPath = assembly.Location.Split([
-                                                            '/', '\\'
-                                                        ],
-                                                        StringSplitOptions.RemoveEmptyEntries);
+        string[] assemblyPath = assembly.Location.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
 
         int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
 
