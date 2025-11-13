@@ -36,11 +36,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marechai.Server.Controllers;
 
-[Route("/companies-by-magazine")]
+[Route("/magazines/companies")]
 [ApiController]
 public class CompaniesByMagazineController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("/magazines/{magazineId:long}/companies")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,7 +59,7 @@ public class CompaniesByMagazineController(MarechaiContext context) : Controller
        .ThenBy(p => p.Role)
        .ToListAsync();
 
-    [HttpDelete]
+    [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -70,6 +70,7 @@ public class CompaniesByMagazineController(MarechaiContext context) : Controller
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
+
         CompaniesByMagazine item = await context.CompaniesByMagazines.FindAsync(id);
 
         if(item is null) return NotFound();
@@ -86,7 +87,7 @@ public class CompaniesByMagazineController(MarechaiContext context) : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<long>> CreateAsync(int companyId, long magazineId, string roleId)
+    public async Task<ActionResult<long>> CreateAsync([FromBody] CompanyByMagazineDto dto)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
@@ -94,9 +95,9 @@ public class CompaniesByMagazineController(MarechaiContext context) : Controller
 
         var item = new CompaniesByMagazine
         {
-            CompanyId  = companyId,
-            MagazineId = magazineId,
-            RoleId     = roleId
+            CompanyId  = dto.CompanyId,
+            MagazineId = dto.MagazineId,
+            RoleId     = dto.RoleId
         };
 
         await context.CompaniesByMagazines.AddAsync(item);
