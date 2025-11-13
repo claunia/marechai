@@ -5,10 +5,13 @@
     <Company>Canary Islands Computer Museum</Company>
     <Copyright>Copyright © 2003-2021 Natalia Portillo</Copyright>
     <Product>Canary Islands Computer Museum Website</Product>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Common duplicated packages -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
     <PackageReference Include="Packaging.Targets">
-      <Version>0.1.189-*</Version>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
