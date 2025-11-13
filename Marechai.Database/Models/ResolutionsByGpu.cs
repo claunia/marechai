@@ -26,17 +26,16 @@
 using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Marechai.Database.Models
-{
-    public class ResolutionsByGpu : BaseModel<long>
-    {
-        [Remote("VerifyUnique", "ResolutionsByGpu", "Admin", AdditionalFields = nameof(ResolutionId))]
-        public int GpuId { get; set; }
-        [Remote("VerifyUnique", "ResolutionsByGpu", "Admin", AdditionalFields = nameof(GpuId))]
-        public int ResolutionId { get; set; }
+namespace Marechai.Database.Models;
 
-        [DisplayName("GPU")]
-        public virtual Gpu Gpu { get;               set; }
-        public virtual Resolution Resolution { get; set; }
-    }
+public class ResolutionsByGpu : BaseModel<long>
+{
+    [Remote("VerifyUnique", "ResolutionsByGpu", "Admin", AdditionalFields = nameof(ResolutionId))]
+    public int GpuId { get; set; }
+    [Remote("VerifyUnique", "ResolutionsByGpu", "Admin", AdditionalFields = nameof(GpuId))]
+    public int ResolutionId { get; set; }
+
+    [DisplayName("GPU")]
+    public virtual Gpu Gpu { get;               set; }
+    public virtual Resolution Resolution { get; set; }
 }

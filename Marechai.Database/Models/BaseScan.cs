@@ -27,37 +27,36 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public abstract class BaseScan : BaseModel<Guid>
 {
-    public abstract class BaseScan : BaseModel<Guid>
-    {
-        public string Author { get; set; }
-        [DisplayName("Color space")]
-        public ColorSpace? ColorSpace { get; set; }
-        [DisplayName("User comments")]
-        public string Comments { get; set; }
-        [DisplayName("Date and time of digitizing")]
-        public DateTime? CreationDate { get; set; }
-        [DisplayName("Exif version")]
-        public string ExifVersion { get; set; }
-        [DisplayName("Horizontal resolution")]
-        public double? HorizontalResolution { get; set; }
-        [DisplayName("Resolution unit")]
-        public ResolutionUnit? ResolutionUnit { get; set; }
-        [DisplayName("Scanner manufacturer")]
-        public string ScannerManufacturer { get; set; }
-        [DisplayName("Scanner model")]
-        public string ScannerModel { get; set; }
-        [DisplayName("Software used")]
-        public string SoftwareUsed { get; set; }
-        [Timestamp]
-        public DateTime UploadDate { get; set; }
-        [DisplayName("Vertical resolution")]
-        public double? VerticalResolution { get; set; }
-        public string OriginalExtension { get;   set; }
+    public string Author { get; set; }
+    [DisplayName("Color space")]
+    public ColorSpace? ColorSpace { get; set; }
+    [DisplayName("User comments")]
+    public string Comments { get; set; }
+    [DisplayName("Date and time of digitizing")]
+    public DateTime? CreationDate { get; set; }
+    [DisplayName("Exif version")]
+    public string ExifVersion { get; set; }
+    [DisplayName("Horizontal resolution")]
+    public double? HorizontalResolution { get; set; }
+    [DisplayName("Resolution unit")]
+    public ResolutionUnit? ResolutionUnit { get; set; }
+    [DisplayName("Scanner manufacturer")]
+    public string ScannerManufacturer { get; set; }
+    [DisplayName("Scanner model")]
+    public string ScannerModel { get; set; }
+    [DisplayName("Software used")]
+    public string SoftwareUsed { get; set; }
+    [Timestamp]
+    public DateTime UploadDate { get; set; }
+    [DisplayName("Vertical resolution")]
+    public double? VerticalResolution { get; set; }
+    public string OriginalExtension { get;   set; }
 
-        public virtual ApplicationUser User { get; set; }
+    public virtual ApplicationUser User { get; set; }
 
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }

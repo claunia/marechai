@@ -23,11 +23,10 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class BookScanViewModel : DocumentScanBaseViewModel
 {
-    public class BookScanViewModel : DocumentScanBaseViewModel
-    {
-        public long   BookId { get; set; }
-        public string Book   { get; set; }
-    }
+    public long   BookId { get; set; }
+    public string Book   { get; set; }
 }

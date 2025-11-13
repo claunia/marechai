@@ -28,20 +28,18 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class InstructionSetExtension : BaseModel<int>
 {
-    public class InstructionSetExtension : BaseModel<int>
-    {
-        public InstructionSetExtension() =>
-            InstructionSetExtensionsByProcessor = new HashSet<InstructionSetExtensionsByProcessor>();
+    public InstructionSetExtension() =>
+        InstructionSetExtensionsByProcessor = new HashSet<InstructionSetExtensionsByProcessor>();
 
-        [DisplayName("Name"), Required, StringLength(45), Remote("VerifyUnique", "InstructionSetExtensions", "Admin")]
-        public string Extension { get; set; }
+    [DisplayName("Name")]
+    [Required]
+    [StringLength(45)]
+    [Remote("VerifyUnique", "InstructionSetExtensions", "Admin")]
+    public string Extension { get; set; }
 
-        public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor
-        {
-            get;
-            set;
-        }
-    }
+    public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensionsByProcessor { get; set; }
 }

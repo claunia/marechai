@@ -30,67 +30,65 @@ using System.Threading.Tasks;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class InstructionSetExtensionsService(MarechaiContext context)
 {
-    public class InstructionSetExtensionsService
+    public async Task<List<InstructionSetExtension>> GetAsync() => await context.InstructionSetExtensions
+                                                                                .OrderBy(e => e.Extension)
+                                                                                .Select(e => new InstructionSetExtension
+                                                                                 {
+                                                                                     Extension = e.Extension,
+                                                                                     Id        = e.Id
+                                                                                 })
+                                                                                .ToListAsync();
+
+    public async Task<InstructionSetExtension> GetAsync(int id) => await context.InstructionSetExtensions
+                                                                      .Where(e => e.Id == id)
+                                                                      .Select(e => new InstructionSetExtension
+                                                                       {
+                                                                           Extension = e.Extension,
+                                                                           Id        = e.Id
+                                                                       })
+                                                                      .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(InstructionSetExtension viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        InstructionSetExtension model = await context.InstructionSetExtensions.FindAsync(viewModel.Id);
 
-        public InstructionSetExtensionsService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<InstructionSetExtension>> GetAsync() =>
-            await _context.InstructionSetExtensions.OrderBy(e => e.Extension).Select(e => new InstructionSetExtension
-            {
-                Extension = e.Extension,
-                Id        = e.Id
-            }).ToListAsync();
+        model.Extension = viewModel.Extension;
 
-        public async Task<InstructionSetExtension> GetAsync(int id) =>
-            await _context.InstructionSetExtensions.Where(e => e.Id == id).Select(e => new InstructionSetExtension
-            {
-                Extension = e.Extension,
-                Id        = e.Id
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(InstructionSetExtension viewModel, string userId)
-        {
-            InstructionSetExtension model = await _context.InstructionSetExtensions.FindAsync(viewModel.Id);
-
-            if(model is null)
-                return;
-
-            model.Extension = viewModel.Extension;
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<int> CreateAsync(InstructionSetExtension viewModel, string userId)
-        {
-            var model = new InstructionSetExtension
-            {
-                Extension = viewModel.Extension
-            };
-
-            await _context.InstructionSetExtensions.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            InstructionSetExtension item = await _context.InstructionSetExtensions.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.InstructionSetExtensions.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public bool VerifyUnique(string extension) =>
-            !_context.InstructionSetExtensions.Any(i => string.Equals(i.Extension, extension,
-                                                                      StringComparison.InvariantCultureIgnoreCase));
+        await context.SaveChangesWithUserAsync(userId);
     }
+
+    public async Task<int> CreateAsync(InstructionSetExtension viewModel, string userId)
+    {
+        var model = new InstructionSetExtension
+        {
+            Extension = viewModel.Extension
+        };
+
+        await context.InstructionSetExtensions.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return model.Id;
+    }
+
+    public async Task DeleteAsync(int id, string userId)
+    {
+        InstructionSetExtension item = await context.InstructionSetExtensions.FindAsync(id);
+
+        if(item is null) return;
+
+        context.InstructionSetExtensions.Remove(item);
+
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public bool VerifyUnique(string extension) =>
+        !context.InstructionSetExtensions.Any(i => string.Equals(i.Extension,
+                                                                  extension,
+                                                                  StringComparison.InvariantCultureIgnoreCase));
 }

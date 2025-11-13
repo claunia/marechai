@@ -25,13 +25,12 @@
 
 using System.ComponentModel;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class DocumentCompanyViewModel : BaseViewModel<int>
 {
-    public class DocumentCompanyViewModel : BaseViewModel<int>
-    {
-        public string Name { get; set; }
-        [DisplayName("Linked company")]
-        public string Company { get; set; }
-        public int? CompanyId { get; set; }
-    }
+    public string Name { get; set; }
+    [DisplayName("Linked company")]
+    public string Company { get; set; }
+    public int? CompanyId { get; set; }
 }

@@ -25,16 +25,15 @@
 
 using System.ComponentModel;
 
-namespace Marechai.Database.Models
-{
-    public class ProcessorsByMachine : BaseModel<long>
-    {
-        public int ProcessorId { get; set; }
-        public int MachineId   { get; set; }
-        [DisplayName("Speed (MHz)")]
-        public float? Speed { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual Machine   Machine   { get; set; }
-        public virtual Processor Processor { get; set; }
-    }
+public class ProcessorsByMachine : BaseModel<long>
+{
+    public int ProcessorId { get; set; }
+    public int MachineId   { get; set; }
+    [DisplayName("Speed (MHz)")]
+    public float? Speed { get; set; }
+
+    public virtual Machine   Machine   { get; set; }
+    public virtual Processor Processor { get; set; }
 }

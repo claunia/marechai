@@ -29,8 +29,8 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<DocumentPeopleService>
 @inject IStringLocalizer<DocumentPeopleService> L
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser>            UserManager
+@inject AuthenticationStateProvider             AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Document companies"]</h3>
 @if(_people is null)
@@ -55,7 +55,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _people)
+    @foreach(DocumentPersonViewModel item in _people)
     {
         <tr>
             <td>
@@ -76,11 +76,11 @@
     </tbody>
 </table>
 <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-    <ModalBackdrop />
+    <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete person"]</ModalTitle>
-            <CloseButton Clicked="@HideModal" />
+            <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(L["Are you sure you want to delete {0}?"], _person?.Name)</Text>

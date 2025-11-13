@@ -30,47 +30,44 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class BooksByMachineService(MarechaiContext context)
 {
-    public class BooksByMachineService
+    public async Task<List<BookByMachineViewModel>> GetByBook(long bookId) => await context.BooksByMachines
+                                                                                           .Where(p => p.BookId == bookId)
+                                                                                           .Select(p => new BookByMachineViewModel
+                                                                                            {
+                                                                                                Id        = p.Id,
+                                                                                                BookId    = p.BookId,
+                                                                                                MachineId = p.MachineId,
+                                                                                                Machine   = p.Machine.Name
+                                                                                            })
+                                                                                           .OrderBy(p => p.Machine)
+                                                                                           .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        BooksByMachine item = await context.BooksByMachines.FindAsync(id);
 
-        public BooksByMachineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<BookByMachineViewModel>> GetByBook(long bookId) =>
-            await _context.BooksByMachines.Where(p => p.BookId == bookId).Select(p => new BookByMachineViewModel
-            {
-                Id        = p.Id,
-                BookId    = p.BookId,
-                MachineId = p.MachineId,
-                Machine   = p.Machine.Name
-            }).OrderBy(p => p.Machine).ToListAsync();
+        context.BooksByMachines.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int machineId, long bookId, string userId)
+    {
+        var item = new BooksByMachine
         {
-            BooksByMachine item = await _context.BooksByMachines.FindAsync(id);
+            MachineId = machineId,
+            BookId    = bookId
+        };
 
-            if(item is null)
-                return;
+        await context.BooksByMachines.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.BooksByMachines.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int machineId, long bookId, string userId)
-        {
-            var item = new BooksByMachine
-            {
-                MachineId = machineId,
-                BookId    = bookId
-            };
-
-            await _context.BooksByMachines.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

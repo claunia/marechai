@@ -30,89 +30,84 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class DumpsService(MarechaiContext context)
 {
-    public class DumpsService
+    public async Task<List<DumpViewModel>> GetAsync() => await context.Dumps.OrderBy(d => d.Dumper)
+                                                                      .ThenBy(d => d.DumpingGroup)
+                                                                      .ThenBy(b => b.Media.Title)
+                                                                      .ThenBy(d => d.DumpDate)
+                                                                      .Select(d => new DumpViewModel
+                                                                       {
+                                                                           Id           = d.Id,
+                                                                           Dumper       = d.Dumper,
+                                                                           UserId       = d.UserId,
+                                                                           DumpingGroup = d.DumpingGroup,
+                                                                           DumpDate     = d.DumpDate,
+                                                                           UserName     = d.User.UserName,
+                                                                           MediaId      = d.MediaId,
+                                                                           MediaTitle   = d.Media.Title,
+                                                                           MediaDumpId  = d.MediaDumpId
+                                                                       })
+                                                                      .ToListAsync();
+
+    public async Task<DumpViewModel> GetAsync(ulong id) => await context.Dumps.Where(d => d.Id == id)
+                                                                         .Select(d => new DumpViewModel
+                                                                          {
+                                                                              Id           = d.Id,
+                                                                              Dumper       = d.Dumper,
+                                                                              UserId       = d.User.Id,
+                                                                              DumpingGroup = d.DumpingGroup,
+                                                                              DumpDate     = d.DumpDate,
+                                                                              UserName     = d.User.UserName,
+                                                                              MediaId      = d.MediaId,
+                                                                              MediaTitle   = d.Media.Title,
+                                                                              MediaDumpId  = d.MediaDumpId
+                                                                          })
+                                                                         .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(DumpViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        Dump model = await context.Dumps.FindAsync(viewModel.Id);
 
-        public DumpsService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<DumpViewModel>> GetAsync() => await _context.
-                                                                   Dumps.OrderBy(d => d.Dumper).
-                                                                   ThenBy(d => d.DumpingGroup).
-                                                                   ThenBy(b => b.Media.Title).ThenBy(d => d.DumpDate).
-                                                                   Select(d => new DumpViewModel
-                                                                   {
-                                                                       Id           = d.Id,
-                                                                       Dumper       = d.Dumper,
-                                                                       UserId       = d.UserId,
-                                                                       DumpingGroup = d.DumpingGroup,
-                                                                       DumpDate     = d.DumpDate,
-                                                                       UserName     = d.User.UserName,
-                                                                       MediaId      = d.MediaId,
-                                                                       MediaTitle   = d.Media.Title,
-                                                                       MediaDumpId  = d.MediaDumpId
-                                                                   }).ToListAsync();
+        model.Dumper       = viewModel.Dumper;
+        model.UserId       = viewModel.UserId;
+        model.DumpingGroup = viewModel.DumpingGroup;
+        model.DumpDate     = viewModel.DumpDate;
+        model.MediaId      = viewModel.MediaId;
+        model.MediaDumpId  = viewModel.MediaDumpId;
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<DumpViewModel> GetAsync(ulong id) => await _context.Dumps.Where(d => d.Id == id).
-                                                                              Select(d => new DumpViewModel
-                                                                              {
-                                                                                  Id           = d.Id,
-                                                                                  Dumper       = d.Dumper,
-                                                                                  UserId       = d.User.Id,
-                                                                                  DumpingGroup = d.DumpingGroup,
-                                                                                  DumpDate     = d.DumpDate,
-                                                                                  UserName     = d.User.UserName,
-                                                                                  MediaId      = d.MediaId,
-                                                                                  MediaTitle   = d.Media.Title,
-                                                                                  MediaDumpId  = d.MediaDumpId
-                                                                              }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(DumpViewModel viewModel, string userId)
+    public async Task<ulong> CreateAsync(DumpViewModel viewModel, string userId)
+    {
+        var model = new Dump
         {
-            Dump model = await _context.Dumps.FindAsync(viewModel.Id);
+            Dumper       = viewModel.Dumper,
+            UserId       = viewModel.UserId,
+            DumpingGroup = viewModel.DumpingGroup,
+            DumpDate     = viewModel.DumpDate,
+            MediaId      = viewModel.MediaId,
+            MediaDumpId  = viewModel.MediaDumpId
+        };
 
-            if(model is null)
-                return;
+        await context.Dumps.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Dumper       = viewModel.Dumper;
-            model.UserId       = viewModel.UserId;
-            model.DumpingGroup = viewModel.DumpingGroup;
-            model.DumpDate     = viewModel.DumpDate;
-            model.MediaId      = viewModel.MediaId;
-            model.MediaDumpId  = viewModel.MediaDumpId;
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        return model.Id;
+    }
 
-        public async Task<ulong> CreateAsync(DumpViewModel viewModel, string userId)
-        {
-            var model = new Dump
-            {
-                Dumper       = viewModel.Dumper,
-                UserId       = viewModel.UserId,
-                DumpingGroup = viewModel.DumpingGroup,
-                DumpDate     = viewModel.DumpDate,
-                MediaId      = viewModel.MediaId,
-                MediaDumpId  = viewModel.MediaDumpId
-            };
+    public async Task DeleteAsync(ulong id, string userId)
+    {
+        Dump item = await context.Dumps.FindAsync(id);
 
-            await _context.Dumps.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        if(item is null) return;
 
-            return model.Id;
-        }
+        context.Dumps.Remove(item);
 
-        public async Task DeleteAsync(ulong id, string userId)
-        {
-            Dump item = await _context.Dumps.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.Dumps.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

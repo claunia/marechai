@@ -25,14 +25,13 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class CurrencyInflation : BaseModel<int>
 {
-    public class CurrencyInflation : BaseModel<int>
-    {
-        [Required]
-        public virtual Iso4217 Currency { get; set; }
-        public uint   Year         { get;      set; }
-        public float  Inflation    { get;      set; }
-        public string CurrencyCode { get;      set; }
-    }
+    [Required]
+    public virtual Iso4217 Currency { get; set; }
+    public uint   Year         { get;      set; }
+    public float  Inflation    { get;      set; }
+    public string CurrencyCode { get;      set; }
 }

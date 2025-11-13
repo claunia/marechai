@@ -30,51 +30,48 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class CompaniesByMagazineService(MarechaiContext context)
 {
-    public class CompaniesByMagazineService
+    public async Task<List<CompanyByMagazineViewModel>> GetByMagazine(long magazineId) => await context
+                                                                                               .CompaniesByMagazines.Where(p => p.MagazineId == magazineId)
+                                                                                               .Select(p => new CompanyByMagazineViewModel
+                                                                                                {
+                                                                                                    Id         = p.Id,
+                                                                                                    Company    = p.Company.Name,
+                                                                                                    CompanyId  = p.CompanyId,
+                                                                                                    RoleId     = p.RoleId,
+                                                                                                    Role       = p.Role.Name,
+                                                                                                    MagazineId = p.MagazineId
+                                                                                                })
+                                                                                               .OrderBy(p => p.Company)
+                                                                                               .ThenBy(p => p.Role)
+                                                                                               .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        CompaniesByMagazine item = await context.CompaniesByMagazines.FindAsync(id);
 
-        public CompaniesByMagazineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<CompanyByMagazineViewModel>> GetByMagazine(long magazineId) =>
-            await _context.CompaniesByMagazines.Where(p => p.MagazineId == magazineId).
-                           Select(p => new CompanyByMagazineViewModel
-                           {
-                               Id         = p.Id,
-                               Company    = p.Company.Name,
-                               CompanyId  = p.CompanyId,
-                               RoleId     = p.RoleId,
-                               Role       = p.Role.Name,
-                               MagazineId = p.MagazineId
-                           }).OrderBy(p => p.Company).ThenBy(p => p.Role).ToListAsync();
+        context.CompaniesByMagazines.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int companyId, long magazineId, string roleId, string userId)
+    {
+        var item = new CompaniesByMagazine
         {
-            CompaniesByMagazine item = await _context.CompaniesByMagazines.FindAsync(id);
+            CompanyId  = companyId,
+            MagazineId = magazineId,
+            RoleId     = roleId
+        };
 
-            if(item is null)
-                return;
+        await context.CompaniesByMagazines.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.CompaniesByMagazines.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int companyId, long magazineId, string roleId, string userId)
-        {
-            var item = new CompaniesByMagazine
-            {
-                CompanyId  = companyId,
-                MagazineId = magazineId,
-                RoleId     = roleId
-            };
-
-            await _context.CompaniesByMagazines.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

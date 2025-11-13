@@ -31,104 +31,103 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class BookScansService(MarechaiContext context)
 {
-    public class BookScansService
+    public async Task<List<Guid>> GetGuidsByBookAsync(long bookId) =>
+        await context.BookScans.Where(p => p.BookId == bookId).Select(p => p.Id).ToListAsync();
+
+    public async Task<BookScanViewModel> GetAsync(Guid id) => await context.BookScans.Where(p => p.Id == id)
+                                                                            .Select(p => new BookScanViewModel
+                                                                             {
+                                                                                 Author       = p.Author,
+                                                                                 BookId       = p.Book.Id,
+                                                                                 ColorSpace   = p.ColorSpace,
+                                                                                 Comments     = p.Comments,
+                                                                                 CreationDate = p.CreationDate,
+                                                                                 ExifVersion  = p.ExifVersion,
+                                                                                 HorizontalResolution =
+                                                                                     p.HorizontalResolution,
+                                                                                 Id = p.Id,
+                                                                                 ResolutionUnit =
+                                                                                     p.ResolutionUnit,
+                                                                                 Page = p.Page,
+                                                                                 ScannerManufacturer =
+                                                                                     p.ScannerManufacturer,
+                                                                                 ScannerModel = p.ScannerModel,
+                                                                                 SoftwareUsed = p.SoftwareUsed,
+                                                                                 Type         = p.Type,
+                                                                                 UploadDate   = p.UploadDate,
+                                                                                 UserId       = p.UserId,
+                                                                                 VerticalResolution =
+                                                                                     p.VerticalResolution,
+                                                                                 OriginalExtension =
+                                                                                     p.OriginalExtension
+                                                                             })
+                                                                            .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(BookScanViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        BookScan model = await context.BookScans.FindAsync(viewModel.Id);
 
-        public BookScansService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<Guid>> GetGuidsByBookAsync(long bookId) =>
-            await _context.BookScans.Where(p => p.BookId == bookId).Select(p => p.Id).ToListAsync();
+        model.Author               = viewModel.Author;
+        model.ColorSpace           = viewModel.ColorSpace;
+        model.Comments             = viewModel.Comments;
+        model.CreationDate         = viewModel.CreationDate;
+        model.ExifVersion          = viewModel.ExifVersion;
+        model.HorizontalResolution = viewModel.HorizontalResolution;
+        model.ResolutionUnit       = viewModel.ResolutionUnit;
+        model.Page                 = viewModel.Page;
+        model.ScannerManufacturer  = viewModel.ScannerManufacturer;
+        model.ScannerModel         = viewModel.ScannerModel;
+        model.Type                 = viewModel.Type;
+        model.SoftwareUsed         = viewModel.SoftwareUsed;
+        model.VerticalResolution   = viewModel.VerticalResolution;
 
-        public async Task<BookScanViewModel> GetAsync(Guid id) =>
-            await _context.BookScans.Where(p => p.Id == id).Select(p => new BookScanViewModel
-            {
-                Author               = p.Author,
-                BookId               = p.Book.Id,
-                ColorSpace           = p.ColorSpace,
-                Comments             = p.Comments,
-                CreationDate         = p.CreationDate,
-                ExifVersion          = p.ExifVersion,
-                HorizontalResolution = p.HorizontalResolution,
-                Id                   = p.Id,
-                ResolutionUnit       = p.ResolutionUnit,
-                Page                 = p.Page,
-                ScannerManufacturer  = p.ScannerManufacturer,
-                ScannerModel         = p.ScannerModel,
-                SoftwareUsed         = p.SoftwareUsed,
-                Type                 = p.Type,
-                UploadDate           = p.UploadDate,
-                UserId               = p.UserId,
-                VerticalResolution   = p.VerticalResolution,
-                OriginalExtension    = p.OriginalExtension
-            }).FirstOrDefaultAsync();
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task UpdateAsync(BookScanViewModel viewModel, string userId)
+    public async Task<Guid> CreateAsync(BookScanViewModel viewModel, string userId)
+    {
+        var model = new BookScan
         {
-            BookScan model = await _context.BookScans.FindAsync(viewModel.Id);
+            Author               = viewModel.Author,
+            BookId               = viewModel.BookId,
+            ColorSpace           = viewModel.ColorSpace,
+            Comments             = viewModel.Comments,
+            CreationDate         = viewModel.CreationDate,
+            ExifVersion          = viewModel.ExifVersion,
+            HorizontalResolution = viewModel.HorizontalResolution,
+            Id                   = viewModel.Id,
+            ResolutionUnit       = viewModel.ResolutionUnit,
+            Page                 = viewModel.Page,
+            ScannerManufacturer  = viewModel.ScannerManufacturer,
+            ScannerModel         = viewModel.ScannerModel,
+            Type                 = viewModel.Type,
+            SoftwareUsed         = viewModel.SoftwareUsed,
+            UploadDate           = viewModel.UploadDate,
+            UserId               = viewModel.UserId,
+            VerticalResolution   = viewModel.VerticalResolution,
+            OriginalExtension    = viewModel.OriginalExtension
+        };
 
-            if(model is null)
-                return;
+        await context.BookScans.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Author               = viewModel.Author;
-            model.ColorSpace           = viewModel.ColorSpace;
-            model.Comments             = viewModel.Comments;
-            model.CreationDate         = viewModel.CreationDate;
-            model.ExifVersion          = viewModel.ExifVersion;
-            model.HorizontalResolution = viewModel.HorizontalResolution;
-            model.ResolutionUnit       = viewModel.ResolutionUnit;
-            model.Page                 = viewModel.Page;
-            model.ScannerManufacturer  = viewModel.ScannerManufacturer;
-            model.ScannerModel         = viewModel.ScannerModel;
-            model.Type                 = viewModel.Type;
-            model.SoftwareUsed         = viewModel.SoftwareUsed;
-            model.VerticalResolution   = viewModel.VerticalResolution;
+        return model.Id;
+    }
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+    public async Task DeleteAsync(Guid id, string userId)
+    {
+        BookScan item = await context.BookScans.FindAsync(id);
 
-        public async Task<Guid> CreateAsync(BookScanViewModel viewModel, string userId)
-        {
-            var model = new BookScan
-            {
-                Author               = viewModel.Author,
-                BookId               = viewModel.BookId,
-                ColorSpace           = viewModel.ColorSpace,
-                Comments             = viewModel.Comments,
-                CreationDate         = viewModel.CreationDate,
-                ExifVersion          = viewModel.ExifVersion,
-                HorizontalResolution = viewModel.HorizontalResolution,
-                Id                   = viewModel.Id,
-                ResolutionUnit       = viewModel.ResolutionUnit,
-                Page                 = viewModel.Page,
-                ScannerManufacturer  = viewModel.ScannerManufacturer,
-                ScannerModel         = viewModel.ScannerModel,
-                Type                 = viewModel.Type,
-                SoftwareUsed         = viewModel.SoftwareUsed,
-                UploadDate           = viewModel.UploadDate,
-                UserId               = viewModel.UserId,
-                VerticalResolution   = viewModel.VerticalResolution,
-                OriginalExtension    = viewModel.OriginalExtension
-            };
+        if(item is null) return;
 
-            await _context.BookScans.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        context.BookScans.Remove(item);
 
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(Guid id, string userId)
-        {
-            BookScan item = await _context.BookScans.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.BookScans.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

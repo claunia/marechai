@@ -25,28 +25,18 @@
 
 using System.Data;
 
-namespace Marechai.Database
+namespace Marechai.Database;
+
+public partial class Operations(IDbConnection connection, IDbCore core)
 {
-    public partial class Operations
-    {
-        /// <summary>Last known database version</summary>
-        const int DB_VERSION = 24;
-        public const int DbVersionEntityFramework = 1984;
-        /// <summary>The column with this value indicates there is no item of this type.</summary>
-        public const int DB_NONE = -1;
-        /// <summary>
-        ///     This value indicates there's no processing unit, but a direct memory connection (a framebuffer or sound
-        ///     buffer).
-        /// </summary>
-        public const int DB_SOFTWARE = -2;
-
-        readonly IDbConnection dbCon;
-        readonly IDbCore       dbCore;
-
-        public Operations(IDbConnection connection, IDbCore core)
-        {
-            dbCon  = connection;
-            dbCore = core;
-        }
-    }
+    /// <summary>Last known database version</summary>
+    const int DB_VERSION = 24;
+    public const int DbVersionEntityFramework = 1984;
+    /// <summary>The column with this value indicates there is no item of this type.</summary>
+    public const int DbNone = -1;
+    /// <summary>
+    ///     This value indicates there's no processing unit, but a direct memory connection (a framebuffer or sound
+    ///     buffer).
+    /// </summary>
+    public const int DbSoftware = -2;
 }

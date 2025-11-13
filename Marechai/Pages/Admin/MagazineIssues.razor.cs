@@ -30,59 +30,56 @@ using Blazorise;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin
+namespace Marechai.Pages.Admin;
+
+public partial class MagazineIssues
 {
-    public partial class MagazineIssues
+    MagazineIssueViewModel       _currentMagazineIssue;
+    bool                         _deleteInProgress;
+    Modal                        _frmDelete;
+    bool                         _loaded;
+    List<MagazineIssueViewModel> _magazineIssues;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        MagazineIssueViewModel       _currentMagazineIssue;
-        bool                         _deleteInProgress;
-        Modal                        _frmDelete;
-        bool                         _loaded;
-        List<MagazineIssueViewModel> _magazineIssues;
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _magazineIssues = await Service.GetAsync();
-            _loaded         = true;
-            StateHasChanged();
-        }
-
-        void ShowModal(long itemId)
-        {
-            _currentMagazineIssue = _magazineIssues.FirstOrDefault(n => n.Id == itemId);
-            _frmDelete.Show();
-        }
-
-        void HideModal() => _frmDelete.Hide();
-
-        async void ConfirmDelete()
-        {
-            if(_currentMagazineIssue is null)
-                return;
-
-            _deleteInProgress = true;
-            _magazineIssues   = null;
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            await Service.DeleteAsync(_currentMagazineIssue.Id, (await UserManager.GetUserAsync(authState.User)).Id);
-            _magazineIssues = await Service.GetAsync();
-
-            _deleteInProgress = false;
-            _frmDelete.Hide();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            // Tell we finished loading
-            StateHasChanged();
-        }
-
-        void ModalClosing(ModalClosingEventArgs obj) => _currentMagazineIssue = null;
+        _magazineIssues = await Service.GetAsync();
+        _loaded         = true;
+        StateHasChanged();
     }
+
+    void ShowModal(long itemId)
+    {
+        _currentMagazineIssue = _magazineIssues.FirstOrDefault(n => n.Id == itemId);
+        _frmDelete.Show();
+    }
+
+    void HideModal() => _frmDelete.Hide();
+
+    async void ConfirmDelete()
+    {
+        if(_currentMagazineIssue is null) return;
+
+        _deleteInProgress = true;
+        _magazineIssues   = null;
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        await Service.DeleteAsync(_currentMagazineIssue.Id, (await UserManager.GetUserAsync(authState.User)).Id);
+        _magazineIssues = await Service.GetAsync();
+
+        _deleteInProgress = false;
+        _frmDelete.Hide();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        // Tell we finished loading
+        StateHasChanged();
+    }
+
+    void ModalClosing(ModalClosingEventArgs obj) => _currentMagazineIssue = null;
 }

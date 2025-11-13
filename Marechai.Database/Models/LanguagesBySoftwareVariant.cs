@@ -25,13 +25,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class LanguagesBySoftwareVariant : BaseModel<ulong>
 {
-    public class LanguagesBySoftwareVariant : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Iso639 Language { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
-    }
+    [Required]
+    public virtual Iso639 Language { get; set; }
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
 }

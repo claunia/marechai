@@ -28,88 +28,74 @@ using System.Threading.Tasks;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 
-namespace Marechai.Pages.Companies
+namespace Marechai.Pages.Companies;
+
+public partial class Index
 {
-    public partial class Index
+    char?                  _character;
+    List<CompanyViewModel> _companies;
+    int?                   _countryId;
+    string                 _countryName;
+    bool                   _loaded;
+    string                 _startingCharacter;
+
+    [Parameter]
+    public int? CountryId
     {
-        char?                  _character;
-        List<CompanyViewModel> _companies;
-        int?                   _countryId;
-        string                 _countryName;
-        bool                   _loaded;
-        string                 _startingCharacter;
-
-        [Parameter]
-        public int? CountryId
+        get => _countryId;
+        set
         {
-            get => _countryId;
-            set
-            {
-                if(_countryId == value)
-                    return;
+            if(_countryId == value) return;
 
-                _countryId = value;
-                _loaded    = false;
-            }
+            _countryId = value;
+            _loaded    = false;
+        }
+    }
+
+    [Parameter]
+    public string StartingCharacter
+    {
+        get => _startingCharacter;
+        set
+        {
+            if(_startingCharacter == value) return;
+
+            _startingCharacter = value;
+            _loaded            = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(_loaded) return;
+
+        _character = null;
+
+        if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
+        {
+            _character = StartingCharacter[0];
+
+            // ToUpper()
+            if(_character >= 'a' && _character <= 'z') _character -= (char)32;
+
+            // Check if not letter or number
+            if(_character < '0' || _character > '9' && _character < 'A' || _character > 'Z') _character = null;
         }
 
-        [Parameter]
-        public string StartingCharacter
-        {
-            get => _startingCharacter;
-            set
-            {
-                if(_startingCharacter == value)
-                    return;
+        if(_character.HasValue) _companies = await Service.GetCompaniesByLetterAsync(_character.Value);
 
-                _startingCharacter = value;
-                _loaded            = false;
-            }
+        if(CountryId.HasValue && _companies is null)
+        {
+            _countryName = await Service.GetCountryNameAsync(CountryId.Value);
+
+            if(_countryName != null)
+                _companies = await Service.GetCompaniesByCountryAsync(CountryId.Value);
+            else
+                CountryId = null;
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _character = null;
-
-            if(!string.IsNullOrWhiteSpace(StartingCharacter) &&
-               StartingCharacter.Length == 1)
-            {
-                _character = StartingCharacter[0];
-
-                // ToUpper()
-                if(_character >= 'a' &&
-                   _character <= 'z')
-                    _character -= (char)32;
-
-                // Check if not letter or number
-                if(_character < '0'                       ||
-                   (_character > '9' && _character < 'A') ||
-                   _character > 'Z')
-                    _character = null;
-            }
-
-            if(_character.HasValue)
-                _companies = await Service.GetCompaniesByLetterAsync(_character.Value);
-
-            if(CountryId.HasValue &&
-               _companies is null)
-            {
-                _countryName = await Service.GetCountryNameAsync(CountryId.Value);
-
-                if(_countryName != null)
-                {
-                    _companies = await Service.GetCompaniesByCountryAsync(CountryId.Value);
-                }
-                else
-                    CountryId = null;
-            }
-
-            _companies ??= await Service.GetAsync();
-            _loaded    =   true;
-            StateHasChanged();
-        }
+        _companies ??= await Service.GetAsync();
+        _loaded    =   true;
+        StateHasChanged();
     }
 }

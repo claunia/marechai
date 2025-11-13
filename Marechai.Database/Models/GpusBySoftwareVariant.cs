@@ -25,15 +25,14 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class GpusBySoftwareVariant : BaseModel<ulong>
 {
-    public class GpusBySoftwareVariant : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Gpu Gpu { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
-        public bool? Minimum     { get;                       set; }
-        public bool? Recommended { get;                       set; }
-    }
+    [Required]
+    public virtual Gpu Gpu { get; set; }
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
+    public bool? Minimum     { get;                       set; }
+    public bool? Recommended { get;                       set; }
 }

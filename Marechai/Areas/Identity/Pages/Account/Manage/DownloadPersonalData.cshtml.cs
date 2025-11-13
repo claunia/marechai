@@ -10,53 +10,36 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Marechai.Areas.Identity.Pages.Account.Manage
+namespace Marechai.Areas.Identity.Pages.Account.Manage;
+
+public class DownloadPersonalDataModel
+    (UserManager<ApplicationUser> userManager, ILogger<DownloadPersonalDataModel> logger) : PageModel
 {
-    public class DownloadPersonalDataModel : PageModel
+    public async Task<IActionResult> OnPostAsync()
     {
-        readonly ILogger<DownloadPersonalDataModel> _logger;
-        readonly UserManager<ApplicationUser>       _userManager;
+        ApplicationUser user = await userManager.GetUserAsync(User);
 
-        public DownloadPersonalDataModel(UserManager<ApplicationUser> userManager,
-                                         ILogger<DownloadPersonalDataModel> logger)
-        {
-            _userManager = userManager;
-            _logger      = logger;
-        }
+        if(user == null) return NotFound($"Unable to load user with ID '{userManager.GetUserId(User)}'.");
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            ApplicationUser user = await _userManager.GetUserAsync(User);
+        logger.LogInformation("User with ID '{UserId}' asked for their personal data.", userManager.GetUserId(User));
 
-            if(user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+        // Only include personal data for download
+        Dictionary<string, string> personalData = new();
 
-            _logger.LogInformation("User with ID '{UserId}' asked for their personal data.",
-                                   _userManager.GetUserId(User));
+        IEnumerable<PropertyInfo> personalDataProps = typeof(ApplicationUser).GetProperties()
+                                                                             .Where(prop => Attribute.IsDefined(prop,
+                                                                                  typeof(
+                                                                                      PersonalDataAttribute)));
 
-            // Only include personal data for download
-            Dictionary<string, string> personalData = new();
+        foreach(PropertyInfo p in personalDataProps) personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
 
-            IEnumerable<PropertyInfo> personalDataProps = typeof(ApplicationUser).GetProperties().
-                Where(prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
+        IList<UserLoginInfo> logins = await userManager.GetLoginsAsync(user);
 
-            foreach(PropertyInfo p in personalDataProps)
-            {
-                personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
-            }
+        foreach(UserLoginInfo l in logins)
+            personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
 
-            IList<UserLoginInfo> logins = await _userManager.GetLoginsAsync(user);
+        Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
 
-            foreach(UserLoginInfo l in logins)
-            {
-                personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
-            }
-
-            Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
-
-            return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");
-        }
+        return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");
     }
 }

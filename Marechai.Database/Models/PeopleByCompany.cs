@@ -26,19 +26,18 @@
 using System;
 using System.ComponentModel;
 
-namespace Marechai.Database.Models
-{
-    public class PeopleByCompany : BaseModel<long>
-    {
-        public int       PersonId  { get; set; }
-        public int       CompanyId { get; set; }
-        public string    Position  { get; set; }
-        public DateTime? Start     { get; set; }
-        public DateTime? End       { get; set; }
-        [DefaultValue(false)]
-        public bool Ongoing { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual Person  Person  { get; set; }
-        public virtual Company Company { get; set; }
-    }
+public class PeopleByCompany : BaseModel<long>
+{
+    public int       PersonId  { get; set; }
+    public int       CompanyId { get; set; }
+    public string    Position  { get; set; }
+    public DateTime? Start     { get; set; }
+    public DateTime? End       { get; set; }
+    [DefaultValue(false)]
+    public bool Ongoing { get; set; }
+
+    public virtual Person  Person  { get; set; }
+    public virtual Company Company { get; set; }
 }

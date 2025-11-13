@@ -30,7 +30,7 @@
 @page "/companies/{StartingCharacter}"
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
-@inject IWebHostEnvironment Host
+@inject IWebHostEnvironment                Host
 
 @if(_companies is null)
 {
@@ -50,9 +50,10 @@
                 <source srcset="/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
         /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 2x,
         /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 3x" type="image/webp">
-                <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png" srcset="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
+                <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png"
+                     srcset="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
                                  /assets/flags/countries/png/1x/@($"{CountryId:D3}").png 2x,
-                                 /assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x" />
+                                 /assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x"/>
             </picture>
         }
     </p>
@@ -68,25 +69,27 @@
 @if(_companies.Any())
 {
     <div class="container">
-        <span class="align-content-center">@string.Format(L["{0} companies found in the database."], _companies.Count())</span>
-        <hr />
+        <span
+            class="align-content-center">@string.Format(L["{0} companies found in the database."], _companies.Count())</span>
+        <hr/>
         <table>
-            @foreach(var company in _companies)
+            @foreach(CompanyViewModel company in _companies)
             {
                 <tr>
                     <td class="text-right">
                         <a href="/company/@company.Id">
-                            @if(company.LastLogo != null &&
-                                File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
+                            @if(company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
                             {
                                 <picture>
                                     <source srcset="/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
                                     <source srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
 /assets/logos/thumbs/webp/2x/@(company.LastLogo).webp 2x,
 /assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x" type="image/webp">
-                                    <img alt="" height="auto" src="/assets/logos/thumbs/png/1x/@(company.LastLogo).png" srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
+                                    <img alt="" height="auto" src="/assets/logos/thumbs/png/1x/@(company.LastLogo).png"
+                                         srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
                      /assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
-                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 32px; max-width: 128px" width="auto" />
+                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 32px; max-width: 128px"
+                                         width="auto"/>
                                 </picture>
                             }
                         </a>

@@ -27,23 +27,22 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class Dump : BaseModel<ulong>
-    {
-        [Required]
-        public string Dumper { get;          set; }
-        public string    UserId       { get; set; }
-        public string    DumpingGroup { get; set; }
-        public DateTime? DumpDate     { get; set; }
-        [Required]
-        public virtual Media Media { get; set; }
-        [Required]
-        public virtual MediaDump MediaDump { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual ApplicationUser           User         { get; set; }
-        public virtual ICollection<DumpHardware> DumpHardware { get; set; }
-        public         ulong                     MediaId      { get; set; }
-        public         ulong                     MediaDumpId  { get; set; }
-    }
+public class Dump : BaseModel<ulong>
+{
+    [Required]
+    public string Dumper { get;          set; }
+    public string    UserId       { get; set; }
+    public string    DumpingGroup { get; set; }
+    public DateTime? DumpDate     { get; set; }
+    [Required]
+    public virtual Media Media { get; set; }
+    [Required]
+    public virtual MediaDump MediaDump { get; set; }
+
+    public virtual ApplicationUser           User         { get; set; }
+    public virtual ICollection<DumpHardware> DumpHardware { get; set; }
+    public         ulong                     MediaId      { get; set; }
+    public         ulong                     MediaDumpId  { get; set; }
 }

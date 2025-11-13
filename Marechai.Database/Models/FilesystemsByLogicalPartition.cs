@@ -25,13 +25,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class FilesystemsByLogicalPartition : BaseModel<ulong>
 {
-    public class FilesystemsByLogicalPartition : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Filesystem Filesystem { get; set; }
-        [Required]
-        public virtual LogicalPartition Partition { get; set; }
-    }
+    [Required]
+    public virtual Filesystem Filesystem { get; set; }
+    [Required]
+    public virtual LogicalPartition Partition { get; set; }
 }

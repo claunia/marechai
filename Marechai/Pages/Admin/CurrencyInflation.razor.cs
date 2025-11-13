@@ -30,59 +30,56 @@ using Blazorise;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin
+namespace Marechai.Pages.Admin;
+
+public partial class CurrencyInflation
 {
-    public partial class CurrencyInflation
+    CurrencyInflationViewModel       _currentInflation;
+    bool                             _deleteInProgress;
+    Modal                            _frmDelete;
+    List<CurrencyInflationViewModel> _inflations;
+    bool                             _loaded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        CurrencyInflationViewModel       _currentInflation;
-        bool                             _deleteInProgress;
-        Modal                            _frmDelete;
-        List<CurrencyInflationViewModel> _inflations;
-        bool                             _loaded;
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _inflations = await Service.GetAsync();
-            _loaded     = true;
-            StateHasChanged();
-        }
-
-        void ShowModal(long itemId)
-        {
-            _currentInflation = _inflations.FirstOrDefault(n => n.Id == itemId);
-            _frmDelete.Show();
-        }
-
-        void HideModal() => _frmDelete.Hide();
-
-        async void ConfirmDelete()
-        {
-            if(_currentInflation is null)
-                return;
-
-            _deleteInProgress = true;
-            _inflations       = null;
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            await Service.DeleteAsync(_currentInflation.Id, (await UserManager.GetUserAsync(authState.User)).Id);
-            _inflations = await Service.GetAsync();
-
-            _deleteInProgress = false;
-            _frmDelete.Hide();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            // Tell we finished loading
-            StateHasChanged();
-        }
-
-        void ModalClosing(ModalClosingEventArgs obj) => _currentInflation = null;
+        _inflations = await Service.GetAsync();
+        _loaded     = true;
+        StateHasChanged();
     }
+
+    void ShowModal(long itemId)
+    {
+        _currentInflation = _inflations.FirstOrDefault(n => n.Id == itemId);
+        _frmDelete.Show();
+    }
+
+    void HideModal() => _frmDelete.Hide();
+
+    async void ConfirmDelete()
+    {
+        if(_currentInflation is null) return;
+
+        _deleteInProgress = true;
+        _inflations       = null;
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        await Service.DeleteAsync(_currentInflation.Id, (await UserManager.GetUserAsync(authState.User)).Id);
+        _inflations = await Service.GetAsync();
+
+        _deleteInProgress = false;
+        _frmDelete.Hide();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        // Tell we finished loading
+        StateHasChanged();
+    }
+
+    void ModalClosing(ModalClosingEventArgs obj) => _currentInflation = null;
 }

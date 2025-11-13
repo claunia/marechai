@@ -26,21 +26,21 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class MachineFamily : BaseModel<int>
 {
-    public class MachineFamily : BaseModel<int>
-    {
-        public MachineFamily() => Machines = new HashSet<Machine>();
+    public MachineFamily() => Machines = new HashSet<Machine>();
 
-        public int CompanyId { get; set; }
-        [Required, StringLength(255)]
-        public string Name { get; set; }
+    public int CompanyId { get; set; }
+    [Required]
+    [StringLength(255)]
+    public string Name { get; set; }
 
-        public virtual Company                                       Company   { get; set; }
-        public virtual ICollection<Machine>                          Machines  { get; set; }
-        public virtual ICollection<DocumentsByMachineFamily>         Documents { get; set; }
-        public virtual ICollection<BooksByMachineFamily>             Books     { get; set; }
-        public virtual ICollection<MagazinesByMachineFamily>         Magazines { get; set; }
-        public virtual ICollection<MachineFamiliesBySoftwareVariant> Software  { get; set; }
-    }
+    public virtual Company                                       Company   { get; set; }
+    public virtual ICollection<Machine>                          Machines  { get; set; }
+    public virtual ICollection<DocumentsByMachineFamily>         Documents { get; set; }
+    public virtual ICollection<BooksByMachineFamily>             Books     { get; set; }
+    public virtual ICollection<MagazinesByMachineFamily>         Magazines { get; set; }
+    public virtual ICollection<MachineFamiliesBySoftwareVariant> Software  { get; set; }
 }

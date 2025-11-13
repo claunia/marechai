@@ -25,15 +25,14 @@
 
 using System.ComponentModel;
 
-namespace Marechai.Database.Models
-{
-    public class GpusByMachine : BaseModel<long>
-    {
-        public int GpuId     { get; set; }
-        public int MachineId { get; set; }
+namespace Marechai.Database.Models;
 
-        [DisplayName("GPU")]
-        public virtual Gpu Gpu { get;         set; }
-        public virtual Machine Machine { get; set; }
-    }
+public class GpusByMachine : BaseModel<long>
+{
+    public int GpuId     { get; set; }
+    public int MachineId { get; set; }
+
+    [DisplayName("GPU")]
+    public virtual Gpu Gpu { get;         set; }
+    public virtual Machine Machine { get; set; }
 }

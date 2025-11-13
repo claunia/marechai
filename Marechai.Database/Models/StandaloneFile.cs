@@ -26,13 +26,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class StandaloneFile : BaseFile
-    {
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual ICollection<FileDataStreamsByStandaloneFile> DataStreams { get; set; }
-    }
+public class StandaloneFile : BaseFile
+{
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
+
+    public virtual ICollection<FileDataStreamsByStandaloneFile> DataStreams { get; set; }
 }

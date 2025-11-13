@@ -25,26 +25,24 @@
 
 using System.Threading.Tasks;
 
-namespace Marechai.Pages.Computers
+namespace Marechai.Pages.Computers;
+
+public partial class Index
 {
-    public partial class Index
+    int  _computers;
+    bool _loaded;
+    int  _maxYear;
+    int  _minYear;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        int  _computers;
-        bool _loaded;
-        int  _maxYear;
-        int  _minYear;
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
+        _computers = await Service.GetComputersCountAsync();
+        _minYear   = await Service.GetMinimumYearAsync();
+        _maxYear   = await Service.GetMaximumYearAsync();
 
-            _computers = await Service.GetComputersCountAsync();
-            _minYear   = await Service.GetMinimumYearAsync();
-            _maxYear   = await Service.GetMaximumYearAsync();
-
-            _loaded = true;
-            StateHasChanged();
-        }
+        _loaded = true;
+        StateHasChanged();
     }
 }

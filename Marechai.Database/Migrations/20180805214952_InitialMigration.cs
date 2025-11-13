@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -31,6 +32,7 @@ namespace Marechai.Database.Migrations
 {
     public partial class InitialMigration : Migration
     {
+        [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "The method is called just once")]
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable("admins", table => new

@@ -30,109 +30,117 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class ScreensService(MarechaiContext context)
 {
-    public class ScreensService
+    public async Task<List<ScreenViewModel>> GetAsync() => (await context.Screens.Select(s => new ScreenViewModel
+                                                                          {
+                                                                              Diagonal        = s.Diagonal,
+                                                                              EffectiveColors = s.EffectiveColors,
+                                                                              Height          = s.Height,
+                                                                              Id              = s.Id,
+                                                                              Type            = s.Type,
+                                                                              Width           = s.Width,
+                                                                              NativeResolutionId =
+                                                                                  s.NativeResolutionId,
+                                                                              NativeResolution =
+                                                                                  new ResolutionViewModel
+                                                                                  {
+                                                                                      Chars = s.NativeResolution
+                                                                                               .Chars,
+                                                                                      Colors = s.NativeResolution
+                                                                                                .Colors,
+                                                                                      Grayscale = s.NativeResolution
+                                                                                                   .Grayscale,
+                                                                                      Height = s.NativeResolution
+                                                                                                .Height,
+                                                                                      Id =
+                                                                                          s.NativeResolution.Id,
+                                                                                      Palette = s.NativeResolution
+                                                                                                 .Palette,
+                                                                                      Width = s.NativeResolution
+                                                                                               .Width
+                                                                                  }
+                                                                          })
+                                                                         .ToListAsync()).OrderBy(s => s.Diagonal)
+                                                                                        .ThenBy(s => s.EffectiveColors)
+                                                                                        .ThenBy(s => s.NativeResolution.ToString())
+                                                                                        .ThenBy(s => s.Type)
+                                                                                        .ThenBy(s => s.Size)
+                                                                                        .ToList();
+
+    public async Task<ScreenViewModel> GetAsync(int id) => await context.Screens.Where(s => s.Id == id)
+                                                                         .Select(s => new ScreenViewModel
+                                                                          {
+                                                                              Diagonal        = s.Diagonal,
+                                                                              EffectiveColors = s.EffectiveColors,
+                                                                              Height          = s.Height,
+                                                                              Id              = s.Id,
+                                                                              NativeResolution = new ResolutionViewModel
+                                                                              {
+                                                                                  Chars  = s.NativeResolution.Chars,
+                                                                                  Colors = s.NativeResolution.Colors,
+                                                                                  Grayscale = s.NativeResolution
+                                                                                     .Grayscale,
+                                                                                  Height = s.NativeResolution.Height,
+                                                                                  Id     = s.NativeResolution.Id,
+                                                                                  Palette =
+                                                                                      s.NativeResolution.Palette,
+                                                                                  Width = s.NativeResolution.Width
+                                                                              },
+                                                                              NativeResolutionId = s.NativeResolutionId,
+                                                                              Type               = s.Type,
+                                                                              Width              = s.Width
+                                                                          })
+                                                                         .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(ScreenViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        Screen model = await context.Screens.FindAsync(viewModel.Id);
 
-        public ScreensService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<ScreenViewModel>> GetAsync() => (await _context.Screens.Select(s => new ScreenViewModel
-                                                                   {
-                                                                       Diagonal           = s.Diagonal,
-                                                                       EffectiveColors    = s.EffectiveColors,
-                                                                       Height             = s.Height,
-                                                                       Id                 = s.Id,
-                                                                       Type               = s.Type,
-                                                                       Width              = s.Width,
-                                                                       NativeResolutionId = s.NativeResolutionId,
-                                                                       NativeResolution = new ResolutionViewModel
-                                                                       {
-                                                                           Chars     = s.NativeResolution.Chars,
-                                                                           Colors    = s.NativeResolution.Colors,
-                                                                           Grayscale = s.NativeResolution.Grayscale,
-                                                                           Height    = s.NativeResolution.Height,
-                                                                           Id        = s.NativeResolution.Id,
-                                                                           Palette   = s.NativeResolution.Palette,
-                                                                           Width     = s.NativeResolution.Width
-                                                                       }
-                                                                   }).ToListAsync()).OrderBy(s => s.Diagonal).
-            ThenBy(s => s.EffectiveColors).ThenBy(s => s.NativeResolution.ToString()).ThenBy(s => s.Type).
-            ThenBy(s => s.Size).ToList();
+        Resolution nativeResolution = await context.Resolutions.FindAsync(viewModel.NativeResolutionId);
 
-        public async Task<ScreenViewModel> GetAsync(int id) =>
-            await _context.Screens.Where(s => s.Id == id).Select(s => new ScreenViewModel
-            {
-                Diagonal        = s.Diagonal,
-                EffectiveColors = s.EffectiveColors,
-                Height          = s.Height,
-                Id              = s.Id,
-                NativeResolution = new ResolutionViewModel
-                {
-                    Chars     = s.NativeResolution.Chars,
-                    Colors    = s.NativeResolution.Colors,
-                    Grayscale = s.NativeResolution.Grayscale,
-                    Height    = s.NativeResolution.Height,
-                    Id        = s.NativeResolution.Id,
-                    Palette   = s.NativeResolution.Palette,
-                    Width     = s.NativeResolution.Width
-                },
-                NativeResolutionId = s.NativeResolutionId,
-                Type               = s.Type,
-                Width              = s.Width
-            }).FirstOrDefaultAsync();
+        if(nativeResolution is null) return;
 
-        public async Task UpdateAsync(ScreenViewModel viewModel, string userId)
+        model.Diagonal           = viewModel.Diagonal;
+        model.EffectiveColors    = viewModel.EffectiveColors;
+        model.Height             = viewModel.Height;
+        model.NativeResolutionId = viewModel.NativeResolutionId;
+        model.Type               = viewModel.Type;
+        model.Width              = viewModel.Width;
+
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<int> CreateAsync(ScreenViewModel viewModel, string userId)
+    {
+        var model = new Screen
         {
-            Screen model = await _context.Screens.FindAsync(viewModel.Id);
+            Diagonal           = viewModel.Diagonal,
+            EffectiveColors    = viewModel.EffectiveColors,
+            Height             = viewModel.Height,
+            NativeResolutionId = viewModel.NativeResolutionId,
+            Type               = viewModel.Type,
+            Width              = viewModel.Width
+        };
 
-            if(model is null)
-                return;
+        await context.Screens.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            Resolution nativeResolution = await _context.Resolutions.FindAsync(viewModel.NativeResolutionId);
+        return model.Id;
+    }
 
-            if(nativeResolution is null)
-                return;
+    public async Task DeleteAsync(int id, string userId)
+    {
+        Screen item = await context.Screens.FindAsync(id);
 
-            model.Diagonal           = viewModel.Diagonal;
-            model.EffectiveColors    = viewModel.EffectiveColors;
-            model.Height             = viewModel.Height;
-            model.NativeResolutionId = viewModel.NativeResolutionId;
-            model.Type               = viewModel.Type;
-            model.Width              = viewModel.Width;
+        if(item is null) return;
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        context.Screens.Remove(item);
 
-        public async Task<int> CreateAsync(ScreenViewModel viewModel, string userId)
-        {
-            var model = new Screen
-            {
-                Diagonal           = viewModel.Diagonal,
-                EffectiveColors    = viewModel.EffectiveColors,
-                Height             = viewModel.Height,
-                NativeResolutionId = viewModel.NativeResolutionId,
-                Type               = viewModel.Type,
-                Width              = viewModel.Width
-            };
-
-            await _context.Screens.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            Screen item = await _context.Screens.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.Screens.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

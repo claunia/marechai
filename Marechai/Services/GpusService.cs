@@ -30,108 +30,108 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class GpusService(MarechaiContext context)
 {
-    public class GpusService
+    public async Task<List<GpuViewModel>> GetAsync() => await context.Gpus.OrderBy(g => g.Company.Name)
+                                                                     .ThenBy(g => g.Name)
+                                                                     .ThenBy(g => g.Introduced)
+                                                                     .Select(g => new GpuViewModel
+                                                                      {
+                                                                          Id         = g.Id,
+                                                                          Company    = g.Company.Name,
+                                                                          Introduced = g.Introduced,
+                                                                          ModelCode  = g.ModelCode,
+                                                                          Name       = g.Name
+                                                                      })
+                                                                     .ToListAsync();
+
+    public async Task<List<GpuViewModel>> GetByMachineAsync(int machineId) => await context.GpusByMachine
+                                                                                 .Where(g => g.MachineId == machineId)
+                                                                                 .Select(g => g.Gpu)
+                                                                                 .OrderBy(g => g.Company.Name)
+                                                                                 .ThenBy(g => g.Name)
+                                                                                 .Select(g => new GpuViewModel
+                                                                                  {
+                                                                                      Id          = g.Id,
+                                                                                      Name        = g.Name,
+                                                                                      Company     = g.Company.Name,
+                                                                                      CompanyId   = g.Company.Id,
+                                                                                      ModelCode   = g.ModelCode,
+                                                                                      Introduced  = g.Introduced,
+                                                                                      Package     = g.Package,
+                                                                                      Process     = g.Process,
+                                                                                      ProcessNm   = g.ProcessNm,
+                                                                                      DieSize     = g.DieSize,
+                                                                                      Transistors = g.Transistors
+                                                                                  })
+                                                                                 .ToListAsync();
+
+    public async Task<GpuViewModel> GetAsync(int id) => await context.Gpus.Where(g => g.Id == id)
+                                                                      .Select(g => new GpuViewModel
+                                                                       {
+                                                                           Id          = g.Id,
+                                                                           Name        = g.Name,
+                                                                           CompanyId   = g.Company.Id,
+                                                                           ModelCode   = g.ModelCode,
+                                                                           Introduced  = g.Introduced,
+                                                                           Package     = g.Package,
+                                                                           Process     = g.Process,
+                                                                           ProcessNm   = g.ProcessNm,
+                                                                           DieSize     = g.DieSize,
+                                                                           Transistors = g.Transistors
+                                                                       })
+                                                                      .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(GpuViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        Gpu model = await context.Gpus.FindAsync(viewModel.Id);
 
-        public GpusService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<GpuViewModel>> GetAsync() =>
-            await _context.Gpus.OrderBy(g => g.Company.Name).ThenBy(g => g.Name).ThenBy(g => g.Introduced).
-                           Select(g => new GpuViewModel
-                           {
-                               Id         = g.Id,
-                               Company    = g.Company.Name,
-                               Introduced = g.Introduced,
-                               ModelCode  = g.ModelCode,
-                               Name       = g.Name
-                           }).ToListAsync();
+        model.Name        = viewModel.Name;
+        model.CompanyId   = viewModel.CompanyId;
+        model.ModelCode   = viewModel.ModelCode;
+        model.Introduced  = viewModel.Introduced;
+        model.Package     = viewModel.Package;
+        model.Process     = viewModel.Process;
+        model.ProcessNm   = viewModel.ProcessNm;
+        model.DieSize     = viewModel.DieSize;
+        model.Transistors = viewModel.Transistors;
 
-        public async Task<List<GpuViewModel>> GetByMachineAsync(int machineId) =>
-            await _context.GpusByMachine.Where(g => g.MachineId == machineId).Select(g => g.Gpu).
-                           OrderBy(g => g.Company.Name).ThenBy(g => g.Name).Select(g => new GpuViewModel
-                           {
-                               Id          = g.Id,
-                               Name        = g.Name,
-                               Company     = g.Company.Name,
-                               CompanyId   = g.Company.Id,
-                               ModelCode   = g.ModelCode,
-                               Introduced  = g.Introduced,
-                               Package     = g.Package,
-                               Process     = g.Process,
-                               ProcessNm   = g.ProcessNm,
-                               DieSize     = g.DieSize,
-                               Transistors = g.Transistors
-                           }).ToListAsync();
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<GpuViewModel> GetAsync(int id) =>
-            await _context.Gpus.Where(g => g.Id == id).Select(g => new GpuViewModel
-            {
-                Id          = g.Id,
-                Name        = g.Name,
-                CompanyId   = g.Company.Id,
-                ModelCode   = g.ModelCode,
-                Introduced  = g.Introduced,
-                Package     = g.Package,
-                Process     = g.Process,
-                ProcessNm   = g.ProcessNm,
-                DieSize     = g.DieSize,
-                Transistors = g.Transistors
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(GpuViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(GpuViewModel viewModel, string userId)
+    {
+        var model = new Gpu
         {
-            Gpu model = await _context.Gpus.FindAsync(viewModel.Id);
+            Name        = viewModel.Name,
+            CompanyId   = viewModel.CompanyId,
+            ModelCode   = viewModel.ModelCode,
+            Introduced  = viewModel.Introduced,
+            Package     = viewModel.Package,
+            Process     = viewModel.Process,
+            ProcessNm   = viewModel.ProcessNm,
+            DieSize     = viewModel.DieSize,
+            Transistors = viewModel.Transistors
+        };
 
-            if(model is null)
-                return;
+        await context.Gpus.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Name        = viewModel.Name;
-            model.CompanyId   = viewModel.CompanyId;
-            model.ModelCode   = viewModel.ModelCode;
-            model.Introduced  = viewModel.Introduced;
-            model.Package     = viewModel.Package;
-            model.Process     = viewModel.Process;
-            model.ProcessNm   = viewModel.ProcessNm;
-            model.DieSize     = viewModel.DieSize;
-            model.Transistors = viewModel.Transistors;
+        return model.Id;
+    }
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+    public async Task DeleteAsync(int id, string userId)
+    {
+        Gpu item = await context.Gpus.FindAsync(id);
 
-        public async Task<int> CreateAsync(GpuViewModel viewModel, string userId)
-        {
-            var model = new Gpu
-            {
-                Name        = viewModel.Name,
-                CompanyId   = viewModel.CompanyId,
-                ModelCode   = viewModel.ModelCode,
-                Introduced  = viewModel.Introduced,
-                Package     = viewModel.Package,
-                Process     = viewModel.Process,
-                ProcessNm   = viewModel.ProcessNm,
-                DieSize     = viewModel.DieSize,
-                Transistors = viewModel.Transistors
-            };
+        if(item is null) return;
 
-            await _context.Gpus.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        context.Gpus.Remove(item);
 
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            Gpu item = await _context.Gpus.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.Gpus.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

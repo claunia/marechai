@@ -29,14 +29,9 @@ using System.Threading.Tasks;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class Iso4217Service(MarechaiContext context)
 {
-    public class Iso4217Service
-    {
-        readonly MarechaiContext _context;
-
-        public Iso4217Service(MarechaiContext context) => _context = context;
-
-        public async Task<List<Iso4217>> GetAsync() => await _context.Iso4217.OrderBy(c => c.Name).ToListAsync();
-    }
+    public async Task<List<Iso4217>> GetAsync() => await context.Iso4217.OrderBy(c => c.Name).ToListAsync();
 }

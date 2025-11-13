@@ -23,30 +23,27 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class ScreenViewModel : BaseViewModel<int>
 {
-    public class ScreenViewModel : BaseViewModel<int>
+    public double?             Width              { get; set; }
+    public double?             Height             { get; set; }
+    public double              Diagonal           { get; set; }
+    public int                 NativeResolutionId { get; set; }
+    public ResolutionViewModel NativeResolution   { get; set; }
+    public long?               EffectiveColors    { get; set; }
+    public string              Type               { get; set; }
+
+    public long? Colors => EffectiveColors ?? NativeResolution.Colors;
+
+    public string Size
     {
-        public double?             Width              { get; set; }
-        public double?             Height             { get; set; }
-        public double              Diagonal           { get; set; }
-        public int                 NativeResolutionId { get; set; }
-        public ResolutionViewModel NativeResolution   { get; set; }
-        public long?               EffectiveColors    { get; set; }
-        public string              Type               { get; set; }
-
-        public long? Colors => EffectiveColors ?? NativeResolution.Colors;
-
-        public string Size
+        get
         {
-            get
-            {
-                if(Width  != null &&
-                   Height != null)
-                    return $"{Width}x{Height} mm";
+            if(Width != null && Height != null) return $"{Width}x{Height} mm";
 
-                return "Unknown";
-            }
+            return "Unknown";
         }
     }
 }

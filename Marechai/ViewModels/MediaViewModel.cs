@@ -27,34 +27,33 @@ using Aaru.CommonTypes;
 using Marechai.Database;
 using Marechai.Database.Models;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class MediaViewModel : BaseViewModel<ulong>
 {
-    public class MediaViewModel : BaseViewModel<ulong>
-    {
-        public string              Title             { get; set; }
-        public ushort?             Sequence          { get; set; }
-        public ushort?             LastSequence      { get; set; }
-        public MediaType           Type              { get; set; }
-        public int?                WriteOffset       { get; set; }
-        public ushort?             Sides             { get; set; }
-        public ushort?             Layers            { get; set; }
-        public ushort?             Sessions          { get; set; }
-        public ushort?             Tracks            { get; set; }
-        public ulong               Sectors           { get; set; }
-        public ulong               Size              { get; set; }
-        public string              CopyProtection    { get; set; }
-        public string              PartNumber        { get; set; }
-        public string              SerialNumber      { get; set; }
-        public string              Barcode           { get; set; }
-        public string              CatalogueNumber   { get; set; }
-        public string              Manufacturer      { get; set; }
-        public string              Model             { get; set; }
-        public string              Revision          { get; set; }
-        public string              Firmware          { get; set; }
-        public int?                PhysicalBlockSize { get; set; }
-        public int?                LogicalBlockSize  { get; set; }
-        public VariableBlockSize[] BlockSizes        { get; set; }
-        public StorageInterface?   StorageInterface  { get; set; }
-        public OpticalDiscTrack[]  TableOfContents   { get; set; }
-    }
+    public string              Title             { get; set; }
+    public ushort?             Sequence          { get; set; }
+    public ushort?             LastSequence      { get; set; }
+    public MediaType           Type              { get; set; }
+    public int?                WriteOffset       { get; set; }
+    public ushort?             Sides             { get; set; }
+    public ushort?             Layers            { get; set; }
+    public ushort?             Sessions          { get; set; }
+    public ushort?             Tracks            { get; set; }
+    public ulong               Sectors           { get; set; }
+    public ulong               Size              { get; set; }
+    public string              CopyProtection    { get; set; }
+    public string              PartNumber        { get; set; }
+    public string              SerialNumber      { get; set; }
+    public string              Barcode           { get; set; }
+    public string              CatalogueNumber   { get; set; }
+    public string              Manufacturer      { get; set; }
+    public string              Model             { get; set; }
+    public string              Revision          { get; set; }
+    public string              Firmware          { get; set; }
+    public int?                PhysicalBlockSize { get; set; }
+    public int?                LogicalBlockSize  { get; set; }
+    public VariableBlockSize[] BlockSizes        { get; set; }
+    public StorageInterface?   StorageInterface  { get; set; }
+    public OpticalDiscTrack[]  TableOfContents   { get; set; }
 }

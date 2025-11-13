@@ -32,109 +32,101 @@ using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin.Details
+namespace Marechai.Pages.Admin.Details;
+
+public partial class CurrencyInflation
 {
-    public partial class CurrencyInflation
+    AuthenticationState        _authState;
+    bool                       _creating;
+    List<Iso4217>              _currencies;
+    bool                       _editing;
+    bool                       _loaded;
+    CurrencyInflationViewModel _model;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        AuthenticationState        _authState;
-        bool                       _creating;
-        List<Iso4217>              _currencies;
-        bool                       _editing;
-        bool                       _loaded;
-        CurrencyInflationViewModel _model;
+        if(_loaded) return;
 
-        [Parameter]
-        public int Id { get; set; }
+        _loaded = true;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                     .ToLowerInvariant()
+                                     .StartsWith("admin/currency_inflation/create", StringComparison.InvariantCulture);
+
+        if(Id <= 0 && !_creating) return;
+
+        _currencies = await CurrenciesService.GetAsync();
+        _model      = _creating ? new CurrencyInflationViewModel() : await Service.GetAsync(Id);
+        _authState  = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        _editing = _creating ||
+                   NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                    .ToLowerInvariant()
+                                    .StartsWith("admin/currency_inflation/edit/", StringComparison.InvariantCulture);
+
+        StateHasChanged();
+    }
+
+    void OnEditClicked()
+    {
+        _editing = true;
+        StateHasChanged();
+    }
+
+    async void OnCancelClicked()
+    {
+        _editing = false;
+
+        if(_creating)
         {
-            if(_loaded)
-                return;
+            NavigationManager.ToBaseRelativePath("admin/currency_inflation");
 
-            _loaded = true;
-
-            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                          StartsWith("admin/currency_inflation/create",
-                                                     StringComparison.InvariantCulture);
-
-            if(Id <= 0 &&
-               !_creating)
-                return;
-
-            _currencies = await CurrenciesService.GetAsync();
-            _model      = _creating ? new CurrencyInflationViewModel() : await Service.GetAsync(Id);
-            _authState  = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                                      StartsWith("admin/currency_inflation/edit/",
-                                                                 StringComparison.InvariantCulture);
-
-            StateHasChanged();
+            return;
         }
 
-        void OnEditClicked()
-        {
-            _editing = true;
-            StateHasChanged();
-        }
+        _model = await Service.GetAsync(Id);
+        StateHasChanged();
+    }
 
-        async void OnCancelClicked()
-        {
-            _editing = false;
+    async void OnSaveClicked()
+    {
+        if(string.IsNullOrWhiteSpace(_model.CurrencyCode)) return;
 
-            if(_creating)
-            {
-                NavigationManager.ToBaseRelativePath("admin/currency_inflation");
+        if(_model.Year > DateTime.UtcNow.Year) return;
 
-                return;
-            }
+        if(_model.Inflation == 0) return;
 
-            _model = await Service.GetAsync(Id);
-            StateHasChanged();
-        }
+        if(_creating)
+            Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        else
+            await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
 
-        async void OnSaveClicked()
-        {
-            if(string.IsNullOrWhiteSpace(_model.CurrencyCode))
-                return;
+        _editing  = false;
+        _creating = false;
+        _model    = await Service.GetAsync(Id);
+        StateHasChanged();
+    }
 
-            if(_model.Year > DateTime.UtcNow.Year)
-                return;
+    void ValidateYear(ValidatorEventArgs e)
+    {
+        e.Status = ValidationStatus.Success;
 
-            if(_model.Inflation == 0)
-                return;
+        if((uint)e.Value <= DateTime.UtcNow.Year) return;
 
-            if(_creating)
-                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
-            else
-                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        e.Status    = ValidationStatus.Error;
+        e.ErrorText = L["Year must be before current one."];
+    }
 
-            _editing  = false;
-            _creating = false;
-            _model    = await Service.GetAsync(Id);
-            StateHasChanged();
-        }
+    void ValidateInflation(ValidatorEventArgs e)
+    {
+        e.Status = ValidationStatus.Success;
 
-        void ValidateYear(ValidatorEventArgs e)
-        {
-            e.Status = ValidationStatus.Success;
+        if((float)e.Value != 0) return;
 
-            if((uint)e.Value <= DateTime.UtcNow.Year)
-                return;
-
-            e.Status    = ValidationStatus.Error;
-            e.ErrorText = L["Year must be before current one."];
-        }
-
-        void ValidateInflation(ValidatorEventArgs e)
-        {
-            e.Status = ValidationStatus.Success;
-
-            if((float)e.Value != 0)
-                return;
-
-            e.Status    = ValidationStatus.Error;
-            e.ErrorText = L["Inflation must be bigger than 0."];
-        }
+        e.Status    = ValidationStatus.Error;
+        e.ErrorText = L["Inflation must be bigger than 0."];
     }
 }

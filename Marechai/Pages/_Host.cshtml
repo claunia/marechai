@@ -34,20 +34,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Marechai</title>
-    <base href="~/" />
-    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+    <base href="~/"/>
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" rel="stylesheet">
-    <link href="_content/Blazorise/blazorise.css" rel="stylesheet" />
-    <link href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" rel="stylesheet" />
-    <link href="css/site.css" rel="stylesheet" />
+    <link href="_content/Blazorise/blazorise.css" rel="stylesheet"/>
+    <link href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" rel="stylesheet"/>
+    <link href="css/site.css" rel="stylesheet"/>
     <script src="js/ga.js"></script>
 </head>
 <body>
 <app>
-    <component render-mode="ServerPrerendered" type="typeof(App)" />
+    <component render-mode="ServerPrerendered" type="typeof(App)"/>
 </app>
 <div id="blazor-error-ui">
     <environment include="Staging,Production">
@@ -60,36 +61,36 @@
     <a class="dismiss">🗙</a>
 </div>
 <script src="_framework/blazor.server.js"></script>
-<script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="_content/Blazorise/blazorise.js"></script>
 <script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script>
 <script>
-let dotNetClassReference;
+    let dotNetClassReference;
 
-function SetDotNetClassReference(reference)
-{
-    dotNetClassReference = reference;
-}
+    function SetDotNetClassReference(reference) {
+        dotNetClassReference = reference;
+    }
 
-function SetCompanyDescriptionText(markdown)
-{
-    let textArea = document.getElementById("txtCompanyDescriptionMarkdown");
-    
-    if(!textArea) return;
+    function SetCompanyDescriptionText(markdown) {
+        let textArea = document.getElementById("txtCompanyDescriptionMarkdown");
 
-    textArea.value = markdown;
-}
+        if (!textArea) return;
 
-function OnCompanyMarkdownChanged()
-{
-    let textArea = document.getElementById("txtCompanyDescriptionMarkdown");
-    
-    if(!textArea) return;
-    
-    dotNetClassReference.invokeMethodAsync('OnCompanyDescriptionChangedDotnet', textArea.value);
-}
+        textArea.value = markdown;
+    }
+
+    function OnCompanyMarkdownChanged() {
+        let textArea = document.getElementById("txtCompanyDescriptionMarkdown");
+
+        if (!textArea) return;
+
+        dotNetClassReference.invokeMethodAsync('OnCompanyDescriptionChangedDotnet', textArea.value);
+    }
 </script>
 </body>
 </html>

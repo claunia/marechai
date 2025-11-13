@@ -31,52 +31,50 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class StorageByMachineService(MarechaiContext context)
 {
-    public class StorageByMachineService
+    public async Task<List<StorageByMachineViewModel>> GetByMachine(int machineId) => await context.StorageByMachine
+                                                                                                   .Where(s => s.MachineId == machineId)
+                                                                                                   .Select(s => new StorageByMachineViewModel
+                                                                                                    {
+                                                                                                        Id        = s.Id,
+                                                                                                        Type      = s.Type,
+                                                                                                        Interface = s.Interface,
+                                                                                                        Capacity  = s.Capacity,
+                                                                                                        MachineId = s.MachineId
+                                                                                                    })
+                                                                                                   .OrderBy(s => s.Type)
+                                                                                                   .ThenBy(s => s.Interface)
+                                                                                                   .ThenBy(s => s.Capacity)
+                                                                                                   .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        StorageByMachine item = await context.StorageByMachine.FindAsync(id);
 
-        public StorageByMachineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<StorageByMachineViewModel>> GetByMachine(int machineId) =>
-            await _context.StorageByMachine.Where(s => s.MachineId == machineId).
-                           Select(s => new StorageByMachineViewModel
-                           {
-                               Id        = s.Id,
-                               Type      = s.Type,
-                               Interface = s.Interface,
-                               Capacity  = s.Capacity,
-                               MachineId = s.MachineId
-                           }).OrderBy(s => s.Type).ThenBy(s => s.Interface).ThenBy(s => s.Capacity).ToListAsync();
+        context.StorageByMachine.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int    machineId, StorageType type, StorageInterface @interface, long? capacity,
+                                        string userId)
+    {
+        var item = new StorageByMachine
         {
-            StorageByMachine item = await _context.StorageByMachine.FindAsync(id);
+            MachineId = machineId,
+            Type      = type,
+            Interface = @interface,
+            Capacity  = capacity
+        };
 
-            if(item is null)
-                return;
+        await context.StorageByMachine.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.StorageByMachine.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int machineId, StorageType type, StorageInterface @interface,
-                                            long? capacity, string userId)
-        {
-            var item = new StorageByMachine
-            {
-                MachineId = machineId,
-                Type      = type,
-                Interface = @interface,
-                Capacity  = capacity
-            };
-
-            await _context.StorageByMachine.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

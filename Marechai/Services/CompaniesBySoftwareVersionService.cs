@@ -30,51 +30,48 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class CompaniesBySoftwareVersionService(MarechaiContext context)
 {
-    public class CompaniesBySoftwareVersionService
+    public async Task<List<CompanyBySoftwareVersionViewModel>> GetBySoftwareVersion(ulong softwareVersionId) =>
+        await context.CompaniesBySoftwareVersions.Where(p => p.SoftwareVersionId == softwareVersionId)
+                      .Select(p => new CompanyBySoftwareVersionViewModel
+                       {
+                           Id                = p.Id,
+                           Company           = p.Company.Name,
+                           CompanyId         = p.CompanyId,
+                           RoleId            = p.RoleId,
+                           Role              = p.Role.Name,
+                           SoftwareVersionId = p.SoftwareVersionId
+                       })
+                      .OrderBy(p => p.Company)
+                      .ThenBy(p => p.Role)
+                      .ToListAsync();
+
+    public async Task DeleteAsync(ulong id, string userId)
     {
-        readonly MarechaiContext _context;
+        CompaniesBySoftwareVersion item = await context.CompaniesBySoftwareVersions.FindAsync(id);
 
-        public CompaniesBySoftwareVersionService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<CompanyBySoftwareVersionViewModel>> GetBySoftwareVersion(ulong softwareVersionId) =>
-            await _context.CompaniesBySoftwareVersions.Where(p => p.SoftwareVersionId == softwareVersionId).
-                           Select(p => new CompanyBySoftwareVersionViewModel
-                           {
-                               Id                = p.Id,
-                               Company           = p.Company.Name,
-                               CompanyId         = p.CompanyId,
-                               RoleId            = p.RoleId,
-                               Role              = p.Role.Name,
-                               SoftwareVersionId = p.SoftwareVersionId
-                           }).OrderBy(p => p.Company).ThenBy(p => p.Role).ToListAsync();
+        context.CompaniesBySoftwareVersions.Remove(item);
 
-        public async Task DeleteAsync(ulong id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<ulong> CreateAsync(int companyId, ulong softwareVersionId, string roleId, string userId)
+    {
+        var item = new CompaniesBySoftwareVersion
         {
-            CompaniesBySoftwareVersion item = await _context.CompaniesBySoftwareVersions.FindAsync(id);
+            CompanyId         = companyId,
+            SoftwareVersionId = softwareVersionId,
+            RoleId            = roleId
+        };
 
-            if(item is null)
-                return;
+        await context.CompaniesBySoftwareVersions.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.CompaniesBySoftwareVersions.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<ulong> CreateAsync(int companyId, ulong softwareVersionId, string roleId, string userId)
-        {
-            var item = new CompaniesBySoftwareVersion
-            {
-                CompanyId         = companyId,
-                SoftwareVersionId = softwareVersionId,
-                RoleId            = roleId
-            };
-
-            await _context.CompaniesBySoftwareVersions.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

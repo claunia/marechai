@@ -27,26 +27,25 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class SoftwareVersion : BaseModel<ulong>
-    {
-        [Required]
-        public virtual SoftwareFamily Family { get; set; }
-        public string Name     { get;               set; }
-        public string Codename { get;               set; }
-        [Required]
-        public string Version { get;                                             set; }
-        public         DateTime?                               Introduced { get; set; }
-        public virtual License                                 License    { get; set; }
-        public virtual SoftwareVersion                         Previous   { get; set; }
-        public virtual SoftwareVersion                         Next       { get; set; }
-        public virtual ICollection<CompaniesBySoftwareVersion> Companies  { get; set; }
-        public virtual ICollection<PeopleBySoftwareVersion>    People     { get; set; }
-        public virtual ICollection<SoftwareVariant>            Variants   { get; set; }
+namespace Marechai.Database.Models;
 
-        public ulong  FamilyId   { get; set; }
-        public int?   LicenseId  { get; set; }
-        public ulong? PreviousId { get; set; }
-    }
+public class SoftwareVersion : BaseModel<ulong>
+{
+    [Required]
+    public virtual SoftwareFamily Family { get; set; }
+    public string Name     { get;               set; }
+    public string Codename { get;               set; }
+    [Required]
+    public string Version { get;                                             set; }
+    public         DateTime?                               Introduced { get; set; }
+    public virtual License                                 License    { get; set; }
+    public virtual SoftwareVersion                         Previous   { get; set; }
+    public virtual SoftwareVersion                         Next       { get; set; }
+    public virtual ICollection<CompaniesBySoftwareVersion> Companies  { get; set; }
+    public virtual ICollection<PeopleBySoftwareVersion>    People     { get; set; }
+    public virtual ICollection<SoftwareVariant>            Variants   { get; set; }
+
+    public ulong  FamilyId   { get; set; }
+    public int?   LicenseId  { get; set; }
+    public ulong? PreviousId { get; set; }
 }

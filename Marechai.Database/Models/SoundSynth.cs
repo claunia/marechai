@@ -28,33 +28,39 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class SoundSynth : BaseModel<int>
 {
-    public class SoundSynth : BaseModel<int>
-    {
-        public SoundSynth() => SoundByMachine = new HashSet<SoundByMachine>();
+    public SoundSynth() => SoundByMachine = new HashSet<SoundByMachine>();
 
-        [Required, StringLength(50)]
-        public string Name { get;    set; }
-        public int? CompanyId { get; set; }
-        [DisplayName("Model code"), StringLength(45)]
-        public string ModelCode { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
-        public DateTime? Introduced { get; set; }
-        [DisplayName("PCM voices"), Range(1, int.MaxValue)]
-        public int? Voices { get; set; }
-        [DisplayName("Sample rate (Hz)")]
-        public double? Frequency { get; set; }
-        [DisplayName("Sample resolution"), Range(1, int.MaxValue)]
-        public int? Depth { get; set; }
-        [DisplayName("Square wave channels"), Range(1, int.MaxValue)]
-        public int? SquareWave { get; set; }
-        [DisplayName("White noise channels"), Range(1, int.MaxValue)]
-        public int? WhiteNoise { get; set; }
-        public int? Type { get;       set; }
+    [Required]
+    [StringLength(50)]
+    public string Name { get;    set; }
+    public int? CompanyId { get; set; }
+    [DisplayName("Model code")]
+    [StringLength(45)]
+    public string ModelCode { get; set; }
+    [DisplayFormat(DataFormatString = "{0:d}")]
+    [DataType(DataType.Date)]
+    public DateTime? Introduced { get; set; }
+    [DisplayName("PCM voices")]
+    [Range(1, int.MaxValue)]
+    public int? Voices { get; set; }
+    [DisplayName("Sample rate (Hz)")]
+    public double? Frequency { get; set; }
+    [DisplayName("Sample resolution")]
+    [Range(1, int.MaxValue)]
+    public int? Depth { get; set; }
+    [DisplayName("Square wave channels")]
+    [Range(1, int.MaxValue)]
+    public int? SquareWave { get; set; }
+    [DisplayName("White noise channels")]
+    [Range(1, int.MaxValue)]
+    public int? WhiteNoise { get; set; }
+    public int? Type { get;       set; }
 
-        public virtual Company                             Company        { get; set; }
-        public virtual ICollection<SoundByMachine>         SoundByMachine { get; set; }
-        public virtual ICollection<SoundBySoftwareVariant> Software       { get; set; }
-    }
+    public virtual Company                             Company        { get; set; }
+    public virtual ICollection<SoundByMachine>         SoundByMachine { get; set; }
+    public virtual ICollection<SoundBySoftwareVariant> Software       { get; set; }
 }

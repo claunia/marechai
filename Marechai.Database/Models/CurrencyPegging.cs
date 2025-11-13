@@ -26,21 +26,20 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class CurrencyPegging : BaseModel<int>
-    {
-        [Required]
-        public virtual Iso4217 Source { get; set; }
-        [Required]
-        public virtual Iso4217 Destination { get; set; }
-        public float Ratio { get;                 set; }
-        [DataType(DataType.Date)]
-        public DateTime Start { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? End { get; set; }
+namespace Marechai.Database.Models;
 
-        public string SourceCode      { get; set; }
-        public string DestinationCode { get; set; }
-    }
+public class CurrencyPegging : BaseModel<int>
+{
+    [Required]
+    public virtual Iso4217 Source { get; set; }
+    [Required]
+    public virtual Iso4217 Destination { get; set; }
+    public float Ratio { get;                 set; }
+    [DataType(DataType.Date)]
+    public DateTime Start { get; set; }
+    [DataType(DataType.Date)]
+    public DateTime? End { get; set; }
+
+    public string SourceCode      { get; set; }
+    public string DestinationCode { get; set; }
 }

@@ -25,19 +25,18 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class CompaniesBySoftwareVersion : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Company Company { get; set; }
-        [Required]
-        public virtual SoftwareVersion SoftwareVersion { get; set; }
-        [Required]
-        public virtual DocumentRole Role { get; set; }
+namespace Marechai.Database.Models;
 
-        public string RoleId            { get; set; }
-        public int    CompanyId         { get; set; }
-        public ulong  SoftwareVersionId { get; set; }
-    }
+public class CompaniesBySoftwareVersion : BaseModel<ulong>
+{
+    [Required]
+    public virtual Company Company { get; set; }
+    [Required]
+    public virtual SoftwareVersion SoftwareVersion { get; set; }
+    [Required]
+    public virtual DocumentRole Role { get; set; }
+
+    public string RoleId            { get; set; }
+    public int    CompanyId         { get; set; }
+    public ulong  SoftwareVersionId { get; set; }
 }

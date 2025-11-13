@@ -26,23 +26,22 @@
 using System;
 using Marechai.Database;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class BaseScanViewModel : BaseViewModel<Guid>
 {
-    public class BaseScanViewModel : BaseViewModel<Guid>
-    {
-        public string          Author               { get; set; }
-        public ColorSpace?     ColorSpace           { get; set; }
-        public string          Comments             { get; set; }
-        public DateTime?       CreationDate         { get; set; }
-        public string          ExifVersion          { get; set; }
-        public double?         HorizontalResolution { get; set; }
-        public ResolutionUnit? ResolutionUnit       { get; set; }
-        public string          ScannerManufacturer  { get; set; }
-        public string          ScannerModel         { get; set; }
-        public string          SoftwareUsed         { get; set; }
-        public DateTime        UploadDate           { get; set; }
-        public double?         VerticalResolution   { get; set; }
-        public string          OriginalExtension    { get; set; }
-        public string          UserId               { get; set; }
-    }
+    public string          Author               { get; set; }
+    public ColorSpace?     ColorSpace           { get; set; }
+    public string          Comments             { get; set; }
+    public DateTime?       CreationDate         { get; set; }
+    public string          ExifVersion          { get; set; }
+    public double?         HorizontalResolution { get; set; }
+    public ResolutionUnit? ResolutionUnit       { get; set; }
+    public string          ScannerManufacturer  { get; set; }
+    public string          ScannerModel         { get; set; }
+    public string          SoftwareUsed         { get; set; }
+    public DateTime        UploadDate           { get; set; }
+    public double?         VerticalResolution   { get; set; }
+    public string          OriginalExtension    { get; set; }
+    public string          UserId               { get; set; }
 }

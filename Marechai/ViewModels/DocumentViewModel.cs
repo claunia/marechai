@@ -1,4 +1,3 @@
-namespace Marechai.ViewModels
-{
-    public class DocumentViewModel : DocumentBaseViewModel {}
-}
+namespace Marechai.ViewModels;
+
+public class DocumentViewModel : DocumentBaseViewModel {}

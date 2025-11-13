@@ -26,13 +26,12 @@
 using System;
 using System.ComponentModel;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class News : BaseModel<int>
 {
-    public class News : BaseModel<int>
-    {
-        public DateTime Date { get; set; }
-        public NewsType Type { get; set; }
-        [DisplayName("Affected ID")]
-        public int AddedId { get; set; }
-    }
+    public DateTime Date { get; set; }
+    public NewsType Type { get; set; }
+    [DisplayName("Affected ID")]
+    public int AddedId { get; set; }
 }

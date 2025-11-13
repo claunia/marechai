@@ -27,43 +27,44 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class Machine : BaseModel<int>
 {
-    public class Machine : BaseModel<int>
+    public Machine()
     {
-        public Machine()
-        {
-            Gpus       = new HashSet<GpusByMachine>();
-            Memory     = new HashSet<MemoryByMachine>();
-            Processors = new HashSet<ProcessorsByMachine>();
-            Sound      = new HashSet<SoundByMachine>();
-            Storage    = new HashSet<StorageByMachine>();
-        }
-
-        [Required]
-        public int CompanyId { get; set; }
-        [Required, StringLength(255)]
-        public string Name { get; set; }
-        [Required]
-        public MachineType Type { get; set; }
-        [DisplayFormat(DataFormatString = "{0:d}"), DataType(DataType.Date)]
-        public DateTime? Introduced { get; set; }
-        public int? FamilyId { get;        set; }
-        [StringLength(50)]
-        public string Model { get; set; }
-
-        public virtual Company                                Company    { get; set; }
-        public virtual MachineFamily                          Family     { get; set; }
-        public virtual ICollection<GpusByMachine>             Gpus       { get; set; }
-        public virtual ICollection<MemoryByMachine>           Memory     { get; set; }
-        public virtual ICollection<ProcessorsByMachine>       Processors { get; set; }
-        public virtual ICollection<SoundByMachine>            Sound      { get; set; }
-        public virtual ICollection<StorageByMachine>          Storage    { get; set; }
-        public virtual ICollection<MachinePhoto>              Photos     { get; set; }
-        public virtual ICollection<ScreensByMachine>          Screens    { get; set; }
-        public virtual ICollection<DocumentsByMachine>        Documents  { get; set; }
-        public virtual ICollection<BooksByMachine>            Books      { get; set; }
-        public virtual ICollection<MagazinesByMachine>        Magazines  { get; set; }
-        public virtual ICollection<MachinesBySoftwareVariant> Software   { get; set; }
+        Gpus       = new HashSet<GpusByMachine>();
+        Memory     = new HashSet<MemoryByMachine>();
+        Processors = new HashSet<ProcessorsByMachine>();
+        Sound      = new HashSet<SoundByMachine>();
+        Storage    = new HashSet<StorageByMachine>();
     }
+
+    [Required]
+    public int CompanyId { get; set; }
+    [Required]
+    [StringLength(255)]
+    public string Name { get; set; }
+    [Required]
+    public MachineType Type { get; set; }
+    [DisplayFormat(DataFormatString = "{0:d}")]
+    [DataType(DataType.Date)]
+    public DateTime? Introduced { get; set; }
+    public int? FamilyId { get;        set; }
+    [StringLength(50)]
+    public string Model { get; set; }
+
+    public virtual Company                                Company    { get; set; }
+    public virtual MachineFamily                          Family     { get; set; }
+    public virtual ICollection<GpusByMachine>             Gpus       { get; set; }
+    public virtual ICollection<MemoryByMachine>           Memory     { get; set; }
+    public virtual ICollection<ProcessorsByMachine>       Processors { get; set; }
+    public virtual ICollection<SoundByMachine>            Sound      { get; set; }
+    public virtual ICollection<StorageByMachine>          Storage    { get; set; }
+    public virtual ICollection<MachinePhoto>              Photos     { get; set; }
+    public virtual ICollection<ScreensByMachine>          Screens    { get; set; }
+    public virtual ICollection<DocumentsByMachine>        Documents  { get; set; }
+    public virtual ICollection<BooksByMachine>            Books      { get; set; }
+    public virtual ICollection<MagazinesByMachine>        Magazines  { get; set; }
+    public virtual ICollection<MachinesBySoftwareVariant> Software   { get; set; }
 }

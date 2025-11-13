@@ -25,16 +25,15 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Marechai.Database.Models
-{
-    public class ScreensByMachine : BaseModel<long>
-    {
-        [Remote("VerifyUnique", "ScreensByMachine", "Admin", AdditionalFields = nameof(MachineId))]
-        public int ScreenId { get; set; }
-        [Remote("VerifyUnique", "ScreensByMachine", "Admin", AdditionalFields = nameof(ScreenId))]
-        public int MachineId { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual Screen  Screen  { get; set; }
-        public virtual Machine Machine { get; set; }
-    }
+public class ScreensByMachine : BaseModel<long>
+{
+    [Remote("VerifyUnique", "ScreensByMachine", "Admin", AdditionalFields = nameof(MachineId))]
+    public int ScreenId { get; set; }
+    [Remote("VerifyUnique", "ScreensByMachine", "Admin", AdditionalFields = nameof(ScreenId))]
+    public int MachineId { get; set; }
+
+    public virtual Screen  Screen  { get; set; }
+    public virtual Machine Machine { get; set; }
 }

@@ -28,33 +28,37 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+/// <summary>ISO-639 codes</summary>
+public class Iso639
 {
-    /// <summary>ISO-639 codes</summary>
-    public class Iso639
-    {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedOn { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime UpdatedOn { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public DateTime CreatedOn { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+    public DateTime UpdatedOn { get; set; }
 
-        [Column(TypeName = "char(3)"), Key, Required]
-        public string Id { get; set; }
-        [Column(TypeName = "char(3)")]
-        public string Part2B { get; set; }
-        [Column(TypeName = "char(3)")]
-        public string Part2T { get; set; }
-        [Column(TypeName = "char(2)")]
-        public string Part1 { get; set; }
-        [Column(TypeName = "char(1)"), Required]
-        public string Scope { get; set; }
-        [Column(TypeName = "char(1)"), Required]
-        public string Type { get; set; }
-        [Column(TypeName = "varchar(150)"), Required]
-        public string ReferenceName { get; set; }
-        [Column(TypeName = "varchar(150)")]
-        public string Comment { get; set; }
+    [Column(TypeName = "char(3)")]
+    [Key]
+    [Required]
+    public string Id { get; set; }
+    [Column(TypeName = "char(3)")]
+    public string Part2B { get; set; }
+    [Column(TypeName = "char(3)")]
+    public string Part2T { get; set; }
+    [Column(TypeName = "char(2)")]
+    public string Part1 { get; set; }
+    [Column(TypeName = "char(1)")]
+    [Required]
+    public string Scope { get; set; }
+    [Column(TypeName = "char(1)")]
+    [Required]
+    public string Type { get; set; }
+    [Column(TypeName = "varchar(150)")]
+    [Required]
+    public string ReferenceName { get; set; }
+    [Column(TypeName = "varchar(150)")]
+    public string Comment { get; set; }
 
-        public virtual ICollection<LanguagesBySoftwareVariant> Software { get; set; }
-    }
+    public virtual ICollection<LanguagesBySoftwareVariant> Software { get; set; }
 }

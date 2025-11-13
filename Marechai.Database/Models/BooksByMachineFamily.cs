@@ -23,14 +23,13 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models
-{
-    public class BooksByMachineFamily : BaseModel<long>
-    {
-        public long BookId          { get; set; }
-        public int  MachineFamilyId { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual Book          Book          { get; set; }
-        public virtual MachineFamily MachineFamily { get; set; }
-    }
+public class BooksByMachineFamily : BaseModel<long>
+{
+    public long BookId          { get; set; }
+    public int  MachineFamilyId { get; set; }
+
+    public virtual Book          Book          { get; set; }
+    public virtual MachineFamily MachineFamily { get; set; }
 }

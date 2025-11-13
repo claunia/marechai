@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Marechai.Database.Migrations
 {
     public partial class AddDocumentRoles : Migration
     {
+        [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "The method is called just once.")]
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable("DocumentRoles", table => new

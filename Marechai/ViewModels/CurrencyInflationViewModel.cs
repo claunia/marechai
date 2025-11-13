@@ -23,13 +23,12 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class CurrencyInflationViewModel : BaseViewModel<int>
 {
-    public class CurrencyInflationViewModel : BaseViewModel<int>
-    {
-        public string CurrencyCode { get; set; }
-        public string CurrencyName { get; set; }
-        public uint   Year         { get; set; }
-        public float  Inflation    { get; set; }
-    }
+    public string CurrencyCode { get; set; }
+    public string CurrencyName { get; set; }
+    public uint   Year         { get; set; }
+    public float  Inflation    { get; set; }
 }

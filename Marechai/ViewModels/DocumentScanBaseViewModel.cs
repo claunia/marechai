@@ -25,11 +25,10 @@
 
 using Marechai.Database;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class DocumentScanBaseViewModel : BaseScanViewModel
 {
-    public class DocumentScanBaseViewModel : BaseScanViewModel
-    {
-        public DocumentScanType Type { get; set; }
-        public uint?            Page { get; set; }
-    }
+    public DocumentScanType Type { get; set; }
+    public uint?            Page { get; set; }
 }

@@ -23,12 +23,11 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class ResolutionByGpuViewModel : BaseViewModel<long>
 {
-    public class ResolutionByGpuViewModel : BaseViewModel<long>
-    {
-        public int                 ResolutionId { get; set; }
-        public int                 GpuId        { get; set; }
-        public ResolutionViewModel Resolution   { get; set; }
-    }
+    public int                 ResolutionId { get; set; }
+    public int                 GpuId        { get; set; }
+    public ResolutionViewModel Resolution   { get; set; }
 }

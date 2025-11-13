@@ -25,13 +25,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class SoundBySoftwareVariant : BaseModel<ulong>
 {
-    public class SoundBySoftwareVariant : BaseModel<ulong>
-    {
-        [Required]
-        public virtual SoundSynth SoundSynth { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
-    }
+    [Required]
+    public virtual SoundSynth SoundSynth { get; set; }
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
 }

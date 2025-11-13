@@ -30,67 +30,61 @@ using System.Threading.Tasks;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class InstructionSetsService(MarechaiContext context)
 {
-    public class InstructionSetsService
+    public async Task<List<InstructionSet>> GetAsync() => await context.InstructionSets.OrderBy(e => e.Name)
+                                                                       .Select(e => new InstructionSet
+                                                                        {
+                                                                            Name = e.Name,
+                                                                            Id   = e.Id
+                                                                        })
+                                                                       .ToListAsync();
+
+    public async Task<InstructionSet> GetAsync(int id) => await context.InstructionSets.Where(e => e.Id == id)
+                                                                        .Select(e => new InstructionSet
+                                                                         {
+                                                                             Name = e.Name,
+                                                                             Id   = e.Id
+                                                                         })
+                                                                        .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(InstructionSet viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        InstructionSet model = await context.InstructionSets.FindAsync(viewModel.Id);
 
-        public InstructionSetsService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<InstructionSet>> GetAsync() =>
-            await _context.InstructionSets.OrderBy(e => e.Name).Select(e => new InstructionSet
-            {
-                Name = e.Name,
-                Id   = e.Id
-            }).ToListAsync();
+        model.Name = viewModel.Name;
 
-        public async Task<InstructionSet> GetAsync(int id) =>
-            await _context.InstructionSets.Where(e => e.Id == id).Select(e => new InstructionSet
-            {
-                Name = e.Name,
-                Id   = e.Id
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(InstructionSet viewModel, string userId)
-        {
-            InstructionSet model = await _context.InstructionSets.FindAsync(viewModel.Id);
-
-            if(model is null)
-                return;
-
-            model.Name = viewModel.Name;
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<int> CreateAsync(InstructionSet viewModel, string userId)
-        {
-            var model = new InstructionSet
-            {
-                Name = viewModel.Name
-            };
-
-            await _context.InstructionSets.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            InstructionSet item = await _context.InstructionSets.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.InstructionSets.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public bool VerifyUnique(string name) =>
-            !_context.InstructionSets.Any(i => string.Equals(i.Name, name,
-                                                             StringComparison.InvariantCultureIgnoreCase));
+        await context.SaveChangesWithUserAsync(userId);
     }
+
+    public async Task<int> CreateAsync(InstructionSet viewModel, string userId)
+    {
+        var model = new InstructionSet
+        {
+            Name = viewModel.Name
+        };
+
+        await context.InstructionSets.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return model.Id;
+    }
+
+    public async Task DeleteAsync(int id, string userId)
+    {
+        InstructionSet item = await context.InstructionSets.FindAsync(id);
+
+        if(item is null) return;
+
+        context.InstructionSets.Remove(item);
+
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public bool VerifyUnique(string name) =>
+        !context.InstructionSets.Any(i => string.Equals(i.Name, name, StringComparison.InvariantCultureIgnoreCase));
 }

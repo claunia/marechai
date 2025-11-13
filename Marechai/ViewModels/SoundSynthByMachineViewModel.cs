@@ -23,13 +23,12 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class SoundSynthByMachineViewModel : BaseViewModel<long>
 {
-    public class SoundSynthByMachineViewModel : BaseViewModel<long>
-    {
-        public int    SoundSynthId { get; set; }
-        public int    MachineId    { get; set; }
-        public string CompanyName  { get; set; }
-        public string Name         { get; set; }
-    }
+    public int    SoundSynthId { get; set; }
+    public int    MachineId    { get; set; }
+    public string CompanyName  { get; set; }
+    public string Name         { get; set; }
 }

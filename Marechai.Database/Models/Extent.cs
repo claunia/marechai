@@ -23,13 +23,12 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+// Not for table
+public class Extent
 {
-    // Not for table
-    public class Extent
-    {
-        public long Start { get; set; }
-        public long End   { get; set; }
-        public bool Error { get; set; }
-    }
+    public long Start { get; set; }
+    public long End   { get; set; }
+    public bool Error { get; set; }
 }

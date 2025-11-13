@@ -10,63 +10,56 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Marechai.Areas.Identity.Pages.Account
+namespace Marechai.Areas.Identity.Pages.Account;
+
+[AllowAnonymous]
+public abstract class ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+    : PageModel
 {
-    [AllowAnonymous]
-    public abstract class ResendEmailConfirmationModel : PageModel
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+    public void OnGet() {}
+
+    public async Task<IActionResult> OnPostAsync()
     {
-        readonly IEmailSender                 _emailSender;
-        readonly UserManager<ApplicationUser> _userManager;
+        if(!ModelState.IsValid) return Page();
 
-        public ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        ApplicationUser user = await userManager.FindByEmailAsync(Input.Email);
+
+        if(user == null)
         {
-            _userManager = userManager;
-            _emailSender = emailSender;
-        }
-
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public void OnGet() {}
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if(!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            ApplicationUser user = await _userManager.FindByEmailAsync(Input.Email);
-
-            if(user == null)
-            {
-                ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
-
-                return Page();
-            }
-
-            string userId = await _userManager.GetUserIdAsync(user);
-            string code   = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-
-            string callbackUrl = Url.Page("/Account/ConfirmEmail", null, new
-            {
-                userId,
-                code
-            }, Request.Scheme);
-
-            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                                              $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
             ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
 
             return Page();
         }
 
-        public class InputModel
-        {
-            [Required, EmailAddress]
-            public string Email { get; set; }
-        }
+        string userId = await userManager.GetUserIdAsync(user);
+        string code   = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+        string callbackUrl = Url.Page("/Account/ConfirmEmail",
+                                      null,
+                                      new
+                                      {
+                                          userId,
+                                          code
+                                      },
+                                      Request.Scheme);
+
+        await emailSender.SendEmailAsync(Input.Email,
+                                          "Confirm your email",
+                                          $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+        ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+
+        return Page();
+    }
+
+    public class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
     }
 }

@@ -25,16 +25,15 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class FileDataStream : BaseModel<ulong>
-    {
-        [StringLength(255)]
-        public string Name { get; set; }
-        public ulong Size { get;  set; }
-        [Required]
-        public virtual DbFile File { get; set; }
+namespace Marechai.Database.Models;
 
-        public ulong FileId { get; set; }
-    }
+public class FileDataStream : BaseModel<ulong>
+{
+    [StringLength(255)]
+    public string Name { get; set; }
+    public ulong Size { get;  set; }
+    [Required]
+    public virtual DbFile File { get; set; }
+
+    public ulong FileId { get; set; }
 }

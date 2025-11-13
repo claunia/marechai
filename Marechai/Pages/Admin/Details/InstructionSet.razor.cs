@@ -30,94 +30,87 @@ using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin.Details
+namespace Marechai.Pages.Admin.Details;
+
+public partial class InstructionSet
 {
-    public partial class InstructionSet
+    AuthenticationState            _authState;
+    bool                           _creating;
+    bool                           _editing;
+    bool                           _loaded;
+    Database.Models.InstructionSet _model;
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        AuthenticationState            _authState;
-        bool                           _creating;
-        bool                           _editing;
-        bool                           _loaded;
-        Database.Models.InstructionSet _model;
-        [Parameter]
-        public int Id { get; set; }
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        _loaded = true;
+
+        _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                     .ToLowerInvariant()
+                                     .StartsWith("admin/instruction_sets/create", StringComparison.InvariantCulture);
+
+        if(Id <= 0 && !_creating) return;
+
+        _model     = _creating ? new Database.Models.InstructionSet() : await Service.GetAsync(Id);
+        _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        _editing = _creating ||
+                   NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                    .ToLowerInvariant()
+                                    .StartsWith("admin/instruction_sets/edit/", StringComparison.InvariantCulture);
+
+        StateHasChanged();
+    }
+
+    void OnEditClicked()
+    {
+        _editing = true;
+        StateHasChanged();
+    }
+
+    async void OnCancelClicked()
+    {
+        _editing = false;
+
+        if(_creating)
         {
-            if(_loaded)
-                return;
+            NavigationManager.ToBaseRelativePath("admin/instruction_sets");
 
-            _loaded = true;
-
-            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                          StartsWith("admin/instruction_sets/create",
-                                                     StringComparison.InvariantCulture);
-
-            if(Id <= 0 &&
-               !_creating)
-                return;
-
-            _model     = _creating ? new Database.Models.InstructionSet() : await Service.GetAsync(Id);
-            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                                      StartsWith("admin/instruction_sets/edit/",
-                                                                 StringComparison.InvariantCulture);
-
-            StateHasChanged();
+            return;
         }
 
-        void OnEditClicked()
-        {
-            _editing = true;
-            StateHasChanged();
-        }
+        _model = await Service.GetAsync(Id);
+        StateHasChanged();
+    }
 
-        async void OnCancelClicked()
-        {
-            _editing = false;
+    async void OnSaveClicked()
+    {
+        if(string.IsNullOrWhiteSpace(_model.Name) || _model.Name.Length > 45 || !Service.VerifyUnique(_model.Name))
+            return;
 
-            if(_creating)
-            {
-                NavigationManager.ToBaseRelativePath("admin/instruction_sets");
+        if(_creating)
+            Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        else
+            await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
 
-                return;
-            }
+        _editing  = false;
+        _creating = false;
+        _model    = await Service.GetAsync(Id);
+        StateHasChanged();
+    }
 
-            _model = await Service.GetAsync(Id);
-            StateHasChanged();
-        }
+    void ValidateName(ValidatorEventArgs e)
+    {
+        Validators.ValidateString(e, L["Instruction set name cannot contain more than 45 characters."], 45);
 
-        async void OnSaveClicked()
-        {
-            if(string.IsNullOrWhiteSpace(_model.Name) ||
-               _model.Name.Length > 45                ||
-               !Service.VerifyUnique(_model.Name))
-                return;
+        if(e.Status != ValidationStatus.Success) return;
 
-            if(_creating)
-                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
-            else
-                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        if(Service.VerifyUnique(_model.Name)) return;
 
-            _editing  = false;
-            _creating = false;
-            _model    = await Service.GetAsync(Id);
-            StateHasChanged();
-        }
-
-        void ValidateName(ValidatorEventArgs e)
-        {
-            Validators.ValidateString(e, L["Instruction set name cannot contain more than 45 characters."], 45);
-
-            if(e.Status != ValidationStatus.Success)
-                return;
-
-            if(Service.VerifyUnique(_model.Name))
-                return;
-
-            e.Status    = ValidationStatus.Error;
-            e.ErrorText = L["Instruction set name must be unique."];
-        }
+        e.Status    = ValidationStatus.Error;
+        e.ErrorText = L["Instruction set name must be unique."];
     }
 }

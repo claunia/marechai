@@ -27,26 +27,29 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class Screen : BaseModel<int>
-    {
-        [Range(1, 131072), DisplayName("Width (mm)")]
-        public double? Width { get; set; }
-        [Range(1, 131072), DisplayName("Height (mm)")]
-        public double? Height { get; set; }
-        [Required, DisplayName("Diagonal (inches)")]
-        public double Diagonal { get; set; }
-        [DisplayName("Native resolution")]
-        public virtual Resolution NativeResolution { get; set; }
-        [Range(2, 281474976710656), DisplayName("Effective colors")]
-        public long? EffectiveColors { get; set; }
-        [Required]
-        public string Type { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual ICollection<ResolutionsByScreen> Resolutions       { get; set; }
-        public virtual ICollection<ScreensByMachine>    ScreensByMachines { get; set; }
-        [Required]
-        public int NativeResolutionId { get; set; }
-    }
+public class Screen : BaseModel<int>
+{
+    [Range(1, 131072)]
+    [DisplayName("Width (mm)")]
+    public double? Width { get; set; }
+    [Range(1, 131072)]
+    [DisplayName("Height (mm)")]
+    public double? Height { get; set; }
+    [Required]
+    [DisplayName("Diagonal (inches)")]
+    public double Diagonal { get; set; }
+    [DisplayName("Native resolution")]
+    public virtual Resolution NativeResolution { get; set; }
+    [Range(2, 281474976710656)]
+    [DisplayName("Effective colors")]
+    public long? EffectiveColors { get; set; }
+    [Required]
+    public string Type { get; set; }
+
+    public virtual ICollection<ResolutionsByScreen> Resolutions       { get; set; }
+    public virtual ICollection<ScreensByMachine>    ScreensByMachines { get; set; }
+    [Required]
+    public int NativeResolutionId { get; set; }
 }

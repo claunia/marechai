@@ -27,32 +27,31 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class Filesystem : BaseModel<ulong>
-    {
-        [Required]
-        public string Type { get;                      set; }
-        public DateTime? CreationDate           { get; set; }
-        public DateTime? ModificationDate       { get; set; }
-        public DateTime? BackupDate             { get; set; }
-        public int       ClusterSize            { get; set; }
-        public ulong     Clusters               { get; set; }
-        public ulong?    FilesCount             { get; set; }
-        public bool      Bootable               { get; set; }
-        public string    Serial                 { get; set; }
-        public string    Label                  { get; set; }
-        public ulong?    FreeClusters           { get; set; }
-        public DateTime? ExpirationDate         { get; set; }
-        public DateTime? EffectiveDate          { get; set; }
-        public string    SystemIdentifier       { get; set; }
-        public string    VolumeSetIdentifier    { get; set; }
-        public string    PublisherIdentifier    { get; set; }
-        public string    DataPreparerIdentifier { get; set; }
-        public string    ApplicationIdentifier  { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual ICollection<FilesystemsByLogicalPartition> Partitions          { get; set; }
-        public virtual ICollection<FilesystemsByMediaDumpFile>    MediaDumpFileImages { get; set; }
-        public virtual ICollection<FilesByFilesystem>             Files               { get; set; }
-    }
+public class Filesystem : BaseModel<ulong>
+{
+    [Required]
+    public string Type { get;                      set; }
+    public DateTime? CreationDate           { get; set; }
+    public DateTime? ModificationDate       { get; set; }
+    public DateTime? BackupDate             { get; set; }
+    public int       ClusterSize            { get; set; }
+    public ulong     Clusters               { get; set; }
+    public ulong?    FilesCount             { get; set; }
+    public bool      Bootable               { get; set; }
+    public string    Serial                 { get; set; }
+    public string    Label                  { get; set; }
+    public ulong?    FreeClusters           { get; set; }
+    public DateTime? ExpirationDate         { get; set; }
+    public DateTime? EffectiveDate          { get; set; }
+    public string    SystemIdentifier       { get; set; }
+    public string    VolumeSetIdentifier    { get; set; }
+    public string    PublisherIdentifier    { get; set; }
+    public string    DataPreparerIdentifier { get; set; }
+    public string    ApplicationIdentifier  { get; set; }
+
+    public virtual ICollection<FilesystemsByLogicalPartition> Partitions          { get; set; }
+    public virtual ICollection<FilesystemsByMediaDumpFile>    MediaDumpFileImages { get; set; }
+    public virtual ICollection<FilesByFilesystem>             Files               { get; set; }
 }

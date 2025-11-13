@@ -27,38 +27,41 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class OwnedMachine : BaseModel<long>
 {
-    public class OwnedMachine : BaseModel<long>
-    {
-        [DisplayName("Acquisition date")]
-        public DateTime AcquisitionDate { get; set; }
-        [DisplayName("Date when sold, traded, or otherwise lost")]
-        public DateTime? LostDate { get; set; }
-        public StatusType Status { get;  set; }
-        [DisplayName("Last status check date")]
-        public DateTime? LastStatusDate { get; set; }
-        [DisplayName("Available for trade or sale"), DefaultValue(false)]
-        public bool Trade { get; set; }
-        [DisplayName("Has original boxes"), DefaultValue(false)]
-        public bool Boxed { get; set; }
-        [DisplayName("Has original manuals"), DefaultValue(false)]
-        public bool Manuals { get; set; }
-        [DisplayName("Serial number")]
-        public string SerialNumber { get; set; }
-        [DisplayName("Serial number visible to other users"), DefaultValue(false)]
-        public bool SerialNumberVisible { get; set; }
-        public int    MachineId { get;         set; }
-        public string UserId    { get;         set; }
+    [DisplayName("Acquisition date")]
+    public DateTime AcquisitionDate { get; set; }
+    [DisplayName("Date when sold, traded, or otherwise lost")]
+    public DateTime? LostDate { get; set; }
+    public StatusType Status { get;  set; }
+    [DisplayName("Last status check date")]
+    public DateTime? LastStatusDate { get; set; }
+    [DisplayName("Available for trade or sale")]
+    [DefaultValue(false)]
+    public bool Trade { get; set; }
+    [DisplayName("Has original boxes")]
+    [DefaultValue(false)]
+    public bool Boxed { get; set; }
+    [DisplayName("Has original manuals")]
+    [DefaultValue(false)]
+    public bool Manuals { get; set; }
+    [DisplayName("Serial number")]
+    public string SerialNumber { get; set; }
+    [DisplayName("Serial number visible to other users")]
+    [DefaultValue(false)]
+    public bool SerialNumberVisible { get; set; }
+    public int    MachineId { get;         set; }
+    public string UserId    { get;         set; }
 
-        public virtual ICollection<GpusByOwnedMachine>       Gpus       { get; set; }
-        public virtual ICollection<MemoryByOwnedMachine>     Memory     { get; set; }
-        public virtual ICollection<ProcessorsByOwnedMachine> Processors { get; set; }
-        public virtual ICollection<SoundByOwnedMachine>      Sound      { get; set; }
-        public virtual ICollection<StorageByOwnedMachine>    Storage    { get; set; }
-        public virtual ICollection<OwnedMachinePhoto>        Photos     { get; set; }
+    public virtual ICollection<GpusByOwnedMachine>       Gpus       { get; set; }
+    public virtual ICollection<MemoryByOwnedMachine>     Memory     { get; set; }
+    public virtual ICollection<ProcessorsByOwnedMachine> Processors { get; set; }
+    public virtual ICollection<SoundByOwnedMachine>      Sound      { get; set; }
+    public virtual ICollection<StorageByOwnedMachine>    Storage    { get; set; }
+    public virtual ICollection<OwnedMachinePhoto>        Photos     { get; set; }
 
-        public virtual ApplicationUser User    { get; set; }
-        public virtual Machine         Machine { get; set; }
-    }
+    public virtual ApplicationUser User    { get; set; }
+    public virtual Machine         Machine { get; set; }
 }

@@ -32,81 +32,78 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 
-namespace Marechai.Pages.Companies
+namespace Marechai.Pages.Companies;
+
+public partial class View
 {
-    public partial class View
+    CompanyViewModel  _company;
+    List<Machine>     _computers;
+    List<Machine>     _consoles;
+    string            _description;
+    int               _id;
+    bool              _loaded;
+    List<CompanyLogo> _logos;
+    string            _selectedSlide;
+    Company           _soldTo;
+
+    [Parameter]
+    public int Id
     {
-        CompanyViewModel  _company;
-        List<Machine>     _computers;
-        List<Machine>     _consoles;
-        string            _description;
-        int               _id;
-        bool              _loaded;
-        List<CompanyLogo> _logos;
-        string            _selectedSlide;
-        Company           _soldTo;
-
-        [Parameter]
-        public int Id
+        get => _id;
+        set
         {
-            get => _id;
-            set
-            {
-                if(_id == value)
-                    return;
+            if(_id == value) return;
 
-                _id     = value;
-                _loaded = false;
-            }
+            _id     = value;
+            _loaded = false;
         }
+    }
 
-        public bool ComputersCollapsed { get; set; } = true;
-        public bool ConsolesCollapsed  { get; set; } = true;
+    public bool ComputersCollapsed { get; set; } = true;
+    public bool ConsolesCollapsed  { get; set; } = true;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(_loaded) return;
+
+        if(Id <= 0)
         {
-            if(_loaded)
-                return;
-
-            if(Id <= 0)
-            {
-                _loaded = true;
-
-                return;
-            }
-
-            _company = await Service.GetAsync(Id);
-            List<Machine> machines = await Service.GetMachinesAsync(Id);
-
-            _computers = machines.Where(m => m.Type == MachineType.Computer).ToList();
-            _consoles  = machines.Where(m => m.Type == MachineType.Console).ToList();
-
-            _description = await Service.GetDescriptionTextAsync(Id);
-            _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
-            _logos       = await CompanyLogosService.GetByCompany(Id);
-
-            _selectedSlide = _logos.
-                             FirstOrDefault(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos",
-                                                                             logo.Guid + ".svg")))?.Guid.ToString();
-
             _loaded = true;
-            StateHasChanged();
+
+            return;
         }
 
-        void CollapseComputers()
-        {
-            if(_computers.Count == 0)
-                return;
+        _company = await Service.GetAsync(Id);
+        List<Machine> machines = await Service.GetMachinesAsync(Id);
 
-            ComputersCollapsed = !ComputersCollapsed;
-        }
+        _computers = machines.Where(m => m.Type == MachineType.Computer).ToList();
+        _consoles  = machines.Where(m => m.Type == MachineType.Console).ToList();
 
-        void CollapseConsoles()
-        {
-            if(_consoles.Count == 0)
-                return;
+        _description = await Service.GetDescriptionTextAsync(Id);
+        _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
+        _logos       = await CompanyLogosService.GetByCompany(Id);
 
-            ConsolesCollapsed = !ConsolesCollapsed;
-        }
+        _selectedSlide = _logos
+                        .FirstOrDefault(logo => File.Exists(Path.Combine(Host.WebRootPath,
+                                                                         "assets/logos",
+                                                                         logo.Guid + ".svg")))
+                       ?.Guid.ToString();
+
+        _loaded = true;
+        StateHasChanged();
+    }
+
+    void CollapseComputers()
+    {
+        if(_computers.Count == 0) return;
+
+        ComputersCollapsed = !ComputersCollapsed;
+    }
+
+    void CollapseConsoles()
+    {
+        if(_consoles.Count == 0) return;
+
+        ConsolesCollapsed = !ConsolesCollapsed;
     }
 }

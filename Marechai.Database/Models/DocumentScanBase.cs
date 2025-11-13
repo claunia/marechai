@@ -23,11 +23,10 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public abstract class DocumentScanBase : BaseScan
 {
-    public abstract class DocumentScanBase : BaseScan
-    {
-        public DocumentScanType Type { get; set; }
-        public uint?            Page { get; set; }
-    }
+    public DocumentScanType Type { get; set; }
+    public uint?            Page { get; set; }
 }

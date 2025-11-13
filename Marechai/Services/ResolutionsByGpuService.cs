@@ -30,60 +30,58 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class ResolutionsByGpuService(MarechaiContext context)
 {
-    public class ResolutionsByGpuService
+    public async Task<List<ResolutionByGpuViewModel>> GetByGpu(int resolutionId) => (await context.ResolutionsByGpu
+                                                                                                  .Where(r => r.ResolutionId == resolutionId)
+                                                                                                  .Select(r => new ResolutionByGpuViewModel
+                                                                                                   {
+                                                                                                       Id    = r.Id,
+                                                                                                       GpuId = r.GpuId,
+                                                                                                       Resolution = new ResolutionViewModel
+                                                                                                       {
+                                                                                                           Id        = r.Resolution.Id,
+                                                                                                           Width     = r.Resolution.Width,
+                                                                                                           Height    = r.Resolution.Height,
+                                                                                                           Colors    = r.Resolution.Colors,
+                                                                                                           Palette   = r.Resolution.Palette,
+                                                                                                           Chars     = r.Resolution.Chars,
+                                                                                                           Grayscale = r.Resolution.Grayscale
+                                                                                                       },
+                                                                                                       ResolutionId = r.ResolutionId
+                                                                                                   })
+                                                                                                  .ToListAsync()).OrderBy(r => r.Resolution.Width)
+                                                                                                                 .ThenBy(r => r.Resolution.Height)
+                                                                                                                 .ThenBy(r => r.Resolution.Chars)
+                                                                                                                 .ThenBy(r => r.Resolution.Grayscale)
+                                                                                                                 .ThenBy(r => r.Resolution.Colors)
+                                                                                                                 .ThenBy(r => r.Resolution.Palette)
+                                                                                                                 .ToList();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        ResolutionsByGpu item = await context.ResolutionsByGpu.FindAsync(id);
 
-        public ResolutionsByGpuService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<ResolutionByGpuViewModel>> GetByGpu(int resolutionId) =>
-            (await _context.ResolutionsByGpu.Where(r => r.ResolutionId == resolutionId).
-                            Select(r => new ResolutionByGpuViewModel
-                            {
-                                Id    = r.Id,
-                                GpuId = r.GpuId,
-                                Resolution = new ResolutionViewModel
-                                {
-                                    Id        = r.Resolution.Id,
-                                    Width     = r.Resolution.Width,
-                                    Height    = r.Resolution.Height,
-                                    Colors    = r.Resolution.Colors,
-                                    Palette   = r.Resolution.Palette,
-                                    Chars     = r.Resolution.Chars,
-                                    Grayscale = r.Resolution.Grayscale
-                                },
-                                ResolutionId = r.ResolutionId
-                            }).ToListAsync()).OrderBy(r => r.Resolution.Width).ThenBy(r => r.Resolution.Height).
-                                              ThenBy(r => r.Resolution.Chars).ThenBy(r => r.Resolution.Grayscale).
-                                              ThenBy(r => r.Resolution.Colors).ThenBy(r => r.Resolution.Palette).
-                                              ToList();
+        context.ResolutionsByGpu.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int resolutionId, int gpuId, string userId)
+    {
+        var item = new ResolutionsByGpu
         {
-            ResolutionsByGpu item = await _context.ResolutionsByGpu.FindAsync(id);
+            GpuId        = gpuId,
+            ResolutionId = resolutionId
+        };
 
-            if(item is null)
-                return;
+        await context.ResolutionsByGpu.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.ResolutionsByGpu.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int resolutionId, int gpuId, string userId)
-        {
-            var item = new ResolutionsByGpu
-            {
-                GpuId        = gpuId,
-                ResolutionId = resolutionId
-            };
-
-            await _context.ResolutionsByGpu.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

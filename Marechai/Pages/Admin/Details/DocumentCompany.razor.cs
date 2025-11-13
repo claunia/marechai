@@ -32,105 +32,99 @@ using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin.Details
+namespace Marechai.Pages.Admin.Details;
+
+public partial class DocumentCompany
 {
-    public partial class DocumentCompany
+    AuthenticationState      _authState;
+    List<CompanyViewModel>   _companies;
+    bool                     _creating;
+    bool                     _editing;
+    bool                     _loaded;
+    DocumentCompanyViewModel _model;
+    bool                     _noLinkedCompany;
+    bool                     _unknownName;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        AuthenticationState      _authState;
-        List<CompanyViewModel>   _companies;
-        bool                     _creating;
-        bool                     _editing;
-        bool                     _loaded;
-        DocumentCompanyViewModel _model;
-        bool                     _noLinkedCompany;
-        bool                     _unknownName;
+        if(_loaded) return;
 
-        [Parameter]
-        public int Id { get; set; }
+        _loaded = true;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
+        _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                     .ToLowerInvariant()
+                                     .StartsWith("admin/document_companies/create", StringComparison.InvariantCulture);
 
-            _loaded = true;
+        if(Id <= 0 && !_creating) return;
 
-            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                          StartsWith("admin/document_companies/create",
-                                                     StringComparison.InvariantCulture);
+        _companies = await CompaniesService.GetAsync();
+        _model     = _creating ? new DocumentCompanyViewModel() : await Service.GetAsync(Id);
+        _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            if(Id <= 0 &&
-               !_creating)
-                return;
+        _editing = _creating ||
+                   NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                    .ToLowerInvariant()
+                                    .StartsWith("admin/document_companies/edit/", StringComparison.InvariantCulture);
 
-            _companies = await CompaniesService.GetAsync();
-            _model     = _creating ? new DocumentCompanyViewModel() : await Service.GetAsync(Id);
-            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if(_editing) SetCheckboxes();
 
-            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                                      StartsWith("admin/document_companies/edit/",
-                                                                 StringComparison.InvariantCulture);
-
-            if(_editing)
-                SetCheckboxes();
-
-            StateHasChanged();
-        }
-
-        void SetCheckboxes()
-        {
-            _noLinkedCompany = !_model.CompanyId.HasValue;
-            _unknownName     = string.IsNullOrWhiteSpace(_model.Name);
-        }
-
-        void OnEditClicked()
-        {
-            _editing = true;
-            SetCheckboxes();
-            StateHasChanged();
-        }
-
-        async void OnCancelClicked()
-        {
-            _editing = false;
-
-            if(_creating)
-            {
-                NavigationManager.ToBaseRelativePath("admin/document_companies");
-
-                return;
-            }
-
-            _model = await Service.GetAsync(Id);
-            SetCheckboxes();
-            StateHasChanged();
-        }
-
-        async void OnSaveClicked()
-        {
-            if(_noLinkedCompany)
-                _model.CompanyId = null;
-            else if(_model.CompanyId < 0)
-                return;
-
-            if(_unknownName)
-                _model.Name = null;
-            else if(string.IsNullOrWhiteSpace(_model.Name))
-                return;
-
-            if(_creating)
-                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
-            else
-                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
-
-            _editing  = false;
-            _creating = false;
-            _model    = await Service.GetAsync(Id);
-            SetCheckboxes();
-            StateHasChanged();
-        }
-
-        void ValidateName(ValidatorEventArgs e) =>
-            Validators.ValidateString(e, L["Name must be smaller than 256 characters."], 256);
+        StateHasChanged();
     }
+
+    void SetCheckboxes()
+    {
+        _noLinkedCompany = !_model.CompanyId.HasValue;
+        _unknownName     = string.IsNullOrWhiteSpace(_model.Name);
+    }
+
+    void OnEditClicked()
+    {
+        _editing = true;
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    async void OnCancelClicked()
+    {
+        _editing = false;
+
+        if(_creating)
+        {
+            NavigationManager.ToBaseRelativePath("admin/document_companies");
+
+            return;
+        }
+
+        _model = await Service.GetAsync(Id);
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    async void OnSaveClicked()
+    {
+        if(_noLinkedCompany)
+            _model.CompanyId = null;
+        else if(_model.CompanyId < 0) return;
+
+        if(_unknownName)
+            _model.Name = null;
+        else if(string.IsNullOrWhiteSpace(_model.Name)) return;
+
+        if(_creating)
+            Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        else
+            await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+
+        _editing  = false;
+        _creating = false;
+        _model    = await Service.GetAsync(Id);
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    void ValidateName(ValidatorEventArgs e) =>
+        Validators.ValidateString(e, L["Name must be smaller than 256 characters."], 256);
 }

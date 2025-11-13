@@ -30,96 +30,91 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class SoftwareVersionsService(MarechaiContext context)
 {
-    public class SoftwareVersionsService
+    public async Task<List<SoftwareVersionViewModel>> GetAsync() => await context.SoftwareVersions
+                                                                                 .OrderBy(b => b.Family.Name)
+                                                                                 .ThenBy(b => b.Version)
+                                                                                 .ThenBy(b => b.Introduced)
+                                                                                 .Select(b => new SoftwareVersionViewModel
+                                                                                  {
+                                                                                      Id         = b.Id,
+                                                                                      Family     = b.Family.Name,
+                                                                                      Name       = b.Name,
+                                                                                      Codename   = b.Codename,
+                                                                                      Version    = b.Version,
+                                                                                      Introduced = b.Introduced,
+                                                                                      Previous   = b.Previous.Name,
+                                                                                      License    = b.License.Name,
+                                                                                      FamilyId   = b.FamilyId,
+                                                                                      LicenseId  = b.LicenseId,
+                                                                                      PreviousId = b.PreviousId
+                                                                                  })
+                                                                                 .ToListAsync();
+
+    public async Task<SoftwareVersionViewModel> GetAsync(ulong id) => await context.SoftwareVersions
+                                                                         .Where(b => b.Id == id)
+                                                                         .Select(b => new SoftwareVersionViewModel
+                                                                          {
+                                                                              Id         = b.Id,
+                                                                              Family     = b.Family.Name,
+                                                                              Name       = b.Name,
+                                                                              Codename   = b.Codename,
+                                                                              Version    = b.Version,
+                                                                              Introduced = b.Introduced,
+                                                                              Previous   = b.Previous.Name,
+                                                                              License    = b.License.Name,
+                                                                              FamilyId   = b.FamilyId,
+                                                                              LicenseId  = b.LicenseId,
+                                                                              PreviousId = b.PreviousId
+                                                                          })
+                                                                         .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(SoftwareVersionViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        SoftwareVersion model = await context.SoftwareVersions.FindAsync(viewModel.Id);
 
-        public SoftwareVersionsService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<SoftwareVersionViewModel>> GetAsync() => await _context.
-                                                                              SoftwareVersions.
-                                                                              OrderBy(b => b.Family.Name).
-                                                                              ThenBy(b => b.Version).
-                                                                              ThenBy(b => b.Introduced).
-                                                                              Select(b => new SoftwareVersionViewModel
-                                                                              {
-                                                                                  Id         = b.Id,
-                                                                                  Family     = b.Family.Name,
-                                                                                  Name       = b.Name,
-                                                                                  Codename   = b.Codename,
-                                                                                  Version    = b.Version,
-                                                                                  Introduced = b.Introduced,
-                                                                                  Previous   = b.Previous.Name,
-                                                                                  License    = b.License.Name,
-                                                                                  FamilyId   = b.FamilyId,
-                                                                                  LicenseId  = b.LicenseId,
-                                                                                  PreviousId = b.PreviousId
-                                                                              }).ToListAsync();
+        model.Name       = viewModel.Name;
+        model.Codename   = viewModel.Codename;
+        model.Version    = viewModel.Version;
+        model.Introduced = viewModel.Introduced;
+        model.FamilyId   = viewModel.FamilyId;
+        model.LicenseId  = viewModel.LicenseId;
+        model.PreviousId = viewModel.PreviousId;
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<SoftwareVersionViewModel> GetAsync(ulong id) =>
-            await _context.SoftwareVersions.Where(b => b.Id == id).Select(b => new SoftwareVersionViewModel
-            {
-                Id         = b.Id,
-                Family     = b.Family.Name,
-                Name       = b.Name,
-                Codename   = b.Codename,
-                Version    = b.Version,
-                Introduced = b.Introduced,
-                Previous   = b.Previous.Name,
-                License    = b.License.Name,
-                FamilyId   = b.FamilyId,
-                LicenseId  = b.LicenseId,
-                PreviousId = b.PreviousId
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(SoftwareVersionViewModel viewModel, string userId)
+    public async Task<ulong> CreateAsync(SoftwareVersionViewModel viewModel, string userId)
+    {
+        var model = new SoftwareVersion
         {
-            SoftwareVersion model = await _context.SoftwareVersions.FindAsync(viewModel.Id);
+            Name       = viewModel.Name,
+            Codename   = viewModel.Codename,
+            Version    = viewModel.Version,
+            Introduced = viewModel.Introduced,
+            FamilyId   = viewModel.FamilyId,
+            LicenseId  = viewModel.LicenseId,
+            PreviousId = viewModel.PreviousId
+        };
 
-            if(model is null)
-                return;
+        await context.SoftwareVersions.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Name       = viewModel.Name;
-            model.Codename   = viewModel.Codename;
-            model.Version    = viewModel.Version;
-            model.Introduced = viewModel.Introduced;
-            model.FamilyId   = viewModel.FamilyId;
-            model.LicenseId  = viewModel.LicenseId;
-            model.PreviousId = viewModel.PreviousId;
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        return model.Id;
+    }
 
-        public async Task<ulong> CreateAsync(SoftwareVersionViewModel viewModel, string userId)
-        {
-            var model = new SoftwareVersion
-            {
-                Name       = viewModel.Name,
-                Codename   = viewModel.Codename,
-                Version    = viewModel.Version,
-                Introduced = viewModel.Introduced,
-                FamilyId   = viewModel.FamilyId,
-                LicenseId  = viewModel.LicenseId,
-                PreviousId = viewModel.PreviousId
-            };
+    public async Task DeleteAsync(ulong id, string userId)
+    {
+        SoftwareVersion item = await context.SoftwareVersions.FindAsync(id);
 
-            await _context.SoftwareVersions.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        if(item is null) return;
 
-            return model.Id;
-        }
+        context.SoftwareVersions.Remove(item);
 
-        public async Task DeleteAsync(ulong id, string userId)
-        {
-            SoftwareVersion item = await _context.SoftwareVersions.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.SoftwareVersions.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

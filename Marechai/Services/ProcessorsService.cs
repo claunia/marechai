@@ -30,196 +30,202 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class ProcessorsService(MarechaiContext context)
 {
-    public class ProcessorsService
+    public async Task<List<ProcessorViewModel>> GetAsync() => await context.Processors
+                                                                           .Select(p => new ProcessorViewModel
+                                                                            {
+                                                                                Name           = p.Name,
+                                                                                CompanyName    = p.Company.Name,
+                                                                                CompanyId      = p.Company.Id,
+                                                                                ModelCode      = p.ModelCode,
+                                                                                Introduced     = p.Introduced,
+                                                                                Speed          = p.Speed,
+                                                                                Package        = p.Package,
+                                                                                Gprs           = p.Gprs,
+                                                                                GprSize        = p.GprSize,
+                                                                                Fprs           = p.Fprs,
+                                                                                FprSize        = p.FprSize,
+                                                                                Cores          = p.Cores,
+                                                                                ThreadsPerCore = p.ThreadsPerCore,
+                                                                                Process        = p.Process,
+                                                                                ProcessNm      = p.ProcessNm,
+                                                                                DieSize        = p.DieSize,
+                                                                                Transistors    = p.Transistors,
+                                                                                DataBus        = p.DataBus,
+                                                                                AddrBus        = p.AddrBus,
+                                                                                SimdRegisters  = p.SimdRegisters,
+                                                                                SimdSize       = p.SimdSize,
+                                                                                L1Instruction  = p.L1Instruction,
+                                                                                L1Data         = p.L1Data,
+                                                                                L2             = p.L2,
+                                                                                L3             = p.L3,
+                                                                                InstructionSet = p.InstructionSet.Name,
+                                                                                Id             = p.Id,
+                                                                                InstructionSetExtensions =
+                                                                                    p.InstructionSetExtensions
+                                                                                     .Select(e => e.Extension
+                                                                                                   .Extension)
+                                                                                     .ToList()
+                                                                            })
+                                                                           .OrderBy(p => p.CompanyName)
+                                                                           .ThenBy(p => p.Name)
+                                                                           .ToListAsync();
+
+    public async Task<List<ProcessorViewModel>> GetByMachineAsync(int machineId) => await context.ProcessorsByMachine
+       .Where(p => p.MachineId == machineId)
+       .Select(p => new ProcessorViewModel
+        {
+            Name           = p.Processor.Name,
+            CompanyName    = p.Processor.Company.Name,
+            CompanyId      = p.Processor.Company.Id,
+            ModelCode      = p.Processor.ModelCode,
+            Introduced     = p.Processor.Introduced,
+            Speed          = p.Speed,
+            Package        = p.Processor.Package,
+            Gprs           = p.Processor.Gprs,
+            GprSize        = p.Processor.GprSize,
+            Fprs           = p.Processor.Fprs,
+            FprSize        = p.Processor.FprSize,
+            Cores          = p.Processor.Cores,
+            ThreadsPerCore = p.Processor.ThreadsPerCore,
+            Process        = p.Processor.Process,
+            ProcessNm      = p.Processor.ProcessNm,
+            DieSize        = p.Processor.DieSize,
+            Transistors    = p.Processor.Transistors,
+            DataBus        = p.Processor.DataBus,
+            AddrBus        = p.Processor.AddrBus,
+            SimdRegisters  = p.Processor.SimdRegisters,
+            SimdSize       = p.Processor.SimdSize,
+            L1Instruction  = p.Processor.L1Instruction,
+            L1Data         = p.Processor.L1Data,
+            L2             = p.Processor.L2,
+            L3             = p.Processor.L3,
+            InstructionSet = p.Processor.InstructionSet.Name,
+            Id             = p.Processor.Id,
+            InstructionSetExtensions =
+                p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
+        })
+       .OrderBy(p => p.CompanyName)
+       .ThenBy(p => p.Name)
+       .ToListAsync();
+
+    public async Task<ProcessorViewModel> GetAsync(int id) => await context.Processors.Where(p => p.Id == id)
+                                                                            .Select(p => new ProcessorViewModel
+                                                                             {
+                                                                                 Name           = p.Name,
+                                                                                 CompanyName    = p.Company.Name,
+                                                                                 CompanyId      = p.Company.Id,
+                                                                                 ModelCode      = p.ModelCode,
+                                                                                 Introduced     = p.Introduced,
+                                                                                 Speed          = p.Speed,
+                                                                                 Package        = p.Package,
+                                                                                 Gprs           = p.Gprs,
+                                                                                 GprSize        = p.GprSize,
+                                                                                 Fprs           = p.Fprs,
+                                                                                 FprSize        = p.FprSize,
+                                                                                 Cores          = p.Cores,
+                                                                                 ThreadsPerCore = p.ThreadsPerCore,
+                                                                                 Process        = p.Process,
+                                                                                 ProcessNm      = p.ProcessNm,
+                                                                                 DieSize        = p.DieSize,
+                                                                                 Transistors    = p.Transistors,
+                                                                                 DataBus        = p.DataBus,
+                                                                                 AddrBus        = p.AddrBus,
+                                                                                 SimdRegisters  = p.SimdRegisters,
+                                                                                 SimdSize       = p.SimdSize,
+                                                                                 L1Instruction  = p.L1Instruction,
+                                                                                 L1Data         = p.L1Data,
+                                                                                 L2             = p.L2,
+                                                                                 L3             = p.L3,
+                                                                                 InstructionSet =
+                                                                                     p.InstructionSet.Name,
+                                                                                 InstructionSetId = p.InstructionSetId
+                                                                             })
+                                                                            .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(ProcessorViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        Processor model = await context.Processors.FindAsync(viewModel.Id);
 
-        public ProcessorsService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<ProcessorViewModel>> GetAsync() =>
-            await _context.Processors.Select(p => new ProcessorViewModel
-            {
-                Name                     = p.Name,
-                CompanyName              = p.Company.Name,
-                CompanyId                = p.Company.Id,
-                ModelCode                = p.ModelCode,
-                Introduced               = p.Introduced,
-                Speed                    = p.Speed,
-                Package                  = p.Package,
-                Gprs                     = p.Gprs,
-                GprSize                  = p.GprSize,
-                Fprs                     = p.Fprs,
-                FprSize                  = p.FprSize,
-                Cores                    = p.Cores,
-                ThreadsPerCore           = p.ThreadsPerCore,
-                Process                  = p.Process,
-                ProcessNm                = p.ProcessNm,
-                DieSize                  = p.DieSize,
-                Transistors              = p.Transistors,
-                DataBus                  = p.DataBus,
-                AddrBus                  = p.AddrBus,
-                SimdRegisters            = p.SimdRegisters,
-                SimdSize                 = p.SimdSize,
-                L1Instruction            = p.L1Instruction,
-                L1Data                   = p.L1Data,
-                L2                       = p.L2,
-                L3                       = p.L3,
-                InstructionSet           = p.InstructionSet.Name,
-                Id                       = p.Id,
-                InstructionSetExtensions = p.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
-            }).OrderBy(p => p.CompanyName).ThenBy(p => p.Name).ToListAsync();
+        model.AddrBus          = viewModel.AddrBus;
+        model.CompanyId        = viewModel.CompanyId;
+        model.Cores            = viewModel.Cores;
+        model.DataBus          = viewModel.DataBus;
+        model.DieSize          = viewModel.DieSize;
+        model.Fprs             = viewModel.Fprs;
+        model.FprSize          = viewModel.FprSize;
+        model.Gprs             = viewModel.Gprs;
+        model.GprSize          = viewModel.GprSize;
+        model.InstructionSetId = viewModel.InstructionSetId;
+        model.Introduced       = viewModel.Introduced;
+        model.L1Data           = viewModel.L1Data;
+        model.L1Instruction    = viewModel.L1Instruction;
+        model.L2               = viewModel.L2;
+        model.L3               = viewModel.L3;
+        model.ModelCode        = viewModel.ModelCode;
+        model.Name             = viewModel.Name;
+        model.Package          = viewModel.Package;
+        model.Process          = viewModel.Process;
+        model.ProcessNm        = viewModel.ProcessNm;
+        model.SimdRegisters    = viewModel.SimdRegisters;
+        model.SimdSize         = viewModel.SimdSize;
+        model.Speed            = viewModel.Speed;
+        model.ThreadsPerCore   = viewModel.ThreadsPerCore;
+        model.Transistors      = viewModel.Transistors;
 
-        public async Task<List<ProcessorViewModel>> GetByMachineAsync(int machineId) =>
-            await _context.ProcessorsByMachine.Where(p => p.MachineId == machineId).Select(p => new ProcessorViewModel
-            {
-                Name           = p.Processor.Name,
-                CompanyName    = p.Processor.Company.Name,
-                CompanyId      = p.Processor.Company.Id,
-                ModelCode      = p.Processor.ModelCode,
-                Introduced     = p.Processor.Introduced,
-                Speed          = p.Speed,
-                Package        = p.Processor.Package,
-                Gprs           = p.Processor.Gprs,
-                GprSize        = p.Processor.GprSize,
-                Fprs           = p.Processor.Fprs,
-                FprSize        = p.Processor.FprSize,
-                Cores          = p.Processor.Cores,
-                ThreadsPerCore = p.Processor.ThreadsPerCore,
-                Process        = p.Processor.Process,
-                ProcessNm      = p.Processor.ProcessNm,
-                DieSize        = p.Processor.DieSize,
-                Transistors    = p.Processor.Transistors,
-                DataBus        = p.Processor.DataBus,
-                AddrBus        = p.Processor.AddrBus,
-                SimdRegisters  = p.Processor.SimdRegisters,
-                SimdSize       = p.Processor.SimdSize,
-                L1Instruction  = p.Processor.L1Instruction,
-                L1Data         = p.Processor.L1Data,
-                L2             = p.Processor.L2,
-                L3             = p.Processor.L3,
-                InstructionSet = p.Processor.InstructionSet.Name,
-                Id             = p.Processor.Id,
-                InstructionSetExtensions =
-                    p.Processor.InstructionSetExtensions.Select(e => e.Extension.Extension).ToList()
-            }).OrderBy(p => p.CompanyName).ThenBy(p => p.Name).ToListAsync();
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<ProcessorViewModel> GetAsync(int id) =>
-            await _context.Processors.Where(p => p.Id == id).Select(p => new ProcessorViewModel
-            {
-                Name             = p.Name,
-                CompanyName      = p.Company.Name,
-                CompanyId        = p.Company.Id,
-                ModelCode        = p.ModelCode,
-                Introduced       = p.Introduced,
-                Speed            = p.Speed,
-                Package          = p.Package,
-                Gprs             = p.Gprs,
-                GprSize          = p.GprSize,
-                Fprs             = p.Fprs,
-                FprSize          = p.FprSize,
-                Cores            = p.Cores,
-                ThreadsPerCore   = p.ThreadsPerCore,
-                Process          = p.Process,
-                ProcessNm        = p.ProcessNm,
-                DieSize          = p.DieSize,
-                Transistors      = p.Transistors,
-                DataBus          = p.DataBus,
-                AddrBus          = p.AddrBus,
-                SimdRegisters    = p.SimdRegisters,
-                SimdSize         = p.SimdSize,
-                L1Instruction    = p.L1Instruction,
-                L1Data           = p.L1Data,
-                L2               = p.L2,
-                L3               = p.L3,
-                InstructionSet   = p.InstructionSet.Name,
-                InstructionSetId = p.InstructionSetId
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(ProcessorViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(ProcessorViewModel viewModel, string userId)
+    {
+        var model = new Processor
         {
-            Processor model = await _context.Processors.FindAsync(viewModel.Id);
+            AddrBus          = viewModel.AddrBus,
+            CompanyId        = viewModel.CompanyId,
+            Cores            = viewModel.Cores,
+            DataBus          = viewModel.DataBus,
+            DieSize          = viewModel.DieSize,
+            Fprs             = viewModel.Fprs,
+            FprSize          = viewModel.FprSize,
+            Gprs             = viewModel.Gprs,
+            GprSize          = viewModel.GprSize,
+            InstructionSetId = viewModel.InstructionSetId,
+            Introduced       = viewModel.Introduced,
+            L1Data           = viewModel.L1Data,
+            L1Instruction    = viewModel.L1Instruction,
+            L2               = viewModel.L2,
+            L3               = viewModel.L3,
+            ModelCode        = viewModel.ModelCode,
+            Name             = viewModel.Name,
+            Package          = viewModel.Package,
+            Process          = viewModel.Process,
+            ProcessNm        = viewModel.ProcessNm,
+            SimdRegisters    = viewModel.SimdRegisters,
+            SimdSize         = viewModel.SimdSize,
+            Speed            = viewModel.Speed,
+            ThreadsPerCore   = viewModel.ThreadsPerCore,
+            Transistors      = viewModel.Transistors
+        };
 
-            if(model is null)
-                return;
+        await context.Processors.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.AddrBus          = viewModel.AddrBus;
-            model.CompanyId        = viewModel.CompanyId;
-            model.Cores            = viewModel.Cores;
-            model.DataBus          = viewModel.DataBus;
-            model.DieSize          = viewModel.DieSize;
-            model.Fprs             = viewModel.Fprs;
-            model.FprSize          = viewModel.FprSize;
-            model.Gprs             = viewModel.Gprs;
-            model.GprSize          = viewModel.GprSize;
-            model.InstructionSetId = viewModel.InstructionSetId;
-            model.Introduced       = viewModel.Introduced;
-            model.L1Data           = viewModel.L1Data;
-            model.L1Instruction    = viewModel.L1Instruction;
-            model.L2               = viewModel.L2;
-            model.L3               = viewModel.L3;
-            model.ModelCode        = viewModel.ModelCode;
-            model.Name             = viewModel.Name;
-            model.Package          = viewModel.Package;
-            model.Process          = viewModel.Process;
-            model.ProcessNm        = viewModel.ProcessNm;
-            model.SimdRegisters    = viewModel.SimdRegisters;
-            model.SimdSize         = viewModel.SimdSize;
-            model.Speed            = viewModel.Speed;
-            model.ThreadsPerCore   = viewModel.ThreadsPerCore;
-            model.Transistors      = viewModel.Transistors;
+        return model.Id;
+    }
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+    public async Task DeleteAsync(int id, string userId)
+    {
+        Processor item = await context.Processors.FindAsync(id);
 
-        public async Task<int> CreateAsync(ProcessorViewModel viewModel, string userId)
-        {
-            var model = new Processor
-            {
-                AddrBus          = viewModel.AddrBus,
-                CompanyId        = viewModel.CompanyId,
-                Cores            = viewModel.Cores,
-                DataBus          = viewModel.DataBus,
-                DieSize          = viewModel.DieSize,
-                Fprs             = viewModel.Fprs,
-                FprSize          = viewModel.FprSize,
-                Gprs             = viewModel.Gprs,
-                GprSize          = viewModel.GprSize,
-                InstructionSetId = viewModel.InstructionSetId,
-                Introduced       = viewModel.Introduced,
-                L1Data           = viewModel.L1Data,
-                L1Instruction    = viewModel.L1Instruction,
-                L2               = viewModel.L2,
-                L3               = viewModel.L3,
-                ModelCode        = viewModel.ModelCode,
-                Name             = viewModel.Name,
-                Package          = viewModel.Package,
-                Process          = viewModel.Process,
-                ProcessNm        = viewModel.ProcessNm,
-                SimdRegisters    = viewModel.SimdRegisters,
-                SimdSize         = viewModel.SimdSize,
-                Speed            = viewModel.Speed,
-                ThreadsPerCore   = viewModel.ThreadsPerCore,
-                Transistors      = viewModel.Transistors
-            };
+        if(item is null) return;
 
-            await _context.Processors.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        context.Processors.Remove(item);
 
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            Processor item = await _context.Processors.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.Processors.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

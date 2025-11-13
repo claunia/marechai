@@ -8,78 +8,65 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Marechai.Areas.Identity.Pages.Account
+namespace Marechai.Areas.Identity.Pages.Account;
+
+[AllowAnonymous]
+public class ResetPasswordModel(UserManager<ApplicationUser> userManager) : PageModel
 {
-    [AllowAnonymous]
-    public class ResetPasswordModel : PageModel
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+    public IActionResult OnGet(string code = null)
     {
-        readonly UserManager<ApplicationUser> _userManager;
+        if(code == null) return BadRequest("A code must be supplied for password reset.");
 
-        public ResetPasswordModel(UserManager<ApplicationUser> userManager) => _userManager = userManager;
-
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public IActionResult OnGet(string code = null)
+        Input = new InputModel
         {
-            if(code == null)
-            {
-                return BadRequest("A code must be supplied for password reset.");
-            }
+            Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
+        };
 
-            Input = new InputModel
-            {
-                Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
-            };
+        return Page();
+    }
 
-            return Page();
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if(!ModelState.IsValid) return Page();
+
+        ApplicationUser user = await userManager.FindByEmailAsync(Input.Email);
+
+        if(user == null)
+        {
+            // Don't reveal that the user does not exist
+            return RedirectToPage("./ResetPasswordConfirmation");
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if(!ModelState.IsValid)
-            {
-                return Page();
-            }
+        IdentityResult result = await userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
 
-            ApplicationUser user = await _userManager.FindByEmailAsync(Input.Email);
+        if(result.Succeeded) return RedirectToPage("./ResetPasswordConfirmation");
 
-            if(user == null)
-            {
-                // Don't reveal that the user does not exist
-                return RedirectToPage("./ResetPasswordConfirmation");
-            }
+        foreach(IdentityError error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
 
-            IdentityResult result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
+        return Page();
+    }
 
-            if(result.Succeeded)
-            {
-                return RedirectToPage("./ResetPasswordConfirmation");
-            }
+    public class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
 
-            foreach(IdentityError error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+        [Required]
+        [StringLength(100,
+                      ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
+                      MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
 
-            return Page();
-        }
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
 
-        public class InputModel
-        {
-            [Required, EmailAddress]
-            public string Email { get; set; }
-
-            [Required,
-             StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
-                          MinimumLength     = 6), DataType(DataType.Password)]
-            public string Password { get; set; }
-
-            [DataType(DataType.Password), Display(Name = "Confirm password"),
-             Compare("Password", ErrorMessage          = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
-
-            public string Code { get; set; }
-        }
+        public string Code { get; set; }
     }
 }

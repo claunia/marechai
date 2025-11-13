@@ -25,33 +25,32 @@
 
 using System.Data;
 
-namespace Marechai.Database
+namespace Marechai.Database;
+
+/// <summary>Interface to database</summary>
+public interface IDbCore
 {
-    /// <summary>Interface to database</summary>
-    public interface IDbCore
-    {
-        /// <summary>Database operations</summary>
-        Operations Operations { get; }
+    /// <summary>Database operations</summary>
+    Operations Operations { get; }
 
-        /// <summary>Last inserted row's ID</summary>
-        long LastInsertRowId { get; }
+    /// <summary>Last inserted row's ID</summary>
+    long LastInsertRowId { get; }
 
-        /// <summary>Opens an existing database</summary>
-        /// <param name="server">Server</param>
-        /// <param name="user">User</param>
-        /// <param name="database">Database name</param>
-        /// <param name="password">Password</param>
-        /// <param name="port">Port</param>
-        /// <returns><c>true</c> if database opened correctly, <c>false</c> otherwise</returns>
-        bool OpenDb(string server, string user, string database, string password, ushort port);
+    /// <summary>Opens an existing database</summary>
+    /// <param name="server">Server</param>
+    /// <param name="user">User</param>
+    /// <param name="database">Database name</param>
+    /// <param name="password">Password</param>
+    /// <param name="port">Port</param>
+    /// <returns><c>true</c> if database opened correctly, <c>false</c> otherwise</returns>
+    bool OpenDb(string server, string user, string database, string password, ushort port);
 
-        /// <summary>Closes the database</summary>
-        void CloseDb();
+    /// <summary>Closes the database</summary>
+    void CloseDb();
 
-        /// <summary>Gets a data adapter for the opened database</summary>
-        /// <returns>Data adapter</returns>
-        IDbDataAdapter GetNewDataAdapter();
+    /// <summary>Gets a data adapter for the opened database</summary>
+    /// <returns>Data adapter</returns>
+    IDbDataAdapter GetNewDataAdapter();
 
-        bool TableExists(string tableName);
-    }
+    bool TableExists(string tableName);
 }

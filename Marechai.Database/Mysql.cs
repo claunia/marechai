@@ -27,101 +27,96 @@ using System;
 using System.Data;
 using MySqlConnector;
 
-namespace Marechai.Database
+namespace Marechai.Database;
+
+public class Mysql : IDbCore
 {
-    public class Mysql : IDbCore
+    MySqlConnection _connection;
+
+    /// <summary>Database operations</summary>
+    public Operations Operations { get; private set; }
+
+    /// <summary>Last inserted row's ID</summary>
+    public long LastInsertRowId
     {
-        MySqlConnection connection;
-
-        /// <summary>Database operations</summary>
-        public Operations Operations { get; private set; }
-
-        /// <summary>Last inserted row's ID</summary>
-        public long LastInsertRowId
+        get
         {
-            get
-            {
-                MySqlCommand command = connection.CreateCommand();
-                command.CommandText = "SELECT LAST_INSERT_ID()";
-                IDataReader reader = command.ExecuteReader();
+            MySqlCommand command = _connection.CreateCommand();
+            command.CommandText = "SELECT LAST_INSERT_ID()";
+            IDataReader reader = command.ExecuteReader();
 
-                if(reader == null ||
-                   !reader.Read())
-                    return 0;
+            if(reader == null || !reader.Read()) return 0;
 
-                long id = reader.GetInt64(0);
-                reader.Close();
-
-                return id;
-            }
-        }
-
-        /// <summary>Opens an existing database</summary>
-        /// <param name="server">Server</param>
-        /// <param name="user">User</param>
-        /// <param name="database">Database name</param>
-        /// <param name="password">Password</param>
-        /// <param name="port">Port</param>
-        /// <returns><c>true</c> if database opened correctly, <c>false</c> otherwise</returns>
-        public bool OpenDb(string server, string user, string database, string password, ushort port = 3306)
-        {
-            try
-            {
-                string connectionString =
-                    $"server={server};user={user};database={database};port={port};password={password}";
-
-                connection = new MySqlConnection(connectionString);
-                connection.Open();
-
-                Operations = new Operations(connection, this);
-
-                bool res = Operations.UpdateDatabase();
-
-                if(res)
-                    return true;
-
-                connection = null;
-
-                return false;
-            }
-            catch(MySqlException ex)
-            {
-                Console.WriteLine("Error opening database.");
-                Console.WriteLine(ex);
-                connection = null;
-
-                return false;
-            }
-        }
-
-        /// <summary>Closes the database</summary>
-        public void CloseDb()
-        {
-            connection?.Close();
-            connection = null;
-        }
-
-        /// <summary>Gets a data adapter for the opened database</summary>
-        /// <returns>Data adapter</returns>
-        public IDbDataAdapter GetNewDataAdapter() => new MySqlDataAdapter();
-
-        public bool TableExists(string tableName)
-        {
-            MySqlCommand cmd = connection.CreateCommand();
-
-            cmd.CommandText =
-                $"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{connection.Database}' AND table_name = '{tableName}'";
-
-            MySqlDataReader reader = cmd.ExecuteReader();
-
-            reader.Read();
-
-            int count = reader.GetInt32(0);
+            long id = reader.GetInt64(0);
             reader.Close();
 
-            return count > 0;
+            return id;
         }
-
-        ~Mysql() => CloseDb();
     }
+
+    /// <summary>Opens an existing database</summary>
+    /// <param name="server">Server</param>
+    /// <param name="user">User</param>
+    /// <param name="database">Database name</param>
+    /// <param name="password">Password</param>
+    /// <param name="port">Port</param>
+    /// <returns><c>true</c> if database opened correctly, <c>false</c> otherwise</returns>
+    public bool OpenDb(string server, string user, string database, string password, ushort port = 3306)
+    {
+        try
+        {
+            var connectionString = $"server={server};user={user};database={database};port={port};password={password}";
+
+            _connection = new MySqlConnection(connectionString);
+            _connection.Open();
+
+            Operations = new Operations(_connection, this);
+
+            bool res = Operations.UpdateDatabase();
+
+            if(res) return true;
+
+            _connection = null;
+
+            return false;
+        }
+        catch(MySqlException ex)
+        {
+            Console.WriteLine("Error opening database.");
+            Console.WriteLine(ex);
+            _connection = null;
+
+            return false;
+        }
+    }
+
+    /// <summary>Closes the database</summary>
+    public void CloseDb()
+    {
+        _connection?.Close();
+        _connection = null;
+    }
+
+    /// <summary>Gets a data adapter for the opened database</summary>
+    /// <returns>Data adapter</returns>
+    public IDbDataAdapter GetNewDataAdapter() => new MySqlDataAdapter();
+
+    public bool TableExists(string tableName)
+    {
+        MySqlCommand cmd = _connection.CreateCommand();
+
+        cmd.CommandText =
+            $"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{_connection.Database}' AND table_name = '{tableName}'";
+
+        MySqlDataReader reader = cmd.ExecuteReader();
+
+        reader.Read();
+
+        int count = reader.GetInt32(0);
+        reader.Close();
+
+        return count > 0;
+    }
+
+    ~Mysql() => CloseDb();
 }

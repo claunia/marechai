@@ -30,59 +30,56 @@ using Blazorise;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin
+namespace Marechai.Pages.Admin;
+
+public partial class SoundSynths
 {
-    public partial class SoundSynths
+    bool                      _deleteInProgress;
+    Modal                     _frmDelete;
+    bool                      _loaded;
+    SoundSynthViewModel       _soundSynth;
+    List<SoundSynthViewModel> _soundSynths;
+
+    void ShowModal(int itemId)
     {
-        bool                      _deleteInProgress;
-        Modal                     _frmDelete;
-        bool                      _loaded;
-        SoundSynthViewModel       _soundSynth;
-        List<SoundSynthViewModel> _soundSynths;
+        _soundSynth = _soundSynths.FirstOrDefault(n => n.Id == itemId);
+        _frmDelete.Show();
+    }
 
-        void ShowModal(int itemId)
-        {
-            _soundSynth = _soundSynths.FirstOrDefault(n => n.Id == itemId);
-            _frmDelete.Show();
-        }
+    void HideModal() => _frmDelete.Hide();
 
-        void HideModal() => _frmDelete.Hide();
+    async void ConfirmDelete()
+    {
+        if(_soundSynth is null) return;
 
-        async void ConfirmDelete()
-        {
-            if(_soundSynth is null)
-                return;
+        _deleteInProgress = true;
+        _soundSynths      = null;
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            _deleteInProgress = true;
-            _soundSynths      = null;
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        // Yield thread to let UI to update
+        await Task.Yield();
 
-            // Yield thread to let UI to update
-            await Task.Yield();
+        await Service.DeleteAsync(_soundSynth.Id, (await UserManager.GetUserAsync(authState.User)).Id);
+        _soundSynths = await Service.GetAsync();
 
-            await Service.DeleteAsync(_soundSynth.Id, (await UserManager.GetUserAsync(authState.User)).Id);
-            _soundSynths = await Service.GetAsync();
+        _deleteInProgress = false;
+        _frmDelete.Hide();
 
-            _deleteInProgress = false;
-            _frmDelete.Hide();
+        // Yield thread to let UI to update
+        await Task.Yield();
 
-            // Yield thread to let UI to update
-            await Task.Yield();
+        // Tell we finished loading
+        StateHasChanged();
+    }
 
-            // Tell we finished loading
-            StateHasChanged();
-        }
+    void ModalClosing(ModalClosingEventArgs obj) => _soundSynth = null;
 
-        void ModalClosing(ModalClosingEventArgs obj) => _soundSynth = null;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _soundSynths = await Service.GetAsync();
-            _loaded      = true;
-            StateHasChanged();
-        }
+        _soundSynths = await Service.GetAsync();
+        _loaded      = true;
+        StateHasChanged();
     }
 }

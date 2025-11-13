@@ -29,8 +29,8 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<InstructionSetExtensionsService>
 @inject IStringLocalizer<InstructionSetExtensionsService> L
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser>                      UserManager
+@inject AuthenticationStateProvider                       AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Instruction set extensions"]</h3>
 @if(_extensions is null)
@@ -52,7 +52,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _extensions)
+    @foreach(InstructionSetExtension item in _extensions)
     {
         <tr>
             <td>
@@ -68,11 +68,11 @@
     </tbody>
 </table>
 <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-    <ModalBackdrop />
+    <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete extension"]</ModalTitle>
-            <CloseButton Clicked="@HideModal" />
+            <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(L["Are you sure you want to delete {0}?"], _extension?.Extension)</Text>

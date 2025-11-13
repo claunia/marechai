@@ -25,13 +25,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class MachinesBySoftwareVariant : BaseModel<ulong>
 {
-    public class MachinesBySoftwareVariant : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Machine Machine { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
-    }
+    [Required]
+    public virtual Machine Machine { get; set; }
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
 }

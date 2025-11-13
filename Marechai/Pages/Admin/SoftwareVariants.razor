@@ -29,8 +29,8 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<SoftwareVariantsService>
 @inject IStringLocalizer<SoftwareVariantsService> L
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser>              UserManager
+@inject AuthenticationStateProvider               AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Software variants"]</h3>
 @if(_softwareVariants is null)
@@ -64,7 +64,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _softwareVariants)
+    @foreach(SoftwareVariantViewModel item in _softwareVariants)
     {
         <tr>
             <td>
@@ -92,11 +92,11 @@
     </tbody>
 </table>
 <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-    <ModalBackdrop />
+    <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete software variant"]</ModalTitle>
-            <CloseButton Clicked="@HideModal" />
+            <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(L["Are you sure you want to delete the software variant {0}?"], _currentSoftwareVariant?.Name ?? _currentSoftwareVariant?.Version)</Text>

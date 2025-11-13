@@ -25,12 +25,11 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class BookScan : DocumentScanBase
 {
-    public class BookScan : DocumentScanBase
-    {
-        [Required]
-        public virtual Book Book { get; set; }
-        public long BookId { get;       set; }
-    }
+    [Required]
+    public virtual Book Book { get; set; }
+    public long BookId { get;       set; }
 }

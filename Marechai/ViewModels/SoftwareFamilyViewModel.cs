@@ -25,13 +25,12 @@
 
 using System;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class SoftwareFamilyViewModel : BaseViewModel<ulong>
 {
-    public class SoftwareFamilyViewModel : BaseViewModel<ulong>
-    {
-        public string    Name       { get; set; }
-        public DateTime? Introduced { get; set; }
-        public string    Parent     { get; set; }
-        public ulong?    ParentId   { get; set; }
-    }
+    public string    Name       { get; set; }
+    public DateTime? Introduced { get; set; }
+    public string    Parent     { get; set; }
+    public ulong?    ParentId   { get; set; }
 }

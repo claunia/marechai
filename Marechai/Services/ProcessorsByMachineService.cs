@@ -30,51 +30,48 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class ProcessorsByMachineService(MarechaiContext context)
 {
-    public class ProcessorsByMachineService
+    public async Task<List<ProcessorByMachineViewModel>> GetByMachine(int machineId) => await context
+                                                                                             .ProcessorsByMachine.Where(p => p.MachineId == machineId)
+                                                                                             .Select(p => new ProcessorByMachineViewModel
+                                                                                              {
+                                                                                                  Id          = p.Id,
+                                                                                                  Name        = p.Processor.Name,
+                                                                                                  CompanyName = p.Processor.Company.Name,
+                                                                                                  ProcessorId = p.ProcessorId,
+                                                                                                  MachineId   = p.MachineId,
+                                                                                                  Speed       = p.Speed
+                                                                                              })
+                                                                                             .OrderBy(p => p.CompanyName)
+                                                                                             .ThenBy(p => p.Name)
+                                                                                             .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        ProcessorsByMachine item = await context.ProcessorsByMachine.FindAsync(id);
 
-        public ProcessorsByMachineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<ProcessorByMachineViewModel>> GetByMachine(int machineId) =>
-            await _context.ProcessorsByMachine.Where(p => p.MachineId == machineId).
-                           Select(p => new ProcessorByMachineViewModel
-                           {
-                               Id          = p.Id,
-                               Name        = p.Processor.Name,
-                               CompanyName = p.Processor.Company.Name,
-                               ProcessorId = p.ProcessorId,
-                               MachineId   = p.MachineId,
-                               Speed       = p.Speed
-                           }).OrderBy(p => p.CompanyName).ThenBy(p => p.Name).ToListAsync();
+        context.ProcessorsByMachine.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int processorId, int machineId, float? speed, string userId)
+    {
+        var item = new ProcessorsByMachine
         {
-            ProcessorsByMachine item = await _context.ProcessorsByMachine.FindAsync(id);
+            ProcessorId = processorId,
+            MachineId   = machineId,
+            Speed       = speed
+        };
 
-            if(item is null)
-                return;
+        await context.ProcessorsByMachine.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.ProcessorsByMachine.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int processorId, int machineId, float? speed, string userId)
-        {
-            var item = new ProcessorsByMachine
-            {
-                ProcessorId = processorId,
-                MachineId   = machineId,
-                Speed       = speed
-            };
-
-            await _context.ProcessorsByMachine.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

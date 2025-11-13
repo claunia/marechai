@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Marechai.Database.Migrations
 {
@@ -1275,6 +1276,7 @@ namespace Marechai.Database.Migrations
             migrationBuilder.DeleteData("Licenses", "Id", 363);
         }
 
+        [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "The method is called just once.")]
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData("DocumentRoles", new[]

@@ -29,46 +29,43 @@ using System.Threading.Tasks;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 
-namespace Marechai.Pages.Machines
+namespace Marechai.Pages.Machines;
+
+public partial class View
 {
-    public partial class View
+    bool[]           _gpuVisible;
+    int              _id;
+    bool             _loaded;
+    MachineViewModel _machine;
+    List<Guid>       _photos;
+    bool[]           _processorVisible;
+    bool[]           _soundVisible;
+
+    [Parameter]
+    public int Id
     {
-        bool[]           _gpuVisible;
-        int              _id;
-        bool             _loaded;
-        MachineViewModel _machine;
-        List<Guid>       _photos;
-        bool[]           _processorVisible;
-        bool[]           _soundVisible;
-
-        [Parameter]
-        public int Id
+        get => _id;
+        set
         {
-            get => _id;
-            set
-            {
-                if(_id == value)
-                    return;
+            if(_id == value) return;
 
-                _id     = value;
-                _loaded = false;
-            }
+            _id     = value;
+            _loaded = false;
         }
+    }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(_loaded) return;
 
-            _machine = await Service.GetMachine(Id);
+        _machine = await Service.GetMachine(Id);
 
-            _processorVisible = new bool[_machine.Processors.Count];
-            _gpuVisible       = new bool[_machine.Gpus.Count];
-            _soundVisible     = new bool[_machine.SoundSynthesizers.Count];
-            _photos           = await MachinePhotosService.GetGuidsByMachineAsync(Id);
+        _processorVisible = new bool[_machine.Processors.Count];
+        _gpuVisible       = new bool[_machine.Gpus.Count];
+        _soundVisible     = new bool[_machine.SoundSynthesizers.Count];
+        _photos           = await MachinePhotosService.GetGuidsByMachineAsync(Id);
 
-            _loaded = true;
-            StateHasChanged();
-        }
+        _loaded = true;
+        StateHasChanged();
     }
 }

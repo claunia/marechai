@@ -30,48 +30,44 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class MagazinesByMachineService(MarechaiContext context)
 {
-    public class MagazinesByMachineService
+    public async Task<List<MagazineByMachineViewModel>> GetByMagazine(long bookId) => await context.MagazinesByMachines
+                                                                                                   .Where(p => p.MagazineId == bookId)
+                                                                                                   .Select(p => new MagazineByMachineViewModel
+                                                                                                    {
+                                                                                                        Id         = p.Id,
+                                                                                                        MagazineId = p.MagazineId,
+                                                                                                        MachineId  = p.MachineId,
+                                                                                                        Machine    = p.Machine.Name
+                                                                                                    })
+                                                                                                   .OrderBy(p => p.Machine)
+                                                                                                   .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        MagazinesByMachine item = await context.MagazinesByMachines.FindAsync(id);
 
-        public MagazinesByMachineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<MagazineByMachineViewModel>> GetByMagazine(long bookId) =>
-            await _context.MagazinesByMachines.Where(p => p.MagazineId == bookId).
-                           Select(p => new MagazineByMachineViewModel
-                           {
-                               Id         = p.Id,
-                               MagazineId = p.MagazineId,
-                               MachineId  = p.MachineId,
-                               Machine    = p.Machine.Name
-                           }).OrderBy(p => p.Machine).ToListAsync();
+        context.MagazinesByMachines.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int machineId, long bookId, string userId)
+    {
+        var item = new MagazinesByMachine
         {
-            MagazinesByMachine item = await _context.MagazinesByMachines.FindAsync(id);
+            MachineId  = machineId,
+            MagazineId = bookId
+        };
 
-            if(item is null)
-                return;
+        await context.MagazinesByMachines.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.MagazinesByMachines.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int machineId, long bookId, string userId)
-        {
-            var item = new MagazinesByMachine
-            {
-                MachineId  = machineId,
-                MagazineId = bookId
-            };
-
-            await _context.MagazinesByMachines.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

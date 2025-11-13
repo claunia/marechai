@@ -30,92 +30,86 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class MagazineIssuesService(MarechaiContext context)
 {
-    public class MagazineIssuesService
+    public async Task<List<MagazineIssueViewModel>> GetAsync() => await context.MagazineIssues
+                                                                               .OrderBy(b => b.Magazine.Title)
+                                                                               .ThenBy(b => b.Published)
+                                                                               .ThenBy(b => b.Caption)
+                                                                               .Select(b => new MagazineIssueViewModel
+                                                                                {
+                                                                                    Id            = b.Id,
+                                                                                    MagazineId    = b.MagazineId,
+                                                                                    MagazineTitle = b.Magazine.Title,
+                                                                                    Caption       = b.Caption,
+                                                                                    NativeCaption = b.NativeCaption,
+                                                                                    Published     = b.Published,
+                                                                                    ProductCode   = b.ProductCode,
+                                                                                    Pages         = b.Pages,
+                                                                                    IssueNumber   = b.IssueNumber
+                                                                                })
+                                                                               .ToListAsync();
+
+    public async Task<MagazineIssueViewModel> GetAsync(long id) => await context.MagazineIssues.Where(b => b.Id == id)
+                                                                      .Select(b => new MagazineIssueViewModel
+                                                                       {
+                                                                           Id            = b.Id,
+                                                                           MagazineId    = b.MagazineId,
+                                                                           MagazineTitle = b.Magazine.Title,
+                                                                           Caption       = b.Caption,
+                                                                           NativeCaption = b.NativeCaption,
+                                                                           Published     = b.Published,
+                                                                           ProductCode   = b.ProductCode,
+                                                                           Pages         = b.Pages,
+                                                                           IssueNumber   = b.IssueNumber
+                                                                       })
+                                                                      .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(MagazineIssueViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        MagazineIssue model = await context.MagazineIssues.FindAsync(viewModel.Id);
 
-        public MagazineIssuesService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<MagazineIssueViewModel>> GetAsync() => await _context.
-                                                                            MagazineIssues.
-                                                                            OrderBy(b => b.Magazine.Title).
-                                                                            ThenBy(b => b.Published).
-                                                                            ThenBy(b => b.Caption).
-                                                                            Select(b => new MagazineIssueViewModel
-                                                                            {
-                                                                                Id            = b.Id,
-                                                                                MagazineId    = b.MagazineId,
-                                                                                MagazineTitle = b.Magazine.Title,
-                                                                                Caption       = b.Caption,
-                                                                                NativeCaption = b.NativeCaption,
-                                                                                Published     = b.Published,
-                                                                                ProductCode   = b.ProductCode,
-                                                                                Pages         = b.Pages,
-                                                                                IssueNumber   = b.IssueNumber
-                                                                            }).ToListAsync();
+        model.MagazineId    = viewModel.MagazineId;
+        model.Caption       = viewModel.Caption;
+        model.NativeCaption = viewModel.NativeCaption;
+        model.Published     = viewModel.Published;
+        model.ProductCode   = viewModel.ProductCode;
+        model.Pages         = viewModel.Pages;
+        model.IssueNumber   = viewModel.IssueNumber;
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<MagazineIssueViewModel> GetAsync(long id) =>
-            await _context.MagazineIssues.Where(b => b.Id == id).Select(b => new MagazineIssueViewModel
-            {
-                Id            = b.Id,
-                MagazineId    = b.MagazineId,
-                MagazineTitle = b.Magazine.Title,
-                Caption       = b.Caption,
-                NativeCaption = b.NativeCaption,
-                Published     = b.Published,
-                ProductCode   = b.ProductCode,
-                Pages         = b.Pages,
-                IssueNumber   = b.IssueNumber
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(MagazineIssueViewModel viewModel, string userId)
+    public async Task<long> CreateAsync(MagazineIssueViewModel viewModel, string userId)
+    {
+        var model = new MagazineIssue
         {
-            MagazineIssue model = await _context.MagazineIssues.FindAsync(viewModel.Id);
+            MagazineId    = viewModel.MagazineId,
+            Caption       = viewModel.Caption,
+            NativeCaption = viewModel.NativeCaption,
+            Published     = viewModel.Published,
+            ProductCode   = viewModel.ProductCode,
+            Pages         = viewModel.Pages,
+            IssueNumber   = viewModel.IssueNumber
+        };
 
-            if(model is null)
-                return;
+        await context.MagazineIssues.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.MagazineId    = viewModel.MagazineId;
-            model.Caption       = viewModel.Caption;
-            model.NativeCaption = viewModel.NativeCaption;
-            model.Published     = viewModel.Published;
-            model.ProductCode   = viewModel.ProductCode;
-            model.Pages         = viewModel.Pages;
-            model.IssueNumber   = viewModel.IssueNumber;
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        return model.Id;
+    }
 
-        public async Task<long> CreateAsync(MagazineIssueViewModel viewModel, string userId)
-        {
-            var model = new MagazineIssue
-            {
-                MagazineId    = viewModel.MagazineId,
-                Caption       = viewModel.Caption,
-                NativeCaption = viewModel.NativeCaption,
-                Published     = viewModel.Published,
-                ProductCode   = viewModel.ProductCode,
-                Pages         = viewModel.Pages,
-                IssueNumber   = viewModel.IssueNumber
-            };
+    public async Task DeleteAsync(long id, string userId)
+    {
+        MagazineIssue item = await context.MagazineIssues.FindAsync(id);
 
-            await _context.MagazineIssues.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        if(item is null) return;
 
-            return model.Id;
-        }
+        context.MagazineIssues.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
-        {
-            MagazineIssue item = await _context.MagazineIssues.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.MagazineIssues.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

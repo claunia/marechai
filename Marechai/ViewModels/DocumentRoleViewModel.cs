@@ -23,11 +23,10 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class DocumentRoleViewModel : BaseViewModel<string>
 {
-    public class DocumentRoleViewModel : BaseViewModel<string>
-    {
-        public string Name    { get; set; }
-        public bool   Enabled { get; set; }
-    }
+    public string Name    { get; set; }
+    public bool   Enabled { get; set; }
 }

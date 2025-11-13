@@ -25,12 +25,11 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class MagazineScan : DocumentScanBase
 {
-    public class MagazineScan : DocumentScanBase
-    {
-        [Required]
-        public virtual MagazineIssue Magazine { get; set; }
-        public long MagazineId { get;                set; }
-    }
+    [Required]
+    public virtual MagazineIssue Magazine { get; set; }
+    public long MagazineId { get;                set; }
 }

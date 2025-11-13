@@ -37,9 +37,9 @@
 }
 <p>
     @L["Here you can consult our database."]
-    <br />
+    <br/>
     @L["In this database you can find technical information as well as computers history, catalogued by companies, alphabetically and by release date."]
-    <br />
+    <br/>
     @string.Format(L["{0} computers actually catalogued in the database."], _computers)
 </p>
 <p>
@@ -224,17 +224,19 @@
     @L["Search by year"]
     <br>
     @{ var counter = 0; }
-    @for(var i = _minYear; i <= _maxYear; i++)
+    @for(int i = _minYear; i <= _maxYear; i++)
     {
         {
             counter++;
         }
+
         <a href="/computers/year/@i">
             @i
         </a>
+
         if(counter % 8 == 0)
         {
-            <br />
+            <br/>
         }
     }
 </p>

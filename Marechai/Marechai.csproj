@@ -15,30 +15,30 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.2.4" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.2.4" />
-    <PackageReference Include="Markdig" Version="0.22.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.11" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.2.4"/>
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.2.4"/>
+    <PackageReference Include="Markdig" Version="0.22.1"/>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.11"/>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.11"/>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.11"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.11" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
-    <PackageReference Include="MySql.Data" Version="8.0.22" />
-    <PackageReference Include="SkiaSharp" Version="3.119.1" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.119.1" />
-    <PackageReference Include="Svg.Skia" Version="0.4.1" />
-    <PackageReference Include="Tewr.Blazor.FileReader" Version="3.0.0.20340" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.11"/>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0"/>
+    <PackageReference Include="MySql.Data" Version="8.0.22"/>
+    <PackageReference Include="SkiaSharp" Version="3.119.1"/>
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.119.1"/>
+    <PackageReference Include="Svg.Skia" Version="0.4.1"/>
+    <PackageReference Include="Tewr.Blazor.FileReader" Version="3.0.0.20340"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj" />
+    <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Resources\**\*.es.resx" />
+    <EmbeddedResource Update="Resources\**\*.es.resx"/>
   </ItemGroup>
   <ItemGroup>
     <Content Update="Pages\Admin\Index.razor">
@@ -173,119 +173,119 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\News\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Companies\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\DocumentCompanies\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\DocumentPeople\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Gpus\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensions\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSets\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Licenses\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Licenses\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachineFamilies\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Machines\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\People\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Processors\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Screens\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundSynths\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyLogos\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Home\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Create.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Delete.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Details.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewImports.cshtml" />
-    <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewStart.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\BrowserTests\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\News\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Companies\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\DocumentCompanies\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\DocumentPeople\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Gpus\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensions\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSets\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Licenses\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Licenses\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachineFamilies\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Machines\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\People\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Processors\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Screens\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundSynths\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyLogos\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByMachine\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByMachine\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByMachines\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByMachines\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByMachines\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ScreensByMachine\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\InstructionSetExtensionsByProcessor\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Resolutions\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByGpu\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ResolutionsByScreen\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MachinePhotos\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CompanyDescriptions\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\GpusByOwnedMachine\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\Home\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\MemoryByOwnedMachines\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\OwnedMachine\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\ProcessorsByOwnedMachines\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\SoundByOwnedMachine\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Create.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Delete.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Details.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Edit.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\StorageByOwnedMachines\Index.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewImports.cshtml"/>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\_ViewStart.cshtml"/>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Pages\Admin\Dumps.razor.cs">

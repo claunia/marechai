@@ -25,26 +25,25 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Marechai.Database.Models
-{
-    public class MediaDumpSubchannelImage : BaseModel<ulong>
-    {
-        public short            TrackSequence { get; set; }
-        public SubchannelStatus Status        { get; set; }
-        public ulong            Size          { get; set; }
-        [Column(TypeName = "binary(16)")]
-        public string Md5 { get; set; }
-        [Column(TypeName = "binary(20)")]
-        public string Sha1 { get; set; }
-        [Column(TypeName = "binary(32)")]
-        public string Sha256 { get; set; }
-        [Column(TypeName = "binary(64)")]
-        public string Sha3 { get;        set; }
-        public string Spamsum     { get; set; }
-        public ulong? MediaDumpId { get; set; }
-        public ulong? TrackId     { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual MediaDump           MediaDump { get; set; }
-        public virtual MediaDumpTrackImage Track     { get; set; }
-    }
+public class MediaDumpSubchannelImage : BaseModel<ulong>
+{
+    public short            TrackSequence { get; set; }
+    public SubchannelStatus Status        { get; set; }
+    public ulong            Size          { get; set; }
+    [Column(TypeName = "binary(16)")]
+    public string Md5 { get; set; }
+    [Column(TypeName = "binary(20)")]
+    public string Sha1 { get; set; }
+    [Column(TypeName = "binary(32)")]
+    public string Sha256 { get; set; }
+    [Column(TypeName = "binary(64)")]
+    public string Sha3 { get;        set; }
+    public string Spamsum     { get; set; }
+    public ulong? MediaDumpId { get; set; }
+    public ulong? TrackId     { get; set; }
+
+    public virtual MediaDump           MediaDump { get; set; }
+    public virtual MediaDumpTrackImage Track     { get; set; }
 }

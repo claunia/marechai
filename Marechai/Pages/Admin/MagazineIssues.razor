@@ -29,8 +29,8 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<MagazineIssuesService>
 @inject IStringLocalizer<MagazineIssuesService> L
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser>            UserManager
+@inject AuthenticationStateProvider             AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Magazine issues"]</h3>
 @if(_magazineIssues is null)
@@ -58,7 +58,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _magazineIssues)
+    @foreach(MagazineIssueViewModel item in _magazineIssues)
     {
         <tr>
             <td>
@@ -80,11 +80,11 @@
     </tbody>
 </table>
 <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-    <ModalBackdrop />
+    <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete magazine issue"]</ModalTitle>
-            <CloseButton Clicked="@HideModal" />
+            <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(L["Are you sure you want to delete the magazine issue published on {0} for magazine {1} with caption {2}?"], _currentMagazineIssue?.Published, _currentMagazineIssue?.MagazineTitle, _currentMagazineIssue?.Caption)</Text>

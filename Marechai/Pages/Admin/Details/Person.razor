@@ -31,13 +31,13 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<PeopleService>
 @inject IStringLocalizer<PeopleService> L
-@inject Iso31661NumericService CountriesService
-@inject NavigationManager NavigationManager
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject Iso31661NumericService          CountriesService
+@inject NavigationManager               NavigationManager
+@inject UserManager<ApplicationUser>    UserManager
+@inject AuthenticationStateProvider     AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Person details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -52,9 +52,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownName" @TValue="bool">@L["Unknown (name)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownName)
+            }
+            @if(!_editing || !_unknownName)
             {
                 <Validation Validator="@ValidateName">
                     <TextEdit @bind-Text="@_model.Name" ReadOnly="!_editing">
@@ -63,9 +62,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Surname != null)
     {
         <Field>
@@ -73,9 +72,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownSurname" @TValue="bool">@L["Unknown (surname)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownSurname)
+            }
+            @if(!_editing || !_unknownSurname)
             {
                 <Validation Validator="@ValidateSurname">
                     <TextEdit @bind-Text="@_model.Surname" ReadOnly="!_editing">
@@ -84,9 +82,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Alias != null)
     {
         <Field>
@@ -94,9 +92,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownAlias" @TValue="bool">@L["Unknown (alias)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownAlias)
+            }
+            @if(!_editing || !_unknownAlias)
             {
                 <Validation Validator="@ValidateAlias">
                     <TextEdit @bind-Text="@_model.Alias" ReadOnly="!_editing">
@@ -105,9 +102,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.DisplayName != null)
     {
         <Field>
@@ -115,9 +112,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownDisplayName" @TValue="bool">@L["Unknown (display name)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownDisplayName)
+            }
+            @if(!_editing || !_unknownDisplayName)
             {
                 <Validation Validator="@ValidateDisplayName">
                     <TextEdit @bind-Text="@_model.DisplayName" ReadOnly="!_editing">
@@ -126,9 +122,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.CountryOfBirthId != null)
     {
         <Field>
@@ -136,19 +132,18 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownCountry" @TValue="bool">@L["Unknown (country of birth)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownCountry)
+            }
+            @if(!_editing || !_unknownCountry)
             {
                 <Select @bind-SelectedValue="@_model.CountryOfBirthId" Disabled="!_editing" @TValue="short?">
-                    @foreach(var country in _countries)
+                    @foreach(Iso31661Numeric country in _countries)
                     {
                         <SelectItem @TValue="short?" Value="@country.Id">@country.Name</SelectItem>
-}
+                    }
                 </Select>
-}
+            }
         </Field>
-}
+    }
     <Field>
         <FieldLabel>@L["Birth date"]</FieldLabel>
         <Validation Validator="@ValidateBirthDate">
@@ -166,9 +161,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownDeathDate" @TValue="bool">@L["Unknown (death date)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownDeathDate)
+            }
+            @if(!_editing || !_unknownDeathDate)
             {
                 <Validation Validator="@ValidateDeathDate">
                     <DateEdit @bind-Date="@_model.DeathDate" ReadOnly="!_editing" @TValue="DateTime?">
@@ -177,9 +171,9 @@
                         </Feedback>
                     </DateEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Webpage != null)
     {
         <Field>
@@ -187,9 +181,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownWebpage" @TValue="bool">@L["Unknown (webpage)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownWebpage)
+            }
+            @if(!_editing || !_unknownWebpage)
             {
                 <Validation Validator="@ValidateWebpage">
                     <TextEdit @bind-Text="@_model.Webpage" ReadOnly="!_editing">
@@ -198,9 +191,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Twitter != null)
     {
         <Field>
@@ -208,9 +201,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownTwitter" @TValue="bool">@L["Unknown (twitter)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownTwitter)
+            }
+            @if(!_editing || !_unknownTwitter)
             {
                 <Validation Validator="@ValidateTwitter">
                     <TextEdit @bind-Text="@_model.Twitter" ReadOnly="!_editing">
@@ -219,9 +211,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Facebook != null)
     {
         <Field>
@@ -229,9 +221,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownFacebook" @TValue="bool">@L["Unknown (facebook)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownFacebook)
+            }
+            @if(!_editing || !_unknownFacebook)
             {
                 <Validation Validator="@ValidateFacebook">
                     <TextEdit @bind-Text="@_model.Facebook" ReadOnly="!_editing">
@@ -240,19 +231,20 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/people">@L["Back to list"]</a>
 </div>

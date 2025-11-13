@@ -26,15 +26,14 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class CompanyLogo : BaseModel<int>
-    {
-        public int CompanyId { get; set; }
-        [Range(1000, 3000)]
-        public int? Year { get; set; }
-        public Guid Guid { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual Company Company { get; set; }
-    }
+public class CompanyLogo : BaseModel<int>
+{
+    public int CompanyId { get; set; }
+    [Range(1000, 3000)]
+    public int? Year { get; set; }
+    public Guid Guid { get; set; }
+
+    public virtual Company Company { get; set; }
 }

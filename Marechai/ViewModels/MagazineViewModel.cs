@@ -25,11 +25,10 @@
 
 using System;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class MagazineViewModel : DocumentBaseViewModel
 {
-    public class MagazineViewModel : DocumentBaseViewModel
-    {
-        public string    Issn             { get; set; }
-        public DateTime? FirstPublication { get; set; }
-    }
+    public string    Issn             { get; set; }
+    public DateTime? FirstPublication { get; set; }
 }

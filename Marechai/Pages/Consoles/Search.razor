@@ -42,37 +42,37 @@
     @if(_character.HasValue)
     {
         <b>@string.Format(L["Videogame consoles starting with {0}"], _character)</b>
-        <br />
+        <br/>
     }
     else if(Year.HasValue)
     {
         <b>@string.Format(L["Videogame consoles introduced in {0}"], Year)</b>
-        <br />
+        <br/>
     }
 
     @if(_consoles?.Count > 0)
     {
-        <p>
-            @string.Format(L["{0} videogame consoles found in the database."], _consoles.Count)
-            <br />
-            @foreach(var console in _consoles)
-            {
-                <a href="/machine/@console.Id">
-                    @console.Company @console.Name
-                </a>
-                <br />
-            }
-        </p>
-    }
-    else
+    <p>
+        @string.Format(L["{0} videogame consoles found in the database."], _consoles.Count)
+        <br/>
+        @foreach(MachineViewModel console in _consoles)
+        {
+            <a href="/machine/@console.Id">
+                @console.Company @console.Name
+            </a>
+            <br/>
+        }
+    </p>
+}
+else
+{
+    @if(_character.HasValue)
     {
-        @if(_character.HasValue)
-        {
-            <p>@L["There are no videogame consoles found in the database that start with this letter."]</p>
-        }
-        else if(Year.HasValue)
-        {
-            <p>@L["There are no videogame consoles found introduced this year."]</p>
-        }
+        <p>@L["There are no videogame consoles found in the database that start with this letter."]</p>
     }
+    else if(Year.HasValue)
+    {
+        <p>@L["There are no videogame consoles found introduced this year."]</p>
+    }
+}
 </p>

@@ -28,23 +28,23 @@
 @page "/admin/software_variants/details/{Id:long}"
 @page "/admin/software_variants/edit/{Id:long}"
 @page "/admin/software_variants/create"
-@using Marechai.Database.Models
 @using Marechai.Database
+@using Marechai.Database.Models
 @inherits OwningComponentBase<SoftwareVariantsService>
 @inject IStringLocalizer<SoftwareVariantsService> L
-@inject SoftwareVersionsService SoftwareVersionsService
-@inject LicensesService LicensesService
-@inject CompaniesService CompaniesService
-@inject DocumentRolesService DocumentRolesService
-@inject CompaniesBySoftwareVariantService CompaniesBySoftwareVariantService
-@inject NavigationManager NavigationManager
-@inject IWebHostEnvironment Host
-@inject IJSRuntime JSRuntime
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject SoftwareVersionsService                   SoftwareVersionsService
+@inject LicensesService                           LicensesService
+@inject CompaniesService                          CompaniesService
+@inject DocumentRolesService                      DocumentRolesService
+@inject CompaniesBySoftwareVariantService         CompaniesBySoftwareVariantService
+@inject NavigationManager                         NavigationManager
+@inject IWebHostEnvironment                       Host
+@inject IJSRuntime                                JSRuntime
+@inject UserManager<ApplicationUser>              UserManager
+@inject AuthenticationStateProvider               AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Software variant details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -52,290 +52,297 @@
     return;
 }
 <div>
-<Field>
-    <FieldLabel>@L["Software version"]</FieldLabel>
-    <Select @bind-SelectedValue="@_model.SoftwareVersionId" Disabled="!_editing" @TValue="ulong">
-        @foreach(var version in _softwareVersions)
-        {
-            <SelectItem @TValue="ulong" Value="@version.Id">@version.Name ?? @version.Version</SelectItem>
-        }
-    </Select>
-</Field>
-@if(_editing || _model.Name != null)
-{
     <Field>
-        <FieldLabel>@L["Name, if different from software version name"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownName" @TValue="bool">@L["Unknown (name)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownName)
-        {
-            <Validation Validator="@ValidateName">
-                <TextEdit @bind-Text="@_model.Name" Disabled="!_editing">
-                    <Feedback>
-                        <ValidationError>@L["Please enter a valid name."]</ValidationError>
-                    </Feedback>
-                </TextEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.Version != null)
-{
+        <FieldLabel>@L["Software version"]</FieldLabel>
+        <Select @bind-SelectedValue="@_model.SoftwareVersionId" Disabled="!_editing" @TValue="ulong">
+            @foreach(SoftwareVersionViewModel version in _softwareVersions)
+            {
+                <SelectItem @TValue="ulong" Value="@version.Id">@version.Name ?? @version.Version</SelectItem>
+            }
+        </Select>
+    </Field>
+    @if(_editing || _model.Name != null)
+    {
+        <Field>
+            <FieldLabel>@L["Name, if different from software version name"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownName" @TValue="bool">@L["Unknown (name)"]</Check>
+            }
+            @if(!_editing || !_unknownName)
+            {
+                <Validation Validator="@ValidateName">
+                    <TextEdit @bind-Text="@_model.Name" Disabled="!_editing">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid name."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.Version != null)
+    {
+        <Field>
+            <FieldLabel>@L["Version, if different from software version's"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownVersion" @TValue="bool">@L["Unknown (version)"]</Check>
+            }
+            @if(!_editing || !_unknownVersion)
+            {
+                <Validation Validator="@ValidateVersion">
+                    <TextEdit @bind-Text="@_model.Version" Disabled="!_editing">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid version."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.Introduced != null)
+    {
+        <Field>
+            <FieldLabel>@L["Introduced"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownIntroduced" @TValue="bool">@L["Unknown (introduction date)"]</Check>
+            }
+            @if(!_editing || !_unknownIntroduced)
+            {
+                <Validation Validator="@ValidateIntroduced">
+                    <DateEdit @bind-Date="@_model.Introduced" ReadOnly="!_editing" @TValue="DateTime?">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid introduction date."]</ValidationError>
+                        </Feedback>
+                    </DateEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.ParentId != null)
+    {
+        <Field>
+            <FieldLabel>@L["Parent"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownParent" @TValue="bool">@L["Unknown or none (parent variant)"]</Check>
+            }
+            @if(!_editing || !_unknownParent)
+            {
+                <Select @bind-SelectedValue="@_model.ParentId" Disabled="!_editing" @TValue="ulong?">
+                    @foreach(SoftwareVariantViewModel variant in _softwareVariants)
+                    {
+                        <SelectItem @TValue="ulong?" Value="@variant.Id">@variant.Name ?? @variant.Version</SelectItem>
+                    }
+                </Select>
+            }
+        </Field>
+    }
+    @if(_editing || _model.MinimumMemory.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Minimum memory (bytes)"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownMinimumMemory" @TValue="bool">@L["Unknown (minimum memory)"]</Check>
+            }
+            @if(!_editing || !_unknownMinimumMemory)
+            {
+                <Validation Validator="@ValidateUnsignedLongBiggerThanZero">
+                    <NumericEdit @bind-Value="@_model.MinimumMemory" Decimals="0" Disabled="!_editing" @TValue="ulong?">
+                        <Feedback>
+                            <ValidationError>@L["Please enter the minimum memory size in bytes."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.RecommendedMemory.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Recommended memory (bytes)"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownRecommendedMemory"
+                       @TValue="bool">@L["Unknown (recommended memory)"]</Check>
+            }
+            @if(!_editing || !_unknownRecommendedMemory)
+            {
+                <Validation Validator="@ValidateUnsignedLongBiggerThanZero">
+                    <NumericEdit @bind-Value="@_model.RecommendedMemory" Decimals="0" Disabled="!_editing"
+                                 @TValue="ulong?">
+                        <Feedback>
+                            <ValidationError>@L["Please enter the recommended memory size in bytes."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.RequiredStorage.HasValue)
+    {
+        <Field>
+            <FieldLabel>@L["Required storage (bytes)"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownRequiredStorage" @TValue="bool">@L["Unknown (required storage)"]</Check>
+            }
+            @if(!_editing || !_unknownRequiredStorage)
+            {
+                <Validation Validator="@ValidateUnsignedLongBiggerThanZero">
+                    <NumericEdit @bind-Value="@_model.RequiredStorage" Decimals="0" Disabled="!_editing"
+                                 @TValue="ulong?">
+                        <Feedback>
+                            <ValidationError>@L["Please enter the required storage size in bytes."]</ValidationError>
+                        </Feedback>
+                    </NumericEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.PartNumber != null)
+    {
+        <Field>
+            <FieldLabel>@L["Part number"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownPartNumber" @TValue="bool">@L["Unknown (part number)"]</Check>
+            }
+            @if(!_editing || !_unknownPartNumber)
+            {
+                <Validation Validator="@ValidatePartNumber">
+                    <TextEdit @bind-Text="@_model.PartNumber" Disabled="!_editing">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid part number."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.SerialNumber != null)
+    {
+        <Field>
+            <FieldLabel>@L["Serial number"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownSerialNumber" @TValue="bool">@L["Unknown (serial number)"]</Check>
+            }
+            @if(_editing)
+            {
+                @L["Serial number is NOT the serial number used to install the software, but a serial number some software manufacturers use as SKU."]
+            }
+            @if(!_editing || !_unknownSerialNumber)
+            {
+                <Validation Validator="@ValidateSerialNumber">
+                    <TextEdit @bind-Text="@_model.SerialNumber" Disabled="!_editing">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid serial number."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.ProductCode != null)
+    {
+        <Field>
+            <FieldLabel>@L["Product code"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownProductCode" @TValue="bool">@L["Unknown (product code)"]</Check>
+            }
+            @if(!_editing || !_unknownProductCode)
+            {
+                <Validation Validator="@ValidateProductCode">
+                    <TextEdit @bind-Text="@_model.ProductCode" Disabled="!_editing">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid product code."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
+    @if(_editing || _model.CatalogueNumber != null)
+    {
+        <Field>
+            <FieldLabel>@L["Catalogue number"]</FieldLabel>
+            @if(_editing)
+            {
+                <Check @bind-Checked="@_unknownCatalogueNumber" @TValue="bool">@L["Unknown (catalogue number)"]</Check>
+            }
+            @if(!_editing || !_unknownCatalogueNumber)
+            {
+                <Validation Validator="@ValidateCatalogueNumber">
+                    <TextEdit @bind-Text="@_model.CatalogueNumber" Disabled="!_editing">
+                        <Feedback>
+                            <ValidationError>@L["Please enter a valid catalogue number."]</ValidationError>
+                        </Feedback>
+                    </TextEdit>
+                </Validation>
+            }
+        </Field>
+    }
     <Field>
-        <FieldLabel>@L["Version, if different from software version's"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownVersion" @TValue="bool">@L["Unknown (version)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownVersion)
-        {
-            <Validation Validator="@ValidateVersion">
-                <TextEdit @bind-Text="@_model.Version" Disabled="!_editing">
-                    <Feedback>
-                        <ValidationError>@L["Please enter a valid version."]</ValidationError>
-                    </Feedback>
-                </TextEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.Introduced != null)
-{
-    <Field>
-        <FieldLabel>@L["Introduced"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownIntroduced" @TValue="bool">@L["Unknown (introduction date)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownIntroduced)
-        {
-            <Validation Validator="@ValidateIntroduced">
-                <DateEdit @bind-Date="@_model.Introduced" ReadOnly="!_editing" @TValue="DateTime?">
-                    <Feedback>
-                        <ValidationError>@L["Please enter a valid introduction date."]</ValidationError>
-                    </Feedback>
-                </DateEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.ParentId != null)
-{
-    <Field>
-        <FieldLabel>@L["Parent"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownParent" @TValue="bool">@L["Unknown or none (parent variant)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownParent)
-        {
-            <Select @bind-SelectedValue="@_model.ParentId" Disabled="!_editing" @TValue="ulong?">
-                @foreach(var variant in _softwareVariants)
-                {
-                    <SelectItem @TValue="ulong?" Value="@variant.Id">@variant.Name ?? @variant.Version</SelectItem>
-}
-            </Select>
-}
-    </Field>}
-@if(_editing || _model.MinimumMemory.HasValue)
-{
-    <Field>
-        <FieldLabel>@L["Minimum memory (bytes)"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownMinimumMemory" @TValue="bool">@L["Unknown (minimum memory)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownMinimumMemory)
-        {
-            <Validation Validator="@ValidateUnsignedLongBiggerThanZero">
-                <NumericEdit @bind-Value="@_model.MinimumMemory" Decimals="0" Disabled="!_editing" @TValue="ulong?">
-                    <Feedback>
-                        <ValidationError>@L["Please enter the minimum memory size in bytes."]</ValidationError>
-                    </Feedback>
-                </NumericEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.RecommendedMemory.HasValue)
-{
-    <Field>
-        <FieldLabel>@L["Recommended memory (bytes)"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownRecommendedMemory" @TValue="bool">@L["Unknown (recommended memory)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownRecommendedMemory)
-        {
-            <Validation Validator="@ValidateUnsignedLongBiggerThanZero">
-                <NumericEdit @bind-Value="@_model.RecommendedMemory" Decimals="0" Disabled="!_editing" @TValue="ulong?">
-                    <Feedback>
-                        <ValidationError>@L["Please enter the recommended memory size in bytes."]</ValidationError>
-                    </Feedback>
-                </NumericEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.RequiredStorage.HasValue)
-{
-    <Field>
-        <FieldLabel>@L["Required storage (bytes)"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownRequiredStorage" @TValue="bool">@L["Unknown (required storage)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownRequiredStorage)
-        {
-            <Validation Validator="@ValidateUnsignedLongBiggerThanZero">
-                <NumericEdit @bind-Value="@_model.RequiredStorage" Decimals="0" Disabled="!_editing" @TValue="ulong?">
-                    <Feedback>
-                        <ValidationError>@L["Please enter the required storage size in bytes."]</ValidationError>
-                    </Feedback>
-                </NumericEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.PartNumber != null)
-{
-    <Field>
-        <FieldLabel>@L["Part number"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownPartNumber" @TValue="bool">@L["Unknown (part number)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownPartNumber)
-        {
-            <Validation Validator="@ValidatePartNumber">
-                <TextEdit @bind-Text="@_model.PartNumber" Disabled="!_editing">
-                    <Feedback>
-                        <ValidationError>@L["Please enter a valid part number."]</ValidationError>
-                    </Feedback>
-                </TextEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.SerialNumber != null)
-{
-    <Field>
-        <FieldLabel>@L["Serial number"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownSerialNumber" @TValue="bool">@L["Unknown (serial number)"]</Check>
-}
-        @if(_editing)
-        {
-            @L["Serial number is NOT the serial number used to install the software, but a serial number some software manufacturers use as SKU."]
-        }
-        @if(!_editing ||
-            !_unknownSerialNumber)
-        {
-            <Validation Validator="@ValidateSerialNumber">
-                <TextEdit @bind-Text="@_model.SerialNumber" Disabled="!_editing">
-                    <Feedback>
-                        <ValidationError>@L["Please enter a valid serial number."]</ValidationError>
-                    </Feedback>
-                </TextEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.ProductCode != null)
-{
-    <Field>
-        <FieldLabel>@L["Product code"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownProductCode" @TValue="bool">@L["Unknown (product code)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownProductCode)
-        {
-            <Validation Validator="@ValidateProductCode">
-                <TextEdit @bind-Text="@_model.ProductCode" Disabled="!_editing">
-                    <Feedback>
-                        <ValidationError>@L["Please enter a valid product code."]</ValidationError>
-                    </Feedback>
-                </TextEdit>
-            </Validation>
-}
-    </Field>}
-@if(_editing || _model.CatalogueNumber != null)
-{
-    <Field>
-        <FieldLabel>@L["Catalogue number"]</FieldLabel>
-        @if(_editing)
-        {
-            <Check @bind-Checked="@_unknownCatalogueNumber" @TValue="bool">@L["Unknown (catalogue number)"]</Check>
-}
-        @if(!_editing ||
-            !_unknownCatalogueNumber)
-        {
-            <Validation Validator="@ValidateCatalogueNumber">
-                <TextEdit @bind-Text="@_model.CatalogueNumber" Disabled="!_editing">
-                    <Feedback>
-                        <ValidationError>@L["Please enter a valid catalogue number."]</ValidationError>
-                    </Feedback>
-                </TextEdit>
-            </Validation>
-}
-    </Field>}
-<Field>
-    <FieldLabel>@L["Distribution mode"]</FieldLabel>
-    <Select @bind-SelectedValue="@Distribution" Disabled="!_editing" @TValue="uint">
-        @foreach(uint mode in Enum.GetValues(typeof(DistributionMode)))
-        {
-            <SelectItem @TValue="uint" Value="@mode">@(((DistributionMode)mode).ToString())</SelectItem>
-}
-    </Select>
-</Field>
+        <FieldLabel>@L["Distribution mode"]</FieldLabel>
+        <Select @bind-SelectedValue="@Distribution" Disabled="!_editing" @TValue="uint">
+            @foreach(uint mode in Enum.GetValues(typeof(DistributionMode)))
+            {
+                <SelectItem @TValue="uint" Value="@mode">@(((DistributionMode)mode).ToString())</SelectItem>
+            }
+        </Select>
+    </Field>
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/software_variants">@L["Back to list"]</a>
 </div>
 @if(!_editing)
 {
-    <hr />
+    <hr/>
     <h3>@L["Companies involved in this software variant"]</h3>
+
     <Button Clicked="OnAddCompanyClick" Color="Color.Success" Disabled="_addingCompany">@L["Add new (company)"]</Button>
+
     @if(_addingCompany)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Company"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyId" Disabled="_savingCompany" @TValue="int?">
-                    @foreach(var company in _companies)
+                    @foreach(CompanyViewModel company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Field>
                 <FieldLabel>@L["Role"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyRoleId" Disabled="!_editing" @TValue="string">
-                    @foreach(var role in _roles)
+                    @foreach(DocumentRoleViewModel role in _roles)
                     {
                         <SelectItem @TValue="string" Value="@role.Id">@role.Name</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Button Clicked="@CancelAddCompany" Color="Color.Primary" Disabled="@_savingCompany">@L["Cancel"]</Button>
             <Button Clicked="@ConfirmAddCompany" Color="Color.Success" Disabled="@_savingCompany">@L["Add"]</Button>
         </div>
     }
+
     @if(_softwareVariantCompanies?.Count > 0)
     {
         <div>
@@ -352,7 +359,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var item in _softwareVariantCompanies)
+                @foreach(CompanyBySoftwareVariantViewModel item in _softwareVariantCompanies)
                 {
                     <tr>
                         <td>
@@ -362,7 +369,8 @@
                             @item.Role
                         </td>
                         <td>
-                            <Button Clicked="() => {ShowCompanyDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingCompany">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowCompanyDeleteModal(item.Id);}" Color="Color.Danger"
+                                    Disabled="@_addingCompany">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -372,18 +380,20 @@
     }
 
     <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-        <ModalBackdrop />
+        <ModalBackdrop/>
         <ModalContent Centered="true">
             <ModalHeader>
                 <ModalTitle>@_deleteTitle</ModalTitle>
-                <CloseButton Clicked="@HideModal" />
+                <CloseButton Clicked="@HideModal"/>
             </ModalHeader>
             <ModalBody>
                 <Text>@_deleteText</Text>
             </ModalBody>
             <ModalFooter>
                 <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-                <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+                <Button Clicked="@ConfirmDelete" Color="Color.Danger"
+                        Disabled="@_deleteInProgress">@L["Delete"]</Button>
             </ModalFooter>
         </ModalContent>
-    </Modal>}
+    </Modal>
+}

@@ -31,53 +31,53 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class MemoriesByMachineService(MarechaiContext context)
 {
-    public class MemoriesByMachineService
+    public async Task<List<MemoryByMachineViewModel>> GetByMachine(int machineId) => await context.MemoryByMachine
+                                                                                                  .Where(m => m.MachineId == machineId)
+                                                                                                  .Select(m => new MemoryByMachineViewModel
+                                                                                                   {
+                                                                                                       Id        = m.Id,
+                                                                                                       Type      = m.Type,
+                                                                                                       Usage     = m.Usage,
+                                                                                                       Size      = m.Size,
+                                                                                                       Speed     = m.Speed,
+                                                                                                       MachineId = m.MachineId
+                                                                                                   })
+                                                                                                  .OrderBy(m => m.Type)
+                                                                                                  .ThenBy(m => m.Usage)
+                                                                                                  .ThenBy(m => m.Size)
+                                                                                                  .ThenBy(m => m.Speed)
+                                                                                                  .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        MemoryByMachine item = await context.MemoryByMachine.FindAsync(id);
 
-        public MemoriesByMachineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<MemoryByMachineViewModel>> GetByMachine(int machineId) =>
-            await _context.MemoryByMachine.Where(m => m.MachineId == machineId).Select(m => new MemoryByMachineViewModel
-            {
-                Id        = m.Id,
-                Type      = m.Type,
-                Usage     = m.Usage,
-                Size      = m.Size,
-                Speed     = m.Speed,
-                MachineId = m.MachineId
-            }).OrderBy(m => m.Type).ThenBy(m => m.Usage).ThenBy(m => m.Size).ThenBy(m => m.Speed).ToListAsync();
+        context.MemoryByMachine.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int    machineId, MemoryType type, MemoryUsage usage, long? size, double? speed,
+                                        string userId)
+    {
+        var item = new MemoryByMachine
         {
-            MemoryByMachine item = await _context.MemoryByMachine.FindAsync(id);
+            MachineId = machineId,
+            Type      = type,
+            Usage     = usage,
+            Size      = size,
+            Speed     = speed
+        };
 
-            if(item is null)
-                return;
+        await context.MemoryByMachine.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.MemoryByMachine.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int machineId, MemoryType type, MemoryUsage usage, long? size,
-                                            double? speed, string userId)
-        {
-            var item = new MemoryByMachine
-            {
-                MachineId = machineId,
-                Type      = type,
-                Usage     = usage,
-                Size      = size,
-                Speed     = speed
-            };
-
-            await _context.MemoryByMachine.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

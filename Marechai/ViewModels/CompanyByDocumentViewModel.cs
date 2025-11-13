@@ -23,14 +23,13 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class CompanyByDocumentViewModel : BaseViewModel<long>
 {
-    public class CompanyByDocumentViewModel : BaseViewModel<long>
-    {
-        public int    CompanyId  { get; set; }
-        public long   DocumentId { get; set; }
-        public string RoleId     { get; set; }
-        public string Company    { get; set; }
-        public string Role       { get; set; }
-    }
+    public int    CompanyId  { get; set; }
+    public long   DocumentId { get; set; }
+    public string RoleId     { get; set; }
+    public string Company    { get; set; }
+    public string Role       { get; set; }
 }

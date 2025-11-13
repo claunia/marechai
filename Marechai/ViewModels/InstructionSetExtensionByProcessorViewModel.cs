@@ -23,13 +23,12 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class InstructionSetExtensionByProcessorViewModel : BaseViewModel<int>
 {
-    public class InstructionSetExtensionByProcessorViewModel : BaseViewModel<int>
-    {
-        public string Extension   { get; set; }
-        public string Processor   { get; set; }
-        public int    ProcessorId { get; set; }
-        public int    ExtensionId { get; set; }
-    }
+    public string Extension   { get; set; }
+    public string Processor   { get; set; }
+    public int    ProcessorId { get; set; }
+    public int    ExtensionId { get; set; }
 }

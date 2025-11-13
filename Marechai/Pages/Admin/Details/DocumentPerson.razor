@@ -31,13 +31,13 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<DocumentPeopleService>
 @inject IStringLocalizer<DocumentPeopleService> L
-@inject PeopleService PeopleService
-@inject NavigationManager NavigationManager
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject PeopleService                           PeopleService
+@inject NavigationManager                       NavigationManager
+@inject UserManager<ApplicationUser>            UserManager
+@inject AuthenticationStateProvider             AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Document person details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -52,9 +52,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownName" @TValue="bool">@L["Unknown (name)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownName)
+            }
+            @if(!_editing || !_unknownName)
             {
                 <Validation Validator="@ValidateName">
                     <TextEdit @bind-Text="@_model.Name" ReadOnly="!_editing">
@@ -63,9 +62,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Surname != null)
     {
         <Field>
@@ -73,9 +72,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownSurname" @TValue="bool">@L["Unknown (surname)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownSurname)
+            }
+            @if(!_editing || !_unknownSurname)
             {
                 <Validation Validator="@ValidateSurname">
                     <TextEdit @bind-Text="@_model.Surname" ReadOnly="!_editing">
@@ -84,9 +82,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Alias != null)
     {
         <Field>
@@ -94,9 +92,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownAlias" @TValue="bool">@L["Unknown (alias)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownAlias)
+            }
+            @if(!_editing || !_unknownAlias)
             {
                 <Validation Validator="@ValidateAlias">
                     <TextEdit @bind-Text="@_model.Alias" ReadOnly="!_editing">
@@ -105,9 +102,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.DisplayName != null)
     {
         <Field>
@@ -115,9 +112,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownDisplayName" @TValue="bool">@L["Unknown (display name)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownDisplayName)
+            }
+            @if(!_editing || !_unknownDisplayName)
             {
                 <Validation Validator="@ValidateDisplayName">
                     <TextEdit @bind-Text="@_model.DisplayName" ReadOnly="!_editing">
@@ -126,9 +122,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.PersonId != null)
     {
         <Field>
@@ -136,29 +132,29 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_noLinkedPerson" @TValue="bool">@L["None (linked person)"]</Check>
-}
-            @if(!_editing ||
-                !_noLinkedPerson)
+            }
+            @if(!_editing || !_noLinkedPerson)
             {
                 <Select @bind-SelectedValue="@_model.PersonId" Disabled="!_editing" @TValue="int?">
-                    @foreach(var person in _people)
+                    @foreach(PersonViewModel person in _people)
                     {
                         <SelectItem @TValue="int?" Value="@person.Id">@person.DisplayName</SelectItem>
-}
+                    }
                 </Select>
-}
+            }
         </Field>
-}
+    }
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/document_people">@L["Back to list"]</a>
 </div>

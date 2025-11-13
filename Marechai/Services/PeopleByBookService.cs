@@ -30,53 +30,53 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class PeopleByBookService(MarechaiContext context)
 {
-    public class PeopleByBookService
+    public async Task<List<PersonByBookViewModel>> GetByBook(long bookId) => (await context.PeopleByBooks
+                                                                                           .Where(p => p.BookId == bookId)
+                                                                                           .Select(p => new PersonByBookViewModel
+                                                                                            {
+                                                                                                Id      = p.Id,
+                                                                                                Name    = p.Person.Name,
+                                                                                                Surname = p.Person.Surname,
+                                                                                                Alias   = p.Person.Alias,
+                                                                                                DisplayName =
+                                                                                                    p.Person.DisplayName,
+                                                                                                PersonId = p.PersonId,
+                                                                                                RoleId   = p.RoleId,
+                                                                                                Role     = p.Role.Name,
+                                                                                                BookId   = p.BookId
+                                                                                            })
+                                                                                           .ToListAsync())
+                                                                            .OrderBy(p => p.FullName)
+                                                                            .ThenBy(p => p.Role)
+                                                                            .ToList();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        PeopleByBook item = await context.PeopleByBooks.FindAsync(id);
 
-        public PeopleByBookService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<PersonByBookViewModel>> GetByBook(long bookId) =>
-            (await _context.PeopleByBooks.Where(p => p.BookId == bookId).Select(p => new PersonByBookViewModel
-                {
-                    Id          = p.Id,
-                    Name        = p.Person.Name,
-                    Surname     = p.Person.Surname,
-                    Alias       = p.Person.Alias,
-                    DisplayName = p.Person.DisplayName,
-                    PersonId    = p.PersonId,
-                    RoleId      = p.RoleId,
-                    Role        = p.Role.Name,
-                    BookId      = p.BookId
-                }).ToListAsync()).OrderBy(p => p.FullName).ThenBy(p => p.Role).ToList();
+        context.PeopleByBooks.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int personId, long bookId, string roleId, string userId)
+    {
+        var item = new PeopleByBook
         {
-            PeopleByBook item = await _context.PeopleByBooks.FindAsync(id);
+            PersonId = personId,
+            BookId   = bookId,
+            RoleId   = roleId
+        };
 
-            if(item is null)
-                return;
+        await context.PeopleByBooks.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.PeopleByBooks.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int personId, long bookId, string roleId, string userId)
-        {
-            var item = new PeopleByBook
-            {
-                PersonId = personId,
-                BookId   = bookId,
-                RoleId   = roleId
-            };
-
-            await _context.PeopleByBooks.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

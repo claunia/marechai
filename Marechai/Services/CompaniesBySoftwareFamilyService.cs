@@ -30,51 +30,48 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class CompaniesBySoftwareFamilyService(MarechaiContext context)
 {
-    public class CompaniesBySoftwareFamilyService
+    public async Task<List<CompanyBySoftwareFamilyViewModel>> GetBySoftwareFamily(ulong softwareFamilyId) =>
+        await context.CompaniesBySoftwareFamilies.Where(p => p.SoftwareFamilyId == softwareFamilyId)
+                      .Select(p => new CompanyBySoftwareFamilyViewModel
+                       {
+                           Id               = p.Id,
+                           Company          = p.Company.Name,
+                           CompanyId        = p.CompanyId,
+                           RoleId           = p.RoleId,
+                           Role             = p.Role.Name,
+                           SoftwareFamilyId = p.SoftwareFamilyId
+                       })
+                      .OrderBy(p => p.Company)
+                      .ThenBy(p => p.Role)
+                      .ToListAsync();
+
+    public async Task DeleteAsync(ulong id, string userId)
     {
-        readonly MarechaiContext _context;
+        CompaniesBySoftwareFamily item = await context.CompaniesBySoftwareFamilies.FindAsync(id);
 
-        public CompaniesBySoftwareFamilyService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<CompanyBySoftwareFamilyViewModel>> GetBySoftwareFamily(ulong softwareFamilyId) =>
-            await _context.CompaniesBySoftwareFamilies.Where(p => p.SoftwareFamilyId == softwareFamilyId).
-                           Select(p => new CompanyBySoftwareFamilyViewModel
-                           {
-                               Id               = p.Id,
-                               Company          = p.Company.Name,
-                               CompanyId        = p.CompanyId,
-                               RoleId           = p.RoleId,
-                               Role             = p.Role.Name,
-                               SoftwareFamilyId = p.SoftwareFamilyId
-                           }).OrderBy(p => p.Company).ThenBy(p => p.Role).ToListAsync();
+        context.CompaniesBySoftwareFamilies.Remove(item);
 
-        public async Task DeleteAsync(ulong id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<ulong> CreateAsync(int companyId, ulong softwareFamilyId, string roleId, string userId)
+    {
+        var item = new CompaniesBySoftwareFamily
         {
-            CompaniesBySoftwareFamily item = await _context.CompaniesBySoftwareFamilies.FindAsync(id);
+            CompanyId        = companyId,
+            SoftwareFamilyId = softwareFamilyId,
+            RoleId           = roleId
+        };
 
-            if(item is null)
-                return;
+        await context.CompaniesBySoftwareFamilies.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.CompaniesBySoftwareFamilies.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<ulong> CreateAsync(int companyId, ulong softwareFamilyId, string roleId, string userId)
-        {
-            var item = new CompaniesBySoftwareFamily
-            {
-                CompanyId        = companyId,
-                SoftwareFamilyId = softwareFamilyId,
-                RoleId           = roleId
-            };
-
-            await _context.CompaniesBySoftwareFamilies.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

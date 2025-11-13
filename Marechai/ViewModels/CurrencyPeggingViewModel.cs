@@ -25,16 +25,15 @@
 
 using System;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class CurrencyPeggingViewModel : BaseViewModel<int>
 {
-    public class CurrencyPeggingViewModel : BaseViewModel<int>
-    {
-        public string    SourceCode      { get; set; }
-        public string    DestinationCode { get; set; }
-        public string    SourceName      { get; set; }
-        public string    DestinationName { get; set; }
-        public float     Ratio           { get; set; }
-        public DateTime  Start           { get; set; }
-        public DateTime? End             { get; set; }
-    }
+    public string    SourceCode      { get; set; }
+    public string    DestinationCode { get; set; }
+    public string    SourceName      { get; set; }
+    public string    DestinationName { get; set; }
+    public float     Ratio           { get; set; }
+    public DateTime  Start           { get; set; }
+    public DateTime? End             { get; set; }
 }

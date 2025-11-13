@@ -26,6 +26,7 @@
 }
 
 @page "/admin/browser_tests"
+@using Marechai.Database.Models
 @inherits OwningComponentBase<BrowserTestsService>
 @inject IStringLocalizer<BrowserTestsService> L
 @attribute [Authorize(Roles = "UberAdmin")]
@@ -90,7 +91,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _tests)
+    @foreach(BrowserTest item in _tests)
     {
         <tr>
             <td>

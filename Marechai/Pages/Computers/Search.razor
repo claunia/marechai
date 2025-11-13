@@ -42,37 +42,37 @@
     @if(_character.HasValue)
     {
         <b>@string.Format(L["Computers starting with {0}"], _character)</b>
-        <br />
+        <br/>
     }
     else if(Year.HasValue)
     {
         <b>@string.Format(L["Computers introduced in {0}"], Year)</b>
-        <br />
+        <br/>
     }
 
     @if(_computers?.Count > 0)
     {
-        <p>
-            @string.Format(L["{0} computers found in the database."], _computers.Count)
-            <br />
-            @foreach(var computer in _computers)
-            {
-                <a href="/machine/@computer.Id">
-                    @computer.Company @computer.Name
-                </a>
-                <br />
-            }
-        </p>
-    }
-    else
+    <p>
+        @string.Format(L["{0} computers found in the database."], _computers.Count)
+        <br/>
+        @foreach(MachineViewModel computer in _computers)
+        {
+            <a href="/machine/@computer.Id">
+                @computer.Company @computer.Name
+            </a>
+            <br/>
+        }
+    </p>
+}
+else
+{
+    @if(_character.HasValue)
     {
-        @if(_character.HasValue)
-        {
-            <p>@L["There are no computers found in the database that start with this letter."]</p>
-        }
-        else if(Year.HasValue)
-        {
-            <p>@L["There are no computers found introduced this year."]</p>
-        }
+        <p>@L["There are no computers found in the database that start with this letter."]</p>
     }
+    else if(Year.HasValue)
+    {
+        <p>@L["There are no computers found introduced this year."]</p>
+    }
+}
 </p>

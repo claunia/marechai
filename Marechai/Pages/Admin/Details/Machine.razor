@@ -28,29 +28,29 @@
 @page "/admin/machines/details/{Id:int}"
 @page "/admin/machines/edit/{Id:int}"
 @page "/admin/machines/create"
-@using Marechai.Database.Models
 @using Marechai.Database
+@using Marechai.Database.Models
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
-@inject CompaniesService CompaniesService
-@inject MachineFamiliesService MachineFamiliesService
-@inject NavigationManager NavigationManager
-@inject GpusByMachineService GpusByMachineService
-@inject GpusService GpusService
-@inject SoundSynthsByMachineService SoundSynthsByMachineService
-@inject SoundSynthsService SoundSynthsService
-@inject ProcessorsByMachineService ProcessorsByMachineService
-@inject ProcessorsService ProcessorsService
-@inject MemoriesByMachineService MemoriesByMachineService
-@inject StorageByMachineService StorageByMachineService
-@inject ScreensByMachineService ScreensByMachineService
-@inject ScreensService ScreensService
-@inject MachinePhotosService MachinePhotosService
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject CompaniesService                  CompaniesService
+@inject MachineFamiliesService            MachineFamiliesService
+@inject NavigationManager                 NavigationManager
+@inject GpusByMachineService              GpusByMachineService
+@inject GpusService                       GpusService
+@inject SoundSynthsByMachineService       SoundSynthsByMachineService
+@inject SoundSynthsService                SoundSynthsService
+@inject ProcessorsByMachineService        ProcessorsByMachineService
+@inject ProcessorsService                 ProcessorsService
+@inject MemoriesByMachineService          MemoriesByMachineService
+@inject StorageByMachineService           StorageByMachineService
+@inject ScreensByMachineService           ScreensByMachineService
+@inject ScreensService                    ScreensService
+@inject MachinePhotosService              MachinePhotosService
+@inject UserManager<ApplicationUser>      UserManager
+@inject AuthenticationStateProvider       AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Machine details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -61,10 +61,10 @@
     <Field>
         <FieldLabel>@L["Company"]</FieldLabel>
         <Select @bind-SelectedValue="@_model.CompanyId" Disabled="!_editing" @TValue="int">
-            @foreach(var company in _companies)
+            @foreach(CompanyViewModel company in _companies)
             {
                 <SelectItem @TValue="int" Value="@company.Id">@company.Name</SelectItem>
-}
+            }
         </Select>
     </Field>
     <Field>
@@ -83,7 +83,7 @@
             @foreach(int type in Enum.GetValues(typeof(MachineType)))
             {
                 <SelectItem @TValue="int" Value="@type">@(((MachineType)type).ToString())</SelectItem>
-}
+            }
         </Select>
     </Field>
     @if(_editing || _model.Model != null)
@@ -93,9 +93,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownModel" @TValue="bool">@L["Unknown (model)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownModel)
+            }
+            @if(!_editing || !_unknownModel)
             {
                 <Validation Validator="@ValidateModel">
                     <TextEdit @bind-Text="@_model.Model" Disabled="!_editing">
@@ -104,20 +103,21 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Introduced.HasValue)
     {
         <Field>
             <FieldLabel>@L["Introduced (public release)"]</FieldLabel>
             @if(_editing)
             {
-                <Check @bind-Checked="@_unknownIntroduced" Disabled="_prototype" @TValue="bool">@L["Unknown (introduction date)"]</Check>
+                <Check @bind-Checked="@_unknownIntroduced" Disabled="_prototype"
+                       @TValue="bool">@L["Unknown (introduction date)"]</Check>
+
                 <Check @bind-Checked="@_prototype" Disabled="_unknownIntroduced" @TValue="bool">@L["Prototype"]</Check>
-}
-            @if(!_editing ||
-                !_prototype && !_unknownIntroduced)
+            }
+            @if(!_editing || !_prototype && !_unknownIntroduced)
             {
                 <Validation Validator="@ValidateIntroduced">
                     <DateEdit @bind-Date="@_model.Introduced" Disabled="!_editing" @TValue="DateTime?">
@@ -126,9 +126,9 @@
                         </Feedback>
                     </DateEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.FamilyId != null)
     {
         <Field>
@@ -136,53 +136,56 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_noFamily" @TValue="bool">@L["No family"]</Check>
-}
-            @if(!_editing ||
-                !_noFamily)
+            }
+            @if(!_editing || !_noFamily)
             {
                 <Select @bind-SelectedValue="@_model.FamilyId" Disabled="!_editing" @TValue="int?">
-                    @foreach(var family in _families)
+                    @foreach(MachineFamilyViewModel family in _families)
                     {
                         <SelectItem @TValue="int?" Value="@family.Id">@family.Name</SelectItem>
-}
+                    }
                 </Select>
-}
+            }
         </Field>
-}
+    }
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/machines">@L["Back to list"]</a>
 </div>
 @if(!_editing)
 {
-    <hr />
+    <hr/>
     <h3>@L["Graphical processing units belonging to this machine"]</h3>
+
     <Button Clicked="OnAddGpuClick" Color="Color.Success" Disabled="_addingGpu">@L["Add new (gpu by machine)"]</Button>
+
     @if(_addingGpu)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Graphical processing units"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingGpuId" Disabled="_savingGpu" @TValue="int?">
-                    @foreach(var gpu in _gpus)
+                    @foreach(GpuViewModel gpu in _gpus)
                     {
                         <SelectItem @TValue="int?" Value="@gpu.Id">@gpu.Company - @gpu.Name</SelectItem>
-}
+                    }
                 </Select>
                 <Button Clicked="@CancelAddGpu" Color="Color.Primary" Disabled="@_savingGpu">@L["Cancel"]</Button>
                 <Button Clicked="@ConfirmAddGpu" Color="Color.Success" Disabled="@_savingGpu">@L["Add"]</Button>
             </Field>
         </div>
     }
+
     @if(_machineGpus?.Count > 0)
     {
         <div>
@@ -199,7 +202,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var item in _machineGpus)
+                @foreach(GpuByMachineViewModel item in _machineGpus)
                 {
                     <tr>
                         <td>
@@ -209,7 +212,8 @@
                             @item.Name
                         </td>
                         <td>
-                            <Button Clicked="() => {ShowGpuDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingGpu">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowGpuDeleteModal(item.Id);}" Color="Color.Danger"
+                                    Disabled="@_addingGpu">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -218,25 +222,30 @@
         </div>
     }
 
-    <hr />
+    <hr/>
     <h3>@L["Sound synthesizers belonging to this machine"]</h3>
-    <Button Clicked="OnAddSoundClick" Color="Color.Success" Disabled="_addingSound">@L["Add new (sound by machine)"]</Button>
+
+    <Button Clicked="OnAddSoundClick" Color="Color.Success"
+            Disabled="_addingSound">@L["Add new (sound by machine)"]</Button>
+
     @if(_addingSound)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Sound synthesizers"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingSoundId" Disabled="_savingSound" @TValue="int?">
-                    @foreach(var soundSynth in _soundSynths)
+                    @foreach(SoundSynthViewModel soundSynth in _soundSynths)
                     {
-                        <SelectItem @TValue="int?" Value="@soundSynth.Id">@soundSynth.CompanyName - @soundSynth.Name</SelectItem>
-}
+                        <SelectItem @TValue="int?"
+                                    Value="@soundSynth.Id">@soundSynth.CompanyName - @soundSynth.Name</SelectItem>
+                    }
                 </Select>
                 <Button Clicked="@CancelAddSound" Color="Color.Primary" Disabled="@_savingSound">@L["Cancel"]</Button>
                 <Button Clicked="@ConfirmAddSound" Color="Color.Success" Disabled="@_savingSound">@L["Add"]</Button>
             </Field>
         </div>
     }
+
     @if(_machineSound?.Count > 0)
     {
         <div>
@@ -253,7 +262,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var item in _machineSound)
+                @foreach(SoundSynthByMachineViewModel item in _machineSound)
                 {
                     <tr>
                         <td>
@@ -263,7 +272,8 @@
                             @item.Name
                         </td>
                         <td>
-                            <Button Clicked="() => {ShowSoundDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingSound">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowSoundDeleteModal(item.Id);}" Color="Color.Danger"
+                                    Disabled="@_addingSound">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -272,24 +282,28 @@
         </div>
     }
 
-    <hr />
+    <hr/>
     <h3>@L["Processors belonging to this machine"]</h3>
-    <Button Clicked="OnAddCpuClick" Color="Color.Success" Disabled="_addingCpu">@L["Add new (processor by machine)"]</Button>
+
+    <Button Clicked="OnAddCpuClick" Color="Color.Success"
+            Disabled="_addingCpu">@L["Add new (processor by machine)"]</Button>
+
     @if(_addingCpu)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Processors"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCpuId" Disabled="_savingCpu" @TValue="int?">
-                    @foreach(var cpu in _cpus)
+                    @foreach(ProcessorViewModel cpu in _cpus)
                     {
                         <SelectItem @TValue="int?" Value="@cpu.Id">@cpu.CompanyName - @cpu.Name</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Field>
                 <FieldLabel>@L["Nominal speed (MHz)"]</FieldLabel>
-                <Check @bind-Checked="@_unknownProcessorSpeed" @TValue="bool">@L["Unknown (processor by machine speed)"]</Check>
+                <Check @bind-Checked="@_unknownProcessorSpeed"
+                       @TValue="bool">@L["Unknown (processor by machine speed)"]</Check>
                 @if(!_unknownProcessorSpeed)
                 {
                     <Validation Validator="@ValidateProcessorSpeed">
@@ -299,12 +313,13 @@
                             </Feedback>
                         </NumericEdit>
                     </Validation>
-}
+                }
             </Field>
             <Button Clicked="@CancelAddCpu" Color="Color.Primary" Disabled="@_savingCpu">@L["Cancel"]</Button>
             <Button Clicked="@ConfirmAddCpu" Color="Color.Success" Disabled="@_savingCpu">@L["Add"]</Button>
         </div>
     }
+
     @if(_machineCpus?.Count > 0)
     {
         <div>
@@ -324,7 +339,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var item in _machineCpus)
+                @foreach(ProcessorByMachineViewModel item in _machineCpus)
                 {
                     <tr>
                         <td>
@@ -337,7 +352,8 @@
                             @string.Format(L["{0:F3} MHz"], item.Speed)
                         </td>
                         <td>
-                            <Button Clicked="() => {ShowCpuDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingCpu">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowCpuDeleteModal(item.Id);}" Color="Color.Danger"
+                                    Disabled="@_addingCpu">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -346,9 +362,12 @@
         </div>
     }
 
-    <hr />
+    <hr/>
     <h3>@L["Memory belonging to this machine"]</h3>
-    <Button Clicked="OnAddMemoryClick" Color="Color.Success" Disabled="_addingMemory">@L["Add new (memory by machine)"]</Button>
+
+    <Button Clicked="OnAddMemoryClick" Color="Color.Success"
+            Disabled="_addingMemory">@L["Add new (memory by machine)"]</Button>
+
     @if(_addingMemory)
     {
         <div>
@@ -358,7 +377,7 @@
                     @foreach(int type in Enum.GetValues(typeof(MemoryType)))
                     {
                         <SelectItem @TValue="int" Value="@type">@(((MemoryType)type).ToString())</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Field>
@@ -367,12 +386,13 @@
                     @foreach(int usage in Enum.GetValues(typeof(MemoryUsage)))
                     {
                         <SelectItem @TValue="int" Value="@usage">@(((MemoryUsage)usage).ToString())</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Field>
                 <FieldLabel>@L["Nominal speed (Hz)"]</FieldLabel>
-                <Check @bind-Checked="@_unknownMemorySpeed" @TValue="bool">@L["Unknown (memory by machine speed)"]</Check>
+                <Check @bind-Checked="@_unknownMemorySpeed"
+                       @TValue="bool">@L["Unknown (memory by machine speed)"]</Check>
                 @if(!_unknownMemorySpeed)
                 {
                     <Validation Validator="@ValidateMemorySpeed">
@@ -382,7 +402,7 @@
                             </Feedback>
                         </NumericEdit>
                     </Validation>
-}
+                }
             </Field>
             <Field>
                 <FieldLabel>@L["Memory size (bytes)"]</FieldLabel>
@@ -396,12 +416,13 @@
                             </Feedback>
                         </NumericEdit>
                     </Validation>
-}
+                }
             </Field>
             <Button Clicked="@CancelAddMemory" Color="Color.Primary" Disabled="@_savingMemory">@L["Cancel"]</Button>
             <Button Clicked="@ConfirmAddMemory" Color="Color.Success" Disabled="@_savingMemory">@L["Add"]</Button>
         </div>
     }
+
     @if(_machineMemories?.Count > 0)
     {
         <div>
@@ -424,7 +445,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var item in _machineMemories)
+                @foreach(MemoryByMachineViewModel item in _machineMemories)
                 {
                     <tr>
                         <td>
@@ -454,7 +475,8 @@
                             }
                         </td>
                         <td>
-                            <Button Clicked="() => {ShowMemoryDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingMemory">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowMemoryDeleteModal(item.Id);}" Color="Color.Danger"
+                                    Disabled="@_addingMemory">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -463,9 +485,12 @@
         </div>
     }
 
-    <hr />
+    <hr/>
     <h3>@L["Storage belonging to this machine"]</h3>
-    <Button Clicked="OnAddStorageClick" Color="Color.Success" Disabled="_addingStorage">@L["Add new (storage by machine)"]</Button>
+
+    <Button Clicked="OnAddStorageClick" Color="Color.Success"
+            Disabled="_addingStorage">@L["Add new (storage by machine)"]</Button>
+
     @if(_addingStorage)
     {
         <div>
@@ -475,7 +500,7 @@
                     @foreach(int type in Enum.GetValues(typeof(StorageType)))
                     {
                         <SelectItem @TValue="int" Value="@type">@(((StorageType)type).ToString())</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Field>
@@ -484,12 +509,13 @@
                     @foreach(int usage in Enum.GetValues(typeof(StorageInterface)))
                     {
                         <SelectItem @TValue="int" Value="@usage">@(((StorageInterface)usage).ToString())</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Field>
                 <FieldLabel>@L["Nominal capacity (bytes)"]</FieldLabel>
-                <Check @bind-Checked="@_unknownStorageSize" @TValue="bool">@L["Unknown or empty (storage by machine nominal capacity)"]</Check>
+                <Check @bind-Checked="@_unknownStorageSize"
+                       @TValue="bool">@L["Unknown or empty (storage by machine nominal capacity)"]</Check>
                 @if(!_unknownStorageSize)
                 {
                     <Validation Validator="@ValidateStorageSize">
@@ -499,12 +525,13 @@
                             </Feedback>
                         </NumericEdit>
                     </Validation>
-}
+                }
             </Field>
             <Button Clicked="@CancelAddStorage" Color="Color.Primary" Disabled="@_savingStorage">@L["Cancel"]</Button>
             <Button Clicked="@ConfirmAddStorage" Color="Color.Success" Disabled="@_savingStorage">@L["Add"]</Button>
         </div>
     }
+
     @if(_machineStorage?.Count > 0)
     {
         <div>
@@ -524,7 +551,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var item in _machineStorage)
+                @foreach(StorageByMachineViewModel item in _machineStorage)
                 {
                     <tr>
                         <td>
@@ -544,7 +571,8 @@
                             }
                         </td>
                         <td>
-                            <Button Clicked="() => {ShowStorageDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingStorage">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowStorageDeleteModal(item.Id);}" Color="Color.Danger"
+                                    Disabled="@_addingStorage">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -553,21 +581,25 @@
         </div>
     }
 
-    <hr />
+    <hr/>
     <h3>@L["Screens attached to this machine"]</h3>
-    <Button Clicked="OnAddScreenClick" Color="Color.Success" Disabled="_addingScreen">@L["Add new (screen by machine)"]</Button>
+
+    <Button Clicked="OnAddScreenClick" Color="Color.Success"
+            Disabled="_addingScreen">@L["Add new (screen by machine)"]</Button>
+
     @if(_addingScreen)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Screens"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingScreenId" Disabled="_savingScreen" @TValue="int?">
-                    @foreach(var screen in _screens)
+                    @foreach(ScreenViewModel screen in _screens)
                     {
                         if(_machineScreens.All(s => s.ScreenId != screen.Id))
                         {
-                            <SelectItem @TValue="int?" Value="@screen.Id">@string.Format(L["{0}\" with a native resolution of {1}"], screen.Diagonal, screen.NativeResolution)</SelectItem>
-}
+                            <SelectItem @TValue="int?"
+                                        Value="@screen.Id">@string.Format(L["{0}\" with a native resolution of {1}"], screen.Diagonal, screen.NativeResolution)</SelectItem>
+                        }
                     }
                 </Select>
                 <Button Clicked="@CancelAddScreen" Color="Color.Primary" Disabled="@_savingScreen">@L["Cancel"]</Button>
@@ -575,6 +607,7 @@
             </Field>
         </div>
     }
+
     @if(_machineScreens?.Count > 0)
     {
         <div>
@@ -603,7 +636,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var item in _machineScreens)
+                @foreach(ScreenByMachineViewModel item in _machineScreens)
                 {
                     <tr>
                         <td>
@@ -625,7 +658,8 @@
                             @item.Screen.NativeResolution
                         </td>
                         <td>
-                            <Button Clicked="() => {ShowScreenDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingScreen">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowScreenDeleteModal(item.Id);}" Color="Color.Danger"
+                                    Disabled="@_addingScreen">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -635,34 +669,46 @@
     }
 
     <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-        <ModalBackdrop />
+        <ModalBackdrop/>
         <ModalContent Centered="true">
             <ModalHeader>
                 <ModalTitle>@_deleteTitle</ModalTitle>
-                <CloseButton Clicked="@HideModal" />
+                <CloseButton Clicked="@HideModal"/>
             </ModalHeader>
             <ModalBody>
                 <Text>@_deleteText</Text>
             </ModalBody>
             <ModalFooter>
                 <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-                <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+                <Button Clicked="@ConfirmDelete" Color="Color.Danger"
+                        Disabled="@_deleteInProgress">@L["Delete"]</Button>
             </ModalFooter>
         </ModalContent>
     </Modal>
 
     @if(_photos.Count > 0)
     {
-        foreach(var photo in _photos)
+        foreach(Guid photo in _photos)
         {
             <div class="col-md-2">
                 <figure class="figure">
                     <picture>
-                        <source srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
-                        <source srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
-                        <source srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
-                        <source srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x" type="image/jp2">
-                        <img alt="" class="figure-img img-fluid rounded" height="auto" src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg" srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x" style="max-height: 256px; max-width: 256px" width="auto" />
+                        <source
+                            srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x"
+                            type="image/avif">
+                        <source
+                            srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x"
+                            type="image/heic">
+                        <source
+                            srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x"
+                            type="image/webp">
+                        <source
+                            srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x"
+                            type="image/jp2">
+                        <img alt="" class="figure-img img-fluid rounded" height="auto"
+                             src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
+                             srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
+                             style="max-height: 256px; max-width: 256px" width="auto"/>
                     </picture>
                     <figcaption class="figure-caption">
                         <a href="/admin/machines/photo/details/@photo" target="_blank">@L["Details"]</a>

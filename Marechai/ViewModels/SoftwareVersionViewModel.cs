@@ -25,19 +25,18 @@
 
 using System;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class SoftwareVersionViewModel : BaseViewModel<ulong>
 {
-    public class SoftwareVersionViewModel : BaseViewModel<ulong>
-    {
-        public string    Family     { get; set; }
-        public string    Name       { get; set; }
-        public string    Codename   { get; set; }
-        public string    Version    { get; set; }
-        public DateTime? Introduced { get; set; }
-        public string    Previous   { get; set; }
-        public string    License    { get; set; }
-        public ulong     FamilyId   { get; set; }
-        public int?      LicenseId  { get; set; }
-        public ulong?    PreviousId { get; set; }
-    }
+    public string    Family     { get; set; }
+    public string    Name       { get; set; }
+    public string    Codename   { get; set; }
+    public string    Version    { get; set; }
+    public DateTime? Introduced { get; set; }
+    public string    Previous   { get; set; }
+    public string    License    { get; set; }
+    public ulong     FamilyId   { get; set; }
+    public int?      LicenseId  { get; set; }
+    public ulong?    PreviousId { get; set; }
 }

@@ -30,38 +30,36 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class DocumentRolesService(MarechaiContext context)
 {
-    public class DocumentRolesService
-    {
-        readonly MarechaiContext _context;
+    public async Task<List<DocumentRoleViewModel>> GetAsync() => await context.DocumentRoles.OrderBy(c => c.Name)
+                                                                              .Select(c => new DocumentRoleViewModel
+                                                                               {
+                                                                                   Id      = c.Id,
+                                                                                   Name    = c.Name,
+                                                                                   Enabled = c.Enabled
+                                                                               })
+                                                                              .ToListAsync();
 
-        public DocumentRolesService(MarechaiContext context) => _context = context;
+    public async Task<List<DocumentRoleViewModel>> GetEnabledAsync() => await context.DocumentRoles
+                                                                           .Where(c => c.Enabled)
+                                                                           .OrderBy(c => c.Name)
+                                                                           .Select(c => new DocumentRoleViewModel
+                                                                            {
+                                                                                Id      = c.Id,
+                                                                                Name    = c.Name,
+                                                                                Enabled = c.Enabled
+                                                                            })
+                                                                           .ToListAsync();
 
-        public async Task<List<DocumentRoleViewModel>> GetAsync() => await _context.DocumentRoles.
-                                                                         OrderBy(c => c.Name).
-                                                                         Select(c => new DocumentRoleViewModel
-                                                                         {
-                                                                             Id      = c.Id,
-                                                                             Name    = c.Name,
-                                                                             Enabled = c.Enabled
-                                                                         }).ToListAsync();
-
-        public async Task<List<DocumentRoleViewModel>> GetEnabledAsync() =>
-            await _context.DocumentRoles.Where(c => c.Enabled).OrderBy(c => c.Name).
-                           Select(c => new DocumentRoleViewModel
-                           {
-                               Id      = c.Id,
-                               Name    = c.Name,
-                               Enabled = c.Enabled
-                           }).ToListAsync();
-
-        public async Task<DocumentRoleViewModel> GetAsync(string id) =>
-            await _context.DocumentRoles.Where(c => c.Id == id).Select(c => new DocumentRoleViewModel
-            {
-                Id      = c.Id,
-                Name    = c.Name,
-                Enabled = c.Enabled
-            }).FirstOrDefaultAsync();
-    }
+    public async Task<DocumentRoleViewModel> GetAsync(string id) => await context.DocumentRoles.Where(c => c.Id == id)
+                                                                       .Select(c => new DocumentRoleViewModel
+                                                                        {
+                                                                            Id      = c.Id,
+                                                                            Name    = c.Name,
+                                                                            Enabled = c.Enabled
+                                                                        })
+                                                                       .FirstOrDefaultAsync();
 }

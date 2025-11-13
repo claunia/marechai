@@ -23,13 +23,12 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class Forbidden : BaseModel<int>
 {
-    public class Forbidden : BaseModel<int>
-    {
-        public string Browser { get; set; }
-        public string Date    { get; set; }
-        public string Ip      { get; set; }
-        public string Referer { get; set; }
-    }
+    public string Browser { get; set; }
+    public string Date    { get; set; }
+    public string Ip      { get; set; }
+    public string Referer { get; set; }
 }

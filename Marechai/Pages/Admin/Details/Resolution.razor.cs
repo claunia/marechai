@@ -31,102 +31,97 @@ using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin.Details
+namespace Marechai.Pages.Admin.Details;
+
+public partial class Resolution
 {
-    public partial class Resolution
+    AuthenticationState _authState;
+    bool                _creating;
+    bool                _editing;
+    bool                _loaded;
+    ResolutionViewModel _model;
+    bool                _unknownColors;
+    bool                _unknownPalette;
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        AuthenticationState _authState;
-        bool                _creating;
-        bool                _editing;
-        bool                _loaded;
-        ResolutionViewModel _model;
-        bool                _unknownColors;
-        bool                _unknownPalette;
-        [Parameter]
-        public int Id { get; set; }
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
+        _loaded = true;
 
-            _loaded = true;
+        _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                     .ToLowerInvariant()
+                                     .StartsWith("admin/resolutions/create", StringComparison.InvariantCulture);
 
-            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                          StartsWith("admin/resolutions/create", StringComparison.InvariantCulture);
+        if(Id <= 0 && !_creating) return;
 
-            if(Id <= 0 &&
-               !_creating)
-                return;
+        _model     = _creating ? new ResolutionViewModel() : await Service.GetAsync(Id);
+        _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            _model     = _creating ? new ResolutionViewModel() : await Service.GetAsync(Id);
-            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _editing = _creating ||
+                   NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                    .ToLowerInvariant()
+                                    .StartsWith("admin/resolutions/edit/", StringComparison.InvariantCulture);
 
-            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                                      StartsWith("admin/resolutions/edit/",
-                                                                 StringComparison.InvariantCulture);
+        if(_editing) SetCheckboxes();
 
-            if(_editing)
-                SetCheckboxes();
-
-            StateHasChanged();
-        }
-
-        void SetCheckboxes()
-        {
-            _unknownColors  = !_model.Colors.HasValue;
-            _unknownPalette = !_model.Colors.HasValue;
-        }
-
-        void OnEditClicked()
-        {
-            _editing = true;
-            SetCheckboxes();
-            StateHasChanged();
-        }
-
-        async void OnCancelClicked()
-        {
-            _editing = false;
-
-            if(_creating)
-            {
-                NavigationManager.ToBaseRelativePath("admin/resolutions");
-
-                return;
-            }
-
-            _model = await Service.GetAsync(Id);
-            SetCheckboxes();
-            StateHasChanged();
-        }
-
-        async void OnSaveClicked()
-        {
-            if(_unknownColors)
-                _model.Colors = null;
-            else if(_model.Colors <= 0)
-                return;
-
-            if(_unknownPalette)
-                _model.Palette = null;
-            else if(_model.Palette <= 0)
-                return;
-
-            if(_creating)
-                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
-            else
-                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
-
-            _editing  = false;
-            _creating = false;
-            _model    = await Service.GetAsync(Id);
-            SetCheckboxes();
-            StateHasChanged();
-        }
-
-        void ValidateIntegerBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateInteger(e, 1);
-
-        void ValidateLongBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateLong(e, 2);
+        StateHasChanged();
     }
+
+    void SetCheckboxes()
+    {
+        _unknownColors  = !_model.Colors.HasValue;
+        _unknownPalette = !_model.Colors.HasValue;
+    }
+
+    void OnEditClicked()
+    {
+        _editing = true;
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    async void OnCancelClicked()
+    {
+        _editing = false;
+
+        if(_creating)
+        {
+            NavigationManager.ToBaseRelativePath("admin/resolutions");
+
+            return;
+        }
+
+        _model = await Service.GetAsync(Id);
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    async void OnSaveClicked()
+    {
+        if(_unknownColors)
+            _model.Colors = null;
+        else if(_model.Colors <= 0) return;
+
+        if(_unknownPalette)
+            _model.Palette = null;
+        else if(_model.Palette <= 0) return;
+
+        if(_creating)
+            Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        else
+            await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+
+        _editing  = false;
+        _creating = false;
+        _model    = await Service.GetAsync(Id);
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    void ValidateIntegerBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateInteger(e, 1);
+
+    void ValidateLongBiggerThanZero(ValidatorEventArgs e) => Validators.ValidateLong(e, 2);
 }

@@ -28,78 +28,65 @@ using System.Threading.Tasks;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 
-namespace Marechai.Pages.Computers
+namespace Marechai.Pages.Computers;
+
+public partial class Search
 {
-    public partial class Search
+    char?                  _character;
+    List<MachineViewModel> _computers;
+    bool                   _loaded;
+    string                 _startingCharacter;
+    int?                   _year;
+
+    [Parameter]
+    public int? Year
     {
-        char?                  _character;
-        List<MachineViewModel> _computers;
-        bool                   _loaded;
-        string                 _startingCharacter;
-        int?                   _year;
-
-        [Parameter]
-        public int? Year
+        get => _year;
+        set
         {
-            get => _year;
-            set
-            {
-                if(_year == value)
-                    return;
+            if(_year == value) return;
 
-                _year   = value;
-                _loaded = false;
-            }
+            _year   = value;
+            _loaded = false;
+        }
+    }
+
+    [Parameter]
+    public string StartingCharacter
+    {
+        get => _startingCharacter;
+        set
+        {
+            if(_startingCharacter == value) return;
+
+            _startingCharacter = value;
+            _loaded            = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(_loaded) return;
+
+        _character = null;
+
+        if(!string.IsNullOrWhiteSpace(StartingCharacter) && StartingCharacter.Length == 1)
+        {
+            _character = StartingCharacter[0];
+
+            // ToUpper()
+            if(_character >= 'a' && _character <= 'z') _character -= (char)32;
+
+            // Check if not letter or number
+            if(_character < '0' || _character > '9' && _character < 'A' || _character > 'Z') _character = null;
         }
 
-        [Parameter]
-        public string StartingCharacter
-        {
-            get => _startingCharacter;
-            set
-            {
-                if(_startingCharacter == value)
-                    return;
+        if(_character.HasValue) _computers = await Service.GetComputersByLetterAsync(_character.Value);
 
-                _startingCharacter = value;
-                _loaded            = false;
-            }
-        }
+        if(Year.HasValue && _computers is null) _computers = await Service.GetComputersByYearAsync(Year.Value);
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _character = null;
-
-            if(!string.IsNullOrWhiteSpace(StartingCharacter) &&
-               StartingCharacter.Length == 1)
-            {
-                _character = StartingCharacter[0];
-
-                // ToUpper()
-                if(_character >= 'a' &&
-                   _character <= 'z')
-                    _character -= (char)32;
-
-                // Check if not letter or number
-                if(_character < '0'                       ||
-                   (_character > '9' && _character < 'A') ||
-                   _character > 'Z')
-                    _character = null;
-            }
-
-            if(_character.HasValue)
-                _computers = await Service.GetComputersByLetterAsync(_character.Value);
-
-            if(Year.HasValue &&
-               _computers is null)
-                _computers = await Service.GetComputersByYearAsync(Year.Value);
-
-            _computers ??= await Service.GetComputersAsync();
-            _loaded    =   true;
-            StateHasChanged();
-        }
+        _computers ??= await Service.GetComputersAsync();
+        _loaded    =   true;
+        StateHasChanged();
     }
 }

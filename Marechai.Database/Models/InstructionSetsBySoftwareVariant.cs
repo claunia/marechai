@@ -25,13 +25,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class InstructionSetsBySoftwareVariant : BaseModel<ulong>
 {
-    public class InstructionSetsBySoftwareVariant : BaseModel<ulong>
-    {
-        [Required]
-        public virtual InstructionSet InstructionSet { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
-    }
+    [Required]
+    public virtual InstructionSet InstructionSet { get; set; }
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
 }

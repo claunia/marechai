@@ -30,86 +30,82 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class CurrencyPeggingService(MarechaiContext context)
 {
-    public class CurrencyPeggingService
+    public async Task<List<CurrencyPeggingViewModel>> GetAsync() => await context.CurrenciesPegging
+                                                                                 .OrderBy(i => i.Source.Name)
+                                                                                 .ThenBy(i => i.Destination.Name)
+                                                                                 .ThenBy(i => i.Start)
+                                                                                 .ThenBy(i => i.End)
+                                                                                 .Select(i => new CurrencyPeggingViewModel
+                                                                                  {
+                                                                                      Id              = i.Id,
+                                                                                      SourceCode      = i.Source.Code,
+                                                                                      SourceName      = i.Source.Name,
+                                                                                      DestinationCode = i.Source.Code,
+                                                                                      DestinationName = i.Source.Name,
+                                                                                      Ratio           = i.Ratio,
+                                                                                      Start           = i.Start,
+                                                                                      End             = i.End
+                                                                                  })
+                                                                                 .ToListAsync();
+
+    public async Task<CurrencyPeggingViewModel> GetAsync(int id) => await context.CurrenciesPegging
+                                                                       .Where(b => b.Id == id)
+                                                                       .Select(i => new CurrencyPeggingViewModel
+                                                                        {
+                                                                            Id              = i.Id,
+                                                                            SourceCode      = i.Source.Code,
+                                                                            SourceName      = i.Source.Name,
+                                                                            DestinationCode = i.Destination.Code,
+                                                                            DestinationName = i.Destination.Name,
+                                                                            Ratio           = i.Ratio,
+                                                                            Start           = i.Start,
+                                                                            End             = i.End
+                                                                        })
+                                                                       .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(CurrencyPeggingViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        CurrencyPegging model = await context.CurrenciesPegging.FindAsync(viewModel.Id);
 
-        public CurrencyPeggingService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<CurrencyPeggingViewModel>> GetAsync() => await _context.
-                                                                              CurrenciesPegging.
-                                                                              OrderBy(i => i.Source.Name).
-                                                                              ThenBy(i => i.Destination.Name).
-                                                                              ThenBy(i => i.Start).ThenBy(i => i.End).
-                                                                              Select(i => new CurrencyPeggingViewModel
-                                                                              {
-                                                                                  Id              = i.Id,
-                                                                                  SourceCode      = i.Source.Code,
-                                                                                  SourceName      = i.Source.Name,
-                                                                                  DestinationCode = i.Source.Code,
-                                                                                  DestinationName = i.Source.Name,
-                                                                                  Ratio           = i.Ratio,
-                                                                                  Start           = i.Start,
-                                                                                  End             = i.End
-                                                                              }).ToListAsync();
+        model.SourceCode      = viewModel.SourceCode;
+        model.DestinationCode = viewModel.DestinationCode;
+        model.Ratio           = viewModel.Ratio;
+        model.Start           = viewModel.Start;
+        model.End             = viewModel.End;
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<CurrencyPeggingViewModel> GetAsync(int id) =>
-            await _context.CurrenciesPegging.Where(b => b.Id == id).Select(i => new CurrencyPeggingViewModel
-            {
-                Id              = i.Id,
-                SourceCode      = i.Source.Code,
-                SourceName      = i.Source.Name,
-                DestinationCode = i.Destination.Code,
-                DestinationName = i.Destination.Name,
-                Ratio           = i.Ratio,
-                Start           = i.Start,
-                End             = i.End
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(CurrencyPeggingViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(CurrencyPeggingViewModel viewModel, string userId)
+    {
+        var model = new CurrencyPegging
         {
-            CurrencyPegging model = await _context.CurrenciesPegging.FindAsync(viewModel.Id);
+            SourceCode      = viewModel.SourceCode,
+            DestinationCode = viewModel.DestinationCode,
+            Ratio           = viewModel.Ratio,
+            Start           = viewModel.Start,
+            End             = viewModel.End
+        };
 
-            if(model is null)
-                return;
+        await context.CurrenciesPegging.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.SourceCode      = viewModel.SourceCode;
-            model.DestinationCode = viewModel.DestinationCode;
-            model.Ratio           = viewModel.Ratio;
-            model.Start           = viewModel.Start;
-            model.End             = viewModel.End;
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        return model.Id;
+    }
 
-        public async Task<int> CreateAsync(CurrencyPeggingViewModel viewModel, string userId)
-        {
-            var model = new CurrencyPegging
-            {
-                SourceCode      = viewModel.SourceCode,
-                DestinationCode = viewModel.DestinationCode,
-                Ratio           = viewModel.Ratio,
-                Start           = viewModel.Start,
-                End             = viewModel.End
-            };
+    public async Task DeleteAsync(int id, string userId)
+    {
+        CurrencyPegging item = await context.CurrenciesPegging.FindAsync(id);
 
-            await _context.CurrenciesPegging.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        if(item is null) return;
 
-            return model.Id;
-        }
+        context.CurrenciesPegging.Remove(item);
 
-        public async Task DeleteAsync(int id, string userId)
-        {
-            CurrencyPegging item = await _context.CurrenciesPegging.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.CurrenciesPegging.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

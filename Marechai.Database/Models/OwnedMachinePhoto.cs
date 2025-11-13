@@ -23,11 +23,10 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class OwnedMachinePhoto : BasePhoto
 {
-    public class OwnedMachinePhoto : BasePhoto
-    {
-        public virtual OwnedMachine OwnedMachine   { get; set; }
-        public         long         OwnedMachineId { get; set; }
-    }
+    public virtual OwnedMachine OwnedMachine   { get; set; }
+    public         long         OwnedMachineId { get; set; }
 }

@@ -25,10 +25,9 @@
 
 using System.Collections.Generic;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class MediaFile : BaseFile
 {
-    public class MediaFile : BaseFile
-    {
-        public virtual ICollection<FileDataStreamsByMediaFile> DataStreams { get; set; }
-    }
+    public virtual ICollection<FileDataStreamsByMediaFile> DataStreams { get; set; }
 }

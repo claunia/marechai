@@ -31,14 +31,14 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<CurrencyInflationService>
 @inject IStringLocalizer<CurrencyInflationService> L
-@inject Iso4217Service CurrenciesService
-@inject NavigationManager NavigationManager
-@inject IWebHostEnvironment Host
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject Iso4217Service                             CurrenciesService
+@inject NavigationManager                          NavigationManager
+@inject IWebHostEnvironment                        Host
+@inject UserManager<ApplicationUser>               UserManager
+@inject AuthenticationStateProvider                AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Currency inflation details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -49,10 +49,10 @@
     <Field>
         <FieldLabel>@L["Currency"]</FieldLabel>
         <Select @bind-SelectedValue="@_model.CurrencyCode" Disabled="!_editing" @TValue="string">
-            @foreach(var currency in _currencies)
+            @foreach(Iso4217 currency in _currencies)
             {
                 <SelectItem @TValue="string" Value="@currency.Code">@currency.Name</SelectItem>
-}
+            }
         </Select>
     </Field>
     <Field>
@@ -80,11 +80,12 @@
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/currency_inflation">@L["Back to list"]</a>
 </div>

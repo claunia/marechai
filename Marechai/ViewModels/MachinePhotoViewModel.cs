@@ -23,13 +23,12 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class MachinePhotoViewModel : BasePhotoViewModel
 {
-    public class MachinePhotoViewModel : BasePhotoViewModel
-    {
-        public string Source             { get; set; }
-        public string MachineName        { get; set; }
-        public string MachineCompanyName { get; set; }
-        public int    MachineId          { get; set; }
-    }
+    public string Source             { get; set; }
+    public string MachineName        { get; set; }
+    public string MachineCompanyName { get; set; }
+    public int    MachineId          { get; set; }
 }

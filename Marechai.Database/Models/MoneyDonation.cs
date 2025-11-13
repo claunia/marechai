@@ -23,11 +23,10 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class MoneyDonation : BaseModel<int>
 {
-    public class MoneyDonation : BaseModel<int>
-    {
-        public string  Donator  { get; set; }
-        public decimal Quantity { get; set; }
-    }
+    public string  Donator  { get; set; }
+    public decimal Quantity { get; set; }
 }

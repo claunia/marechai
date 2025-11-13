@@ -1,321 +1,327 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ReSharper disable MarkupTextTypo -->
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
+    <!--
+      Microsoft ResX Schema
 
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+      Version 2.0
+
+      The primary goals of this format is to allow a simple XML format
+      that is mostly human readable. The generation and parsing of the
+      various data types are done through the TypeConverter classes
+      associated with the data types.
+
+      Example:
+
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+
+      There are any number of "resheader" rows that contain simple
+      name/value pairs.
+
+      Each data row contains a name, and value. The row also contains a
+      type or mimetype. Type corresponds to a .NET class that support
+      text/value conversion through the TypeConverter architecture.
+      Classes that don't support this are serialized and stored with the
+      mimetype set.
+
+      The mimetype is used for serialized objects, and tells the
+      ResXResourceReader how to depersist the object. This is currently not
+      extensible. For a given mimetype the value must be set accordingly:
+
+      Note - application/x-microsoft.net.object.binary.base64 is the format
+      that the ResXResourceWriter will generate, however the reader can
+      read any of the formats listed below.
+
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Graphics Processing Units" xml:space="preserve">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Graphics Processing Units" xml:space="preserve">
     <value>Unidades de proceso de gráficos</value>
-    <comment>Graphics Processing Units.</comment>
+        <comment>Graphics Processing Units.</comment>
   </data>
-  <data name="Loading..." xml:space="preserve">
+    <data name="Loading..." xml:space="preserve">
     <value>Cargando...</value>
-    <comment>Message that appears while data is being loaded from database</comment>
+        <comment>Message that appears while data is being loaded from database</comment>
   </data>
-  <data name="Company" xml:space="preserve">
+    <data name="Company" xml:space="preserve">
     <value>Compañía</value>
-    <comment>Company</comment>
+        <comment>Company</comment>
   </data>
-  <data name="Name" xml:space="preserve">
+    <data name="Name" xml:space="preserve">
     <value>Nombre</value>
-    <comment>Name</comment>
+        <comment>Name</comment>
   </data>
-  <data name="Model code" xml:space="preserve">
+    <data name="Model code" xml:space="preserve">
     <value>Modelo</value>
-    <comment>Model code</comment>
+        <comment>Model code</comment>
   </data>
-  <data name="Introduced" xml:space="preserve">
+    <data name="Introduced" xml:space="preserve">
     <value>Introducida en</value>
-    <comment>Introduced</comment>
+        <comment>Introduced</comment>
   </data>
-  <data name="Create new" xml:space="preserve">
+    <data name="Create new" xml:space="preserve">
     <value>Crear nueva</value>
-    <comment>Create new document company</comment>
+        <comment>Create new document company</comment>
   </data>
-  <data name="Details" xml:space="preserve">
+    <data name="Details" xml:space="preserve">
     <value>Detalles</value>
-    <comment>Details</comment>
+        <comment>Details</comment>
   </data>
-  <data name="Edit" xml:space="preserve">
+    <data name="Edit" xml:space="preserve">
     <value>Editar</value>
-    <comment>Edit</comment>
+        <comment>Edit</comment>
   </data>
-  <data name="Delete" xml:space="preserve">
+    <data name="Delete" xml:space="preserve">
     <value>Eliminar</value>
-    <comment>Delete</comment>
+        <comment>Delete</comment>
   </data>
-  <data name="Delete GPU" xml:space="preserve">
+    <data name="Delete GPU" xml:space="preserve">
     <value>Eliminar gráfica</value>
-    <comment>Delete GPU, abbreviated</comment>
+        <comment>Delete GPU, abbreviated</comment>
   </data>
-  <data name="Are you sure you want to delete {0} {1}?" xml:space="preserve">
+    <data name="Are you sure you want to delete {0} {1}?" xml:space="preserve">
     <value>¿Está seguro de que desea borrar la gráfica {0}?</value>
-    <comment>{0} company name, {1} gpu name</comment>
+        <comment>{0} company name, {1} gpu name</comment>
   </data>
-  <data name="Cancel" xml:space="preserve">
+    <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
-    <comment>Cancel</comment>
+        <comment>Cancel</comment>
   </data>
-  <data name="Graphical processing unit details" xml:space="preserve">
+    <data name="Graphical processing unit details" xml:space="preserve">
     <value>Detalles de unidad de proceso gráfico</value>
-    <comment>Graphical processing unit details</comment>
+        <comment>Graphical processing unit details</comment>
   </data>
-  <data name="Back to list" xml:space="preserve">
+    <data name="Back to list" xml:space="preserve">
     <value>Volver a la lista</value>
-    <comment>Back to list</comment>
+        <comment>Back to list</comment>
   </data>
-  <data name="Package" xml:space="preserve">
+    <data name="Package" xml:space="preserve">
     <value>Empaquetado</value>
-    <comment>Package</comment>
+        <comment>Package</comment>
   </data>
-  <data name="Process" xml:space="preserve">
+    <data name="Process" xml:space="preserve">
     <value>Proceso</value>
-    <comment>Process</comment>
+        <comment>Process</comment>
   </data>
-  <data name="Process (nm)" xml:space="preserve">
+    <data name="Process (nm)" xml:space="preserve">
     <value>Tamaño en nm del proceso</value>
-    <comment>Process size in nm</comment>
+        <comment>Process size in nm</comment>
   </data>
-  <data name="Die size (mm²)" xml:space="preserve">
+    <data name="Die size (mm²)" xml:space="preserve">
     <value>Área del chip (mm²)</value>
-    <comment>Die size (mm²)</comment>
+        <comment>Die size (mm²)</comment>
   </data>
-  <data name="Transistors" xml:space="preserve">
+    <data name="Transistors" xml:space="preserve">
     <value>Transistores</value>
-    <comment>Transistors</comment>
+        <comment>Transistors</comment>
   </data>
-  <data name="Save" xml:space="preserve">
+    <data name="Save" xml:space="preserve">
     <value>Guardar</value>
-    <comment>Save</comment>
+        <comment>Save</comment>
   </data>
-  <data name="Unknown (company)" xml:space="preserve">
+    <data name="Unknown (company)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to a company</comment>
+        <comment>Unknown, referring to a company</comment>
   </data>
-  <data name="Unknown (model code)" xml:space="preserve">
+    <data name="Unknown (model code)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to a model code</comment>
+        <comment>Unknown, referring to a model code</comment>
   </data>
-  <data name="Unknown (introduction date)" xml:space="preserve">
+    <data name="Unknown (introduction date)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to an introduction date</comment>
+        <comment>Unknown, referring to an introduction date</comment>
   </data>
-  <data name="Unknown (package)" xml:space="preserve">
+    <data name="Unknown (package)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to a chip package</comment>
+        <comment>Unknown, referring to a chip package</comment>
   </data>
-  <data name="Unknown (process)" xml:space="preserve">
+    <data name="Unknown (process)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to the chip process</comment>
+        <comment>Unknown, referring to the chip process</comment>
   </data>
-  <data name="Unknown (process size)" xml:space="preserve">
+    <data name="Unknown (process size)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to the chip process size in nanometers</comment>
+        <comment>Unknown, referring to the chip process size in nanometers</comment>
   </data>
-  <data name="Unknown (die size)" xml:space="preserve">
+    <data name="Unknown (die size)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to the die size in square millimeters</comment>
+        <comment>Unknown, referring to the die size in square millimeters</comment>
   </data>
-  <data name="Unknown (transistors)" xml:space="preserve">
+    <data name="Unknown (transistors)" xml:space="preserve">
     <value>Desconocidos</value>
-    <comment>Unknown, referring to the number of transistors</comment>
+        <comment>Unknown, referring to the number of transistors</comment>
   </data>
-  <data name="Please enter a valid name." xml:space="preserve">
+    <data name="Please enter a valid name." xml:space="preserve">
     <value>Por favor introduce un nombre válido.</value>
-    <comment>Please enter a valid name.</comment>
+        <comment>Please enter a valid name.</comment>
   </data>
-  <data name="Please enter a valid model code." xml:space="preserve">
+    <data name="Please enter a valid model code." xml:space="preserve">
     <value>Por favor introduce un modelo válido.</value>
-    <comment>Please enter a valid model code.</comment>
+        <comment>Please enter a valid model code.</comment>
   </data>
-  <data name="Prototype" xml:space="preserve">
+    <data name="Prototype" xml:space="preserve">
     <value>Prototipo</value>
-    <comment>Prototype</comment>
+        <comment>Prototype</comment>
   </data>
-  <data name="Please enter an introduction date." xml:space="preserve">
+    <data name="Please enter an introduction date." xml:space="preserve">
     <value>Por favor elige una fecha válida.</value>
-    <comment>Please enter an introduction date.</comment>
+        <comment>Please enter an introduction date.</comment>
   </data>
-  <data name="Please enter a valid package." xml:space="preserve">
+    <data name="Please enter a valid package." xml:space="preserve">
     <value>Por favor introduce un empaquetado válido.</value>
-    <comment>Please enter a valid package.</comment>
+        <comment>Please enter a valid package.</comment>
   </data>
-  <data name="Please enter a valid process." xml:space="preserve">
+    <data name="Please enter a valid process." xml:space="preserve">
     <value>Por favor introduce un proceso válido.</value>
-    <comment>Please enter a valid process.</comment>
+        <comment>Please enter a valid process.</comment>
   </data>
-  <data name="Please enter a valid process size in nanometers." xml:space="preserve">
+    <data name="Please enter a valid process size in nanometers." xml:space="preserve">
     <value>Por favor introduce un tamaño de proceso en nanómetros válido.</value>
-    <comment>Please enter a valid process size in nanometers.</comment>
+        <comment>Please enter a valid process size in nanometers.</comment>
   </data>
-  <data name="Please enter a valid die size in square millimeters." xml:space="preserve">
+    <data name="Please enter a valid die size in square millimeters." xml:space="preserve">
     <value>Por favor introduce un área del chip en milímetros cuadrados válida.</value>
-    <comment>Please enter a valid die size in square millimeters.</comment>
+        <comment>Please enter a valid die size in square millimeters.</comment>
   </data>
-  <data name="Please enter a valid number of transistors." xml:space="preserve">
+    <data name="Please enter a valid number of transistors." xml:space="preserve">
     <value>Por favor introduce un número válido de transistores.</value>
-    <comment>Please enter a valid number of transistors.</comment>
+        <comment>Please enter a valid number of transistors.</comment>
   </data>
-  <data name="Add new (resolution by gpu)" xml:space="preserve">
+    <data name="Add new (resolution by gpu)" xml:space="preserve">
     <value>Añadir nueva</value>
-    <comment>Add new, referring to resolutions supported by this gpu</comment>
+        <comment>Add new, referring to resolutions supported by this gpu</comment>
   </data>
-  <data name="Resolutions supported by this graphical processing unit" xml:space="preserve">
+    <data name="Resolutions supported by this graphical processing unit" xml:space="preserve">
     <value>Prototipo</value>
-    <comment>Resolutions supported by this graphical processing unit</comment>
+        <comment>Resolutions supported by this graphical processing unit</comment>
   </data>
-  <data name="Resolutions" xml:space="preserve">
+    <data name="Resolutions" xml:space="preserve">
     <value>Resoluciones</value>
-    <comment>Resolutions</comment>
+        <comment>Resolutions</comment>
   </data>
-  <data name="Add" xml:space="preserve">
+    <data name="Add" xml:space="preserve">
     <value>Añadir</value>
-    <comment>Add</comment>
+        <comment>Add</comment>
   </data>
-  <data name="Width" xml:space="preserve">
+    <data name="Width" xml:space="preserve">
     <value>Ancho</value>
-    <comment>Width</comment>
+        <comment>Width</comment>
   </data>
-  <data name="Height" xml:space="preserve">
+    <data name="Height" xml:space="preserve">
     <value>Alto</value>
-    <comment>Height</comment>
+        <comment>Height</comment>
   </data>
-  <data name="Colors" xml:space="preserve">
+    <data name="Colors" xml:space="preserve">
     <value>Colores</value>
-    <comment>Colors</comment>
+        <comment>Colors</comment>
   </data>
-  <data name="Palette" xml:space="preserve">
+    <data name="Palette" xml:space="preserve">
     <value>Paleta</value>
-    <comment>Palette</comment>
+        <comment>Palette</comment>
   </data>
-  <data name="Chars" xml:space="preserve">
+    <data name="Chars" xml:space="preserve">
     <value>Caracteres</value>
-    <comment>Chars</comment>
+        <comment>Chars</comment>
   </data>
-  <data name="Grayscale" xml:space="preserve">
+    <data name="Grayscale" xml:space="preserve">
     <value>Escala de grises</value>
-    <comment>Grayscale</comment>
+        <comment>Grayscale</comment>
   </data>
-  <data name="Delete resolution from this graphical processing unit" xml:space="preserve">
+    <data name="Delete resolution from this graphical processing unit" xml:space="preserve">
     <value>Eliminar resolución de esta unidad de proceso de gráficos</value>
-    <comment>Delete resolution from this graphical processing unit</comment>
+        <comment>Delete resolution from this graphical processing unit</comment>
   </data>
-  <data name="Are you sure you want to delete the resolution {0} from this graphical processing unit?" xml:space="preserve">
+    <data name="Are you sure you want to delete the resolution {0} from this graphical processing unit?"
+          xml:space="preserve">
     <value>¿Estás seguro de eliminar la resolución {0} de esta unidad de proceso de gráficos?</value>
-    <comment>Are you sure you want to delete the resolution {0} from this graphical processing unit?</comment>
+        <comment>Are you sure you want to delete the resolution {0} from this graphical processing unit?</comment>
   </data>
 </root>

@@ -27,16 +27,17 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class InstructionSet : BaseModel<int>
 {
-    public class InstructionSet : BaseModel<int>
-    {
-        public InstructionSet() => Processors = new HashSet<Processor>();
+    public InstructionSet() => Processors = new HashSet<Processor>();
 
-        [Required, StringLength(45), Remote("VerifyUnique", "InstructionSets", "Admin")]
-        public string Name { get; set; }
+    [Required]
+    [StringLength(45)]
+    [Remote("VerifyUnique", "InstructionSets", "Admin")]
+    public string Name { get; set; }
 
-        public virtual ICollection<Processor>                        Processors { get; set; }
-        public virtual ICollection<InstructionSetsBySoftwareVariant> Software   { get; set; }
-    }
+    public virtual ICollection<Processor>                        Processors { get; set; }
+    public virtual ICollection<InstructionSetsBySoftwareVariant> Software   { get; set; }
 }

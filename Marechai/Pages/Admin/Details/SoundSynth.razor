@@ -31,13 +31,13 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<SoundSynthsService>
 @inject IStringLocalizer<SoundSynthsService> L
-@inject CompaniesService CompaniesService
-@inject NavigationManager NavigationManager
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject CompaniesService                     CompaniesService
+@inject NavigationManager                    NavigationManager
+@inject UserManager<ApplicationUser>         UserManager
+@inject AuthenticationStateProvider          AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Sound synthesizer details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -52,19 +52,18 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownCompany" @TValue="bool">@L["Unknown (company)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownCompany)
+            }
+            @if(!_editing || !_unknownCompany)
             {
                 <Select @bind-SelectedValue="@_model.CompanyId" Disabled="!_editing" @TValue="int?">
-                    @foreach(var company in _companies)
+                    @foreach(CompanyViewModel company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-}
+                    }
                 </Select>
-}
+            }
         </Field>
-}
+    }
     <Field>
         <FieldLabel>@L["Name"]</FieldLabel>
         <Validation Validator="@ValidateName">
@@ -82,9 +81,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownModelCode" @TValue="bool">@L["Unknown (model code)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownModelCode)
+            }
+            @if(!_editing || !_unknownModelCode)
             {
                 <Validation Validator="@ValidateModelCode">
                     <TextEdit @bind-Text="@_model.ModelCode" Disabled="!_editing">
@@ -93,20 +91,21 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Introduced.HasValue)
     {
         <Field>
             <FieldLabel>@L["Introduced"]</FieldLabel>
             @if(_editing)
             {
-                <Check @bind-Checked="@_unknownIntroduced" Disabled="_prototype" @TValue="bool">@L["Unknown (introduction date)"]</Check>
+                <Check @bind-Checked="@_unknownIntroduced" Disabled="_prototype"
+                       @TValue="bool">@L["Unknown (introduction date)"]</Check>
+
                 <Check @bind-Checked="@_prototype" Disabled="_unknownIntroduced" @TValue="bool">@L["Prototype"]</Check>
-}
-            @if(!_editing ||
-                !_prototype && !_unknownIntroduced)
+            }
+            @if(!_editing || !_prototype && !_unknownIntroduced)
             {
                 <Validation Validator="@ValidateIntroduced">
                     <DateEdit @bind-Date="@_model.Introduced" Disabled="!_editing" @TValue="DateTime?">
@@ -115,9 +114,9 @@
                         </Feedback>
                     </DateEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Voices.HasValue)
     {
         <Field>
@@ -125,9 +124,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownVoices" @TValue="bool">@L["Unknown (voices)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownVoices)
+            }
+            @if(!_editing || !_unknownVoices)
             {
                 <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit @bind-Value="@_model.Voices" Decimals="0" Disabled="!_editing" @TValue="int?">
@@ -136,9 +134,9 @@
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Frequency.HasValue)
     {
         <Field>
@@ -146,9 +144,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownSampleRate" @TValue="bool">@L["Unknown (sample rate)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownSampleRate)
+            }
+            @if(!_editing || !_unknownSampleRate)
             {
                 <Validation Validator="@ValidateDoubleBiggerThanZero">
                     <NumericEdit @bind-Value="@_model.Frequency" Decimals="0" Disabled="!_editing" @TValue="double?">
@@ -157,19 +154,19 @@
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Depth.HasValue)
     {
         <Field>
             <FieldLabel>@L["Sample resolution (bits)"]</FieldLabel>
             @if(_editing)
             {
-                <Check @bind-Checked="@_unknownSampleResolution" @TValue="bool">@L["Unknown (sample resolution)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownSampleResolution)
+                <Check @bind-Checked="@_unknownSampleResolution"
+                       @TValue="bool">@L["Unknown (sample resolution)"]</Check>
+            }
+            @if(!_editing || !_unknownSampleResolution)
             {
                 <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit @bind-Value="@_model.Depth" Decimals="0" Disabled="!_editing" @TValue="int?">
@@ -178,19 +175,19 @@
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.SquareWave.HasValue)
     {
         <Field>
             <FieldLabel>@L["Square wave channels"]</FieldLabel>
             @if(_editing)
             {
-                <Check @bind-Checked="@_unknownSquareWaveChannels" @TValue="bool">@L["Unknown (square wave channels)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownSquareWaveChannels)
+                <Check @bind-Checked="@_unknownSquareWaveChannels"
+                       @TValue="bool">@L["Unknown (square wave channels)"]</Check>
+            }
+            @if(!_editing || !_unknownSquareWaveChannels)
             {
                 <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit @bind-Value="@_model.SquareWave" Decimals="0" Disabled="!_editing" @TValue="int?">
@@ -199,19 +196,19 @@
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.WhiteNoise.HasValue)
     {
         <Field>
             <FieldLabel>@L["White noise channels"]</FieldLabel>
             @if(_editing)
             {
-                <Check @bind-Checked="@_unknownWhiteNoiseChannels" @TValue="bool">@L["Unknown (white noise channels)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownWhiteNoiseChannels)
+                <Check @bind-Checked="@_unknownWhiteNoiseChannels"
+                       @TValue="bool">@L["Unknown (white noise channels)"]</Check>
+            }
+            @if(!_editing || !_unknownWhiteNoiseChannels)
             {
                 <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit @bind-Value="@_model.WhiteNoise" Decimals="0" Disabled="!_editing" @TValue="int?">
@@ -220,9 +217,9 @@
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Type.HasValue)
     {
         <Field>
@@ -230,9 +227,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownType" @TValue="bool">@L["Unknown (type)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownType)
+            }
+            @if(!_editing || !_unknownType)
             {
                 <Validation Validator="@ValidateIntegerBiggerThanZero">
                     <NumericEdit @bind-Value="@_model.Type" Decimals="0" Disabled="!_editing" @TValue="int?">
@@ -241,19 +237,20 @@
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/sound_synths">@L["Back to list"]</a>
 </div>

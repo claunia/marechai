@@ -5,29 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Marechai.Areas.Identity.Pages.Account.Manage
+namespace Marechai.Areas.Identity.Pages.Account.Manage;
+
+public class PersonalDataModel(UserManager<ApplicationUser> userManager, ILogger<PersonalDataModel> logger) : PageModel
 {
-    public class PersonalDataModel : PageModel
+    readonly ILogger<PersonalDataModel>   _logger      = logger;
+
+    public async Task<IActionResult> OnGet()
     {
-        readonly ILogger<PersonalDataModel>   _logger;
-        readonly UserManager<ApplicationUser> _userManager;
+        ApplicationUser user = await userManager.GetUserAsync(User);
 
-        public PersonalDataModel(UserManager<ApplicationUser> userManager, ILogger<PersonalDataModel> logger)
-        {
-            _userManager = userManager;
-            _logger      = logger;
-        }
+        if(user == null) return NotFound($"Unable to load user with ID '{userManager.GetUserId(User)}'.");
 
-        public async Task<IActionResult> OnGet()
-        {
-            ApplicationUser user = await _userManager.GetUserAsync(User);
-
-            if(user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            return Page();
-        }
+        return Page();
     }
 }

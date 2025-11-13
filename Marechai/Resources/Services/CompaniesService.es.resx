@@ -1,554 +1,565 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ReSharper disable MarkupTextTypo -->
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
+    <!--
+      Microsoft ResX Schema
 
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+      Version 2.0
+
+      The primary goals of this format is to allow a simple XML format
+      that is mostly human readable. The generation and parsing of the
+      various data types are done through the TypeConverter classes
+      associated with the data types.
+
+      Example:
+
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+
+      There are any number of "resheader" rows that contain simple
+      name/value pairs.
+
+      Each data row contains a name, and value. The row also contains a
+      type or mimetype. Type corresponds to a .NET class that support
+      text/value conversion through the TypeConverter architecture.
+      Classes that don't support this are serialized and stored with the
+      mimetype set.
+
+      The mimetype is used for serialized objects, and tells the
+      ResXResourceReader how to depersist the object. This is currently not
+      extensible. For a given mimetype the value must be set accordingly:
+
+      Note - application/x-microsoft.net.object.binary.base64 is the format
+      that the ResXResourceWriter will generate, however the reader can
+      read any of the formats listed below.
+
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Companies" xml:space="preserve">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Companies" xml:space="preserve">
     <value>Compañías</value>
-    <comment>Companies</comment>
+        <comment>Companies</comment>
   </data>
-  <data name="Loading..." xml:space="preserve">
+    <data name="Loading..." xml:space="preserve">
     <value>Cargando...</value>
-    <comment>Message that appears while data is being loaded from database</comment>
+        <comment>Message that appears while data is being loaded from database</comment>
   </data>
-  <data name="{0} companies found in the database." xml:space="preserve">
+    <data name="{0} companies found in the database." xml:space="preserve">
     <value>{0} compañías en la base de datos.</value>
-    <comment>How many companies are in the database, {0} is a number</comment>
+        <comment>How many companies are in the database, {0} is a number</comment>
   </data>
-  <data name="Company not found." xml:space="preserve">
+    <data name="Company not found." xml:space="preserve">
     <value>Compañía no encontrada</value>
-    <comment>Cannot find the requested company id</comment>
+        <comment>Cannot find the requested company id</comment>
   </data>
-  <data name="Founded" xml:space="preserve">
+    <data name="Founded" xml:space="preserve">
     <value>Fundación</value>
-    <comment>Date of company foundation</comment>
+        <comment>Date of company foundation</comment>
   </data>
-  <data name="Country" xml:space="preserve">
+    <data name="Country" xml:space="preserve">
     <value>País</value>
-    <comment>Country where the company was established</comment>
+        <comment>Country where the company was established</comment>
   </data>
-  <data name="Status" xml:space="preserve">
+    <data name="Status" xml:space="preserve">
     <value>Estado</value>
-    <comment>Company status</comment>
+        <comment>Company status</comment>
   </data>
-  <data name="Current company status is unknown." xml:space="preserve">
+    <data name="Current company status is unknown." xml:space="preserve">
     <value>Estado actual desconocido.</value>
-    <comment>Current status unknown.</comment>
+        <comment>Current status unknown.</comment>
   </data>
-  <data name="Company is active." xml:space="preserve">
+    <data name="Company is active." xml:space="preserve">
     <value>Activa</value>
-    <comment>Company is active</comment>
+        <comment>Company is active</comment>
   </data>
-  <data name="Company sold to {0} on {1}." xml:space="preserve">
+    <data name="Company sold to {0} on {1}." xml:space="preserve">
     <value>Vendida a {0} el {1}.</value>
-    <comment>Sold to, {0} buyer company name, {1} date</comment>
+        <comment>Sold to, {0} buyer company name, {1} date</comment>
   </data>
-  <data name="Company sold on {0} to an unknown company." xml:space="preserve">
+    <data name="Company sold on {0} to an unknown company." xml:space="preserve">
     <value>Vendida el {0} a una compañía desconocida.</value>
-    <comment>Sold to an unknown company, {0} date</comment>
+        <comment>Sold to an unknown company, {0} date</comment>
   </data>
-  <data name="Company sold to {0} on an unknown date." xml:space="preserve">
+    <data name="Company sold to {0} on an unknown date." xml:space="preserve">
     <value>Vendida a {0} en una fecha desconocida.</value>
-    <comment>Sold to on an unknown date, {0} buyer company name.</comment>
+        <comment>Sold to on an unknown date, {0} buyer company name.</comment>
   </data>
-  <data name="Company was sold to an unknown company on an unknown date." xml:space="preserve">
+    <data name="Company was sold to an unknown company on an unknown date." xml:space="preserve">
     <value>Vendida a una compañía desconocida en una fecha desconocida.</value>
-    <comment>Sold, unknown company or date</comment>
+        <comment>Sold, unknown company or date</comment>
   </data>
-  <data name="Company merged on {0} to form {1}." xml:space="preserve">
+    <data name="Company merged on {0} to form {1}." xml:space="preserve">
     <value>Fusionada el {0} para formar {1}.</value>
-    <comment>Merged, {0} date, {1} resulting company</comment>
+        <comment>Merged, {0} date, {1} resulting company</comment>
   </data>
-  <data name="Company merged on {0} to form an unknown company." xml:space="preserve">
+    <data name="Company merged on {0} to form an unknown company." xml:space="preserve">
     <value>Fusionada el {0} para formar una compañía desconocida.</value>
-    <comment>Merged, unknown resulting company, {0} date</comment>
+        <comment>Merged, unknown resulting company, {0} date</comment>
   </data>
-  <data name="Company merged on an unknown date to form {0}." xml:space="preserve">
+    <data name="Company merged on an unknown date to form {0}." xml:space="preserve">
     <value>Fusionada para format {0} en una fecha desconocida.</value>
-    <comment>Merged, {0} resulting company, date unknown</comment>
+        <comment>Merged, {0} resulting company, date unknown</comment>
   </data>
-  <data name="Company merged to form an unknown company on an unknown date." xml:space="preserve">
+    <data name="Company merged to form an unknown company on an unknown date." xml:space="preserve">
     <value>Fusionada en una fecha desconocida para format una compañía desconocida.</value>
-    <comment>Merged, unknown resulting company or date</comment>
+        <comment>Merged, unknown resulting company or date</comment>
   </data>
-  <data name="Company declared bankruptcy on {0}." xml:space="preserve">
+    <data name="Company declared bankruptcy on {0}." xml:space="preserve">
     <value>Declaró bancarrota el {0}.</value>
-    <comment>Declared bankruptcy, {0} date</comment>
+        <comment>Declared bankruptcy, {0} date</comment>
   </data>
-  <data name="Company declared bankruptcy on an unknown date." xml:space="preserve">
+    <data name="Company declared bankruptcy on an unknown date." xml:space="preserve">
     <value>Declaró bancarrota en una fecha desconocida.</value>
-    <comment>Declared bankruptcy, unknown date</comment>
+        <comment>Declared bankruptcy, unknown date</comment>
   </data>
-  <data name="Company ceased operations on {0}." xml:space="preserve">
+    <data name="Company ceased operations on {0}." xml:space="preserve">
     <value>Cesó las operaciones el {0}.</value>
-    <comment>Ceased operations, {0} date</comment>
+        <comment>Ceased operations, {0} date</comment>
   </data>
-  <data name="Company ceased operations on an unknown date." xml:space="preserve">
+    <data name="Company ceased operations on an unknown date." xml:space="preserve">
     <value>Cesó las operaciones en una fecha desconocida.</value>
-    <comment>Ceased operations, unknown date</comment>
+        <comment>Ceased operations, unknown date</comment>
   </data>
-  <data name="Company renamed to {0} on {1}." xml:space="preserve">
+    <data name="Company renamed to {0} on {1}." xml:space="preserve">
     <value>Cambió el nombre a {0} el {1}.</value>
-    <comment>Renamed, {0} new name, {1} date</comment>
+        <comment>Renamed, {0} new name, {1} date</comment>
   </data>
-  <data name="Company was renamed on {0} to an unknown name." xml:space="preserve">
+    <data name="Company was renamed on {0} to an unknown name." xml:space="preserve">
     <value>Cambió el nombre en {0} a uno desconocido..</value>
-    <comment>Renamed, {0} date, unknown new name</comment>
+        <comment>Renamed, {0} date, unknown new name</comment>
   </data>
-  <data name="Company renamed to {0} on an unknown date." xml:space="preserve">
+    <data name="Company renamed to {0} on an unknown date." xml:space="preserve">
     <value>Cambió el nombre a {0} en una fecha desconocida.</value>
-    <comment>Renamed, {0} new name, unknown date</comment>
+        <comment>Renamed, {0} new name, unknown date</comment>
   </data>
-  <data name="Company renamed to an unknown name on an unknown date." xml:space="preserve">
+    <data name="Company renamed to an unknown name on an unknown date." xml:space="preserve">
     <value>Cambió el nombre a uno desconocido en una fecha desconocida.</value>
-    <comment>Renamed, unknown date, unknown new name</comment>
+        <comment>Renamed, unknown date, unknown new name</comment>
   </data>
-  <data name="Address" xml:space="preserve">
+    <data name="Address" xml:space="preserve">
     <value>Dirección</value>
-    <comment>Postal address</comment>
+        <comment>Postal address</comment>
   </data>
-  <data name="Links" xml:space="preserve">
+    <data name="Links" xml:space="preserve">
     <value>Enlaces</value>
-    <comment>Web links</comment>
+        <comment>Web links</comment>
   </data>
-  <data name="Website" xml:space="preserve">
+    <data name="Website" xml:space="preserve">
     <value>Página web</value>
-    <comment>Main web link</comment>
+        <comment>Main web link</comment>
   </data>
-  <data name="&lt;ok&gt;{0}&lt;/ok&gt; computers known." xml:space="preserve">
+    <data name="&lt;ok&gt;{0}&lt;/ok&gt; computers known." xml:space="preserve">
     <value>&lt;ok&gt;{0}&lt;/ok&gt; ordenadores conocidos.</value>
-    <comment>Known computers, {0} number. Do not translate &lt;ok&gt; neither &lt;/ok&gt; and keep number in between.</comment>
+        <comment>Known computers, {0} number. Do not translate &lt;ok&gt; neither &lt;/ok&gt; and keep number in between.</comment>
   </data>
-  <data name="&lt;ok&gt;{0}&lt;/ok&gt; videogame consoles known." xml:space="preserve">
+    <data name="&lt;ok&gt;{0}&lt;/ok&gt; videogame consoles known." xml:space="preserve">
     <value>&lt;ok&gt;{0}&lt;/ok&gt; videoconsolas conocidas.</value>
-    <comment>Known video game consoles, {0} number. Do not translate &lt;ok&gt; neither &lt;/ok&gt; and keep number in between.</comment>
+        <comment>Known video game consoles, {0} number. Do not translate &lt;ok&gt; neither &lt;/ok&gt; and keep number in between.</comment>
   </data>
-  <data name="&lt;red&gt;No&lt;/red&gt; computers known." xml:space="preserve">
+    <data name="&lt;red&gt;No&lt;/red&gt; computers known." xml:space="preserve">
     <value>&lt;red&gt;Ningún&lt;/red&gt; ordenador conocido.</value>
-    <comment>There are no known computers. Do not translate &lt;red&gt; neither &lt;/red&gt; and keep negation in between.</comment>
+        <comment>There are no known computers. Do not translate &lt;red&gt; neither &lt;/red&gt; and keep negation in between.</comment>
   </data>
-  <data name="&lt;red&gt;No&lt;/red&gt; videogame consoles known." xml:space="preserve">
+    <data name="&lt;red&gt;No&lt;/red&gt; videogame consoles known." xml:space="preserve">
     <value>&lt;red&gt;Ninguna&lt;/red&gt; videoconsola conocida.</value>
-    <comment>There are no known computers. Do not translate &lt;red&gt; neither &lt;/red&gt; and keep negation in between.</comment>
+        <comment>There are no known computers. Do not translate &lt;red&gt; neither &lt;/red&gt; and keep negation in between.</comment>
   </data>
-  <data name="There are no companies in the database." xml:space="preserve">
+    <data name="There are no companies in the database." xml:space="preserve">
     <value>No hay compañías en la base de datos.</value>
-    <comment>No companies in the database</comment>
+        <comment>No companies in the database</comment>
   </data>
-  <data name="Companies founded in {0}." xml:space="preserve">
+    <data name="Companies founded in {0}." xml:space="preserve">
     <value>Compañías fundadas en {0}.</value>
-    <comment>Companies founded in, {0} country name</comment>
+        <comment>Companies founded in, {0} country name</comment>
   </data>
-  <data name="Companies which name starts with {0}." xml:space="preserve">
+    <data name="Companies which name starts with {0}." xml:space="preserve">
     <value>Compañías cuyo nombre empieza por {0}.</value>
-    <comment>Companies with {0}, a single character, as the start of the name</comment>
+        <comment>Companies with {0}, a single character, as the start of the name</comment>
   </data>
-  <data name="Sold" xml:space="preserve">
+    <data name="Sold" xml:space="preserve">
     <value>Vendida</value>
-    <comment>Sold</comment>
+        <comment>Sold</comment>
   </data>
-  <data name="Sold to" xml:space="preserve">
+    <data name="Sold to" xml:space="preserve">
     <value>Vendida a</value>
-    <comment>Sold to</comment>
+        <comment>Sold to</comment>
   </data>
-  <data name="Details" xml:space="preserve">
+    <data name="Details" xml:space="preserve">
     <value>Detalles</value>
-    <comment>Details</comment>
+        <comment>Details</comment>
   </data>
-  <data name="Edit" xml:space="preserve">
+    <data name="Edit" xml:space="preserve">
     <value>Editar</value>
-    <comment>Edit</comment>
+        <comment>Edit</comment>
   </data>
-  <data name="Delete" xml:space="preserve">
+    <data name="Delete" xml:space="preserve">
     <value>Eliminar</value>
-    <comment>Delete</comment>
+        <comment>Delete</comment>
   </data>
-  <data name="Delete company" xml:space="preserve">
+    <data name="Delete company" xml:space="preserve">
     <value>Eliminar compañía</value>
-    <comment>Delete company</comment>
+        <comment>Delete company</comment>
   </data>
-  <data name="Are you sure you want to delete the company {0}?" xml:space="preserve">
+    <data name="Are you sure you want to delete the company {0}?" xml:space="preserve">
     <value>¿Está seguro de que desea borrar la compañía {0}?</value>
-    <comment>{0} company name</comment>
+        <comment>{0} company name</comment>
   </data>
-  <data name="Cancel" xml:space="preserve">
+    <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
-    <comment>Cancel</comment>
+        <comment>Cancel</comment>
   </data>
-  <data name="Company details" xml:space="preserve">
+    <data name="Company details" xml:space="preserve">
     <value>Detalles de compañía</value>
-    <comment>Company details</comment>
+        <comment>Company details</comment>
   </data>
-  <data name="Name" xml:space="preserve">
+    <data name="Name" xml:space="preserve">
     <value>Nombre</value>
-    <comment>Name</comment>
+        <comment>Name</comment>
   </data>
-  <data name="City" xml:space="preserve">
+    <data name="City" xml:space="preserve">
     <value>Ciudad</value>
-    <comment>City</comment>
+        <comment>City</comment>
   </data>
-  <data name="Province" xml:space="preserve">
+    <data name="Province" xml:space="preserve">
     <value>Provincia</value>
-    <comment>Province</comment>
+        <comment>Province</comment>
   </data>
-  <data name="Postal code" xml:space="preserve">
+    <data name="Postal code" xml:space="preserve">
     <value>Código postal</value>
-    <comment>Postal code</comment>
+        <comment>Postal code</comment>
   </data>
-  <data name="Back to list" xml:space="preserve">
+    <data name="Back to list" xml:space="preserve">
     <value>Volver a la lista</value>
-    <comment>Back to list</comment>
+        <comment>Back to list</comment>
   </data>
-  <data name="Save" xml:space="preserve">
+    <data name="Save" xml:space="preserve">
     <value>Guardar</value>
-    <comment>Save</comment>
+        <comment>Save</comment>
   </data>
-  <data name="Unknown (country)" xml:space="preserve">
+    <data name="Unknown (country)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to a country</comment>
+        <comment>Unknown, referring to a country</comment>
   </data>
-  <data name="Unknown (foundation date)" xml:space="preserve">
+    <data name="Unknown (foundation date)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to the foundation date</comment>
+        <comment>Unknown, referring to the foundation date</comment>
   </data>
-  <data name="Unknown (website)" xml:space="preserve">
+    <data name="Unknown (website)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to a website</comment>
+        <comment>Unknown, referring to a website</comment>
   </data>
-  <data name="Unknown (twitter)" xml:space="preserve">
+    <data name="Unknown (twitter)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to a twitter handle</comment>
+        <comment>Unknown, referring to a twitter handle</comment>
   </data>
-  <data name="Unknown (facebook)" xml:space="preserve">
+    <data name="Unknown (facebook)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to a facebook username</comment>
+        <comment>Unknown, referring to a facebook username</comment>
   </data>
-  <data name="Unknown (address)" xml:space="preserve">
+    <data name="Unknown (address)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to a postal address</comment>
+        <comment>Unknown, referring to a postal address</comment>
   </data>
-  <data name="Unknown (city)" xml:space="preserve">
+    <data name="Unknown (city)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to a city</comment>
+        <comment>Unknown, referring to a city</comment>
   </data>
-  <data name="Unknown (province)" xml:space="preserve">
+    <data name="Unknown (province)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to a province</comment>
+        <comment>Unknown, referring to a province</comment>
   </data>
-  <data name="Unknown (postal code)" xml:space="preserve">
+    <data name="Unknown (postal code)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to a postal code</comment>
+        <comment>Unknown, referring to a postal code</comment>
   </data>
-  <data name="Unknown (sold/merged/bankrupt date)" xml:space="preserve">
+    <data name="Unknown (sold/merged/bankrupt date)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to the date when the company was sold, merged, bankrupted, or renamed</comment>
+        <comment>Unknown, referring to the date when the company was sold, merged, bankrupted, or renamed</comment>
   </data>
-  <data name="Unknown (sold to)" xml:space="preserve">
+    <data name="Unknown (sold to)" xml:space="preserve">
     <value>Desconocida</value>
-    <comment>Unknown, referring to another company name</comment>
+        <comment>Unknown, referring to another company name</comment>
   </data>
-  <data name="Please enter a valid name." xml:space="preserve">
+    <data name="Please enter a valid name." xml:space="preserve">
     <value>Por favor introduce un nombre válido.</value>
-    <comment>Please enter a valid name.</comment>
+        <comment>Please enter a valid name.</comment>
   </data>
-  <data name="Please enter a valid foundation date." xml:space="preserve">
+    <data name="Please enter a valid foundation date." xml:space="preserve">
     <value>Por favor introduce una fecha de fundación válida.</value>
-    <comment>Please enter a valid foundation date.</comment>
+        <comment>Please enter a valid foundation date.</comment>
   </data>
-  <data name="Please enter a valid website." xml:space="preserve">
+    <data name="Please enter a valid website." xml:space="preserve">
     <value>Por favor introduce una página web válida.</value>
-    <comment>Please enter a valid website.</comment>
+        <comment>Please enter a valid website.</comment>
   </data>
-  <data name="Please enter a valid Twitter handle." xml:space="preserve">
+    <data name="Please enter a valid Twitter handle." xml:space="preserve">
     <value>Por favor introduce un indicador de Twitter válido.</value>
-    <comment>Please enter a valid Twitter handle.</comment>
+        <comment>Please enter a valid Twitter handle.</comment>
   </data>
-  <data name="Please enter a valid Facebook user name." xml:space="preserve">
+    <data name="Please enter a valid Facebook user name." xml:space="preserve">
     <value>Por favor introduce un nombre de usuario de Facebook válido.</value>
-    <comment>Please enter a valid Facebook user name.</comment>
+        <comment>Please enter a valid Facebook user name.</comment>
   </data>
-  <data name="Please enter a valid address." xml:space="preserve">
+    <data name="Please enter a valid address." xml:space="preserve">
     <value>Por favor introduce una dirección válida.</value>
-    <comment>Please enter a valid address.</comment>
+        <comment>Please enter a valid address.</comment>
   </data>
-  <data name="Please enter a valid city." xml:space="preserve">
+    <data name="Please enter a valid city." xml:space="preserve">
     <value>Por favor introduce una ciudad válida.</value>
-    <comment>Please enter a valid city.</comment>
+        <comment>Please enter a valid city.</comment>
   </data>
-  <data name="Please enter a valid province." xml:space="preserve">
+    <data name="Please enter a valid province." xml:space="preserve">
     <value>Por favor introduce una provincia válida.</value>
-    <comment>Please enter a valid province.</comment>
+        <comment>Please enter a valid province.</comment>
   </data>
-  <data name="Please enter a valid postal code." xml:space="preserve">
+    <data name="Please enter a valid postal code." xml:space="preserve">
     <value>Por favor introduce un código postal válido.</value>
-    <comment>Please enter a valid postal code.</comment>
+        <comment>Please enter a valid postal code.</comment>
   </data>
-  <data name="Please enter a valid sold/merge/bankruptcy date." xml:space="preserve">
+    <data name="Please enter a valid sold/merge/bankruptcy date." xml:space="preserve">
     <value>Por favor introduce una fecha de venta, fusión, bancarrota o renombre válida.</value>
-    <comment>Please enter a valid sold/merge/bankruptcy date.</comment>
+        <comment>Please enter a valid sold/merge/bankruptcy date.</comment>
   </data>
-  <data name="Unknown (logo year)" xml:space="preserve">
+    <data name="Unknown (logo year)" xml:space="preserve">
     <value>Desconocido</value>
-    <comment>Unknown, referring to a company logo year</comment>
+        <comment>Unknown, referring to a company logo year</comment>
   </data>
-  <data name="Upload new logo" xml:space="preserve">
+    <data name="Upload new logo" xml:space="preserve">
     <value>Subir nuevo logo</value>
-    <comment>Upload new logo</comment>
+        <comment>Upload new logo</comment>
   </data>
-  <data name="Logos" xml:space="preserve">
+    <data name="Logos" xml:space="preserve">
     <value>Logos</value>
-    <comment>Logos</comment>
+        <comment>Logos</comment>
   </data>
-  <data name="Logo" xml:space="preserve">
+    <data name="Logo" xml:space="preserve">
     <value>Logo</value>
-    <comment>Logo</comment>
+        <comment>Logo</comment>
   </data>
-  <data name="Year logo came in use" xml:space="preserve">
+    <data name="Year logo came in use" xml:space="preserve">
     <value>Año el logo empezó a usarse</value>
-    <comment>Year logo came in use</comment>
+        <comment>Year logo came in use</comment>
   </data>
-  <data name="Cannot find logo file" xml:space="preserve">
+    <data name="Cannot find logo file" xml:space="preserve">
     <value>No se pudo encontrar el archivo del logo</value>
-    <comment>Cannot find logo file</comment>
+        <comment>Cannot find logo file</comment>
   </data>
-  <data name="Change year" xml:space="preserve">
+    <data name="Change year" xml:space="preserve">
     <value>Cambiar año</value>
-    <comment>Change year</comment>
+        <comment>Change year</comment>
   </data>
-  <data name="Delete logo" xml:space="preserve">
+    <data name="Delete logo" xml:space="preserve">
     <value>Borrar logo</value>
-    <comment>Delete logo</comment>
+        <comment>Delete logo</comment>
   </data>
-  <data name="Are you sure you want to delete the company logo introduced in {0}?" xml:space="preserve">
+    <data name="Are you sure you want to delete the company logo introduced in {0}?" xml:space="preserve">
     <value>¿Estás seguro de que quieres borrar el logo que la compañía empezó a utilizar en {0}?</value>
-    <comment>Are you sure you want to delete the company logo introduced in {0}?</comment>
+        <comment>Are you sure you want to delete the company logo introduced in {0}?</comment>
   </data>
-  <data name="Change logo year" xml:space="preserve">
+    <data name="Change logo year" xml:space="preserve">
     <value>Cambiar año del logo</value>
-    <comment>Change logo year</comment>
+        <comment>Change logo year</comment>
   </data>
-  <data name="Please enter a valid year." xml:space="preserve">
+    <data name="Please enter a valid year." xml:space="preserve">
     <value>Por favor introduce un año válido.</value>
-    <comment>Please enter a valid year.</comment>
+        <comment>Please enter a valid year.</comment>
   </data>
-  <data name="Are you sure you want to delete the company logo you selected?" xml:space="preserve">
+    <data name="Are you sure you want to delete the company logo you selected?" xml:space="preserve">
     <value>¿Estás seguro de que quieres borrar el logo de la compañía que has seleccionado?</value>
-    <comment>Are you sure you want to delete the company logo you selected?</comment>
+        <comment>Are you sure you want to delete the company logo you selected?</comment>
   </data>
-  <data name="Choose SVG (version 1.1 or lower) logo file" xml:space="preserve">
+    <data name="Choose SVG (version 1.1 or lower) logo file" xml:space="preserve">
     <value>Elige un archivo con el logo en format SVG (versión 1.1 o inferior)</value>
-    <comment>Choose SVG (version 1.1 or lower) logo file</comment>
+        <comment>Choose SVG (version 1.1 or lower) logo file</comment>
   </data>
-  <data name="Upload" xml:space="preserve">
+    <data name="Upload" xml:space="preserve">
     <value>Subir</value>
-    <comment>Upload</comment>
+        <comment>Upload</comment>
   </data>
-  <data name="Uploading..." xml:space="preserve">
+    <data name="Uploading..." xml:space="preserve">
     <value>Subiendo...</value>
-    <comment>Uploading...</comment>
+        <comment>Uploading...</comment>
   </data>
-  <data name="SVG" xml:space="preserve">
+    <data name="SVG" xml:space="preserve">
     <value>SVG</value>
-    <comment>SVG</comment>
+        <comment>SVG</comment>
   </data>
-  <data name="PNG" xml:space="preserve">
+    <data name="PNG" xml:space="preserve">
     <value>PNG</value>
-    <comment>PNG</comment>
+        <comment>PNG</comment>
   </data>
-  <data name="WebP" xml:space="preserve">
+    <data name="WebP" xml:space="preserve">
     <value>WebP</value>
-    <comment>WebP</comment>
+        <comment>WebP</comment>
   </data>
-  <data name="May not show properly" xml:space="preserve">
+    <data name="May not show properly" xml:space="preserve">
     <value>Puede que no se muestre correctamente</value>
-    <comment>May not show properly</comment>
+        <comment>May not show properly</comment>
   </data>
-  <data name="The selected file is too big." xml:space="preserve">
+    <data name="The selected file is too big." xml:space="preserve">
     <value>El archivo seleccionado es demasiado grande.</value>
-    <comment>The selected file is too big.</comment>
+        <comment>The selected file is too big.</comment>
   </data>
-  <data name="There was an error uploading the file." xml:space="preserve">
+    <data name="There was an error uploading the file." xml:space="preserve">
     <value>Hubo un error subiendo el archivo.</value>
-    <comment>There was an error uploading the file.</comment>
+        <comment>There was an error uploading the file.</comment>
   </data>
-  <data name="The uploaded file is not a SVG file." xml:space="preserve">
+    <data name="The uploaded file is not a SVG file." xml:space="preserve">
     <value>El archivo que has subido no es un archivo SVG.</value>
-    <comment>The uploaded file is not a SVG file.</comment>
+        <comment>The uploaded file is not a SVG file.</comment>
   </data>
-  <data name="The uploaded file could not be loaded. Is it a correct SVG file?" xml:space="preserve">
+    <data name="The uploaded file could not be loaded. Is it a correct SVG file?" xml:space="preserve">
     <value>No se pudo cargar el archivo que has subido. ¿Es un SVG correcto?</value>
-    <comment>The uploaded file could not be loaded. Is it a correct SVG file?</comment>
+        <comment>The uploaded file could not be loaded. Is it a correct SVG file?</comment>
   </data>
-  <data name="An error occuring rendering the uploaded file. Is it a correct SVG file?" xml:space="preserve">
+    <data name="An error occuring rendering the uploaded file. Is it a correct SVG file?" xml:space="preserve">
     <value>Ocurrió un error renderizando el archivo subido. ¿Es un SVG correcto?</value>
-    <comment>An error occuring rendering the uploaded file. Is it a correct SVG file?</comment>
+        <comment>An error occuring rendering the uploaded file. Is it a correct SVG file?</comment>
   </data>
-  <data name="Company description" xml:space="preserve">
+    <data name="Company description" xml:space="preserve">
     <value>Descripción</value>
-    <comment>Company description</comment>
+        <comment>Company description</comment>
   </data>
-  <data name="Add new description" xml:space="preserve">
+    <data name="Add new description" xml:space="preserve">
     <value>Añadir nueva descripción</value>
-    <comment>Add new description</comment>
+        <comment>Add new description</comment>
   </data>
-  <data name="Unknown foundation month" xml:space="preserve">
+    <data name="Unknown foundation month" xml:space="preserve">
     <value>Mes de fundación desconocido</value>
-    <comment>Unknown foundation month</comment>
+        <comment>Unknown foundation month</comment>
   </data>
-  <data name="Unknown foundation day" xml:space="preserve">
+    <data name="Unknown foundation day" xml:space="preserve">
     <value>Día de fundación desconocido</value>
-    <comment>Unknown foundation day</comment>
+        <comment>Unknown foundation day</comment>
   </data>
-  <data name="If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored." xml:space="preserve">
+    <data
+        name="If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored."
+        xml:space="preserve">
     <value>Si el día o mes de la fundación están marcados como desconocidos, elige cualquiera en el campo inferior, será ignorado.</value>
-    <comment>If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored.</comment>
+        <comment>If the foundation day or month are selected as unknown, pick anyone in the field below, it will be ignored.</comment>
   </data>
-  <data name="Unknown sold/merge/bankruptcy month" xml:space="preserve">
+    <data name="Unknown sold/merge/bankruptcy month" xml:space="preserve">
     <value>Mes de venta, fusión o bancarrota desconocido</value>
-    <comment>Unknown sold/merge/bankruptcy month</comment>
+        <comment>Unknown sold/merge/bankruptcy month</comment>
   </data>
-  <data name="Unknown sold/merge/bankruptcy day" xml:space="preserve">
+    <data name="Unknown sold/merge/bankruptcy day" xml:space="preserve">
     <value>Día de venta, fusión o bancarrota desconocido</value>
-    <comment>Unknown sold/merge/bankruptcy day</comment>
+        <comment>Unknown sold/merge/bankruptcy day</comment>
   </data>
-  <data name="If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored." xml:space="preserve">
+    <data
+        name="If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored."
+        xml:space="preserve">
     <value>Si el día o mes de la venta, fusión o bancarrota están marcados como desconocidos, elige cualquiera en el campo inferior, será ignorado.</value>
-    <comment>If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored.</comment>
+        <comment>If the sold, merge or bankruptcy day or month are selected as unknown, pick anyone in the field below, it will be ignored.</comment>
   </data>
-  <data name="in use since {0}" xml:space="preserve">
+    <data name="in use since {0}" xml:space="preserve">
     <value>en uso desde el {0}</value>
   </data>
-  <data name="Legal name must be smaller than 256 characters." xml:space="preserve">
+    <data name="Legal name must be smaller than 256 characters." xml:space="preserve">
     <value>El nombre legal debe contener menos de 256 caracteres.</value>
   </data>
-  <data name="Common name (as usually displayed publicly)" xml:space="preserve">
+    <data name="Common name (as usually displayed publicly)" xml:space="preserve">
     <value>Nombre común (como se muestra en público usualmente)</value>
   </data>
-  <data name="Legal name (as shown in governmental registries including &quot;Inc.&quot;, &quot;Corp.&quot;, &quot;gmbH&quot;, etc...)" xml:space="preserve">
+    <data
+        name="Legal name (as shown in governmental registries including &quot;Inc.&quot;, &quot;Corp.&quot;, &quot;gmbH&quot;, etc...)"
+        xml:space="preserve">
     <value>Nombre legal (como aparece en registros gubernamentales incluyendo "Inc.", "Corp.", "gmbH", etc...)</value>
   </data>
-  <data name="Unknown (legal name)" xml:space="preserve">
+    <data name="Unknown (legal name)" xml:space="preserve">
     <value>Desconocido</value>
   </data>
-  <data name="Please enter a valid legal name." xml:space="preserve">
+    <data name="Please enter a valid legal name." xml:space="preserve">
     <value>Por favor introduce un nombre legal válido.</value>
   </data>
-  <data name="Legal name" xml:space="preserve">
+    <data name="Legal name" xml:space="preserve">
     <value>Nombre legal</value>
   </data>
 </root>

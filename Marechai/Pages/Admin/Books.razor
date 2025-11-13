@@ -29,8 +29,8 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<BooksService>
 @inject IStringLocalizer<BooksService> L
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser>   UserManager
+@inject AuthenticationStateProvider    AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Books"]</h3>
 @if(_books is null)
@@ -64,7 +64,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _books)
+    @foreach(BookViewModel item in _books)
     {
         <tr>
             <td>
@@ -92,11 +92,11 @@
     </tbody>
 </table>
 <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-    <ModalBackdrop />
+    <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete book"]</ModalTitle>
-            <CloseButton Clicked="@HideModal" />
+            <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(L["Are you sure you want to delete the book {0}?"], _currentBook?.Title)</Text>

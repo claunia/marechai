@@ -30,99 +30,93 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class MagazinesService(MarechaiContext context)
 {
-    public class MagazinesService
-    {
-        readonly MarechaiContext _context;
+    public async Task<List<MagazineViewModel>> GetAsync() => await context.Magazines.OrderBy(b => b.NativeTitle)
+                                                                          .ThenBy(b => b.FirstPublication)
+                                                                          .ThenBy(b => b.Title)
+                                                                          .Select(b => new MagazineViewModel
+                                                                           {
+                                                                               Id               = b.Id,
+                                                                               Title            = b.Title,
+                                                                               NativeTitle      = b.NativeTitle,
+                                                                               FirstPublication = b.FirstPublication,
+                                                                               Synopsis         = b.Synopsis,
+                                                                               Issn             = b.Issn,
+                                                                               CountryId        = b.CountryId,
+                                                                               Country          = b.Country.Name
+                                                                           })
+                                                                          .ToListAsync();
 
-        public MagazinesService(MarechaiContext context) => _context = context;
-
-        public async Task<List<MagazineViewModel>> GetAsync() => await _context.
-                                                                       Magazines.OrderBy(b => b.NativeTitle).
-                                                                       ThenBy(b => b.FirstPublication).
-                                                                       ThenBy(b => b.Title).
-                                                                       Select(b => new MagazineViewModel
+    public async Task<List<MagazineViewModel>> GetTitlesAsync() => await context.Magazines.OrderBy(b => b.Title)
+                                                                      .ThenBy(b => b.FirstPublication)
+                                                                      .Select(b => new MagazineViewModel
                                                                        {
-                                                                           Id               = b.Id,
-                                                                           Title            = b.Title,
-                                                                           NativeTitle      = b.NativeTitle,
-                                                                           FirstPublication = b.FirstPublication,
-                                                                           Synopsis         = b.Synopsis,
-                                                                           Issn             = b.Issn,
-                                                                           CountryId        = b.CountryId,
-                                                                           Country          = b.Country.Name
-                                                                       }).ToListAsync();
+                                                                           Id    = b.Id,
+                                                                           Title = $"{b.Title} ({b.Country.Name}"
+                                                                       })
+                                                                      .ToListAsync();
 
-        public async Task<List<MagazineViewModel>> GetTitlesAsync() => await _context.
-                                                                             Magazines.OrderBy(b => b.Title).
-                                                                             ThenBy(b => b.FirstPublication).
-                                                                             Select(b => new MagazineViewModel
+    public async Task<MagazineViewModel> GetAsync(long id) => await context.Magazines.Where(b => b.Id == id)
+                                                                            .Select(b => new MagazineViewModel
                                                                              {
-                                                                                 Id    = b.Id,
-                                                                                 Title = $"{b.Title} ({b.Country.Name}"
-                                                                             }).ToListAsync();
+                                                                                 Id               = b.Id,
+                                                                                 Title            = b.Title,
+                                                                                 NativeTitle      = b.NativeTitle,
+                                                                                 FirstPublication = b.FirstPublication,
+                                                                                 Synopsis         = b.Synopsis,
+                                                                                 Issn             = b.Issn,
+                                                                                 CountryId        = b.CountryId,
+                                                                                 Country          = b.Country.Name
+                                                                             })
+                                                                            .FirstOrDefaultAsync();
 
-        public async Task<MagazineViewModel> GetAsync(long id) => await _context.Magazines.Where(b => b.Id == id).
-                                                                      Select(b => new MagazineViewModel
-                                                                      {
-                                                                          Id               = b.Id,
-                                                                          Title            = b.Title,
-                                                                          NativeTitle      = b.NativeTitle,
-                                                                          FirstPublication = b.FirstPublication,
-                                                                          Synopsis         = b.Synopsis,
-                                                                          Issn             = b.Issn,
-                                                                          CountryId        = b.CountryId,
-                                                                          Country          = b.Country.Name
-                                                                      }).FirstOrDefaultAsync();
+    public async Task UpdateAsync(MagazineViewModel viewModel, string userId)
+    {
+        Magazine model = await context.Magazines.FindAsync(viewModel.Id);
 
-        public async Task UpdateAsync(MagazineViewModel viewModel, string userId)
+        if(model is null) return;
+
+        model.Title            = viewModel.Title;
+        model.NativeTitle      = viewModel.NativeTitle;
+        model.FirstPublication = viewModel.FirstPublication;
+        model.Synopsis         = viewModel.Synopsis;
+        model.CountryId        = viewModel.CountryId;
+        model.Issn             = viewModel.Issn;
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(MagazineViewModel viewModel, string userId)
+    {
+        var model = new Magazine
         {
-            Magazine model = await _context.Magazines.FindAsync(viewModel.Id);
+            Title            = viewModel.Title,
+            NativeTitle      = viewModel.NativeTitle,
+            FirstPublication = viewModel.FirstPublication,
+            Synopsis         = viewModel.Synopsis,
+            CountryId        = viewModel.CountryId,
+            Issn             = viewModel.Issn
+        };
 
-            if(model is null)
-                return;
+        await context.Magazines.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Title            = viewModel.Title;
-            model.NativeTitle      = viewModel.NativeTitle;
-            model.FirstPublication = viewModel.FirstPublication;
-            model.Synopsis         = viewModel.Synopsis;
-            model.CountryId        = viewModel.CountryId;
-            model.Issn             = viewModel.Issn;
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        return model.Id;
+    }
 
-        public async Task<long> CreateAsync(MagazineViewModel viewModel, string userId)
-        {
-            var model = new Magazine
-            {
-                Title            = viewModel.Title,
-                NativeTitle      = viewModel.NativeTitle,
-                FirstPublication = viewModel.FirstPublication,
-                Synopsis         = viewModel.Synopsis,
-                CountryId        = viewModel.CountryId,
-                Issn             = viewModel.Issn
-            };
+    public async Task<string> GetSynopsisTextAsync(int id) =>
+        (await context.Magazines.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
 
-            await _context.Magazines.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+    public async Task DeleteAsync(long id, string userId)
+    {
+        Magazine item = await context.Magazines.FindAsync(id);
 
-            return model.Id;
-        }
+        if(item is null) return;
 
-        public async Task<string> GetSynopsisTextAsync(int id) =>
-            (await _context.Magazines.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
+        context.Magazines.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
-        {
-            Magazine item = await _context.Magazines.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.Magazines.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

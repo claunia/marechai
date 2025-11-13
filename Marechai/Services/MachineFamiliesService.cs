@@ -30,68 +30,65 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class MachineFamiliesService(MarechaiContext context)
 {
-    public class MachineFamiliesService
+    public async Task<List<MachineFamilyViewModel>> GetAsync() => await context.MachineFamilies
+                                                                               .OrderBy(m => m.Company.Name)
+                                                                               .ThenBy(m => m.Name)
+                                                                               .Select(m => new MachineFamilyViewModel
+                                                                                {
+                                                                                    Id      = m.Id,
+                                                                                    Company = m.Company.Name,
+                                                                                    Name    = m.Name
+                                                                                })
+                                                                               .OrderBy(m => m.Name)
+                                                                               .ToListAsync();
+
+    public async Task<MachineFamilyViewModel> GetAsync(int id) => await context.MachineFamilies.Where(f => f.Id == id)
+                                                                     .Select(m => new MachineFamilyViewModel
+                                                                      {
+                                                                          Id        = m.Id,
+                                                                          CompanyId = m.CompanyId,
+                                                                          Name      = m.Name
+                                                                      })
+                                                                     .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(MachineFamilyViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        MachineFamily model = await context.MachineFamilies.FindAsync(viewModel.Id);
 
-        public MachineFamiliesService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<MachineFamilyViewModel>> GetAsync() =>
-            await _context.MachineFamilies.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).
-                           Select(m => new MachineFamilyViewModel
-                           {
-                               Id      = m.Id,
-                               Company = m.Company.Name,
-                               Name    = m.Name
-                           }).OrderBy(m => m.Name).ToListAsync();
+        model.Name      = viewModel.Name;
+        model.CompanyId = viewModel.CompanyId;
 
-        public async Task<MachineFamilyViewModel> GetAsync(int id) =>
-            await _context.MachineFamilies.Where(f => f.Id == id).Select(m => new MachineFamilyViewModel
-            {
-                Id        = m.Id,
-                CompanyId = m.CompanyId,
-                Name      = m.Name
-            }).FirstOrDefaultAsync();
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task UpdateAsync(MachineFamilyViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(MachineFamilyViewModel viewModel, string userId)
+    {
+        var model = new MachineFamily
         {
-            MachineFamily model = await _context.MachineFamilies.FindAsync(viewModel.Id);
+            Name      = viewModel.Name,
+            CompanyId = viewModel.CompanyId
+        };
 
-            if(model is null)
-                return;
+        await context.MachineFamilies.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Name      = viewModel.Name;
-            model.CompanyId = viewModel.CompanyId;
+        return model.Id;
+    }
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+    public async Task DeleteAsync(int id, string userId)
+    {
+        MachineFamily item = await context.MachineFamilies.FindAsync(id);
 
-        public async Task<int> CreateAsync(MachineFamilyViewModel viewModel, string userId)
-        {
-            var model = new MachineFamily
-            {
-                Name      = viewModel.Name,
-                CompanyId = viewModel.CompanyId
-            };
+        if(item is null) return;
 
-            await _context.MachineFamilies.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        context.MachineFamilies.Remove(item);
 
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            MachineFamily item = await _context.MachineFamilies.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.MachineFamilies.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

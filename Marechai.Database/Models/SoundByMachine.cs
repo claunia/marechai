@@ -25,15 +25,14 @@
 
 using System.ComponentModel;
 
-namespace Marechai.Database.Models
-{
-    public class SoundByMachine : BaseModel<long>
-    {
-        public int SoundSynthId { get; set; }
-        public int MachineId    { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual Machine Machine { get; set; }
-        [DisplayName("Sound synthetizer")]
-        public virtual SoundSynth SoundSynth { get; set; }
-    }
+public class SoundByMachine : BaseModel<long>
+{
+    public int SoundSynthId { get; set; }
+    public int MachineId    { get; set; }
+
+    public virtual Machine Machine { get; set; }
+    [DisplayName("Sound synthetizer")]
+    public virtual SoundSynth SoundSynth { get; set; }
 }

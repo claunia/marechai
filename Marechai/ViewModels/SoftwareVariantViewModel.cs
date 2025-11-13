@@ -26,25 +26,24 @@
 using System;
 using Marechai.Database;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class SoftwareVariantViewModel : BaseViewModel<ulong>
 {
-    public class SoftwareVariantViewModel : BaseViewModel<ulong>
-    {
-        public string           Name              { get; set; }
-        public string           Version           { get; set; }
-        public DateTime?        Introduced        { get; set; }
-        public ulong?           ParentId          { get; set; }
-        public string           Parent            { get; set; }
-        public ulong            SoftwareVersionId { get; set; }
-        public string           SoftwareVersion   { get; set; }
-        public ulong?           MinimumMemory     { get; set; }
-        public ulong?           RecommendedMemory { get; set; }
-        public ulong?           RequiredStorage   { get; set; }
-        public string           PartNumber        { get; set; }
-        public string           SerialNumber      { get; set; }
-        public string           ProductCode       { get; set; }
-        public string           CatalogueNumber   { get; set; }
-        public DistributionMode DistributionMode  { get; set; }
-        public string           Family            { get; set; }
-    }
+    public string           Name              { get; set; }
+    public string           Version           { get; set; }
+    public DateTime?        Introduced        { get; set; }
+    public ulong?           ParentId          { get; set; }
+    public string           Parent            { get; set; }
+    public ulong            SoftwareVersionId { get; set; }
+    public string           SoftwareVersion   { get; set; }
+    public ulong?           MinimumMemory     { get; set; }
+    public ulong?           RecommendedMemory { get; set; }
+    public ulong?           RequiredStorage   { get; set; }
+    public string           PartNumber        { get; set; }
+    public string           SerialNumber      { get; set; }
+    public string           ProductCode       { get; set; }
+    public string           CatalogueNumber   { get; set; }
+    public DistributionMode DistributionMode  { get; set; }
+    public string           Family            { get; set; }
 }

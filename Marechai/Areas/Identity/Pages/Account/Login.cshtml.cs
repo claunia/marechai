@@ -11,103 +11,93 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
-namespace Marechai.Areas.Identity.Pages.Account
+namespace Marechai.Areas.Identity.Pages.Account;
+
+[AllowAnonymous]
+public class LoginModel
+    (SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager)
+    : PageModel
 {
-    [AllowAnonymous]
-    public class LoginModel : PageModel
+    readonly UserManager<ApplicationUser>   _userManager   = userManager;
+
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+    public IList<AuthenticationScheme> ExternalLogins { get; set; }
+
+    public string ReturnUrl { get; set; }
+
+    [TempData]
+    public string ErrorMessage { get; set; }
+
+    public async Task OnGetAsync(string returnUrl = null)
     {
-        readonly ILogger<LoginModel>            _logger;
-        readonly SignInManager<ApplicationUser> _signInManager;
-        readonly UserManager<ApplicationUser>   _userManager;
+        if(!string.IsNullOrEmpty(ErrorMessage)) ModelState.AddModelError(string.Empty, ErrorMessage);
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger,
-                          UserManager<ApplicationUser> userManager)
+        returnUrl = returnUrl ?? Url.Content("~/");
+
+        // Clear the existing external cookie to ensure a clean login process
+        await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+        ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+        ReturnUrl = returnUrl;
+    }
+
+    public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+    {
+        returnUrl = returnUrl ?? Url.Content("~/");
+
+        if(ModelState.IsValid)
         {
-            _userManager   = userManager;
-            _signInManager = signInManager;
-            _logger        = logger;
-        }
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+            SignInResult result =
+                await signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, false);
 
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
-
-        public string ReturnUrl { get; set; }
-
-        [TempData]
-        public string ErrorMessage { get; set; }
-
-        public async Task OnGetAsync(string returnUrl = null)
-        {
-            if(!string.IsNullOrEmpty(ErrorMessage))
+            if(result.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, ErrorMessage);
+                logger.LogInformation("User logged in.");
+
+                return LocalRedirect(returnUrl);
             }
 
-            returnUrl = returnUrl ?? Url.Content("~/");
-
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
-            ReturnUrl = returnUrl;
-        }
-
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
-            returnUrl = returnUrl ?? Url.Content("~/");
-
-            if(ModelState.IsValid)
+            if(result.RequiresTwoFactor)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                SignInResult result =
-                    await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, false);
-
-                if(result.Succeeded)
-                {
-                    _logger.LogInformation("User logged in.");
-
-                    return LocalRedirect(returnUrl);
-                }
-
-                if(result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new
-                    {
-                        ReturnUrl = returnUrl,
-                        Input.RememberMe
-                    });
-                }
-
-                if(result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-
-                    return RedirectToPage("./Lockout");
-                }
-
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-
-                return Page();
+                return RedirectToPage("./LoginWith2fa",
+                                      new
+                                      {
+                                          ReturnUrl = returnUrl,
+                                          Input.RememberMe
+                                      });
             }
 
-            // If we got this far, something failed, redisplay form
+            if(result.IsLockedOut)
+            {
+                logger.LogWarning("User account locked out.");
+
+                return RedirectToPage("./Lockout");
+            }
+
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+
             return Page();
         }
 
-        public class InputModel
-        {
-            [Required]
-            public string Username { get; set; }
+        // If we got this far, something failed, redisplay form
+        return Page();
+    }
 
-            [Required, DataType(DataType.Password)]
-            public string Password { get; set; }
+    public class InputModel
+    {
+        [Required]
+        public string Username { get; set; }
 
-            [Display(Name = "Remember me?")]
-            public bool RememberMe { get; set; }
-        }
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
     }
 }

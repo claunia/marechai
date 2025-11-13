@@ -45,101 +45,101 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Tewr.Blazor.FileReader;
 
-namespace Marechai
+namespace Marechai;
+
+public class Startup(IConfiguration configuration)
 {
-    public class Startup
+    readonly CultureInfo[] _supportedCultures =
+    [
+        new("en-US"), new("es")
+    ];
+
+    public IConfiguration Configuration { get; } = configuration;
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+    public void ConfigureServices(IServiceCollection services)
     {
-        readonly CultureInfo[] supportedCultures =
+        services.AddBlazorise(options => options.ChangeTextOnKeyPress = true)
+                .AddBootstrapProviders()
+                .AddFontAwesomeIcons();
+
+        // Add credential encryption support using ASP.NET Core Data Protection API (DPAPI)
+        ConnectionStringManager.AddConnectionStringManagement(services);
+
+        services.AddDbContext<MarechaiContext>(options => options.UseLazyLoadingProxies()
+                                                                 .UseMySql(Configuration
+                                                                              .GetConnectionString("DefaultConnection"),
+                                                                           new MariaDbServerVersion(new Version(10,
+                                                                               5,
+                                                                               0)),
+                                                                           b => b.UseMicrosoftJson()));
+
+        services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<ApplicationRole>()
+                .AddEntityFrameworkStores<MarechaiContext>();
+
+        services.AddRazorPages();
+        services.AddServerSideBlazor();
+
+        services
+           .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+
+        services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+        services.AddFileReaderService();
+
+        Register.RegisterServices(services);
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder          app,         IWebHostEnvironment env, MarechaiContext context,
+                          UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+    {
+        if(env.IsDevelopment())
         {
-            new("en-US"), new("es")
-        };
-
-        public Startup(IConfiguration configuration) => Configuration = configuration;
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+            app.UseDeveloperExceptionPage();
+            app.UseMigrationsEndPoint();
+        }
+        else
         {
-            services.AddBlazorise(options => options.ChangeTextOnKeyPress = true).AddBootstrapProviders().
-                     AddFontAwesomeIcons();
+            app.UseExceptionHandler("/Error");
 
-            // Add credential encryption support using ASP.NET Core Data Protection API (DPAPI)
-            ConnectionStringManager.AddConnectionStringManagement(services);
-
-            services.AddDbContext<MarechaiContext>(options => options.UseLazyLoadingProxies().
-                                                                      UseMySql(Configuration.GetConnectionString("DefaultConnection"),
-                                                                               new MariaDbServerVersion(new Version(10,
-                                                                                   5, 0)),
-                                                                               b => b.UseMicrosoftJson()));
-
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).
-                     AddRoles<ApplicationRole>().AddEntityFrameworkStores<MarechaiContext>();
-
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-
-            services.
-                AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>
-                >();
-
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-            services.AddFileReaderService();
-
-            Register.RegisterServices(services);
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, MarechaiContext context,
-                              UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        app.UseRequestLocalization(new RequestLocalizationOptions
         {
-            if(env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
+            DefaultRequestCulture = new RequestCulture("en-US"),
 
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            // Formatting numbers, dates, etc.
+            SupportedCultures = _supportedCultures,
 
-            app.UseRequestLocalization(new RequestLocalizationOptions
-            {
-                DefaultRequestCulture = new RequestCulture("en-US"),
+            // UI strings that we have localized.
+            SupportedUICultures = _supportedCultures
+        });
 
-                // Formatting numbers, dates, etc.
-                SupportedCultures = supportedCultures,
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
 
-                // UI strings that we have localized.
-                SupportedUICultures = supportedCultures
-            });
+        // Add other security headers
+        app.UseMiddleware<SecurityHeadersMiddleware>();
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+        app.UseRouting();
 
-            // Add other security headers
-            app.UseMiddleware<SecurityHeadersMiddleware>();
+        app.ApplicationServices.UseBootstrapProviders().UseFontAwesomeIcons();
 
-            app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-            app.ApplicationServices.UseBootstrapProviders().UseFontAwesomeIcons();
+        All.Seed(context, userManager, roleManager, Configuration);
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            All.Seed(context, userManager, roleManager, Configuration);
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
-            });
-        }
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapBlazorHub();
+            endpoints.MapFallbackToPage("/_Host");
+        });
     }
 }

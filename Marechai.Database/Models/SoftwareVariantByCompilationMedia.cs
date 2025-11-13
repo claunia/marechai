@@ -26,19 +26,18 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class SoftwareVariantByCompilationMedia : BaseModel<ulong>
-    {
-        public string Path { get; set; }
-        [DefaultValue('/')]
-        public char PathSeparator { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
-        [Required]
-        public virtual Media Media { get; set; }
+namespace Marechai.Database.Models;
 
-        public ulong SoftwareVariantId { get; set; }
-        public ulong MediaId           { get; set; }
-    }
+public class SoftwareVariantByCompilationMedia : BaseModel<ulong>
+{
+    public string Path { get; set; }
+    [DefaultValue('/')]
+    public char PathSeparator { get; set; }
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
+    [Required]
+    public virtual Media Media { get; set; }
+
+    public ulong SoftwareVariantId { get; set; }
+    public ulong MediaId           { get; set; }
 }

@@ -25,16 +25,15 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class RequiredSoftwareBySoftwareVariant : BaseModel<ulong>
-    {
-        [Required]
-        public virtual SoftwareVersion SoftwareVersion { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
+namespace Marechai.Database.Models;
 
-        public ulong SoftwareVersionId { get; set; }
-        public ulong SoftwareVariantId { get; set; }
-    }
+public class RequiredSoftwareBySoftwareVariant : BaseModel<ulong>
+{
+    [Required]
+    public virtual SoftwareVersion SoftwareVersion { get; set; }
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
+
+    public ulong SoftwareVersionId { get; set; }
+    public ulong SoftwareVariantId { get; set; }
 }

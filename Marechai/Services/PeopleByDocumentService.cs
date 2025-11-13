@@ -30,54 +30,51 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class PeopleByDocumentService(MarechaiContext context)
 {
-    public class PeopleByDocumentService
+    public async Task<List<PersonByDocumentViewModel>> GetByDocument(long documentId) => (await context
+                                                                                               .PeopleByDocuments.Where(p => p.DocumentId == documentId)
+                                                                                               .Select(p => new PersonByDocumentViewModel
+                                                                                                {
+                                                                                                    Id          = p.Id,
+                                                                                                    Name        = p.Person.Name,
+                                                                                                    Surname     = p.Person.Surname,
+                                                                                                    Alias       = p.Person.Alias,
+                                                                                                    DisplayName = p.Person.DisplayName,
+                                                                                                    PersonId    = p.PersonId,
+                                                                                                    RoleId      = p.RoleId,
+                                                                                                    Role        = p.Role.Name,
+                                                                                                    DocumentId  = p.DocumentId
+                                                                                                })
+                                                                                               .ToListAsync()).OrderBy(p => p.FullName)
+                                                                                                              .ThenBy(p => p.Role)
+                                                                                                              .ToList();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        PeopleByDocument item = await context.PeopleByDocuments.FindAsync(id);
 
-        public PeopleByDocumentService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<PersonByDocumentViewModel>> GetByDocument(long documentId) =>
-            (await _context.PeopleByDocuments.Where(p => p.DocumentId == documentId).
-                            Select(p => new PersonByDocumentViewModel
-                            {
-                                Id          = p.Id,
-                                Name        = p.Person.Name,
-                                Surname     = p.Person.Surname,
-                                Alias       = p.Person.Alias,
-                                DisplayName = p.Person.DisplayName,
-                                PersonId    = p.PersonId,
-                                RoleId      = p.RoleId,
-                                Role        = p.Role.Name,
-                                DocumentId  = p.DocumentId
-                            }).ToListAsync()).OrderBy(p => p.FullName).ThenBy(p => p.Role).ToList();
+        context.PeopleByDocuments.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int personId, long documentId, string roleId, string userId)
+    {
+        var item = new PeopleByDocument
         {
-            PeopleByDocument item = await _context.PeopleByDocuments.FindAsync(id);
+            PersonId   = personId,
+            DocumentId = documentId,
+            RoleId     = roleId
+        };
 
-            if(item is null)
-                return;
+        await context.PeopleByDocuments.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.PeopleByDocuments.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int personId, long documentId, string roleId, string userId)
-        {
-            var item = new PeopleByDocument
-            {
-                PersonId   = personId,
-                DocumentId = documentId,
-                RoleId     = roleId
-            };
-
-            await _context.PeopleByDocuments.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

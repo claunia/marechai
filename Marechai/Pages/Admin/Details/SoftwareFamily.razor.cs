@@ -33,225 +33,218 @@ using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin.Details
+namespace Marechai.Pages.Admin.Details;
+
+public partial class SoftwareFamily
 {
-    public partial class SoftwareFamily
+    bool                                   _addingCompany;
+    int?                                   _addingCompanyId;
+    string                                 _addingCompanyRoleId;
+    AuthenticationState                    _authState;
+    List<CompanyViewModel>                 _companies;
+    bool                                   _creating;
+    CompanyBySoftwareFamilyViewModel       _currentCompanyBySoftwareFamily;
+    bool                                   _deleteInProgress;
+    string                                 _deleteText;
+    string                                 _deleteTitle;
+    bool                                   _deletingCompanyBySoftwareFamily;
+    bool                                   _editing;
+    Modal                                  _frmDelete;
+    bool                                   _loaded;
+    SoftwareFamilyViewModel                _model;
+    List<DocumentRoleViewModel>            _roles;
+    bool                                   _savingCompany;
+    List<SoftwareFamilyViewModel>          _softwareFamilies;
+    List<CompanyBySoftwareFamilyViewModel> _softwareFamilyCompanies;
+    bool                                   _unknownIntroduced;
+    bool                                   _unknownParent;
+
+    [Parameter]
+    public ulong Id { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        bool                                   _addingCompany;
-        int?                                   _addingCompanyId;
-        string                                 _addingCompanyRoleId;
-        AuthenticationState                    _authState;
-        List<CompanyViewModel>                 _companies;
-        bool                                   _creating;
-        CompanyBySoftwareFamilyViewModel       _currentCompanyBySoftwareFamily;
-        bool                                   _deleteInProgress;
-        string                                 _deleteText;
-        string                                 _deleteTitle;
-        bool                                   _deletingCompanyBySoftwareFamily;
-        bool                                   _editing;
-        Modal                                  _frmDelete;
-        bool                                   _loaded;
-        SoftwareFamilyViewModel                _model;
-        List<DocumentRoleViewModel>            _roles;
-        bool                                   _savingCompany;
-        List<SoftwareFamilyViewModel>          _softwareFamilies;
-        List<CompanyBySoftwareFamilyViewModel> _softwareFamilyCompanies;
-        bool                                   _unknownIntroduced;
-        bool                                   _unknownParent;
+        if(_loaded) return;
 
-        [Parameter]
-        public ulong Id { get; set; }
+        _loaded = true;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                     .ToLowerInvariant()
+                                     .StartsWith("admin/software_families/create", StringComparison.InvariantCulture);
+
+        if(Id <= 0 && !_creating) return;
+
+        _softwareFamilies        = await Service.GetAsync();
+        _companies               = await CompaniesService.GetAsync();
+        _roles                   = await DocumentRolesService.GetEnabledAsync();
+        _model                   = _creating ? new SoftwareFamilyViewModel() : await Service.GetAsync(Id);
+        _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _addingCompanyRoleId     = _roles.First().Id;
+        _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
+
+        _editing = _creating ||
+                   NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                    .ToLowerInvariant()
+                                    .StartsWith("admin/software_families/edit/", StringComparison.InvariantCulture);
+
+        if(_editing) SetCheckboxes();
+
+        StateHasChanged();
+    }
+
+    void SetCheckboxes()
+    {
+        _unknownParent     = !_model.ParentId.HasValue;
+        _unknownIntroduced = !_model.Introduced.HasValue;
+    }
+
+    void OnEditClicked()
+    {
+        _editing = true;
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    async void OnCancelClicked()
+    {
+        _editing = false;
+
+        if(_creating)
         {
-            if(_loaded)
-                return;
+            NavigationManager.ToBaseRelativePath("admin/software_families");
 
-            _loaded = true;
-
-            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                          StartsWith("admin/software_families/create",
-                                                     StringComparison.InvariantCulture);
-
-            if(Id <= 0 &&
-               !_creating)
-                return;
-
-            _softwareFamilies        = await Service.GetAsync();
-            _companies               = await CompaniesService.GetAsync();
-            _roles                   = await DocumentRolesService.GetEnabledAsync();
-            _model                   = _creating ? new SoftwareFamilyViewModel() : await Service.GetAsync(Id);
-            _authState               = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            _addingCompanyRoleId     = _roles.First().Id;
-            _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
-
-            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                                      StartsWith("admin/software_families/edit/",
-                                                                 StringComparison.InvariantCulture);
-
-            if(_editing)
-                SetCheckboxes();
-
-            StateHasChanged();
+            return;
         }
 
-        void SetCheckboxes()
+        _model = await Service.GetAsync(Id);
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    async void OnSaveClicked()
+    {
+        if(_unknownParent)
+            _model.ParentId = null;
+        else if(_model.ParentId < 1) return;
+
+        if(_unknownIntroduced)
+            _model.Introduced = null;
+        else if(_model.Introduced?.Date >= DateTime.UtcNow.Date) return;
+
+        if(string.IsNullOrWhiteSpace(_model.Name)) return;
+
+        if(_creating)
+            Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        else
+            await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+
+        _editing  = false;
+        _creating = false;
+        _model    = await Service.GetAsync(Id);
+        SetCheckboxes();
+        StateHasChanged();
+    }
+
+    void ValidateName(ValidatorEventArgs e) =>
+        Validators.ValidateString(e, L["Name must be smaller than 256 characters."], 256);
+
+    void ValidateIntroduced(ValidatorEventArgs e) => Validators.ValidateDate(e);
+
+    void OnAddCompanyClick()
+    {
+        _addingCompany   = true;
+        _savingCompany   = false;
+        _addingCompanyId = _companies.First().Id;
+    }
+
+    void CancelAddCompany()
+    {
+        _addingCompany   = false;
+        _savingCompany   = false;
+        _addingCompanyId = null;
+    }
+
+    async Task ConfirmAddCompany()
+    {
+        if(_addingCompanyId is null || _addingCompanyId <= 0)
         {
-            _unknownParent     = !_model.ParentId.HasValue;
-            _unknownIntroduced = !_model.Introduced.HasValue;
+            CancelAddCompany();
+
+            return;
         }
 
-        void OnEditClicked()
-        {
-            _editing = true;
-            SetCheckboxes();
-            StateHasChanged();
-        }
+        _savingCompany = true;
 
-        async void OnCancelClicked()
-        {
-            _editing = false;
+        // Yield thread to let UI to update
+        await Task.Yield();
 
-            if(_creating)
-            {
-                NavigationManager.ToBaseRelativePath("admin/software_families");
+        await CompaniesBySoftwareFamilyService.CreateAsync(_addingCompanyId.Value,
+                                                           Id,
+                                                           _addingCompanyRoleId,
+                                                           (await UserManager.GetUserAsync(_authState.User)).Id);
 
-                return;
-            }
+        _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
 
-            _model = await Service.GetAsync(Id);
-            SetCheckboxes();
-            StateHasChanged();
-        }
+        _addingCompany   = false;
+        _savingCompany   = false;
+        _addingCompanyId = null;
 
-        async void OnSaveClicked()
-        {
-            if(_unknownParent)
-                _model.ParentId = null;
-            else if(_model.ParentId < 1)
-                return;
+        // Yield thread to let UI to update
+        await Task.Yield();
 
-            if(_unknownIntroduced)
-                _model.Introduced = null;
-            else if(_model.Introduced?.Date >= DateTime.UtcNow.Date)
-                return;
+        // Tell we finished loading
+        StateHasChanged();
+    }
 
-            if(string.IsNullOrWhiteSpace(_model.Name))
-                return;
+    void ShowCompanyDeleteModal(ulong itemId)
+    {
+        _currentCompanyBySoftwareFamily  = _softwareFamilyCompanies.FirstOrDefault(n => n.Id == itemId);
+        _deletingCompanyBySoftwareFamily = true;
+        _deleteTitle                     = L["Delete company from this software family"];
 
-            if(_creating)
-                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
-            else
-                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        _deleteText =
+            string.Format(L["Are you sure you want to delete the company {0} with role {1} from this software family?"],
+                          _currentCompanyBySoftwareFamily?.Company,
+                          _currentCompanyBySoftwareFamily?.Role);
 
-            _editing  = false;
-            _creating = false;
-            _model    = await Service.GetAsync(Id);
-            SetCheckboxes();
-            StateHasChanged();
-        }
+        _frmDelete.Show();
+    }
 
-        void ValidateName(ValidatorEventArgs e) =>
-            Validators.ValidateString(e, L["Name must be smaller than 256 characters."], 256);
+    void ModalClosing(ModalClosingEventArgs obj)
+    {
+        _deleteInProgress                = false;
+        _deletingCompanyBySoftwareFamily = false;
+        _currentCompanyBySoftwareFamily  = null;
+    }
 
-        void ValidateIntroduced(ValidatorEventArgs e) => Validators.ValidateDate(e);
+    void HideModal() => _frmDelete.Hide();
 
-        void OnAddCompanyClick()
-        {
-            _addingCompany   = true;
-            _savingCompany   = false;
-            _addingCompanyId = _companies.First().Id;
-        }
+    async void ConfirmDelete()
+    {
+        if(_deletingCompanyBySoftwareFamily) await ConfirmDeleteCompanyByMachine();
+    }
 
-        void CancelAddCompany()
-        {
-            _addingCompany   = false;
-            _savingCompany   = false;
-            _addingCompanyId = null;
-        }
+    async Task ConfirmDeleteCompanyByMachine()
+    {
+        if(_currentCompanyBySoftwareFamily is null) return;
 
-        async Task ConfirmAddCompany()
-        {
-            if(_addingCompanyId is null ||
-               _addingCompanyId <= 0)
-            {
-                CancelAddCompany();
+        _deleteInProgress = true;
 
-                return;
-            }
+        // Yield thread to let UI to update
+        await Task.Yield();
 
-            _savingCompany = true;
+        await CompaniesBySoftwareFamilyService.DeleteAsync(_currentCompanyBySoftwareFamily.Id,
+                                                           (await UserManager.GetUserAsync(_authState.User)).Id);
 
-            // Yield thread to let UI to update
-            await Task.Yield();
+        _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
 
-            await CompaniesBySoftwareFamilyService.CreateAsync(_addingCompanyId.Value, Id, _addingCompanyRoleId,
-                                                               (await UserManager.GetUserAsync(_authState.User)).Id);
+        _deleteInProgress = false;
+        _frmDelete.Hide();
 
-            _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
+        // Yield thread to let UI to update
+        await Task.Yield();
 
-            _addingCompany   = false;
-            _savingCompany   = false;
-            _addingCompanyId = null;
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            // Tell we finished loading
-            StateHasChanged();
-        }
-
-        void ShowCompanyDeleteModal(ulong itemId)
-        {
-            _currentCompanyBySoftwareFamily  = _softwareFamilyCompanies.FirstOrDefault(n => n.Id == itemId);
-            _deletingCompanyBySoftwareFamily = true;
-            _deleteTitle                     = L["Delete company from this software family"];
-
-            _deleteText =
-                string.Format(L["Are you sure you want to delete the company {0} with role {1} from this software family?"],
-                              _currentCompanyBySoftwareFamily?.Company, _currentCompanyBySoftwareFamily?.Role);
-
-            _frmDelete.Show();
-        }
-
-        void ModalClosing(ModalClosingEventArgs obj)
-        {
-            _deleteInProgress                = false;
-            _deletingCompanyBySoftwareFamily = false;
-            _currentCompanyBySoftwareFamily  = null;
-        }
-
-        void HideModal() => _frmDelete.Hide();
-
-        async void ConfirmDelete()
-        {
-            if(_deletingCompanyBySoftwareFamily)
-                await ConfirmDeleteCompanyByMachine();
-        }
-
-        async Task ConfirmDeleteCompanyByMachine()
-        {
-            if(_currentCompanyBySoftwareFamily is null)
-                return;
-
-            _deleteInProgress = true;
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            await CompaniesBySoftwareFamilyService.DeleteAsync(_currentCompanyBySoftwareFamily.Id,
-                                                               (await UserManager.GetUserAsync(_authState.User)).Id);
-
-            _softwareFamilyCompanies = await CompaniesBySoftwareFamilyService.GetBySoftwareFamily(Id);
-
-            _deleteInProgress = false;
-            _frmDelete.Hide();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            // Tell we finished loading
-            StateHasChanged();
-        }
+        // Tell we finished loading
+        StateHasChanged();
     }
 }

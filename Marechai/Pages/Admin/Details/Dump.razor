@@ -31,15 +31,15 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<DumpsService>
 @inject IStringLocalizer<DumpsService> L
-@inject MediaService MediaService
-@inject NavigationManager NavigationManager
-@inject IWebHostEnvironment Host
-@inject IJSRuntime JSRuntime
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject MediaService                   MediaService
+@inject NavigationManager              NavigationManager
+@inject IWebHostEnvironment            Host
+@inject IJSRuntime                     JSRuntime
+@inject UserManager<ApplicationUser>   UserManager
+@inject AuthenticationStateProvider    AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Dump details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -64,19 +64,18 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownUser" @TValue="bool">@L["Unknown (user)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownUser)
+            }
+            @if(!_editing || !_unknownUser)
             {
                 <Select @bind-SelectedValue="@_model.UserId" Disabled="!_editing" @TValue="string">
-                    @foreach(var user in _users)
+                    @foreach(ApplicationUser user in _users)
                     {
                         <SelectItem @TValue="string" Value="@user.Id">@user.UserName</SelectItem>
-}
+                    }
                 </Select>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.DumpingGroup != null)
     {
         <Field>
@@ -84,9 +83,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownDumpingGroup" @TValue="bool">@L["Unknown (dumping group)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownDumpingGroup)
+            }
+            @if(!_editing || !_unknownDumpingGroup)
             {
                 <Validation Validator="@ValidateDumpingGroup">
                     <TextEdit @bind-Text="@_model.DumpingGroup" Disabled="!_editing">
@@ -95,9 +93,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.DumpDate != null)
     {
         <Field>
@@ -105,9 +103,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownDumpDate" @TValue="bool">@L["Unknown (dump date)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownDumpDate)
+            }
+            @if(!_editing || !_unknownDumpDate)
             {
                 <Validation Validator="@ValidateDumpDate">
                     <DateEdit @bind-Date="@_model.DumpDate" ReadOnly="!_editing" @TValue="DateTime?">
@@ -116,16 +113,16 @@
                         </Feedback>
                     </DateEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     <Field>
         <FieldLabel>@L["Media"]</FieldLabel>
         <Select @bind-SelectedValue="@_model.MediaId" Disabled="!_editing" @TValue="ulong">
-            @foreach(var media in _medias)
+            @foreach(MediaViewModel media in _medias)
             {
                 <SelectItem @TValue="ulong" Value="@media.Id">@media.Title</SelectItem>
-}
+            }
         </Select>
     </Field>
     @{
@@ -136,11 +133,12 @@
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/dumps">@L["Back to list"]</a>
 </div>

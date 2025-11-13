@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-  xmlns:xlink="http://www.w3.org/1999/xlink"
-  width="660" height="480" viewBox="0 0 220 160">
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"
+     version="1.1"
+     width="660" height="480" viewBox="0 0 220 160">
   <desc>Flag of Israel</desc>
   <defs>
     <!-- Specs are taken from "The Provisional Council of State Proclamation of
@@ -20,7 +20,7 @@
     <polygon id="triangle" points="0,-29.1410161513775421
                 -25.2368602791855814, 14.5705080756887710
                  25.2368602791855814, 14.5705080756887710"
-      stroke="#0038b8" stroke-width="5.5" fill-opacity="0"/>
+             stroke="#0038b8" stroke-width="5.5" fill-opacity="0"/>
   </defs>
   <!-- "The flag is 220 cm long and 160 cm wide.  The background is white" -->
   <rect width="220" height="160" fill="white"/>

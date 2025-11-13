@@ -25,17 +25,16 @@
 
 using System;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class MagazineIssueViewModel : BaseViewModel<long>
 {
-    public class MagazineIssueViewModel : BaseViewModel<long>
-    {
-        public long      MagazineId    { get; set; }
-        public string    MagazineTitle { get; set; }
-        public string    Caption       { get; set; }
-        public string    NativeCaption { get; set; }
-        public DateTime? Published     { get; set; }
-        public string    ProductCode   { get; set; }
-        public short?    Pages         { get; set; }
-        public uint?     IssueNumber   { get; set; }
-    }
+    public long      MagazineId    { get; set; }
+    public string    MagazineTitle { get; set; }
+    public string    Caption       { get; set; }
+    public string    NativeCaption { get; set; }
+    public DateTime? Published     { get; set; }
+    public string    ProductCode   { get; set; }
+    public short?    Pages         { get; set; }
+    public uint?     IssueNumber   { get; set; }
 }

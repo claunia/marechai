@@ -30,59 +30,56 @@ using Blazorise;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin
+namespace Marechai.Pages.Admin;
+
+public partial class Dumps
 {
-    public partial class Dumps
+    DumpViewModel       _currentDump;
+    bool                _deleteInProgress;
+    List<DumpViewModel> _dumps;
+    Modal               _frmDelete;
+    bool                _loaded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        DumpViewModel       _currentDump;
-        bool                _deleteInProgress;
-        List<DumpViewModel> _dumps;
-        Modal               _frmDelete;
-        bool                _loaded;
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _dumps  = await Service.GetAsync();
-            _loaded = true;
-            StateHasChanged();
-        }
-
-        void ShowModal(ulong itemId)
-        {
-            _currentDump = _dumps.FirstOrDefault(n => n.Id == itemId);
-            _frmDelete.Show();
-        }
-
-        void HideModal() => _frmDelete.Hide();
-
-        async void ConfirmDelete()
-        {
-            if(_currentDump is null)
-                return;
-
-            _deleteInProgress = true;
-            _dumps            = null;
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            await Service.DeleteAsync(_currentDump.Id, (await UserManager.GetUserAsync(authState.User)).Id);
-            _dumps = await Service.GetAsync();
-
-            _deleteInProgress = false;
-            _frmDelete.Hide();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            // Tell we finished loading
-            StateHasChanged();
-        }
-
-        void ModalClosing(ModalClosingEventArgs obj) => _currentDump = null;
+        _dumps  = await Service.GetAsync();
+        _loaded = true;
+        StateHasChanged();
     }
+
+    void ShowModal(ulong itemId)
+    {
+        _currentDump = _dumps.FirstOrDefault(n => n.Id == itemId);
+        _frmDelete.Show();
+    }
+
+    void HideModal() => _frmDelete.Hide();
+
+    async void ConfirmDelete()
+    {
+        if(_currentDump is null) return;
+
+        _deleteInProgress = true;
+        _dumps            = null;
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        await Service.DeleteAsync(_currentDump.Id, (await UserManager.GetUserAsync(authState.User)).Id);
+        _dumps = await Service.GetAsync();
+
+        _deleteInProgress = false;
+        _frmDelete.Hide();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        // Tell we finished loading
+        StateHasChanged();
+    }
+
+    void ModalClosing(ModalClosingEventArgs obj) => _currentDump = null;
 }

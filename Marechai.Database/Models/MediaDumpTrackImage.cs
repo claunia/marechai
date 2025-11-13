@@ -25,24 +25,23 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Marechai.Database.Models
-{
-    public class MediaDumpTrackImage : BaseModel<ulong>
-    {
-        public short  TrackSequence { get; set; }
-        public string Format        { get; set; }
-        public ulong  Size          { get; set; }
-        [Column(TypeName = "binary(16)")]
-        public string Md5 { get; set; }
-        [Column(TypeName = "binary(20)")]
-        public string Sha1 { get; set; }
-        [Column(TypeName = "binary(32)")]
-        public string Sha256 { get; set; }
-        [Column(TypeName = "binary(64)")]
-        public string Sha3 { get;    set; }
-        public string Spamsum { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual MediaDump                MediaDump  { get; set; }
-        public virtual MediaDumpSubchannelImage Subchannel { get; set; }
-    }
+public class MediaDumpTrackImage : BaseModel<ulong>
+{
+    public short  TrackSequence { get; set; }
+    public string Format        { get; set; }
+    public ulong  Size          { get; set; }
+    [Column(TypeName = "binary(16)")]
+    public string Md5 { get; set; }
+    [Column(TypeName = "binary(20)")]
+    public string Sha1 { get; set; }
+    [Column(TypeName = "binary(32)")]
+    public string Sha256 { get; set; }
+    [Column(TypeName = "binary(64)")]
+    public string Sha3 { get;    set; }
+    public string Spamsum { get; set; }
+
+    public virtual MediaDump                MediaDump  { get; set; }
+    public virtual MediaDumpSubchannelImage Subchannel { get; set; }
 }

@@ -26,26 +26,25 @@
 using System;
 using Marechai.Database;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public sealed class NewsViewModel : BaseViewModel<int>
 {
-    public sealed class NewsViewModel : BaseViewModel<int>
+    public NewsViewModel() {}
+
+    public NewsViewModel(int affectedId, string text, DateTime timestamp, string controller, string itemName)
     {
-        public NewsViewModel() {}
-
-        public NewsViewModel(int affectedId, string text, DateTime timestamp, string controller, string itemName)
-        {
-            AffectedId = affectedId;
-            Text       = text;
-            Timestamp  = timestamp;
-            Controller = controller;
-            ItemName   = itemName;
-        }
-
-        public NewsType Type       { get; set; }
-        public int      AffectedId { get; set; }
-        public string   Controller { get; }
-        public string   ItemName   { get; }
-        public string   Text       { get; }
-        public DateTime Timestamp  { get; set; }
+        AffectedId = affectedId;
+        Text       = text;
+        Timestamp  = timestamp;
+        Controller = controller;
+        ItemName   = itemName;
     }
+
+    public NewsType Type       { get; set; }
+    public int      AffectedId { get; set; }
+    public string   Controller { get; }
+    public string   ItemName   { get; }
+    public string   Text       { get; }
+    public DateTime Timestamp  { get; set; }
 }

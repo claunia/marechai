@@ -30,49 +30,45 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class InstructionSetExtensionsByProcessorService(MarechaiContext context)
 {
-    public class InstructionSetExtensionsByProcessorService
+    public async Task<List<InstructionSetExtensionByProcessorViewModel>> GetByProcessor(int processorId) =>
+        await context.InstructionSetExtensionsByProcessor.Where(e => e.ProcessorId == processorId)
+                      .Select(e => new InstructionSetExtensionByProcessorViewModel
+                       {
+                           Id          = e.Id,
+                           Extension   = e.Extension.Extension,
+                           Processor   = e.Processor.Name,
+                           ProcessorId = e.ProcessorId,
+                           ExtensionId = e.ExtensionId
+                       })
+                      .OrderBy(e => e.Extension)
+                      .ToListAsync();
+
+    public async Task DeleteAsync(int id, string userId)
     {
-        readonly MarechaiContext _context;
+        InstructionSetExtensionsByProcessor item = await context.InstructionSetExtensionsByProcessor.FindAsync(id);
 
-        public InstructionSetExtensionsByProcessorService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<InstructionSetExtensionByProcessorViewModel>> GetByProcessor(int processorId) =>
-            await _context.InstructionSetExtensionsByProcessor.Where(e => e.ProcessorId == processorId).
-                           Select(e => new InstructionSetExtensionByProcessorViewModel
-                           {
-                               Id          = e.Id,
-                               Extension   = e.Extension.Extension,
-                               Processor   = e.Processor.Name,
-                               ProcessorId = e.ProcessorId,
-                               ExtensionId = e.ExtensionId
-                           }).OrderBy(e => e.Extension).ToListAsync();
+        context.InstructionSetExtensionsByProcessor.Remove(item);
 
-        public async Task DeleteAsync(int id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<int> CreateAsync(int processorId, int extensionId, string userId)
+    {
+        var item = new InstructionSetExtensionsByProcessor
         {
-            InstructionSetExtensionsByProcessor item = await _context.InstructionSetExtensionsByProcessor.FindAsync(id);
+            ProcessorId = processorId,
+            ExtensionId = extensionId
+        };
 
-            if(item is null)
-                return;
+        await context.InstructionSetExtensionsByProcessor.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.InstructionSetExtensionsByProcessor.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<int> CreateAsync(int processorId, int extensionId, string userId)
-        {
-            var item = new InstructionSetExtensionsByProcessor
-            {
-                ProcessorId = processorId,
-                ExtensionId = extensionId
-            };
-
-            await _context.InstructionSetExtensionsByProcessor.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

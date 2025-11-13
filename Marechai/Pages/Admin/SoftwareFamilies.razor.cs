@@ -30,59 +30,56 @@ using Blazorise;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin
+namespace Marechai.Pages.Admin;
+
+public partial class SoftwareFamilies
 {
-    public partial class SoftwareFamilies
+    SoftwareFamilyViewModel       _currentSoftwareFamily;
+    bool                          _deleteInProgress;
+    Modal                         _frmDelete;
+    bool                          _loaded;
+    List<SoftwareFamilyViewModel> _softwareFamilies;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        SoftwareFamilyViewModel       _currentSoftwareFamily;
-        bool                          _deleteInProgress;
-        Modal                         _frmDelete;
-        bool                          _loaded;
-        List<SoftwareFamilyViewModel> _softwareFamilies;
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _softwareFamilies = await Service.GetAsync();
-            _loaded           = true;
-            StateHasChanged();
-        }
-
-        void ShowModal(ulong itemId)
-        {
-            _currentSoftwareFamily = _softwareFamilies.FirstOrDefault(n => n.Id == itemId);
-            _frmDelete.Show();
-        }
-
-        void HideModal() => _frmDelete.Hide();
-
-        async void ConfirmDelete()
-        {
-            if(_currentSoftwareFamily is null)
-                return;
-
-            _deleteInProgress = true;
-            _softwareFamilies = null;
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            await Service.DeleteAsync(_currentSoftwareFamily.Id, (await UserManager.GetUserAsync(authState.User)).Id);
-            _softwareFamilies = await Service.GetAsync();
-
-            _deleteInProgress = false;
-            _frmDelete.Hide();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            // Tell we finished loading
-            StateHasChanged();
-        }
-
-        void ModalClosing(ModalClosingEventArgs obj) => _currentSoftwareFamily = null;
+        _softwareFamilies = await Service.GetAsync();
+        _loaded           = true;
+        StateHasChanged();
     }
+
+    void ShowModal(ulong itemId)
+    {
+        _currentSoftwareFamily = _softwareFamilies.FirstOrDefault(n => n.Id == itemId);
+        _frmDelete.Show();
+    }
+
+    void HideModal() => _frmDelete.Hide();
+
+    async void ConfirmDelete()
+    {
+        if(_currentSoftwareFamily is null) return;
+
+        _deleteInProgress = true;
+        _softwareFamilies = null;
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        await Service.DeleteAsync(_currentSoftwareFamily.Id, (await UserManager.GetUserAsync(authState.User)).Id);
+        _softwareFamilies = await Service.GetAsync();
+
+        _deleteInProgress = false;
+        _frmDelete.Hide();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        // Tell we finished loading
+        StateHasChanged();
+    }
+
+    void ModalClosing(ModalClosingEventArgs obj) => _currentSoftwareFamily = null;
 }

@@ -30,75 +30,70 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class CurrencyInflationService(MarechaiContext context)
 {
-    public class CurrencyInflationService
+    public async Task<List<CurrencyInflationViewModel>> GetAsync() => await context.CurrenciesInflation
+                                                                                   .OrderBy(i => i.Currency.Name)
+                                                                                   .ThenBy(i => i.Year)
+                                                                                   .Select(i => new CurrencyInflationViewModel
+                                                                                    {
+                                                                                        Id           = i.Id,
+                                                                                        CurrencyCode = i.Currency.Code,
+                                                                                        CurrencyName = i.Currency.Name,
+                                                                                        Year         = i.Year,
+                                                                                        Inflation    = i.Inflation
+                                                                                    })
+                                                                                   .ToListAsync();
+
+    public async Task<CurrencyInflationViewModel> GetAsync(int id) => await context.CurrenciesInflation
+                                                                         .Where(b => b.Id == id)
+                                                                         .Select(i => new CurrencyInflationViewModel
+                                                                          {
+                                                                              Id           = i.Id,
+                                                                              CurrencyCode = i.Currency.Code,
+                                                                              CurrencyName = i.Currency.Name,
+                                                                              Year         = i.Year,
+                                                                              Inflation    = i.Inflation
+                                                                          })
+                                                                         .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(CurrencyInflationViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        CurrencyInflation model = await context.CurrenciesInflation.FindAsync(viewModel.Id);
 
-        public CurrencyInflationService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<CurrencyInflationViewModel>> GetAsync() => await _context.
-                                                                              CurrenciesInflation.
-                                                                              OrderBy(i => i.Currency.Name).
-                                                                              ThenBy(i => i.Year).
-                                                                              Select(i => new CurrencyInflationViewModel
-                                                                              {
-                                                                                  Id           = i.Id,
-                                                                                  CurrencyCode = i.Currency.Code,
-                                                                                  CurrencyName = i.Currency.Name,
-                                                                                  Year         = i.Year,
-                                                                                  Inflation    = i.Inflation
-                                                                              }).ToListAsync();
+        model.CurrencyCode = viewModel.CurrencyCode;
+        model.Year         = viewModel.Year;
+        model.Inflation    = viewModel.Inflation;
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<CurrencyInflationViewModel> GetAsync(int id) =>
-            await _context.CurrenciesInflation.Where(b => b.Id == id).Select(i => new CurrencyInflationViewModel
-            {
-                Id           = i.Id,
-                CurrencyCode = i.Currency.Code,
-                CurrencyName = i.Currency.Name,
-                Year         = i.Year,
-                Inflation    = i.Inflation
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(CurrencyInflationViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(CurrencyInflationViewModel viewModel, string userId)
+    {
+        var model = new CurrencyInflation
         {
-            CurrencyInflation model = await _context.CurrenciesInflation.FindAsync(viewModel.Id);
+            CurrencyCode = viewModel.CurrencyCode,
+            Year         = viewModel.Year,
+            Inflation    = viewModel.Inflation
+        };
 
-            if(model is null)
-                return;
+        await context.CurrenciesInflation.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.CurrencyCode = viewModel.CurrencyCode;
-            model.Year         = viewModel.Year;
-            model.Inflation    = viewModel.Inflation;
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        return model.Id;
+    }
 
-        public async Task<int> CreateAsync(CurrencyInflationViewModel viewModel, string userId)
-        {
-            var model = new CurrencyInflation
-            {
-                CurrencyCode = viewModel.CurrencyCode,
-                Year         = viewModel.Year,
-                Inflation    = viewModel.Inflation
-            };
+    public async Task DeleteAsync(int id, string userId)
+    {
+        CurrencyInflation item = await context.CurrenciesInflation.FindAsync(id);
 
-            await _context.CurrenciesInflation.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        if(item is null) return;
 
-            return model.Id;
-        }
+        context.CurrenciesInflation.Remove(item);
 
-        public async Task DeleteAsync(int id, string userId)
-        {
-            CurrencyInflation item = await _context.CurrenciesInflation.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.CurrenciesInflation.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

@@ -31,57 +31,60 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class ComputersService(MarechaiContext context)
 {
-    public class ComputersService
-    {
-        readonly MarechaiContext _context;
+    public async Task<int> GetComputersCountAsync() =>
+        await context.Machines.CountAsync(c => c.Type == MachineType.Computer);
 
-        public ComputersService(MarechaiContext context) => _context = context;
+    public Task<int> GetMinimumYearAsync() => context.Machines
+                                                      .Where(t => t.Type == MachineType.Computer &&
+                                                                  t.Introduced.HasValue          &&
+                                                                  t.Introduced.Value.Year > 1000)
+                                                      .MinAsync(t => t.Introduced.Value.Year);
 
-        public async Task<int> GetComputersCountAsync() =>
-            await _context.Machines.CountAsync(c => c.Type == MachineType.Computer);
+    public Task<int> GetMaximumYearAsync() => context.Machines
+                                                      .Where(t => t.Type == MachineType.Computer &&
+                                                                  t.Introduced.HasValue          &&
+                                                                  t.Introduced.Value.Year > 1000)
+                                                      .MaxAsync(t => t.Introduced.Value.Year);
 
-        public Task<int> GetMinimumYearAsync() => _context.Machines.
-                                                           Where(t => t.Type == MachineType.Computer &&
-                                                                      t.Introduced.HasValue          &&
-                                                                      t.Introduced.Value.Year > 1000).
-                                                           MinAsync(t => t.Introduced.Value.Year);
+    public async Task<List<MachineViewModel>> GetComputersByLetterAsync(char c) => await context.Machines
+       .Include(m => m.Company)
+       .Where(m => m.Type == MachineType.Computer && EF.Functions.Like(m.Name, $"{c}%"))
+       .OrderBy(m => m.Company.Name)
+       .ThenBy(m => m.Name)
+       .Select(m => new MachineViewModel
+        {
+            Id      = m.Id,
+            Name    = m.Name,
+            Company = m.Company.Name
+        })
+       .ToListAsync();
 
-        public Task<int> GetMaximumYearAsync() => _context.Machines.
-                                                           Where(t => t.Type == MachineType.Computer &&
-                                                                      t.Introduced.HasValue          &&
-                                                                      t.Introduced.Value.Year > 1000).
-                                                           MaxAsync(t => t.Introduced.Value.Year);
+    public async Task<List<MachineViewModel>> GetComputersByYearAsync(int year) => await context.Machines
+       .Include(m => m.Company)
+       .Where(m => m.Type == MachineType.Computer && m.Introduced != null && m.Introduced.Value.Year == year)
+       .OrderBy(m => m.Company.Name)
+       .ThenBy(m => m.Name)
+       .Select(m => new MachineViewModel
+        {
+            Id      = m.Id,
+            Name    = m.Name,
+            Company = m.Company.Name
+        })
+       .ToListAsync();
 
-        public async Task<List<MachineViewModel>> GetComputersByLetterAsync(char c) =>
-            await _context.Machines.Include(m => m.Company).
-                           Where(m => m.Type == MachineType.Computer && EF.Functions.Like(m.Name, $"{c}%")).
-                           OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new MachineViewModel
-                           {
-                               Id      = m.Id,
-                               Name    = m.Name,
-                               Company = m.Company.Name
-                           }).ToListAsync();
-
-        public async Task<List<MachineViewModel>> GetComputersByYearAsync(int year) =>
-            await _context.Machines.Include(m => m.Company).
-                           Where(m => m.Type                  == MachineType.Computer && m.Introduced != null &&
-                                      m.Introduced.Value.Year == year).OrderBy(m => m.Company.Name).ThenBy(m => m.Name).
-                           Select(m => new MachineViewModel
-                           {
-                               Id      = m.Id,
-                               Name    = m.Name,
-                               Company = m.Company.Name
-                           }).ToListAsync();
-
-        public async Task<List<MachineViewModel>> GetComputersAsync() =>
-            await _context.Machines.Include(m => m.Company).Where(m => m.Type == MachineType.Computer).
-                           OrderBy(m => m.Company.Name).ThenBy(m => m.Name).Select(m => new MachineViewModel
-                           {
-                               Id      = m.Id,
-                               Name    = m.Name,
-                               Company = m.Company.Name
-                           }).ToListAsync();
-    }
+    public async Task<List<MachineViewModel>> GetComputersAsync() => await context.Machines.Include(m => m.Company)
+                                                                        .Where(m => m.Type == MachineType.Computer)
+                                                                        .OrderBy(m => m.Company.Name)
+                                                                        .ThenBy(m => m.Name)
+                                                                        .Select(m => new MachineViewModel
+                                                                         {
+                                                                             Id      = m.Id,
+                                                                             Name    = m.Name,
+                                                                             Company = m.Company.Name
+                                                                         })
+                                                                        .ToListAsync();
 }

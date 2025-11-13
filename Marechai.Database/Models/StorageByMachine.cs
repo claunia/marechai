@@ -25,16 +25,15 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class StorageByMachine : BaseModel<long>
-    {
-        public int              MachineId { get; set; }
-        public StorageType      Type      { get; set; }
-        public StorageInterface Interface { get; set; }
-        [Range(1, long.MaxValue)]
-        public long? Capacity { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual Machine Machine { get; set; }
-    }
+public class StorageByMachine : BaseModel<long>
+{
+    public int              MachineId { get; set; }
+    public StorageType      Type      { get; set; }
+    public StorageInterface Interface { get; set; }
+    [Range(1, long.MaxValue)]
+    public long? Capacity { get; set; }
+
+    public virtual Machine Machine { get; set; }
 }

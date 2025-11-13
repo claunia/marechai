@@ -30,94 +30,91 @@ using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin.Details
+namespace Marechai.Pages.Admin.Details;
+
+public partial class InstructionSetExtension
 {
-    public partial class InstructionSetExtension
+    AuthenticationState                     _authState;
+    bool                                    _creating;
+    bool                                    _editing;
+    bool                                    _loaded;
+    Database.Models.InstructionSetExtension _model;
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        AuthenticationState                     _authState;
-        bool                                    _creating;
-        bool                                    _editing;
-        bool                                    _loaded;
-        Database.Models.InstructionSetExtension _model;
-        [Parameter]
-        public int Id { get; set; }
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        _loaded = true;
+
+        _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                     .ToLowerInvariant()
+                                     .StartsWith("admin/instruction_set_extensions/create",
+                                                 StringComparison.InvariantCulture);
+
+        if(Id <= 0 && !_creating) return;
+
+        _model     = _creating ? new Database.Models.InstructionSetExtension() : await Service.GetAsync(Id);
+        _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        _editing = _creating ||
+                   NavigationManager.ToBaseRelativePath(NavigationManager.Uri)
+                                    .ToLowerInvariant()
+                                    .StartsWith("admin/instruction_set_extensions/edit/",
+                                                StringComparison.InvariantCulture);
+
+        StateHasChanged();
+    }
+
+    void OnEditClicked()
+    {
+        _editing = true;
+        StateHasChanged();
+    }
+
+    async void OnCancelClicked()
+    {
+        _editing = false;
+
+        if(_creating)
         {
-            if(_loaded)
-                return;
+            NavigationManager.ToBaseRelativePath("admin/instruction_set_extensions");
 
-            _loaded = true;
-
-            _creating = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                          StartsWith("admin/instruction_set_extensions/create",
-                                                     StringComparison.InvariantCulture);
-
-            if(Id <= 0 &&
-               !_creating)
-                return;
-
-            _model     = _creating ? new Database.Models.InstructionSetExtension() : await Service.GetAsync(Id);
-            _authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            _editing = _creating || NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToLowerInvariant().
-                                                      StartsWith("admin/instruction_set_extensions/edit/",
-                                                                 StringComparison.InvariantCulture);
-
-            StateHasChanged();
+            return;
         }
 
-        void OnEditClicked()
-        {
-            _editing = true;
-            StateHasChanged();
-        }
+        _model = await Service.GetAsync(Id);
+        StateHasChanged();
+    }
 
-        async void OnCancelClicked()
-        {
-            _editing = false;
+    async void OnSaveClicked()
+    {
+        if(string.IsNullOrWhiteSpace(_model.Extension) ||
+           _model.Extension.Length > 45                ||
+           !Service.VerifyUnique(_model.Extension))
+            return;
 
-            if(_creating)
-            {
-                NavigationManager.ToBaseRelativePath("admin/instruction_set_extensions");
+        if(_creating)
+            Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        else
+            await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
 
-                return;
-            }
+        _editing  = false;
+        _creating = false;
+        _model    = await Service.GetAsync(Id);
+        StateHasChanged();
+    }
 
-            _model = await Service.GetAsync(Id);
-            StateHasChanged();
-        }
+    void ValidateName(ValidatorEventArgs e)
+    {
+        Validators.ValidateString(e, L["Extension name cannot contain more than 45 characters."], 45);
 
-        async void OnSaveClicked()
-        {
-            if(string.IsNullOrWhiteSpace(_model.Extension) ||
-               _model.Extension.Length > 45                ||
-               !Service.VerifyUnique(_model.Extension))
-                return;
+        if(e.Status != ValidationStatus.Success) return;
 
-            if(_creating)
-                Id = await Service.CreateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
-            else
-                await Service.UpdateAsync(_model, (await UserManager.GetUserAsync(_authState.User)).Id);
+        if(Service.VerifyUnique(_model.Extension)) return;
 
-            _editing  = false;
-            _creating = false;
-            _model    = await Service.GetAsync(Id);
-            StateHasChanged();
-        }
-
-        void ValidateName(ValidatorEventArgs e)
-        {
-            Validators.ValidateString(e, L["Extension name cannot contain more than 45 characters."], 45);
-
-            if(e.Status != ValidationStatus.Success)
-                return;
-
-            if(Service.VerifyUnique(_model.Extension))
-                return;
-
-            e.Status    = ValidationStatus.Error;
-            e.ErrorText = L["Extension name must be unique."];
-        }
+        e.Status    = ValidationStatus.Error;
+        e.ErrorText = L["Extension name must be unique."];
     }
 }

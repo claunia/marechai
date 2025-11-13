@@ -29,82 +29,77 @@ using System.Threading.Tasks;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class LicensesService(MarechaiContext context)
 {
-    public class LicensesService
+    public async Task<List<License>> GetAsync() => await context.Licenses.OrderBy(l => l.Name)
+                                                                .Select(l => new License
+                                                                 {
+                                                                     FsfApproved = l.FsfApproved,
+                                                                     Id          = l.Id,
+                                                                     Link        = l.Link,
+                                                                     Name        = l.Name,
+                                                                     OsiApproved = l.OsiApproved,
+                                                                     SPDX        = l.SPDX
+                                                                 })
+                                                                .ToListAsync();
+
+    public async Task<License> GetAsync(int id) => await context.Licenses.Where(l => l.Id == id)
+                                                                 .Select(l => new License
+                                                                  {
+                                                                      FsfApproved = l.FsfApproved,
+                                                                      Id          = l.Id,
+                                                                      Link        = l.Link,
+                                                                      Name        = l.Name,
+                                                                      OsiApproved = l.OsiApproved,
+                                                                      SPDX        = l.SPDX,
+                                                                      Text        = l.Text
+                                                                  })
+                                                                 .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(License viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        License model = await context.Licenses.FindAsync(viewModel.Id);
 
-        public LicensesService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<License>> GetAsync() =>
-            await _context.Licenses.OrderBy(l => l.Name).Select(l => new License
-            {
-                FsfApproved = l.FsfApproved,
-                Id          = l.Id,
-                Link        = l.Link,
-                Name        = l.Name,
-                OsiApproved = l.OsiApproved,
-                SPDX        = l.SPDX
-            }).ToListAsync();
+        model.FsfApproved = viewModel.FsfApproved;
+        model.Link        = viewModel.Link;
+        model.Name        = viewModel.Name;
+        model.OsiApproved = viewModel.OsiApproved;
+        model.SPDX        = viewModel.SPDX;
+        model.Text        = viewModel.Text;
 
-        public async Task<License> GetAsync(int id) =>
-            await _context.Licenses.Where(l => l.Id == id).Select(l => new License
-            {
-                FsfApproved = l.FsfApproved,
-                Id          = l.Id,
-                Link        = l.Link,
-                Name        = l.Name,
-                OsiApproved = l.OsiApproved,
-                SPDX        = l.SPDX,
-                Text        = l.Text
-            }).FirstOrDefaultAsync();
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task UpdateAsync(License viewModel, string userId)
+    public async Task<int> CreateAsync(License viewModel, string userId)
+    {
+        var model = new License
         {
-            License model = await _context.Licenses.FindAsync(viewModel.Id);
+            FsfApproved = viewModel.FsfApproved,
+            Link        = viewModel.Link,
+            Name        = viewModel.Name,
+            OsiApproved = viewModel.OsiApproved,
+            SPDX        = viewModel.SPDX,
+            Text        = viewModel.Text
+        };
 
-            if(model is null)
-                return;
+        await context.Licenses.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.FsfApproved = viewModel.FsfApproved;
-            model.Link        = viewModel.Link;
-            model.Name        = viewModel.Name;
-            model.OsiApproved = viewModel.OsiApproved;
-            model.SPDX        = viewModel.SPDX;
-            model.Text        = viewModel.Text;
+        return model.Id;
+    }
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+    public async Task DeleteAsync(int id, string userId)
+    {
+        License item = await context.Licenses.FindAsync(id);
 
-        public async Task<int> CreateAsync(License viewModel, string userId)
-        {
-            var model = new License
-            {
-                FsfApproved = viewModel.FsfApproved,
-                Link        = viewModel.Link,
-                Name        = viewModel.Name,
-                OsiApproved = viewModel.OsiApproved,
-                SPDX        = viewModel.SPDX,
-                Text        = viewModel.Text
-            };
+        if(item is null) return;
 
-            await _context.Licenses.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        context.Licenses.Remove(item);
 
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            License item = await _context.Licenses.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.Licenses.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

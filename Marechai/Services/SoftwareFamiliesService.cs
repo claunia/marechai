@@ -30,73 +30,68 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class SoftwareFamiliesService(MarechaiContext context)
 {
-    public class SoftwareFamiliesService
+    public async Task<List<SoftwareFamilyViewModel>> GetAsync() => await context.SoftwareFamilies.OrderBy(b => b.Name)
+                                                                                .Select(b => new SoftwareFamilyViewModel
+                                                                                 {
+                                                                                     Id         = b.Id,
+                                                                                     Name       = b.Name,
+                                                                                     Parent     = b.Parent.Name,
+                                                                                     Introduced = b.Introduced,
+                                                                                     ParentId   = b.ParentId
+                                                                                 })
+                                                                                .ToListAsync();
+
+    public async Task<SoftwareFamilyViewModel> GetAsync(ulong id) => await context.SoftwareFamilies
+                                                                        .Where(b => b.Id == id)
+                                                                        .Select(b => new SoftwareFamilyViewModel
+                                                                         {
+                                                                             Id         = b.Id,
+                                                                             Name       = b.Name,
+                                                                             Parent     = b.Parent.Name,
+                                                                             Introduced = b.Introduced,
+                                                                             ParentId   = b.ParentId
+                                                                         })
+                                                                        .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(SoftwareFamilyViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        SoftwareFamily model = await context.SoftwareFamilies.FindAsync(viewModel.Id);
 
-        public SoftwareFamiliesService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<SoftwareFamilyViewModel>> GetAsync() => await _context.
-                                                                             SoftwareFamilies.OrderBy(b => b.Name).
-                                                                             Select(b => new SoftwareFamilyViewModel
-                                                                             {
-                                                                                 Id         = b.Id,
-                                                                                 Name       = b.Name,
-                                                                                 Parent     = b.Parent.Name,
-                                                                                 Introduced = b.Introduced,
-                                                                                 ParentId   = b.ParentId
-                                                                             }).ToListAsync();
+        model.Name       = viewModel.Name;
+        model.ParentId   = viewModel.ParentId;
+        model.Introduced = viewModel.Introduced;
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<SoftwareFamilyViewModel> GetAsync(ulong id) =>
-            await _context.SoftwareFamilies.Where(b => b.Id == id).Select(b => new SoftwareFamilyViewModel
-            {
-                Id         = b.Id,
-                Name       = b.Name,
-                Parent     = b.Parent.Name,
-                Introduced = b.Introduced,
-                ParentId   = b.ParentId
-            }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(SoftwareFamilyViewModel viewModel, string userId)
+    public async Task<ulong> CreateAsync(SoftwareFamilyViewModel viewModel, string userId)
+    {
+        var model = new SoftwareFamily
         {
-            SoftwareFamily model = await _context.SoftwareFamilies.FindAsync(viewModel.Id);
+            Name       = viewModel.Name,
+            ParentId   = viewModel.ParentId,
+            Introduced = viewModel.Introduced
+        };
 
-            if(model is null)
-                return;
+        await context.SoftwareFamilies.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Name       = viewModel.Name;
-            model.ParentId   = viewModel.ParentId;
-            model.Introduced = viewModel.Introduced;
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        return model.Id;
+    }
 
-        public async Task<ulong> CreateAsync(SoftwareFamilyViewModel viewModel, string userId)
-        {
-            var model = new SoftwareFamily
-            {
-                Name       = viewModel.Name,
-                ParentId   = viewModel.ParentId,
-                Introduced = viewModel.Introduced
-            };
+    public async Task DeleteAsync(ulong id, string userId)
+    {
+        SoftwareFamily item = await context.SoftwareFamilies.FindAsync(id);
 
-            await _context.SoftwareFamilies.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        if(item is null) return;
 
-            return model.Id;
-        }
+        context.SoftwareFamilies.Remove(item);
 
-        public async Task DeleteAsync(ulong id, string userId)
-        {
-            SoftwareFamily item = await _context.SoftwareFamilies.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.SoftwareFamilies.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

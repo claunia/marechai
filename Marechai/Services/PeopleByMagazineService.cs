@@ -30,54 +30,51 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class PeopleByMagazineService(MarechaiContext context)
 {
-    public class PeopleByMagazineService
+    public async Task<List<PersonByMagazineViewModel>> GetByMagazine(long magazineId) => (await context
+                                                                                               .PeopleByMagazines.Where(p => p.MagazineId == magazineId)
+                                                                                               .Select(p => new PersonByMagazineViewModel
+                                                                                                {
+                                                                                                    Id          = p.Id,
+                                                                                                    Name        = p.Person.Name,
+                                                                                                    Surname     = p.Person.Surname,
+                                                                                                    Alias       = p.Person.Alias,
+                                                                                                    DisplayName = p.Person.DisplayName,
+                                                                                                    PersonId    = p.PersonId,
+                                                                                                    RoleId      = p.RoleId,
+                                                                                                    Role        = p.Role.Name,
+                                                                                                    MagazineId  = p.MagazineId
+                                                                                                })
+                                                                                               .ToListAsync()).OrderBy(p => p.FullName)
+                                                                                                              .ThenBy(p => p.Role)
+                                                                                                              .ToList();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        PeopleByMagazine item = await context.PeopleByMagazines.FindAsync(id);
 
-        public PeopleByMagazineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<PersonByMagazineViewModel>> GetByMagazine(long magazineId) =>
-            (await _context.PeopleByMagazines.Where(p => p.MagazineId == magazineId).
-                            Select(p => new PersonByMagazineViewModel
-                            {
-                                Id          = p.Id,
-                                Name        = p.Person.Name,
-                                Surname     = p.Person.Surname,
-                                Alias       = p.Person.Alias,
-                                DisplayName = p.Person.DisplayName,
-                                PersonId    = p.PersonId,
-                                RoleId      = p.RoleId,
-                                Role        = p.Role.Name,
-                                MagazineId  = p.MagazineId
-                            }).ToListAsync()).OrderBy(p => p.FullName).ThenBy(p => p.Role).ToList();
+        context.PeopleByMagazines.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int personId, long magazineId, string roleId, string userId)
+    {
+        var item = new PeopleByMagazine
         {
-            PeopleByMagazine item = await _context.PeopleByMagazines.FindAsync(id);
+            PersonId   = personId,
+            MagazineId = magazineId,
+            RoleId     = roleId
+        };
 
-            if(item is null)
-                return;
+        await context.PeopleByMagazines.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.PeopleByMagazines.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int personId, long magazineId, string roleId, string userId)
-        {
-            var item = new PeopleByMagazine
-            {
-                PersonId   = personId,
-                MagazineId = magazineId,
-                RoleId     = roleId
-            };
-
-            await _context.PeopleByMagazines.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

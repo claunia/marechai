@@ -29,8 +29,8 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<SoftwareFamiliesService>
 @inject IStringLocalizer<SoftwareFamiliesService> L
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser>              UserManager
+@inject AuthenticationStateProvider               AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Software families"]</h3>
 @if(_softwareFamilies is null)
@@ -58,7 +58,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _softwareFamilies)
+    @foreach(SoftwareFamilyViewModel item in _softwareFamilies)
     {
         <tr>
             <td>
@@ -80,11 +80,11 @@
     </tbody>
 </table>
 <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-    <ModalBackdrop />
+    <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete software family"]</ModalTitle>
-            <CloseButton Clicked="@HideModal" />
+            <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(L["Are you sure you want to delete the software family {0}?"], _currentSoftwareFamily?.Name)</Text>

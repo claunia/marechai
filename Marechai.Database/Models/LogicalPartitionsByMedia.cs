@@ -25,13 +25,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class LogicalPartitionsByMedia : BaseModel<ulong>
 {
-    public class LogicalPartitionsByMedia : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Media Media { get; set; }
-        [Required]
-        public virtual LogicalPartition Partition { get; set; }
-    }
+    [Required]
+    public virtual Media Media { get; set; }
+    [Required]
+    public virtual LogicalPartition Partition { get; set; }
 }

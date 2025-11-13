@@ -30,48 +30,44 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class DocumentsByMachineService(MarechaiContext context)
 {
-    public class DocumentsByMachineService
+    public async Task<List<DocumentByMachineViewModel>> GetByDocument(long bookId) => await context.DocumentsByMachines
+                                                                                                   .Where(p => p.DocumentId == bookId)
+                                                                                                   .Select(p => new DocumentByMachineViewModel
+                                                                                                    {
+                                                                                                        Id         = p.Id,
+                                                                                                        DocumentId = p.DocumentId,
+                                                                                                        MachineId  = p.MachineId,
+                                                                                                        Machine    = p.Machine.Name
+                                                                                                    })
+                                                                                                   .OrderBy(p => p.Machine)
+                                                                                                   .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        DocumentsByMachine item = await context.DocumentsByMachines.FindAsync(id);
 
-        public DocumentsByMachineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<DocumentByMachineViewModel>> GetByDocument(long bookId) =>
-            await _context.DocumentsByMachines.Where(p => p.DocumentId == bookId).
-                           Select(p => new DocumentByMachineViewModel
-                           {
-                               Id         = p.Id,
-                               DocumentId = p.DocumentId,
-                               MachineId  = p.MachineId,
-                               Machine    = p.Machine.Name
-                           }).OrderBy(p => p.Machine).ToListAsync();
+        context.DocumentsByMachines.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int machineId, long bookId, string userId)
+    {
+        var item = new DocumentsByMachine
         {
-            DocumentsByMachine item = await _context.DocumentsByMachines.FindAsync(id);
+            MachineId  = machineId,
+            DocumentId = bookId
+        };
 
-            if(item is null)
-                return;
+        await context.DocumentsByMachines.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.DocumentsByMachines.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int machineId, long bookId, string userId)
-        {
-            var item = new DocumentsByMachine
-            {
-                MachineId  = machineId,
-                DocumentId = bookId
-            };
-
-            await _context.DocumentsByMachines.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

@@ -26,15 +26,14 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Marechai.Database.Models
-{
-    public abstract class BaseModel<TKey>
-    {
-        public TKey Id { get; set; }
+namespace Marechai.Database.Models;
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedOn { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime UpdatedOn { get; set; }
-    }
+public abstract class BaseModel<TKey>
+{
+    public TKey Id { get; set; }
+
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public DateTime CreatedOn { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+    public DateTime UpdatedOn { get; set; }
 }

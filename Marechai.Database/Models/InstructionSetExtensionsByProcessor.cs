@@ -25,16 +25,15 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace Marechai.Database.Models
-{
-    public class InstructionSetExtensionsByProcessor : BaseModel<int>
-    {
-        [Remote("VerifyUnique", "InstructionSetExtensionsByProcessor", "Admin", AdditionalFields = nameof(ExtensionId))]
-        public int ProcessorId { get; set; }
-        [Remote("VerifyUnique", "InstructionSetExtensionsByProcessor", "Admin", AdditionalFields = nameof(ProcessorId))]
-        public int ExtensionId { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual InstructionSetExtension Extension { get; set; }
-        public virtual Processor               Processor { get; set; }
-    }
+public class InstructionSetExtensionsByProcessor : BaseModel<int>
+{
+    [Remote("VerifyUnique", "InstructionSetExtensionsByProcessor", "Admin", AdditionalFields = nameof(ExtensionId))]
+    public int ProcessorId { get; set; }
+    [Remote("VerifyUnique", "InstructionSetExtensionsByProcessor", "Admin", AdditionalFields = nameof(ProcessorId))]
+    public int ExtensionId { get; set; }
+
+    public virtual InstructionSetExtension Extension { get; set; }
+    public virtual Processor               Processor { get; set; }
 }

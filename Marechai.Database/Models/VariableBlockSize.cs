@@ -23,13 +23,12 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+// Not for a table
+public class VariableBlockSize
 {
-    // Not for a table
-    public class VariableBlockSize
-    {
-        public ulong Start { get; set; }
-        public ulong End   { get; set; }
-        public uint  Size  { get; set; }
-    }
+    public ulong Start { get; set; }
+    public ulong End   { get; set; }
+    public uint  Size  { get; set; }
 }

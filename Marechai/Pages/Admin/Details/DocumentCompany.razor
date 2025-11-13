@@ -31,13 +31,13 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<DocumentCompaniesService>
 @inject IStringLocalizer<DocumentCompaniesService> L
-@inject CompaniesService CompaniesService
-@inject NavigationManager NavigationManager
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject CompaniesService                           CompaniesService
+@inject NavigationManager                          NavigationManager
+@inject UserManager<ApplicationUser>               UserManager
+@inject AuthenticationStateProvider                AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Document company details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -62,29 +62,29 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_noLinkedCompany" @TValue="bool">@L["None (linked company)"]</Check>
-}
-            @if(!_editing ||
-                !_noLinkedCompany)
+            }
+            @if(!_editing || !_noLinkedCompany)
             {
                 <Select @bind-SelectedValue="@_model.CompanyId" Disabled="!_editing" @TValue="int?">
-                    @foreach(var company in _companies)
+                    @foreach(CompanyViewModel company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-}
+                    }
                 </Select>
-}
+            }
         </Field>
-}
+    }
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/document_people">@L["Back to list"]</a>
 </div>

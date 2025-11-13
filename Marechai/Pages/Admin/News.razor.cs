@@ -30,59 +30,56 @@ using Blazorise;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin
+namespace Marechai.Pages.Admin;
+
+public partial class News
 {
-    public partial class News
+    NewsViewModel       _currentNews;
+    bool                _deleteInProgress;
+    Modal               _frmDelete;
+    bool                _loaded;
+    List<NewsViewModel> _news;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        NewsViewModel       _currentNews;
-        bool                _deleteInProgress;
-        Modal               _frmDelete;
-        bool                _loaded;
-        List<NewsViewModel> _news;
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _news   = await Service.GetAsync();
-            _loaded = true;
-            StateHasChanged();
-        }
-
-        void ShowModal(int itemId)
-        {
-            _currentNews = _news.FirstOrDefault(n => n.Id == itemId);
-            _frmDelete.Show();
-        }
-
-        void HideModal() => _frmDelete.Hide();
-
-        async void ConfirmDelete()
-        {
-            if(_currentNews is null)
-                return;
-
-            _deleteInProgress = true;
-            _news             = null;
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            await Service.DeleteAsync(_currentNews.Id, (await UserManager.GetUserAsync(authState.User)).Id);
-            _news = await Service.GetAsync();
-
-            _deleteInProgress = false;
-            _frmDelete.Hide();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            // Tell we finished loading
-            StateHasChanged();
-        }
-
-        void ModalClosing(ModalClosingEventArgs obj) => _currentNews = null;
+        _news   = await Service.GetAsync();
+        _loaded = true;
+        StateHasChanged();
     }
+
+    void ShowModal(int itemId)
+    {
+        _currentNews = _news.FirstOrDefault(n => n.Id == itemId);
+        _frmDelete.Show();
+    }
+
+    void HideModal() => _frmDelete.Hide();
+
+    async void ConfirmDelete()
+    {
+        if(_currentNews is null) return;
+
+        _deleteInProgress = true;
+        _news             = null;
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        await Service.DeleteAsync(_currentNews.Id, (await UserManager.GetUserAsync(authState.User)).Id);
+        _news = await Service.GetAsync();
+
+        _deleteInProgress = false;
+        _frmDelete.Hide();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        // Tell we finished loading
+        StateHasChanged();
+    }
+
+    void ModalClosing(ModalClosingEventArgs obj) => _currentNews = null;
 }

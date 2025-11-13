@@ -31,18 +31,18 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<MagazinesService>
 @inject IStringLocalizer<MagazinesService> L
-@inject Iso31661NumericService CountriesService
-@inject DocumentCompaniesService CompaniesService
-@inject DocumentRolesService DocumentRolesService
-@inject CompaniesByMagazineService CompaniesByMagazineService
-@inject NavigationManager NavigationManager
-@inject IWebHostEnvironment Host
-@inject IJSRuntime JSRuntime
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject Iso31661NumericService             CountriesService
+@inject DocumentCompaniesService           CompaniesService
+@inject DocumentRolesService               DocumentRolesService
+@inject CompaniesByMagazineService         CompaniesByMagazineService
+@inject NavigationManager                  NavigationManager
+@inject IWebHostEnvironment                Host
+@inject IJSRuntime                         JSRuntime
+@inject UserManager<ApplicationUser>       UserManager
+@inject AuthenticationStateProvider        AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Magazine details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -67,9 +67,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownNativeTitle" @TValue="bool">@L["Unknown (native title)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownNativeTitle)
+            }
+            @if(!_editing || !_unknownNativeTitle)
             {
                 <Validation Validator="@ValidateNativeTitle">
                     <TextEdit @bind-Text="@_model.NativeTitle" Disabled="!_editing">
@@ -78,19 +77,19 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.FirstPublication != null)
     {
         <Field>
             <FieldLabel>@L["First publication"]</FieldLabel>
             @if(_editing)
             {
-                <Check @bind-Checked="@_unknownFirstPublication" @TValue="bool">@L["Unknown (first publication date)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownFirstPublication)
+                <Check @bind-Checked="@_unknownFirstPublication"
+                       @TValue="bool">@L["Unknown (first publication date)"]</Check>
+            }
+            @if(!_editing || !_unknownFirstPublication)
             {
                 <Validation Validator="@ValidateFirstPublication">
                     <DateEdit @bind-Date="@_model.FirstPublication" ReadOnly="!_editing" @TValue="DateTime?">
@@ -99,9 +98,9 @@
                         </Feedback>
                     </DateEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.CountryId != null)
     {
         <Field>
@@ -109,19 +108,18 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownCountry" @TValue="bool">@L["Unknown (country of publication)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownCountry)
+            }
+            @if(!_editing || !_unknownCountry)
             {
                 <Select @bind-SelectedValue="@_model.CountryId" Disabled="!_editing" @TValue="short?">
-                    @foreach(var country in _countries)
+                    @foreach(Iso31661Numeric country in _countries)
                     {
                         <SelectItem @TValue="short?" Value="@country.Id">@country.Name</SelectItem>
-}
+                    }
                 </Select>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Issn != null)
     {
         <Field>
@@ -129,9 +127,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownIssn" @TValue="bool">@L["Unknown (ISSN)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownIssn)
+            }
+            @if(!_editing || !_unknownIssn)
             {
                 <Validation Validator="@ValidateIssn">
                     <TextEdit @bind-Text="@_model.Issn" ReadOnly="!_editing">
@@ -140,52 +137,56 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/magazines">@L["Back to list"]</a>
 </div>
 @if(!_editing)
 {
-    <hr />
+    <hr/>
     <h3>@L["Companies involved in this magazine"]</h3>
+
     <Button Clicked="OnAddCompanyClick" Color="Color.Success" Disabled="_addingCompany">@L["Add new (company)"]</Button>
+
     @if(_addingCompany)
     {
         <div>
             <Field>
                 <FieldLabel>@L["Company"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyId" Disabled="_savingCompany" @TValue="int?">
-                    @foreach(var company in _companies)
+                    @foreach(DocumentCompanyViewModel company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Field>
                 <FieldLabel>@L["Role"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyRoleId" Disabled="!_editing" @TValue="string">
-                    @foreach(var role in _roles)
+                    @foreach(DocumentRoleViewModel role in _roles)
                     {
                         <SelectItem @TValue="string" Value="@role.Id">@role.Name</SelectItem>
-}
+                    }
                 </Select>
             </Field>
             <Button Clicked="@CancelAddCompany" Color="Color.Primary" Disabled="@_savingCompany">@L["Cancel"]</Button>
             <Button Clicked="@ConfirmAddCompany" Color="Color.Success" Disabled="@_savingCompany">@L["Add"]</Button>
         </div>
     }
+
     @if(_magazineCompanies?.Count > 0)
     {
         <div>
@@ -202,7 +203,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(var item in _magazineCompanies)
+                @foreach(CompanyByMagazineViewModel item in _magazineCompanies)
                 {
                     <tr>
                         <td>
@@ -212,7 +213,8 @@
                             @item.Role
                         </td>
                         <td>
-                            <Button Clicked="() => {ShowCompanyDeleteModal(item.Id);}" Color="Color.Danger" Disabled="@_addingCompany">@L["Delete"]</Button>
+                            <Button Clicked="() => {ShowCompanyDeleteModal(item.Id);}" Color="Color.Danger"
+                                    Disabled="@_addingCompany">@L["Delete"]</Button>
                         </td>
                     </tr>
                 }
@@ -222,18 +224,20 @@
     }
 
     <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-        <ModalBackdrop />
+        <ModalBackdrop/>
         <ModalContent Centered="true">
             <ModalHeader>
                 <ModalTitle>@_deleteTitle</ModalTitle>
-                <CloseButton Clicked="@HideModal" />
+                <CloseButton Clicked="@HideModal"/>
             </ModalHeader>
             <ModalBody>
                 <Text>@_deleteText</Text>
             </ModalBody>
             <ModalFooter>
                 <Button Clicked="@HideModal" Color="Color.Primary" Disabled="@_deleteInProgress">@L["Cancel"]</Button>
-                <Button Clicked="@ConfirmDelete" Color="Color.Danger" Disabled="@_deleteInProgress">@L["Delete"]</Button>
+                <Button Clicked="@ConfirmDelete" Color="Color.Danger"
+                        Disabled="@_deleteInProgress">@L["Delete"]</Button>
             </ModalFooter>
         </ModalContent>
-    </Modal>}
+    </Modal>
+}

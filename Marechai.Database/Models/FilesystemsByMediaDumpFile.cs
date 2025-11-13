@@ -25,13 +25,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class FilesystemsByMediaDumpFile : BaseModel<ulong>
 {
-    public class FilesystemsByMediaDumpFile : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Filesystem Filesystem { get; set; }
-        [Required]
-        public virtual MediaDumpFileImage MediaDumpFileImage { get; set; }
-    }
+    [Required]
+    public virtual Filesystem Filesystem { get; set; }
+    [Required]
+    public virtual MediaDumpFileImage MediaDumpFileImage { get; set; }
 }

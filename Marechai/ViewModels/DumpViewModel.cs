@@ -25,17 +25,16 @@
 
 using System;
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class DumpViewModel : BaseViewModel<ulong>
 {
-    public class DumpViewModel : BaseViewModel<ulong>
-    {
-        public string    Dumper       { get; set; }
-        public string    UserId       { get; set; }
-        public string    DumpingGroup { get; set; }
-        public DateTime? DumpDate     { get; set; }
-        public string    UserName     { get; set; }
-        public ulong     MediaId      { get; set; }
-        public string    MediaTitle   { get; set; }
-        public ulong     MediaDumpId  { get; set; }
-    }
+    public string    Dumper       { get; set; }
+    public string    UserId       { get; set; }
+    public string    DumpingGroup { get; set; }
+    public DateTime? DumpDate     { get; set; }
+    public string    UserName     { get; set; }
+    public ulong     MediaId      { get; set; }
+    public string    MediaTitle   { get; set; }
+    public ulong     MediaDumpId  { get; set; }
 }

@@ -25,26 +25,24 @@
 
 using System.Threading.Tasks;
 
-namespace Marechai.Pages.Consoles
+namespace Marechai.Pages.Consoles;
+
+public partial class Index
 {
-    public partial class Index
+    int  _consoles;
+    bool _loaded;
+    int  _maxYear;
+    int  _minYear;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        int  _consoles;
-        bool _loaded;
-        int  _maxYear;
-        int  _minYear;
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
+        _consoles = await Service.GetConsolesCountAsync();
+        _minYear  = await Service.GetMinimumYearAsync();
+        _maxYear  = await Service.GetMaximumYearAsync();
 
-            _consoles = await Service.GetConsolesCountAsync();
-            _minYear  = await Service.GetMinimumYearAsync();
-            _maxYear  = await Service.GetMaximumYearAsync();
-
-            _loaded = true;
-            StateHasChanged();
-        }
+        _loaded = true;
+        StateHasChanged();
     }
 }

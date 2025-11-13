@@ -29,8 +29,8 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<InstructionSetsService>
 @inject IStringLocalizer<InstructionSetsService> L
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser>             UserManager
+@inject AuthenticationStateProvider              AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Instruction sets"]</h3>
 @if(_instructionSets is null)
@@ -52,7 +52,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _instructionSets)
+    @foreach(InstructionSet item in _instructionSets)
     {
         <tr>
             <td>
@@ -68,11 +68,11 @@
     </tbody>
 </table>
 <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-    <ModalBackdrop />
+    <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete instruction set"]</ModalTitle>
-            <CloseButton Clicked="@HideModal" />
+            <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(L["Are you sure you want to delete {0}?"], _instructionSet?.Name)</Text>

@@ -25,12 +25,11 @@
 
 using System;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class MarechaiDb
 {
-    public class MarechaiDb
-    {
-        public int             Id      { get; set; }
-        public int             Version { get; set; }
-        public DateTimeOffset? Updated { get; set; }
-    }
+    public int             Id      { get; set; }
+    public int             Version { get; set; }
+    public DateTimeOffset? Updated { get; set; }
 }

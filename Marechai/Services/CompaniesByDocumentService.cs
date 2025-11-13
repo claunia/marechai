@@ -30,51 +30,48 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class CompaniesByDocumentService(MarechaiContext context)
 {
-    public class CompaniesByDocumentService
+    public async Task<List<CompanyByDocumentViewModel>> GetByDocument(long documentId) => await context
+                                                                                               .CompaniesByDocuments.Where(p => p.DocumentId == documentId)
+                                                                                               .Select(p => new CompanyByDocumentViewModel
+                                                                                                {
+                                                                                                    Id         = p.Id,
+                                                                                                    Company    = p.Company.Name,
+                                                                                                    CompanyId  = p.CompanyId,
+                                                                                                    RoleId     = p.RoleId,
+                                                                                                    Role       = p.Role.Name,
+                                                                                                    DocumentId = p.DocumentId
+                                                                                                })
+                                                                                               .OrderBy(p => p.Company)
+                                                                                               .ThenBy(p => p.Role)
+                                                                                               .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        CompaniesByDocument item = await context.CompaniesByDocuments.FindAsync(id);
 
-        public CompaniesByDocumentService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<CompanyByDocumentViewModel>> GetByDocument(long documentId) =>
-            await _context.CompaniesByDocuments.Where(p => p.DocumentId == documentId).
-                           Select(p => new CompanyByDocumentViewModel
-                           {
-                               Id         = p.Id,
-                               Company    = p.Company.Name,
-                               CompanyId  = p.CompanyId,
-                               RoleId     = p.RoleId,
-                               Role       = p.Role.Name,
-                               DocumentId = p.DocumentId
-                           }).OrderBy(p => p.Company).ThenBy(p => p.Role).ToListAsync();
+        context.CompaniesByDocuments.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int companyId, long documentId, string roleId, string userId)
+    {
+        var item = new CompaniesByDocument
         {
-            CompaniesByDocument item = await _context.CompaniesByDocuments.FindAsync(id);
+            CompanyId  = companyId,
+            DocumentId = documentId,
+            RoleId     = roleId
+        };
 
-            if(item is null)
-                return;
+        await context.CompaniesByDocuments.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.CompaniesByDocuments.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int companyId, long documentId, string roleId, string userId)
-        {
-            var item = new CompaniesByDocument
-            {
-                CompanyId  = companyId,
-                DocumentId = documentId,
-                RoleId     = roleId
-            };
-
-            await _context.CompaniesByDocuments.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

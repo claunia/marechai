@@ -30,105 +30,100 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class BooksService(MarechaiContext context)
 {
-    public class BooksService
+    public async Task<List<BookViewModel>> GetAsync() => await context.Books.OrderBy(b => b.NativeTitle)
+                                                                      .ThenBy(b => b.Published)
+                                                                      .ThenBy(b => b.Title)
+                                                                      .Select(b => new BookViewModel
+                                                                       {
+                                                                           Id          = b.Id,
+                                                                           Title       = b.Title,
+                                                                           NativeTitle = b.NativeTitle,
+                                                                           Published   = b.Published,
+                                                                           Synopsis    = b.Synopsis,
+                                                                           Isbn        = b.Isbn,
+                                                                           CountryId   = b.CountryId,
+                                                                           Pages       = b.Pages,
+                                                                           Edition     = b.Edition,
+                                                                           PreviousId  = b.PreviousId,
+                                                                           SourceId    = b.SourceId,
+                                                                           Country     = b.Country.Name
+                                                                       })
+                                                                      .ToListAsync();
+
+    public async Task<BookViewModel> GetAsync(long id) => await context.Books.Where(b => b.Id == id)
+                                                                        .Select(b => new BookViewModel
+                                                                         {
+                                                                             Id          = b.Id,
+                                                                             Title       = b.Title,
+                                                                             NativeTitle = b.NativeTitle,
+                                                                             Published   = b.Published,
+                                                                             Synopsis    = b.Synopsis,
+                                                                             Isbn        = b.Isbn,
+                                                                             CountryId   = b.CountryId,
+                                                                             Pages       = b.Pages,
+                                                                             Edition     = b.Edition,
+                                                                             PreviousId  = b.PreviousId,
+                                                                             SourceId    = b.SourceId,
+                                                                             Country     = b.Country.Name
+                                                                         })
+                                                                        .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(BookViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        Book model = await context.Books.FindAsync(viewModel.Id);
 
-        public BooksService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<BookViewModel>> GetAsync() => await _context.
-                                                                   Books.OrderBy(b => b.NativeTitle).
-                                                                   ThenBy(b => b.Published).ThenBy(b => b.Title).
-                                                                   Select(b => new BookViewModel
-                                                                   {
-                                                                       Id          = b.Id,
-                                                                       Title       = b.Title,
-                                                                       NativeTitle = b.NativeTitle,
-                                                                       Published   = b.Published,
-                                                                       Synopsis    = b.Synopsis,
-                                                                       Isbn        = b.Isbn,
-                                                                       CountryId   = b.CountryId,
-                                                                       Pages       = b.Pages,
-                                                                       Edition     = b.Edition,
-                                                                       PreviousId  = b.PreviousId,
-                                                                       SourceId    = b.SourceId,
-                                                                       Country     = b.Country.Name
-                                                                   }).ToListAsync();
+        model.Title       = viewModel.Title;
+        model.NativeTitle = viewModel.NativeTitle;
+        model.Published   = viewModel.Published;
+        model.Synopsis    = viewModel.Synopsis;
+        model.CountryId   = viewModel.CountryId;
+        model.Isbn        = viewModel.Isbn;
+        model.Pages       = viewModel.Pages;
+        model.Edition     = viewModel.Edition;
+        model.PreviousId  = viewModel.PreviousId;
+        model.SourceId    = viewModel.SourceId;
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task<BookViewModel> GetAsync(long id) => await _context.Books.Where(b => b.Id == id).
-                                                                             Select(b => new BookViewModel
-                                                                             {
-                                                                                 Id          = b.Id,
-                                                                                 Title       = b.Title,
-                                                                                 NativeTitle = b.NativeTitle,
-                                                                                 Published   = b.Published,
-                                                                                 Synopsis    = b.Synopsis,
-                                                                                 Isbn        = b.Isbn,
-                                                                                 CountryId   = b.CountryId,
-                                                                                 Pages       = b.Pages,
-                                                                                 Edition     = b.Edition,
-                                                                                 PreviousId  = b.PreviousId,
-                                                                                 SourceId    = b.SourceId,
-                                                                                 Country     = b.Country.Name
-                                                                             }).FirstOrDefaultAsync();
-
-        public async Task UpdateAsync(BookViewModel viewModel, string userId)
+    public async Task<long> CreateAsync(BookViewModel viewModel, string userId)
+    {
+        var model = new Book
         {
-            Book model = await _context.Books.FindAsync(viewModel.Id);
+            Title       = viewModel.Title,
+            NativeTitle = viewModel.NativeTitle,
+            Published   = viewModel.Published,
+            Synopsis    = viewModel.Synopsis,
+            CountryId   = viewModel.CountryId,
+            Isbn        = viewModel.Isbn,
+            Pages       = viewModel.Pages,
+            Edition     = viewModel.Edition,
+            PreviousId  = viewModel.PreviousId,
+            SourceId    = viewModel.SourceId
+        };
 
-            if(model is null)
-                return;
+        await context.Books.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Title       = viewModel.Title;
-            model.NativeTitle = viewModel.NativeTitle;
-            model.Published   = viewModel.Published;
-            model.Synopsis    = viewModel.Synopsis;
-            model.CountryId   = viewModel.CountryId;
-            model.Isbn        = viewModel.Isbn;
-            model.Pages       = viewModel.Pages;
-            model.Edition     = viewModel.Edition;
-            model.PreviousId  = viewModel.PreviousId;
-            model.SourceId    = viewModel.SourceId;
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        return model.Id;
+    }
 
-        public async Task<long> CreateAsync(BookViewModel viewModel, string userId)
-        {
-            var model = new Book
-            {
-                Title       = viewModel.Title,
-                NativeTitle = viewModel.NativeTitle,
-                Published   = viewModel.Published,
-                Synopsis    = viewModel.Synopsis,
-                CountryId   = viewModel.CountryId,
-                Isbn        = viewModel.Isbn,
-                Pages       = viewModel.Pages,
-                Edition     = viewModel.Edition,
-                PreviousId  = viewModel.PreviousId,
-                SourceId    = viewModel.SourceId
-            };
+    public async Task<string> GetSynopsisTextAsync(int id) =>
+        (await context.Books.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
 
-            await _context.Books.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+    public async Task DeleteAsync(long id, string userId)
+    {
+        Book item = await context.Books.FindAsync(id);
 
-            return model.Id;
-        }
+        if(item is null) return;
 
-        public async Task<string> GetSynopsisTextAsync(int id) =>
-            (await _context.Books.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
+        context.Books.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
-        {
-            Book item = await _context.Books.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.Books.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

@@ -31,12 +31,12 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<ResolutionsService>
 @inject IStringLocalizer<ResolutionsService> L
-@inject NavigationManager NavigationManager
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager                    NavigationManager
+@inject UserManager<ApplicationUser>         UserManager
+@inject AuthenticationStateProvider          AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Resolution details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -71,9 +71,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownColors" @TValue="bool">@L["Unknown (colors)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownColors)
+            }
+            @if(!_editing || !_unknownColors)
             {
                 <Validation Validator="@ValidateLongBiggerThanZero">
                     <NumericEdit @bind-Value="@_model.Colors" Decimals="0" Disabled="!_editing" @TValue="long?">
@@ -82,9 +81,9 @@
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Palette.HasValue)
     {
         <Field>
@@ -92,9 +91,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownPalette" @TValue="bool">@L["Unknown (colors in palette)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownPalette)
+            }
+            @if(!_editing || !_unknownPalette)
             {
                 <Validation Validator="@ValidateLongBiggerThanZero">
                     <NumericEdit @bind-Value="@_model.Palette" Decimals="0" Disabled="!_editing" @TValue="long?">
@@ -103,25 +101,28 @@
                         </Feedback>
                     </NumericEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     <Field>
-        <Check @bind-Checked="@_model.Chars" Disabled="!_editing" @TValue="bool">@L["Resolution is character based (text only)."]</Check>
+        <Check @bind-Checked="@_model.Chars" Disabled="!_editing"
+               @TValue="bool">@L["Resolution is character based (text only)."]</Check>
     </Field>
     <Field>
-        <Check @bind-Checked="@_model.Grayscale" Disabled="!_editing" @TValue="bool">@L["Resolution only has gray colors."]</Check>
+        <Check @bind-Checked="@_model.Grayscale" Disabled="!_editing"
+               @TValue="bool">@L["Resolution only has gray colors."]</Check>
     </Field>
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/resolutions">@L["Back to list"]</a>
 </div>

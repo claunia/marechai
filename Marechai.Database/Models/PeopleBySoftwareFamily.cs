@@ -26,18 +26,18 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Marechai.Database.Models
-{
-    public class PeopleBySoftwareFamily : BaseModel<ulong>
-    {
-        [Required]
-        public virtual DocumentRole Role { get; set; }
-        [Required]
-        public virtual Person Person { get; set; }
-        [Required]
-        public virtual SoftwareFamily SoftwareFamily { get; set; }
+namespace Marechai.Database.Models;
 
-        [Column(TypeName = "char(3)"), Required]
-        public string RoleId { get; set; }
-    }
+public class PeopleBySoftwareFamily : BaseModel<ulong>
+{
+    [Required]
+    public virtual DocumentRole Role { get; set; }
+    [Required]
+    public virtual Person Person { get; set; }
+    [Required]
+    public virtual SoftwareFamily SoftwareFamily { get; set; }
+
+    [Column(TypeName = "char(3)")]
+    [Required]
+    public string RoleId { get; set; }
 }

@@ -23,19 +23,18 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
-{
-    public class PersonByBookViewModel : BaseViewModel<long>
-    {
-        public int    PersonId    { get; set; }
-        public long   BookId      { get; set; }
-        public string RoleId      { get; set; }
-        public string Role        { get; set; }
-        public string Name        { get; set; }
-        public string Alias       { get; set; }
-        public string Surname     { get; set; }
-        public string DisplayName { get; set; }
+namespace Marechai.ViewModels;
 
-        public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
-    }
+public class PersonByBookViewModel : BaseViewModel<long>
+{
+    public int    PersonId    { get; set; }
+    public long   BookId      { get; set; }
+    public string RoleId      { get; set; }
+    public string Role        { get; set; }
+    public string Name        { get; set; }
+    public string Alias       { get; set; }
+    public string Surname     { get; set; }
+    public string DisplayName { get; set; }
+
+    public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 }

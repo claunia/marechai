@@ -30,69 +30,65 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class DocumentCompaniesService(MarechaiContext context)
 {
-    public class DocumentCompaniesService
+    public async Task<List<DocumentCompanyViewModel>> GetAsync() => await context.DocumentCompanies
+                                                                                 .OrderBy(c => c.Name)
+                                                                                 .Select(d => new DocumentCompanyViewModel
+                                                                                  {
+                                                                                      Id        = d.Id,
+                                                                                      Name      = d.Name,
+                                                                                      Company   = d.Company.Name,
+                                                                                      CompanyId = d.CompanyId
+                                                                                  })
+                                                                                 .ToListAsync();
+
+    public async Task<DocumentCompanyViewModel> GetAsync(int id) => await context.DocumentCompanies
+                                                                       .Where(d => d.Id == id)
+                                                                       .Select(d => new DocumentCompanyViewModel
+                                                                        {
+                                                                            Id        = d.Id,
+                                                                            Name      = d.Name,
+                                                                            CompanyId = d.CompanyId
+                                                                        })
+                                                                       .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(DocumentCompanyViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        DocumentCompany model = await context.DocumentCompanies.FindAsync(viewModel.Id);
 
-        public DocumentCompaniesService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<DocumentCompanyViewModel>> GetAsync() => await _context.
-                                                                              DocumentCompanies.OrderBy(c => c.Name).
-                                                                              Select(d => new DocumentCompanyViewModel
-                                                                              {
-                                                                                  Id        = d.Id,
-                                                                                  Name      = d.Name,
-                                                                                  Company   = d.Company.Name,
-                                                                                  CompanyId = d.CompanyId
-                                                                              }).ToListAsync();
+        model.CompanyId = viewModel.CompanyId;
+        model.Name      = viewModel.Name;
 
-        public async Task<DocumentCompanyViewModel> GetAsync(int id) =>
-            await _context.DocumentCompanies.Where(d => d.Id == id).Select(d => new DocumentCompanyViewModel
-            {
-                Id        = d.Id,
-                Name      = d.Name,
-                CompanyId = d.CompanyId
-            }).FirstOrDefaultAsync();
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task UpdateAsync(DocumentCompanyViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(DocumentCompanyViewModel viewModel, string userId)
+    {
+        var model = new DocumentCompany
         {
-            DocumentCompany model = await _context.DocumentCompanies.FindAsync(viewModel.Id);
+            CompanyId = viewModel.CompanyId,
+            Name      = viewModel.Name
+        };
 
-            if(model is null)
-                return;
+        await context.DocumentCompanies.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.CompanyId = viewModel.CompanyId;
-            model.Name      = viewModel.Name;
+        return model.Id;
+    }
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+    public async Task DeleteAsync(int id, string userId)
+    {
+        DocumentCompany item = await context.DocumentCompanies.FindAsync(id);
 
-        public async Task<int> CreateAsync(DocumentCompanyViewModel viewModel, string userId)
-        {
-            var model = new DocumentCompany
-            {
-                CompanyId = viewModel.CompanyId,
-                Name      = viewModel.Name
-            };
+        if(item is null) return;
 
-            await _context.DocumentCompanies.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        context.DocumentCompanies.Remove(item);
 
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            DocumentCompany item = await _context.DocumentCompanies.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.DocumentCompanies.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

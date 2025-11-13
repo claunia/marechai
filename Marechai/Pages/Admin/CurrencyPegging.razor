@@ -29,8 +29,8 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<CurrencyPeggingService>
 @inject IStringLocalizer<CurrencyPeggingService> L
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser>             UserManager
+@inject AuthenticationStateProvider              AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["Currency pegging"]</h3>
 @if(_peggings is null)
@@ -64,7 +64,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach(var item in _peggings)
+    @foreach(CurrencyPeggingViewModel item in _peggings)
     {
         <tr>
             <td>
@@ -92,11 +92,11 @@
     </tbody>
 </table>
 <Modal Closing="@ModalClosing" IsCentered="true" ref="_frmDelete">
-    <ModalBackdrop />
+    <ModalBackdrop/>
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@L["Delete currency pegging"]</ModalTitle>
-            <CloseButton Clicked="@HideModal" />
+            <CloseButton Clicked="@HideModal"/>
         </ModalHeader>
         <ModalBody>
             <Text>@string.Format(L["Are you sure you want to delete the pegging of {0:F} happened to currency {1} with currency {2} since {3}?"], _currentPegging?.Ratio, _currentPegging?.SourceName, _currentPegging?.DestinationName, _currentPegging?.Start.ToLongDateString())</Text>

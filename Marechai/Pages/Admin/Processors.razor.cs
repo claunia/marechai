@@ -30,59 +30,56 @@ using Blazorise;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin
+namespace Marechai.Pages.Admin;
+
+public partial class Processors
 {
-    public partial class Processors
+    bool                     _deleteInProgress;
+    Modal                    _frmDelete;
+    bool                     _loaded;
+    ProcessorViewModel       _processor;
+    List<ProcessorViewModel> _processors;
+
+    void ShowModal(int itemId)
     {
-        bool                     _deleteInProgress;
-        Modal                    _frmDelete;
-        bool                     _loaded;
-        ProcessorViewModel       _processor;
-        List<ProcessorViewModel> _processors;
+        _processor = _processors.FirstOrDefault(n => n.Id == itemId);
+        _frmDelete.Show();
+    }
 
-        void ShowModal(int itemId)
-        {
-            _processor = _processors.FirstOrDefault(n => n.Id == itemId);
-            _frmDelete.Show();
-        }
+    void HideModal() => _frmDelete.Hide();
 
-        void HideModal() => _frmDelete.Hide();
+    async void ConfirmDelete()
+    {
+        if(_processor is null) return;
 
-        async void ConfirmDelete()
-        {
-            if(_processor is null)
-                return;
+        _deleteInProgress = true;
+        _processors       = null;
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-            _deleteInProgress = true;
-            _processors       = null;
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        // Yield thread to let UI to update
+        await Task.Yield();
 
-            // Yield thread to let UI to update
-            await Task.Yield();
+        await Service.DeleteAsync(_processor.Id, (await UserManager.GetUserAsync(authState.User)).Id);
+        _processors = await Service.GetAsync();
 
-            await Service.DeleteAsync(_processor.Id, (await UserManager.GetUserAsync(authState.User)).Id);
-            _processors = await Service.GetAsync();
+        _deleteInProgress = false;
+        _frmDelete.Hide();
 
-            _deleteInProgress = false;
-            _frmDelete.Hide();
+        // Yield thread to let UI to update
+        await Task.Yield();
 
-            // Yield thread to let UI to update
-            await Task.Yield();
+        // Tell we finished loading
+        StateHasChanged();
+    }
 
-            // Tell we finished loading
-            StateHasChanged();
-        }
+    void ModalClosing(ModalClosingEventArgs obj) => _processor = null;
 
-        void ModalClosing(ModalClosingEventArgs obj) => _processor = null;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _processors = await Service.GetAsync();
-            _loaded     = true;
-            StateHasChanged();
-        }
+        _processors = await Service.GetAsync();
+        _loaded     = true;
+        StateHasChanged();
     }
 }

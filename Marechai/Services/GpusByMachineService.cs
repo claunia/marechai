@@ -30,48 +30,46 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class GpusByMachineService(MarechaiContext context)
 {
-    public class GpusByMachineService
+    public async Task<List<GpuByMachineViewModel>> GetByMachine(int machineId) => await context.GpusByMachine
+                                                                                               .Where(g => g.MachineId == machineId)
+                                                                                               .Select(g => new GpuByMachineViewModel
+                                                                                                {
+                                                                                                    Id          = g.Id,
+                                                                                                    Name        = g.Gpu.Name,
+                                                                                                    CompanyName = g.Gpu.Company.Name,
+                                                                                                    GpuId       = g.GpuId,
+                                                                                                    MachineId   = g.MachineId
+                                                                                                })
+                                                                                               .OrderBy(g => g.CompanyName)
+                                                                                               .ThenBy(g => g.Name)
+                                                                                               .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        GpusByMachine item = await context.GpusByMachine.FindAsync(id);
 
-        public GpusByMachineService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<GpuByMachineViewModel>> GetByMachine(int machineId) =>
-            await _context.GpusByMachine.Where(g => g.MachineId == machineId).Select(g => new GpuByMachineViewModel
-            {
-                Id          = g.Id,
-                Name        = g.Gpu.Name,
-                CompanyName = g.Gpu.Company.Name,
-                GpuId       = g.GpuId,
-                MachineId   = g.MachineId
-            }).OrderBy(g => g.CompanyName).ThenBy(g => g.Name).ToListAsync();
+        context.GpusByMachine.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int gpuId, int machineId, string userId)
+    {
+        var item = new GpusByMachine
         {
-            GpusByMachine item = await _context.GpusByMachine.FindAsync(id);
+            GpuId     = gpuId,
+            MachineId = machineId
+        };
 
-            if(item is null)
-                return;
+        await context.GpusByMachine.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.GpusByMachine.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int gpuId, int machineId, string userId)
-        {
-            var item = new GpusByMachine
-            {
-                GpuId     = gpuId,
-                MachineId = machineId
-            };
-
-            await _context.GpusByMachine.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

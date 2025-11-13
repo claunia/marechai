@@ -25,63 +25,58 @@
 
 using System;
 
-namespace Marechai.Database.Schemas
+namespace Marechai.Database.Schemas;
+
+public static class HexStringToBytesConverter
 {
-    public static class HexStringToBytesConverter
+    public static byte[] StringToHex(string v)
     {
-        public static byte[] StringToHex(string v)
+        var    hex = new byte[v.Length / 2];
+        string str = v.ToLowerInvariant();
+
+        for(var i = 0; i < hex.Length; i++)
         {
-            byte[] hex = new byte[v.Length / 2];
-            string str = v.ToLowerInvariant();
+            char c0 = str[i * 2];
+            char c1 = str[i * 2 + 1];
 
-            for(int i = 0; i < hex.Length; i++)
-            {
-                char c0 = str[i * 2];
-                char c1 = str[(i * 2) + 1];
+            if(c0 >= 0x30 && c0 <= 0x39)
+                hex[i] += (byte)((c0 - 0x30) * 16);
+            else if(c0 >= 0x61 && c0 <= 0x66)
+                hex[i] += (byte)((c0 - 0x57) * 16);
+            else
+                throw new ArgumentOutOfRangeException();
 
-                if(c0 >= 0x30 &&
-                   c0 <= 0x39)
-                    hex[i] += (byte)((c0 - 0x30) * 16);
-                else if(c0 >= 0x61 &&
-                        c0 <= 0x66)
-                    hex[i] += (byte)((c0 - 0x57) * 16);
-                else
-                    throw new ArgumentOutOfRangeException();
-
-                if(c1 >= 0x30 &&
-                   c1 <= 0x39)
-                    hex[i] += (byte)(c1 - 0x30);
-                else if(c1 >= 0x61 &&
-                        c1 <= 0x66)
-                    hex[i] += (byte)(c1 - 0x57);
-                else
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return hex;
+            if(c1 >= 0x30 && c1 <= 0x39)
+                hex[i] += (byte)(c1 - 0x30);
+            else if(c1 >= 0x61 && c1 <= 0x66)
+                hex[i] += (byte)(c1 - 0x57);
+            else
+                throw new ArgumentOutOfRangeException();
         }
 
-        public static string HexToString(byte[] v)
+        return hex;
+    }
+
+    public static string HexToString(byte[] v)
+    {
+        var chars = new char[v.Length * 2];
+
+        for(var i = 0; i < v.Length; i++)
         {
-            char[] chars = new char[v.Length * 2];
+            int c0 = v[i] / 0x10;
+            int c1 = v[i] & 0xF;
 
-            for(int i = 0; i < v.Length; i++)
-            {
-                int c0 = v[i] / 0x10;
-                int c1 = v[i] & 0xF;
+            if(c0 >= 10)
+                chars[i * 2] = (char)(c0 + 0x57);
+            else
+                chars[i * 2] = (char)(c0 + 0x30);
 
-                if(c0 >= 10)
-                    chars[i * 2] = (char)(c0 + 0x57);
-                else
-                    chars[i * 2] = (char)(c0 + 0x30);
-
-                if(c1 >= 10)
-                    chars[(i * 2) + 1] = (char)(c1 + 0x57);
-                else
-                    chars[(i * 2) + 1] = (char)(c1 + 0x30);
-            }
-
-            return new string(chars);
+            if(c1 >= 10)
+                chars[i * 2 + 1] = (char)(c1 + 0x57);
+            else
+                chars[i * 2 + 1] = (char)(c1 + 0x30);
         }
+
+        return new string(chars);
     }
 }

@@ -7,6 +7,7 @@ This repository contains the Marechai software.
 For contributing please read [here.](CONTRIBUTING.md)
 
 For development you need:
+
 * A .NET Core 3.1 compatible development environment.
 * .NET Core 3.1 SDK
 * ASP.NET Core 3.1 runtime

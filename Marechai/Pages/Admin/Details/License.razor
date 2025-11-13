@@ -31,12 +31,12 @@
 @using Marechai.Database.Models
 @inherits OwningComponentBase<LicensesService>
 @inject IStringLocalizer<LicensesService> L
-@inject NavigationManager NavigationManager
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager                 NavigationManager
+@inject UserManager<ApplicationUser>      UserManager
+@inject AuthenticationStateProvider       AuthenticationStateProvider
 @attribute [Authorize(Roles = "UberAdmin, Admin")]
 <h3>@L["License details"]</h3>
-<hr />
+<hr/>
 @if(!_loaded)
 {
     <p align="center">@L["Loading..."]</p>
@@ -66,11 +66,11 @@
     </Field>
     <Field>
         <FieldLabel>@L["FSF approved"]</FieldLabel>
-        <Check @bind-Checked="@_model.FsfApproved" Disabled="!_editing" @TValue="bool" />
+        <Check @bind-Checked="@_model.FsfApproved" Disabled="!_editing" @TValue="bool"/>
     </Field>
     <Field>
         <FieldLabel>@L["OSI approved"]</FieldLabel>
-        <Check @bind-Checked="@_model.OsiApproved" Disabled="!_editing" @TValue="bool" />
+        <Check @bind-Checked="@_model.OsiApproved" Disabled="!_editing" @TValue="bool"/>
     </Field>
     @if(_editing || _model.Link != null)
     {
@@ -79,9 +79,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownLink" @TValue="bool">@L["Unknown or none (text link)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownLink)
+            }
+            @if(!_editing || !_unknownLink)
             {
                 <Validation Validator="@ValidateLink">
                     <TextEdit @bind-Text="@_model.Link" ReadOnly="!_editing">
@@ -90,9 +89,9 @@
                         </Feedback>
                     </TextEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
     @if(_editing || _model.Text != null)
     {
         <Field>
@@ -100,9 +99,8 @@
             @if(_editing)
             {
                 <Check @bind-Checked="@_unknownText" @TValue="bool">@L["Unknown (license text)"]</Check>
-}
-            @if(!_editing ||
-                !_unknownText)
+            }
+            @if(!_editing || !_unknownText)
             {
                 <Validation Validator="@ValidateText">
                     <MemoEdit @bind-Text="@_model.Text" Plaintext="true" ReadOnly="!_editing" @Rows="200">
@@ -111,19 +109,20 @@
                         </Feedback>
                     </MemoEdit>
                 </Validation>
-}
+            }
         </Field>
-}
+    }
 </div>
 <div>
     @if(!_editing)
     {
         <Button Clicked="@OnEditClicked" Color="Color.Primary">@L["Edit"]</Button>
-}
+    }
     else
     {
         <Button Clicked="@OnSaveClicked" Color="Color.Success">@L["Save"]</Button>
+
         <Button Clicked="@OnCancelClicked" Color="Color.Danger">@L["Cancel"]</Button>
-}
+    }
     <a class="btn btn-secondary" href="/admin/licenses">@L["Back to list"]</a>
 </div>

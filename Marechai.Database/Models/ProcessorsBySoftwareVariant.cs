@@ -25,16 +25,15 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class ProcessorsBySoftwareVariant : BaseModel<ulong>
 {
-    public class ProcessorsBySoftwareVariant : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Processor Processor { get; set; }
-        [Required]
-        public virtual SoftwareVariant SoftwareVariant { get; set; }
-        public float? Speed       { get;                      set; }
-        public bool?  Minimum     { get;                      set; }
-        public bool?  Recommended { get;                      set; }
-    }
+    [Required]
+    public virtual Processor Processor { get; set; }
+    [Required]
+    public virtual SoftwareVariant SoftwareVariant { get; set; }
+    public float? Speed       { get;                      set; }
+    public bool?  Minimum     { get;                      set; }
+    public bool?  Recommended { get;                      set; }
 }

@@ -30,8 +30,8 @@
 @using Marechai.Database
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
-@inject IWebHostEnvironment Host
-@inject MachinePhotosService MachinePhotosService
+@inject IWebHostEnvironment               Host
+@inject MachinePhotosService              MachinePhotosService
 
 @if(!_loaded)
 {
@@ -47,24 +47,24 @@
     return;
 }
 <p align="center">
-    @if(_machine.CompanyLogo != null &&
-        File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _machine.CompanyLogo + ".svg")))
+    @if(_machine.CompanyLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _machine.CompanyLogo + ".svg")))
     {
         <picture>
             <source srcset="/assets/logos/@(_machine.CompanyLogo).svg" type="image/svg+xml">
             <source srcset="/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
     /assets/logos/webp/2x/@(_machine.CompanyLogo).webp 2x,
     /assets/logos/webp/3x/@(_machine.CompanyLogo).webp 3x" type="image/webp">
-            <img alt="" height="auto" src="/assets/logos/png/1x/@(_machine.CompanyLogo).png" srcset="/assets/logos/png/1x/@(_machine.CompanyLogo).png,
+            <img alt="" height="auto" src="/assets/logos/png/1x/@(_machine.CompanyLogo).png"
+                 srcset="/assets/logos/png/1x/@(_machine.CompanyLogo).png,
                              /assets/logos/png/2x/@(_machine.CompanyLogo).png 2x,
-                             /assets/logos/png/3x/@(_machine.CompanyLogo).png 3x" style="max-height: 256px; max-width: 256px" width="auto" />
+                             /assets/logos/png/3x/@(_machine.CompanyLogo).png 3x"
+                 style="max-height: 256px; max-width: 256px" width="auto"/>
         </picture>
     }
 </p>
 @{ var counter = 0; }
 
-@if(_machine.Introduced.HasValue &&
-    _machine.Introduced.Value.Year == 1000)
+@if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year == 1000)
 {
     <b>
         <div style="text-align: center;">@L["PROTOTYPE"]</div>
@@ -77,569 +77,425 @@
 </b>
 <table class="table">
 
-@if(_machine.Introduced.HasValue &&
-    _machine.Introduced.Value.Year != 1000)
-{
-    <tr>
-        <th class="text-right" scope=row style="width: 33%;">
-            @L["Introduction date"]
-        </th>
-        <td style="width: 67%;">
-            @if(_machine.Type == MachineType.Computer)
-            {
-                <a href="/computers/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.ToLongDateString()</a>
-            }
-            else if(_machine.Type == MachineType.Console)
-            {
-                <a href="/consoles/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.ToLongDateString()</a>
-            }
-            else
-            {
-                @_machine.Introduced.Value.ToLongDateString()
-            }
-        </td>
-    </tr>
-}
-@if(_machine.FamilyId != null)
-{
-    <tr>
-        <th class="text-right" scope=row style="width: 33%;">
-            @L["Family"]
-        </th>
-        <td style="width: 67%;">
-            <a href="/machines/family/@_machine.FamilyId">
-                @_machine.FamilyName
-            </a>
-        </td>
-    </tr>
-}
-@if(_machine.Model != null)
-{
-    <tr>
-        <th class="text-right" scope=row style="width: 33%;">
-            @L["Model"]
-        </th>
-        <td style="width: 67%;">
-            @_machine.Model
-        </td>
-    </tr>
-}
-@if(_machine.Processors.Count > 0)
-{
-    <tr>
-    <th class="text-right" scope=row style="width: 33%;">
-        @L["Processors"]
-    </th>
-    <td style="width: 67%;">
-    <table class="table table-borderless">
-    @{ counter = 0; }
-    @foreach(var processor in _machine.Processors)
+    @if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year != 1000)
     {
-        var currentCounter = counter;
-
         <tr>
-        <td>
-        <Collapse Visible="@_processorVisible[currentCounter]">
-        <CollapseHeader>
-            @if(processor.Speed > 0)
-            {
-                @(processor.GprSize > 0 ? string.Format(L["{0} @{1}MHz ({2} bits)"], processor.Name, processor.Speed, processor.GprSize) : string.Format(L["{0} @{1}MHz"], processor.Name, processor.Speed))
-            }
-            else
-            {
-                @($"{processor.Name}")
-            }
-            <span class="btn btn-link" @onclick="() => _processorVisible[currentCounter] = !_processorVisible[currentCounter]">
-                @L["+info"]
-            </span>
-        </CollapseHeader>
-        <CollapseBody Class="card card-body">
-        <table class="table table-borderless">
-        @if(processor.ModelCode != null &&
-            processor.ModelCode != processor.Name)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Model"]</td>
-                <td style="width: 67%;">@processor.ModelCode</td>
-            </tr>
-        }
-        <tr>
-            <td class="text-right" style="width: 33%">@L["Manufacturer"]</td>
+            <th class="text-right" scope=row style="width: 33%;">
+                @L["Introduction date"]
+            </th>
             <td style="width: 67%;">
-                <a href="/processors/company/@processor.CompanyId">
-                    @processor.CompanyName
+                @if(_machine.Type == MachineType.Computer)
+                {
+                    <a href="/computers/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.ToLongDateString()</a>
+                }
+                else if(_machine.Type == MachineType.Console)
+                {
+                    <a href="/consoles/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.ToLongDateString()</a>
+                }
+                else
+                {
+                    @_machine.Introduced.Value.ToLongDateString()
+                }
+            </td>
+        </tr>
+    }
+    @if(_machine.FamilyId != null)
+    {
+        <tr>
+            <th class="text-right" scope=row style="width: 33%;">
+                @L["Family"]
+            </th>
+            <td style="width: 67%;">
+                <a href="/machines/family/@_machine.FamilyId">
+                    @_machine.FamilyName
                 </a>
             </td>
         </tr>
-        @if(processor.Introduced != null)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Introduction date"]</td>
-                <td style="width: 67%;">@($"{processor.Introduced:yyyy}")</td>
-            </tr>
-        }
-        @if(processor.InstructionSet != null)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Instruction set"]</td>
-                <td style="width: 67%;">@processor.InstructionSet</td>
-            </tr>
-        }
-        @if(processor.Speed > 0)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Nominal speed"]</td>
-                <td style="width: 67%;">@string.Format(L["{0} MHz"], processor.Speed)</td>
-            </tr>
-        }
-        @if(processor.Gprs > 0 ||
-            processor.Fprs > 0 ||
-            processor.SimdRegisters > 0)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Registers"]</td>
-                <td style="width: 67%;">
-                    <table class="table table-borderless">
-                        @if(processor.Gprs > 0)
-                        {
-                            <tr>
-                                <td>
-                                    @if(processor.FprSize > 0 &&
-                                        processor.Fprs == 0 &&
-                                        processor.SimdSize > 0 &&
-                                        processor.SimdRegisters == 0)
-                                    {
-                                        @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits."], processor.Gprs, processor.GprSize, processor.FprSize, processor.SimdSize))
-                                    }
-                                    else if(processor.FprSize > 0 &&
-                                            processor.Fprs == 0)
-                                    {
-                                        @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits."], processor.Gprs, processor.GprSize, processor.FprSize))
-                                    }
-                                    else if(processor.FprSize == 0 &&
-                                            processor.SimdSize > 0 &&
-                                            processor.SimdRegisters == 0)
-                                    {
-                                        @(string.Format(L["{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits."], processor.Gprs, processor.GprSize, processor.SimdSize))
-                                    }
-                                    else
-                                    {
-                                        @(string.Format(L["{0} general purpose registers of {1} bits."], processor.Gprs, processor.GprSize))
-                                    }
-                                </td>
-                            </tr>
-                        }
-                        @if(processor.Fprs > 0)
-                        {
-                            <tr>
-                                <td>
-                                    @if(processor.SimdSize > 0 &&
-                                        processor.SimdRegisters == 0)
-                                    {
-                                        @(string.Format(L["{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits."], processor.Fprs, processor.FprSize, processor.SimdSize))
-                                    }
-                                    else
-                                    {
-                                        @(string.Format(L["{0} floating point registers of {1} bits."], processor.Fprs, processor.FprSize))
-                                    }
-                                </td>
-                            </tr>
-                        }
-                        @if(processor.SimdRegisters > 0)
-                        {
-                            <tr>
-                                <td>
-                                    <abbr title="@L["Single instruction, multiple data"]">
-                                        @string.Format(L["{0} SIMD registers of {1} bits."], processor.SimdRegisters, processor.SimdSize)
-                                    </abbr>
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                </td>
-            </tr>
-        }
-        @if(processor.Cores > 1)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Multi-core"]</td>
-                <td style="width: 67%;">@string.Format(L["{0} cores."], processor.Cores)</td>
-            </tr>
-        }
-        @if(processor.ThreadsPerCore > 1)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">
-                    <abbr title="@L["Simultaneous multithreading"]">SMT</abbr>
-                </td>
-                <td style="width: 67%;">
-                    @string.Format(processor.Cores > 1 ? L["{0} threads per core."] : L["{0} threads."], processor.ThreadsPerCore)
-                </td>
-            </tr>
-        }
-        @if(processor.DataBus > 0 ||
-            processor.AddrBus > 0)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Bus"]</td>
-                <td style="width: 67%;">
-                    <table class="table table-borderless">
-                        @if(processor.DataBus > 0)
-                        {
-                            <tr>
-                                <td>
-                                    @string.Format(L["{0}-bit data."], processor.DataBus)
-                                </td>
-                            </tr>
-                        }
-                        @if(processor.AddrBus > 0)
-                        {
-                            <tr>
-                                <td>
-                                    @string.Format(L["{0}-bit address."], processor.AddrBus)
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                </td>
-            </tr>
-        }
-
-        @if(processor.L1Instruction > 0 ||
-            processor.L1Data > 0 ||
-            processor.L2 > 0 ||
-            processor.L2 > 0)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Cache"]</td>
-                <td style="width: 67%;">
-                    <table class="table table-borderless">
-                        @if(processor.L1Instruction > 0)
-                        {
-                            <tr>
-                                <td>
-                                    @string.Format(processor.L1Data < 0 ? L["{0}KiB combined instruction-data L1"] : L["{0}KiB instruction L1"], processor.L1Instruction)
-                                </td>
-                            </tr>
-                        }
-                        @if(processor.L1Data > 0)
-                        {
-                            <tr>
-                                <td>
-                                    @string.Format(L["{0}KiB data L1"], processor.L1Data)
-                                </td>
-                            </tr>
-                        }
-                        @if(processor.L2 > 0)
-                        {
-                            <tr>
-                                <td>
-                                    @string.Format(L["{0}KiB L2"], processor.L2)
-                                </td>
-                            </tr>
-                        }
-                        @if(processor.L3 > 0)
-                        {
-                            <tr>
-                                <td>
-                                    @string.Format(L["{0}KiB L3"], processor.L3)
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                </td>
-            </tr>
-        }
-        @if(processor.Package != null)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Package"]</td>
-                <td style="width: 67%;">@processor.Package</td>
-            </tr>
-        }
-        @if(processor.Process != null ||
-            processor.ProcessNm > 0)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Manufacturing process"]</td>
-                <td style="width: 67%;">
-                    @if(processor.Process != null &&
-                        processor.ProcessNm > 0)
-                    {
-                        if(processor.ProcessNm > 100)
-                        {
-                            @(string.Format(L["{0} @{1}µm"], processor.Process, processor.ProcessNm / 100))
-                        }
-                        else
-                        {
-                            @(string.Format(L["{0} @{1}nm"], processor.Process, processor.ProcessNm))
-                        }
-                    }
-                    else if(processor.ProcessNm > 0)
-                    {
-                        if(processor.ProcessNm > 100)
-                        {
-                            @(string.Format(L["{0}µm"], processor.ProcessNm / 100))
-                        }
-                        else
-                        {
-                            @(string.Format(L["{0}nm"], processor.ProcessNm))
-                        }
-                    }
-                    else
-                    {
-                        @processor.Process
-                    }
-                </td>
-            </tr>
-        }
-        @if(processor.DieSize > 0)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Die size"]</td>
-                <td style="width: 67%;">@string.Format(L["{0} mm²"], processor.DieSize)</td>
-            </tr>
-        }
-        @if(processor.Transistors > 0)
-        {
-            <tr>
-                <td class="text-right" style="width: 33%">@L["Transistors"]</td>
-                <td style="width: 67%;">@processor.Transistors</td>
-            </tr>
-        }
-        </table>
-        </CollapseBody>
-        </Collapse>
-        </td>
-        </tr>
-
-        counter++;
     }
-    </table>
-    </td>
-    </tr>
-}
-@if(_machine.Memory != null &&
-    _machine.Memory.Count > 0)
-{
-    <tr>
-        <th class="text-right" scope=row style="width: 33%;">
-            @L["Memory"]
-        </th>
-        <td style="width: 67%;">
-            <table class="table table-borderless">
-                @foreach(var memory in _machine.Memory)
-                {
-                    string memValue;
-                    if(memory.Size > 1073741824)
+    @if(_machine.Model != null)
+    {
+        <tr>
+            <th class="text-right" scope=row style="width: 33%;">
+                @L["Model"]
+            </th>
+            <td style="width: 67%;">
+                @_machine.Model
+            </td>
+        </tr>
+    }
+    @if(_machine.Processors.Count > 0)
+    {
+        <tr>
+            <th class="text-right" scope=row style="width: 33%;">
+                @L["Processors"]
+            </th>
+            <td style="width: 67%;">
+                <table class="table table-borderless">
+                    @{ counter = 0; }
+                    @foreach(ProcessorViewModel processor in _machine.Processors)
                     {
-                        memValue = string.Format(L["{0} GiB"], memory.Size / 1073741824);
-                    }
-                    else if(memory.Size > 1048576)
-                    {
-                        memValue = string.Format(L["{0} MiB"], memory.Size / 1048576);
-                    }
-                    else if(memory.Size > 1024)
-                    {
-                        memValue = string.Format(L["{0} KiB"], memory.Size / 1024);
-                    }
-                    else if(memory.Size > 0)
-                    {
-                        memValue = string.Format(L["{0} bytes"], memory.Size);
-                    }
-                    else
-                    {
-                        memValue = L["Unknown size"];
-                    }
+                        int currentCounter = counter;
 
-                    string speedValue;
-                    if(memory.Speed > 1000000000)
-                    {
-                        speedValue = string.Format(L["{0} GHz"], memory.Speed / 1000000000);
-                    }
-                    else if(memory.Speed > 1000000)
-                    {
-                        speedValue = string.Format(L["{0} MHz"], memory.Speed / 1000000);
-                    }
-                    else if(memory.Speed > 1000)
-                    {
-                        speedValue = string.Format(L["{0} KHz"], memory.Speed / 1000);
-                    }
-                    else if(memory.Speed > 0)
-                    {
-                        speedValue = string.Format(L["{0} Hz"], memory.Speed);
-                    }
-                    else
-                    {
-                        speedValue = L["unknown speed"];
-                    }
-
-                    <tr>
-                        <td>@string.Format(L["{0} of {1} memory ({2} at {3})"], memValue, memory.Usage, memory.Type, speedValue)</td>
-                    </tr>
-                }
-            </table>
-        </td>
-    </tr>
-}
-@if(_machine.Gpus.Count > 0)
-{
-    <tr>
-        <th class="text-right" scope=row style="width: 33%;">
-            @L["Graphics processing units"]
-        </th>
-        <td style="width: 67%;">
-            <table class="table table-borderless">
-                @{ counter = 0; }
-                @foreach(var gpu in _machine.Gpus)
-                {
-                    var currentCounter = counter;
-
-                    if(gpu.Id == -2)
-                    {
-                        <td>
-                            <Collapse Visible="@_gpuVisible[currentCounter]">
-                                <CollapseHeader>
-                                    @L["Framebuffer"]
-                                    <span class="btn btn-link" @onclick="() => _gpuVisible[currentCounter] = !_gpuVisible[currentCounter]">
-                                        @L["+info"]
-                                    </span>
-                                </CollapseHeader>
-                                <CollapseBody Class="card card-body">
-                                    @L["This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit."]
-                                </CollapseBody>
-                            </Collapse>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <Collapse Visible="@_gpuVisible[currentCounter]">
-                                <CollapseHeader>
-                                    @($"{gpu.Name}")
-                                    <span class="btn btn-link" @onclick="() => _gpuVisible[currentCounter] = !_gpuVisible[currentCounter]">
-                                        @L["+info"]
-                                    </span>
-                                </CollapseHeader>
-                                <CollapseBody Class="card card-body">
-                                    <table class="table table-borderless">
-                                        @if(gpu.ModelCode != null &&
-                                            gpu.ModelCode != gpu.Name)
-                                        {
-                                            <tr>
-                                                <td class="text-right" style="width: 33%">@L["Model"]</td>
-                                                <td style="width: 67%">@gpu.ModelCode</td>
-                                            </tr>
-                                        }
-                                        <tr>
-                                            <td class="text-right" style="width: 33%">@L["Manufacturer"]</td>
-                                            <td style="width: 67%">
-                                                <a href="/gpus/company/@gpu.CompanyId">
-                                                    @gpu.Company
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        @if(gpu.Introduced != null)
-                                        {
-                                            <tr>
-                                                <td class="text-right" style="width: 33%">@L["Introduction date"]</td>
-                                                <td style="width: 67%">@($"{gpu.Introduced:yyyy}")</td>
-                                            </tr>
-                                        }
-                                        @if(gpu.Package != null)
-                                        {
-                                            <tr>
-                                                <td class="text-right" style="width: 33%">@L["Package"]</td>
-                                                <td style="width: 67%">@gpu.Package</td>
-                                            </tr>
-                                        }
-                                        @if(gpu.Process != null ||
-                                            gpu.ProcessNm > 0)
-                                        {
-                                            <tr>
-                                                <td class="text-right" style="width: 33%">@L["Manufacturing process"]</td>
-                                                <td style="width: 67%">
-                                                    @if(gpu.Process != null &&
-                                                        gpu.ProcessNm > 0)
-                                                    {
-                                                        if(gpu.ProcessNm > 100)
-                                                        {
-                                                            @(string.Format(L["{0} @{1}µm"], gpu.Process, gpu.ProcessNm / 100))
-                                                        }
-                                                        else
-                                                        {
-                                                            @(string.Format(L["{0} @{1}nm"], gpu.Process, gpu.ProcessNm))
-                                                        }
-                                                    }
-                                                    else if(gpu.ProcessNm > 0)
-                                                    {
-                                                        if(gpu.ProcessNm > 100)
-                                                        {
-                                                            @(string.Format(L["{0}µm"], gpu.ProcessNm / 100))
-                                                        }
-                                                        else
-                                                        {
-                                                            @(string.Format(L["{0}nm"], gpu.ProcessNm))
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        @gpu.Process
-                                                    }
-                                                </td>
-                                            </tr>
-                                        }
-                                        @if(gpu.DieSize > 0)
-                                        {
-                                            <tr>
-                                                <td class="text-right" style="width: 33%">@L["Die size"]</td>
-                                                <td style="width: 67%">@string.Format(L["{0} mm²"], gpu.DieSize)</td>
-                                            </tr>
-                                        }
-                                        @if(gpu.Transistors > 0)
-                                        {
-                                            <tr>
-                                                <td class="text-right" style="width: 33%">@L["Transistors"]</td>
-                                                <td style="width: 67%">@gpu.Transistors</td>
-                                            </tr>
-                                        }
-                                    </table>
-                                </CollapseBody>
-                            </Collapse>
-                        </td>
-                    }
-                    counter++;
-                }
-            </table>
-        </td>
-    </tr>
-}
-@if(_machine.SoundSynthesizers.Count > 0)
-{
-    <tr>
-        <th class="text-right" scope=row style="width: 33%;">
-            @L["Sound synthesizers"]
-        </th>
-        <td style="width: 67%;">
-            <table class="table table-borderless">
-                @{ counter = 0; }
-                @foreach(var sound in _machine.SoundSynthesizers)
-                {
-                    var currentCounter = counter;
-
-                    <tr>
-                        @if(sound.Id == -2)
-                        {
+                        <tr>
                             <td>
-                                <Collapse Visible="@_soundVisible[currentCounter]">
+                                <Collapse Visible="@_processorVisible[currentCounter]">
                                     <CollapseHeader>
-                                        @L["Software"]
-                                        <span class="btn btn-link" @onclick="() => _soundVisible[currentCounter] = !_soundVisible[currentCounter]">
-                                            @L["+info"]
-                                        </span>
+                                        @if(processor.Speed > 0)
+                                        {
+                                            @(processor.GprSize > 0 ? string.Format(L["{0} @{1}MHz ({2} bits)"], processor.Name, processor.Speed, processor.GprSize) : string.Format(L["{0} @{1}MHz"], processor.Name, processor.Speed))
+                                        }
+                                        else
+                                        {
+                                            @($"{processor.Name}")
+                                        }
+                                        <span class="btn btn-link"
+                                              @onclick="() => _processorVisible[currentCounter] = !_processorVisible[currentCounter]">
+                @L["+info"]
+            </span>
                                     </CollapseHeader>
                                     <CollapseBody Class="card card-body">
-                                        @L["This machine directly sends data to a DAC or similar connected to the audio output."]
+                                        <table class="table table-borderless">
+                                            @if(processor.ModelCode != null && processor.ModelCode != processor.Name)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Model"]</td>
+                                                    <td style="width: 67%;">@processor.ModelCode</td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td class="text-right" style="width: 33%">@L["Manufacturer"]</td>
+                                                <td style="width: 67%;">
+                                                    <a href="/processors/company/@processor.CompanyId">
+                                                        @processor.CompanyName
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            @if(processor.Introduced != null)
+                                            {
+                                                <tr>
+                                                    <td class="text-right"
+                                                        style="width: 33%">@L["Introduction date"]</td>
+                                                    <td style="width: 67%;">@($"{processor.Introduced:yyyy}")</td>
+                                                </tr>
+                                            }
+                                            @if(processor.InstructionSet != null)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Instruction set"]</td>
+                                                    <td style="width: 67%;">@processor.InstructionSet</td>
+                                                </tr>
+                                            }
+                                            @if(processor.Speed > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Nominal speed"]</td>
+                                                    <td style="width: 67%;">@string.Format(L["{0} MHz"], processor.Speed)</td>
+                                                </tr>
+                                            }
+                                            @if(processor.Gprs > 0 || processor.Fprs > 0 || processor.SimdRegisters > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Registers"]</td>
+                                                    <td style="width: 67%;">
+                                                        <table class="table table-borderless">
+                                                            @if(processor.Gprs > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @if(processor.FprSize > 0 && processor.Fprs == 0 && processor.SimdSize > 0 && processor.SimdRegisters == 0)
+                                                                        {
+                                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits."], processor.Gprs, processor.GprSize, processor.FprSize, processor.SimdSize))
+                                                                        }
+                                                                        else if(processor.FprSize > 0 && processor.Fprs == 0)
+                                                                        {
+                                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits."], processor.Gprs, processor.GprSize, processor.FprSize))
+                                                                        }
+                                                                        else if(processor.FprSize == 0 && processor.SimdSize > 0 && processor.SimdRegisters == 0)
+                                                                        {
+                                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits."], processor.Gprs, processor.GprSize, processor.SimdSize))
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @(string.Format(L["{0} general purpose registers of {1} bits."], processor.Gprs, processor.GprSize))
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            @if(processor.Fprs > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @if(processor.SimdSize > 0 && processor.SimdRegisters == 0)
+                                                                        {
+                                                                            @(string.Format(L["{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits."], processor.Fprs, processor.FprSize, processor.SimdSize))
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @(string.Format(L["{0} floating point registers of {1} bits."], processor.Fprs, processor.FprSize))
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            @if(processor.SimdRegisters > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <abbr
+                                                                            title="@L["Single instruction, multiple data"]">
+                                                                            @string.Format(L["{0} SIMD registers of {1} bits."], processor.SimdRegisters, processor.SimdSize)
+                                                                        </abbr>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @if(processor.Cores > 1)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Multi-core"]</td>
+                                                    <td style="width: 67%;">@string.Format(L["{0} cores."], processor.Cores)</td>
+                                                </tr>
+                                            }
+                                            @if(processor.ThreadsPerCore > 1)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">
+                                                        <abbr title="@L["Simultaneous multithreading"]">SMT</abbr>
+                                                    </td>
+                                                    <td style="width: 67%;">
+                                                        @string.Format(processor.Cores > 1 ? L["{0} threads per core."] : L["{0} threads."], processor.ThreadsPerCore)
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @if(processor.DataBus > 0 || processor.AddrBus > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Bus"]</td>
+                                                    <td style="width: 67%;">
+                                                        <table class="table table-borderless">
+                                                            @if(processor.DataBus > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @string.Format(L["{0}-bit data."], processor.DataBus)
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            @if(processor.AddrBus > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @string.Format(L["{0}-bit address."], processor.AddrBus)
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                            @if(processor.L1Instruction > 0 || processor.L1Data > 0 || processor.L2 > 0 || processor.L2 > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Cache"]</td>
+                                                    <td style="width: 67%;">
+                                                        <table class="table table-borderless">
+                                                            @if(processor.L1Instruction > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @string.Format(processor.L1Data < 0 ? L["{0}KiB combined instruction-data L1"] : L["{0}KiB instruction L1"], processor.L1Instruction)
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            @if(processor.L1Data > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @string.Format(L["{0}KiB data L1"], processor.L1Data)
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            @if(processor.L2 > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @string.Format(L["{0}KiB L2"], processor.L2)
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            @if(processor.L3 > 0)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @string.Format(L["{0}KiB L3"], processor.L3)
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @if(processor.Package != null)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Package"]</td>
+                                                    <td style="width: 67%;">@processor.Package</td>
+                                                </tr>
+                                            }
+                                            @if(processor.Process != null || processor.ProcessNm > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right"
+                                                        style="width: 33%">@L["Manufacturing process"]</td>
+                                                    <td style="width: 67%;">
+                                                        @if(processor.Process != null && processor.ProcessNm > 0)
+                                                        {
+                                                            if(processor.ProcessNm > 100)
+                                                            {
+                                                                @(string.Format(L["{0} @{1}µm"], processor.Process, processor.ProcessNm / 100))
+                                                            }
+                                                            else
+                                                            {
+                                                                @(string.Format(L["{0} @{1}nm"], processor.Process, processor.ProcessNm))
+                                                            }
+                                                        }
+                                                        else if(processor.ProcessNm > 0)
+                                                        {
+                                                            if(processor.ProcessNm > 100)
+                                                            {
+                                                                @(string.Format(L["{0}µm"], processor.ProcessNm / 100))
+                                                            }
+                                                            else
+                                                            {
+                                                                @(string.Format(L["{0}nm"], processor.ProcessNm))
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @processor.Process
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @if(processor.DieSize > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Die size"]</td>
+                                                    <td style="width: 67%;">@string.Format(L["{0} mm²"], processor.DieSize)</td>
+                                                </tr>
+                                            }
+                                            @if(processor.Transistors > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Transistors"]</td>
+                                                    <td style="width: 67%;">@processor.Transistors</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </CollapseBody>
+                                </Collapse>
+                            </td>
+                        </tr>
+
+                        counter++;
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    @if(_machine.Memory != null && _machine.Memory.Count > 0)
+    {
+        <tr>
+            <th class="text-right" scope=row style="width: 33%;">
+                @L["Memory"]
+            </th>
+            <td style="width: 67%;">
+                <table class="table table-borderless">
+                    @foreach(MemoryViewModel memory in _machine.Memory)
+                    {
+                        string memValue;
+
+                        if(memory.Size > 1073741824)
+                        {
+                            memValue = string.Format(L["{0} GiB"], memory.Size / 1073741824);
+                        }
+                        else if(memory.Size > 1048576)
+                        {
+                            memValue = string.Format(L["{0} MiB"], memory.Size / 1048576);
+                        }
+                        else if(memory.Size > 1024)
+                        {
+                            memValue = string.Format(L["{0} KiB"], memory.Size / 1024);
+                        }
+                        else if(memory.Size > 0)
+                        {
+                            memValue = string.Format(L["{0} bytes"], memory.Size);
+                        }
+                        else
+                        {
+                            memValue = L["Unknown size"];
+                        }
+
+                        string speedValue;
+
+                        if(memory.Speed > 1000000000)
+                        {
+                            speedValue = string.Format(L["{0} GHz"], memory.Speed / 1000000000);
+                        }
+                        else if(memory.Speed > 1000000)
+                        {
+                            speedValue = string.Format(L["{0} MHz"], memory.Speed / 1000000);
+                        }
+                        else if(memory.Speed > 1000)
+                        {
+                            speedValue = string.Format(L["{0} KHz"], memory.Speed / 1000);
+                        }
+                        else if(memory.Speed > 0)
+                        {
+                            speedValue = string.Format(L["{0} Hz"], memory.Speed);
+                        }
+                        else
+                        {
+                            speedValue = L["unknown speed"];
+                        }
+
+                        <tr>
+                            <td>@string.Format(L["{0} of {1} memory ({2} at {3})"], memValue, memory.Usage, memory.Type, speedValue)</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    @if(_machine.Gpus.Count > 0)
+    {
+        <tr>
+            <th class="text-right" scope=row style="width: 33%;">
+                @L["Graphics processing units"]
+            </th>
+            <td style="width: 67%;">
+                <table class="table table-borderless">
+                    @{ counter = 0; }
+                    @foreach(GpuViewModel gpu in _machine.Gpus)
+                    {
+                        int currentCounter = counter;
+
+                        if(gpu.Id == -2)
+                        {
+                            <td>
+                                <Collapse Visible="@_gpuVisible[currentCounter]">
+                                    <CollapseHeader>
+                                        @L["Framebuffer"]
+                                        <span class="btn btn-link"
+                                              @onclick="() => _gpuVisible[currentCounter] = !_gpuVisible[currentCounter]">
+                                        @L["+info"]
+                                    </span>
+                                    </CollapseHeader>
+                                    <CollapseBody Class="card card-body">
+                                        @L["This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit."]
                                     </CollapseBody>
                                 </Collapse>
                             </td>
@@ -647,126 +503,93 @@
                         else
                         {
                             <td>
-                                <Collapse Visible="@_soundVisible[currentCounter]">
+                                <Collapse Visible="@_gpuVisible[currentCounter]">
                                     <CollapseHeader>
-                                        @($"{sound.Name}")
-                                        <span class="btn btn-link" @onclick="() => _soundVisible[currentCounter] = !_soundVisible[currentCounter]">
-                                            @L["+info"]
-                                        </span>
+                                        @($"{gpu.Name}")
+                                        <span class="btn btn-link"
+                                              @onclick="() => _gpuVisible[currentCounter] = !_gpuVisible[currentCounter]">
+                                        @L["+info"]
+                                    </span>
                                     </CollapseHeader>
                                     <CollapseBody Class="card card-body">
                                         <table class="table table-borderless">
-                                            @if(sound.ModelCode != null &&
-                                                sound.ModelCode != sound.Name)
+                                            @if(gpu.ModelCode != null && gpu.ModelCode != gpu.Name)
                                             {
                                                 <tr>
                                                     <td class="text-right" style="width: 33%">@L["Model"]</td>
-                                                    <td style="width: 67%">@sound.ModelCode</td>
+                                                    <td style="width: 67%">@gpu.ModelCode</td>
                                                 </tr>
                                             }
-                                            @if(sound.CompanyId != null)
+                                            <tr>
+                                                <td class="text-right" style="width: 33%">@L["Manufacturer"]</td>
+                                                <td style="width: 67%">
+                                                    <a href="/gpus/company/@gpu.CompanyId">
+                                                        @gpu.Company
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            @if(gpu.Introduced != null)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Manufacturer"]</td>
+                                                    <td class="text-right"
+                                                        style="width: 33%">@L["Introduction date"]</td>
+                                                    <td style="width: 67%">@($"{gpu.Introduced:yyyy}")</td>
+                                                </tr>
+                                            }
+                                            @if(gpu.Package != null)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Package"]</td>
+                                                    <td style="width: 67%">@gpu.Package</td>
+                                                </tr>
+                                            }
+                                            @if(gpu.Process != null || gpu.ProcessNm > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right"
+                                                        style="width: 33%">@L["Manufacturing process"]</td>
                                                     <td style="width: 67%">
-                                                        <a href="/soundsynths/company/@sound.CompanyId">
-                                                            @sound.CompanyName
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(sound.Introduced != null)
-                                            {
-                                                <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Introduction date"]</td>
-                                                    <td style="width: 67%">@($"{sound.Introduced:yyyy}")</td>
-                                                </tr>
-                                            }
-                                            @if(sound.Voices != null ||
-                                                sound.SquareWave != null ||
-                                                sound.WhiteNoise != null)
-                                            {
-                                                <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Generators"]</td>
-                                                    <td style="width: 67%">
-                                                        <table class="table table-borderless">
-                                                            @if(sound.Voices != null)
+                                                        @if(gpu.Process != null && gpu.ProcessNm > 0)
+                                                        {
+                                                            if(gpu.ProcessNm > 100)
                                                             {
-                                                                <tr>
-                                                                    <td>@string.Format(L["{0} voices"], sound.Voices)</td>
-                                                                </tr>
-                                                            }
-                                                            @if(sound.SquareWave != null)
-                                                            {
-                                                                <tr>
-                                                                    <td>@string.Format(L["{0} square wave"], sound.SquareWave)</td>
-                                                                </tr>
-                                                            }
-                                                            @if(sound.WhiteNoise != null)
-                                                            {
-                                                                <tr>
-                                                                    <td>@string.Format(L["{0} white noise"], sound.WhiteNoise)</td>
-                                                                </tr>
-                                                            }
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(sound.Depth != null ||
-                                                sound.Frequency != null)
-                                            {
-                                                <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Sample rate"]</td>
-                                                    <td style="width: 67%">
-                                                        <table class="table table-borderless">
-                                                            @if(sound.Depth != null &&
-                                                                sound.Frequency != null)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @if(sound.Frequency > 1000)
-                                                                        {
-                                                                            @string.Format(L["{0} bits at {1} KHz"], sound.Depth, sound.Frequency / 1000)
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @string.Format(L["{0} bits at {1} Hz"], sound.Depth, sound.Frequency)
-                                                                        }
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                            else if(sound.Depth != null)
-                                                            {
-                                                                <tr>
-                                                                    <td>@string.Format(L["{0} bits"], sound.Depth)</td>
-                                                                </tr>
+                                                                @(string.Format(L["{0} @{1}µm"], gpu.Process, gpu.ProcessNm / 100))
                                                             }
                                                             else
                                                             {
-                                                                <tr>
-                                                                    <td>
-                                                                        @if(sound.Frequency > 1000)
-                                                                        {
-                                                                            @string.Format(L["{0} KHz"], sound.Frequency / 1000)
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @string.Format(L["{0} Hz"], sound.Frequency)
-                                                                        }
-                                                                    </td>
-                                                                </tr>
+                                                                @(string.Format(L["{0} @{1}nm"], gpu.Process, gpu.ProcessNm))
                                                             }
-                                                        </table>
+                                                        }
+                                                        else if(gpu.ProcessNm > 0)
+                                                        {
+                                                            if(gpu.ProcessNm > 100)
+                                                            {
+                                                                @(string.Format(L["{0}µm"], gpu.ProcessNm / 100))
+                                                            }
+                                                            else
+                                                            {
+                                                                @(string.Format(L["{0}nm"], gpu.ProcessNm))
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @gpu.Process
+                                                        }
                                                     </td>
                                                 </tr>
                                             }
-                                            @if(sound.Type != null)
+                                            @if(gpu.DieSize > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Synthesizer type"]</td>
-                                                    <td style="width: 67%">
-                                                        @sound.Type
-                                                    </td>
+                                                    <td class="text-right" style="width: 33%">@L["Die size"]</td>
+                                                    <td style="width: 67%">@string.Format(L["{0} mm²"], gpu.DieSize)</td>
+                                                </tr>
+                                            }
+                                            @if(gpu.Transistors > 0)
+                                            {
+                                                <tr>
+                                                    <td class="text-right" style="width: 33%">@L["Transistors"]</td>
+                                                    <td style="width: 67%">@gpu.Transistors</td>
                                                 </tr>
                                             }
                                         </table>
@@ -774,105 +597,283 @@
                                 </Collapse>
                             </td>
                         }
-                    </tr>
-                    counter++;
-                }
-            </table>
-        </td>
-    </tr>
-}
-@if(_machine.Storage.Count > 0)
-{
-    <tr>
-        <th class="text-right" scope=row style="width: 33%;">
-            @L["Storage"]
-        </th>
-        <td style="width: 67%;">
-            <table class="table table-borderless">
-                @foreach(var storage in _machine.Storage)
-                {
-                    string capString = null;
 
-                    if(storage.Capacity != null)
+                        counter++;
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    @if(_machine.SoundSynthesizers.Count > 0)
+    {
+        <tr>
+            <th class="text-right" scope=row style="width: 33%;">
+                @L["Sound synthesizers"]
+            </th>
+            <td style="width: 67%;">
+                <table class="table table-borderless">
+                    @{ counter = 0; }
+                    @foreach(SoundSynthViewModel sound in _machine.SoundSynthesizers)
                     {
-                        if(storage.Type == StorageType.CompactCassette)
-                        {
-                            capString = string.Format(L["{0} bps"], storage.Capacity);
-                        }
-                        else
-                        {
-                            if(storage.Capacity > 1073741824)
+                        int currentCounter = counter;
+
+                        <tr>
+                            @if(sound.Id == -2)
                             {
-                                capString = string.Format(L["{0} GiB"], storage.Capacity / 1073741824);
-                            }
-                            else if(storage.Capacity > 1048576)
-                            {
-                                capString = string.Format(L["{0} MiB"], storage.Capacity / 1048576);
-                            }
-                            else if(storage.Capacity > 1024)
-                            {
-                                capString = string.Format(L["{0} KiB"], storage.Capacity / 1024);
-                            }
-                            else if(storage.Capacity > 0)
-                            {
-                                capString = string.Format(L["{0} bytes"], storage.Capacity);
+                                <td>
+                                    <Collapse Visible="@_soundVisible[currentCounter]">
+                                        <CollapseHeader>
+                                            @L["Software"]
+                                            <span class="btn btn-link"
+                                                  @onclick="() => _soundVisible[currentCounter] = !_soundVisible[currentCounter]">
+                                            @L["+info"]
+                                        </span>
+                                        </CollapseHeader>
+                                        <CollapseBody Class="card card-body">
+                                            @L["This machine directly sends data to a DAC or similar connected to the audio output."]
+                                        </CollapseBody>
+                                    </Collapse>
+                                </td>
                             }
                             else
                             {
-                                capString = null;
+                                <td>
+                                    <Collapse Visible="@_soundVisible[currentCounter]">
+                                        <CollapseHeader>
+                                            @($"{sound.Name}")
+                                            <span class="btn btn-link"
+                                                  @onclick="() => _soundVisible[currentCounter] = !_soundVisible[currentCounter]">
+                                            @L["+info"]
+                                        </span>
+                                        </CollapseHeader>
+                                        <CollapseBody Class="card card-body">
+                                            <table class="table table-borderless">
+                                                @if(sound.ModelCode != null && sound.ModelCode != sound.Name)
+                                                {
+                                                    <tr>
+                                                        <td class="text-right" style="width: 33%">@L["Model"]</td>
+                                                        <td style="width: 67%">@sound.ModelCode</td>
+                                                    </tr>
+                                                }
+                                                @if(sound.CompanyId != null)
+                                                {
+                                                    <tr>
+                                                        <td class="text-right"
+                                                            style="width: 33%">@L["Manufacturer"]</td>
+                                                        <td style="width: 67%">
+                                                            <a href="/soundsynths/company/@sound.CompanyId">
+                                                                @sound.CompanyName
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @if(sound.Introduced != null)
+                                                {
+                                                    <tr>
+                                                        <td class="text-right"
+                                                            style="width: 33%">@L["Introduction date"]</td>
+                                                        <td style="width: 67%">@($"{sound.Introduced:yyyy}")</td>
+                                                    </tr>
+                                                }
+                                                @if(sound.Voices != null || sound.SquareWave != null || sound.WhiteNoise != null)
+                                                {
+                                                    <tr>
+                                                        <td class="text-right" style="width: 33%">@L["Generators"]</td>
+                                                        <td style="width: 67%">
+                                                            <table class="table table-borderless">
+                                                                @if(sound.Voices != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@string.Format(L["{0} voices"], sound.Voices)</td>
+                                                                    </tr>
+                                                                }
+                                                                @if(sound.SquareWave != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@string.Format(L["{0} square wave"], sound.SquareWave)</td>
+                                                                    </tr>
+                                                                }
+                                                                @if(sound.WhiteNoise != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@string.Format(L["{0} white noise"], sound.WhiteNoise)</td>
+                                                                    </tr>
+                                                                }
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @if(sound.Depth != null || sound.Frequency != null)
+                                                {
+                                                    <tr>
+                                                        <td class="text-right" style="width: 33%">@L["Sample rate"]</td>
+                                                        <td style="width: 67%">
+                                                            <table class="table table-borderless">
+                                                                @if(sound.Depth != null && sound.Frequency != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @if(sound.Frequency > 1000)
+                                                                            {
+                                                                                @string.Format(L["{0} bits at {1} KHz"], sound.Depth, sound.Frequency / 1000)
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @string.Format(L["{0} bits at {1} Hz"], sound.Depth, sound.Frequency)
+                                                                            }
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                                else if(sound.Depth != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@string.Format(L["{0} bits"], sound.Depth)</td>
+                                                                    </tr>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @if(sound.Frequency > 1000)
+                                                                            {
+                                                                                @string.Format(L["{0} KHz"], sound.Frequency / 1000)
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @string.Format(L["{0} Hz"], sound.Frequency)
+                                                                            }
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                @if(sound.Type != null)
+                                                {
+                                                    <tr>
+                                                        <td class="text-right"
+                                                            style="width: 33%">@L["Synthesizer type"]</td>
+                                                        <td style="width: 67%">
+                                                            @sound.Type
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </table>
+                                        </CollapseBody>
+                                    </Collapse>
+                                </td>
+                            }
+                        </tr>
+                        counter++;
+                    }
+                </table>
+            </td>
+        </tr>
+    }
+    @if(_machine.Storage.Count > 0)
+    {
+        <tr>
+            <th class="text-right" scope=row style="width: 33%;">
+                @L["Storage"]
+            </th>
+            <td style="width: 67%;">
+                <table class="table table-borderless">
+                    @foreach(StorageViewModel storage in _machine.Storage)
+                    {
+                        string capString = null;
+
+                        if(storage.Capacity != null)
+                        {
+                            if(storage.Type == StorageType.CompactCassette)
+                            {
+                                capString = string.Format(L["{0} bps"], storage.Capacity);
+                            }
+                            else
+                            {
+                                if(storage.Capacity > 1073741824)
+                                {
+                                    capString = string.Format(L["{0} GiB"], storage.Capacity / 1073741824);
+                                }
+                                else if(storage.Capacity > 1048576)
+                                {
+                                    capString = string.Format(L["{0} MiB"], storage.Capacity / 1048576);
+                                }
+                                else if(storage.Capacity > 1024)
+                                {
+                                    capString = string.Format(L["{0} KiB"], storage.Capacity / 1024);
+                                }
+                                else if(storage.Capacity > 0)
+                                {
+                                    capString = string.Format(L["{0} bytes"], storage.Capacity);
+                                }
+                                else
+                                {
+                                    capString = null;
+                                }
                             }
                         }
-                    }
 
-                    <tr>
-                        @if(storage.Interface != StorageInterface.Unknown)
-                        {
-                            if(storage.Type == StorageType.Empty)
+                        <tr>
+                            @if(storage.Interface != StorageInterface.Unknown)
                             {
-                                <td>@string.Format(L["Available {0} interface."], storage.Interface)</td>
+                                if(storage.Type == StorageType.Empty)
+                                {
+                                    <td>@string.Format(L["Available {0} interface."], storage.Interface)</td>
+                                }
+                                else
+                                {
+                                    if(capString != null)
+                                    {
+                                        <td>@string.Format(L["{0} connected thru a {1} interface with a nominal capacity of {2}"], storage.Type, storage.Interface, capString)</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@string.Format(L["{0} connected thru a {1} interface"], storage.Type, storage.Interface)</td>
+                                    }
+                                }
                             }
                             else
                             {
                                 if(capString != null)
                                 {
-                                    <td>@string.Format(L["{0} connected thru a {1} interface with a nominal capacity of {2}"], storage.Type, storage.Interface, capString)</td>
+                                    <td>@string.Format(L["{0} with a nominal capacity of {1}"], storage.Type, capString)</td>
                                 }
                                 else
                                 {
-                                    <td>@string.Format(L["{0} connected thru a {1} interface"], storage.Type, storage.Interface)</td>
+                                    <td>@storage.Type</td>
                                 }
                             }
-                        }
-                        else
-                        {
-                            if(capString != null)
-                            {
-                                <td>@string.Format(L["{0} with a nominal capacity of {1}"], storage.Type, capString)</td>
-                            }
-                            else
-                            {
-                                <td>@storage.Type</td>
-                            }
-                        }
-                    </tr>
-                }
-            </table>
-        </td>
-    </tr>
-}
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    }
 </table>
 @if(_photos.Count > 0)
 {
-    foreach(var photo in _photos)
+    foreach(Guid photo in _photos)
     {
         <div class="col-md-2">
             <figure class="figure">
                 <picture>
-                    <source srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
-                    <source srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
-                    <source srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
-                    <source srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x" type="image/jp2">
-                    <img alt="" class="figure-img img-fluid rounded" height="auto" src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg" srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x" style="max-height: 256px; max-width: 256px" width="auto" />
+                    <source
+                        srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x"
+                        type="image/avif">
+                    <source
+                        srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x"
+                        type="image/heic">
+                    <source
+                        srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x"
+                        type="image/webp">
+                    <source
+                        srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x"
+                        type="image/jp2">
+                    <img alt="" class="figure-img img-fluid rounded" height="auto"
+                         src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
+                         srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
+                         style="max-height: 256px; max-width: 256px" width="auto"/>
                 </picture>
                 <figcaption class="figure-caption">
                     <a href="/machines/photo/@photo" target="_blank">@L["Details"]</a>
@@ -887,30 +888,30 @@
     <img alt="" src="@Path.Combine("/assets/photos/computers", _machine.Id + ".jpg")">
 }
 <style>
-.card {
-    border: none;
-}
+    .card {
+        border: none;
+    }
 
-.card-header {
-    padding: 0;
-    margin-bottom: 0;
-    background-color: unset;
-    border-bottom: none;
-}
+    .card-header {
+        padding: 0;
+        margin-bottom: 0;
+        background-color: unset;
+        border-bottom: none;
+    }
 
-.card-body {
-    padding: unset;
-}
+    .card-body {
+        padding: unset;
+    }
 
-.table th {
-    padding: 4px;
-}
+    .table th {
+        padding: 4px;
+    }
 
-.table td {
-    padding: 4px;
-}
+    .table td {
+        padding: 4px;
+    }
 
-.table {
-    margin-bottom: 0;
-}
+    .table {
+        margin-bottom: 0;
+    }
 </style>

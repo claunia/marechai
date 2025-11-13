@@ -23,10 +23,9 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.ViewModels
+namespace Marechai.ViewModels;
+
+public class BaseViewModel<TKey>
 {
-    public class BaseViewModel<TKey>
-    {
-        public TKey Id;
-    }
+    public TKey Id;
 }

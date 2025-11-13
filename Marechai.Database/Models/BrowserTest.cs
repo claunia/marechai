@@ -26,41 +26,54 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public class BrowserTest : BaseModel<int>
 {
-    public class BrowserTest : BaseModel<int>
-    {
-        [DisplayName("User agent"), Required, StringLength(128)]
-        public string UserAgent { get; set; }
-        [Required, StringLength(64)]
-        public string Browser { get; set; }
-        [Required, StringLength(16)]
-        public string Version { get; set; }
-        [DisplayName("Operating system"), Required, StringLength(32)]
-        public string Os { get; set; }
-        [Required, StringLength(8)]
-        public string Platform { get; set; }
-        [DisplayName("GIF87"), DefaultValue(false)]
-        public bool Gif87 { get; set; }
-        [DisplayName("GIF89"), DefaultValue(false)]
-        public bool Gif89 { get; set; }
-        [DisplayName("JPEG"), DefaultValue(false)]
-        public bool Jpeg { get; set; }
-        [DisplayName("PNG"), DefaultValue(false)]
-        public bool Png { get; set; }
-        [DisplayName("Transparent PNG"), DefaultValue(false)]
-        public bool Pngt { get; set; }
-        [DisplayName("Animated GIF"), DefaultValue(false)]
-        public bool Agif { get; set; }
-        [DefaultValue(false)]
-        public bool Table { get; set; }
-        [DefaultValue(false)]
-        public bool Colors { get; set; }
-        [DisplayName("JavaScript"), DefaultValue(false)]
-        public bool Js { get; set; }
-        [DefaultValue(false)]
-        public bool Frames { get; set; }
-        [DefaultValue(false)]
-        public bool Flash { get; set; }
-    }
+    [DisplayName("User agent")]
+    [Required]
+    [StringLength(128)]
+    public string UserAgent { get; set; }
+    [Required]
+    [StringLength(64)]
+    public string Browser { get; set; }
+    [Required]
+    [StringLength(16)]
+    public string Version { get; set; }
+    [DisplayName("Operating system")]
+    [Required]
+    [StringLength(32)]
+    public string Os { get; set; }
+    [Required]
+    [StringLength(8)]
+    public string Platform { get; set; }
+    [DisplayName("GIF87")]
+    [DefaultValue(false)]
+    public bool Gif87 { get; set; }
+    [DisplayName("GIF89")]
+    [DefaultValue(false)]
+    public bool Gif89 { get; set; }
+    [DisplayName("JPEG")]
+    [DefaultValue(false)]
+    public bool Jpeg { get; set; }
+    [DisplayName("PNG")]
+    [DefaultValue(false)]
+    public bool Png { get; set; }
+    [DisplayName("Transparent PNG")]
+    [DefaultValue(false)]
+    public bool Pngt { get; set; }
+    [DisplayName("Animated GIF")]
+    [DefaultValue(false)]
+    public bool Agif { get; set; }
+    [DefaultValue(false)]
+    public bool Table { get; set; }
+    [DefaultValue(false)]
+    public bool Colors { get; set; }
+    [DisplayName("JavaScript")]
+    [DefaultValue(false)]
+    public bool Js { get; set; }
+    [DefaultValue(false)]
+    public bool Frames { get; set; }
+    [DefaultValue(false)]
+    public bool Flash { get; set; }
 }

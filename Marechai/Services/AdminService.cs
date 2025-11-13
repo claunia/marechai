@@ -23,7 +23,6 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Services
-{
-    public class AdminService {}
-}
+namespace Marechai.Services;
+
+public class AdminService {}

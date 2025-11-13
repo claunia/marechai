@@ -26,20 +26,19 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class MediaDump : BaseModel<ulong>
-    {
-        [Required]
-        public virtual Media Media { get; set; }
-        public string     Format { get;   set; }
-        public DumpStatus Status { get;   set; }
+namespace Marechai.Database.Models;
 
-        public virtual ICollection<MediaDumpFileImage>  Files      { get; set; }
-        public virtual MediaDumpImage                   Image      { get; set; }
-        public virtual MediaDumpSubchannelImage         Subchannel { get; set; }
-        public virtual ICollection<MediaDumpTrackImage> Tracks     { get; set; }
-        public virtual ICollection<Dump>                Dumps      { get; set; }
-        public virtual ICollection<MediaTagDump>        Tags       { get; set; }
-    }
+public class MediaDump : BaseModel<ulong>
+{
+    [Required]
+    public virtual Media Media { get; set; }
+    public string     Format { get;   set; }
+    public DumpStatus Status { get;   set; }
+
+    public virtual ICollection<MediaDumpFileImage>  Files      { get; set; }
+    public virtual MediaDumpImage                   Image      { get; set; }
+    public virtual MediaDumpSubchannelImage         Subchannel { get; set; }
+    public virtual ICollection<MediaDumpTrackImage> Tracks     { get; set; }
+    public virtual ICollection<Dump>                Dumps      { get; set; }
+    public virtual ICollection<MediaTagDump>        Tags       { get; set; }
 }

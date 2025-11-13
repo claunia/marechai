@@ -32,109 +32,123 @@ using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> localizer)
 {
-    public class NewsService
+    public async Task<List<NewsViewModel>> GetAsync() => await context.News.OrderByDescending(n => n.Date)
+                                                                      .Select(n => new NewsViewModel
+                                                                       {
+                                                                           Id         = n.Id,
+                                                                           Timestamp  = n.Date,
+                                                                           Type       = n.Type,
+                                                                           AffectedId = n.AddedId
+                                                                       })
+                                                                      .ToListAsync();
+
+    public List<NewsViewModel> GetNews()
     {
-        readonly MarechaiContext               _context;
-        readonly IStringLocalizer<NewsService> _l;
+        List<NewsViewModel> news = new();
 
-        public NewsService(MarechaiContext context, IStringLocalizer<NewsService> localizer)
+        foreach(News @new in context.News.OrderByDescending(t => t.Date).Take(10).ToList())
         {
-            _context = context;
-            _l       = localizer;
-        }
+            Machine machine = context.Machines.Find(@new.AddedId);
 
-        public async Task<List<NewsViewModel>> GetAsync() => await _context.News.OrderByDescending(n => n.Date).
-                                                                            Select(n => new NewsViewModel
-                                                                            {
-                                                                                Id         = n.Id,
-                                                                                Timestamp  = n.Date,
-                                                                                Type       = n.Type,
-                                                                                AffectedId = n.AddedId
-                                                                            }).ToListAsync();
+            if(machine is null) continue;
 
-        public List<NewsViewModel> GetNews()
-        {
-            List<NewsViewModel> news = new();
-
-            foreach(News @new in _context.News.OrderByDescending(t => t.Date).Take(10).ToList())
+            switch(@new.Type)
             {
-                Machine machine = _context.Machines.Find(@new.AddedId);
+                case NewsType.NewComputerInDb:
+                    news.Add(new NewsViewModel(@new.AddedId,
+                                               localizer["New computer in database"],
+                                               @new.Date,
+                                               "machine",
+                                               $"{machine.Company.Name} {machine.Name}"));
 
-                if(machine is null)
+                    break;
+                case NewsType.NewConsoleInDb:
+                    news.Add(new NewsViewModel(@new.AddedId,
+                                               localizer["New console in database"],
+                                               @new.Date,
+                                               "machine",
+                                               $"{machine.Company.Name} {machine.Name}"));
+
+                    break;
+
+                case NewsType.NewComputerInCollection:
+                    news.Add(new NewsViewModel(@new.AddedId,
+                                               localizer["New computer in collection"],
+                                               @new.Date,
+                                               "machine",
+                                               $"{machine.Company.Name} {machine.Name}"));
+
+                    break;
+
+                case NewsType.NewConsoleInCollection:
+                    news.Add(new NewsViewModel(@new.AddedId,
+                                               localizer["New console in collection"],
+                                               @new.Date,
+                                               "machine",
+                                               $"{machine.Company.Name} {machine.Name}"));
+
+                    break;
+
+                case NewsType.UpdatedComputerInDb:
+                    news.Add(new NewsViewModel(@new.AddedId,
+                                               localizer["Updated computer in database"],
+                                               @new.Date,
+                                               "machine",
+                                               $"{machine.Company.Name} {machine.Name}"));
+
+                    break;
+
+                case NewsType.UpdatedConsoleInDb:
+                    news.Add(new NewsViewModel(@new.AddedId,
+                                               localizer["Updated console in database"],
+                                               @new.Date,
+                                               "machine",
+                                               $"{machine.Company.Name} {machine.Name}"));
+
+                    break;
+
+                case NewsType.UpdatedComputerInCollection:
+                    news.Add(new NewsViewModel(@new.AddedId,
+                                               localizer["Updated computer in collection"],
+                                               @new.Date,
+                                               "machine",
+                                               $"{machine.Company.Name} {machine.Name}"));
+
+                    break;
+
+                case NewsType.UpdatedConsoleInCollection:
+                    news.Add(new NewsViewModel(@new.AddedId,
+                                               localizer["Updated console in collection"],
+                                               @new.Date,
+                                               "machine",
+                                               $"{machine.Company.Name} {machine.Name}"));
+
+                    break;
+
+                case NewsType.NewMoneyDonation:
+                    // TODO
+                    break;
+
+                default:
                     continue;
-
-                switch(@new.Type)
-                {
-                    case NewsType.NewComputerInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["New computer in database"], @new.Date, "machine",
-                                                   $"{machine.Company.Name} {machine.Name}"));
-
-                        break;
-                    case NewsType.NewConsoleInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["New console in database"], @new.Date, "machine",
-                                                   $"{machine.Company.Name} {machine.Name}"));
-
-                        break;
-
-                    case NewsType.NewComputerInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["New computer in collection"], @new.Date, "machine",
-                                                   $"{machine.Company.Name} {machine.Name}"));
-
-                        break;
-
-                    case NewsType.NewConsoleInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["New console in collection"], @new.Date, "machine",
-                                                   $"{machine.Company.Name} {machine.Name}"));
-
-                        break;
-
-                    case NewsType.UpdatedComputerInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["Updated computer in database"], @new.Date,
-                                                   "machine", $"{machine.Company.Name} {machine.Name}"));
-
-                        break;
-
-                    case NewsType.UpdatedConsoleInDb:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["Updated console in database"], @new.Date,
-                                                   "machine", $"{machine.Company.Name} {machine.Name}"));
-
-                        break;
-
-                    case NewsType.UpdatedComputerInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["Updated computer in collection"], @new.Date,
-                                                   "machine", $"{machine.Company.Name} {machine.Name}"));
-
-                        break;
-
-                    case NewsType.UpdatedConsoleInCollection:
-                        news.Add(new NewsViewModel(@new.AddedId, _l["Updated console in collection"], @new.Date,
-                                                   "machine", $"{machine.Company.Name} {machine.Name}"));
-
-                        break;
-
-                    case NewsType.NewMoneyDonation:
-                        // TODO
-                        break;
-
-                    default: continue;
-                }
             }
-
-            return news;
         }
 
-        public async Task DeleteAsync(int id, string userId)
-        {
-            News item = await _context.News.FindAsync(id);
+        return news;
+    }
 
-            if(item is null)
-                return;
+    public async Task DeleteAsync(int id, string userId)
+    {
+        News item = await context.News.FindAsync(id);
 
-            _context.News.Remove(item);
+        if(item is null) return;
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        context.News.Remove(item);
+
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

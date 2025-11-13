@@ -26,16 +26,17 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Marechai.Database.Models
-{
-    public class CompanyDescription : BaseModel<int>
-    {
-        public int CompanyId { get; set; }
-        [MaxLength(262144, ErrorMessage = "Description is too long"), Required]
-        public string Text { get; set; }
-        [MaxLength(262144, ErrorMessage = "Description is too long"), DisplayName("HTML")]
-        public string Html { get; set; }
+namespace Marechai.Database.Models;
 
-        public virtual Company Company { get; set; }
-    }
+public class CompanyDescription : BaseModel<int>
+{
+    public int CompanyId { get; set; }
+    [MaxLength(262144, ErrorMessage = "Description is too long")]
+    [Required]
+    public string Text { get; set; }
+    [MaxLength(262144, ErrorMessage = "Description is too long")]
+    [DisplayName("HTML")]
+    public string Html { get; set; }
+
+    public virtual Company Company { get; set; }
 }

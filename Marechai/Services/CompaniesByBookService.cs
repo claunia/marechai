@@ -30,50 +30,48 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class CompaniesByBookService(MarechaiContext context)
 {
-    public class CompaniesByBookService
+    public async Task<List<CompanyByBookViewModel>> GetByBook(long bookId) => await context.CompaniesByBooks
+                                                                                           .Where(p => p.BookId == bookId)
+                                                                                           .Select(p => new CompanyByBookViewModel
+                                                                                            {
+                                                                                                Id        = p.Id,
+                                                                                                Company   = p.Company.Name,
+                                                                                                CompanyId = p.CompanyId,
+                                                                                                RoleId    = p.RoleId,
+                                                                                                Role      = p.Role.Name,
+                                                                                                BookId    = p.BookId
+                                                                                            })
+                                                                                           .OrderBy(p => p.Company)
+                                                                                           .ThenBy(p => p.Role)
+                                                                                           .ToListAsync();
+
+    public async Task DeleteAsync(long id, string userId)
     {
-        readonly MarechaiContext _context;
+        CompaniesByBook item = await context.CompaniesByBooks.FindAsync(id);
 
-        public CompaniesByBookService(MarechaiContext context) => _context = context;
+        if(item is null) return;
 
-        public async Task<List<CompanyByBookViewModel>> GetByBook(long bookId) =>
-            await _context.CompaniesByBooks.Where(p => p.BookId == bookId).Select(p => new CompanyByBookViewModel
-            {
-                Id        = p.Id,
-                Company   = p.Company.Name,
-                CompanyId = p.CompanyId,
-                RoleId    = p.RoleId,
-                Role      = p.Role.Name,
-                BookId    = p.BookId
-            }).OrderBy(p => p.Company).ThenBy(p => p.Role).ToListAsync();
+        context.CompaniesByBooks.Remove(item);
 
-        public async Task DeleteAsync(long id, string userId)
+        await context.SaveChangesWithUserAsync(userId);
+    }
+
+    public async Task<long> CreateAsync(int companyId, long bookId, string roleId, string userId)
+    {
+        var item = new CompaniesByBook
         {
-            CompaniesByBook item = await _context.CompaniesByBooks.FindAsync(id);
+            CompanyId = companyId,
+            BookId    = bookId,
+            RoleId    = roleId
+        };
 
-            if(item is null)
-                return;
+        await context.CompaniesByBooks.AddAsync(item);
+        await context.SaveChangesWithUserAsync(userId);
 
-            _context.CompaniesByBooks.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
-
-        public async Task<long> CreateAsync(int companyId, long bookId, string roleId, string userId)
-        {
-            var item = new CompaniesByBook
-            {
-                CompanyId = companyId,
-                BookId    = bookId,
-                RoleId    = roleId
-            };
-
-            await _context.CompaniesByBooks.AddAsync(item);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            return item.Id;
-        }
+        return item.Id;
     }
 }

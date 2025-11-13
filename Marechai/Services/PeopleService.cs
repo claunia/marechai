@@ -30,104 +30,101 @@ using Marechai.Database.Models;
 using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class PeopleService(MarechaiContext context)
 {
-    public class PeopleService
+    public async Task<List<PersonViewModel>> GetAsync() => await context.People.OrderBy(p => p.DisplayName)
+                                                                        .ThenBy(p => p.Alias)
+                                                                        .ThenBy(p => p.Name)
+                                                                        .ThenBy(p => p.Surname)
+                                                                        .Select(p => new PersonViewModel
+                                                                         {
+                                                                             Id             = p.Id,
+                                                                             Name           = p.Name,
+                                                                             Surname        = p.Surname,
+                                                                             CountryOfBirth = p.CountryOfBirth.Name,
+                                                                             BirthDate      = p.BirthDate,
+                                                                             DeathDate      = p.DeathDate,
+                                                                             Webpage        = p.Webpage,
+                                                                             Twitter        = p.Twitter,
+                                                                             Facebook       = p.Facebook,
+                                                                             Photo          = p.Photo,
+                                                                             Alias          = p.Alias,
+                                                                             DisplayName    = p.DisplayName
+                                                                         })
+                                                                        .ToListAsync();
+
+    public async Task<PersonViewModel> GetAsync(int id) => await context.People.Where(p => p.Id == id)
+                                                                         .Select(p => new PersonViewModel
+                                                                          {
+                                                                              Id               = p.Id,
+                                                                              Name             = p.Name,
+                                                                              Surname          = p.Surname,
+                                                                              CountryOfBirthId = p.CountryOfBirthId,
+                                                                              BirthDate        = p.BirthDate,
+                                                                              DeathDate        = p.DeathDate,
+                                                                              Webpage          = p.Webpage,
+                                                                              Twitter          = p.Twitter,
+                                                                              Facebook         = p.Facebook,
+                                                                              Photo            = p.Photo,
+                                                                              Alias            = p.Alias,
+                                                                              DisplayName      = p.DisplayName
+                                                                          })
+                                                                         .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(PersonViewModel viewModel, string userId)
     {
-        readonly MarechaiContext _context;
+        Person model = await context.People.FindAsync(viewModel.Id);
 
-        public PeopleService(MarechaiContext context) => _context = context;
+        if(model is null) return;
 
-        public async Task<List<PersonViewModel>> GetAsync() =>
-            await _context.People.OrderBy(p => p.DisplayName).ThenBy(p => p.Alias).ThenBy(p => p.Name).
-                           ThenBy(p => p.Surname).Select(p => new PersonViewModel
-                           {
-                               Id             = p.Id,
-                               Name           = p.Name,
-                               Surname        = p.Surname,
-                               CountryOfBirth = p.CountryOfBirth.Name,
-                               BirthDate      = p.BirthDate,
-                               DeathDate      = p.DeathDate,
-                               Webpage        = p.Webpage,
-                               Twitter        = p.Twitter,
-                               Facebook       = p.Facebook,
-                               Photo          = p.Photo,
-                               Alias          = p.Alias,
-                               DisplayName    = p.DisplayName
-                           }).ToListAsync();
+        model.Name             = viewModel.Name;
+        model.Surname          = viewModel.Surname;
+        model.CountryOfBirthId = viewModel.CountryOfBirthId;
+        model.BirthDate        = viewModel.BirthDate;
+        model.DeathDate        = viewModel.DeathDate;
+        model.Webpage          = viewModel.Webpage;
+        model.Twitter          = viewModel.Twitter;
+        model.Facebook         = viewModel.Facebook;
+        model.Photo            = viewModel.Photo;
+        model.Alias            = viewModel.Alias;
+        model.DisplayName      = viewModel.DisplayName;
 
-        public async Task<PersonViewModel> GetAsync(int id) =>
-            await _context.People.Where(p => p.Id == id).Select(p => new PersonViewModel
-            {
-                Id               = p.Id,
-                Name             = p.Name,
-                Surname          = p.Surname,
-                CountryOfBirthId = p.CountryOfBirthId,
-                BirthDate        = p.BirthDate,
-                DeathDate        = p.DeathDate,
-                Webpage          = p.Webpage,
-                Twitter          = p.Twitter,
-                Facebook         = p.Facebook,
-                Photo            = p.Photo,
-                Alias            = p.Alias,
-                DisplayName      = p.DisplayName
-            }).FirstOrDefaultAsync();
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task UpdateAsync(PersonViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(PersonViewModel viewModel, string userId)
+    {
+        var model = new Person
         {
-            Person model = await _context.People.FindAsync(viewModel.Id);
+            Name             = viewModel.Name,
+            Surname          = viewModel.Surname,
+            CountryOfBirthId = viewModel.CountryOfBirthId,
+            BirthDate        = viewModel.BirthDate,
+            DeathDate        = viewModel.DeathDate,
+            Webpage          = viewModel.Webpage,
+            Twitter          = viewModel.Twitter,
+            Facebook         = viewModel.Facebook,
+            Photo            = viewModel.Photo,
+            Alias            = viewModel.Alias,
+            DisplayName      = viewModel.DisplayName
+        };
 
-            if(model is null)
-                return;
+        await context.People.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.Name             = viewModel.Name;
-            model.Surname          = viewModel.Surname;
-            model.CountryOfBirthId = viewModel.CountryOfBirthId;
-            model.BirthDate        = viewModel.BirthDate;
-            model.DeathDate        = viewModel.DeathDate;
-            model.Webpage          = viewModel.Webpage;
-            model.Twitter          = viewModel.Twitter;
-            model.Facebook         = viewModel.Facebook;
-            model.Photo            = viewModel.Photo;
-            model.Alias            = viewModel.Alias;
-            model.DisplayName      = viewModel.DisplayName;
+        return model.Id;
+    }
 
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+    public async Task DeleteAsync(int id, string userId)
+    {
+        Person item = await context.People.FindAsync(id);
 
-        public async Task<int> CreateAsync(PersonViewModel viewModel, string userId)
-        {
-            var model = new Person
-            {
-                Name             = viewModel.Name,
-                Surname          = viewModel.Surname,
-                CountryOfBirthId = viewModel.CountryOfBirthId,
-                BirthDate        = viewModel.BirthDate,
-                DeathDate        = viewModel.DeathDate,
-                Webpage          = viewModel.Webpage,
-                Twitter          = viewModel.Twitter,
-                Facebook         = viewModel.Facebook,
-                Photo            = viewModel.Photo,
-                Alias            = viewModel.Alias,
-                DisplayName      = viewModel.DisplayName
-            };
+        if(item is null) return;
 
-            await _context.People.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
+        context.People.Remove(item);
 
-            return model.Id;
-        }
-
-        public async Task DeleteAsync(int id, string userId)
-        {
-            Person item = await _context.People.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.People.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
-        }
+        await context.SaveChangesWithUserAsync(userId);
     }
 }

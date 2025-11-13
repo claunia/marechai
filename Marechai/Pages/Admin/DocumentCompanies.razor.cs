@@ -30,59 +30,56 @@ using Blazorise;
 using Marechai.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Marechai.Pages.Admin
+namespace Marechai.Pages.Admin;
+
+public partial class DocumentCompanies
 {
-    public partial class DocumentCompanies
+    List<DocumentCompanyViewModel> _companies;
+    DocumentCompanyViewModel       _currentCompany;
+    bool                           _deleteInProgress;
+    Modal                          _frmDelete;
+    bool                           _loaded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        List<DocumentCompanyViewModel> _companies;
-        DocumentCompanyViewModel       _currentCompany;
-        bool                           _deleteInProgress;
-        Modal                          _frmDelete;
-        bool                           _loaded;
+        if(_loaded) return;
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _companies = await Service.GetAsync();
-            _loaded    = true;
-            StateHasChanged();
-        }
-
-        void ShowModal(int itemId)
-        {
-            _currentCompany = _companies.FirstOrDefault(n => n.Id == itemId);
-            _frmDelete.Show();
-        }
-
-        void HideModal() => _frmDelete.Hide();
-
-        async void ConfirmDelete()
-        {
-            if(_currentCompany is null)
-                return;
-
-            _deleteInProgress = true;
-            _companies        = null;
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            await Service.DeleteAsync(_currentCompany.Id, (await UserManager.GetUserAsync(authState.User)).Id);
-            _companies = await Service.GetAsync();
-
-            _deleteInProgress = false;
-            _frmDelete.Hide();
-
-            // Yield thread to let UI to update
-            await Task.Yield();
-
-            // Tell we finished loading
-            StateHasChanged();
-        }
-
-        void ModalClosing(ModalClosingEventArgs obj) => _currentCompany = null;
+        _companies = await Service.GetAsync();
+        _loaded    = true;
+        StateHasChanged();
     }
+
+    void ShowModal(int itemId)
+    {
+        _currentCompany = _companies.FirstOrDefault(n => n.Id == itemId);
+        _frmDelete.Show();
+    }
+
+    void HideModal() => _frmDelete.Hide();
+
+    async void ConfirmDelete()
+    {
+        if(_currentCompany is null) return;
+
+        _deleteInProgress = true;
+        _companies        = null;
+        AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        await Service.DeleteAsync(_currentCompany.Id, (await UserManager.GetUserAsync(authState.User)).Id);
+        _companies = await Service.GetAsync();
+
+        _deleteInProgress = false;
+        _frmDelete.Hide();
+
+        // Yield thread to let UI to update
+        await Task.Yield();
+
+        // Tell we finished loading
+        StateHasChanged();
+    }
+
+    void ModalClosing(ModalClosingEventArgs obj) => _currentCompany = null;
 }

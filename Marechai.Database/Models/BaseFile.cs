@@ -28,28 +28,30 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Aaru.CommonTypes.Structs;
 
-namespace Marechai.Database.Models
+namespace Marechai.Database.Models;
+
+public abstract class BaseFile : BaseModel<ulong>
 {
-    public abstract class BaseFile : BaseModel<ulong>
-    {
-        [StringLength(8192), Required]
-        public string Path { get; set; }
-        [StringLength(255), Required]
-        public string Name { get; set; }
-        [Required, DefaultValue('/')]
-        public char PathSeparator { get;              set; }
-        public bool           IsDirectory      { get; set; }
-        public DateTime?      CreationDate     { get; set; }
-        public DateTime?      AccessDate       { get; set; }
-        public DateTime?      StatusChangeDate { get; set; }
-        public DateTime?      BackupDate       { get; set; }
-        public DateTime?      LastWriteDate    { get; set; }
-        public FileAttributes Attributes       { get; set; }
-        public ushort?        PosixMode        { get; set; }
-        public uint?          DeviceNumber     { get; set; }
-        public ulong?         GroupId          { get; set; }
-        public ulong?         UserId           { get; set; }
-        public ulong?         Inode            { get; set; }
-        public ulong?         Links            { get; set; }
-    }
+    [StringLength(8192)]
+    [Required]
+    public string Path { get; set; }
+    [StringLength(255)]
+    [Required]
+    public string Name { get; set; }
+    [Required]
+    [DefaultValue('/')]
+    public char PathSeparator { get;              set; }
+    public bool           IsDirectory      { get; set; }
+    public DateTime?      CreationDate     { get; set; }
+    public DateTime?      AccessDate       { get; set; }
+    public DateTime?      StatusChangeDate { get; set; }
+    public DateTime?      BackupDate       { get; set; }
+    public DateTime?      LastWriteDate    { get; set; }
+    public FileAttributes Attributes       { get; set; }
+    public ushort?        PosixMode        { get; set; }
+    public uint?          DeviceNumber     { get; set; }
+    public ulong?         GroupId          { get; set; }
+    public ulong?         UserId           { get; set; }
+    public ulong?         Inode            { get; set; }
+    public ulong?         Links            { get; set; }
 }

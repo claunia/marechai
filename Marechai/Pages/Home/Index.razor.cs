@@ -26,21 +26,19 @@
 using System.Collections.Generic;
 using Marechai.ViewModels;
 
-namespace Marechai.Pages.Home
+namespace Marechai.Pages.Home;
+
+public partial class Index
 {
-    public partial class Index
+    bool                _loaded;
+    List<NewsViewModel> _news;
+
+    protected override void OnAfterRender(bool firstRender)
     {
-        bool                _loaded;
-        List<NewsViewModel> _news;
+        if(_loaded) return;
 
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if(_loaded)
-                return;
-
-            _news   = Service.GetNews();
-            _loaded = true;
-            StateHasChanged();
-        }
+        _news   = Service.GetNews();
+        _loaded = true;
+        StateHasChanged();
     }
 }

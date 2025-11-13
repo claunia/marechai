@@ -33,218 +33,209 @@ using Marechai.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 
-namespace Marechai.Services
+namespace Marechai.Services;
+
+public class MachinesService
+(
+    MarechaiContext                   context,
+    IStringLocalizer<MachinesService> localizer,
+    GpusService                       gpusService,
+    ProcessorsService                 processorsService,
+    SoundSynthsService                soundSynthsService
+)
 {
-    public class MachinesService
+    readonly IStringLocalizer<MachinesService> _l                  = localizer;
+
+    public async Task<List<MachineViewModel>> GetAsync() => await context.Machines.OrderBy(m => m.Company.Name)
+                                                                         .ThenBy(m => m.Name)
+                                                                         .ThenBy(m => m.Family.Name)
+                                                                         .Select(m => new MachineViewModel
+                                                                          {
+                                                                              Id         = m.Id,
+                                                                              Company    = m.Company.Name,
+                                                                              Name       = m.Name,
+                                                                              Model      = m.Model,
+                                                                              Introduced = m.Introduced,
+                                                                              Type       = m.Type,
+                                                                              Family     = m.Family.Name
+                                                                          })
+                                                                         .ToListAsync();
+
+    public async Task<MachineViewModel> GetAsync(int id) => await context.Machines.Where(m => m.Id == id)
+                                                                          .Select(m => new MachineViewModel
+                                                                           {
+                                                                               Id         = m.Id,
+                                                                               Company    = m.Company.Name,
+                                                                               CompanyId  = m.CompanyId,
+                                                                               Name       = m.Name,
+                                                                               Model      = m.Model,
+                                                                               Introduced = m.Introduced,
+                                                                               Type       = m.Type,
+                                                                               FamilyId   = m.FamilyId
+                                                                           })
+                                                                          .FirstOrDefaultAsync();
+
+    public async Task UpdateAsync(MachineViewModel viewModel, string userId)
     {
-        readonly MarechaiContext                   _context;
-        readonly GpusService                       _gpusService;
-        readonly IStringLocalizer<MachinesService> _l;
-        readonly ProcessorsService                 _processorsService;
-        readonly SoundSynthsService                _soundSynthsService;
+        Machine model = await context.Machines.FindAsync(viewModel.Id);
 
-        public MachinesService(MarechaiContext context, IStringLocalizer<MachinesService> localizer,
-                               GpusService gpusService, ProcessorsService processorsService,
-                               SoundSynthsService soundSynthsService)
+        if(model is null) return;
+
+        model.CompanyId  = viewModel.CompanyId;
+        model.Name       = viewModel.Name;
+        model.Model      = viewModel.Model;
+        model.Introduced = viewModel.Introduced;
+        model.Type       = viewModel.Type;
+        model.FamilyId   = viewModel.FamilyId;
+
+        var news = new News
         {
-            _context            = context;
-            _l                  = localizer;
-            _gpusService        = gpusService;
-            _processorsService  = processorsService;
-            _soundSynthsService = soundSynthsService;
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow
+        };
+
+        switch(model.Type)
+        {
+            case MachineType.Computer:
+                news.Type = NewsType.UpdatedComputerInDb;
+
+                break;
+            case MachineType.Console:
+                news.Type = NewsType.UpdatedConsoleInDb;
+
+                break;
+            default:
+                news = null;
+
+                break;
         }
 
-        public async Task<List<MachineViewModel>> GetAsync() =>
-            await _context.Machines.OrderBy(m => m.Company.Name).ThenBy(m => m.Name).ThenBy(m => m.Family.Name).
-                           Select(m => new MachineViewModel
-                           {
-                               Id         = m.Id,
-                               Company    = m.Company.Name,
-                               Name       = m.Name,
-                               Model      = m.Model,
-                               Introduced = m.Introduced,
-                               Type       = m.Type,
-                               Family     = m.Family.Name
-                           }).ToListAsync();
+        if(news != null) await context.News.AddAsync(news);
 
-        public async Task<MachineViewModel> GetAsync(int id) => await _context.Machines.Where(m => m.Id == id).
-                                                                               Select(m => new MachineViewModel
-                                                                               {
-                                                                                   Id         = m.Id,
-                                                                                   Company    = m.Company.Name,
-                                                                                   CompanyId  = m.CompanyId,
-                                                                                   Name       = m.Name,
-                                                                                   Model      = m.Model,
-                                                                                   Introduced = m.Introduced,
-                                                                                   Type       = m.Type,
-                                                                                   FamilyId   = m.FamilyId
-                                                                               }).FirstOrDefaultAsync();
+        await context.SaveChangesWithUserAsync(userId);
+    }
 
-        public async Task UpdateAsync(MachineViewModel viewModel, string userId)
+    public async Task<int> CreateAsync(MachineViewModel viewModel, string userId)
+    {
+        var model = new Machine
         {
-            Machine model = await _context.Machines.FindAsync(viewModel.Id);
+            CompanyId  = viewModel.CompanyId,
+            Name       = viewModel.Name,
+            Model      = viewModel.Model,
+            Introduced = viewModel.Introduced,
+            Type       = viewModel.Type,
+            FamilyId   = viewModel.FamilyId
+        };
 
-            if(model is null)
-                return;
+        await context.Machines.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
 
-            model.CompanyId  = viewModel.CompanyId;
-            model.Name       = viewModel.Name;
-            model.Model      = viewModel.Model;
-            model.Introduced = viewModel.Introduced;
-            model.Type       = viewModel.Type;
-            model.FamilyId   = viewModel.FamilyId;
+        var news = new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow
+        };
 
-            var news = new News
-            {
-                AddedId = model.Id,
-                Date    = DateTime.UtcNow
-            };
+        switch(model.Type)
+        {
+            case MachineType.Computer:
+                news.Type = NewsType.NewComputerInDb;
 
-            switch(model.Type)
-            {
-                case MachineType.Computer:
-                    news.Type = NewsType.UpdatedComputerInDb;
+                break;
+            case MachineType.Console:
+                news.Type = NewsType.NewConsoleInDb;
 
-                    break;
-                case MachineType.Console:
-                    news.Type = NewsType.UpdatedConsoleInDb;
+                break;
+            default:
+                news = null;
 
-                    break;
-                default:
-                    news = null;
-
-                    break;
-            }
-
-            if(news != null)
-                await _context.News.AddAsync(news);
-
-            await _context.SaveChangesWithUserAsync(userId);
+                break;
         }
 
-        public async Task<int> CreateAsync(MachineViewModel viewModel, string userId)
+        if(news != null)
         {
-            var model = new Machine
-            {
-                CompanyId  = viewModel.CompanyId,
-                Name       = viewModel.Name,
-                Model      = viewModel.Model,
-                Introduced = viewModel.Introduced,
-                Type       = viewModel.Type,
-                FamilyId   = viewModel.FamilyId
-            };
-
-            await _context.Machines.AddAsync(model);
-            await _context.SaveChangesWithUserAsync(userId);
-
-            var news = new News
-            {
-                AddedId = model.Id,
-                Date    = DateTime.UtcNow
-            };
-
-            switch(model.Type)
-            {
-                case MachineType.Computer:
-                    news.Type = NewsType.NewComputerInDb;
-
-                    break;
-                case MachineType.Console:
-                    news.Type = NewsType.NewConsoleInDb;
-
-                    break;
-                default:
-                    news = null;
-
-                    break;
-            }
-
-            if(news != null)
-            {
-                await _context.News.AddAsync(news);
-                await _context.SaveChangesWithUserAsync(userId);
-            }
-
-            return model.Id;
+            await context.News.AddAsync(news);
+            await context.SaveChangesWithUserAsync(userId);
         }
 
-        public async Task<MachineViewModel> GetMachine(int id)
+        return model.Id;
+    }
+
+    public async Task<MachineViewModel> GetMachine(int id)
+    {
+        Machine machine = await context.Machines.FindAsync(id);
+
+        if(machine is null) return null;
+
+        var model = new MachineViewModel
         {
-            Machine machine = await _context.Machines.FindAsync(id);
+            Introduced = machine.Introduced,
+            Name       = machine.Name,
+            CompanyId  = machine.CompanyId,
+            Model      = machine.Model,
+            Type       = machine.Type
+        };
 
-            if(machine is null)
-                return null;
+        Company company = await context.Companies.FindAsync(model.CompanyId);
 
-            var model = new MachineViewModel
+        if(company != null)
+        {
+            model.Company = company.Name;
+
+            IQueryable<CompanyLogo> logos = context.CompanyLogos.Where(l => l.CompanyId == company.Id);
+
+            if(model.Introduced.HasValue)
             {
-                Introduced = machine.Introduced,
-                Name       = machine.Name,
-                CompanyId  = machine.CompanyId,
-                Model      = machine.Model,
-                Type       = machine.Type
-            };
-
-            Company company = await _context.Companies.FindAsync(model.CompanyId);
-
-            if(company != null)
-            {
-                model.Company = company.Name;
-
-                IQueryable<CompanyLogo> logos = _context.CompanyLogos.Where(l => l.CompanyId == company.Id);
-
-                if(model.Introduced.HasValue)
-                    model.CompanyLogo = (await logos.FirstOrDefaultAsync(l => l.Year >= model.Introduced.Value.Year))?.
-                        Guid;
-
-                if(model.CompanyLogo is null &&
-                   logos.Any())
-                    model.CompanyLogo = (await logos.FirstAsync())?.Guid;
+                model.CompanyLogo = (await logos.FirstOrDefaultAsync(l => l.Year >= model.Introduced.Value.Year))?.Guid;
             }
 
-            MachineFamily family = await _context.MachineFamilies.FindAsync(machine.FamilyId);
-
-            if(family != null)
-            {
-                model.FamilyName = family.Name;
-                model.FamilyId   = family.Id;
-            }
-
-            model.Gpus = await _gpusService.GetByMachineAsync(machine.Id);
-
-            model.Memory = await _context.MemoryByMachine.Where(m => m.MachineId == machine.Id).
-                                          Select(m => new MemoryViewModel
-                                          {
-                                              Type  = m.Type,
-                                              Usage = m.Usage,
-                                              Size  = m.Size,
-                                              Speed = m.Speed
-                                          }).ToListAsync();
-
-            model.Processors = await _processorsService.GetByMachineAsync(machine.Id);
-
-            model.SoundSynthesizers = await _soundSynthsService.GetByMachineAsync(machine.Id);
-
-            model.Storage = await _context.StorageByMachine.Where(s => s.MachineId == machine.Id).
-                                           Select(s => new StorageViewModel
-                                           {
-                                               Type      = s.Type,
-                                               Interface = s.Interface,
-                                               Capacity  = s.Capacity
-                                           }).ToListAsync();
-
-            return model;
+            if(model.CompanyLogo is null && logos.Any()) model.CompanyLogo = (await logos.FirstAsync())?.Guid;
         }
 
-        public async Task DeleteAsync(int id, string userId)
+        MachineFamily family = await context.MachineFamilies.FindAsync(machine.FamilyId);
+
+        if(family != null)
         {
-            Machine item = await _context.Machines.FindAsync(id);
-
-            if(item is null)
-                return;
-
-            _context.Machines.Remove(item);
-
-            await _context.SaveChangesWithUserAsync(userId);
+            model.FamilyName = family.Name;
+            model.FamilyId   = family.Id;
         }
+
+        model.Gpus = await gpusService.GetByMachineAsync(machine.Id);
+
+        model.Memory = await context.MemoryByMachine.Where(m => m.MachineId == machine.Id)
+                                     .Select(m => new MemoryViewModel
+                                      {
+                                          Type  = m.Type,
+                                          Usage = m.Usage,
+                                          Size  = m.Size,
+                                          Speed = m.Speed
+                                      })
+                                     .ToListAsync();
+
+        model.Processors = await processorsService.GetByMachineAsync(machine.Id);
+
+        model.SoundSynthesizers = await soundSynthsService.GetByMachineAsync(machine.Id);
+
+        model.Storage = await context.StorageByMachine.Where(s => s.MachineId == machine.Id)
+                                      .Select(s => new StorageViewModel
+                                       {
+                                           Type      = s.Type,
+                                           Interface = s.Interface,
+                                           Capacity  = s.Capacity
+                                       })
+                                      .ToListAsync();
+
+        return model;
+    }
+
+    public async Task DeleteAsync(int id, string userId)
+    {
+        Machine item = await context.Machines.FindAsync(id);
+
+        if(item is null) return;
+
+        context.Machines.Remove(item);
+
+        await context.SaveChangesWithUserAsync(userId);
     }
 }
