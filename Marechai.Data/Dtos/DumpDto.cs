@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,19 +31,20 @@ namespace Marechai.Data.Dtos;
 public class DumpDto : BaseDto<ulong>
 {
     [JsonPropertyName("dumper")]
-    public string Dumper { get; set; }
+    [Required]
+    public required string Dumper { get; set; }
     [JsonPropertyName("user_id")]
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
     [JsonPropertyName("dumping_group")]
-    public string DumpingGroup { get; set; }
+    public string? DumpingGroup { get; set; }
     [JsonPropertyName("dump_date")]
     public DateTime? DumpDate { get; set; }
     [JsonPropertyName("username")]
-    public string UserName { get; set; }
+    public string? UserName { get; set; }
     [JsonPropertyName("media_id")]
     public ulong MediaId { get; set; }
     [JsonPropertyName("media_title")]
-    public string MediaTitle { get; set; }
+    public string? MediaTitle { get; set; }
     [JsonPropertyName("media_dump_id")]
     public ulong MediaDumpId { get; set; }
 }

@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,9 +31,11 @@ namespace Marechai.Data.Dtos;
 public class ResolutionByGpuDto : BaseDto<long>
 {
     [JsonPropertyName("resolution_id")]
+    [Required]
     public int ResolutionId { get; set; }
     [JsonPropertyName("gpu_id")]
+    [Required]
     public int GpuId { get; set; }
     [JsonPropertyName("resolution")]
-    public ResolutionDto Resolution { get; set; }
+    public ResolutionDto? Resolution { get; set; }
 }

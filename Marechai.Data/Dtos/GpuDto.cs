@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,19 +31,20 @@ namespace Marechai.Data.Dtos;
 public class GpuDto : BaseDto<int>
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    [Required]
+    public required string Name { get; set; }
     [JsonPropertyName("company_id")]
     public int? CompanyId { get; set; }
     [JsonPropertyName("company")]
-    public string Company { get; set; }
+    public string? Company { get; set; }
     [JsonPropertyName("model_code")]
-    public string ModelCode { get; set; }
+    public string? ModelCode { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
     [JsonPropertyName("package")]
-    public string Package { get; set; }
+    public string? Package { get; set; }
     [JsonPropertyName("process")]
-    public string Process { get; set; }
+    public string? Process { get; set; }
     [JsonPropertyName("process_nm")]
     public float? ProcessNm { get; set; }
     [JsonPropertyName("die_size")]

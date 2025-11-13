@@ -31,25 +31,25 @@ namespace Marechai.Data.Dtos;
 public class BaseScanDto : BaseDto<Guid>
 {
     [JsonPropertyName("author")]
-    public string Author { get; set; }
+    public string? Author { get; set; }
     [JsonPropertyName("colorspace")]
     public ColorSpace? ColorSpace { get; set; }
     [JsonPropertyName("comments")]
-    public string Comments { get; set; }
+    public string? Comments { get; set; }
     [JsonPropertyName("creation_date")]
     public DateTime? CreationDate { get; set; }
     [JsonPropertyName("exif_version")]
-    public string ExifVersion { get; set; }
+    public string? ExifVersion { get; set; }
     [JsonPropertyName("horizontal_resolution")]
     public double? HorizontalResolution { get; set; }
     [JsonPropertyName("resolution_unit")]
     public ResolutionUnit? ResolutionUnit { get; set; }
     [JsonPropertyName("scanner_manufacturer")]
-    public string ScannerManufacturer { get; set; }
+    public string? ScannerManufacturer { get; set; }
     [JsonPropertyName("scanner_model")]
-    public string ScannerModel { get; set; }
+    public string? ScannerModel { get; set; }
     [JsonPropertyName("software")]
-    public string SoftwareUsed { get; set; }
+    public string? SoftwareUsed { get; set; }
     [JsonPropertyName("upload_date")]
     public DateTime UploadDate { get; set; }
     [JsonPropertyName("vertical_resolution")]
@@ -57,5 +57,5 @@ public class BaseScanDto : BaseDto<Guid>
     [JsonPropertyName("original_extension")]
     public string OriginalExtension { get; set; }
     [JsonPropertyName("user_id")]
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
 }

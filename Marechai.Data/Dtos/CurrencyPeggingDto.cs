@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,13 +31,15 @@ namespace Marechai.Data.Dtos;
 public class CurrencyPeggingDto : BaseDto<int>
 {
     [JsonPropertyName("source_code")]
-    public string SourceCode { get; set; }
+    [Required]
+    public required string SourceCode { get; set; }
     [JsonPropertyName("destination_code")]
-    public string DestinationCode { get; set; }
+    [Required]
+    public required string DestinationCode { get; set; }
     [JsonPropertyName("source_name")]
-    public string SourceName { get; set; }
+    public string? SourceName { get; set; }
     [JsonPropertyName("destination_name")]
-    public string DestinationName { get; set; }
+    public string? DestinationName { get; set; }
     [JsonPropertyName("ratio")]
     public float Ratio { get; set; }
     [JsonPropertyName("start")]

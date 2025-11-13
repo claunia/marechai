@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,9 +31,11 @@ namespace Marechai.Data.Dtos;
 public class ScreenByMachineDto : BaseDto<long>
 {
     [JsonPropertyName("machine_id")]
+    [Required]
     public int MachineId { get; set; }
     [JsonPropertyName("screen")]
-    public ScreenDto Screen { get; set; }
+    public ScreenDto? Screen { get; set; }
     [JsonPropertyName("screen_id")]
+    [Required]
     public int ScreenId { get; set; }
 }

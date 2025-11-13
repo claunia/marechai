@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,11 +31,12 @@ namespace Marechai.Data.Dtos;
 public class MachinePhotoDto : BasePhotoDto
 {
     [JsonPropertyName("source")]
-    public string Source { get; set; }
+    public string? Source { get; set; }
     [JsonPropertyName("machine_name")]
-    public string MachineName { get; set; }
+    public string? MachineName { get; set; }
     [JsonPropertyName("machine_company_name")]
-    public string MachineCompanyName { get; set; }
+    public string? MachineCompanyName { get; set; }
     [JsonPropertyName("machine_id")]
+    [Required]
     public int MachineId { get; set; }
 }

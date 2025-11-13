@@ -30,7 +30,7 @@ namespace Marechai.Data.Dtos;
 public class MagazineDto : DocumentBaseDto
 {
     [JsonPropertyName("issn")]
-    public string Issn { get; set; }
+    public string? Issn { get; set; }
     [JsonPropertyName("first_publication")]
     public DateTime? FirstPublication { get; set; }
 }

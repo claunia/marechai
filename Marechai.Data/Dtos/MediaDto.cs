@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
 using Marechai.Database;
@@ -33,7 +34,8 @@ namespace Marechai.Data.Dtos;
 public class MediaDto : BaseDto<ulong>
 {
     [JsonPropertyName("title")]
-    public string Title { get; set; }
+    [Required]
+    public required string Title { get; set; }
     [JsonPropertyName("sequence")]
     public ushort? Sequence { get; set; }
     [JsonPropertyName("last_sequence")]
@@ -55,31 +57,31 @@ public class MediaDto : BaseDto<ulong>
     [JsonPropertyName("size")]
     public ulong Size { get; set; }
     [JsonPropertyName("copy_protection")]
-    public string CopyProtection { get; set; }
+    public string? CopyProtection { get; set; }
     [JsonPropertyName("part_number")]
-    public string PartNumber { get; set; }
+    public string? PartNumber { get; set; }
     [JsonPropertyName("serial_number")]
-    public string SerialNumber { get; set; }
+    public string? SerialNumber { get; set; }
     [JsonPropertyName("barcode")]
-    public string Barcode { get; set; }
+    public string? Barcode { get; set; }
     [JsonPropertyName("catalogue_number")]
-    public string CatalogueNumber { get; set; }
+    public string? CatalogueNumber { get; set; }
     [JsonPropertyName("manufacturer")]
-    public string Manufacturer { get; set; }
+    public string? Manufacturer { get; set; }
     [JsonPropertyName("model")]
-    public string Model { get; set; }
+    public string? Model { get; set; }
     [JsonPropertyName("revision")]
-    public string Revision { get; set; }
+    public string? Revision { get; set; }
     [JsonPropertyName("firmware")]
-    public string Firmware { get; set; }
+    public string? Firmware { get; set; }
     [JsonPropertyName("physical_block_size")]
     public int? PhysicalBlockSize { get; set; }
     [JsonPropertyName("logical_block_size")]
     public int? LogicalBlockSize { get; set; }
     [JsonPropertyName("block_sizes")]
-    public VariableBlockSize[] BlockSizes { get; set; }
+    public VariableBlockSize[]? BlockSizes { get; set; }
     [JsonPropertyName("storage_interface")]
     public StorageInterface? StorageInterface { get; set; }
     [JsonPropertyName("table_of_contents")]
-    public OpticalDiscTrack[] TableOfContents { get; set; }
+    public OpticalDiscTrack[]? TableOfContents { get; set; }
 }

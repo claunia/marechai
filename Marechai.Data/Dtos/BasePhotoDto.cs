@@ -33,15 +33,15 @@ public class BasePhotoDto : BaseDto<Guid>
     [JsonPropertyName("aperture")]
     public double? Aperture { get; set; }
     [JsonPropertyName("author")]
-    public string Author { get; set; }
+    public string? Author { get; set; }
     [JsonPropertyName("camera_manufacturer")]
-    public string CameraManufacturer { get; set; }
+    public string? CameraManufacturer { get; set; }
     [JsonPropertyName("camera_model")]
-    public string CameraModel { get; set; }
+    public string? CameraModel { get; set; }
     [JsonPropertyName("colorspace")]
     public ColorSpace? ColorSpace { get; set; }
     [JsonPropertyName("comments")]
-    public string Comments { get; set; }
+    public string? Comments { get; set; }
     [JsonPropertyName("contrast")]
     public Contrast? Contrast { get; set; }
     [JsonPropertyName("creation_date")]
@@ -49,7 +49,7 @@ public class BasePhotoDto : BaseDto<Guid>
     [JsonPropertyName("digital_zoom")]
     public double? DigitalZoomRatio { get; set; }
     [JsonPropertyName("exif_version")]
-    public string ExifVersion { get; set; }
+    public string? ExifVersion { get; set; }
     [JsonPropertyName("exposure")]
     public double? ExposureTime { get; set; }
     [JsonPropertyName("exposure_method")]
@@ -69,7 +69,7 @@ public class BasePhotoDto : BaseDto<Guid>
     [JsonPropertyName("iso")]
     public ushort? IsoRating { get; set; }
     [JsonPropertyName("lens")]
-    public string Lens { get; set; }
+    public string? Lens { get; set; }
     [JsonPropertyName("light_source")]
     public LightSource? LightSource { get; set; }
     [JsonPropertyName("metering_mode")]
@@ -87,7 +87,7 @@ public class BasePhotoDto : BaseDto<Guid>
     [JsonPropertyName("sharpness")]
     public Sharpness? Sharpness { get; set; }
     [JsonPropertyName("software")]
-    public string SoftwareUsed { get; set; }
+    public string? SoftwareUsed { get; set; }
     [JsonPropertyName("subject_distance_range")]
     public SubjectDistanceRange? SubjectDistanceRange { get; set; }
     [JsonPropertyName("upload_date")]
@@ -97,9 +97,9 @@ public class BasePhotoDto : BaseDto<Guid>
     [JsonPropertyName("white_balance")]
     public WhiteBalance? WhiteBalance { get; set; }
     [JsonPropertyName("user_id")]
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
     [JsonPropertyName("license_name")]
-    public string LicenseName { get; set; }
+    public string? LicenseName { get; set; }
     [JsonPropertyName("license_id")]
     public int LicenseId { get; set; }
     [JsonPropertyName("original_extension")]

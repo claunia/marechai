@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,13 +31,14 @@ namespace Marechai.Data.Dtos;
 public class SoundSynthDto : BaseDto<int>
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    [Required]
+    public required string Name { get; set; }
     [JsonPropertyName("company")]
-    public string CompanyName { get; set; }
+    public string? CompanyName { get; set; }
     [JsonPropertyName("company_id")]
     public int? CompanyId { get; set; }
     [JsonPropertyName("model_code")]
-    public string ModelCode { get; set; }
+    public string? ModelCode { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
     [JsonPropertyName("voices")]

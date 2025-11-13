@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,7 +31,8 @@ namespace Marechai.Data.Dtos;
 public class MagazineScanDto : DocumentScanBaseDto
 {
     [JsonPropertyName("magazine_id")]
+    [Required]
     public long MagazineId { get; set; }
     [JsonPropertyName("magazine")]
-    public string Magazine { get; set; }
+    public string? Magazine { get; set; }
 }

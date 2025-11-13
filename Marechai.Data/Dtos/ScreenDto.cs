@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -34,15 +35,17 @@ public class ScreenDto : BaseDto<int>
     [JsonPropertyName("height")]
     public double? Height { get; set; }
     [JsonPropertyName("diagonal")]
+    [Required]
     public double Diagonal { get; set; }
     [JsonPropertyName("native_resolution_id")]
+    [Required]
     public int NativeResolutionId { get; set; }
     [JsonPropertyName("native_resolution")]
-    public ResolutionDto NativeResolution { get; set; }
+    public ResolutionDto? NativeResolution { get; set; }
     [JsonPropertyName("effective_colors")]
     public long? EffectiveColors { get; set; }
     [JsonPropertyName("type")]
-    public string Type { get; set; }
+    public string? Type { get; set; }
     [JsonIgnore]
     public long? Colors => EffectiveColors ?? NativeResolution.Colors;
 

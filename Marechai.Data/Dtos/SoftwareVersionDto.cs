@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,20 +31,22 @@ namespace Marechai.Data.Dtos;
 public class SoftwareVersionDto : BaseDto<ulong>
 {
     [JsonPropertyName("family")]
-    public string Family { get; set; }
+    public string? Family { get; set; }
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    [Required]
+    public required string Name { get; set; }
     [JsonPropertyName("codename")]
-    public string Codename { get; set; }
+    public string? Codename { get; set; }
     [JsonPropertyName("version")]
-    public string Version { get; set; }
+    public string? Version { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
     [JsonPropertyName("previous")]
-    public string Previous { get; set; }
+    public string? Previous { get; set; }
     [JsonPropertyName("license")]
-    public string License { get; set; }
+    public string? License { get; set; }
     [JsonPropertyName("family_id")]
+    [Required]
     public ulong FamilyId { get; set; }
     [JsonPropertyName("license_id")]
     public int? LicenseId { get; set; }

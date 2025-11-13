@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,17 +31,18 @@ namespace Marechai.Data.Dtos;
 public class ProcessorDto : BaseDto<int>
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    [Required]
+    public required string Name { get; set; }
     [JsonPropertyName("company")]
-    public string CompanyName { get; set; }
+    public string? CompanyName { get; set; }
     [JsonPropertyName("model_code")]
-    public string ModelCode { get; set; }
+    public string? ModelCode { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
     [JsonPropertyName("speed")]
     public double? Speed { get; set; }
     [JsonPropertyName("package")]
-    public string Package { get; set; }
+    public string? Package { get; set; }
     [JsonPropertyName("gprs")]
     public int? Gprs { get; set; }
     [JsonPropertyName("gpr_size")]
@@ -54,7 +56,7 @@ public class ProcessorDto : BaseDto<int>
     [JsonPropertyName("threads_per_core")]
     public int? ThreadsPerCore { get; set; }
     [JsonPropertyName("process")]
-    public string Process { get; set; }
+    public string? Process { get; set; }
     [JsonPropertyName("process_nm")]
     public float? ProcessNm { get; set; }
     [JsonPropertyName("die_size")]
@@ -78,9 +80,9 @@ public class ProcessorDto : BaseDto<int>
     [JsonPropertyName("l3")]
     public float? L3 { get; set; }
     [JsonPropertyName("instruction_set")]
-    public string InstructionSet { get; set; }
+    public string? InstructionSet { get; set; }
     [JsonPropertyName("instruction_set_extensions")]
-    public List<string> InstructionSetExtensions { get; set; }
+    public List<string>? InstructionSetExtensions { get; set; }
     [JsonPropertyName("company_id")]
     public int? CompanyId { get; set; }
     [JsonPropertyName("instruction_set_id")]

@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,9 +31,10 @@ namespace Marechai.Data.Dtos;
 public class CurrencyInflationDto : BaseDto<int>
 {
     [JsonPropertyName("code")]
-    public string CurrencyCode { get; set; }
+    [Required]
+    public required string CurrencyCode { get; set; }
     [JsonPropertyName("name")]
-    public string CurrencyName { get; set; }
+    public string? CurrencyName { get; set; }
     [JsonPropertyName("year")]
     public uint Year { get; set; }
     [JsonPropertyName("inflation")]

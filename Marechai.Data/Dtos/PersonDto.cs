@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,27 +31,28 @@ namespace Marechai.Data.Dtos;
 public class PersonDto : BaseDto<int>
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    [Required]
+    public required string Name { get; set; }
     [JsonPropertyName("surname")]
-    public string Surname { get; set; }
+    public string? Surname { get; set; }
     [JsonPropertyName("country")]
-    public string CountryOfBirth { get; set; }
+    public string? CountryOfBirth { get; set; }
     [JsonPropertyName("birthdate")]
     public DateTime BirthDate { get; set; }
     [JsonPropertyName("death_date")]
     public DateTime? DeathDate { get; set; }
     [JsonPropertyName("webpage")]
-    public string Webpage { get; set; }
+    public string? Webpage { get; set; }
     [JsonPropertyName("twitter")]
-    public string Twitter { get; set; }
+    public string? Twitter { get; set; }
     [JsonPropertyName("facebook")]
-    public string Facebook { get; set; }
+    public string? Facebook { get; set; }
     [JsonPropertyName("photo")]
-    public Guid Photo { get; set; }
+    public Guid? Photo { get; set; }
     [JsonPropertyName("alias")]
-    public string Alias { get; set; }
+    public string? Alias { get; set; }
     [JsonPropertyName("display_name")]
-    public string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
     [JsonPropertyName("country_id")]
     public short? CountryOfBirthId { get; set; }
     [JsonIgnore]

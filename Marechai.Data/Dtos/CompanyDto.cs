@@ -33,27 +33,27 @@ public class CompanyDto : BaseDto<int>
 {
     [JsonPropertyName("name")]
     [Required]
-    public string Name { get; set; }
+    public required string Name { get; set; }
     [JsonPropertyName("founded")]
     public DateTime? Founded { get; set; }
     [JsonPropertyName("website")]
-    public string Website { get; set; }
+    public string? Website { get; set; }
     [JsonPropertyName("twitter")]
-    public string Twitter { get; set; }
+    public string? Twitter { get; set; }
     [JsonPropertyName("facebook")]
-    public string Facebook { get; set; }
+    public string? Facebook { get; set; }
     [JsonPropertyName("sold")]
     public DateTime? Sold { get; set; }
     [JsonPropertyName("sold_to_id")]
     public int? SoldToId { get; set; }
     [JsonPropertyName("address")]
-    public string Address { get; set; }
+    public string? Address { get; set; }
     [JsonPropertyName("city")]
-    public string City { get; set; }
+    public string? City { get; set; }
     [JsonPropertyName("province")]
-    public string Province { get; set; }
+    public string? Province { get; set; }
     [JsonPropertyName("postal_code")]
-    public string PostalCode { get; set; }
+    public string? PostalCode { get; set; }
     [JsonPropertyName("country_id")]
     public short? CountryId { get; set; }
     [JsonPropertyName("status")]
@@ -61,9 +61,9 @@ public class CompanyDto : BaseDto<int>
     [JsonPropertyName("last_logo")]
     public Guid? LastLogo { get; set; }
     [JsonPropertyName("sold_to")]
-    public string SoldTo { get; set; }
+    public string? SoldTo { get; set; }
     [JsonPropertyName("country")]
-    public string Country { get; set; }
+    public string? Country { get; set; }
     [JsonPropertyName("founded_day_is_unknown")]
     public bool FoundedDayIsUnknown { get; set; }
     [JsonPropertyName("founded_month_is_unknown")]
@@ -73,7 +73,7 @@ public class CompanyDto : BaseDto<int>
     [JsonPropertyName("sold_month_is_unknown")]
     public bool SoldMonthIsUnknown { get; set; }
     [JsonPropertyName("legal_name")]
-    public string LegalName { get; set; }
+    public string? LegalName { get; set; }
     [JsonIgnore]
     public string SoldView => Status != CompanyStatus.Active && Status != CompanyStatus.Unknown
                                   ? Sold?.ToShortDateString() ?? "Unknown"

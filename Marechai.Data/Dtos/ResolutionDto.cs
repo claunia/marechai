@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,16 +31,20 @@ namespace Marechai.Data.Dtos;
 public class ResolutionDto : BaseDto<int>
 {
     [JsonPropertyName("width")]
+    [Required]
     public int Width { get; set; }
     [JsonPropertyName("height")]
+    [Required]
     public int Height { get; set; }
     [JsonPropertyName("colors")]
     public long? Colors { get; set; }
     [JsonPropertyName("palette")]
     public long? Palette { get; set; }
     [JsonPropertyName("chars")]
+    [Required]
     public bool Chars { get; set; }
     [JsonPropertyName("grayscale")]
+    [Required]
     public bool Grayscale { get; set; }
     [JsonIgnore]
     public long? PaletteView => Palette ?? Colors;

@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Marechai.Database;
 
@@ -31,19 +32,21 @@ namespace Marechai.Data.Dtos;
 public class SoftwareVariantDto : BaseDto<ulong>
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    [Required]
+    public required string Name { get; set; }
     [JsonPropertyName("version")]
-    public string Version { get; set; }
+    public string? Version { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
     [JsonPropertyName("parent_id")]
     public ulong? ParentId { get; set; }
     [JsonPropertyName("parent")]
-    public string Parent { get; set; }
+    public string? Parent { get; set; }
     [JsonPropertyName("version_id")]
+    [Required]
     public ulong SoftwareVersionId { get; set; }
     [JsonPropertyName("version")]
-    public string SoftwareVersion { get; set; }
+    public string? SoftwareVersion { get; set; }
     [JsonPropertyName("minimum_memory")]
     public ulong? MinimumMemory { get; set; }
     [JsonPropertyName("recommended_memory")]
@@ -51,15 +54,15 @@ public class SoftwareVariantDto : BaseDto<ulong>
     [JsonPropertyName("required_storage")]
     public ulong? RequiredStorage { get; set; }
     [JsonPropertyName("part_number")]
-    public string PartNumber { get; set; }
+    public string? PartNumber { get; set; }
     [JsonPropertyName("serial_number")]
-    public string SerialNumber { get; set; }
+    public string? SerialNumber { get; set; }
     [JsonPropertyName("product_code")]
-    public string ProductCode { get; set; }
+    public string? ProductCode { get; set; }
     [JsonPropertyName("catalogue_number")]
-    public string CatalogueNumber { get; set; }
+    public string? CatalogueNumber { get; set; }
     [JsonPropertyName("distribution_mode")]
     public DistributionMode DistributionMode { get; set; }
     [JsonPropertyName("family")]
-    public string Family { get; set; }
+    public string? Family { get; set; }
 }

@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,11 +31,13 @@ namespace Marechai.Data.Dtos;
 public class InstructionSetExtensionByProcessorDto : BaseDto<int>
 {
     [JsonPropertyName("extensions")]
-    public string Extension { get; set; }
+    public string? Extension { get; set; }
     [JsonPropertyName("processor")]
-    public string Processor { get; set; }
+    public string? Processor { get; set; }
     [JsonPropertyName("processor_id")]
+    [Required]
     public int ProcessorId { get; set; }
     [JsonPropertyName("extension_id")]
+    [Required]
     public int ExtensionId { get; set; }
 }

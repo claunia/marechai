@@ -23,6 +23,7 @@
 // Copyright © 2003-2021 Natalia Portillo
 *******************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -30,17 +31,18 @@ namespace Marechai.Data.Dtos;
 public class DocumentPersonDto : BaseDto<int>
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    [Required]
+    public required string Name { get; set; }
     [JsonPropertyName("person")]
-    public string Person { get; set; }
+    public string? Person { get; set; }
     [JsonPropertyName("person_id")]
     public int? PersonId { get; set; }
     [JsonPropertyName("alias")]
-    public string Alias { get; set; }
+    public string? Alias { get; set; }
     [JsonPropertyName("surname")]
-    public string Surname { get; set; }
+    public string? Surname { get; set; }
     [JsonPropertyName("display_name")]
-    public string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
 
     [JsonIgnore]
     public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
