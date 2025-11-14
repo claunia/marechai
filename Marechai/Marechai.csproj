@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
     <Version>4.0.0.1836</Version>
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <RootNamespace>Marechai</RootNamespace>
@@ -32,7 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj"/>
-    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj" />
+    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\**\*.es.resx"/>
