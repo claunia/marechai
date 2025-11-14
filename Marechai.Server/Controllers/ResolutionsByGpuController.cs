@@ -40,7 +40,7 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class ResolutionsByGpuController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet("gpus/{gpuId:int}/resolutions")]
+    [HttpGet("gpus/{resolutionId:int}/resolutions")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
