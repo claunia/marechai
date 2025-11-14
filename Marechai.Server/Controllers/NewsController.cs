@@ -34,13 +34,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/news")]
 [ApiController]
-public class NewsController(MarechaiContext context, IStringLocalizer<NewsController> localizer) : ControllerBase
+public class NewsController(MarechaiContext context) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
@@ -86,73 +85,28 @@ public class NewsController(MarechaiContext context, IStringLocalizer<NewsContro
             switch(@new.Type)
             {
                 case NewsType.NewComputerInDb:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["New computer in database"],
-                                         @new.Date,
-                                         "computers",
-                                         $"{machine.Company.Name} {machine.Name}"));
-
-                    break;
                 case NewsType.NewConsoleInDb:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["New console in database"],
-                                         @new.Date,
-                                         "consoles",
-                                         $"{machine.Company.Name} {machine.Name}"));
-
-                    break;
-
                 case NewsType.NewComputerInCollection:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["New computer in collection"],
-                                         @new.Date,
-                                         "computers",
-                                         $"{machine.Company.Name} {machine.Name}"));
-
-                    break;
-
                 case NewsType.NewConsoleInCollection:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["New console in collection"],
-                                         @new.Date,
-                                         "consoles",
-                                         $"{machine.Company.Name} {machine.Name}"));
-
-                    break;
-
                 case NewsType.UpdatedComputerInDb:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["Updated computer in database"],
-                                         @new.Date,
-                                         "computers",
-                                         $"{machine.Company.Name} {machine.Name}"));
-
-                    break;
-
                 case NewsType.UpdatedConsoleInDb:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["Updated console in database"],
-                                         @new.Date,
-                                         "consoles",
-                                         $"{machine.Company.Name} {machine.Name}"));
-
-                    break;
-
                 case NewsType.UpdatedComputerInCollection:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["Updated computer in collection"],
-                                         @new.Date,
-                                         "computers",
-                                         $"{machine.Company.Name} {machine.Name}"));
-
-                    break;
-
                 case NewsType.UpdatedConsoleInCollection:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["Updated console in collection"],
-                                         @new.Date,
-                                         "consoles",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                    news.Add(new NewsDto
+                    {
+                        Id         = @new.Id,
+                        AffectedId = @new.AddedId,
+                        Timestamp  = @new.Date,
+                        Type       = @new.Type,
+                        Controller =
+                            @new.Type is NewsType.NewComputerInDb
+                                      or NewsType.NewComputerInCollection
+                                      or NewsType.UpdatedComputerInDb
+                                      or NewsType.UpdatedComputerInCollection
+                                ? "computers"
+                                : "consoles",
+                        ItemName = $"{machine.Company.Name} {machine.Name}"
+                    });
 
                     break;
 
