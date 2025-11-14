@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -43,34 +44,40 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<License>> GetAsync() => context.Licenses.OrderBy(l => l.Name)
-                                                    .Select(l => new License
-                                                     {
-                                                         FsfApproved = l.FsfApproved,
-                                                         Id          = l.Id,
-                                                         Link        = l.Link,
-                                                         Name        = l.Name,
-                                                         OsiApproved = l.OsiApproved,
-                                                         SPDX        = l.SPDX
-                                                     })
-                                                    .ToListAsync();
+    public Task<List<LicenseDto>> GetAsync()
+    {
+        return context.Licenses.OrderBy(l => l.Name)
+        .Select(l => new LicenseDto
+        {
+            FsfApproved = l.FsfApproved,
+            Id = l.Id,
+            Link = l.Link,
+            Name = l.Name,
+            OsiApproved = l.OsiApproved,
+            SPDX = l.SPDX
+        })
+        .ToListAsync();
+    }
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<License> GetAsync(int id) => context.Licenses.Where(l => l.Id == id)
-                                                    .Select(l => new License
-                                                     {
-                                                         FsfApproved = l.FsfApproved,
-                                                         Id          = l.Id,
-                                                         Link        = l.Link,
-                                                         Name        = l.Name,
-                                                         OsiApproved = l.OsiApproved,
-                                                         SPDX        = l.SPDX,
-                                                         Text        = l.Text
-                                                     })
-                                                    .FirstOrDefaultAsync();
+    public Task<LicenseDto> GetAsync(int id)
+    {
+        return context.Licenses.Where(l => l.Id == id)
+        .Select(l => new LicenseDto
+        {
+            FsfApproved = l.FsfApproved,
+            Id = l.Id,
+            Link = l.Link,
+            Name = l.Name,
+            OsiApproved = l.OsiApproved,
+            SPDX = l.SPDX,
+            Text = l.Text
+        })
+        .FirstOrDefaultAsync();
+    }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -78,21 +85,21 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(int id, [FromBody] License viewModel)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] LicenseDto viewModel)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
-        License model = await context.Licenses.FindAsync(viewModel.Id);
+        if (userId is null) return Unauthorized();
+        var model = await context.Licenses.FindAsync(viewModel.Id);
 
-        if(model is null) return NotFound();
+        if (model is null) return NotFound();
 
         model.FsfApproved = viewModel.FsfApproved;
-        model.Link        = viewModel.Link;
-        model.Name        = viewModel.Name;
+        model.Link = viewModel.Link;
+        model.Name = viewModel.Name;
         model.OsiApproved = viewModel.OsiApproved;
-        model.SPDX        = viewModel.SPDX;
-        model.Text        = viewModel.Text;
+        model.SPDX = viewModel.SPDX;
+        model.Text = viewModel.Text;
 
         await context.SaveChangesWithUserAsync(userId);
 
@@ -104,20 +111,20 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync([FromBody] License viewModel)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] LicenseDto viewModel)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
+        if (userId is null) return Unauthorized();
 
         var model = new License
         {
             FsfApproved = viewModel.FsfApproved,
-            Link        = viewModel.Link,
-            Name        = viewModel.Name,
+            Link = viewModel.Link,
+            Name = viewModel.Name,
             OsiApproved = viewModel.OsiApproved,
-            SPDX        = viewModel.SPDX,
-            Text        = viewModel.Text
+            SPDX = viewModel.SPDX,
+            Text = viewModel.Text
         };
 
         await context.Licenses.AddAsync(model);
@@ -134,12 +141,12 @@ public class LicensesController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
-        License item = await context.Licenses.FindAsync(id);
+        if (userId is null) return Unauthorized();
+        var item = await context.Licenses.FindAsync(id);
 
-        if(item is null) return NotFound();
+        if (item is null) return NotFound();
 
         context.Licenses.Remove(item);
 

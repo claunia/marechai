@@ -1,0 +1,48 @@
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2021 Natalia Portillo
+*******************************************************************************/
+
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace Marechai.Data.Dtos;
+
+public class LicenseDto : BaseDto<int>
+{
+    [JsonPropertyName("name")] [Required] public string Name { get; set; }
+
+    [JsonPropertyName("spdx")] public string? SPDX { get; set; }
+
+    [JsonPropertyName("fsf_approved")]
+    [Required]
+    public bool FsfApproved { get; set; }
+
+    [JsonPropertyName("osi_approved")]
+    [Required]
+    public bool OsiApproved { get; set; }
+
+    [JsonPropertyName("link")] public string? Link { get; set; }
+
+    [JsonPropertyName("text")] public string? Text { get; set; }
+}
