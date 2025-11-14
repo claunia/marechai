@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -44,25 +45,31 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<InstructionSet>> GetAsync() => context.InstructionSets.OrderBy(e => e.Name)
-                                                           .Select(e => new InstructionSet
-                                                            {
-                                                                Name = e.Name,
-                                                                Id   = e.Id
-                                                            })
-                                                           .ToListAsync();
+    public Task<List<InstructionSetDto>> GetAsync()
+    {
+        return context.InstructionSets.OrderBy(e => e.Name)
+        .Select(e => new InstructionSetDto
+        {
+            Name = e.Name,
+            Id = e.Id
+        })
+        .ToListAsync();
+    }
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<InstructionSet> GetAsync(int id) => context.InstructionSets.Where(e => e.Id == id)
-                                                           .Select(e => new InstructionSet
-                                                            {
-                                                                Name = e.Name,
-                                                                Id   = e.Id
-                                                            })
-                                                           .FirstOrDefaultAsync();
+    public Task<InstructionSetDto> GetAsync(int id)
+    {
+        return context.InstructionSets.Where(e => e.Id == id)
+        .Select(e => new InstructionSetDto
+        {
+            Name = e.Name,
+            Id = e.Id
+        })
+        .FirstOrDefaultAsync();
+    }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -70,14 +77,14 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(int id, [FromBody] InstructionSet viewModel)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] InstructionSetDto viewModel)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
-        InstructionSet model = await context.InstructionSets.FindAsync(viewModel.Id);
+        if (userId is null) return Unauthorized();
+        var model = await context.InstructionSets.FindAsync(viewModel.Id);
 
-        if(model is null) return NotFound();
+        if (model is null) return NotFound();
 
         model.Name = viewModel.Name;
 
@@ -91,11 +98,11 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync([FromBody] InstructionSet viewModel)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] InstructionSetDto viewModel)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
+        if (userId is null) return Unauthorized();
 
         var model = new InstructionSet
         {
@@ -116,12 +123,12 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
-        InstructionSet item = await context.InstructionSets.FindAsync(id);
+        if (userId is null) return Unauthorized();
+        var item = await context.InstructionSets.FindAsync(id);
 
-        if(item is null) return NotFound();
+        if (item is null) return NotFound();
 
         context.InstructionSets.Remove(item);
 
@@ -134,6 +141,8 @@ public class InstructionSetsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public bool VerifyUnique(string name) =>
-        !context.InstructionSets.Any(i => string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase));
+    public bool VerifyUnique(string name)
+    {
+        return !context.InstructionSets.Any(i => string.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase));
+    }
 }
