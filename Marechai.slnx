@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+  </Folder>
+  <Project Path="Marechai.App/Marechai.App.csproj" />
+  <Project Path="Marechai.Data/Marechai.Data.csproj" />
+  <Project Path="Marechai.Database/Marechai.Database.csproj" />
+  <Project Path="Marechai.Server/Marechai.Server.csproj" />
+  <Project Path="Marechai/Marechai.csproj" />
+</Solution>
