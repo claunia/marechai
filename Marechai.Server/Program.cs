@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes.Interop;
 using Marechai.Database;
 using Marechai.Database.Models;
@@ -10,6 +11,7 @@ using Marechai.Server.Services;
 using Markdig;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +23,7 @@ namespace Marechai.Server;
 
 file class Program
 {
-    static IDbCore _database;
+    private static IDbCore _database;
 
     public static void Main(string[] args)
     {
@@ -154,10 +156,18 @@ file class Program
                     options.JsonSerializerOptions.Converters.Add(new IsoDateTimeConverter());
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.WriteIndented        = true;
+                    options.JsonSerializerOptions.ReferenceHandler     = ReferenceHandler.IgnoreCycles;
                 });
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+
+        // Add custom route constraints
+        builder.Services.Configure<RouteOptions>(options =>
+        {
+            options.ConstraintMap["ulong"] = typeof(UlongRouteConstraint);
+            options.ConstraintMap["char"]  = typeof(CharRouteConstraint);
+        });
 
         builder.Services.AddAuthentication(options =>
                 {
