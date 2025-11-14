@@ -100,6 +100,8 @@ public partial class App : Application
                                                                  // Register application services
                                                                  services.AddSingleton<NewsService>();
                                                                  services.AddSingleton<NewsViewModel>();
+                                                                 services.AddSingleton<ComputersService>();
+                                                                 services.AddSingleton<ComputersViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
@@ -117,14 +119,27 @@ public partial class App : Application
     {
         views.Register(new ViewMap(ViewModel: typeof(ShellViewModel)),
                        new ViewMap<MainPage, MainViewModel>(),
+                       new ViewMap<NewsPage, NewsViewModel>(),
+                       new ViewMap<ComputersPage, ComputersViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
         routes.Register(new RouteMap("",
                                      views.FindByViewModel<ShellViewModel>(),
                                      Nested:
                                      [
-                                         new RouteMap("Main",   views.FindByViewModel<MainViewModel>(), true),
-                                         new RouteMap("Second", views.FindByViewModel<SecondViewModel>())
+                                         new RouteMap("Main",
+                                                      views.FindByViewModel<MainViewModel>(),
+                                                      true,
+                                                      Nested:
+                                                      [
+                                                          new RouteMap("News",
+                                                                       views.FindByViewModel<NewsViewModel>(),
+                                                                       true),
+                                                          new RouteMap("computers",
+                                                                       views.FindByViewModel<ComputersViewModel>()),
+                                                          new RouteMap("Second",
+                                                                       views.FindByViewModel<SecondViewModel>())
+                                                      ])
                                      ]));
     }
 }

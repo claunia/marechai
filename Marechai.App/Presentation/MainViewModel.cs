@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -149,16 +150,23 @@ public partial class MainViewModel : ObservableObject
 
     private async Task NavigateTo(string destination)
     {
-        // TODO: Navigate to the specified destination
-        // These routes will need to be registered in App.xaml.cs RegisterRoutes method
-        // For now, placeholder implementation
-        await Task.CompletedTask;
+        try
+        {
+            // Navigate within the Main region using relative navigation
+            // The "./" prefix means navigate within the current page's region
+            await _navigator.NavigateRouteAsync(this, $"./{destination}");
+        }
+        catch(Exception)
+        {
+            // Navigation error - fail silently for now
+            // TODO: Add error handling/logging
+        }
     }
 
     private async Task NavigateToMainAsync()
     {
-        // Stay on main page
-        await Task.CompletedTask;
+        // Navigate to News page (the default/home page)
+        await NavigateTo("News");
     }
 
     private async Task GoToSecondView()
