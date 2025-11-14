@@ -3,12 +3,9 @@
 using Marechai.App.Auth;
 using Marechai.App.Books;
 using Marechai.App.BrowserTests;
-using Marechai.App.ByLetter;
-using Marechai.App.ByYear;
 using Marechai.App.Companies;
 using Marechai.App.Computers;
 using Marechai.App.Consoles;
-using Marechai.App.Count;
 using Marechai.App.Countries;
 using Marechai.App.Currencies;
 using Marechai.App.Documents;
@@ -25,10 +22,8 @@ using Marechai.App.Machines;
 using Marechai.App.Magazines;
 using Marechai.App.MagazinesByMachine;
 using Marechai.App.MagazinesByMachineFamily;
-using Marechai.App.MaximumYear;
 using Marechai.App.Medias;
 using Marechai.App.MemoriesByMachine;
-using Marechai.App.MinimumYear;
 using Marechai.App.News;
 using Marechai.App.People;
 using Marechai.App.PeopleByBook;
@@ -79,16 +74,6 @@ namespace Marechai.App
         {
             get => new global::Marechai.App.BrowserTests.BrowserTestsRequestBuilder(PathParameters, RequestAdapter);
         }
-        /// <summary>The byLetter property</summary>
-        public global::Marechai.App.ByLetter.ByLetterRequestBuilder ByLetter
-        {
-            get => new global::Marechai.App.ByLetter.ByLetterRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The byYear property</summary>
-        public global::Marechai.App.ByYear.ByYearRequestBuilder ByYear
-        {
-            get => new global::Marechai.App.ByYear.ByYearRequestBuilder(PathParameters, RequestAdapter);
-        }
         /// <summary>The companies property</summary>
         public global::Marechai.App.Companies.CompaniesRequestBuilder Companies
         {
@@ -103,11 +88,6 @@ namespace Marechai.App
         public global::Marechai.App.Consoles.ConsolesRequestBuilder Consoles
         {
             get => new global::Marechai.App.Consoles.ConsolesRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The count property</summary>
-        public global::Marechai.App.Count.CountRequestBuilder Count
-        {
-            get => new global::Marechai.App.Count.CountRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The countries property</summary>
         public global::Marechai.App.Countries.CountriesRequestBuilder Countries
@@ -189,11 +169,6 @@ namespace Marechai.App
         {
             get => new global::Marechai.App.MagazinesByMachineFamily.MagazinesByMachineFamilyRequestBuilder(PathParameters, RequestAdapter);
         }
-        /// <summary>The maximumYear property</summary>
-        public global::Marechai.App.MaximumYear.MaximumYearRequestBuilder MaximumYear
-        {
-            get => new global::Marechai.App.MaximumYear.MaximumYearRequestBuilder(PathParameters, RequestAdapter);
-        }
         /// <summary>The medias property</summary>
         public global::Marechai.App.Medias.MediasRequestBuilder Medias
         {
@@ -203,11 +178,6 @@ namespace Marechai.App
         public global::Marechai.App.MemoriesByMachine.MemoriesByMachineRequestBuilder MemoriesByMachine
         {
             get => new global::Marechai.App.MemoriesByMachine.MemoriesByMachineRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The minimumYear property</summary>
-        public global::Marechai.App.MinimumYear.MinimumYearRequestBuilder MinimumYear
-        {
-            get => new global::Marechai.App.MinimumYear.MinimumYearRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The news property</summary>
         public global::Marechai.App.News.NewsRequestBuilder News

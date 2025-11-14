@@ -40,13 +40,13 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class ComputersController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet("/count")]
+    [HttpGet("count")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<int> GetComputersCountAsync() => context.Machines.CountAsync(c => c.Type == MachineType.Computer);
 
-    [HttpGet("/minimum-year")]
+    [HttpGet("minimum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -56,7 +56,7 @@ public class ComputersController(MarechaiContext context) : ControllerBase
                                                                  t.Introduced.Value.Year > 1000)
                                                      .MinAsync(t => t.Introduced.Value.Year);
 
-    [HttpGet("/maximum-year")]
+    [HttpGet("maximum-year")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,7 +66,7 @@ public class ComputersController(MarechaiContext context) : ControllerBase
                                                                  t.Introduced.Value.Year > 1000)
                                                      .MaxAsync(t => t.Introduced.Value.Year);
 
-    [HttpGet("/by-letter/{c}")]
+    [HttpGet("by-letter/{c}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -84,7 +84,7 @@ public class ComputersController(MarechaiContext context) : ControllerBase
                                                                                })
                                                                               .ToListAsync();
 
-    [HttpGet("/by-year/{year:int}")]
+    [HttpGet("by-year/{year:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
