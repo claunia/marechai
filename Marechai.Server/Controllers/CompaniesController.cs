@@ -190,15 +190,15 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<Machine>> GetMachinesAsync(int id) => context.Machines.Where(m => m.CompanyId == id)
-                                                                  .OrderBy(m => m.Name)
-                                                                  .Select(m => new Machine
-                                                                   {
-                                                                       Id   = m.Id,
-                                                                       Name = m.Name,
-                                                                       Type = m.Type
-                                                                   })
-                                                                  .ToListAsync();
+    public Task<List<MachineDto>> GetMachinesAsync(int id) => context.Machines.Where(m => m.CompanyId == id)
+                                                                     .OrderBy(m => m.Name)
+                                                                     .Select(m => new MachineDto
+                                                                      {
+                                                                          Id   = m.Id,
+                                                                          Name = m.Name,
+                                                                          Type = m.Type
+                                                                      })
+                                                                     .ToListAsync();
 
     [HttpGet("{id:int}/description/text")]
     [AllowAnonymous]
@@ -215,12 +215,12 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<Company> GetSoldToAsync(int? id) => context.Companies.Select(c => new Company
-                                                            {
-                                                                Id   = c.Id,
-                                                                Name = c.Name
-                                                            })
-                                                           .FirstOrDefaultAsync(c => c.Id == id);
+    public Task<CompanyDto> GetSoldToAsync(int? id) => context.Companies.Select(c => new CompanyDto
+                                                               {
+                                                                   Id   = c.Id,
+                                                                   Name = c.Name
+                                                               })
+                                                              .FirstOrDefaultAsync(c => c.Id == id);
 
     [HttpGet("/countries/{id:int}/name")]
     [AllowAnonymous]
@@ -233,8 +233,8 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<CompanyDto>> GetCompaniesByCountryAsync(int countryId) => context.Companies.Include(c => c.Logos)
-       .Where(c => c.CountryId == countryId)
+    public Task<List<CompanyDto>> GetCompaniesByCountryAsync(int id) => context.Companies.Include(c => c.Logos)
+       .Where(c => c.CountryId == id)
        .OrderBy(c => c.Name)
        .Select(c => new CompanyDto
         {
