@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -41,16 +42,26 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment host) : ControllerBase
 {
-    readonly string _webRootPath = host.WebRootPath;
+    private readonly string _webRootPath = host.WebRootPath;
 
     [HttpGet("/companies/{companyId:int}/logos")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<CompanyLogo>> GetByCompany(int companyId) => context.CompanyLogos
-                                                                         .Where(l => l.CompanyId == companyId)
-                                                                         .OrderBy(l => l.Year)
-                                                                         .ToListAsync();
+    public Task<List<CompanyLogoDto>> GetByCompany(int companyId)
+    {
+        return context.CompanyLogos
+        .Where(l => l.CompanyId == companyId)
+        .OrderBy(l => l.Year)
+        .Select(l => new CompanyLogoDto
+        {
+            Id = l.Id,
+            CompanyId = l.CompanyId,
+            Year = l.Year,
+            Guid = l.Guid
+        })
+        .ToListAsync();
+    }
 
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -60,53 +71,53 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
-        CompanyLogo logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
+        if (userId is null) return Unauthorized();
+        var logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
 
-        if(logo is null) return NotFound();
+        if (logo is null) return NotFound();
 
         context.CompanyLogos.Remove(logo);
         await context.SaveChangesWithUserAsync(userId);
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png"));
 
-        if(System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png")))
+        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png")))
             System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png"));
 
         return Ok();
@@ -120,13 +131,13 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> ChangeYearAsync(int id, [FromBody] int? year)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
+        if (userId is null) return Unauthorized();
 
-        CompanyLogo logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
+        var logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
 
-        if(logo is null) return NotFound();
+        if (logo is null) return NotFound();
 
         logo.Year = year;
         await context.SaveChangesWithUserAsync(userId);
@@ -139,16 +150,16 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync([FromBody] CompanyLogo dto)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] CompanyLogoDto dto)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
+        if (userId is null) return Unauthorized();
 
         var logo = new CompanyLogo
         {
-            Guid      = dto.Guid,
-            Year      = dto.Year,
+            Guid = dto.Guid,
+            Year = dto.Year,
             CompanyId = dto.CompanyId
         };
 
