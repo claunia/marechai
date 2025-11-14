@@ -294,7 +294,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-            entity.Property(e => e.Agif).HasColumnName("agif").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Agif).HasColumnName("agif").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
             entity.Property(e => e.Browser)
                   .IsRequired()
@@ -302,25 +302,19 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasColumnType("varchar(64)")
                   .HasDefaultValueSql("''");
 
-            entity.Property(e => e.Colors)
-                  .HasColumnName("colors")
-                  .HasColumnType("tinyint(1)")
-                  .HasDefaultValueSql("'0'");
+            entity.Property(e => e.Colors).HasColumnName("colors").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
-            entity.Property(e => e.Flash).HasColumnName("flash").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Flash).HasColumnName("flash").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
-            entity.Property(e => e.Frames)
-                  .HasColumnName("frames")
-                  .HasColumnType("tinyint(1)")
-                  .HasDefaultValueSql("'0'");
+            entity.Property(e => e.Frames).HasColumnName("frames").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
-            entity.Property(e => e.Gif87).HasColumnName("gif87").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Gif87).HasColumnName("gif87").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
-            entity.Property(e => e.Gif89).HasColumnName("gif89").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Gif89).HasColumnName("gif89").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
-            entity.Property(e => e.Jpeg).HasColumnName("jpeg").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Jpeg).HasColumnName("jpeg").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
-            entity.Property(e => e.Js).HasColumnName("js").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Js).HasColumnName("js").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
             entity.Property(e => e.Os)
                   .IsRequired()
@@ -334,11 +328,11 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasColumnType("varchar(8)")
                   .HasDefaultValueSql("''");
 
-            entity.Property(e => e.Png).HasColumnName("png").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Png).HasColumnName("png").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
-            entity.Property(e => e.Pngt).HasColumnName("pngt").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Pngt).HasColumnName("pngt").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
-            entity.Property(e => e.Table).HasColumnName("table").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Table).HasColumnName("table").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
             entity.Property(e => e.UserAgent)
                   .IsRequired()
@@ -892,7 +886,10 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasColumnType("varchar(255)");
 
-            entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Type)
+                  .HasColumnName("type")
+                  .HasColumnType("int(11)")
+                  .HasDefaultValue(MachineType.Unknown);
 
             entity.HasOne(d => d.Company)
                   .WithMany(p => p.Machines)
@@ -1159,9 +1156,15 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.Property(e => e.Speed).HasColumnName("speed");
 
-            entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Type)
+                  .HasColumnName("type")
+                  .HasColumnType("int(11)")
+                  .HasDefaultValue(MemoryType.Unknown);
 
-            entity.Property(e => e.Usage).HasColumnName("usage").HasColumnType("int(11)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Usage)
+                  .HasColumnName("usage")
+                  .HasColumnType("int(11)")
+                  .HasDefaultValue(MemoryUsage.Unknown);
 
             entity.HasOne(d => d.Machine)
                   .WithMany(p => p.Memory)
@@ -1225,7 +1228,10 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("datetime");
 
-            entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Type)
+                  .HasColumnName("type")
+                  .HasColumnType("int(11)")
+                  .HasDefaultValue(NewsType.NewComputerInDb);
         });
 
         modelBuilder.Entity<PeopleByBook>(entity =>
@@ -1505,7 +1511,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.Property(e => e.Id).HasColumnName("id").HasColumnType("int(11)");
 
-            entity.Property(e => e.Chars).HasColumnName("chars").HasColumnType("tinyint(1)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Chars).HasColumnName("chars").HasColumnType("tinyint(1)").HasDefaultValue(false);
 
             entity.Property(e => e.Colors).HasColumnName("colors").HasColumnType("bigint(20)");
 
@@ -1679,11 +1685,14 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.Property(e => e.Interface)
                   .HasColumnName("interface")
                   .HasColumnType("int(11)")
-                  .HasDefaultValueSql("'0'");
+                  .HasDefaultValue(StorageInterface.Unknown);
 
             entity.Property(e => e.MachineId).HasColumnName("machine").HasColumnType("int(11)");
 
-            entity.Property(e => e.Type).HasColumnName("type").HasColumnType("int(11)").HasDefaultValueSql("'0'");
+            entity.Property(e => e.Type)
+                  .HasColumnName("type")
+                  .HasColumnType("int(11)")
+                  .HasDefaultValue(StorageType.Unknown);
 
             entity.HasOne(d => d.Machine)
                   .WithMany(p => p.Storage)
