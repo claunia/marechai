@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,5 +43,17 @@ public class Iso4217Controller(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<Iso4217>> GetAsync() => context.Iso4217.OrderBy(c => c.Name).ToListAsync();
+    public Task<List<Iso4217Dto>> GetAsync()
+    {
+        return context.Iso4217.OrderBy(c => c.Name)
+        .Select(c => new Iso4217Dto
+        {
+            Code = c.Code,
+            Numeric = c.Numeric,
+            MinorUnits = c.MinorUnits,
+            Name = c.Name,
+            Withdrawn = c.Withdrawn
+        })
+        .ToListAsync();
+    }
 }
