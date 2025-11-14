@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -44,25 +45,31 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<InstructionSetExtension>> GetAsync() => context.InstructionSetExtensions.OrderBy(e => e.Extension)
-                                                                    .Select(e => new InstructionSetExtension
-                                                                     {
-                                                                         Extension = e.Extension,
-                                                                         Id        = e.Id
-                                                                     })
-                                                                    .ToListAsync();
+    public Task<List<InstructionSetExtensionDto>> GetAsync()
+    {
+        return context.InstructionSetExtensions.OrderBy(e => e.Extension)
+        .Select(e => new InstructionSetExtensionDto
+        {
+            Extension = e.Extension,
+            Id = e.Id
+        })
+        .ToListAsync();
+    }
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<InstructionSetExtension> GetAsync(int id) => context.InstructionSetExtensions.Where(e => e.Id == id)
-                                                                    .Select(e => new InstructionSetExtension
-                                                                     {
-                                                                         Extension = e.Extension,
-                                                                         Id        = e.Id
-                                                                     })
-                                                                    .FirstOrDefaultAsync();
+    public Task<InstructionSetExtensionDto> GetAsync(int id)
+    {
+        return context.InstructionSetExtensions.Where(e => e.Id == id)
+        .Select(e => new InstructionSetExtensionDto
+        {
+            Extension = e.Extension,
+            Id = e.Id
+        })
+        .FirstOrDefaultAsync();
+    }
 
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -70,14 +77,14 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> UpdateAsync(int id, [FromBody] InstructionSetExtension viewModel)
+    public async Task<ActionResult> UpdateAsync(int id, [FromBody] InstructionSetExtensionDto viewModel)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
-        InstructionSetExtension model = await context.InstructionSetExtensions.FindAsync(viewModel.Id);
+        if (userId is null) return Unauthorized();
+        var model = await context.InstructionSetExtensions.FindAsync(viewModel.Id);
 
-        if(model is null) return NotFound();
+        if (model is null) return NotFound();
 
         model.Extension = viewModel.Extension;
 
@@ -91,11 +98,11 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<int>> CreateAsync([FromBody] InstructionSetExtension viewModel)
+    public async Task<ActionResult<int>> CreateAsync([FromBody] InstructionSetExtensionDto viewModel)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
+        if (userId is null) return Unauthorized();
 
         var model = new InstructionSetExtension
         {
@@ -116,12 +123,12 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> DeleteAsync(int id)
     {
-        string userId = User.FindFirstValue(ClaimTypes.Sid);
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
 
-        if(userId is null) return Unauthorized();
-        InstructionSetExtension item = await context.InstructionSetExtensions.FindAsync(id);
+        if (userId is null) return Unauthorized();
+        var item = await context.InstructionSetExtensions.FindAsync(id);
 
-        if(item is null) return NotFound();
+        if (item is null) return NotFound();
 
         context.InstructionSetExtensions.Remove(item);
 
@@ -134,8 +141,10 @@ public class InstructionSetExtensionsController(MarechaiContext context) : Contr
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public bool VerifyUnique(string extension) =>
-        !context.InstructionSetExtensions.Any(i => string.Equals(i.Extension,
-                                                                 extension,
-                                                                 StringComparison.OrdinalIgnoreCase));
+    public bool VerifyUnique(string extension)
+    {
+        return !context.InstructionSetExtensions.Any(i => string.Equals(i.Extension,
+            extension,
+            StringComparison.OrdinalIgnoreCase));
+    }
 }
