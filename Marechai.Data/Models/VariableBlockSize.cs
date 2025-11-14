@@ -23,7 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Models;
 
 // Not for a table
 public class VariableBlockSize

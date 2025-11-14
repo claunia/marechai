@@ -1,6 +1,6 @@
 using Aaru.CommonTypes.Enums;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Models;
 
 // Not for a table
 public class OpticalDiscTrack

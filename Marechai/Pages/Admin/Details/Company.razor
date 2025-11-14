@@ -28,8 +28,8 @@
 @page "/admin/companies/details/{Id:int}"
 @page "/admin/companies/edit/{Id:int}"
 @page "/admin/companies/create"
+@using Marechai.Data
 @using Marechai.Data.Dtos
-@using Marechai.Database
 @using Marechai.Database.Models
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L

@@ -26,8 +26,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
-using Marechai.Database;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -37,14 +37,14 @@ namespace Marechai.Services;
 public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> localizer)
 {
     public async Task<List<NewsDto>> GetAsync() => await context.News.OrderByDescending(n => n.Date)
-                                                                      .Select(n => new NewsDto
-                                                                       {
-                                                                           Id         = n.Id,
-                                                                           Timestamp  = n.Date,
-                                                                           Type       = n.Type,
-                                                                           AffectedId = n.AddedId
-                                                                       })
-                                                                      .ToListAsync();
+                                                                .Select(n => new NewsDto
+                                                                 {
+                                                                     Id         = n.Id,
+                                                                     Timestamp  = n.Date,
+                                                                     Type       = n.Type,
+                                                                     AffectedId = n.AddedId
+                                                                 })
+                                                                .ToListAsync();
 
     public List<NewsDto> GetNews()
     {
@@ -60,72 +60,72 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
             {
                 case NewsType.NewComputerInDb:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["New computer in database"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["New computer in database"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
                 case NewsType.NewConsoleInDb:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["New console in database"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["New console in database"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.NewComputerInCollection:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["New computer in collection"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["New computer in collection"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.NewConsoleInCollection:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["New console in collection"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["New console in collection"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.UpdatedComputerInDb:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["Updated computer in database"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["Updated computer in database"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.UpdatedConsoleInDb:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["Updated console in database"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["Updated console in database"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.UpdatedComputerInCollection:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["Updated computer in collection"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["Updated computer in collection"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 
                 case NewsType.UpdatedConsoleInCollection:
                     news.Add(new NewsDto(@new.AddedId,
-                                               localizer["Updated console in collection"],
-                                               @new.Date,
-                                               "machine",
-                                               $"{machine.Company.Name} {machine.Name}"));
+                                         localizer["Updated console in collection"],
+                                         @new.Date,
+                                         "machine",
+                                         $"{machine.Company.Name} {machine.Name}"));
 
                     break;
 

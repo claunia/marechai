@@ -15,4 +15,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft"/>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
+  </ItemGroup>
 </Project>

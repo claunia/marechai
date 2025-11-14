@@ -23,6 +23,8 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using Marechai.Data;
+
 namespace Marechai.Database.Models;
 
 public abstract class DocumentScanBase : BaseScan

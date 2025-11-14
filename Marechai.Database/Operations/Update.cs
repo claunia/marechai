@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using Marechai.Data;
 using Marechai.Database.Schemas.Sql;
 
 namespace Marechai.Database;
@@ -422,9 +423,7 @@ public partial class Operations
         dataAdapter.Fill(dataSet);
 
         foreach(DataRow dataRow in dataSet.Tables[0].Rows)
-        {
             consoleIdAndCompanyId.Add(int.Parse(dataRow["id"].ToString()), int.Parse(dataRow["company"].ToString()));
-        }
 
         trans = connection.BeginTransaction();
 
@@ -1200,7 +1199,7 @@ public partial class Operations
         dbCmd.Transaction = trans;
 
         dbCmd.CommandText = $"UPDATE `computers` SET `gpu` = {DbNone} WHERE `gpu` = 1;\n" +
-                            "UPDATE `computers` SET `gpu` = NULL WHERE `gpu` = 2;\n"       +
+                            "UPDATE `computers` SET `gpu` = NULL WHERE `gpu` = 2;\n"      +
                             $"UPDATE `computers` SET `gpu` = {DbSoftware} WHERE `gpu` = 3;";
 
         dbCmd.ExecuteNonQuery();
@@ -1213,7 +1212,7 @@ public partial class Operations
         dbCmd.Transaction = trans;
 
         dbCmd.CommandText = $"UPDATE `consoles` SET `gpu` = {DbNone} WHERE `gpu` = 1;\n" +
-                            "UPDATE `consoles` SET `gpu` = NULL WHERE `gpu` = 2;\n"       +
+                            "UPDATE `consoles` SET `gpu` = NULL WHERE `gpu` = 2;\n"      +
                             $"UPDATE `consoles` SET `gpu` = {DbSoftware} WHERE `gpu` = 3;";
 
         dbCmd.ExecuteNonQuery();

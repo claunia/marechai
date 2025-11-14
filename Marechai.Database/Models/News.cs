@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 

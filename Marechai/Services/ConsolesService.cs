@@ -26,8 +26,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
-using Marechai.Database;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,52 +39,61 @@ public class ConsolesService(MarechaiContext context)
         await context.Machines.CountAsync(c => c.Type == MachineType.Console);
 
     public Task<int> GetMinimumYearAsync() => context.Machines
-                                                      .Where(t => t.Type == MachineType.Console &&
-                                                                  t.Introduced.HasValue         &&
-                                                                  t.Introduced.Value.Year > 1000)
-                                                      .MinAsync(t => t.Introduced.Value.Year);
+                                                     .Where(t => t.Type == MachineType.Console &&
+                                                                 t.Introduced.HasValue         &&
+                                                                 t.Introduced.Value.Year > 1000)
+                                                     .MinAsync(t => t.Introduced.Value.Year);
 
     public Task<int> GetMaximumYearAsync() => context.Machines
-                                                      .Where(t => t.Type == MachineType.Console &&
-                                                                  t.Introduced.HasValue         &&
-                                                                  t.Introduced.Value.Year > 1000)
-                                                      .MaxAsync(t => t.Introduced.Value.Year);
+                                                     .Where(t => t.Type == MachineType.Console &&
+                                                                 t.Introduced.HasValue         &&
+                                                                 t.Introduced.Value.Year > 1000)
+                                                     .MaxAsync(t => t.Introduced.Value.Year);
 
     public async Task<List<MachineDto>> GetConsolesByLetterAsync(char c) => await context.Machines
-       .Include(m => m.Company)
-       .Where(m => m.Type == MachineType.Console && EF.Functions.Like(m.Name, $"{c}%"))
-       .OrderBy(m => m.Company.Name)
-       .ThenBy(m => m.Name)
-       .Select(m => new MachineDto
-        {
-            Id      = m.Id,
-            Name    = m.Name,
-            Company = m.Company.Name
-        })
-       .ToListAsync();
+                                                                               .Include(m => m.Company)
+                                                                               .Where(m =>
+                                                                                    m.Type ==
+                                                                                    MachineType.Console &&
+                                                                                    EF.Functions.Like(m.Name,
+                                                                                        $"{c}%"))
+                                                                               .OrderBy(m => m.Company.Name)
+                                                                               .ThenBy(m => m.Name)
+                                                                               .Select(m => new MachineDto
+                                                                                {
+                                                                                    Id      = m.Id,
+                                                                                    Name    = m.Name,
+                                                                                    Company = m.Company.Name
+                                                                                })
+                                                                               .ToListAsync();
 
     public async Task<List<MachineDto>> GetConsolesByYearAsync(int year) => await context.Machines
-       .Include(m => m.Company)
-       .Where(m => m.Type == MachineType.Console && m.Introduced != null && m.Introduced.Value.Year == year)
-       .OrderBy(m => m.Company.Name)
-       .ThenBy(m => m.Name)
-       .Select(m => new MachineDto
-        {
-            Id      = m.Id,
-            Name    = m.Name,
-            Company = m.Company.Name
-        })
-       .ToListAsync();
+                                                                               .Include(m => m.Company)
+                                                                               .Where(m =>
+                                                                                    m.Type ==
+                                                                                    MachineType.Console  &&
+                                                                                    m.Introduced != null &&
+                                                                                    m.Introduced.Value.Year ==
+                                                                                    year)
+                                                                               .OrderBy(m => m.Company.Name)
+                                                                               .ThenBy(m => m.Name)
+                                                                               .Select(m => new MachineDto
+                                                                                {
+                                                                                    Id      = m.Id,
+                                                                                    Name    = m.Name,
+                                                                                    Company = m.Company.Name
+                                                                                })
+                                                                               .ToListAsync();
 
     public async Task<List<MachineDto>> GetConsolesAsync() => await context.Machines.Include(m => m.Company)
-                                                                       .Where(m => m.Type == MachineType.Console)
-                                                                       .OrderBy(m => m.Company.Name)
-                                                                       .ThenBy(m => m.Name)
-                                                                       .Select(m => new MachineDto
-                                                                        {
-                                                                            Id      = m.Id,
-                                                                            Name    = m.Name,
-                                                                            Company = m.Company.Name
-                                                                        })
-                                                                       .ToListAsync();
+                                                                           .Where(m => m.Type == MachineType.Console)
+                                                                           .OrderBy(m => m.Company.Name)
+                                                                           .ThenBy(m => m.Name)
+                                                                           .Select(m => new MachineDto
+                                                                            {
+                                                                                Id      = m.Id,
+                                                                                Name    = m.Name,
+                                                                                Company = m.Company.Name
+                                                                            })
+                                                                           .ToListAsync();
 }

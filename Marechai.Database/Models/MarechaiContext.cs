@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Database.Schemas;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

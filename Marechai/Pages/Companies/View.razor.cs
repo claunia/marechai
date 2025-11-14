@@ -27,8 +27,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
-using Marechai.Database;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Components;
 
@@ -36,7 +36,7 @@ namespace Marechai.Pages.Companies;
 
 public partial class View
 {
-    CompanyDto  _company;
+    CompanyDto        _company;
     List<Machine>     _computers;
     List<Machine>     _consoles;
     string            _description;

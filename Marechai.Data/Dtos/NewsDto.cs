@@ -24,7 +24,6 @@
 *******************************************************************************/
 
 using System.Text.Json.Serialization;
-using Marechai.Database;
 
 namespace Marechai.Data.Dtos;
 

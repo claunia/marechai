@@ -28,8 +28,8 @@
 @page "/admin/machines/details/{Id:int}"
 @page "/admin/machines/edit/{Id:int}"
 @page "/admin/machines/create"
+@using Marechai.Data
 @using Marechai.Data.Dtos
-@using Marechai.Database
 @using Marechai.Database.Models
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L

@@ -27,8 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
-using Marechai.Database;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -44,36 +44,36 @@ public class MachinesService
     SoundSynthsService                soundSynthsService
 )
 {
-    readonly IStringLocalizer<MachinesService> _l                  = localizer;
+    readonly IStringLocalizer<MachinesService> _l = localizer;
 
     public async Task<List<MachineDto>> GetAsync() => await context.Machines.OrderBy(m => m.Company.Name)
-                                                                         .ThenBy(m => m.Name)
-                                                                         .ThenBy(m => m.Family.Name)
-                                                                         .Select(m => new MachineDto
-                                                                          {
-                                                                              Id         = m.Id,
-                                                                              Company    = m.Company.Name,
-                                                                              Name       = m.Name,
-                                                                              Model      = m.Model,
-                                                                              Introduced = m.Introduced,
-                                                                              Type       = m.Type,
-                                                                              Family     = m.Family.Name
-                                                                          })
-                                                                         .ToListAsync();
+                                                                   .ThenBy(m => m.Name)
+                                                                   .ThenBy(m => m.Family.Name)
+                                                                   .Select(m => new MachineDto
+                                                                    {
+                                                                        Id         = m.Id,
+                                                                        Company    = m.Company.Name,
+                                                                        Name       = m.Name,
+                                                                        Model      = m.Model,
+                                                                        Introduced = m.Introduced,
+                                                                        Type       = m.Type,
+                                                                        Family     = m.Family.Name
+                                                                    })
+                                                                   .ToListAsync();
 
     public async Task<MachineDto> GetAsync(int id) => await context.Machines.Where(m => m.Id == id)
-                                                                          .Select(m => new MachineDto
-                                                                           {
-                                                                               Id         = m.Id,
-                                                                               Company    = m.Company.Name,
-                                                                               CompanyId  = m.CompanyId,
-                                                                               Name       = m.Name,
-                                                                               Model      = m.Model,
-                                                                               Introduced = m.Introduced,
-                                                                               Type       = m.Type,
-                                                                               FamilyId   = m.FamilyId
-                                                                           })
-                                                                          .FirstOrDefaultAsync();
+                                                                   .Select(m => new MachineDto
+                                                                    {
+                                                                        Id         = m.Id,
+                                                                        Company    = m.Company.Name,
+                                                                        CompanyId  = m.CompanyId,
+                                                                        Name       = m.Name,
+                                                                        Model      = m.Model,
+                                                                        Introduced = m.Introduced,
+                                                                        Type       = m.Type,
+                                                                        FamilyId   = m.FamilyId
+                                                                    })
+                                                                   .FirstOrDefaultAsync();
 
     public async Task UpdateAsync(MachineDto dto, string userId)
     {
@@ -185,9 +185,7 @@ public class MachinesService
             IQueryable<CompanyLogo> logos = context.CompanyLogos.Where(l => l.CompanyId == company.Id);
 
             if(model.Introduced.HasValue)
-            {
                 model.CompanyLogo = (await logos.FirstOrDefaultAsync(l => l.Year >= model.Introduced.Value.Year))?.Guid;
-            }
 
             if(model.CompanyLogo is null && logos.Any()) model.CompanyLogo = (await logos.FirstAsync())?.Guid;
         }
@@ -203,27 +201,27 @@ public class MachinesService
         model.Gpus = await gpusService.GetByMachineAsync(machine.Id);
 
         model.Memory = await context.MemoryByMachine.Where(m => m.MachineId == machine.Id)
-                                     .Select(m => new MemoryDto
-                                      {
-                                          Type  = m.Type,
-                                          Usage = m.Usage,
-                                          Size  = m.Size,
-                                          Speed = m.Speed
-                                      })
-                                     .ToListAsync();
+                                    .Select(m => new MemoryDto
+                                     {
+                                         Type  = m.Type,
+                                         Usage = m.Usage,
+                                         Size  = m.Size,
+                                         Speed = m.Speed
+                                     })
+                                    .ToListAsync();
 
         model.Processors = await processorsService.GetByMachineAsync(machine.Id);
 
         model.SoundSynthesizers = await soundSynthsService.GetByMachineAsync(machine.Id);
 
         model.Storage = await context.StorageByMachine.Where(s => s.MachineId == machine.Id)
-                                      .Select(s => new StorageDto
-                                       {
-                                           Type      = s.Type,
-                                           Interface = s.Interface,
-                                           Capacity  = s.Capacity
-                                       })
-                                      .ToListAsync();
+                                     .Select(s => new StorageDto
+                                      {
+                                          Type      = s.Type,
+                                          Interface = s.Interface,
+                                          Capacity  = s.Capacity
+                                      })
+                                     .ToListAsync();
 
         return model;
     }

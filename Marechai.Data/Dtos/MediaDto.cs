@@ -26,8 +26,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
-using Marechai.Database;
-using Marechai.Database.Models;
+using Marechai.Data.Models;
 
 namespace Marechai.Data.Dtos;
 

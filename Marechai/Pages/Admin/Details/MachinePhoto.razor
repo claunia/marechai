@@ -27,9 +27,9 @@
 
 @page "/admin/machines/photo/details/{Id:guid}"
 @page "/admin/machines/photo/edit/{Id:guid}"
-@using Marechai.Database
+@using Marechai.Data
 @using Marechai.Database.Models
-@using Orientation = Marechai.Database.Orientation
+@using Orientation = Marechai.Data.Orientation
 @inherits OwningComponentBase<MachinePhotosService>
 @inject IStringLocalizer<MachinePhotosService> L
 @inject NavigationManager                      NavigationManager

@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System.ComponentModel.DataAnnotations.Schema;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 

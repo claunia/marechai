@@ -23,13 +23,12 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.ComponentModel.DataAnnotations;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
-namespace Marechai.Database;
+namespace Marechai.Data;
 
 public enum NewsType
 {

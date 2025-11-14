@@ -26,8 +26,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
-using Marechai.Database;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,21 +36,21 @@ namespace Marechai.Services;
 public class MemoriesByMachineService(MarechaiContext context)
 {
     public async Task<List<MemoryByMachineDto>> GetByMachine(int machineId) => await context.MemoryByMachine
-                                                                                                  .Where(m => m.MachineId == machineId)
-                                                                                                  .Select(m => new MemoryByMachineDto
-                                                                                                   {
-                                                                                                       Id        = m.Id,
-                                                                                                       Type      = m.Type,
-                                                                                                       Usage     = m.Usage,
-                                                                                                       Size      = m.Size,
-                                                                                                       Speed     = m.Speed,
-                                                                                                       MachineId = m.MachineId
-                                                                                                   })
-                                                                                                  .OrderBy(m => m.Type)
-                                                                                                  .ThenBy(m => m.Usage)
-                                                                                                  .ThenBy(m => m.Size)
-                                                                                                  .ThenBy(m => m.Speed)
-                                                                                                  .ToListAsync();
+                                                                                  .Where(m => m.MachineId == machineId)
+                                                                                  .Select(m => new MemoryByMachineDto
+                                                                                   {
+                                                                                       Id        = m.Id,
+                                                                                       Type      = m.Type,
+                                                                                       Usage     = m.Usage,
+                                                                                       Size      = m.Size,
+                                                                                       Speed     = m.Speed,
+                                                                                       MachineId = m.MachineId
+                                                                                   })
+                                                                                  .OrderBy(m => m.Type)
+                                                                                  .ThenBy(m => m.Usage)
+                                                                                  .ThenBy(m => m.Size)
+                                                                                  .ThenBy(m => m.Speed)
+                                                                                  .ToListAsync();
 
     public async Task DeleteAsync(long id, string userId)
     {

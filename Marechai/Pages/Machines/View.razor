@@ -27,8 +27,8 @@
 }
 
 @page "/machine/{Id:int}"
+@using Marechai.Data
 @using Marechai.Data.Dtos
-@using Marechai.Database
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
 @inject IWebHostEnvironment               Host

@@ -27,13 +27,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazorise;
+using Marechai.Data;
 using Marechai.Data.Dtos;
-using Marechai.Database;
 using Marechai.Database.Models;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Orientation = Marechai.Database.Orientation;
+using Orientation = Marechai.Data.Orientation;
 
 namespace Marechai.Pages.Admin.Details;
 
@@ -44,7 +44,7 @@ public partial class MachinePhoto
     bool                          _editing;
     List<Database.Models.License> _licenses;
     bool                          _loaded;
-    MachinePhotoDto         _model;
+    MachinePhotoDto               _model;
     bool                          _unknownAperture;
     bool                          _unknownAuthor;
     bool                          _unknownCameraManufacturer;
