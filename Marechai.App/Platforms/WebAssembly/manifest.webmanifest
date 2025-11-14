@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "Marechai.App",
+  "display": "standalone",
+  "name": "Marechai.App",
+  "short_name": "Marechai.App",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}
