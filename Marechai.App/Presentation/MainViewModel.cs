@@ -6,20 +6,22 @@ namespace Marechai.App.Presentation;
 
 public partial class MainViewModel : ObservableObject
 {
-    private INavigator _navigator;
+    private readonly INavigator _navigator;
 
-    [ObservableProperty] private string? name;
+    [ObservableProperty]
+    private string? name;
+    [ObservableProperty]
+    private NewsViewModel? newsViewModel;
 
-    public MainViewModel(
-        IStringLocalizer localizer,
-        IOptions<AppConfig> appInfo,
-        INavigator navigator)
+    public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, INavigator navigator,
+                         NewsViewModel    newsViewModel)
     {
-        _navigator = navigator;
-        Title = "Main";
-        Title += $" - {localizer["ApplicationName"]}";
-        Title += $" - {appInfo?.Value?.Environment}";
-        GoToSecond = new AsyncRelayCommand(GoToSecondView);
+        _navigator    =  navigator;
+        NewsViewModel =  newsViewModel;
+        Title         =  "Marechai";
+        Title         += $" - {localizer["ApplicationName"]}";
+        Title         += $" - {appInfo?.Value?.Environment}";
+        GoToSecond    =  new AsyncRelayCommand(GoToSecondView);
     }
 
     public string? Title { get; }

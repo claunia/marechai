@@ -1,4 +1,5 @@
 using System.Net.Http;
+using Marechai.App.Services;
 using Microsoft.UI.Xaml;
 using Uno.Extensions;
 using Uno.Extensions.Configuration;
@@ -96,8 +97,9 @@ public partial class App : Application
                                                              })
                                                             .ConfigureServices((context, services) =>
                                                              {
-                                                                 // TODO: Register your services
-                                                                 //services.AddSingleton<IMyService, MyService>();
+                                                                 // Register application services
+                                                                 services.AddSingleton<NewsService>();
+                                                                 services.AddSingleton<NewsViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
