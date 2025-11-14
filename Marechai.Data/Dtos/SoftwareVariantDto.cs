@@ -31,38 +31,39 @@ namespace Marechai.Data.Dtos;
 
 public class SoftwareVariantDto : BaseDto<ulong>
 {
-    [JsonPropertyName("name")]
-    [Required]
-    public required string Name { get; set; }
-    [JsonPropertyName("version")]
-    public string? Version { get; set; }
-    [JsonPropertyName("introduced")]
-    public DateTime? Introduced { get; set; }
-    [JsonPropertyName("parent_id")]
-    public ulong? ParentId { get; set; }
-    [JsonPropertyName("parent")]
-    public string? Parent { get; set; }
+    [JsonPropertyName("name")] [Required] public required string Name { get; set; }
+
+    [JsonPropertyName("version")] public string? Version { get; set; }
+
+    [JsonPropertyName("introduced")] public DateTime? Introduced { get; set; }
+
+    [JsonPropertyName("parent_id")] public ulong? ParentId { get; set; }
+
+    [JsonPropertyName("parent")] public string? Parent { get; set; }
+
     [JsonPropertyName("version_id")]
     [Required]
     public ulong SoftwareVersionId { get; set; }
-    [JsonPropertyName("version")]
-    public string? SoftwareVersion { get; set; }
-    [JsonPropertyName("minimum_memory")]
-    public ulong? MinimumMemory { get; set; }
+
+    [JsonPropertyName("software_version")] public string? SoftwareVersion { get; set; }
+
+    [JsonPropertyName("minimum_memory")] public ulong? MinimumMemory { get; set; }
+
     [JsonPropertyName("recommended_memory")]
     public ulong? RecommendedMemory { get; set; }
-    [JsonPropertyName("required_storage")]
-    public ulong? RequiredStorage { get; set; }
-    [JsonPropertyName("part_number")]
-    public string? PartNumber { get; set; }
-    [JsonPropertyName("serial_number")]
-    public string? SerialNumber { get; set; }
-    [JsonPropertyName("product_code")]
-    public string? ProductCode { get; set; }
-    [JsonPropertyName("catalogue_number")]
-    public string? CatalogueNumber { get; set; }
+
+    [JsonPropertyName("required_storage")] public ulong? RequiredStorage { get; set; }
+
+    [JsonPropertyName("part_number")] public string? PartNumber { get; set; }
+
+    [JsonPropertyName("serial_number")] public string? SerialNumber { get; set; }
+
+    [JsonPropertyName("product_code")] public string? ProductCode { get; set; }
+
+    [JsonPropertyName("catalogue_number")] public string? CatalogueNumber { get; set; }
+
     [JsonPropertyName("distribution_mode")]
     public DistributionMode DistributionMode { get; set; }
-    [JsonPropertyName("family")]
-    public string? Family { get; set; }
+
+    [JsonPropertyName("family")] public string? Family { get; set; }
 }
