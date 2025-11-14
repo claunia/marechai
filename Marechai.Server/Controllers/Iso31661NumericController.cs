@@ -23,10 +23,8 @@
 // Copyright © 2003-2025 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
@@ -34,7 +32,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 
 namespace Marechai.Server.Controllers;
 
@@ -46,6 +43,14 @@ public class Iso31661NumericController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<Iso31661Numeric>> GetAsync() =>
-         context.Iso31661Numeric.OrderBy(c => c.Name).ToListAsync();
+    public Task<List<Iso31661NumericDto>> GetAsync()
+    {
+        return context.Iso31661Numeric.OrderBy(c => c.Name)
+        .Select(c => new Iso31661NumericDto
+        {
+            Id = c.Id,
+            Name = c.Name
+        })
+        .ToListAsync();
+    }
 }
