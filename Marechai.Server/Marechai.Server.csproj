@@ -11,6 +11,7 @@
     <PackageReference Include="Svg.Skia"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
   </ItemGroup>
 
   <ItemGroup>
