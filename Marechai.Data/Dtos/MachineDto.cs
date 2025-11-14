@@ -31,33 +31,37 @@ namespace Marechai.Data.Dtos;
 
 public class MachineDto : BaseDto<int>
 {
-    [JsonPropertyName("name")]
-    [Required]
-    public required string Name { get; set; }
-    [JsonPropertyName("model")]
-    public string? Model { get; set; }
-    [JsonPropertyName("company_id")]
-    public int CompanyId { get; set; }
-    [JsonPropertyName("company_logo")]
-    public Guid? CompanyLogo { get; set; }
-    [JsonPropertyName("introduced")]
-    public DateTime? Introduced { get; set; }
-    [JsonPropertyName("family_id")]
-    public int? FamilyId { get; set; }
-    [JsonPropertyName("family_name")]
-    public string? FamilyName { get;                     set; }
-    public List<GpuDto>?        Gpus              { get; set; }
-    public List<MemoryDto>?     Memory            { get; set; }
-    public List<ProcessorDto>?  Processors        { get; set; }
-    public List<SoundSynthDto>? SoundSynthesizers { get; set; }
-    public List<StorageDto>?    Storage           { get; set; }
-    [JsonPropertyName("company")]
-    public string? Company { get; set; }
-    [JsonPropertyName("type")]
-    public MachineType Type { get; set; }
-    [JsonPropertyName("family")]
-    public string? Family { get; set; }
+    [JsonPropertyName("name")] [Required] public required string Name { get; set; }
+
+    [JsonPropertyName("model")] public string? Model { get; set; }
+
+    [JsonPropertyName("company_id")] public int CompanyId { get; set; }
+
+    [JsonPropertyName("company_logo")] public Guid? CompanyLogo { get; set; }
+
+    [JsonPropertyName("introduced")] public DateTime? Introduced { get; set; }
+
+    [JsonPropertyName("family_id")] public int? FamilyId { get; set; }
+
+    [JsonPropertyName("family_name")] public string? FamilyName { get; set; }
+
+    [JsonIgnore] public List<GpuDto>? Gpus { get; set; }
+
+    [JsonIgnore] public List<MemoryDto>? Memory { get; set; }
+
+    [JsonIgnore] public List<ProcessorDto>? Processors { get; set; }
+
+    [JsonIgnore] public List<SoundSynthDto>? SoundSynthesizers { get; set; }
+
+    [JsonIgnore] public List<StorageDto>? Storage { get; set; }
+
+    [JsonPropertyName("company")] public string? Company { get; set; }
+
+    [JsonPropertyName("type")] public MachineType Type { get; set; }
+
+    [JsonPropertyName("family")] public string? Family { get; set; }
+
     [JsonIgnore]
     public string IntroducedView =>
-        Introduced?.Year == 1000 ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
+    Introduced?.Year == 1000 ? "Prototype" : Introduced?.ToShortDateString() ?? "Unknown";
 }
