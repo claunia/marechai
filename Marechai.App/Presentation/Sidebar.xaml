@@ -1,0 +1,260 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<UserControl x:Class="Marechai.App.Presentation.Sidebar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Marechai.App.Presentation.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="600"
+             d:DesignWidth="280"
+             Background="{ThemeResource NavigationViewDefaultPaneBackground}">
+    <UserControl.Resources>
+        <local:CollapseExpandIconConverter x:Key="CollapseExpandIconConverter" />
+        <local:CollapseExpandTooltipConverter x:Key="CollapseExpandTooltipConverter" />
+    </UserControl.Resources>
+
+    <!-- Grid container - naturally responds to parent column width -->
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Sidebar Header with Collapse/Expand Button -->
+        <Grid Grid.Row="0"
+              Padding="8,8,8,8"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" /> <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar Title - Hidden when collapsed -->
+            <TextBlock Grid.Column="0"
+                       Text="Navigation"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                       VerticalAlignment="Center"
+                       Padding="4,0,0,0"
+                       Visibility="{Binding SidebarContentVisible}" />
+
+            <!-- Collapse/Expand Button - Always visible -->
+            <Button Grid.Column="1"
+                    Content="{Binding IsSidebarOpen, Converter={StaticResource CollapseExpandIconConverter}}"
+                    Command="{Binding ToggleSidebarCommand}"
+                    Background="Transparent"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Padding="8,8,8,8"
+                    CornerRadius="4"
+                    ToolTipService.ToolTip="{Binding IsSidebarOpen, Converter={StaticResource CollapseExpandTooltipConverter}}"
+                    FontSize="14"
+                    MinWidth="40"
+                    MinHeight="40"
+                    HorizontalAlignment="Center" />
+        </Grid>
+
+        <!-- Scrollable Navigation Items - Hidden when collapsed -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="0"
+                      Visibility="{Binding SidebarContentVisible}">
+            <StackPanel Orientation="Vertical"
+                        Spacing="0"
+                        Padding="0">
+                <!-- News -->
+                <Button Content="{Binding LocalizedStrings[News]}"
+                        Command="{Binding NavigateToNewsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Books -->
+                <Button Content="{Binding LocalizedStrings[Books]}"
+                        Command="{Binding NavigateToBooksCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Companies -->
+                <Button Content="{Binding LocalizedStrings[Companies]}"
+                        Command="{Binding NavigateToCompaniesCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Computers -->
+                <Button Content="{Binding LocalizedStrings[Computers]}"
+                        Command="{Binding NavigateToComputersCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Consoles -->
+                <Button Content="{Binding LocalizedStrings[Consoles]}"
+                        Command="{Binding NavigateToConsolesCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Documents -->
+                <Button Content="{Binding LocalizedStrings[Documents]}"
+                        Command="{Binding NavigateToDocumentsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Dumps -->
+                <Button Content="{Binding LocalizedStrings[Dumps]}"
+                        Command="{Binding NavigateToDumpsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Graphical Processing Units -->
+                <Button Content="{Binding LocalizedStrings[GraphicalProcessingUnits]}"
+                        Command="{Binding NavigateToGraphicalProcessingUnitsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Magazines -->
+                <Button Content="{Binding LocalizedStrings[Magazines]}"
+                        Command="{Binding NavigateToMagazinesCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- People -->
+                <Button Content="{Binding LocalizedStrings[People]}"
+                        Command="{Binding NavigateToPeopleCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Processors -->
+                <Button Content="{Binding LocalizedStrings[Processors]}"
+                        Command="{Binding NavigateToProcessorsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Software -->
+                <Button Content="{Binding LocalizedStrings[Software]}"
+                        Command="{Binding NavigateToSoftwareCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Sound Synthesizers -->
+                <Button Content="{Binding LocalizedStrings[SoundSynthesizers]}"
+                        Command="{Binding NavigateToSoundSynthesizersCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Bottom Fixed Items - Hidden when collapsed -->
+        <Grid Grid.Row="2"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,1,0,0"
+              Padding="0"
+              Visibility="{Binding IsSidebarOpen}">
+            <StackPanel Orientation="Vertical"
+                        Spacing="0">
+                <!-- Login/Logout -->
+                <Button Content="{Binding LoginLogoutButtonText}"
+                        Command="{Binding LoginLogoutCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Settings -->
+                <Button Content="{Binding LocalizedStrings[Settings]}"
+                        Command="{Binding NavigateToSettingsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

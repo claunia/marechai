@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Uno.Extensions.Navigation;
@@ -6,30 +7,163 @@ namespace Marechai.App.Presentation;
 
 public partial class MainViewModel : ObservableObject
 {
-    private readonly INavigator _navigator;
+    private readonly IStringLocalizer _localizer;
+    private readonly INavigator       _navigator;
+    [ObservableProperty]
+    private bool isSidebarOpen = true;
+    [ObservableProperty]
+    private Dictionary<string, string> localizedStrings = new();
+    [ObservableProperty]
+    private string loginLogoutButtonText = "";
 
     [ObservableProperty]
     private string? name;
     [ObservableProperty]
     private NewsViewModel? newsViewModel;
+    [ObservableProperty]
+    private bool sidebarContentVisible = true;
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, INavigator navigator,
                          NewsViewModel    newsViewModel)
     {
         _navigator    =  navigator;
+        _localizer    =  localizer;
         NewsViewModel =  newsViewModel;
         Title         =  "Marechai";
         Title         += $" - {localizer["ApplicationName"]}";
-        Title         += $" - {appInfo?.Value?.Environment}";
-        GoToSecond    =  new AsyncRelayCommand(GoToSecondView);
+        if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
+
+        GoToSecond = new AsyncRelayCommand(GoToSecondView);
+
+        // Initialize localized strings
+        InitializeLocalizedStrings();
+
+        // Initialize commands
+        NavigateToNewsCommand                     = new AsyncRelayCommand(NavigateToMainAsync);
+        NavigateToBooksCommand                    = new AsyncRelayCommand(() => NavigateTo("books"));
+        NavigateToCompaniesCommand                = new AsyncRelayCommand(() => NavigateTo("companies"));
+        NavigateToComputersCommand                = new AsyncRelayCommand(() => NavigateTo("computers"));
+        NavigateToConsolesCommand                 = new AsyncRelayCommand(() => NavigateTo("consoles"));
+        NavigateToDocumentsCommand                = new AsyncRelayCommand(() => NavigateTo("documents"));
+        NavigateToDumpsCommand                    = new AsyncRelayCommand(() => NavigateTo("dumps"));
+        NavigateToGraphicalProcessingUnitsCommand = new AsyncRelayCommand(() => NavigateTo("gpus"));
+        NavigateToMagazinesCommand                = new AsyncRelayCommand(() => NavigateTo("magazines"));
+        NavigateToPeopleCommand                   = new AsyncRelayCommand(() => NavigateTo("people"));
+        NavigateToProcessorsCommand               = new AsyncRelayCommand(() => NavigateTo("processors"));
+        NavigateToSoftwareCommand                 = new AsyncRelayCommand(() => NavigateTo("software"));
+        NavigateToSoundSynthesizersCommand        = new AsyncRelayCommand(() => NavigateTo("soundsynthesizers"));
+        NavigateToSettingsCommand                 = new AsyncRelayCommand(() => NavigateTo("settings"));
+        LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
+        ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
+
+        UpdateLoginLogoutButtonText();
     }
 
     public string? Title { get; }
 
     public ICommand GoToSecond { get; }
 
+    public ICommand NavigateToNewsCommand                     { get; }
+    public ICommand NavigateToBooksCommand                    { get; }
+    public ICommand NavigateToCompaniesCommand                { get; }
+    public ICommand NavigateToComputersCommand                { get; }
+    public ICommand NavigateToConsolesCommand                 { get; }
+    public ICommand NavigateToDocumentsCommand                { get; }
+    public ICommand NavigateToDumpsCommand                    { get; }
+    public ICommand NavigateToGraphicalProcessingUnitsCommand { get; }
+    public ICommand NavigateToMagazinesCommand                { get; }
+    public ICommand NavigateToPeopleCommand                   { get; }
+    public ICommand NavigateToProcessorsCommand               { get; }
+    public ICommand NavigateToSoftwareCommand                 { get; }
+    public ICommand NavigateToSoundSynthesizersCommand        { get; }
+    public ICommand NavigateToSettingsCommand                 { get; }
+    public ICommand LoginLogoutCommand                        { get; }
+    public ICommand ToggleSidebarCommand                      { get; }
+
+    private void InitializeLocalizedStrings()
+    {
+        LocalizedStrings = new Dictionary<string, string>
+        {
+            {
+                "News", _localizer["News"]
+            },
+            {
+                "Books", _localizer["Books"]
+            },
+            {
+                "Companies", _localizer["Companies"]
+            },
+            {
+                "Computers", _localizer["Computers"]
+            },
+            {
+                "Consoles", _localizer["Consoles"]
+            },
+            {
+                "Documents", _localizer["Documents"]
+            },
+            {
+                "Dumps", _localizer["Dumps"]
+            },
+            {
+                "GraphicalProcessingUnits", _localizer["GraphicalProcessingUnits"]
+            },
+            {
+                "Magazines", _localizer["Magazines"]
+            },
+            {
+                "People", _localizer["People"]
+            },
+            {
+                "Processors", _localizer["Processors"]
+            },
+            {
+                "Software", _localizer["Software"]
+            },
+            {
+                "SoundSynthesizers", _localizer["SoundSynthesizers"]
+            },
+            {
+                "Settings", _localizer["Settings"]
+            },
+            {
+                "Login", _localizer["Login"]
+            },
+            {
+                "Logout", _localizer["Logout"]
+            }
+        };
+    }
+
+    private void UpdateLoginLogoutButtonText()
+    {
+        // TODO: Check if user is logged in
+        // For now, always show "Login"
+        LoginLogoutButtonText = LocalizedStrings["Login"];
+    }
+
+    private static void HandleLoginLogout()
+    {
+        // TODO: Implement login/logout logic
+    }
+
+    private async Task NavigateTo(string destination)
+    {
+        // TODO: Navigate to the specified destination
+        // These routes will need to be registered in App.xaml.cs RegisterRoutes method
+        // For now, placeholder implementation
+        await Task.CompletedTask;
+    }
+
+    private async Task NavigateToMainAsync()
+    {
+        // Stay on main page
+        await Task.CompletedTask;
+    }
+
     private async Task GoToSecondView()
     {
-        await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: new Entity(Name!));
+        // Navigate to Second view model providing qualifier and data
+        await _navigator.NavigateViewModelAsync<SecondViewModel>(this, "Second", new Entity(Name ?? ""));
     }
 }

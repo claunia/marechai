@@ -4,129 +4,159 @@
 <Page x:Class="Marechai.App.Presentation.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Marechai.App.Presentation"
       xmlns:utu="using:Uno.Toolkit.UI"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid utu:SafeArea.Insets="VisibleBounds">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="SidebarColumn"
+                              Width="280" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Sidebar -->
+        <Grid x:Name="SidebarWrapper"
+              Grid.Row="0"
+              Grid.RowSpan="2"
+              Grid.Column="0"
+              Width="280"
+              HorizontalAlignment="Left">
+            <local:Sidebar x:Name="SidebarPanel"
+                           DataContext="{Binding}"
+                           VerticalAlignment="Stretch" />
+        </Grid>
+
         <!-- Header -->
-        <utu:NavigationBar Content="{Binding Title}" />
+        <utu:NavigationBar Grid.Row="0"
+                           Grid.Column="1"
+                           Content="{Binding Title}">
+            <utu:NavigationBar.MainCommand>
+                <AppBarButton Icon="GlobalNavigationButton"
+                              Command="{Binding ToggleSidebarCommand}"
+                              Label="Toggle Sidebar"
+                              AutomationProperties.Name="Toggle sidebar visibility" />
+            </utu:NavigationBar.MainCommand>
+        </utu:NavigationBar>
 
-        <!-- Refresh Container with Pull-to-Refresh -->
-        <RefreshContainer Grid.Row="1"
-                          x:Name="RefreshContainer"
-                          RefreshRequested="RefreshContainer_RefreshRequested">
-            <ScrollViewer>
-                <Grid Padding="16">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+        <!-- Content -->
+        <Grid Grid.Row="1"
+              Grid.Column="1">
+            <RefreshContainer x:Name="RefreshContainer"
+                              RefreshRequested="RefreshContainer_RefreshRequested">
+                <ScrollViewer>
+                    <Grid Padding="16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                    <!-- News Title Section -->
-                    <StackPanel Grid.Row="0"
-                                Margin="0,0,0,16">
-                        <TextBlock Text="Latest News"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{ThemeResource SystemAccentColor}"
-                                   Margin="0,0,0,8" />
-                        <TextBlock Text="Stay updated with the latest additions to the database"
-                                   FontSize="14"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
+                        <!-- News Title Section -->
+                        <StackPanel Grid.Row="0"
+                                    Margin="0,0,0,16">
+                            <TextBlock Text="Latest News"
+                                       FontSize="32"
+                                       FontWeight="Bold"
+                                       Foreground="{ThemeResource SystemAccentColor}"
+                                       Margin="0,0,0,8" />
+                            <TextBlock Text="Stay updated with the latest additions to the database"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
 
-                    <!-- Loading State -->
-                    <StackPanel Grid.Row="2"
-                                Visibility="{Binding NewsViewModel.IsLoading}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Padding="32"
-                                Spacing="16">
-                        <ProgressRing IsActive="True"
-                                      IsIndeterminate="True"
-                                      Height="48"
-                                      Width="48"
-                                      Foreground="{ThemeResource SystemAccentColor}" />
-                        <TextBlock Text="Loading latest news..."
-                                   FontSize="16"
-                                   TextAlignment="Center"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                    </StackPanel>
+                        <!-- Loading State -->
+                        <StackPanel Grid.Row="2"
+                                    Visibility="{Binding NewsViewModel.IsLoading}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Padding="32"
+                                    Spacing="16">
+                            <ProgressRing IsActive="True"
+                                          IsIndeterminate="True"
+                                          Height="48"
+                                          Width="48"
+                                          Foreground="{ThemeResource SystemAccentColor}" />
+                            <TextBlock Text="Loading latest news..."
+                                       FontSize="16"
+                                       TextAlignment="Center"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        </StackPanel>
 
-                    <!-- Error State -->
-                    <StackPanel Grid.Row="2"
-                                Visibility="{Binding NewsViewModel.HasError}"
-                                VerticalAlignment="Center"
-                                Spacing="16"
-                                Padding="32">
-                        <InfoBar IsOpen="True"
-                                 Severity="Error"
-                                 Title="Unable to Load News"
-                                 Message="{Binding NewsViewModel.ErrorMessage}"
-                                 IsClosable="False" />
-                        <Button Content="Retry"
-                                Command="{Binding NewsViewModel.LoadNews}"
-                                HorizontalAlignment="Center"
-                                Style="{ThemeResource AccentButtonStyle}" />
-                    </StackPanel>
+                        <!-- Error State -->
+                        <StackPanel Grid.Row="2"
+                                    Visibility="{Binding NewsViewModel.HasError}"
+                                    VerticalAlignment="Center"
+                                    Spacing="16"
+                                    Padding="32">
+                            <InfoBar IsOpen="True"
+                                     Severity="Error"
+                                     Title="Unable to Load News"
+                                     Message="{Binding NewsViewModel.ErrorMessage}"
+                                     IsClosable="False" />
+                            <Button Content="Retry"
+                                    Command="{Binding NewsViewModel.LoadNews}"
+                                    HorizontalAlignment="Center"
+                                    Style="{ThemeResource AccentButtonStyle}" />
+                        </StackPanel>
 
-                    <!-- News Feed -->
-                    <ItemsControl Grid.Row="2"
-                                  ItemsSource="{Binding NewsViewModel.NewsList}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Margin="0,0,0,12"
-                                        CornerRadius="8"
-                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1"
-                                        Padding="16">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
+                        <!-- News Feed -->
+                        <ItemsControl Grid.Row="2"
+                                      ItemsSource="{Binding NewsViewModel.NewsList}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,12"
+                                            CornerRadius="8"
+                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            Padding="16">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
 
-                                        <!-- Date -->
-                                        <TextBlock Grid.Row="0"
-                                                   Text="{Binding News.Timestamp}"
-                                                   FontSize="12"
-                                                   Foreground="{ThemeResource SystemBaseMediumColor}"
-                                                   Margin="0,0,0,12" />
+                                            <!-- Date -->
+                                            <TextBlock Grid.Row="0"
+                                                       Text="{Binding News.Timestamp}"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                       Margin="0,0,0,12" />
 
-                                        <!-- News Title/Text (Localized) -->
-                                        <TextBlock Grid.Row="1"
-                                                   Text="{Binding DisplayText}"
-                                                   FontSize="16"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{ThemeResource SystemBaseHighColor}"
-                                                   TextWrapping="Wrap"
-                                                   Margin="0,0,0,12" />
+                                            <!-- News Title/Text (Localized) -->
+                                            <TextBlock Grid.Row="1"
+                                                       Text="{Binding DisplayText}"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{ThemeResource SystemBaseHighColor}"
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,0,0,12" />
 
-                                        <!-- Item Name Link -->
-                                        <HyperlinkButton Grid.Row="2"
-                                                         Content="{Binding News.ItemName}"
-                                                         FontSize="14"
-                                                         Padding="0,4,0,4"
-                                                         Foreground="{ThemeResource SystemAccentColor}" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical"
-                                            Spacing="0" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                </Grid>
-            </ScrollViewer>
-        </RefreshContainer>
+                                            <!-- Item Name Link -->
+                                            <HyperlinkButton Grid.Row="2"
+                                                             Content="{Binding News.ItemName}"
+                                                             FontSize="14"
+                                                             Padding="0,4,0,4"
+                                                             Foreground="{ThemeResource SystemAccentColor}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="0" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </Grid>
+                </ScrollViewer>
+            </RefreshContainer>
+        </Grid>
     </Grid>
 </Page>
