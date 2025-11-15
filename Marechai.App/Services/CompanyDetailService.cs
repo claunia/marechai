@@ -1,0 +1,101 @@
+#nullable enable
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Marechai.App.Models;
+
+namespace Marechai.App.Services;
+
+/// <summary>
+///     Service for fetching company details from the API
+/// </summary>
+public class CompanyDetailService
+{
+    private readonly ApiClient                 _apiClient;
+    private readonly ILogger<CompanyDetailService> _logger;
+
+    public CompanyDetailService(ApiClient apiClient, ILogger<CompanyDetailService> logger)
+    {
+        _apiClient = apiClient;
+        _logger    = logger;
+    }
+
+    /// <summary>
+    ///     Gets a single company by ID with full details
+    /// </summary>
+    public async Task<CompanyDto?> GetCompanyByIdAsync(int companyId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching company {CompanyId} from API", companyId);
+
+            CompanyDto? company = await _apiClient.Companies[companyId].GetAsync();
+
+            if(company == null)
+            {
+                _logger.LogWarning("Company {CompanyId} not found", companyId);
+
+                return null;
+            }
+
+            _logger.LogInformation("Successfully fetched company {CompanyId}: {CompanyName}", companyId, company.Name);
+
+            return company;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching company {CompanyId} from API", companyId);
+
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Gets machines (computers) made by a company
+    /// </summary>
+    public async Task<List<MachineDto>> GetComputersByCompanyAsync(int companyId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching computers for company {CompanyId}", companyId);
+
+            List<MachineDto>? machines = await _apiClient.Companies[companyId].Machines.GetAsync();
+
+            if(machines == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} computers for company {CompanyId}", machines.Count, companyId);
+
+            return machines;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching computers for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Gets the sold-to company (when company was sold, merged, or renamed)
+    /// </summary>
+    public async Task<CompanyDto?> GetSoldToCompanyAsync(int? companyId)
+    {
+        if(companyId is null or <= 0) return null;
+
+        try
+        {
+            _logger.LogInformation("Fetching sold-to company {CompanyId}", companyId);
+
+            CompanyDto? company = await _apiClient.Companies[companyId.Value].GetAsync();
+
+            return company;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching sold-to company {CompanyId}", companyId);
+
+            return null;
+        }
+    }
+}

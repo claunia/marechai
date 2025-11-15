@@ -92,7 +92,23 @@
                 <StackPanel Visibility="{Binding IsDataLoaded}"
                             Spacing="8">
                     <ItemsRepeater ItemsSource="{Binding CompaniesList}">
-                        <ItemsRepeater.ItemTemplate></ItemsRepeater.ItemTemplate>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate>
+                                <Button HorizontalAlignment="Stretch"
+                                        Command="{Binding DataContext.NavigateToCompanyCommand, ElementName=PageRoot}"
+                                        CommandParameter="{Binding}">
+                                    <StackPanel Spacing="4"
+                                               Padding="8">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding FoundationDateDisplay}"
+                                                   FontSize="12"
+                                                   Opacity="0.6" />
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>
                 </StackPanel>
 

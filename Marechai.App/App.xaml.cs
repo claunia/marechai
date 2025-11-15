@@ -10,6 +10,7 @@ using Uno.Extensions.Http;
 using Uno.Extensions.Localization;
 using Uno.Extensions.Navigation;
 using Uno.UI;
+using CompanyDetailViewModel = Marechai.App.Presentation.ViewModels.CompanyDetailViewModel;
 using ComputersListViewModel = Marechai.App.Presentation.ViewModels.ComputersListViewModel;
 using ComputersViewModel = Marechai.App.Presentation.ViewModels.ComputersViewModel;
 using MachineViewViewModel = Marechai.App.Presentation.ViewModels.MachineViewViewModel;
@@ -113,6 +114,8 @@ public partial class App : Application
                                                                  services.AddSingleton<ConsolesViewModel>();
                                                                  services.AddSingleton<CompaniesService>();
                                                                  services.AddSingleton<CompaniesViewModel>();
+                                                                 services.AddSingleton<CompanyDetailService>();
+                                                                 services.AddSingleton<CompanyDetailViewModel>();
                                                                  services.AddSingleton<MachineViewViewModel>();
 
                                                                  services
@@ -148,6 +151,7 @@ public partial class App : Application
                        new ViewMap<ConsolesPage, ConsolesViewModel>(),
                        new ViewMap<ConsolesListPage, ConsolesListViewModel>(),
                        new ViewMap<CompaniesPage, CompaniesViewModel>(),
+                       new ViewMap<CompanyDetailPage, CompanyDetailViewModel>(),
                        new ViewMap<MachineViewPage, MachineViewViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
@@ -183,7 +187,13 @@ public partial class App : Application
                                                                                    ConsolesListViewModel>())
                                                                        ]),
                                                           new RouteMap("companies",
-                                                                       views.FindByViewModel<CompaniesViewModel>()),
+                                                                       views.FindByViewModel<CompaniesViewModel>(),
+                                                                       Nested:
+                                                                       [
+                                                                           new RouteMap("detail",
+                                                                               views.FindByViewModel<
+                                                                                   CompanyDetailViewModel>())
+                                                                       ]),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())
                                                       ])

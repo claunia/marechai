@@ -1,19 +1,23 @@
 <Application x:Class="Marechai.App.App"
-       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Marechai.App.Presentation.Converters">
 
-  <Application.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <!-- Load WinUI resources -->
-        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-        <!-- Load Uno.UI.Toolkit resources -->
-        <ToolkitResources xmlns="using:Uno.Toolkit.UI" />
-      </ResourceDictionary.MergedDictionaries>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Load WinUI resources -->
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!-- Load Uno.UI.Toolkit resources -->
+                <ToolkitResources xmlns="using:Uno.Toolkit.UI" />
+            </ResourceDictionary.MergedDictionaries>
 
-      <!-- Add resources here -->
+            <!-- Add resources here -->
+            <local:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
+            <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <local:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
 
-    </ResourceDictionary>
-  </Application.Resources>
+        </ResourceDictionary>
+    </Application.Resources>
 
 </Application>

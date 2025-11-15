@@ -109,4 +109,61 @@
   <data name="Logout" xml:space="preserve">
     <value>Logout</value>
   </data>
+  <data name="Company is active." xml:space="preserve">
+    <value>Company is active.</value>
+  </data>
+  <data name="Company sold to {0} on {1}." xml:space="preserve">
+    <value>Company sold to {0} on {1}.</value>
+  </data>
+  <data name="Company sold on {0} to an unknown company." xml:space="preserve">
+    <value>Company sold on {0} to an unknown company.</value>
+  </data>
+  <data name="Company sold to {0} on an unknown date." xml:space="preserve">
+    <value>Company sold to {0} on an unknown date.</value>
+  </data>
+  <data name="Company was sold to an unknown company on an unknown date." xml:space="preserve">
+    <value>Company was sold to an unknown company on an unknown date.</value>
+  </data>
+  <data name="Company merged on {0} to form {1}." xml:space="preserve">
+    <value>Company merged on {0} to form {1}.</value>
+  </data>
+  <data name="Company merged on {0} to form an unknown company." xml:space="preserve">
+    <value>Company merged on {0} to form an unknown company.</value>
+  </data>
+  <data name="Company merged on an unknown date to form {0}." xml:space="preserve">
+    <value>Company merged on an unknown date to form {0}.</value>
+  </data>
+  <data name="Company merged to form an unknown company on an unknown date." xml:space="preserve">
+    <value>Company merged to form an unknown company on an unknown date.</value>
+  </data>
+  <data name="Current company status is unknown." xml:space="preserve">
+    <value>Current company status is unknown.</value>
+  </data>
+  <data name="unknown date" xml:space="preserve">
+    <value>unknown date</value>
+  </data>
+  <data name="Company declared bankruptcy on {0}." xml:space="preserve">
+    <value>Company declared bankruptcy on {0}.</value>
+  </data>
+  <data name="Company declared bankruptcy on an unknown date." xml:space="preserve">
+    <value>Company declared bankruptcy on an unknown date.</value>
+  </data>
+  <data name="Company ceased operations on {0}." xml:space="preserve">
+    <value>Company ceased operations on {0}.</value>
+  </data>
+  <data name="Company ceased operations on an unknown date." xml:space="preserve">
+    <value>Company ceased operations on an unknown date.</value>
+  </data>
+  <data name="Company renamed to {0} on {1}." xml:space="preserve">
+    <value>Company renamed to {0} on {1}.</value>
+  </data>
+  <data name="Company was renamed on {0} to an unknown name." xml:space="preserve">
+    <value>Company was renamed on {0} to an unknown name.</value>
+  </data>
+  <data name="Company renamed to {0} on an unknown date." xml:space="preserve">
+    <value>Company renamed to {0} on an unknown date.</value>
+  </data>
+  <data name="Company was renamed on an unknown date to an unknown name." xml:space="preserve">
+    <value>Company was renamed on an unknown date to an unknown name.</value>
+  </data>
 </root>

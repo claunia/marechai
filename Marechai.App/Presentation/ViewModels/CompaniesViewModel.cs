@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.App.Helpers;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Uno.Extensions.Navigation;
 
@@ -14,12 +15,11 @@ namespace Marechai.App.Presentation.ViewModels;
 
 public partial class CompaniesViewModel : ObservableObject
 {
+    private readonly List<CompanyListItem>       _allCompanies = [];
     private readonly CompaniesService            _companiesService;
     private readonly IStringLocalizer            _localizer;
     private readonly ILogger<CompaniesViewModel> _logger;
     private readonly INavigator                  _navigator;
-
-    private readonly List<CompanyListItem> _allCompanies = [];
 
     [ObservableProperty]
     private ObservableCollection<CompanyListItem> _companiesList = [];
@@ -146,8 +146,14 @@ public partial class CompaniesViewModel : ObservableObject
 
         _logger.LogInformation("Navigating to company: {CompanyName} (ID: {CompanyId})", company.Name, company.Id);
 
-        // TODO: Implement company detail view
-        // For now, just log the navigation
+        // Navigate to company detail view with navigation parameter
+        var navParam = new CompanyDetailNavigationParameter
+        {
+            CompanyId        = company.Id,
+            NavigationSource = this
+        };
+
+        await _navigator.NavigateViewModelAsync<CompanyDetailViewModel>(this, data: navParam);
     }
 
     /// <summary>

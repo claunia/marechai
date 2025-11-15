@@ -31,6 +31,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Humanizer;
 using Marechai.App.Helpers;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Marechai.Data;
 using Microsoft.UI.Xaml;
@@ -123,6 +124,19 @@ public partial class MachineViewViewModel : ObservableObject
         if(_navigationSource is NewsViewModel)
         {
             await _navigator.NavigateViewModelAsync<NewsViewModel>(this);
+
+            return;
+        }
+
+        // If we came from CompanyDetailViewModel, navigate back to company details
+        if(_navigationSource is CompanyDetailViewModel companyVm)
+        {
+            var navParam = new CompanyDetailNavigationParameter
+            {
+                CompanyId = companyVm.CompanyId
+            };
+
+            await _navigator.NavigateViewModelAsync<CompanyDetailViewModel>(this, data: navParam);
 
             return;
         }
