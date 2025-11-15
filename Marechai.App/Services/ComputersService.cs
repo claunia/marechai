@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Helpers;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -203,6 +204,41 @@ public class ComputersService
             _logger.LogError(ex, "Error fetching machine {MachineId} from API", machineId);
 
             return null;
+        }
+    }
+
+    /// <summary>
+    ///     Fetches the list of photo GUIDs for a machine from the API
+    /// </summary>
+    public async Task<List<Guid>> GetMachinePhotosAsync(int machineId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching photos for machine {MachineId} from API", machineId);
+
+            List<Guid?>? photos = await _apiClient.Machines[machineId].Photos.GetAsync();
+
+            if(photos == null || photos.Count == 0)
+            {
+                _logger.LogInformation("No photos found for machine {MachineId}", machineId);
+
+                return [];
+            }
+
+            // Filter out null values
+            var validPhotos = photos.Where(p => p.HasValue).Select(p => p!.Value).ToList();
+
+            _logger.LogInformation("Successfully fetched {Count} photos for machine {MachineId}",
+                                   validPhotos.Count,
+                                   machineId);
+
+            return validPhotos;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching photos for machine {MachineId} from API", machineId);
+
+            return [];
         }
     }
 }

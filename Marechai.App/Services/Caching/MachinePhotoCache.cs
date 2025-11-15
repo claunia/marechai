@@ -31,7 +31,7 @@ public sealed class MachinePhotoCache
 
     public async Task<Stream> GetThumbnailAsync(Guid photoId)
     {
-        var filename = $"{photoId}.svg";
+        var filename = $"{photoId}.webp";
 
         Stream retStream;
 
@@ -53,7 +53,7 @@ public sealed class MachinePhotoCache
 
     public async Task<Stream> GetPhotoAsync(Guid photoId)
     {
-        var filename = $"{photoId}.svg";
+        var filename = $"{photoId}.webp";
 
         Stream retStream;
 

@@ -32,7 +32,7 @@ public partial class App : Application
     }
 
     protected Window? MainWindow { get; private set; }
-    protected IHost?  Host       { get; private set; }
+    public    IHost?  Host       { get; private set; }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -109,6 +109,7 @@ public partial class App : Application
                                                                  // Register application services
                                                                  services.AddSingleton<FlagCache>();
                                                                  services.AddSingleton<CompanyLogoCache>();
+                                                                 services.AddSingleton<MachinePhotoCache>();
                                                                  services.AddSingleton<NewsService>();
                                                                  services.AddSingleton<NewsViewModel>();
                                                                  services.AddSingleton<ComputersService>();

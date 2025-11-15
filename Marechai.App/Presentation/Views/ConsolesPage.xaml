@@ -86,7 +86,14 @@
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
                         <ItemsRepeater ItemsSource="{Binding LettersList}"
                                        Layout="{StaticResource LettersGridLayout}">
-                            <ItemsRepeater.ItemTemplate></ItemsRepeater.ItemTemplate>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding}"
+                                            Command="{Binding DataContext.NavigateByLetterCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource KeyboardKeyButtonStyle}" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
                     </StackPanel>
 
@@ -98,7 +105,14 @@
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
                         <ItemsRepeater ItemsSource="{Binding YearsList}"
                                        Layout="{StaticResource YearsGridLayout}">
-                            <ItemsRepeater.ItemTemplate></ItemsRepeater.ItemTemplate>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding}"
+                                            Command="{Binding DataContext.NavigateByYearCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource KeyboardKeyButtonStyle}" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
                     </StackPanel>
 

@@ -28,13 +28,18 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 using Humanizer;
 using Marechai.App.Helpers;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
+using Marechai.App.Services.Caching;
 using Marechai.Data;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
@@ -44,6 +49,7 @@ public partial class MachineViewViewModel : ObservableObject
     private readonly ComputersService              _computersService;
     private readonly ILogger<MachineViewViewModel> _logger;
     private readonly INavigator                    _navigator;
+    private readonly MachinePhotoCache             _photoCache;
 
     [ObservableProperty]
     private string _companyName = string.Empty;
@@ -95,6 +101,9 @@ public partial class MachineViewViewModel : ObservableObject
     private Visibility _showModel = Visibility.Collapsed;
 
     [ObservableProperty]
+    private Visibility _showPhotos = Visibility.Collapsed;
+
+    [ObservableProperty]
     private Visibility _showProcessors = Visibility.Collapsed;
 
     [ObservableProperty]
@@ -103,12 +112,13 @@ public partial class MachineViewViewModel : ObservableObject
     [ObservableProperty]
     private Visibility _showStorage = Visibility.Collapsed;
 
-    public MachineViewViewModel(ILogger<MachineViewViewModel> logger, INavigator navigator,
-                                ComputersService              computersService)
+    public MachineViewViewModel(ILogger<MachineViewViewModel> logger,           INavigator        navigator,
+                                ComputersService              computersService, MachinePhotoCache photoCache)
     {
         _logger           = logger;
         _navigator        = navigator;
         _computersService = computersService;
+        _photoCache       = photoCache;
     }
 
     public ObservableCollection<ProcessorDisplayItem>        Processors        { get; } = [];
@@ -116,6 +126,7 @@ public partial class MachineViewViewModel : ObservableObject
     public ObservableCollection<GpuDisplayItem>              Gpus              { get; } = [];
     public ObservableCollection<SoundSynthesizerDisplayItem> SoundSynthesizers { get; } = [];
     public ObservableCollection<StorageDisplayItem>          Storage           { get; } = [];
+    public ObservableCollection<PhotoCarouselDisplayItem>    Photos            { get; } = [];
 
     [RelayCommand]
     public async Task GoBack()
@@ -192,6 +203,7 @@ public partial class MachineViewViewModel : ObservableObject
             Gpus.Clear();
             SoundSynthesizers.Clear();
             Storage.Clear();
+            Photos.Clear();
 
             _logger.LogInformation("Loading machine {MachineId}", machineId);
 
@@ -324,6 +336,25 @@ public partial class MachineViewViewModel : ObservableObject
                 }
             }
 
+            // Populate photos
+            List<Guid> photoIds = await _computersService.GetMachinePhotosAsync(machineId);
+
+            if(photoIds.Count > 0)
+            {
+                foreach(Guid photoId in photoIds)
+                {
+                    var photoItem = new PhotoCarouselDisplayItem
+                    {
+                        PhotoId = photoId
+                    };
+
+                    // Load thumbnail image asynchronously
+                    _ = LoadPhotoThumbnailAsync(photoItem);
+
+                    Photos.Add(photoItem);
+                }
+            }
+
             UpdateVisibilities();
             IsDataLoaded = true;
             IsLoading    = false;
@@ -354,6 +385,28 @@ public partial class MachineViewViewModel : ObservableObject
         ShowGpus              = Gpus.Count              > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowSoundSynthesizers = SoundSynthesizers.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowStorage           = Storage.Count           > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowPhotos            = Photos.Count            > 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private async Task LoadPhotoThumbnailAsync(PhotoCarouselDisplayItem photoItem)
+    {
+        try
+        {
+            Stream stream = await _photoCache.GetThumbnailAsync(photoItem.PhotoId);
+
+            var bitmap = new BitmapImage();
+
+            using(IRandomAccessStream randomStream = stream.AsRandomAccessStream())
+            {
+                await bitmap.SetSourceAsync(randomStream);
+            }
+
+            photoItem.ThumbnailImageSource = bitmap;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading photo thumbnail {PhotoId}", photoItem.PhotoId);
+        }
     }
 }
 
@@ -404,4 +457,15 @@ public class StorageDisplayItem
 {
     public string DisplayText { get; set; } = string.Empty;
     public string TypeNote    { get; set; } = string.Empty;
+}
+
+/// <summary>
+///     Display item for photo carousel
+/// </summary>
+public class PhotoCarouselDisplayItem
+{
+    // Thumbnail constraints
+    public const int          ThumbnailMaxSize = 256;
+    public       Guid         PhotoId              { get; set; }
+    public       ImageSource? ThumbnailImageSource { get; set; }
 }
