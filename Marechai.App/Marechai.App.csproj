@@ -80,4 +80,14 @@
     </Compile>
   </ItemGroup>
 
+<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+  <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" />
+  <!-- Add more community toolkit references here -->
+</ItemGroup>
+<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'windows'">
+  <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls" />
+  <!-- Add more uno community toolkit references here -->
+</ItemGroup>
+
+
 </Project>

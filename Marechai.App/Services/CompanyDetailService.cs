@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.App.Models;
 
 namespace Marechai.App.Services;
 
@@ -12,7 +11,7 @@ namespace Marechai.App.Services;
 /// </summary>
 public class CompanyDetailService
 {
-    private readonly ApiClient                 _apiClient;
+    private readonly ApiClient                     _apiClient;
     private readonly ILogger<CompanyDetailService> _logger;
 
     public CompanyDetailService(ApiClient apiClient, ILogger<CompanyDetailService> logger)
@@ -64,7 +63,9 @@ public class CompanyDetailService
 
             if(machines == null) return [];
 
-            _logger.LogInformation("Successfully fetched {Count} computers for company {CompanyId}", machines.Count, companyId);
+            _logger.LogInformation("Successfully fetched {Count} computers for company {CompanyId}",
+                                   machines.Count,
+                                   companyId);
 
             return machines;
         }
@@ -96,6 +97,33 @@ public class CompanyDetailService
             _logger.LogError(ex, "Error fetching sold-to company {CompanyId}", companyId);
 
             return null;
+        }
+    }
+
+    /// <summary>
+    ///     Gets all logos for a company
+    /// </summary>
+    public async Task<List<CompanyLogoDto>> GetCompanyLogosAsync(int companyId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching logos for company {CompanyId}", companyId);
+
+            List<CompanyLogoDto>? logos = await _apiClient.Companies[companyId].Logos.GetAsync();
+
+            if(logos == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} logos for company {CompanyId}",
+                                   logos.Count,
+                                   companyId);
+
+            return logos;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching logos for company {CompanyId}", companyId);
+
+            return [];
         }
     }
 }

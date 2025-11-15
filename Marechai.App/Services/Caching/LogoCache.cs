@@ -10,7 +10,7 @@ namespace Marechai.App.Services.Caching;
 public sealed class CompanyLogoCache
 {
     readonly IConfiguration _configuration;
-    StorageFolder           _flagsFolder;
+    StorageFolder           _logosFolder;
 
     public CompanyLogoCache(IConfiguration configuration)
     {
@@ -21,32 +21,32 @@ public sealed class CompanyLogoCache
     async Task EnsureFolderExistAsync()
     {
         StorageFolder localFolder = ApplicationData.Current.LocalCacheFolder;
-        _flagsFolder = await localFolder.CreateFolderAsync("logos", CreationCollisionOption.OpenIfExists);
+        _logosFolder = await localFolder.CreateFolderAsync("logos", CreationCollisionOption.OpenIfExists);
     }
 
-    public async Task<Stream> GetFlagAsync(Guid companyLogoId)
+    public async Task<Stream> GetLogoAsync(Guid companyLogoId)
     {
         var filename = $"{companyLogoId}.svg";
 
         Stream retStream;
 
-        if(await _flagsFolder.TryGetItemAsync(filename) is StorageFile file)
+        if(await _logosFolder.TryGetItemAsync(filename) is StorageFile file)
         {
             retStream = await file.OpenStreamForReadAsync();
 
             return retStream;
         }
 
-        await CacheFlagAsync(companyLogoId);
+        await CacheLogoAsync(companyLogoId);
 
-        file = await _flagsFolder.GetFileAsync(filename);
+        file = await _logosFolder.GetFileAsync(filename);
 
         retStream = await file.OpenStreamForReadAsync();
 
         return retStream;
     }
 
-    async Task CacheFlagAsync(Guid companyLogoId)
+    async Task CacheLogoAsync(Guid companyLogoId)
     {
         var                       filename   = $"{companyLogoId}.svg";
         string                    baseUrl    = _configuration.GetSection("ApiClient:Url").Value;
@@ -56,7 +56,7 @@ public sealed class CompanyLogoCache
         response.EnsureSuccessStatusCode();
 
         using Stream stream = await response.Content.ReadAsStreamAsync();
-        StorageFile  file   = await _flagsFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
+        StorageFile  file   = await _logosFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
 
         using Stream fileStream = await file.OpenStreamForWriteAsync();
         await stream.CopyToAsync(fileStream);

@@ -33,6 +33,9 @@ public partial class CompanyDetailViewModel : ObservableObject
     private int _companyId;
 
     [ObservableProperty]
+    private ObservableCollection<CompanyLogoItem> _companyLogos = [];
+
+    [ObservableProperty]
     private ObservableCollection<CompanyDetailMachine> _computers = [];
 
     [ObservableProperty]
@@ -106,6 +109,11 @@ public partial class CompanyDetailViewModel : ObservableObject
     /// </summary>
     public bool HasLogoContent => LogoImageSource != null;
 
+    /// <summary>
+    ///     Gets whether company has multiple logos
+    /// </summary>
+    public bool HasMultipleLogos => CompanyLogos.Count > 1;
+
     public IAsyncRelayCommand                       LoadData                 { get; }
     public ICommand                                 GoBackCommand            { get; }
     public IAsyncRelayCommand<CompanyDetailMachine> NavigateToMachineCommand { get; }
@@ -128,6 +136,13 @@ public partial class CompanyDetailViewModel : ObservableObject
     {
         // Notify that HasLogoContent has changed
         OnPropertyChanged(nameof(HasLogoContent));
+    }
+
+    partial void OnCompanyLogosChanged(ObservableCollection<CompanyLogoItem> oldValue,
+                                       ObservableCollection<CompanyLogoItem> newValue)
+    {
+        // Notify that HasMultipleLogos has changed
+        OnPropertyChanged(nameof(HasMultipleLogos));
     }
 
     partial void OnComputersFilterTextChanged(string value)
@@ -324,6 +339,7 @@ public partial class CompanyDetailViewModel : ObservableObject
             IsDataLoaded    = false;
             FlagImageSource = null;
             LogoImageSource = null;
+            CompanyLogos.Clear();
 
             if(CompanyId <= 0)
             {
@@ -379,7 +395,7 @@ public partial class CompanyDetailViewModel : ObservableObject
             {
                 try
                 {
-                    Stream? logoStream = await _logoCache.GetFlagAsync(Company.LastLogo.Value);
+                    Stream? logoStream = await _logoCache.GetLogoAsync(Company.LastLogo.Value);
 
                     var logoSource = new SvgImageSource();
                     await logoSource.SetSourceAsync(logoStream.AsRandomAccessStream());
@@ -393,6 +409,58 @@ public partial class CompanyDetailViewModel : ObservableObject
 
                     // Continue without logo if loading fails
                 }
+            }
+
+            // Load all logos for carousel
+            try
+            {
+                // Get all logos for this company
+                List<CompanyLogoDto> logosList = await _companyDetailService.GetCompanyLogosAsync(CompanyId);
+
+                // Convert to list with extracted years for sorting
+                var logosWithYears = logosList.Select(logo => new
+                                               {
+                                                   Logo = logo,
+                                                   Year = logo.Year != null
+                                                              ? (int?)UntypedNodeExtractor.ExtractInt(logo.Year)
+                                                              : null
+                                               })
+                                              .OrderBy(l => l.Year)
+                                              .ToList();
+
+                var loadedLogos = new ObservableCollection<CompanyLogoItem>();
+
+                foreach(var logoData in logosWithYears)
+                {
+                    try
+                    {
+                        if(logoData.Logo.Guid == null) continue;
+
+                        Stream? logoStream = await _logoCache.GetLogoAsync(logoData.Logo.Guid.Value);
+                        var     logoSource = new SvgImageSource();
+                        await logoSource.SetSourceAsync(logoStream.AsRandomAccessStream());
+
+                        loadedLogos.Add(new CompanyLogoItem
+                        {
+                            LogoGuid   = logoData.Logo.Guid.Value,
+                            LogoSource = logoSource,
+                            Year       = logoData.Year
+                        });
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.LogError("Failed to load carousel logo: {Exception}", ex.Message);
+                    }
+                }
+
+                // Assign the new collection (this will trigger OnCompanyLogosChanged)
+                CompanyLogos = loadedLogos;
+
+                _logger.LogInformation("Loaded {Count} logos for company {CompanyId}", CompanyLogos.Count, CompanyId);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load company logos for carousel: {Exception}", ex.Message);
             }
 
             // Load computers and consoles made by this company
@@ -452,4 +520,14 @@ public class CompanyDetailMachine
 {
     public int    Id   { get; set; }
     public string Name { get; set; } = string.Empty;
+}
+
+/// <summary>
+///     Data model for a company logo in the carousel
+/// </summary>
+public class CompanyLogoItem
+{
+    public Guid            LogoGuid   { get; set; }
+    public SvgImageSource? LogoSource { get; set; }
+    public int?            Year       { get; set; }
 }

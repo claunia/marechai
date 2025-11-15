@@ -34,4 +34,14 @@
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11"/>
     <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.11"/>
   </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+  <PackageVersion Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
+  <!-- Add more community toolkit references here -->
+</ItemGroup>
+<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'windows'">
+  <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Controls" Version="7.1.200" />
+  <!-- Add more uno community toolkit references here -->
+</ItemGroup>
+
 </Project>
