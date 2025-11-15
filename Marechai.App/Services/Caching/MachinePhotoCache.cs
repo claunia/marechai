@@ -99,7 +99,7 @@ public sealed class MachinePhotoCache
         response.EnsureSuccessStatusCode();
 
         using Stream stream = await response.Content.ReadAsStreamAsync();
-        StorageFile  file = await _thumbnailsFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
+        StorageFile  file = await _photosFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
 
         using Stream fileStream = await file.OpenStreamForWriteAsync();
         await stream.CopyToAsync(fileStream);
