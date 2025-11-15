@@ -16,37 +16,37 @@ public partial class ComputersViewModel : ObservableObject
     private readonly INavigator                  _navigator;
 
     [ObservableProperty]
-    private int computerCount;
+    private int _computerCount;
 
     [ObservableProperty]
-    private string computerCountText = string.Empty;
+    private string _computerCountText = string.Empty;
 
     [ObservableProperty]
-    private string errorMessage = string.Empty;
+    private string _errorMessage = string.Empty;
 
     [ObservableProperty]
-    private bool hasError;
+    private bool _hasError;
 
     [ObservableProperty]
-    private bool isDataLoaded;
+    private bool _isDataLoaded;
 
     [ObservableProperty]
-    private bool isLoading;
+    private bool _isLoading;
 
     [ObservableProperty]
-    private ObservableCollection<char> lettersList = [];
+    private ObservableCollection<char> _lettersList = [];
 
     [ObservableProperty]
-    private int maximumYear;
+    private int _maximumYear;
 
     [ObservableProperty]
-    private int minimumYear;
+    private int _minimumYear;
 
     [ObservableProperty]
-    private string yearsGridTitle = string.Empty;
+    private string _yearsGridTitle = string.Empty;
 
     [ObservableProperty]
-    private ObservableCollection<int> yearsList = [];
+    private ObservableCollection<int> _yearsList = [];
 
     public ComputersViewModel(ComputersService            computersService, IStringLocalizer localizer,
                               ILogger<ComputersViewModel> logger,           INavigator       navigator,

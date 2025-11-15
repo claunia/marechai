@@ -25,25 +25,25 @@ public partial class ComputersListViewModel : ObservableObject
     private readonly INavigator                      _navigator;
 
     [ObservableProperty]
-    private ObservableCollection<ComputerListItem> computersList = [];
+    private ObservableCollection<ComputerListItem> _computersList = [];
 
     [ObservableProperty]
-    private string errorMessage = string.Empty;
+    private string _errorMessage = string.Empty;
 
     [ObservableProperty]
-    private string filterDescription = string.Empty;
+    private string _filterDescription = string.Empty;
 
     [ObservableProperty]
-    private bool hasError;
+    private bool _hasError;
 
     [ObservableProperty]
-    private bool isDataLoaded;
+    private bool _isDataLoaded;
 
     [ObservableProperty]
-    private bool isLoading;
+    private bool _isLoading;
 
     [ObservableProperty]
-    private string pageTitle = string.Empty;
+    private string _pageTitle = string.Empty;
 
     public ComputersListViewModel(ComputersService                computersService, IStringLocalizer localizer,
                                   ILogger<ComputersListViewModel> logger,           INavigator       navigator,

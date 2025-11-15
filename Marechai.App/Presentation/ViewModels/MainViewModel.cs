@@ -11,18 +11,18 @@ public partial class MainViewModel : ObservableObject
     private readonly IStringLocalizer _localizer;
     private readonly INavigator       _navigator;
     [ObservableProperty]
-    private bool isSidebarOpen = true;
+    private bool _isSidebarOpen = true;
     [ObservableProperty]
-    private Dictionary<string, string> localizedStrings = new();
+    private Dictionary<string, string> _localizedStrings = new();
     [ObservableProperty]
-    private string loginLogoutButtonText = "";
+    private string _loginLogoutButtonText = "";
 
     [ObservableProperty]
-    private string? name;
+    private string? _name;
     [ObservableProperty]
-    private NewsViewModel? newsViewModel;
+    private NewsViewModel? _newsViewModel;
     [ObservableProperty]
-    private bool sidebarContentVisible = true;
+    private bool _sidebarContentVisible = true;
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, INavigator navigator,
                          NewsViewModel    newsViewModel)

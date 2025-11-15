@@ -49,16 +49,16 @@ public partial class NewsViewModel : ObservableObject
     private readonly NewsService            _newsService;
 
     [ObservableProperty]
-    private string errorMessage = string.Empty;
+    private string _errorMessage = string.Empty;
 
     [ObservableProperty]
-    private bool hasError;
+    private bool _hasError;
 
     [ObservableProperty]
-    private bool isLoading;
+    private bool _isLoading;
 
     [ObservableProperty]
-    private ObservableCollection<NewsItemViewModel> newsList = [];
+    private ObservableCollection<NewsItemViewModel> _newsList = [];
 
     public NewsViewModel(NewsService newsService, IStringLocalizer localizer, ILogger<NewsViewModel> logger,
                          INavigator  navigator)

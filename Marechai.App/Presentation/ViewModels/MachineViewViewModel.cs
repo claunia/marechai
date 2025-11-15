@@ -43,64 +43,64 @@ public partial class MachineViewViewModel : ObservableObject
     private readonly ComputersService              _computersService;
     private readonly ILogger<MachineViewViewModel> _logger;
     private readonly INavigator                    _navigator;
-    private          object?                       _navigationSource;
 
     [ObservableProperty]
-    private string companyName = string.Empty;
+    private string _companyName = string.Empty;
 
     [ObservableProperty]
-    private string errorMessage = string.Empty;
+    private string _errorMessage = string.Empty;
 
     [ObservableProperty]
-    private string? familyName;
+    private string? _familyName;
 
     [ObservableProperty]
-    private bool hasError;
+    private bool _hasError;
 
     [ObservableProperty]
-    private string? introductionDateDisplay;
+    private string? _introductionDateDisplay;
 
     [ObservableProperty]
-    private bool isDataLoaded;
+    private bool _isDataLoaded;
 
     [ObservableProperty]
-    private bool isLoading;
+    private bool _isLoading;
 
     [ObservableProperty]
-    private bool isPrototype;
+    private bool _isPrototype;
 
     [ObservableProperty]
-    private string machineName = string.Empty;
+    private string _machineName = string.Empty;
 
     [ObservableProperty]
-    private string? modelName;
+    private string? _modelName;
+    private object? _navigationSource;
 
     [ObservableProperty]
-    private Visibility showFamily = Visibility.Collapsed;
+    private Visibility _showFamily = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility showFamilyOrModel = Visibility.Collapsed;
+    private Visibility _showFamilyOrModel = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility showGpus = Visibility.Collapsed;
+    private Visibility _showGpus = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility showIntroductionDate = Visibility.Collapsed;
+    private Visibility _showIntroductionDate = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility showMemory = Visibility.Collapsed;
+    private Visibility _showMemory = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility showModel = Visibility.Collapsed;
+    private Visibility _showModel = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility showProcessors = Visibility.Collapsed;
+    private Visibility _showProcessors = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility showSoundSynthesizers = Visibility.Collapsed;
+    private Visibility _showSoundSynthesizers = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility showStorage = Visibility.Collapsed;
+    private Visibility _showStorage = Visibility.Collapsed;
 
     public MachineViewViewModel(ILogger<MachineViewViewModel> logger, INavigator navigator,
                                 ComputersService              computersService)
