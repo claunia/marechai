@@ -34,8 +34,7 @@
                         Spacing="16">
 
                 <!-- Logo Display (Top Center) -->
-                <Image MaxWidth="96"
-                       MaxHeight="96"
+                <Image MaxHeight="96"
                        Stretch="Uniform"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
