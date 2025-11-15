@@ -7,6 +7,9 @@
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+    </Page.Resources>
+
     <Grid utu:SafeArea.Insets="VisibleBounds">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -113,14 +116,35 @@
                     <!-- Country -->
                     <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 CornerRadius="8"
-                                Padding="12"
-                                Spacing="8">
-                        <TextBlock Text="Country"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding Company.Country}"
-                                   FontSize="14" />
+                                Padding="12">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Country Name and Label -->
+                            <StackPanel Grid.Column="0"
+                                        Spacing="4">
+                                <TextBlock Text="Country"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                <TextBlock Text="{Binding Company.Country}"
+                                           FontSize="14"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+
+                            <!-- Country Flag -->
+                            <Image Grid.Column="1"
+                                   Width="48"
+                                   Height="32"
+                                   Stretch="UniformToFill"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   Source="{Binding FlagImageSource}"
+                                   Visibility="{Binding HasFlagContent, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        </Grid>
                     </StackPanel>
 
                     <!-- Address -->

@@ -2,6 +2,7 @@ using System.Net.Http;
 using Marechai.App.Presentation.ViewModels;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 using Uno.Extensions;
 using Uno.Extensions.Configuration;
@@ -106,6 +107,7 @@ public partial class App : Application
                                                             .ConfigureServices((context, services) =>
                                                              {
                                                                  // Register application services
+                                                                 services.AddSingleton<FlagCache>();
                                                                  services.AddSingleton<NewsService>();
                                                                  services.AddSingleton<NewsViewModel>();
                                                                  services.AddSingleton<ComputersService>();

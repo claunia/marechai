@@ -36,6 +36,7 @@
       Navigation;
       ThemeService;
       SkiaRenderer;
+      Svg;
     </UnoFeatures>
   </PropertyGroup>
   <ItemGroup>

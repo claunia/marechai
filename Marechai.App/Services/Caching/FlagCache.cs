@@ -26,7 +26,7 @@ public sealed class FlagCache
 
     public async Task<Stream> GetFlagAsync(short countryCode)
     {
-        var filename = $"{countryCode}.svg";
+        var filename = $"{countryCode:D3}.svg";
 
         Stream retStream;
 
@@ -48,9 +48,9 @@ public sealed class FlagCache
 
     async Task CacheFlagAsync(short countryCode)
     {
-        var                       filename   = $"{countryCode}.svg";
+        var                       filename   = $"{countryCode:D3}.svg";
         string                    baseUrl    = _configuration.GetSection("ApiClient:Url").Value;
-        string                    flagUrl    = baseUrl + $"/assets/flags/{filename}";
+        string                    flagUrl    = baseUrl + $"/assets/flags/countries/{filename}";
         using var                 httpClient = new HttpClient();
         using HttpResponseMessage response   = await httpClient.GetAsync(flagUrl);
         response.EnsureSuccessStatusCode();

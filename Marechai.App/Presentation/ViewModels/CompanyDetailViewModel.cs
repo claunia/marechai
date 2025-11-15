@@ -3,20 +3,25 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.App.Helpers;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
+using Marechai.App.Services.Caching;
 using Marechai.Data;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Uno.Extensions.Navigation;
+using Windows.Storage.Streams;
 
 namespace Marechai.App.Presentation.ViewModels;
 
 public partial class CompanyDetailViewModel : ObservableObject
 {
     private readonly CompanyDetailService            _companyDetailService;
+    private readonly FlagCache                       _flagCache;
     private readonly IStringLocalizer                _localizer;
     private readonly ILogger<CompanyDetailViewModel> _logger;
     private readonly INavigator                      _navigator;
@@ -58,12 +63,19 @@ public partial class CompanyDetailViewModel : ObservableObject
     private bool _isLoading;
 
     [ObservableProperty]
+    private SvgImageSource? _flagImageSource;
+
+    [ObservableProperty]
     private CompanyDto? _soldToCompany;
 
-    public CompanyDetailViewModel(CompanyDetailService            companyDetailService, IStringLocalizer localizer,
-                                  ILogger<CompanyDetailViewModel> logger,               INavigator       navigator)
+    public CompanyDetailViewModel(CompanyDetailService            companyDetailService,
+                                  FlagCache                       flagCache,
+                                  IStringLocalizer                localizer,
+                                  ILogger<CompanyDetailViewModel> logger,
+                                  INavigator                      navigator)
     {
         _companyDetailService    = companyDetailService;
+        _flagCache               = flagCache;
         _localizer               = localizer;
         _logger                  = logger;
         _navigator               = navigator;
@@ -82,6 +94,11 @@ public partial class CompanyDetailViewModel : ObservableObject
     /// </summary>
     public string CompanyFoundedDateDisplay => Company != null ? GetFoundedDateDisplay(Company) : string.Empty;
 
+    /// <summary>
+    ///     Gets whether flag content is available
+    /// </summary>
+    public bool HasFlagContent => FlagImageSource != null;
+
     public IAsyncRelayCommand                       LoadData                 { get; }
     public ICommand                                 GoBackCommand            { get; }
     public IAsyncRelayCommand<CompanyDetailMachine> NavigateToMachineCommand { get; }
@@ -92,6 +109,12 @@ public partial class CompanyDetailViewModel : ObservableObject
         // Notify that computed properties have changed
         OnPropertyChanged(nameof(CompanyStatusDisplay));
         OnPropertyChanged(nameof(CompanyFoundedDateDisplay));
+    }
+
+    partial void OnFlagImageSourceChanged(SvgImageSource? oldValue, SvgImageSource? newValue)
+    {
+        // Notify that HasFlagContent has changed
+        OnPropertyChanged(nameof(HasFlagContent));
     }
 
     partial void OnComputersFilterTextChanged(string value)
@@ -286,6 +309,7 @@ public partial class CompanyDetailViewModel : ObservableObject
             ErrorMessage = string.Empty;
             HasError     = false;
             IsDataLoaded = false;
+            FlagImageSource = null;
 
             if(CompanyId <= 0)
             {
@@ -306,7 +330,28 @@ public partial class CompanyDetailViewModel : ObservableObject
                 return;
             }
 
-            // Load sold-to company if applicable
+            // Load flag if country is available
+            if(Company.CountryId is not null)
+            {
+                try
+                {
+                    short countryCode = (short)UntypedNodeExtractor.ExtractInt(Company.CountryId);
+                    var flagStream = await _flagCache.GetFlagAsync(countryCode);
+
+                    var flagSource = new SvgImageSource();
+                    await flagSource.SetSourceAsync(flagStream.AsRandomAccessStream());
+                    FlagImageSource = flagSource;
+
+                    _logger.LogInformation("Successfully loaded flag for country code {CountryCode}",
+                        countryCode);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError("Failed to load flag for country {CountryId}: {Exception}",
+                        Company.CountryId, ex.Message);
+                    // Continue without flag if loading fails
+                }
+            }
             if(Company.SoldToId != null)
             {
                 int soldToId                   = UntypedNodeExtractor.ExtractInt(Company.SoldToId);
