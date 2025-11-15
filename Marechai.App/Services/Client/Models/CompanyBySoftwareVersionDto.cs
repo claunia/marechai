@@ -23,21 +23,9 @@ namespace Marechai.App.Models
         public string Company { get; set; }
 #endif
         /// <summary>The company_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CompanyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CompanyId { get; set; }
-#endif
+        public int? CompanyId { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The role property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -55,13 +43,7 @@ namespace Marechai.App.Models
         public string RoleId { get; set; }
 #endif
         /// <summary>The software_version_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? SoftwareVersionId { get; set; }
-#nullable restore
-#else
-        public UntypedNode SoftwareVersionId { get; set; }
-#endif
+        public int? SoftwareVersionId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.CompanyBySoftwareVersionDto"/> and sets the default values.
         /// </summary>
@@ -88,11 +70,11 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "company", n => { Company = n.GetStringValue(); } },
-                { "company_id", n => { CompanyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "company_id", n => { CompanyId = n.GetIntValue(); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "role", n => { Role = n.GetStringValue(); } },
                 { "role_id", n => { RoleId = n.GetStringValue(); } },
-                { "software_version_id", n => { SoftwareVersionId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "software_version_id", n => { SoftwareVersionId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -103,11 +85,11 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("company", Company);
-            writer.WriteObjectValue<UntypedNode>("company_id", CompanyId);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("company_id", CompanyId);
+            writer.WriteIntValue("id", Id);
             writer.WriteStringValue("role", Role);
             writer.WriteStringValue("role_id", RoleId);
-            writer.WriteObjectValue<UntypedNode>("software_version_id", SoftwareVersionId);
+            writer.WriteIntValue("software_version_id", SoftwareVersionId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

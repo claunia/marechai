@@ -23,21 +23,9 @@ namespace Marechai.App.Models
         public string Document { get; set; }
 #endif
         /// <summary>The document_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? DocumentId { get; set; }
-#nullable restore
-#else
-        public UntypedNode DocumentId { get; set; }
-#endif
+        public long? DocumentId { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The machine_family property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -47,13 +35,7 @@ namespace Marechai.App.Models
         public string MachineFamily { get; set; }
 #endif
         /// <summary>The machine_family_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MachineFamilyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MachineFamilyId { get; set; }
-#endif
+        public int? MachineFamilyId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.DocumentByMachineFamilyDto"/> and sets the default values.
         /// </summary>
@@ -80,10 +62,10 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "document", n => { Document = n.GetStringValue(); } },
-                { "document_id", n => { DocumentId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "document_id", n => { DocumentId = n.GetLongValue(); } },
+                { "id", n => { Id = n.GetLongValue(); } },
                 { "machine_family", n => { MachineFamily = n.GetStringValue(); } },
-                { "machine_family_id", n => { MachineFamilyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "machine_family_id", n => { MachineFamilyId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -94,10 +76,10 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("document", Document);
-            writer.WriteObjectValue<UntypedNode>("document_id", DocumentId);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteLongValue("document_id", DocumentId);
+            writer.WriteLongValue("id", Id);
             writer.WriteStringValue("machine_family", MachineFamily);
-            writer.WriteObjectValue<UntypedNode>("machine_family_id", MachineFamilyId);
+            writer.WriteIntValue("machine_family_id", MachineFamilyId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

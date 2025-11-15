@@ -33,29 +33,11 @@ namespace Marechai.App.Models
         public string DumpingGroup { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The media_dump_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MediaDumpId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MediaDumpId { get; set; }
-#endif
+        public int? MediaDumpId { get; set; }
         /// <summary>The media_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MediaId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MediaId { get; set; }
-#endif
+        public int? MediaId { get; set; }
         /// <summary>The media_title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -108,9 +90,9 @@ namespace Marechai.App.Models
                 { "dump_date", n => { DumpDate = n.GetDateTimeOffsetValue(); } },
                 { "dumper", n => { Dumper = n.GetStringValue(); } },
                 { "dumping_group", n => { DumpingGroup = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "media_dump_id", n => { MediaDumpId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "media_id", n => { MediaId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
+                { "media_dump_id", n => { MediaDumpId = n.GetIntValue(); } },
+                { "media_id", n => { MediaId = n.GetIntValue(); } },
                 { "media_title", n => { MediaTitle = n.GetStringValue(); } },
                 { "user_id", n => { UserId = n.GetStringValue(); } },
                 { "username", n => { Username = n.GetStringValue(); } },
@@ -126,9 +108,9 @@ namespace Marechai.App.Models
             writer.WriteDateTimeOffsetValue("dump_date", DumpDate);
             writer.WriteStringValue("dumper", Dumper);
             writer.WriteStringValue("dumping_group", DumpingGroup);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("media_dump_id", MediaDumpId);
-            writer.WriteObjectValue<UntypedNode>("media_id", MediaId);
+            writer.WriteIntValue("id", Id);
+            writer.WriteIntValue("media_dump_id", MediaDumpId);
+            writer.WriteIntValue("media_id", MediaId);
             writer.WriteStringValue("media_title", MediaTitle);
             writer.WriteStringValue("user_id", UserId);
             writer.WriteStringValue("username", Username);

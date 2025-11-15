@@ -15,13 +15,7 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The address_bus property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? AddressBus { get; set; }
-#nullable restore
-#else
-        public UntypedNode AddressBus { get; set; }
-#endif
+        public int? AddressBus { get; set; }
         /// <summary>The company property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -31,77 +25,23 @@ namespace Marechai.App.Models
         public string Company { get; set; }
 #endif
         /// <summary>The company_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CompanyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CompanyId { get; set; }
-#endif
+        public int? CompanyId { get; set; }
         /// <summary>The cores property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Cores { get; set; }
-#nullable restore
-#else
-        public UntypedNode Cores { get; set; }
-#endif
+        public int? Cores { get; set; }
         /// <summary>The data_bus property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? DataBus { get; set; }
-#nullable restore
-#else
-        public UntypedNode DataBus { get; set; }
-#endif
+        public int? DataBus { get; set; }
         /// <summary>The die_size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? DieSize { get; set; }
-#nullable restore
-#else
-        public UntypedNode DieSize { get; set; }
-#endif
+        public float? DieSize { get; set; }
         /// <summary>The fprs property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Fprs { get; set; }
-#nullable restore
-#else
-        public UntypedNode Fprs { get; set; }
-#endif
+        public int? Fprs { get; set; }
         /// <summary>The fpr_size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? FprSize { get; set; }
-#nullable restore
-#else
-        public UntypedNode FprSize { get; set; }
-#endif
+        public int? FprSize { get; set; }
         /// <summary>The gprs property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Gprs { get; set; }
-#nullable restore
-#else
-        public UntypedNode Gprs { get; set; }
-#endif
+        public int? Gprs { get; set; }
         /// <summary>The gpr_size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? GprSize { get; set; }
-#nullable restore
-#else
-        public UntypedNode GprSize { get; set; }
-#endif
+        public int? GprSize { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The instruction_set property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -119,47 +59,17 @@ namespace Marechai.App.Models
         public List<string> InstructionSetExtensions { get; set; }
 #endif
         /// <summary>The instruction_set_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? InstructionSetId { get; set; }
-#nullable restore
-#else
-        public UntypedNode InstructionSetId { get; set; }
-#endif
+        public int? InstructionSetId { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
         /// <summary>The l1_data property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? L1Data { get; set; }
-#nullable restore
-#else
-        public UntypedNode L1Data { get; set; }
-#endif
+        public float? L1Data { get; set; }
         /// <summary>The l1_instruction property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? L1Instruction { get; set; }
-#nullable restore
-#else
-        public UntypedNode L1Instruction { get; set; }
-#endif
+        public float? L1Instruction { get; set; }
         /// <summary>The l2 property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? L2 { get; set; }
-#nullable restore
-#else
-        public UntypedNode L2 { get; set; }
-#endif
+        public float? L2 { get; set; }
         /// <summary>The l3 property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? L3 { get; set; }
-#nullable restore
-#else
-        public UntypedNode L3 { get; set; }
-#endif
+        public float? L3 { get; set; }
         /// <summary>The model_code property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -193,53 +103,17 @@ namespace Marechai.App.Models
         public string Process { get; set; }
 #endif
         /// <summary>The process_nm property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ProcessNm { get; set; }
-#nullable restore
-#else
-        public UntypedNode ProcessNm { get; set; }
-#endif
+        public float? ProcessNm { get; set; }
         /// <summary>The simd_registers property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? SimdRegisters { get; set; }
-#nullable restore
-#else
-        public UntypedNode SimdRegisters { get; set; }
-#endif
+        public int? SimdRegisters { get; set; }
         /// <summary>The simd_size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? SimdSize { get; set; }
-#nullable restore
-#else
-        public UntypedNode SimdSize { get; set; }
-#endif
+        public int? SimdSize { get; set; }
         /// <summary>The speed property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Speed { get; set; }
-#nullable restore
-#else
-        public UntypedNode Speed { get; set; }
-#endif
+        public double? Speed { get; set; }
         /// <summary>The threads_per_core property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ThreadsPerCore { get; set; }
-#nullable restore
-#else
-        public UntypedNode ThreadsPerCore { get; set; }
-#endif
+        public int? ThreadsPerCore { get; set; }
         /// <summary>The transistors property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Transistors { get; set; }
-#nullable restore
-#else
-        public UntypedNode Transistors { get; set; }
-#endif
+        public long? Transistors { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.ProcessorDto"/> and sets the default values.
         /// </summary>
@@ -265,35 +139,35 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "address_bus", n => { AddressBus = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "address_bus", n => { AddressBus = n.GetIntValue(); } },
                 { "company", n => { Company = n.GetStringValue(); } },
-                { "company_id", n => { CompanyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "cores", n => { Cores = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "data_bus", n => { DataBus = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "die_size", n => { DieSize = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "fpr_size", n => { FprSize = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "fprs", n => { Fprs = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "gpr_size", n => { GprSize = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "gprs", n => { Gprs = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "company_id", n => { CompanyId = n.GetIntValue(); } },
+                { "cores", n => { Cores = n.GetIntValue(); } },
+                { "data_bus", n => { DataBus = n.GetIntValue(); } },
+                { "die_size", n => { DieSize = n.GetFloatValue(); } },
+                { "fpr_size", n => { FprSize = n.GetIntValue(); } },
+                { "fprs", n => { Fprs = n.GetIntValue(); } },
+                { "gpr_size", n => { GprSize = n.GetIntValue(); } },
+                { "gprs", n => { Gprs = n.GetIntValue(); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "instruction_set", n => { InstructionSet = n.GetStringValue(); } },
                 { "instruction_set_extensions", n => { InstructionSetExtensions = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
-                { "instruction_set_id", n => { InstructionSetId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "instruction_set_id", n => { InstructionSetId = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
-                { "l1_data", n => { L1Data = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "l1_instruction", n => { L1Instruction = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "l2", n => { L2 = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "l3", n => { L3 = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "l1_data", n => { L1Data = n.GetFloatValue(); } },
+                { "l1_instruction", n => { L1Instruction = n.GetFloatValue(); } },
+                { "l2", n => { L2 = n.GetFloatValue(); } },
+                { "l3", n => { L3 = n.GetFloatValue(); } },
                 { "model_code", n => { ModelCode = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "package", n => { Package = n.GetStringValue(); } },
                 { "process", n => { Process = n.GetStringValue(); } },
-                { "process_nm", n => { ProcessNm = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "simd_registers", n => { SimdRegisters = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "simd_size", n => { SimdSize = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "speed", n => { Speed = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "threads_per_core", n => { ThreadsPerCore = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "transistors", n => { Transistors = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "process_nm", n => { ProcessNm = n.GetFloatValue(); } },
+                { "simd_registers", n => { SimdRegisters = n.GetIntValue(); } },
+                { "simd_size", n => { SimdSize = n.GetIntValue(); } },
+                { "speed", n => { Speed = n.GetDoubleValue(); } },
+                { "threads_per_core", n => { ThreadsPerCore = n.GetIntValue(); } },
+                { "transistors", n => { Transistors = n.GetLongValue(); } },
             };
         }
         /// <summary>
@@ -303,35 +177,35 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("address_bus", AddressBus);
+            writer.WriteIntValue("address_bus", AddressBus);
             writer.WriteStringValue("company", Company);
-            writer.WriteObjectValue<UntypedNode>("company_id", CompanyId);
-            writer.WriteObjectValue<UntypedNode>("cores", Cores);
-            writer.WriteObjectValue<UntypedNode>("data_bus", DataBus);
-            writer.WriteObjectValue<UntypedNode>("die_size", DieSize);
-            writer.WriteObjectValue<UntypedNode>("fprs", Fprs);
-            writer.WriteObjectValue<UntypedNode>("fpr_size", FprSize);
-            writer.WriteObjectValue<UntypedNode>("gprs", Gprs);
-            writer.WriteObjectValue<UntypedNode>("gpr_size", GprSize);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("company_id", CompanyId);
+            writer.WriteIntValue("cores", Cores);
+            writer.WriteIntValue("data_bus", DataBus);
+            writer.WriteFloatValue("die_size", DieSize);
+            writer.WriteIntValue("fprs", Fprs);
+            writer.WriteIntValue("fpr_size", FprSize);
+            writer.WriteIntValue("gprs", Gprs);
+            writer.WriteIntValue("gpr_size", GprSize);
+            writer.WriteIntValue("id", Id);
             writer.WriteStringValue("instruction_set", InstructionSet);
             writer.WriteCollectionOfPrimitiveValues<string>("instruction_set_extensions", InstructionSetExtensions);
-            writer.WriteObjectValue<UntypedNode>("instruction_set_id", InstructionSetId);
+            writer.WriteIntValue("instruction_set_id", InstructionSetId);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
-            writer.WriteObjectValue<UntypedNode>("l1_data", L1Data);
-            writer.WriteObjectValue<UntypedNode>("l1_instruction", L1Instruction);
-            writer.WriteObjectValue<UntypedNode>("l2", L2);
-            writer.WriteObjectValue<UntypedNode>("l3", L3);
+            writer.WriteFloatValue("l1_data", L1Data);
+            writer.WriteFloatValue("l1_instruction", L1Instruction);
+            writer.WriteFloatValue("l2", L2);
+            writer.WriteFloatValue("l3", L3);
             writer.WriteStringValue("model_code", ModelCode);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("package", Package);
             writer.WriteStringValue("process", Process);
-            writer.WriteObjectValue<UntypedNode>("process_nm", ProcessNm);
-            writer.WriteObjectValue<UntypedNode>("simd_registers", SimdRegisters);
-            writer.WriteObjectValue<UntypedNode>("simd_size", SimdSize);
-            writer.WriteObjectValue<UntypedNode>("speed", Speed);
-            writer.WriteObjectValue<UntypedNode>("threads_per_core", ThreadsPerCore);
-            writer.WriteObjectValue<UntypedNode>("transistors", Transistors);
+            writer.WriteFloatValue("process_nm", ProcessNm);
+            writer.WriteIntValue("simd_registers", SimdRegisters);
+            writer.WriteIntValue("simd_size", SimdSize);
+            writer.WriteDoubleValue("speed", Speed);
+            writer.WriteIntValue("threads_per_core", ThreadsPerCore);
+            writer.WriteLongValue("transistors", Transistors);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -15,29 +15,11 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The end property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? End { get; set; }
-#nullable restore
-#else
-        public UntypedNode End { get; set; }
-#endif
+        public int? End { get; set; }
         /// <summary>The size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Size { get; set; }
-#nullable restore
-#else
-        public UntypedNode Size { get; set; }
-#endif
+        public int? Size { get; set; }
         /// <summary>The start property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Start { get; set; }
-#nullable restore
-#else
-        public UntypedNode Start { get; set; }
-#endif
+        public int? Start { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.VariableBlockSize"/> and sets the default values.
         /// </summary>
@@ -63,9 +45,9 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "end", n => { End = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "size", n => { Size = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "start", n => { Start = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "end", n => { End = n.GetIntValue(); } },
+                { "size", n => { Size = n.GetIntValue(); } },
+                { "start", n => { Start = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -75,9 +57,9 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("end", End);
-            writer.WriteObjectValue<UntypedNode>("size", Size);
-            writer.WriteObjectValue<UntypedNode>("start", Start);
+            writer.WriteIntValue("end", End);
+            writer.WriteIntValue("size", Size);
+            writer.WriteIntValue("start", Start);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

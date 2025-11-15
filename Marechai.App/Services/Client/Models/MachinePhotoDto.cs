@@ -15,13 +15,7 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The aperture property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Aperture { get; set; }
-#nullable restore
-#else
-        public UntypedNode Aperture { get; set; }
-#endif
+        public double? Aperture { get; set; }
         /// <summary>The author property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -73,13 +67,7 @@ namespace Marechai.App.Models
         /// <summary>The creation_date property</summary>
         public DateTimeOffset? CreationDate { get; set; }
         /// <summary>The digital_zoom property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? DigitalZoom { get; set; }
-#nullable restore
-#else
-        public UntypedNode DigitalZoom { get; set; }
-#endif
+        public double? DigitalZoom { get; set; }
         /// <summary>The exif_version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -89,13 +77,7 @@ namespace Marechai.App.Models
         public string ExifVersion { get; set; }
 #endif
         /// <summary>The exposure property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Exposure { get; set; }
-#nullable restore
-#else
-        public UntypedNode Exposure { get; set; }
-#endif
+        public double? Exposure { get; set; }
         /// <summary>The exposure_method property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -121,47 +103,17 @@ namespace Marechai.App.Models
         public global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_flash Flash { get; set; }
 #endif
         /// <summary>The focal property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Focal { get; set; }
-#nullable restore
-#else
-        public UntypedNode Focal { get; set; }
-#endif
+        public double? Focal { get; set; }
         /// <summary>The focal_equivalent property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? FocalEquivalent { get; set; }
-#nullable restore
-#else
-        public UntypedNode FocalEquivalent { get; set; }
-#endif
+        public double? FocalEquivalent { get; set; }
         /// <summary>The focal_length property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? FocalLength { get; set; }
-#nullable restore
-#else
-        public UntypedNode FocalLength { get; set; }
-#endif
+        public double? FocalLength { get; set; }
         /// <summary>The horizontal_resolution property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? HorizontalResolution { get; set; }
-#nullable restore
-#else
-        public UntypedNode HorizontalResolution { get; set; }
-#endif
+        public double? HorizontalResolution { get; set; }
         /// <summary>The id property</summary>
         public Guid? Id { get; set; }
         /// <summary>The iso property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Iso { get; set; }
-#nullable restore
-#else
-        public UntypedNode Iso { get; set; }
-#endif
+        public int? Iso { get; set; }
         /// <summary>The lens property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -171,13 +123,7 @@ namespace Marechai.App.Models
         public string Lens { get; set; }
 #endif
         /// <summary>The license_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? LicenseId { get; set; }
-#nullable restore
-#else
-        public UntypedNode LicenseId { get; set; }
-#endif
+        public int? LicenseId { get; set; }
         /// <summary>The license_name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -203,13 +149,7 @@ namespace Marechai.App.Models
         public string MachineCompanyName { get; set; }
 #endif
         /// <summary>The machine_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MachineId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MachineId { get; set; }
-#endif
+        public int? MachineId { get; set; }
         /// <summary>The machine_name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -317,13 +257,7 @@ namespace Marechai.App.Models
         public string UserId { get; set; }
 #endif
         /// <summary>The vertical_resolution property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? VerticalResolution { get; set; }
-#nullable restore
-#else
-        public UntypedNode VerticalResolution { get; set; }
-#endif
+        public double? VerticalResolution { get; set; }
         /// <summary>The white_balance property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -357,7 +291,7 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "aperture", n => { Aperture = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "aperture", n => { Aperture = n.GetDoubleValue(); } },
                 { "author", n => { Author = n.GetStringValue(); } },
                 { "camera_manufacturer", n => { CameraManufacturer = n.GetStringValue(); } },
                 { "camera_model", n => { CameraModel = n.GetStringValue(); } },
@@ -365,24 +299,24 @@ namespace Marechai.App.Models
                 { "comments", n => { Comments = n.GetStringValue(); } },
                 { "contrast", n => { Contrast = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_contrast>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_contrast.CreateFromDiscriminatorValue); } },
                 { "creation_date", n => { CreationDate = n.GetDateTimeOffsetValue(); } },
-                { "digital_zoom", n => { DigitalZoom = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "digital_zoom", n => { DigitalZoom = n.GetDoubleValue(); } },
                 { "exif_version", n => { ExifVersion = n.GetStringValue(); } },
-                { "exposure", n => { Exposure = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "exposure", n => { Exposure = n.GetDoubleValue(); } },
                 { "exposure_method", n => { ExposureMethod = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_exposure_method>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_exposure_method.CreateFromDiscriminatorValue); } },
                 { "exposure_program", n => { ExposureProgram = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_exposure_program>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_exposure_program.CreateFromDiscriminatorValue); } },
                 { "flash", n => { Flash = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_flash>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_flash.CreateFromDiscriminatorValue); } },
-                { "focal", n => { Focal = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "focal_equivalent", n => { FocalEquivalent = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "focal_length", n => { FocalLength = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "horizontal_resolution", n => { HorizontalResolution = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "focal", n => { Focal = n.GetDoubleValue(); } },
+                { "focal_equivalent", n => { FocalEquivalent = n.GetDoubleValue(); } },
+                { "focal_length", n => { FocalLength = n.GetDoubleValue(); } },
+                { "horizontal_resolution", n => { HorizontalResolution = n.GetDoubleValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
-                { "iso", n => { Iso = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "iso", n => { Iso = n.GetIntValue(); } },
                 { "lens", n => { Lens = n.GetStringValue(); } },
-                { "license_id", n => { LicenseId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "license_id", n => { LicenseId = n.GetIntValue(); } },
                 { "license_name", n => { LicenseName = n.GetStringValue(); } },
                 { "light_source", n => { LightSource = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_light_source>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_light_source.CreateFromDiscriminatorValue); } },
                 { "machine_company_name", n => { MachineCompanyName = n.GetStringValue(); } },
-                { "machine_id", n => { MachineId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "machine_id", n => { MachineId = n.GetIntValue(); } },
                 { "machine_name", n => { MachineName = n.GetStringValue(); } },
                 { "metering_mode", n => { MeteringMode = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_metering_mode>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_metering_mode.CreateFromDiscriminatorValue); } },
                 { "orientation", n => { Orientation = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_orientation>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_orientation.CreateFromDiscriminatorValue); } },
@@ -397,7 +331,7 @@ namespace Marechai.App.Models
                 { "subject_distance_range", n => { SubjectDistanceRange = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_subject_distance_range>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_subject_distance_range.CreateFromDiscriminatorValue); } },
                 { "upload_date", n => { UploadDate = n.GetDateTimeOffsetValue(); } },
                 { "user_id", n => { UserId = n.GetStringValue(); } },
-                { "vertical_resolution", n => { VerticalResolution = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "vertical_resolution", n => { VerticalResolution = n.GetDoubleValue(); } },
                 { "white_balance", n => { WhiteBalance = n.GetObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_white_balance>(global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_white_balance.CreateFromDiscriminatorValue); } },
             };
         }
@@ -408,7 +342,7 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("aperture", Aperture);
+            writer.WriteDoubleValue("aperture", Aperture);
             writer.WriteStringValue("author", Author);
             writer.WriteStringValue("camera_manufacturer", CameraManufacturer);
             writer.WriteStringValue("camera_model", CameraModel);
@@ -416,24 +350,24 @@ namespace Marechai.App.Models
             writer.WriteStringValue("comments", Comments);
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_contrast>("contrast", Contrast);
             writer.WriteDateTimeOffsetValue("creation_date", CreationDate);
-            writer.WriteObjectValue<UntypedNode>("digital_zoom", DigitalZoom);
+            writer.WriteDoubleValue("digital_zoom", DigitalZoom);
             writer.WriteStringValue("exif_version", ExifVersion);
-            writer.WriteObjectValue<UntypedNode>("exposure", Exposure);
+            writer.WriteDoubleValue("exposure", Exposure);
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_exposure_method>("exposure_method", ExposureMethod);
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_exposure_program>("exposure_program", ExposureProgram);
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_flash>("flash", Flash);
-            writer.WriteObjectValue<UntypedNode>("focal", Focal);
-            writer.WriteObjectValue<UntypedNode>("focal_equivalent", FocalEquivalent);
-            writer.WriteObjectValue<UntypedNode>("focal_length", FocalLength);
-            writer.WriteObjectValue<UntypedNode>("horizontal_resolution", HorizontalResolution);
+            writer.WriteDoubleValue("focal", Focal);
+            writer.WriteDoubleValue("focal_equivalent", FocalEquivalent);
+            writer.WriteDoubleValue("focal_length", FocalLength);
+            writer.WriteDoubleValue("horizontal_resolution", HorizontalResolution);
             writer.WriteGuidValue("id", Id);
-            writer.WriteObjectValue<UntypedNode>("iso", Iso);
+            writer.WriteIntValue("iso", Iso);
             writer.WriteStringValue("lens", Lens);
-            writer.WriteObjectValue<UntypedNode>("license_id", LicenseId);
+            writer.WriteIntValue("license_id", LicenseId);
             writer.WriteStringValue("license_name", LicenseName);
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_light_source>("light_source", LightSource);
             writer.WriteStringValue("machine_company_name", MachineCompanyName);
-            writer.WriteObjectValue<UntypedNode>("machine_id", MachineId);
+            writer.WriteIntValue("machine_id", MachineId);
             writer.WriteStringValue("machine_name", MachineName);
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_metering_mode>("metering_mode", MeteringMode);
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_orientation>("orientation", Orientation);
@@ -448,7 +382,7 @@ namespace Marechai.App.Models
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_subject_distance_range>("subject_distance_range", SubjectDistanceRange);
             writer.WriteDateTimeOffsetValue("upload_date", UploadDate);
             writer.WriteStringValue("user_id", UserId);
-            writer.WriteObjectValue<UntypedNode>("vertical_resolution", VerticalResolution);
+            writer.WriteDoubleValue("vertical_resolution", VerticalResolution);
             writer.WriteObjectValue<global::Marechai.App.Models.MachinePhotoDto.MachinePhotoDto_white_balance>("white_balance", WhiteBalance);
             writer.WriteAdditionalData(AdditionalData);
         }

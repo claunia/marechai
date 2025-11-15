@@ -15,21 +15,9 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The machine_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MachineId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MachineId { get; set; }
-#endif
+        public int? MachineId { get; set; }
         /// <summary>The screen property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -39,13 +27,7 @@ namespace Marechai.App.Models
         public global::Marechai.App.Models.ScreenByMachineDto.ScreenByMachineDto_screen Screen { get; set; }
 #endif
         /// <summary>The screen_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ScreenId { get; set; }
-#nullable restore
-#else
-        public UntypedNode ScreenId { get; set; }
-#endif
+        public int? ScreenId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.ScreenByMachineDto"/> and sets the default values.
         /// </summary>
@@ -71,10 +53,10 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "machine_id", n => { MachineId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetLongValue(); } },
+                { "machine_id", n => { MachineId = n.GetIntValue(); } },
                 { "screen", n => { Screen = n.GetObjectValue<global::Marechai.App.Models.ScreenByMachineDto.ScreenByMachineDto_screen>(global::Marechai.App.Models.ScreenByMachineDto.ScreenByMachineDto_screen.CreateFromDiscriminatorValue); } },
-                { "screen_id", n => { ScreenId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "screen_id", n => { ScreenId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -84,10 +66,10 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("machine_id", MachineId);
+            writer.WriteLongValue("id", Id);
+            writer.WriteIntValue("machine_id", MachineId);
             writer.WriteObjectValue<global::Marechai.App.Models.ScreenByMachineDto.ScreenByMachineDto_screen>("screen", Screen);
-            writer.WriteObjectValue<UntypedNode>("screen_id", ScreenId);
+            writer.WriteIntValue("screen_id", ScreenId);
             writer.WriteAdditionalData(AdditionalData);
         }
         /// <summary>

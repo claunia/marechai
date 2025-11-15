@@ -23,29 +23,11 @@ namespace Marechai.App.Models
         public string Company { get; set; }
 #endif
         /// <summary>The company_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CompanyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CompanyId { get; set; }
-#endif
+        public int? CompanyId { get; set; }
         /// <summary>The die_size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? DieSize { get; set; }
-#nullable restore
-#else
-        public UntypedNode DieSize { get; set; }
-#endif
+        public float? DieSize { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
         /// <summary>The model_code property</summary>
@@ -81,21 +63,9 @@ namespace Marechai.App.Models
         public string Process { get; set; }
 #endif
         /// <summary>The process_nm property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ProcessNm { get; set; }
-#nullable restore
-#else
-        public UntypedNode ProcessNm { get; set; }
-#endif
+        public float? ProcessNm { get; set; }
         /// <summary>The transistors property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Transistors { get; set; }
-#nullable restore
-#else
-        public UntypedNode Transistors { get; set; }
-#endif
+        public long? Transistors { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.GpuDto"/> and sets the default values.
         /// </summary>
@@ -122,16 +92,16 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "company", n => { Company = n.GetStringValue(); } },
-                { "company_id", n => { CompanyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "die_size", n => { DieSize = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "company_id", n => { CompanyId = n.GetIntValue(); } },
+                { "die_size", n => { DieSize = n.GetFloatValue(); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
                 { "model_code", n => { ModelCode = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "package", n => { Package = n.GetStringValue(); } },
                 { "process", n => { Process = n.GetStringValue(); } },
-                { "process_nm", n => { ProcessNm = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "transistors", n => { Transistors = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "process_nm", n => { ProcessNm = n.GetFloatValue(); } },
+                { "transistors", n => { Transistors = n.GetLongValue(); } },
             };
         }
         /// <summary>
@@ -142,16 +112,16 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("company", Company);
-            writer.WriteObjectValue<UntypedNode>("company_id", CompanyId);
-            writer.WriteObjectValue<UntypedNode>("die_size", DieSize);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("company_id", CompanyId);
+            writer.WriteFloatValue("die_size", DieSize);
+            writer.WriteIntValue("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
             writer.WriteStringValue("model_code", ModelCode);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("package", Package);
             writer.WriteStringValue("process", Process);
-            writer.WriteObjectValue<UntypedNode>("process_nm", ProcessNm);
-            writer.WriteObjectValue<UntypedNode>("transistors", Transistors);
+            writer.WriteFloatValue("process_nm", ProcessNm);
+            writer.WriteLongValue("transistors", Transistors);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

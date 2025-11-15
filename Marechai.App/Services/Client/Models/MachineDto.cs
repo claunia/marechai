@@ -23,13 +23,7 @@ namespace Marechai.App.Models
         public string Company { get; set; }
 #endif
         /// <summary>The company_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CompanyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CompanyId { get; set; }
-#endif
+        public int? CompanyId { get; set; }
         /// <summary>The company_logo property</summary>
         public Guid? CompanyLogo { get; set; }
         /// <summary>The family property</summary>
@@ -41,13 +35,7 @@ namespace Marechai.App.Models
         public string Family { get; set; }
 #endif
         /// <summary>The family_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? FamilyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode FamilyId { get; set; }
-#endif
+        public int? FamilyId { get; set; }
         /// <summary>The family_name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -65,13 +53,7 @@ namespace Marechai.App.Models
         public List<global::Marechai.App.Models.GpuDto> Gpus { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
         /// <summary>The memory property</summary>
@@ -150,13 +132,13 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "company", n => { Company = n.GetStringValue(); } },
-                { "company_id", n => { CompanyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "company_id", n => { CompanyId = n.GetIntValue(); } },
                 { "company_logo", n => { CompanyLogo = n.GetGuidValue(); } },
                 { "family", n => { Family = n.GetStringValue(); } },
-                { "family_id", n => { FamilyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "family_id", n => { FamilyId = n.GetIntValue(); } },
                 { "family_name", n => { FamilyName = n.GetStringValue(); } },
                 { "gpus", n => { Gpus = n.GetCollectionOfObjectValues<global::Marechai.App.Models.GpuDto>(global::Marechai.App.Models.GpuDto.CreateFromDiscriminatorValue)?.AsList(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
                 { "memory", n => { Memory = n.GetCollectionOfObjectValues<global::Marechai.App.Models.MemoryDto>(global::Marechai.App.Models.MemoryDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "model", n => { Model = n.GetStringValue(); } },
@@ -175,13 +157,13 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("company", Company);
-            writer.WriteObjectValue<UntypedNode>("company_id", CompanyId);
+            writer.WriteIntValue("company_id", CompanyId);
             writer.WriteGuidValue("company_logo", CompanyLogo);
             writer.WriteStringValue("family", Family);
-            writer.WriteObjectValue<UntypedNode>("family_id", FamilyId);
+            writer.WriteIntValue("family_id", FamilyId);
             writer.WriteStringValue("family_name", FamilyName);
             writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.GpuDto>("gpus", Gpus);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
             writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.MemoryDto>("memory", Memory);
             writer.WriteStringValue("model", Model);

@@ -15,21 +15,9 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The gpu_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? GpuId { get; set; }
-#nullable restore
-#else
-        public UntypedNode GpuId { get; set; }
-#endif
+        public int? GpuId { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The resolution property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -39,13 +27,7 @@ namespace Marechai.App.Models
         public global::Marechai.App.Models.ResolutionByGpuDto.ResolutionByGpuDto_resolution Resolution { get; set; }
 #endif
         /// <summary>The resolution_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ResolutionId { get; set; }
-#nullable restore
-#else
-        public UntypedNode ResolutionId { get; set; }
-#endif
+        public int? ResolutionId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.ResolutionByGpuDto"/> and sets the default values.
         /// </summary>
@@ -71,10 +53,10 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "gpu_id", n => { GpuId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "gpu_id", n => { GpuId = n.GetIntValue(); } },
+                { "id", n => { Id = n.GetLongValue(); } },
                 { "resolution", n => { Resolution = n.GetObjectValue<global::Marechai.App.Models.ResolutionByGpuDto.ResolutionByGpuDto_resolution>(global::Marechai.App.Models.ResolutionByGpuDto.ResolutionByGpuDto_resolution.CreateFromDiscriminatorValue); } },
-                { "resolution_id", n => { ResolutionId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "resolution_id", n => { ResolutionId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -84,10 +66,10 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("gpu_id", GpuId);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("gpu_id", GpuId);
+            writer.WriteLongValue("id", Id);
             writer.WriteObjectValue<global::Marechai.App.Models.ResolutionByGpuDto.ResolutionByGpuDto_resolution>("resolution", Resolution);
-            writer.WriteObjectValue<UntypedNode>("resolution_id", ResolutionId);
+            writer.WriteIntValue("resolution_id", ResolutionId);
             writer.WriteAdditionalData(AdditionalData);
         }
         /// <summary>

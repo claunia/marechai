@@ -31,13 +31,7 @@ namespace Marechai.App.Models
         public string Book { get; set; }
 #endif
         /// <summary>The book_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? BookId { get; set; }
-#nullable restore
-#else
-        public UntypedNode BookId { get; set; }
-#endif
+        public long? BookId { get; set; }
         /// <summary>The colorspace property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -65,13 +59,7 @@ namespace Marechai.App.Models
         public string ExifVersion { get; set; }
 #endif
         /// <summary>The horizontal_resolution property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? HorizontalResolution { get; set; }
-#nullable restore
-#else
-        public UntypedNode HorizontalResolution { get; set; }
-#endif
+        public double? HorizontalResolution { get; set; }
         /// <summary>The id property</summary>
         public Guid? Id { get; set; }
         /// <summary>The original_extension property</summary>
@@ -83,13 +71,7 @@ namespace Marechai.App.Models
         public string OriginalExtension { get; set; }
 #endif
         /// <summary>The page property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Page { get; set; }
-#nullable restore
-#else
-        public UntypedNode Page { get; set; }
-#endif
+        public int? Page { get; set; }
         /// <summary>The resolution_unit property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -135,13 +117,7 @@ namespace Marechai.App.Models
         public string UserId { get; set; }
 #endif
         /// <summary>The vertical_resolution property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? VerticalResolution { get; set; }
-#nullable restore
-#else
-        public UntypedNode VerticalResolution { get; set; }
-#endif
+        public double? VerticalResolution { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.BookScanDto"/> and sets the default values.
         /// </summary>
@@ -169,15 +145,15 @@ namespace Marechai.App.Models
             {
                 { "author", n => { Author = n.GetStringValue(); } },
                 { "book", n => { Book = n.GetStringValue(); } },
-                { "book_id", n => { BookId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "book_id", n => { BookId = n.GetLongValue(); } },
                 { "colorspace", n => { Colorspace = n.GetObjectValue<global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace>(global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace.CreateFromDiscriminatorValue); } },
                 { "comments", n => { Comments = n.GetStringValue(); } },
                 { "creation_date", n => { CreationDate = n.GetDateTimeOffsetValue(); } },
                 { "exif_version", n => { ExifVersion = n.GetStringValue(); } },
-                { "horizontal_resolution", n => { HorizontalResolution = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "horizontal_resolution", n => { HorizontalResolution = n.GetDoubleValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "original_extension", n => { OriginalExtension = n.GetStringValue(); } },
-                { "page", n => { Page = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "page", n => { Page = n.GetIntValue(); } },
                 { "resolution_unit", n => { ResolutionUnit = n.GetObjectValue<global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit>(global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit.CreateFromDiscriminatorValue); } },
                 { "scanner_manufacturer", n => { ScannerManufacturer = n.GetStringValue(); } },
                 { "scanner_model", n => { ScannerModel = n.GetStringValue(); } },
@@ -185,7 +161,7 @@ namespace Marechai.App.Models
                 { "type", n => { Type = n.GetIntValue(); } },
                 { "upload_date", n => { UploadDate = n.GetDateTimeOffsetValue(); } },
                 { "user_id", n => { UserId = n.GetStringValue(); } },
-                { "vertical_resolution", n => { VerticalResolution = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "vertical_resolution", n => { VerticalResolution = n.GetDoubleValue(); } },
             };
         }
         /// <summary>
@@ -197,15 +173,15 @@ namespace Marechai.App.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("author", Author);
             writer.WriteStringValue("book", Book);
-            writer.WriteObjectValue<UntypedNode>("book_id", BookId);
+            writer.WriteLongValue("book_id", BookId);
             writer.WriteObjectValue<global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace>("colorspace", Colorspace);
             writer.WriteStringValue("comments", Comments);
             writer.WriteDateTimeOffsetValue("creation_date", CreationDate);
             writer.WriteStringValue("exif_version", ExifVersion);
-            writer.WriteObjectValue<UntypedNode>("horizontal_resolution", HorizontalResolution);
+            writer.WriteDoubleValue("horizontal_resolution", HorizontalResolution);
             writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("original_extension", OriginalExtension);
-            writer.WriteObjectValue<UntypedNode>("page", Page);
+            writer.WriteIntValue("page", Page);
             writer.WriteObjectValue<global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit>("resolution_unit", ResolutionUnit);
             writer.WriteStringValue("scanner_manufacturer", ScannerManufacturer);
             writer.WriteStringValue("scanner_model", ScannerModel);
@@ -213,7 +189,7 @@ namespace Marechai.App.Models
             writer.WriteIntValue("type", Type);
             writer.WriteDateTimeOffsetValue("upload_date", UploadDate);
             writer.WriteStringValue("user_id", UserId);
-            writer.WriteObjectValue<UntypedNode>("vertical_resolution", VerticalResolution);
+            writer.WriteDoubleValue("vertical_resolution", VerticalResolution);
             writer.WriteAdditionalData(AdditionalData);
         }
         /// <summary>

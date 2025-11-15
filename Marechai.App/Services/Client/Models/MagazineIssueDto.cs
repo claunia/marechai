@@ -23,29 +23,11 @@ namespace Marechai.App.Models
         public string Caption { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The issue_number property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? IssueNumber { get; set; }
-#nullable restore
-#else
-        public UntypedNode IssueNumber { get; set; }
-#endif
+        public int? IssueNumber { get; set; }
         /// <summary>The magazine_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MagazineId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MagazineId { get; set; }
-#endif
+        public long? MagazineId { get; set; }
         /// <summary>The magazine_title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -63,13 +45,7 @@ namespace Marechai.App.Models
         public string NativeCaption { get; set; }
 #endif
         /// <summary>The pages property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Pages { get; set; }
-#nullable restore
-#else
-        public UntypedNode Pages { get; set; }
-#endif
+        public int? Pages { get; set; }
         /// <summary>The product_code property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -106,12 +82,12 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "caption", n => { Caption = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "issue_number", n => { IssueNumber = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "magazine_id", n => { MagazineId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetLongValue(); } },
+                { "issue_number", n => { IssueNumber = n.GetIntValue(); } },
+                { "magazine_id", n => { MagazineId = n.GetLongValue(); } },
                 { "magazine_title", n => { MagazineTitle = n.GetStringValue(); } },
                 { "native_caption", n => { NativeCaption = n.GetStringValue(); } },
-                { "pages", n => { Pages = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "pages", n => { Pages = n.GetIntValue(); } },
                 { "product_code", n => { ProductCode = n.GetStringValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
             };
@@ -124,12 +100,12 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("caption", Caption);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("issue_number", IssueNumber);
-            writer.WriteObjectValue<UntypedNode>("magazine_id", MagazineId);
+            writer.WriteLongValue("id", Id);
+            writer.WriteIntValue("issue_number", IssueNumber);
+            writer.WriteLongValue("magazine_id", MagazineId);
             writer.WriteStringValue("magazine_title", MagazineTitle);
             writer.WriteStringValue("native_caption", NativeCaption);
-            writer.WriteObjectValue<UntypedNode>("pages", Pages);
+            writer.WriteIntValue("pages", Pages);
             writer.WriteStringValue("product_code", ProductCode);
             writer.WriteDateTimeOffsetValue("published", Published);
             writer.WriteAdditionalData(AdditionalData);

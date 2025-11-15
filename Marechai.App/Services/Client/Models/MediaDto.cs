@@ -55,37 +55,13 @@ namespace Marechai.App.Models
         public string Firmware { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The last_sequence property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? LastSequence { get; set; }
-#nullable restore
-#else
-        public UntypedNode LastSequence { get; set; }
-#endif
+        public int? LastSequence { get; set; }
         /// <summary>The layers property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Layers { get; set; }
-#nullable restore
-#else
-        public UntypedNode Layers { get; set; }
-#endif
+        public int? Layers { get; set; }
         /// <summary>The logical_block_size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? LogicalBlockSize { get; set; }
-#nullable restore
-#else
-        public UntypedNode LogicalBlockSize { get; set; }
-#endif
+        public int? LogicalBlockSize { get; set; }
         /// <summary>The manufacturer property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -111,13 +87,7 @@ namespace Marechai.App.Models
         public string PartNumber { get; set; }
 #endif
         /// <summary>The physical_block_size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? PhysicalBlockSize { get; set; }
-#nullable restore
-#else
-        public UntypedNode PhysicalBlockSize { get; set; }
-#endif
+        public int? PhysicalBlockSize { get; set; }
         /// <summary>The revision property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -127,21 +97,9 @@ namespace Marechai.App.Models
         public string Revision { get; set; }
 #endif
         /// <summary>The sectors property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Sectors { get; set; }
-#nullable restore
-#else
-        public UntypedNode Sectors { get; set; }
-#endif
+        public int? Sectors { get; set; }
         /// <summary>The sequence property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Sequence { get; set; }
-#nullable restore
-#else
-        public UntypedNode Sequence { get; set; }
-#endif
+        public int? Sequence { get; set; }
         /// <summary>The serial_number property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -151,29 +109,11 @@ namespace Marechai.App.Models
         public string SerialNumber { get; set; }
 #endif
         /// <summary>The sessions property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Sessions { get; set; }
-#nullable restore
-#else
-        public UntypedNode Sessions { get; set; }
-#endif
+        public int? Sessions { get; set; }
         /// <summary>The sides property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Sides { get; set; }
-#nullable restore
-#else
-        public UntypedNode Sides { get; set; }
-#endif
+        public int? Sides { get; set; }
         /// <summary>The size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Size { get; set; }
-#nullable restore
-#else
-        public UntypedNode Size { get; set; }
-#endif
+        public int? Size { get; set; }
         /// <summary>The storage_interface property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -199,23 +139,11 @@ namespace Marechai.App.Models
         public string Title { get; set; }
 #endif
         /// <summary>The tracks property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Tracks { get; set; }
-#nullable restore
-#else
-        public UntypedNode Tracks { get; set; }
-#endif
+        public int? Tracks { get; set; }
         /// <summary>The type property</summary>
         public int? Type { get; set; }
         /// <summary>The write_offset property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? WriteOffset { get; set; }
-#nullable restore
-#else
-        public UntypedNode WriteOffset { get; set; }
-#endif
+        public int? WriteOffset { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.MediaDto"/> and sets the default values.
         /// </summary>
@@ -246,27 +174,27 @@ namespace Marechai.App.Models
                 { "catalogue_number", n => { CatalogueNumber = n.GetStringValue(); } },
                 { "copy_protection", n => { CopyProtection = n.GetStringValue(); } },
                 { "firmware", n => { Firmware = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "last_sequence", n => { LastSequence = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "layers", n => { Layers = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "logical_block_size", n => { LogicalBlockSize = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
+                { "last_sequence", n => { LastSequence = n.GetIntValue(); } },
+                { "layers", n => { Layers = n.GetIntValue(); } },
+                { "logical_block_size", n => { LogicalBlockSize = n.GetIntValue(); } },
                 { "manufacturer", n => { Manufacturer = n.GetStringValue(); } },
                 { "model", n => { Model = n.GetStringValue(); } },
                 { "part_number", n => { PartNumber = n.GetStringValue(); } },
-                { "physical_block_size", n => { PhysicalBlockSize = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "physical_block_size", n => { PhysicalBlockSize = n.GetIntValue(); } },
                 { "revision", n => { Revision = n.GetStringValue(); } },
-                { "sectors", n => { Sectors = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "sequence", n => { Sequence = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "sectors", n => { Sectors = n.GetIntValue(); } },
+                { "sequence", n => { Sequence = n.GetIntValue(); } },
                 { "serial_number", n => { SerialNumber = n.GetStringValue(); } },
-                { "sessions", n => { Sessions = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "sides", n => { Sides = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "size", n => { Size = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "sessions", n => { Sessions = n.GetIntValue(); } },
+                { "sides", n => { Sides = n.GetIntValue(); } },
+                { "size", n => { Size = n.GetIntValue(); } },
                 { "storage_interface", n => { StorageInterface = n.GetObjectValue<global::Marechai.App.Models.MediaDto.MediaDto_storage_interface>(global::Marechai.App.Models.MediaDto.MediaDto_storage_interface.CreateFromDiscriminatorValue); } },
                 { "table_of_contents", n => { TableOfContents = n.GetCollectionOfObjectValues<global::Marechai.App.Models.OpticalDiscTrack>(global::Marechai.App.Models.OpticalDiscTrack.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
-                { "tracks", n => { Tracks = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "tracks", n => { Tracks = n.GetIntValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
-                { "write_offset", n => { WriteOffset = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "write_offset", n => { WriteOffset = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -281,27 +209,27 @@ namespace Marechai.App.Models
             writer.WriteStringValue("catalogue_number", CatalogueNumber);
             writer.WriteStringValue("copy_protection", CopyProtection);
             writer.WriteStringValue("firmware", Firmware);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("last_sequence", LastSequence);
-            writer.WriteObjectValue<UntypedNode>("layers", Layers);
-            writer.WriteObjectValue<UntypedNode>("logical_block_size", LogicalBlockSize);
+            writer.WriteIntValue("id", Id);
+            writer.WriteIntValue("last_sequence", LastSequence);
+            writer.WriteIntValue("layers", Layers);
+            writer.WriteIntValue("logical_block_size", LogicalBlockSize);
             writer.WriteStringValue("manufacturer", Manufacturer);
             writer.WriteStringValue("model", Model);
             writer.WriteStringValue("part_number", PartNumber);
-            writer.WriteObjectValue<UntypedNode>("physical_block_size", PhysicalBlockSize);
+            writer.WriteIntValue("physical_block_size", PhysicalBlockSize);
             writer.WriteStringValue("revision", Revision);
-            writer.WriteObjectValue<UntypedNode>("sectors", Sectors);
-            writer.WriteObjectValue<UntypedNode>("sequence", Sequence);
+            writer.WriteIntValue("sectors", Sectors);
+            writer.WriteIntValue("sequence", Sequence);
             writer.WriteStringValue("serial_number", SerialNumber);
-            writer.WriteObjectValue<UntypedNode>("sessions", Sessions);
-            writer.WriteObjectValue<UntypedNode>("sides", Sides);
-            writer.WriteObjectValue<UntypedNode>("size", Size);
+            writer.WriteIntValue("sessions", Sessions);
+            writer.WriteIntValue("sides", Sides);
+            writer.WriteIntValue("size", Size);
             writer.WriteObjectValue<global::Marechai.App.Models.MediaDto.MediaDto_storage_interface>("storage_interface", StorageInterface);
             writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.OpticalDiscTrack>("table_of_contents", TableOfContents);
             writer.WriteStringValue("title", Title);
-            writer.WriteObjectValue<UntypedNode>("tracks", Tracks);
+            writer.WriteIntValue("tracks", Tracks);
             writer.WriteIntValue("type", Type);
-            writer.WriteObjectValue<UntypedNode>("write_offset", WriteOffset);
+            writer.WriteIntValue("write_offset", WriteOffset);
             writer.WriteAdditionalData(AdditionalData);
         }
         /// <summary>

@@ -15,13 +15,7 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The affected_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? AffectedId { get; set; }
-#nullable restore
-#else
-        public UntypedNode AffectedId { get; set; }
-#endif
+        public int? AffectedId { get; set; }
         /// <summary>The controller property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -31,13 +25,7 @@ namespace Marechai.App.Models
         public string Controller { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The item_name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -83,9 +71,9 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "affected_id", n => { AffectedId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "affected_id", n => { AffectedId = n.GetIntValue(); } },
                 { "controller", n => { Controller = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "item_name", n => { ItemName = n.GetStringValue(); } },
                 { "text", n => { Text = n.GetStringValue(); } },
                 { "timestamp", n => { Timestamp = n.GetDateTimeOffsetValue(); } },
@@ -99,9 +87,9 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("affected_id", AffectedId);
+            writer.WriteIntValue("affected_id", AffectedId);
             writer.WriteStringValue("controller", Controller);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("id", Id);
             writer.WriteStringValue("item_name", ItemName);
             writer.WriteStringValue("text", Text);
             writer.WriteDateTimeOffsetValue("timestamp", Timestamp);

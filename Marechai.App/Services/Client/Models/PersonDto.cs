@@ -33,13 +33,7 @@ namespace Marechai.App.Models
         public string Country { get; set; }
 #endif
         /// <summary>The country_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CountryId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CountryId { get; set; }
-#endif
+        public int? CountryId { get; set; }
         /// <summary>The death_date property</summary>
         public DateTimeOffset? DeathDate { get; set; }
         /// <summary>The display_name property</summary>
@@ -59,13 +53,7 @@ namespace Marechai.App.Models
         public string Facebook { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -128,11 +116,11 @@ namespace Marechai.App.Models
                 { "alias", n => { Alias = n.GetStringValue(); } },
                 { "birthdate", n => { Birthdate = n.GetDateTimeOffsetValue(); } },
                 { "country", n => { Country = n.GetStringValue(); } },
-                { "country_id", n => { CountryId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "country_id", n => { CountryId = n.GetIntValue(); } },
                 { "death_date", n => { DeathDate = n.GetDateTimeOffsetValue(); } },
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
                 { "facebook", n => { Facebook = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "photo", n => { Photo = n.GetGuidValue(); } },
                 { "surname", n => { Surname = n.GetStringValue(); } },
@@ -150,11 +138,11 @@ namespace Marechai.App.Models
             writer.WriteStringValue("alias", Alias);
             writer.WriteDateTimeOffsetValue("birthdate", Birthdate);
             writer.WriteStringValue("country", Country);
-            writer.WriteObjectValue<UntypedNode>("country_id", CountryId);
+            writer.WriteIntValue("country_id", CountryId);
             writer.WriteDateTimeOffsetValue("death_date", DeathDate);
             writer.WriteStringValue("display_name", DisplayName);
             writer.WriteStringValue("facebook", Facebook);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("id", Id);
             writer.WriteStringValue("name", Name);
             writer.WriteGuidValue("photo", Photo);
             writer.WriteStringValue("surname", Surname);

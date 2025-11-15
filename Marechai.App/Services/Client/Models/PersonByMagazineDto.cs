@@ -31,21 +31,9 @@ namespace Marechai.App.Models
         public string DisplayName { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The magazine_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MagazineId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MagazineId { get; set; }
-#endif
+        public long? MagazineId { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -55,13 +43,7 @@ namespace Marechai.App.Models
         public string Name { get; set; }
 #endif
         /// <summary>The person_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? PersonId { get; set; }
-#nullable restore
-#else
-        public UntypedNode PersonId { get; set; }
-#endif
+        public int? PersonId { get; set; }
         /// <summary>The role property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -113,10 +95,10 @@ namespace Marechai.App.Models
             {
                 { "alias", n => { Alias = n.GetStringValue(); } },
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "magazine_id", n => { MagazineId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetLongValue(); } },
+                { "magazine_id", n => { MagazineId = n.GetLongValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "person_id", n => { PersonId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "person_id", n => { PersonId = n.GetIntValue(); } },
                 { "role", n => { Role = n.GetStringValue(); } },
                 { "role_id", n => { RoleId = n.GetStringValue(); } },
                 { "surname", n => { Surname = n.GetStringValue(); } },
@@ -131,10 +113,10 @@ namespace Marechai.App.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("alias", Alias);
             writer.WriteStringValue("display_name", DisplayName);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("magazine_id", MagazineId);
+            writer.WriteLongValue("id", Id);
+            writer.WriteLongValue("magazine_id", MagazineId);
             writer.WriteStringValue("name", Name);
-            writer.WriteObjectValue<UntypedNode>("person_id", PersonId);
+            writer.WriteIntValue("person_id", PersonId);
             writer.WriteStringValue("role", Role);
             writer.WriteStringValue("role_id", RoleId);
             writer.WriteStringValue("surname", Surname);

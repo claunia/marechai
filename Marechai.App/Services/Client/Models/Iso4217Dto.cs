@@ -23,13 +23,7 @@ namespace Marechai.App.Models
         public string Code { get; set; }
 #endif
         /// <summary>The minor_units property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MinorUnits { get; set; }
-#nullable restore
-#else
-        public UntypedNode MinorUnits { get; set; }
-#endif
+        public byte? MinorUnits { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -39,13 +33,7 @@ namespace Marechai.App.Models
         public string Name { get; set; }
 #endif
         /// <summary>The numeric property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Numeric { get; set; }
-#nullable restore
-#else
-        public UntypedNode Numeric { get; set; }
-#endif
+        public int? Numeric { get; set; }
         /// <summary>The withdrawn property</summary>
         public DateTimeOffset? Withdrawn { get; set; }
         /// <summary>
@@ -74,9 +62,9 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "code", n => { Code = n.GetStringValue(); } },
-                { "minor_units", n => { MinorUnits = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "minor_units", n => { MinorUnits = n.GetByteValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "numeric", n => { Numeric = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "numeric", n => { Numeric = n.GetIntValue(); } },
                 { "withdrawn", n => { Withdrawn = n.GetDateTimeOffsetValue(); } },
             };
         }
@@ -88,9 +76,9 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("code", Code);
-            writer.WriteObjectValue<UntypedNode>("minor_units", MinorUnits);
+            writer.WriteByteValue("minor_units", MinorUnits);
             writer.WriteStringValue("name", Name);
-            writer.WriteObjectValue<UntypedNode>("numeric", Numeric);
+            writer.WriteIntValue("numeric", Numeric);
             writer.WriteDateTimeOffsetValue("withdrawn", Withdrawn);
             writer.WriteAdditionalData(AdditionalData);
         }

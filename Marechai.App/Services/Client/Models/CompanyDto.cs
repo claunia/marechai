@@ -39,13 +39,7 @@ namespace Marechai.App.Models
         public string Country { get; set; }
 #endif
         /// <summary>The country_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CountryId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CountryId { get; set; }
-#endif
+        public int? CountryId { get; set; }
         /// <summary>The facebook property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -61,13 +55,7 @@ namespace Marechai.App.Models
         /// <summary>The founded_month_is_unknown property</summary>
         public bool? FoundedMonthIsUnknown { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The last_logo property</summary>
         public Guid? LastLogo { get; set; }
         /// <summary>The legal_name property</summary>
@@ -117,13 +105,7 @@ namespace Marechai.App.Models
         public string SoldTo { get; set; }
 #endif
         /// <summary>The sold_to_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? SoldToId { get; set; }
-#nullable restore
-#else
-        public UntypedNode SoldToId { get; set; }
-#endif
+        public int? SoldToId { get; set; }
         /// <summary>The status property</summary>
         public int? Status { get; set; }
         /// <summary>The twitter property</summary>
@@ -170,12 +152,12 @@ namespace Marechai.App.Models
                 { "address", n => { Address = n.GetStringValue(); } },
                 { "city", n => { City = n.GetStringValue(); } },
                 { "country", n => { Country = n.GetStringValue(); } },
-                { "country_id", n => { CountryId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "country_id", n => { CountryId = n.GetIntValue(); } },
                 { "facebook", n => { Facebook = n.GetStringValue(); } },
                 { "founded", n => { Founded = n.GetDateTimeOffsetValue(); } },
                 { "founded_day_is_unknown", n => { FoundedDayIsUnknown = n.GetBoolValue(); } },
                 { "founded_month_is_unknown", n => { FoundedMonthIsUnknown = n.GetBoolValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "last_logo", n => { LastLogo = n.GetGuidValue(); } },
                 { "legal_name", n => { LegalName = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
@@ -185,7 +167,7 @@ namespace Marechai.App.Models
                 { "sold_day_is_unknown", n => { SoldDayIsUnknown = n.GetBoolValue(); } },
                 { "sold_month_is_unknown", n => { SoldMonthIsUnknown = n.GetBoolValue(); } },
                 { "sold_to", n => { SoldTo = n.GetStringValue(); } },
-                { "sold_to_id", n => { SoldToId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "sold_to_id", n => { SoldToId = n.GetIntValue(); } },
                 { "status", n => { Status = n.GetIntValue(); } },
                 { "twitter", n => { Twitter = n.GetStringValue(); } },
                 { "website", n => { Website = n.GetStringValue(); } },
@@ -201,12 +183,12 @@ namespace Marechai.App.Models
             writer.WriteStringValue("address", Address);
             writer.WriteStringValue("city", City);
             writer.WriteStringValue("country", Country);
-            writer.WriteObjectValue<UntypedNode>("country_id", CountryId);
+            writer.WriteIntValue("country_id", CountryId);
             writer.WriteStringValue("facebook", Facebook);
             writer.WriteDateTimeOffsetValue("founded", Founded);
             writer.WriteBoolValue("founded_day_is_unknown", FoundedDayIsUnknown);
             writer.WriteBoolValue("founded_month_is_unknown", FoundedMonthIsUnknown);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("id", Id);
             writer.WriteGuidValue("last_logo", LastLogo);
             writer.WriteStringValue("legal_name", LegalName);
             writer.WriteStringValue("name", Name);
@@ -216,7 +198,7 @@ namespace Marechai.App.Models
             writer.WriteBoolValue("sold_day_is_unknown", SoldDayIsUnknown);
             writer.WriteBoolValue("sold_month_is_unknown", SoldMonthIsUnknown);
             writer.WriteStringValue("sold_to", SoldTo);
-            writer.WriteObjectValue<UntypedNode>("sold_to_id", SoldToId);
+            writer.WriteIntValue("sold_to_id", SoldToId);
             writer.WriteIntValue("status", Status);
             writer.WriteStringValue("twitter", Twitter);
             writer.WriteStringValue("website", Website);

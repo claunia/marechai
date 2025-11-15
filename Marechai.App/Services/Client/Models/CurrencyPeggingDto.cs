@@ -33,21 +33,9 @@ namespace Marechai.App.Models
         /// <summary>The end property</summary>
         public DateTimeOffset? End { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The ratio property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Ratio { get; set; }
-#nullable restore
-#else
-        public UntypedNode Ratio { get; set; }
-#endif
+        public float? Ratio { get; set; }
         /// <summary>The source_code property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -94,8 +82,8 @@ namespace Marechai.App.Models
                 { "destination_code", n => { DestinationCode = n.GetStringValue(); } },
                 { "destination_name", n => { DestinationName = n.GetStringValue(); } },
                 { "end", n => { End = n.GetDateTimeOffsetValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "ratio", n => { Ratio = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
+                { "ratio", n => { Ratio = n.GetFloatValue(); } },
                 { "source_code", n => { SourceCode = n.GetStringValue(); } },
                 { "source_name", n => { SourceName = n.GetStringValue(); } },
                 { "start", n => { Start = n.GetDateTimeOffsetValue(); } },
@@ -111,8 +99,8 @@ namespace Marechai.App.Models
             writer.WriteStringValue("destination_code", DestinationCode);
             writer.WriteStringValue("destination_name", DestinationName);
             writer.WriteDateTimeOffsetValue("end", End);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("ratio", Ratio);
+            writer.WriteIntValue("id", Id);
+            writer.WriteFloatValue("ratio", Ratio);
             writer.WriteStringValue("source_code", SourceCode);
             writer.WriteStringValue("source_name", SourceName);
             writer.WriteDateTimeOffsetValue("start", Start);

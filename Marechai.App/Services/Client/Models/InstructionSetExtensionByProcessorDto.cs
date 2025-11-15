@@ -15,13 +15,7 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The extension_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ExtensionId { get; set; }
-#nullable restore
-#else
-        public UntypedNode ExtensionId { get; set; }
-#endif
+        public int? ExtensionId { get; set; }
         /// <summary>The extensions property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -31,13 +25,7 @@ namespace Marechai.App.Models
         public string Extensions { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The processor property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -47,13 +35,7 @@ namespace Marechai.App.Models
         public string Processor { get; set; }
 #endif
         /// <summary>The processor_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ProcessorId { get; set; }
-#nullable restore
-#else
-        public UntypedNode ProcessorId { get; set; }
-#endif
+        public int? ProcessorId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.InstructionSetExtensionByProcessorDto"/> and sets the default values.
         /// </summary>
@@ -79,11 +61,11 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "extension_id", n => { ExtensionId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "extension_id", n => { ExtensionId = n.GetIntValue(); } },
                 { "extensions", n => { Extensions = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "processor", n => { Processor = n.GetStringValue(); } },
-                { "processor_id", n => { ProcessorId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "processor_id", n => { ProcessorId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -93,11 +75,11 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("extension_id", ExtensionId);
+            writer.WriteIntValue("extension_id", ExtensionId);
             writer.WriteStringValue("extensions", Extensions);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("id", Id);
             writer.WriteStringValue("processor", Processor);
-            writer.WriteObjectValue<UntypedNode>("processor_id", ProcessorId);
+            writer.WriteIntValue("processor_id", ProcessorId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -96,7 +96,7 @@ namespace Marechai.App.Companies.Logos.ChangeYear.Item
         {
         }
         /// <summary>
-        /// Composed type wrapper for classes <see cref="global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember1"/>, <see cref="global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember2"/>
+        /// Composed type wrapper for classes <see cref="global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember1"/>, <see cref="int"/>
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         public partial class ChangeYearPutRequestBody : IComposedTypeWrapper, IParsable
@@ -109,14 +109,8 @@ namespace Marechai.App.Companies.Logos.ChangeYear.Item
 #else
             public global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember1 ChangeYearPutRequestBodyMember1 { get; set; }
 #endif
-            /// <summary>Composed type representation for type <see cref="global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember2"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember2? ChangeYearPutRequestBodyMember2 { get; set; }
-#nullable restore
-#else
-            public global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember2 ChangeYearPutRequestBodyMember2 { get; set; }
-#endif
+            /// <summary>Composed type representation for type <see cref="int"/></summary>
+            public int? Integer { get; set; }
             /// <summary>
             /// Creates a new instance of the appropriate class based on discriminator value
             /// </summary>
@@ -131,9 +125,9 @@ namespace Marechai.App.Companies.Logos.ChangeYear.Item
                 {
                     result.ChangeYearPutRequestBodyMember1 = new global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember1();
                 }
-                else if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
+                else if(parseNode.GetIntValue() is int integerValue)
                 {
-                    result.ChangeYearPutRequestBodyMember2 = new global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember2();
+                    result.Integer = integerValue;
                 }
                 return result;
             }
@@ -146,10 +140,6 @@ namespace Marechai.App.Companies.Logos.ChangeYear.Item
                 if(ChangeYearPutRequestBodyMember1 != null)
                 {
                     return ChangeYearPutRequestBodyMember1.GetFieldDeserializers();
-                }
-                else if(ChangeYearPutRequestBodyMember2 != null)
-                {
-                    return ChangeYearPutRequestBodyMember2.GetFieldDeserializers();
                 }
                 return new Dictionary<string, Action<IParseNode>>();
             }
@@ -164,9 +154,9 @@ namespace Marechai.App.Companies.Logos.ChangeYear.Item
                 {
                     writer.WriteObjectValue<global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember1>(null, ChangeYearPutRequestBodyMember1);
                 }
-                else if(ChangeYearPutRequestBodyMember2 != null)
+                else if(Integer != null)
                 {
-                    writer.WriteObjectValue<global::Marechai.App.Companies.Logos.ChangeYear.Item.ChangeYearPutRequestBodyMember2>(null, ChangeYearPutRequestBodyMember2);
+                    writer.WriteIntValue(null, Integer);
                 }
             }
         }

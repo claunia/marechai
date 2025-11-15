@@ -15,13 +15,7 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The capacity property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Capacity { get; set; }
-#nullable restore
-#else
-        public UntypedNode Capacity { get; set; }
-#endif
+        public long? Capacity { get; set; }
         /// <summary>The interface property</summary>
         public int? Interface { get; set; }
         /// <summary>The type property</summary>
@@ -51,7 +45,7 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "capacity", n => { Capacity = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "capacity", n => { Capacity = n.GetLongValue(); } },
                 { "interface", n => { Interface = n.GetIntValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
             };
@@ -63,7 +57,7 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("capacity", Capacity);
+            writer.WriteLongValue("capacity", Capacity);
             writer.WriteIntValue("interface", Interface);
             writer.WriteIntValue("type", Type);
             writer.WriteAdditionalData(AdditionalData);

@@ -15,31 +15,13 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The capacity property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Capacity { get; set; }
-#nullable restore
-#else
-        public UntypedNode Capacity { get; set; }
-#endif
+        public long? Capacity { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The interface property</summary>
         public int? Interface { get; set; }
         /// <summary>The machine_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MachineId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MachineId { get; set; }
-#endif
+        public int? MachineId { get; set; }
         /// <summary>The type property</summary>
         public int? Type { get; set; }
         /// <summary>
@@ -67,10 +49,10 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "capacity", n => { Capacity = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "capacity", n => { Capacity = n.GetLongValue(); } },
+                { "id", n => { Id = n.GetLongValue(); } },
                 { "interface", n => { Interface = n.GetIntValue(); } },
-                { "machine_id", n => { MachineId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "machine_id", n => { MachineId = n.GetIntValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
             };
         }
@@ -81,10 +63,10 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("capacity", Capacity);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteLongValue("capacity", Capacity);
+            writer.WriteLongValue("id", Id);
             writer.WriteIntValue("interface", Interface);
-            writer.WriteObjectValue<UntypedNode>("machine_id", MachineId);
+            writer.WriteIntValue("machine_id", MachineId);
             writer.WriteIntValue("type", Type);
             writer.WriteAdditionalData(AdditionalData);
         }

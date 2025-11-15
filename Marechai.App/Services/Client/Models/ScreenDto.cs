@@ -15,37 +15,13 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The diagonal property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Diagonal { get; set; }
-#nullable restore
-#else
-        public UntypedNode Diagonal { get; set; }
-#endif
+        public double? Diagonal { get; set; }
         /// <summary>The effective_colors property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? EffectiveColors { get; set; }
-#nullable restore
-#else
-        public UntypedNode EffectiveColors { get; set; }
-#endif
+        public long? EffectiveColors { get; set; }
         /// <summary>The height property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Height { get; set; }
-#nullable restore
-#else
-        public UntypedNode Height { get; set; }
-#endif
+        public double? Height { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The native_resolution property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -55,13 +31,7 @@ namespace Marechai.App.Models
         public global::Marechai.App.Models.ScreenDto.ScreenDto_native_resolution NativeResolution { get; set; }
 #endif
         /// <summary>The native_resolution_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? NativeResolutionId { get; set; }
-#nullable restore
-#else
-        public UntypedNode NativeResolutionId { get; set; }
-#endif
+        public int? NativeResolutionId { get; set; }
         /// <summary>The size property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -79,13 +49,7 @@ namespace Marechai.App.Models
         public string Type { get; set; }
 #endif
         /// <summary>The width property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Width { get; set; }
-#nullable restore
-#else
-        public UntypedNode Width { get; set; }
-#endif
+        public double? Width { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.ScreenDto"/> and sets the default values.
         /// </summary>
@@ -111,15 +75,15 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "diagonal", n => { Diagonal = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "effective_colors", n => { EffectiveColors = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "height", n => { Height = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "diagonal", n => { Diagonal = n.GetDoubleValue(); } },
+                { "effective_colors", n => { EffectiveColors = n.GetLongValue(); } },
+                { "height", n => { Height = n.GetDoubleValue(); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "native_resolution", n => { NativeResolution = n.GetObjectValue<global::Marechai.App.Models.ScreenDto.ScreenDto_native_resolution>(global::Marechai.App.Models.ScreenDto.ScreenDto_native_resolution.CreateFromDiscriminatorValue); } },
-                { "native_resolution_id", n => { NativeResolutionId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "native_resolution_id", n => { NativeResolutionId = n.GetIntValue(); } },
                 { "size", n => { Size = n.GetStringValue(); } },
                 { "type", n => { Type = n.GetStringValue(); } },
-                { "width", n => { Width = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "width", n => { Width = n.GetDoubleValue(); } },
             };
         }
         /// <summary>
@@ -129,15 +93,15 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("diagonal", Diagonal);
-            writer.WriteObjectValue<UntypedNode>("effective_colors", EffectiveColors);
-            writer.WriteObjectValue<UntypedNode>("height", Height);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteDoubleValue("diagonal", Diagonal);
+            writer.WriteLongValue("effective_colors", EffectiveColors);
+            writer.WriteDoubleValue("height", Height);
+            writer.WriteIntValue("id", Id);
             writer.WriteObjectValue<global::Marechai.App.Models.ScreenDto.ScreenDto_native_resolution>("native_resolution", NativeResolution);
-            writer.WriteObjectValue<UntypedNode>("native_resolution_id", NativeResolutionId);
+            writer.WriteIntValue("native_resolution_id", NativeResolutionId);
             writer.WriteStringValue("size", Size);
             writer.WriteStringValue("type", Type);
-            writer.WriteObjectValue<UntypedNode>("width", Width);
+            writer.WriteDoubleValue("width", Width);
             writer.WriteAdditionalData(AdditionalData);
         }
         /// <summary>

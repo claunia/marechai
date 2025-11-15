@@ -23,29 +23,11 @@ namespace Marechai.App.Models
         public string Country { get; set; }
 #endif
         /// <summary>The country_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CountryId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CountryId { get; set; }
-#endif
+        public int? CountryId { get; set; }
         /// <summary>The edition property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Edition { get; set; }
-#nullable restore
-#else
-        public UntypedNode Edition { get; set; }
-#endif
+        public int? Edition { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The isbn property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -63,31 +45,13 @@ namespace Marechai.App.Models
         public string NativeTitle { get; set; }
 #endif
         /// <summary>The pages property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Pages { get; set; }
-#nullable restore
-#else
-        public UntypedNode Pages { get; set; }
-#endif
+        public int? Pages { get; set; }
         /// <summary>The previous_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? PreviousId { get; set; }
-#nullable restore
-#else
-        public UntypedNode PreviousId { get; set; }
-#endif
+        public long? PreviousId { get; set; }
         /// <summary>The published property</summary>
         public DateTimeOffset? Published { get; set; }
         /// <summary>The source_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? SourceId { get; set; }
-#nullable restore
-#else
-        public UntypedNode SourceId { get; set; }
-#endif
+        public long? SourceId { get; set; }
         /// <summary>The synopsis property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -130,15 +94,15 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "country", n => { Country = n.GetStringValue(); } },
-                { "country_id", n => { CountryId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "edition", n => { Edition = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "country_id", n => { CountryId = n.GetIntValue(); } },
+                { "edition", n => { Edition = n.GetIntValue(); } },
+                { "id", n => { Id = n.GetLongValue(); } },
                 { "isbn", n => { Isbn = n.GetStringValue(); } },
                 { "native_title", n => { NativeTitle = n.GetStringValue(); } },
-                { "pages", n => { Pages = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "previous_id", n => { PreviousId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "pages", n => { Pages = n.GetIntValue(); } },
+                { "previous_id", n => { PreviousId = n.GetLongValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
-                { "source_id", n => { SourceId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "source_id", n => { SourceId = n.GetLongValue(); } },
                 { "synopsis", n => { Synopsis = n.GetStringValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
             };
@@ -151,15 +115,15 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("country", Country);
-            writer.WriteObjectValue<UntypedNode>("country_id", CountryId);
-            writer.WriteObjectValue<UntypedNode>("edition", Edition);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("country_id", CountryId);
+            writer.WriteIntValue("edition", Edition);
+            writer.WriteLongValue("id", Id);
             writer.WriteStringValue("isbn", Isbn);
             writer.WriteStringValue("native_title", NativeTitle);
-            writer.WriteObjectValue<UntypedNode>("pages", Pages);
-            writer.WriteObjectValue<UntypedNode>("previous_id", PreviousId);
+            writer.WriteIntValue("pages", Pages);
+            writer.WriteLongValue("previous_id", PreviousId);
             writer.WriteDateTimeOffsetValue("published", Published);
-            writer.WriteObjectValue<UntypedNode>("source_id", SourceId);
+            writer.WriteLongValue("source_id", SourceId);
             writer.WriteStringValue("synopsis", Synopsis);
             writer.WriteStringValue("title", Title);
             writer.WriteAdditionalData(AdditionalData);

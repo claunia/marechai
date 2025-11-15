@@ -15,37 +15,13 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The firstSector property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? FirstSector { get; set; }
-#nullable restore
-#else
-        public UntypedNode FirstSector { get; set; }
-#endif
+        public long? FirstSector { get; set; }
         /// <summary>The lastSector property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? LastSector { get; set; }
-#nullable restore
-#else
-        public UntypedNode LastSector { get; set; }
-#endif
+        public long? LastSector { get; set; }
         /// <summary>The sessionNumber property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? SessionNumber { get; set; }
-#nullable restore
-#else
-        public UntypedNode SessionNumber { get; set; }
-#endif
+        public int? SessionNumber { get; set; }
         /// <summary>The trackNumber property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? TrackNumber { get; set; }
-#nullable restore
-#else
-        public UntypedNode TrackNumber { get; set; }
-#endif
+        public int? TrackNumber { get; set; }
         /// <summary>The type property</summary>
         public int? Type { get; set; }
         /// <summary>
@@ -73,10 +49,10 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "firstSector", n => { FirstSector = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "lastSector", n => { LastSector = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "sessionNumber", n => { SessionNumber = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "trackNumber", n => { TrackNumber = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "firstSector", n => { FirstSector = n.GetLongValue(); } },
+                { "lastSector", n => { LastSector = n.GetLongValue(); } },
+                { "sessionNumber", n => { SessionNumber = n.GetIntValue(); } },
+                { "trackNumber", n => { TrackNumber = n.GetIntValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
             };
         }
@@ -87,10 +63,10 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("firstSector", FirstSector);
-            writer.WriteObjectValue<UntypedNode>("lastSector", LastSector);
-            writer.WriteObjectValue<UntypedNode>("sessionNumber", SessionNumber);
-            writer.WriteObjectValue<UntypedNode>("trackNumber", TrackNumber);
+            writer.WriteLongValue("firstSector", FirstSector);
+            writer.WriteLongValue("lastSector", LastSector);
+            writer.WriteIntValue("sessionNumber", SessionNumber);
+            writer.WriteIntValue("trackNumber", TrackNumber);
             writer.WriteIntValue("type", Type);
             writer.WriteAdditionalData(AdditionalData);
         }

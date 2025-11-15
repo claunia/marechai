@@ -23,21 +23,9 @@ namespace Marechai.App.Models
         public string Company { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The machine_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MachineId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MachineId { get; set; }
-#endif
+        public int? MachineId { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -47,21 +35,9 @@ namespace Marechai.App.Models
         public string Name { get; set; }
 #endif
         /// <summary>The processor_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ProcessorId { get; set; }
-#nullable restore
-#else
-        public UntypedNode ProcessorId { get; set; }
-#endif
+        public int? ProcessorId { get; set; }
         /// <summary>The speed property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Speed { get; set; }
-#nullable restore
-#else
-        public UntypedNode Speed { get; set; }
-#endif
+        public float? Speed { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.ProcessorByMachineDto"/> and sets the default values.
         /// </summary>
@@ -88,11 +64,11 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "company", n => { Company = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "machine_id", n => { MachineId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetLongValue(); } },
+                { "machine_id", n => { MachineId = n.GetIntValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "processor_id", n => { ProcessorId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "speed", n => { Speed = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "processor_id", n => { ProcessorId = n.GetIntValue(); } },
+                { "speed", n => { Speed = n.GetFloatValue(); } },
             };
         }
         /// <summary>
@@ -103,11 +79,11 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("company", Company);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("machine_id", MachineId);
+            writer.WriteLongValue("id", Id);
+            writer.WriteIntValue("machine_id", MachineId);
             writer.WriteStringValue("name", Name);
-            writer.WriteObjectValue<UntypedNode>("processor_id", ProcessorId);
-            writer.WriteObjectValue<UntypedNode>("speed", Speed);
+            writer.WriteIntValue("processor_id", ProcessorId);
+            writer.WriteFloatValue("speed", Speed);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

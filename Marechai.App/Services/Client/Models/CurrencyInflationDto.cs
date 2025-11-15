@@ -23,21 +23,9 @@ namespace Marechai.App.Models
         public string Code { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The inflation property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Inflation { get; set; }
-#nullable restore
-#else
-        public UntypedNode Inflation { get; set; }
-#endif
+        public float? Inflation { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -47,13 +35,7 @@ namespace Marechai.App.Models
         public string Name { get; set; }
 #endif
         /// <summary>The year property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Year { get; set; }
-#nullable restore
-#else
-        public UntypedNode Year { get; set; }
-#endif
+        public int? Year { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.CurrencyInflationDto"/> and sets the default values.
         /// </summary>
@@ -80,10 +62,10 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "code", n => { Code = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "inflation", n => { Inflation = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
+                { "inflation", n => { Inflation = n.GetFloatValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "year", n => { Year = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "year", n => { Year = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -94,10 +76,10 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("code", Code);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("inflation", Inflation);
+            writer.WriteIntValue("id", Id);
+            writer.WriteFloatValue("inflation", Inflation);
             writer.WriteStringValue("name", Name);
-            writer.WriteObjectValue<UntypedNode>("year", Year);
+            writer.WriteIntValue("year", Year);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -23,37 +23,13 @@ namespace Marechai.App.Models
         public string Company { get; set; }
 #endif
         /// <summary>The company_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CompanyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CompanyId { get; set; }
-#endif
+        public int? CompanyId { get; set; }
         /// <summary>The depth property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Depth { get; set; }
-#nullable restore
-#else
-        public UntypedNode Depth { get; set; }
-#endif
+        public int? Depth { get; set; }
         /// <summary>The frequency property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Frequency { get; set; }
-#nullable restore
-#else
-        public UntypedNode Frequency { get; set; }
-#endif
+        public double? Frequency { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
         /// <summary>The model_code property</summary>
@@ -73,37 +49,13 @@ namespace Marechai.App.Models
         public string Name { get; set; }
 #endif
         /// <summary>The square_wave property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? SquareWave { get; set; }
-#nullable restore
-#else
-        public UntypedNode SquareWave { get; set; }
-#endif
+        public int? SquareWave { get; set; }
         /// <summary>The type property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Type { get; set; }
-#nullable restore
-#else
-        public UntypedNode Type { get; set; }
-#endif
+        public int? Type { get; set; }
         /// <summary>The voices property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Voices { get; set; }
-#nullable restore
-#else
-        public UntypedNode Voices { get; set; }
-#endif
+        public int? Voices { get; set; }
         /// <summary>The white_noise property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? WhiteNoise { get; set; }
-#nullable restore
-#else
-        public UntypedNode WhiteNoise { get; set; }
-#endif
+        public int? WhiteNoise { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.SoundSynthDto"/> and sets the default values.
         /// </summary>
@@ -130,17 +82,17 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "company", n => { Company = n.GetStringValue(); } },
-                { "company_id", n => { CompanyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "depth", n => { Depth = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "frequency", n => { Frequency = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "company_id", n => { CompanyId = n.GetIntValue(); } },
+                { "depth", n => { Depth = n.GetIntValue(); } },
+                { "frequency", n => { Frequency = n.GetDoubleValue(); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
                 { "model_code", n => { ModelCode = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "square_wave", n => { SquareWave = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "type", n => { Type = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "voices", n => { Voices = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "white_noise", n => { WhiteNoise = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "square_wave", n => { SquareWave = n.GetIntValue(); } },
+                { "type", n => { Type = n.GetIntValue(); } },
+                { "voices", n => { Voices = n.GetIntValue(); } },
+                { "white_noise", n => { WhiteNoise = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -151,17 +103,17 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("company", Company);
-            writer.WriteObjectValue<UntypedNode>("company_id", CompanyId);
-            writer.WriteObjectValue<UntypedNode>("depth", Depth);
-            writer.WriteObjectValue<UntypedNode>("frequency", Frequency);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("company_id", CompanyId);
+            writer.WriteIntValue("depth", Depth);
+            writer.WriteDoubleValue("frequency", Frequency);
+            writer.WriteIntValue("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
             writer.WriteStringValue("model_code", ModelCode);
             writer.WriteStringValue("name", Name);
-            writer.WriteObjectValue<UntypedNode>("square_wave", SquareWave);
-            writer.WriteObjectValue<UntypedNode>("type", Type);
-            writer.WriteObjectValue<UntypedNode>("voices", Voices);
-            writer.WriteObjectValue<UntypedNode>("white_noise", WhiteNoise);
+            writer.WriteIntValue("square_wave", SquareWave);
+            writer.WriteIntValue("type", Type);
+            writer.WriteIntValue("voices", Voices);
+            writer.WriteIntValue("white_noise", WhiteNoise);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

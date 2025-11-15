@@ -15,13 +15,7 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The machine_family property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -31,13 +25,7 @@ namespace Marechai.App.Models
         public string MachineFamily { get; set; }
 #endif
         /// <summary>The machine_family_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MachineFamilyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MachineFamilyId { get; set; }
-#endif
+        public int? MachineFamilyId { get; set; }
         /// <summary>The magazine property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -47,13 +35,7 @@ namespace Marechai.App.Models
         public string Magazine { get; set; }
 #endif
         /// <summary>The magazine_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MagazineId { get; set; }
-#nullable restore
-#else
-        public UntypedNode MagazineId { get; set; }
-#endif
+        public long? MagazineId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.MagazineByMachineFamilyDto"/> and sets the default values.
         /// </summary>
@@ -79,11 +61,11 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetLongValue(); } },
                 { "machine_family", n => { MachineFamily = n.GetStringValue(); } },
-                { "machine_family_id", n => { MachineFamilyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "machine_family_id", n => { MachineFamilyId = n.GetIntValue(); } },
                 { "magazine", n => { Magazine = n.GetStringValue(); } },
-                { "magazine_id", n => { MagazineId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "magazine_id", n => { MagazineId = n.GetLongValue(); } },
             };
         }
         /// <summary>
@@ -93,11 +75,11 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteLongValue("id", Id);
             writer.WriteStringValue("machine_family", MachineFamily);
-            writer.WriteObjectValue<UntypedNode>("machine_family_id", MachineFamilyId);
+            writer.WriteIntValue("machine_family_id", MachineFamilyId);
             writer.WriteStringValue("magazine", Magazine);
-            writer.WriteObjectValue<UntypedNode>("magazine_id", MagazineId);
+            writer.WriteLongValue("magazine_id", MagazineId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

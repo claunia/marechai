@@ -15,21 +15,9 @@ namespace Marechai.App.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The size property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Size { get; set; }
-#nullable restore
-#else
-        public UntypedNode Size { get; set; }
-#endif
+        public long? Size { get; set; }
         /// <summary>The speed property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Speed { get; set; }
-#nullable restore
-#else
-        public UntypedNode Speed { get; set; }
-#endif
+        public double? Speed { get; set; }
         /// <summary>The type property</summary>
         public int? Type { get; set; }
         /// <summary>The usage property</summary>
@@ -59,8 +47,8 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "size", n => { Size = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "speed", n => { Speed = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "size", n => { Size = n.GetLongValue(); } },
+                { "speed", n => { Speed = n.GetDoubleValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
                 { "usage", n => { Usage = n.GetIntValue(); } },
             };
@@ -72,8 +60,8 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("size", Size);
-            writer.WriteObjectValue<UntypedNode>("speed", Speed);
+            writer.WriteLongValue("size", Size);
+            writer.WriteDoubleValue("speed", Speed);
             writer.WriteIntValue("type", Type);
             writer.WriteIntValue("usage", Usage);
             writer.WriteAdditionalData(AdditionalData);

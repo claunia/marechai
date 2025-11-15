@@ -37,13 +37,7 @@ namespace Marechai.App.Models
         /// <summary>The gif89 property</summary>
         public bool? Gif89 { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The jpeg property</summary>
         public bool? Jpeg { get; set; }
         /// <summary>The js property</summary>
@@ -121,7 +115,7 @@ namespace Marechai.App.Models
                 { "frames", n => { Frames = n.GetBoolValue(); } },
                 { "gif87", n => { Gif87 = n.GetBoolValue(); } },
                 { "gif89", n => { Gif89 = n.GetBoolValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "jpeg", n => { Jpeg = n.GetBoolValue(); } },
                 { "js", n => { Js = n.GetBoolValue(); } },
                 { "os", n => { Os = n.GetStringValue(); } },
@@ -149,7 +143,7 @@ namespace Marechai.App.Models
             writer.WriteBoolValue("frames", Frames);
             writer.WriteBoolValue("gif87", Gif87);
             writer.WriteBoolValue("gif89", Gif89);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("id", Id);
             writer.WriteBoolValue("jpeg", Jpeg);
             writer.WriteBoolValue("js", Js);
             writer.WriteStringValue("os", Os);

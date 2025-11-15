@@ -33,23 +33,11 @@ namespace Marechai.App.Models
         public string Family { get; set; }
 #endif
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
         /// <summary>The minimum_memory property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? MinimumMemory { get; set; }
-#nullable restore
-#else
-        public UntypedNode MinimumMemory { get; set; }
-#endif
+        public int? MinimumMemory { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -67,13 +55,7 @@ namespace Marechai.App.Models
         public string Parent { get; set; }
 #endif
         /// <summary>The parent_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? ParentId { get; set; }
-#nullable restore
-#else
-        public UntypedNode ParentId { get; set; }
-#endif
+        public int? ParentId { get; set; }
         /// <summary>The part_number property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -91,21 +73,9 @@ namespace Marechai.App.Models
         public string ProductCode { get; set; }
 #endif
         /// <summary>The recommended_memory property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? RecommendedMemory { get; set; }
-#nullable restore
-#else
-        public UntypedNode RecommendedMemory { get; set; }
-#endif
+        public int? RecommendedMemory { get; set; }
         /// <summary>The required_storage property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? RequiredStorage { get; set; }
-#nullable restore
-#else
-        public UntypedNode RequiredStorage { get; set; }
-#endif
+        public int? RequiredStorage { get; set; }
         /// <summary>The serial_number property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -131,13 +101,7 @@ namespace Marechai.App.Models
         public string Version { get; set; }
 #endif
         /// <summary>The version_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? VersionId { get; set; }
-#nullable restore
-#else
-        public UntypedNode VersionId { get; set; }
-#endif
+        public int? VersionId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.SoftwareVariantDto"/> and sets the default values.
         /// </summary>
@@ -166,20 +130,20 @@ namespace Marechai.App.Models
                 { "catalogue_number", n => { CatalogueNumber = n.GetStringValue(); } },
                 { "distribution_mode", n => { DistributionMode = n.GetIntValue(); } },
                 { "family", n => { Family = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
-                { "minimum_memory", n => { MinimumMemory = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "minimum_memory", n => { MinimumMemory = n.GetIntValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "parent", n => { Parent = n.GetStringValue(); } },
-                { "parent_id", n => { ParentId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "parent_id", n => { ParentId = n.GetIntValue(); } },
                 { "part_number", n => { PartNumber = n.GetStringValue(); } },
                 { "product_code", n => { ProductCode = n.GetStringValue(); } },
-                { "recommended_memory", n => { RecommendedMemory = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "required_storage", n => { RequiredStorage = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "recommended_memory", n => { RecommendedMemory = n.GetIntValue(); } },
+                { "required_storage", n => { RequiredStorage = n.GetIntValue(); } },
                 { "serial_number", n => { SerialNumber = n.GetStringValue(); } },
                 { "software_version", n => { SoftwareVersion = n.GetStringValue(); } },
                 { "version", n => { Version = n.GetStringValue(); } },
-                { "version_id", n => { VersionId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "version_id", n => { VersionId = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -192,20 +156,20 @@ namespace Marechai.App.Models
             writer.WriteStringValue("catalogue_number", CatalogueNumber);
             writer.WriteIntValue("distribution_mode", DistributionMode);
             writer.WriteStringValue("family", Family);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
-            writer.WriteObjectValue<UntypedNode>("minimum_memory", MinimumMemory);
+            writer.WriteIntValue("minimum_memory", MinimumMemory);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("parent", Parent);
-            writer.WriteObjectValue<UntypedNode>("parent_id", ParentId);
+            writer.WriteIntValue("parent_id", ParentId);
             writer.WriteStringValue("part_number", PartNumber);
             writer.WriteStringValue("product_code", ProductCode);
-            writer.WriteObjectValue<UntypedNode>("recommended_memory", RecommendedMemory);
-            writer.WriteObjectValue<UntypedNode>("required_storage", RequiredStorage);
+            writer.WriteIntValue("recommended_memory", RecommendedMemory);
+            writer.WriteIntValue("required_storage", RequiredStorage);
             writer.WriteStringValue("serial_number", SerialNumber);
             writer.WriteStringValue("software_version", SoftwareVersion);
             writer.WriteStringValue("version", Version);
-            writer.WriteObjectValue<UntypedNode>("version_id", VersionId);
+            writer.WriteIntValue("version_id", VersionId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

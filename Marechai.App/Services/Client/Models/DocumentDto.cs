@@ -23,21 +23,9 @@ namespace Marechai.App.Models
         public string Country { get; set; }
 #endif
         /// <summary>The country_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? CountryId { get; set; }
-#nullable restore
-#else
-        public UntypedNode CountryId { get; set; }
-#endif
+        public int? CountryId { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public long? Id { get; set; }
         /// <summary>The native_title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -90,8 +78,8 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "country", n => { Country = n.GetStringValue(); } },
-                { "country_id", n => { CountryId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "country_id", n => { CountryId = n.GetIntValue(); } },
+                { "id", n => { Id = n.GetLongValue(); } },
                 { "native_title", n => { NativeTitle = n.GetStringValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
                 { "synopsis", n => { Synopsis = n.GetStringValue(); } },
@@ -106,8 +94,8 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("country", Country);
-            writer.WriteObjectValue<UntypedNode>("country_id", CountryId);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("country_id", CountryId);
+            writer.WriteLongValue("id", Id);
             writer.WriteStringValue("native_title", NativeTitle);
             writer.WriteDateTimeOffsetValue("published", Published);
             writer.WriteStringValue("synopsis", Synopsis);

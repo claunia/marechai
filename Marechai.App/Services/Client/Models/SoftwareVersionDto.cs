@@ -31,21 +31,9 @@ namespace Marechai.App.Models
         public string Family { get; set; }
 #endif
         /// <summary>The family_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? FamilyId { get; set; }
-#nullable restore
-#else
-        public UntypedNode FamilyId { get; set; }
-#endif
+        public int? FamilyId { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
         /// <summary>The license property</summary>
@@ -57,13 +45,7 @@ namespace Marechai.App.Models
         public string License { get; set; }
 #endif
         /// <summary>The license_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? LicenseId { get; set; }
-#nullable restore
-#else
-        public UntypedNode LicenseId { get; set; }
-#endif
+        public int? LicenseId { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -81,13 +63,7 @@ namespace Marechai.App.Models
         public string Previous { get; set; }
 #endif
         /// <summary>The previous_id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? PreviousId { get; set; }
-#nullable restore
-#else
-        public UntypedNode PreviousId { get; set; }
-#endif
+        public int? PreviousId { get; set; }
         /// <summary>The version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -123,14 +99,14 @@ namespace Marechai.App.Models
             {
                 { "codename", n => { Codename = n.GetStringValue(); } },
                 { "family", n => { Family = n.GetStringValue(); } },
-                { "family_id", n => { FamilyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "family_id", n => { FamilyId = n.GetIntValue(); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
                 { "license", n => { License = n.GetStringValue(); } },
-                { "license_id", n => { LicenseId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "license_id", n => { LicenseId = n.GetIntValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "previous", n => { Previous = n.GetStringValue(); } },
-                { "previous_id", n => { PreviousId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "previous_id", n => { PreviousId = n.GetIntValue(); } },
                 { "version", n => { Version = n.GetStringValue(); } },
             };
         }
@@ -143,14 +119,14 @@ namespace Marechai.App.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("codename", Codename);
             writer.WriteStringValue("family", Family);
-            writer.WriteObjectValue<UntypedNode>("family_id", FamilyId);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("family_id", FamilyId);
+            writer.WriteIntValue("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
             writer.WriteStringValue("license", License);
-            writer.WriteObjectValue<UntypedNode>("license_id", LicenseId);
+            writer.WriteIntValue("license_id", LicenseId);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("previous", Previous);
-            writer.WriteObjectValue<UntypedNode>("previous_id", PreviousId);
+            writer.WriteIntValue("previous_id", PreviousId);
             writer.WriteStringValue("version", Version);
             writer.WriteAdditionalData(AdditionalData);
         }

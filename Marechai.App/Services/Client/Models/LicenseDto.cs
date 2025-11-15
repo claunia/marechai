@@ -17,13 +17,7 @@ namespace Marechai.App.Models
         /// <summary>The fsf_approved property</summary>
         public bool? FsfApproved { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The link property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -84,7 +78,7 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "fsf_approved", n => { FsfApproved = n.GetBoolValue(); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "id", n => { Id = n.GetIntValue(); } },
                 { "link", n => { Link = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "osi_approved", n => { OsiApproved = n.GetBoolValue(); } },
@@ -100,7 +94,7 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteBoolValue("fsf_approved", FsfApproved);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
+            writer.WriteIntValue("id", Id);
             writer.WriteStringValue("link", Link);
             writer.WriteStringValue("name", Name);
             writer.WriteBoolValue("osi_approved", OsiApproved);

@@ -27,12 +27,25 @@ namespace Marechai.App.Medias
         /// <summary>Gets an item from the Marechai.App.medias.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::Marechai.App.Medias.Item.MediasItemRequestBuilder"/></returns>
-        public global::Marechai.App.Medias.Item.MediasItemRequestBuilder this[string position]
+        public global::Marechai.App.Medias.Item.MediasItemRequestBuilder this[int position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
                 urlTplParams.Add("id", position);
+                return new global::Marechai.App.Medias.Item.MediasItemRequestBuilder(urlTplParams, RequestAdapter);
+            }
+        }
+        /// <summary>Gets an item from the Marechai.App.medias.item collection</summary>
+        /// <param name="position">Unique identifier of the item</param>
+        /// <returns>A <see cref="global::Marechai.App.Medias.Item.MediasItemRequestBuilder"/></returns>
+        [Obsolete("This indexer is deprecated and will be removed in the next major version. Use the one with the typed parameter instead.")]
+        public global::Marechai.App.Medias.Item.MediasItemRequestBuilder this[string position]
+        {
+            get
+            {
+                var urlTplParams = new Dictionary<string, object>(PathParameters);
+                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("id", position);
                 return new global::Marechai.App.Medias.Item.MediasItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
@@ -73,7 +86,7 @@ namespace Marechai.App.Medias
             var collectionResult = await RequestAdapter.SendCollectionAsync<global::Marechai.App.Models.MediaDto>(requestInfo, global::Marechai.App.Models.MediaDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
             return collectionResult?.AsList();
         }
-        /// <returns>A <see cref="UntypedNode"/></returns>
+        /// <returns>A <see cref="int"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -81,11 +94,11 @@ namespace Marechai.App.Medias
         /// <exception cref="global::Marechai.App.Models.ProblemDetails">When receiving a 401 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<UntypedNode?> PostAsync(global::Marechai.App.Models.MediaDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<int?> PostAsync(global::Marechai.App.Models.MediaDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<UntypedNode> PostAsync(global::Marechai.App.Models.MediaDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<int?> PostAsync(global::Marechai.App.Models.MediaDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -95,7 +108,7 @@ namespace Marechai.App.Medias
                 { "400", global::Marechai.App.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "401", global::Marechai.App.Models.ProblemDetails.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendAsync<UntypedNode>(requestInfo, UntypedNode.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendPrimitiveAsync<int?>(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>

@@ -17,47 +17,17 @@ namespace Marechai.App.Models
         /// <summary>The chars property</summary>
         public bool? Chars { get; set; }
         /// <summary>The colors property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Colors { get; set; }
-#nullable restore
-#else
-        public UntypedNode Colors { get; set; }
-#endif
+        public long? Colors { get; set; }
         /// <summary>The grayscale property</summary>
         public bool? Grayscale { get; set; }
         /// <summary>The height property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Height { get; set; }
-#nullable restore
-#else
-        public UntypedNode Height { get; set; }
-#endif
+        public int? Height { get; set; }
         /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Id { get; set; }
-#nullable restore
-#else
-        public UntypedNode Id { get; set; }
-#endif
+        public int? Id { get; set; }
         /// <summary>The palette property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Palette { get; set; }
-#nullable restore
-#else
-        public UntypedNode Palette { get; set; }
-#endif
+        public long? Palette { get; set; }
         /// <summary>The width property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? Width { get; set; }
-#nullable restore
-#else
-        public UntypedNode Width { get; set; }
-#endif
+        public int? Width { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.ResolutionDto"/> and sets the default values.
         /// </summary>
@@ -84,12 +54,12 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "chars", n => { Chars = n.GetBoolValue(); } },
-                { "colors", n => { Colors = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "colors", n => { Colors = n.GetLongValue(); } },
                 { "grayscale", n => { Grayscale = n.GetBoolValue(); } },
-                { "height", n => { Height = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "palette", n => { Palette = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
-                { "width", n => { Width = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "height", n => { Height = n.GetIntValue(); } },
+                { "id", n => { Id = n.GetIntValue(); } },
+                { "palette", n => { Palette = n.GetLongValue(); } },
+                { "width", n => { Width = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -100,12 +70,12 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteBoolValue("chars", Chars);
-            writer.WriteObjectValue<UntypedNode>("colors", Colors);
+            writer.WriteLongValue("colors", Colors);
             writer.WriteBoolValue("grayscale", Grayscale);
-            writer.WriteObjectValue<UntypedNode>("height", Height);
-            writer.WriteObjectValue<UntypedNode>("id", Id);
-            writer.WriteObjectValue<UntypedNode>("palette", Palette);
-            writer.WriteObjectValue<UntypedNode>("width", Width);
+            writer.WriteIntValue("height", Height);
+            writer.WriteIntValue("id", Id);
+            writer.WriteLongValue("palette", Palette);
+            writer.WriteIntValue("width", Width);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
