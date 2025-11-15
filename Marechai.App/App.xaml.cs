@@ -111,6 +111,8 @@ public partial class App : Application
                                                                  services.AddSingleton<ComputersViewModel>();
                                                                  services.AddSingleton<ConsolesService>();
                                                                  services.AddSingleton<ConsolesViewModel>();
+                                                                 services.AddSingleton<CompaniesService>();
+                                                                 services.AddSingleton<CompaniesViewModel>();
                                                                  services.AddSingleton<MachineViewViewModel>();
 
                                                                  services
@@ -145,6 +147,7 @@ public partial class App : Application
                        new ViewMap<ComputersListPage, ComputersListViewModel>(),
                        new ViewMap<ConsolesPage, ConsolesViewModel>(),
                        new ViewMap<ConsolesListPage, ConsolesListViewModel>(),
+                       new ViewMap<CompaniesPage, CompaniesViewModel>(),
                        new ViewMap<MachineViewPage, MachineViewViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
@@ -179,6 +182,8 @@ public partial class App : Application
                                                                                views.FindByViewModel<
                                                                                    ConsolesListViewModel>())
                                                                        ]),
+                                                          new RouteMap("companies",
+                                                                       views.FindByViewModel<CompaniesViewModel>()),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())
                                                       ])
