@@ -52,19 +52,14 @@ public class MachineDto : BaseDto<int>
     [JsonPropertyName("family_name")]
     public string? FamilyName { get; set; }
 
-    [JsonIgnore]
     public List<GpuDto>? Gpus { get; set; }
 
-    [JsonIgnore]
     public List<MemoryDto>? Memory { get; set; }
 
-    [JsonIgnore]
     public List<ProcessorDto>? Processors { get; set; }
 
-    [JsonIgnore]
     public List<SoundSynthDto>? SoundSynthesizers { get; set; }
 
-    [JsonIgnore]
     public List<StorageDto>? Storage { get; set; }
 
     [JsonPropertyName("company")]

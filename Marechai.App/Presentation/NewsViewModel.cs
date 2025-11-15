@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Marechai.App.Services;
 using Marechai.Data;
+using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation;
 
@@ -12,14 +13,37 @@ namespace Marechai.App.Presentation;
 /// </summary>
 public class NewsItemViewModel
 {
-    public required NewsDto News        { get; init; }
-    public required string  DisplayText { get; init; }
+    public required NewsDto                     News                  { get; init; }
+    public required string                      DisplayText           { get; init; }
+    public required IAsyncRelayCommand<NewsDto> NavigateToItemCommand { get; init; }
+
+    /// <summary>
+    ///     Determines if this news item can be navigated to (only computers and consoles)
+    /// </summary>
+    public bool CanNavigateToItem
+    {
+        get
+        {
+            if(News?.Type is null) return false;
+            var type = (NewsType)News.Type.Value;
+
+            return type is NewsType.NewComputerInDb
+                        or NewsType.NewConsoleInDb
+                        or NewsType.UpdatedComputerInDb
+                        or NewsType.UpdatedConsoleInDb
+                        or NewsType.NewComputerInCollection
+                        or NewsType.NewConsoleInCollection
+                        or NewsType.UpdatedComputerInCollection
+                        or NewsType.UpdatedConsoleInCollection;
+        }
+    }
 }
 
 public partial class NewsViewModel : ObservableObject
 {
     private readonly IStringLocalizer       _localizer;
     private readonly ILogger<NewsViewModel> _logger;
+    private readonly INavigator             _navigator;
     private readonly NewsService            _newsService;
 
     [ObservableProperty]
@@ -32,18 +56,59 @@ public partial class NewsViewModel : ObservableObject
     private bool isLoading;
 
     [ObservableProperty]
-    private ObservableCollection<NewsItemViewModel> newsList = new();
+    private ObservableCollection<NewsItemViewModel> newsList = [];
 
-    public NewsViewModel(NewsService newsService, IStringLocalizer localizer, ILogger<NewsViewModel> logger)
+    public NewsViewModel(NewsService newsService, IStringLocalizer localizer, ILogger<NewsViewModel> logger,
+                         INavigator  navigator)
     {
         _newsService = newsService;
         _localizer   = localizer;
         _logger      = logger;
+        _navigator   = navigator;
         LoadNews     = new AsyncRelayCommand(LoadNewsAsync);
     }
 
     public IAsyncRelayCommand LoadNews { get; }
 
+    [RelayCommand]
+    private async Task NavigateToNewsItem(NewsDto news)
+    {
+        if(news?.Type is null) return;
+
+        var newsType = (NewsType)news.Type.Value;
+
+        // Only navigate for computer and console news items
+        bool isComputerOrConsole = newsType is NewsType.NewComputerInDb
+                                            or NewsType.NewConsoleInDb
+                                            or NewsType.UpdatedComputerInDb
+                                            or NewsType.UpdatedConsoleInDb
+                                            or NewsType.NewComputerInCollection
+                                            or NewsType.NewConsoleInCollection
+                                            or NewsType.UpdatedComputerInCollection
+                                            or NewsType.UpdatedConsoleInCollection;
+
+        if(!isComputerOrConsole) return;
+
+        // Extract the machine ID from AffectedId
+        if(news.AffectedId is null) return;
+
+        int machineId = UntypedNodeExtractor.ExtractInt(news.AffectedId);
+
+        if(machineId <= 0) return;
+
+        // Navigate to machine view with source information
+        var navParam = new MachineViewNavigationParameter
+        {
+            MachineId        = machineId,
+            NavigationSource = this
+        };
+
+        await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this, data: navParam);
+    }
+
+    /// <summary>
+    ///     Helper to extract int from UntypedNode
+    /// </summary>
     /// <summary>
     ///     Generates localized text based on NewsType
     /// </summary>
@@ -88,8 +153,9 @@ public partial class NewsViewModel : ObservableObject
                 {
                     NewsList.Add(new NewsItemViewModel
                     {
-                        News        = item,
-                        DisplayText = GetLocalizedTextForNewsType((NewsType)(item.Type ?? 0))
+                        News                  = item,
+                        DisplayText           = GetLocalizedTextForNewsType((NewsType)(item.Type ?? 0)),
+                        NavigateToItemCommand = NavigateToNewsItemCommand
                     });
                 }
             }

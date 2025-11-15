@@ -40,13 +40,7 @@ namespace Marechai.Server.Controllers;
 
 [Route("/machines")]
 [ApiController]
-public class MachinesController
-(
-    MarechaiContext       context,
-    GpusController        gpusController,
-    ProcessorsController  processorsController,
-    SoundSynthsController soundSynthsController
-) : ControllerBase
+public class MachinesController(MarechaiContext context) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
@@ -232,7 +226,25 @@ public class MachinesController
             model.FamilyId   = family.Id;
         }
 
-        model.Gpus = await gpusController.GetByMachineAsync(machine.Id);
+        model.Gpus = await context.GpusByMachine.Where(g => g.MachineId == machine.Id)
+                                  .Select(g => g.Gpu)
+                                  .OrderBy(g => g.Company.Name)
+                                  .ThenBy(g => g.Name)
+                                  .Select(g => new GpuDto
+                                   {
+                                       Id          = g.Id,
+                                       Name        = g.Name,
+                                       Company     = g.Company.Name,
+                                       CompanyId   = g.Company.Id,
+                                       ModelCode   = g.ModelCode,
+                                       Introduced  = g.Introduced,
+                                       Package     = g.Package,
+                                       Process     = g.Process,
+                                       ProcessNm   = g.ProcessNm,
+                                       DieSize     = g.DieSize,
+                                       Transistors = g.Transistors
+                                   })
+                                  .ToListAsync();
 
         model.Memory = await context.MemoryByMachine.Where(m => m.MachineId == machine.Id)
                                     .Select(m => new MemoryDto
@@ -244,9 +256,63 @@ public class MachinesController
                                      })
                                     .ToListAsync();
 
-        model.Processors = await processorsController.GetByMachineAsync(machine.Id);
+        model.Processors = await context.ProcessorsByMachine.Where(p => p.MachineId == machine.Id)
+                                        .Select(p => new ProcessorDto
+                                         {
+                                             Name           = p.Processor.Name,
+                                             CompanyName    = p.Processor.Company.Name,
+                                             CompanyId      = p.Processor.Company.Id,
+                                             ModelCode      = p.Processor.ModelCode,
+                                             Introduced     = p.Processor.Introduced,
+                                             Speed          = p.Speed,
+                                             Package        = p.Processor.Package,
+                                             Gprs           = p.Processor.Gprs,
+                                             GprSize        = p.Processor.GprSize,
+                                             Fprs           = p.Processor.Fprs,
+                                             FprSize        = p.Processor.FprSize,
+                                             Cores          = p.Processor.Cores,
+                                             ThreadsPerCore = p.Processor.ThreadsPerCore,
+                                             Process        = p.Processor.Process,
+                                             ProcessNm      = p.Processor.ProcessNm,
+                                             DieSize        = p.Processor.DieSize,
+                                             Transistors    = p.Processor.Transistors,
+                                             DataBus        = p.Processor.DataBus,
+                                             AddrBus        = p.Processor.AddrBus,
+                                             SimdRegisters  = p.Processor.SimdRegisters,
+                                             SimdSize       = p.Processor.SimdSize,
+                                             L1Instruction  = p.Processor.L1Instruction,
+                                             L1Data         = p.Processor.L1Data,
+                                             L2             = p.Processor.L2,
+                                             L3             = p.Processor.L3,
+                                             InstructionSet = p.Processor.InstructionSet.Name,
+                                             Id             = p.Processor.Id,
+                                             InstructionSetExtensions = p.Processor.InstructionSetExtensions
+                                                                         .Select(e => e.Extension.Extension)
+                                                                         .ToList()
+                                         })
+                                        .ToListAsync();
 
-        model.SoundSynthesizers = await soundSynthsController.GetByMachineAsync(machine.Id);
+        model.SoundSynthesizers = await context.SoundByMachine.Where(s => s.MachineId == machine.Id)
+                                               .Select(s => s.SoundSynth)
+                                               .OrderBy(s => s.Company.Name)
+                                               .ThenBy(s => s.Name)
+                                               .ThenBy(s => s.ModelCode)
+                                               .Select(s => new SoundSynthDto
+                                                {
+                                                    Id          = s.Id,
+                                                    Name        = s.Name,
+                                                    CompanyId   = s.Company.Id,
+                                                    CompanyName = s.Company.Name,
+                                                    ModelCode   = s.ModelCode,
+                                                    Introduced  = s.Introduced,
+                                                    Voices      = s.Voices,
+                                                    Frequency   = s.Frequency,
+                                                    Depth       = s.Depth,
+                                                    SquareWave  = s.SquareWave,
+                                                    WhiteNoise  = s.WhiteNoise,
+                                                    Type        = s.Type
+                                                })
+                                               .ToListAsync();
 
         model.Storage = await context.StorageByMachine.Where(s => s.MachineId == machine.Id)
                                      .Select(s => new StorageDto

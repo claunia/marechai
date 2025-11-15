@@ -8,7 +8,7 @@ namespace Marechai.App.Services;
 public class CompositeSerializationWriterFactory : ISerializationWriterFactory
 {
     // Internal list of registered factories.
-    private readonly List<ISerializationWriterFactory> _factories = new();
+    private readonly List<ISerializationWriterFactory> _factories = [];
 
     // This method loops through each registered factory and returns the first one that supports the content type.
     public ISerializationWriter GetSerializationWriter(string contentType)

@@ -56,6 +56,14 @@ namespace Marechai.App.Models
 #else
         public string FamilyName { get; set; }
 #endif
+        /// <summary>The gpus property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Marechai.App.Models.GpuDto>? Gpus { get; set; }
+#nullable restore
+#else
+        public List<global::Marechai.App.Models.GpuDto> Gpus { get; set; }
+#endif
         /// <summary>The id property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -66,6 +74,14 @@ namespace Marechai.App.Models
 #endif
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
+        /// <summary>The memory property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Marechai.App.Models.MemoryDto>? Memory { get; set; }
+#nullable restore
+#else
+        public List<global::Marechai.App.Models.MemoryDto> Memory { get; set; }
+#endif
         /// <summary>The model property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -81,6 +97,30 @@ namespace Marechai.App.Models
 #nullable restore
 #else
         public string Name { get; set; }
+#endif
+        /// <summary>The processors property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Marechai.App.Models.ProcessorDto>? Processors { get; set; }
+#nullable restore
+#else
+        public List<global::Marechai.App.Models.ProcessorDto> Processors { get; set; }
+#endif
+        /// <summary>The soundSynthesizers property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Marechai.App.Models.SoundSynthDto>? SoundSynthesizers { get; set; }
+#nullable restore
+#else
+        public List<global::Marechai.App.Models.SoundSynthDto> SoundSynthesizers { get; set; }
+#endif
+        /// <summary>The storage property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Marechai.App.Models.StorageDto>? Storage { get; set; }
+#nullable restore
+#else
+        public List<global::Marechai.App.Models.StorageDto> Storage { get; set; }
 #endif
         /// <summary>The type property</summary>
         public int? Type { get; set; }
@@ -115,10 +155,15 @@ namespace Marechai.App.Models
                 { "family", n => { Family = n.GetStringValue(); } },
                 { "family_id", n => { FamilyId = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "family_name", n => { FamilyName = n.GetStringValue(); } },
+                { "gpus", n => { Gpus = n.GetCollectionOfObjectValues<global::Marechai.App.Models.GpuDto>(global::Marechai.App.Models.GpuDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "id", n => { Id = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
+                { "memory", n => { Memory = n.GetCollectionOfObjectValues<global::Marechai.App.Models.MemoryDto>(global::Marechai.App.Models.MemoryDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "model", n => { Model = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
+                { "processors", n => { Processors = n.GetCollectionOfObjectValues<global::Marechai.App.Models.ProcessorDto>(global::Marechai.App.Models.ProcessorDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "soundSynthesizers", n => { SoundSynthesizers = n.GetCollectionOfObjectValues<global::Marechai.App.Models.SoundSynthDto>(global::Marechai.App.Models.SoundSynthDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "storage", n => { Storage = n.GetCollectionOfObjectValues<global::Marechai.App.Models.StorageDto>(global::Marechai.App.Models.StorageDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
             };
         }
@@ -135,10 +180,15 @@ namespace Marechai.App.Models
             writer.WriteStringValue("family", Family);
             writer.WriteObjectValue<UntypedNode>("family_id", FamilyId);
             writer.WriteStringValue("family_name", FamilyName);
+            writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.GpuDto>("gpus", Gpus);
             writer.WriteObjectValue<UntypedNode>("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
+            writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.MemoryDto>("memory", Memory);
             writer.WriteStringValue("model", Model);
             writer.WriteStringValue("name", Name);
+            writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.ProcessorDto>("processors", Processors);
+            writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.SoundSynthDto>("soundSynthesizers", SoundSynthesizers);
+            writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.StorageDto>("storage", Storage);
             writer.WriteIntValue("type", Type);
             writer.WriteAdditionalData(AdditionalData);
         }

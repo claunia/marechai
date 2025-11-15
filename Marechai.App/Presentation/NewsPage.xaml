@@ -71,42 +71,49 @@
                                   ItemsSource="{Binding NewsList}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="0,0,0,12"
-                                        CornerRadius="8"
-                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1"
-                                        Padding="16">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
+                                <Button Margin="0,0,0,12"
+                                        Padding="0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{Binding NavigateToItemCommand}"
+                                        CommandParameter="{Binding News}">
+                                    <Border CornerRadius="8"
+                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            Padding="16">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
 
-                                        <!-- Date -->
-                                        <TextBlock Grid.Row="0"
-                                                   Text="{Binding News.Timestamp}"
-                                                   FontSize="12"
-                                                   Foreground="{ThemeResource SystemBaseMediumColor}"
-                                                   Margin="0,0,0,12" />
+                                            <!-- Date -->
+                                            <TextBlock Grid.Row="0"
+                                                       Text="{Binding News.Timestamp}"
+                                                       FontSize="12"
+                                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                       Margin="0,0,0,12" />
 
-                                        <!-- News Title/Text (Localized) -->
-                                        <TextBlock Grid.Row="1"
-                                                   Text="{Binding DisplayText}"
-                                                   FontSize="16"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{ThemeResource SystemBaseHighColor}"
-                                                   TextWrapping="Wrap"
-                                                   Margin="0,0,0,12" />
+                                            <!-- News Title/Text (Localized) -->
+                                            <TextBlock Grid.Row="1"
+                                                       Text="{Binding DisplayText}"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{ThemeResource SystemBaseHighColor}"
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,0,0,12" />
 
-                                        <!-- Item Name Link -->
-                                        <HyperlinkButton Grid.Row="2"
-                                                         Content="{Binding News.ItemName}"
-                                                         FontSize="14"
-                                                         Padding="0,4,0,4"
-                                                         Foreground="{ThemeResource SystemAccentColor}" />
-                                    </Grid>
-                                </Border>
+                                            <!-- Item Name -->
+                                            <TextBlock Grid.Row="2"
+                                                       Text="{Binding News.ItemName}"
+                                                       FontSize="14"
+                                                       Foreground="{ThemeResource SystemAccentColor}" />
+                                        </Grid>
+                                    </Border>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                         <ItemsControl.ItemsPanel>

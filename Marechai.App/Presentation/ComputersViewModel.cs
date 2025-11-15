@@ -34,7 +34,7 @@ public partial class ComputersViewModel : ObservableObject
     private bool isLoading;
 
     [ObservableProperty]
-    private ObservableCollection<char> lettersList = new();
+    private ObservableCollection<char> lettersList = [];
 
     [ObservableProperty]
     private int maximumYear;
@@ -46,7 +46,7 @@ public partial class ComputersViewModel : ObservableObject
     private string yearsGridTitle = string.Empty;
 
     [ObservableProperty]
-    private ObservableCollection<int> yearsList = new();
+    private ObservableCollection<int> yearsList = [];
 
     public ComputersViewModel(ComputersService            computersService, IStringLocalizer localizer,
                               ILogger<ComputersViewModel> logger,           INavigator       navigator,

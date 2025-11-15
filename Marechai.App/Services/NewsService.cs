@@ -30,13 +30,13 @@ public class NewsService
             List<NewsDto> news = await _apiClient.News.Latest.GetAsync();
             _logger.LogInformation("Successfully fetched {Count} news items", news?.Count ?? 0);
 
-            return news ?? new List<NewsDto>();
+            return news ?? [];
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error fetching latest news from API");
 
-            return new List<NewsDto>();
+            return [];
         }
     }
 }

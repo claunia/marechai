@@ -41,5 +41,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Humanizer"/>
+  </ItemGroup>
 
 </Project>

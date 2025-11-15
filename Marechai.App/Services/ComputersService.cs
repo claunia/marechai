@@ -32,7 +32,7 @@ public class ComputersService
 
             // Extract integer value from UntypedNode
             // UntypedNode wraps a JsonElement, we need to parse it
-            int count = ExtractIntFromUntypedNode(result);
+            int count = UntypedNodeExtractor.ExtractInt(result);
             _logger.LogInformation("Successfully fetched computers count: {Count}", count);
 
             return count;
@@ -57,7 +57,7 @@ public class ComputersService
             UntypedNode result = await _apiClient.Computers.MinimumYear.GetAsync();
 
             // Extract integer value from UntypedNode
-            int year = ExtractIntFromUntypedNode(result);
+            int year = UntypedNodeExtractor.ExtractInt(result);
             _logger.LogInformation("Successfully fetched minimum year: {Year}", year);
 
             return year;
@@ -82,7 +82,7 @@ public class ComputersService
             UntypedNode result = await _apiClient.Computers.MaximumYear.GetAsync();
 
             // Extract integer value from UntypedNode
-            int year = ExtractIntFromUntypedNode(result);
+            int year = UntypedNodeExtractor.ExtractInt(result);
             _logger.LogInformation("Successfully fetched maximum year: {Year}", year);
 
             return year;
@@ -98,28 +98,6 @@ public class ComputersService
     /// <summary>
     ///     Helper method to extract an integer from an UntypedNode
     /// </summary>
-    private int ExtractIntFromUntypedNode(UntypedNode node)
-    {
-        if(node == null) return 0;
-
-        try
-        {
-            // Cast to UntypedInteger to access the Value property
-            if(node is UntypedInteger intNode) return intNode.GetValue();
-
-            // Fallback: try to parse ToString() result
-            var stringValue = node.ToString();
-
-            if(!string.IsNullOrWhiteSpace(stringValue) && int.TryParse(stringValue, out int result)) return result;
-
-            return 0;
-        }
-        catch
-        {
-            return 0;
-        }
-    }
-
     /// <summary>
     ///     Fetches computers filtered by starting letter from the API
     /// </summary>
@@ -131,7 +109,7 @@ public class ComputersService
 
             List<MachineDto> computers = await _apiClient.Computers.ByLetter[letter.ToString()].GetAsync();
 
-            if(computers == null) return new List<MachineDto>();
+            if(computers == null) return [];
 
             _logger.LogInformation("Successfully fetched {Count} computers starting with '{Letter}'",
                                    computers.Count,
@@ -143,7 +121,7 @@ public class ComputersService
         {
             _logger.LogError(ex, "Error fetching computers by letter '{Letter}' from API", letter);
 
-            return new List<MachineDto>();
+            return [];
         }
     }
 
@@ -158,7 +136,7 @@ public class ComputersService
 
             List<MachineDto> computers = await _apiClient.Computers.ByYear[year].GetAsync();
 
-            if(computers == null) return new List<MachineDto>();
+            if(computers == null) return [];
 
             _logger.LogInformation("Successfully fetched {Count} computers from year {Year}", computers.Count, year);
 
@@ -168,7 +146,7 @@ public class ComputersService
         {
             _logger.LogError(ex, "Error fetching computers by year {Year} from API", year);
 
-            return new List<MachineDto>();
+            return [];
         }
     }
 
@@ -183,7 +161,7 @@ public class ComputersService
 
             List<MachineDto> computers = await _apiClient.Computers.GetAsync();
 
-            if(computers == null) return new List<MachineDto>();
+            if(computers == null) return [];
 
             _logger.LogInformation("Successfully fetched {Count} total computers", computers.Count);
 
@@ -193,7 +171,37 @@ public class ComputersService
         {
             _logger.LogError(ex, "Error fetching all computers from API");
 
-            return new List<MachineDto>();
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Fetches a single machine with full details by ID from the API
+    /// </summary>
+    public async Task<MachineDto?> GetMachineByIdAsync(int machineId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching machine {MachineId} from API", machineId);
+
+            MachineDto? machine = await _apiClient.Machines[machineId].Full.GetAsync();
+
+            if(machine == null)
+            {
+                _logger.LogWarning("Machine {MachineId} not found", machineId);
+
+                return null;
+            }
+
+            _logger.LogInformation("Successfully fetched machine {MachineId}: {MachineName}", machineId, machine.Name);
+
+            return machine;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching machine {MachineId} from API", machineId);
+
+            return null;
         }
     }
 }
