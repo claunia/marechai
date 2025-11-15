@@ -32,6 +32,16 @@
             <StackPanel Padding="16"
                         Spacing="16">
 
+                <!-- Logo Display (Top Center) -->
+                <Image MaxWidth="96"
+                       MaxHeight="96"
+                       Stretch="Uniform"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,8"
+                       Source="{Binding LogoImageSource}"
+                       Visibility="{Binding HasLogoContent, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                 <!-- Loading State -->
                 <StackPanel Visibility="{Binding IsLoading}"
                             VerticalAlignment="Center"

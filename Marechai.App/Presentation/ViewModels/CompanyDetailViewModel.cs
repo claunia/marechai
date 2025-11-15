@@ -14,7 +14,6 @@ using Marechai.App.Services.Caching;
 using Marechai.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Uno.Extensions.Navigation;
-using Windows.Storage.Streams;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -24,6 +23,7 @@ public partial class CompanyDetailViewModel : ObservableObject
     private readonly FlagCache                       _flagCache;
     private readonly IStringLocalizer                _localizer;
     private readonly ILogger<CompanyDetailViewModel> _logger;
+    private readonly CompanyLogoCache                _logoCache;
     private readonly INavigator                      _navigator;
 
     [ObservableProperty]
@@ -54,6 +54,9 @@ public partial class CompanyDetailViewModel : ObservableObject
     private ObservableCollection<CompanyDetailMachine> _filteredConsoles = [];
 
     [ObservableProperty]
+    private SvgImageSource? _flagImageSource;
+
+    [ObservableProperty]
     private bool _hasError;
 
     [ObservableProperty]
@@ -63,19 +66,18 @@ public partial class CompanyDetailViewModel : ObservableObject
     private bool _isLoading;
 
     [ObservableProperty]
-    private SvgImageSource? _flagImageSource;
+    private SvgImageSource? _logoImageSource;
 
     [ObservableProperty]
     private CompanyDto? _soldToCompany;
 
-    public CompanyDetailViewModel(CompanyDetailService            companyDetailService,
-                                  FlagCache                       flagCache,
-                                  IStringLocalizer                localizer,
-                                  ILogger<CompanyDetailViewModel> logger,
-                                  INavigator                      navigator)
+    public CompanyDetailViewModel(CompanyDetailService            companyDetailService, FlagCache        flagCache,
+                                  CompanyLogoCache                logoCache,            IStringLocalizer localizer,
+                                  ILogger<CompanyDetailViewModel> logger,               INavigator       navigator)
     {
         _companyDetailService    = companyDetailService;
         _flagCache               = flagCache;
+        _logoCache               = logoCache;
         _localizer               = localizer;
         _logger                  = logger;
         _navigator               = navigator;
@@ -99,6 +101,11 @@ public partial class CompanyDetailViewModel : ObservableObject
     /// </summary>
     public bool HasFlagContent => FlagImageSource != null;
 
+    /// <summary>
+    ///     Gets whether logo content is available
+    /// </summary>
+    public bool HasLogoContent => LogoImageSource != null;
+
     public IAsyncRelayCommand                       LoadData                 { get; }
     public ICommand                                 GoBackCommand            { get; }
     public IAsyncRelayCommand<CompanyDetailMachine> NavigateToMachineCommand { get; }
@@ -115,6 +122,12 @@ public partial class CompanyDetailViewModel : ObservableObject
     {
         // Notify that HasFlagContent has changed
         OnPropertyChanged(nameof(HasFlagContent));
+    }
+
+    partial void OnLogoImageSourceChanged(SvgImageSource? oldValue, SvgImageSource? newValue)
+    {
+        // Notify that HasLogoContent has changed
+        OnPropertyChanged(nameof(HasLogoContent));
     }
 
     partial void OnComputersFilterTextChanged(string value)
@@ -305,11 +318,12 @@ public partial class CompanyDetailViewModel : ObservableObject
     {
         try
         {
-            IsLoading    = true;
-            ErrorMessage = string.Empty;
-            HasError     = false;
-            IsDataLoaded = false;
+            IsLoading       = true;
+            ErrorMessage    = string.Empty;
+            HasError        = false;
+            IsDataLoaded    = false;
             FlagImageSource = null;
+            LogoImageSource = null;
 
             if(CompanyId <= 0)
             {
@@ -335,27 +349,50 @@ public partial class CompanyDetailViewModel : ObservableObject
             {
                 try
                 {
-                    short countryCode = (short)UntypedNodeExtractor.ExtractInt(Company.CountryId);
-                    var flagStream = await _flagCache.GetFlagAsync(countryCode);
+                    var     countryCode = (short)UntypedNodeExtractor.ExtractInt(Company.CountryId);
+                    Stream? flagStream  = await _flagCache.GetFlagAsync(countryCode);
 
                     var flagSource = new SvgImageSource();
                     await flagSource.SetSourceAsync(flagStream.AsRandomAccessStream());
                     FlagImageSource = flagSource;
 
-                    _logger.LogInformation("Successfully loaded flag for country code {CountryCode}",
-                        countryCode);
+                    _logger.LogInformation("Successfully loaded flag for country code {CountryCode}", countryCode);
                 }
                 catch(Exception ex)
                 {
                     _logger.LogError("Failed to load flag for country {CountryId}: {Exception}",
-                        Company.CountryId, ex.Message);
+                                     Company.CountryId,
+                                     ex.Message);
+
                     // Continue without flag if loading fails
                 }
             }
+
             if(Company.SoldToId != null)
             {
                 int soldToId                   = UntypedNodeExtractor.ExtractInt(Company.SoldToId);
                 if(soldToId > 0) SoldToCompany = await _companyDetailService.GetSoldToCompanyAsync(soldToId);
+            }
+
+            // Load logo if available
+            if(Company.LastLogo.HasValue)
+            {
+                try
+                {
+                    Stream? logoStream = await _logoCache.GetFlagAsync(Company.LastLogo.Value);
+
+                    var logoSource = new SvgImageSource();
+                    await logoSource.SetSourceAsync(logoStream.AsRandomAccessStream());
+                    LogoImageSource = logoSource;
+
+                    _logger.LogInformation("Successfully loaded logo for company {CompanyId}", CompanyId);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError("Failed to load logo for company {CompanyId}: {Exception}", CompanyId, ex.Message);
+
+                    // Continue without logo if loading fails
+                }
             }
 
             // Load computers and consoles made by this company

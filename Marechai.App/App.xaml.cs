@@ -108,6 +108,7 @@ public partial class App : Application
                                                              {
                                                                  // Register application services
                                                                  services.AddSingleton<FlagCache>();
+                                                                 services.AddSingleton<CompanyLogoCache>();
                                                                  services.AddSingleton<NewsService>();
                                                                  services.AddSingleton<NewsViewModel>();
                                                                  services.AddSingleton<ComputersService>();
