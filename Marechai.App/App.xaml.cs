@@ -17,6 +17,7 @@ using ComputersViewModel = Marechai.App.Presentation.ViewModels.ComputersViewMod
 using MachineViewViewModel = Marechai.App.Presentation.ViewModels.MachineViewViewModel;
 using MainViewModel = Marechai.App.Presentation.ViewModels.MainViewModel;
 using NewsViewModel = Marechai.App.Presentation.ViewModels.NewsViewModel;
+using PhotoDetailViewModel = Marechai.App.Presentation.ViewModels.PhotoDetailViewModel;
 
 namespace Marechai.App;
 
@@ -121,6 +122,7 @@ public partial class App : Application
                                                                  services.AddSingleton<CompanyDetailService>();
                                                                  services.AddSingleton<CompanyDetailViewModel>();
                                                                  services.AddSingleton<MachineViewViewModel>();
+                                                                 services.AddTransient<PhotoDetailViewModel>();
 
                                                                  services
                                                                     .AddSingleton<IComputersListFilterContext,
@@ -157,6 +159,7 @@ public partial class App : Application
                        new ViewMap<CompaniesPage, CompaniesViewModel>(),
                        new ViewMap<CompanyDetailPage, CompanyDetailViewModel>(),
                        new ViewMap<MachineViewPage, MachineViewViewModel>(),
+                       new ViewMap<PhotoDetailPage, PhotoDetailViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
         routes.Register(new RouteMap("",

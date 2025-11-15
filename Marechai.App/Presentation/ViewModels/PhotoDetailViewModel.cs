@@ -1,0 +1,423 @@
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+
+#nullable enable
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage.Streams;
+using Humanizer;
+using Marechai.App.Services;
+using Marechai.App.Services.Caching;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Uno.Extensions.Navigation;
+using ColorSpace = Marechai.Data.ColorSpace;
+using Contrast = Marechai.Data.Contrast;
+using ExposureMode = Marechai.Data.ExposureMode;
+using ExposureProgram = Marechai.Data.ExposureProgram;
+using Flash = Marechai.Data.Flash;
+using LightSource = Marechai.Data.LightSource;
+using MeteringMode = Marechai.Data.MeteringMode;
+using Orientation = Marechai.Data.Orientation;
+using ResolutionUnit = Marechai.Data.ResolutionUnit;
+using Saturation = Marechai.Data.Saturation;
+using SceneCaptureType = Marechai.Data.SceneCaptureType;
+using SensingMethod = Marechai.Data.SensingMethod;
+using Sharpness = Marechai.Data.Sharpness;
+using SubjectDistanceRange = Marechai.Data.SubjectDistanceRange;
+using WhiteBalance = Marechai.Data.WhiteBalance;
+
+namespace Marechai.App.Presentation.ViewModels;
+
+/// <summary>
+///     Navigation parameter for photo detail page
+/// </summary>
+public class PhotoDetailNavigationParameter
+{
+    public Guid PhotoId { get; set; }
+}
+
+public partial class PhotoDetailViewModel : ObservableObject
+{
+    private readonly ComputersService              _computersService;
+    private readonly ILogger<PhotoDetailViewModel> _logger;
+    private readonly INavigator                    _navigator;
+    private readonly MachinePhotoCache             _photoCache;
+
+    [ObservableProperty]
+    private string _errorMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool _errorOccurred;
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private bool _isPortrait = true;
+
+    // EXIF Camera Settings
+    [ObservableProperty]
+    private string _photoAperture = string.Empty;
+
+    [ObservableProperty]
+    private string _photoAuthor = string.Empty;
+
+    [ObservableProperty]
+    private string _photoCameraManufacturer = string.Empty;
+
+    [ObservableProperty]
+    private string _photoCameraModel = string.Empty;
+
+    // Photo Properties
+    [ObservableProperty]
+    private string _photoColorSpace = string.Empty;
+
+    [ObservableProperty]
+    private string _photoComments = string.Empty;
+
+    [ObservableProperty]
+    private string _photoContrast = string.Empty;
+
+    [ObservableProperty]
+    private string _photoCreationDate = string.Empty;
+
+    [ObservableProperty]
+    private string _photoDigitalZoomRatio = string.Empty;
+
+    [ObservableProperty]
+    private string _photoExifVersion = string.Empty;
+
+    [ObservableProperty]
+    private string _photoExposureMode = string.Empty;
+
+    [ObservableProperty]
+    private string _photoExposureProgram = string.Empty;
+
+    [ObservableProperty]
+    private string _photoExposureTime = string.Empty;
+
+    [ObservableProperty]
+    private string _photoFlash = string.Empty;
+
+    [ObservableProperty]
+    private string _photoFocalLength = string.Empty;
+
+    [ObservableProperty]
+    private string _photoFocalLengthEquivalent = string.Empty;
+
+    // Resolution and Other
+    [ObservableProperty]
+    private string _photoHorizontalResolution = string.Empty;
+
+    [ObservableProperty]
+    private BitmapImage? _photoImageSource;
+
+    [ObservableProperty]
+    private string _photoIsoRating = string.Empty;
+
+    [ObservableProperty]
+    private string _photoLensModel = string.Empty;
+
+    [ObservableProperty]
+    private string _photoLicenseName = string.Empty;
+
+    [ObservableProperty]
+    private string _photoLightSource = string.Empty;
+
+    [ObservableProperty]
+    private string _photoMachineCompany = string.Empty;
+
+    [ObservableProperty]
+    private string _photoMachineName = string.Empty;
+
+    [ObservableProperty]
+    private string _photoMeteringMode = string.Empty;
+
+    [ObservableProperty]
+    private string _photoOrientation = string.Empty;
+
+    [ObservableProperty]
+    private string _photoOriginalExtension = string.Empty;
+
+    [ObservableProperty]
+    private string _photoResolutionUnit = string.Empty;
+
+    [ObservableProperty]
+    private string _photoSaturation = string.Empty;
+
+    [ObservableProperty]
+    private string _photoSceneCaptureType = string.Empty;
+
+    [ObservableProperty]
+    private string _photoSensingMethod = string.Empty;
+
+    [ObservableProperty]
+    private string _photoSharpness = string.Empty;
+
+    [ObservableProperty]
+    private string _photoSoftwareUsed = string.Empty;
+
+    [ObservableProperty]
+    private string _photoSource = string.Empty;
+
+    [ObservableProperty]
+    private string _photoSubjectDistanceRange = string.Empty;
+
+    [ObservableProperty]
+    private string _photoUploadDate = string.Empty;
+
+    [ObservableProperty]
+    private string _photoVerticalResolution = string.Empty;
+
+    [ObservableProperty]
+    private string _photoWhiteBalance = string.Empty;
+
+    public PhotoDetailViewModel(ILogger<PhotoDetailViewModel> logger,           INavigator        navigator,
+                                ComputersService              computersService, MachinePhotoCache photoCache)
+    {
+        _logger           = logger;
+        _navigator        = navigator;
+        _computersService = computersService;
+        _photoCache       = photoCache;
+    }
+
+    [RelayCommand]
+    public async Task GoBack()
+    {
+        await _navigator.GoBack(this);
+    }
+
+    [RelayCommand]
+    public async Task LoadPhoto(Guid photoId)
+    {
+        try
+        {
+            IsLoading        = true;
+            ErrorOccurred    = false;
+            ErrorMessage     = string.Empty;
+            PhotoImageSource = null;
+
+            _logger.LogInformation("Loading photo details for {PhotoId}", photoId);
+
+            // Fetch photo details from API
+            MachinePhotoDto? photo = await _computersService.GetMachinePhotoDetailsAsync(photoId);
+
+            if(photo is null)
+            {
+                ErrorOccurred = true;
+                ErrorMessage  = "Photo not found";
+                IsLoading     = false;
+
+                return;
+            }
+
+            // Populate photo information
+            PhotoAuthor             = photo.Author             ?? string.Empty;
+            PhotoCameraManufacturer = photo.CameraManufacturer ?? string.Empty;
+            PhotoCameraModel        = photo.CameraModel        ?? string.Empty;
+            PhotoComments           = photo.Comments           ?? string.Empty;
+            PhotoLensModel          = photo.Lens               ?? string.Empty;
+            PhotoLicenseName        = photo.LicenseName        ?? string.Empty;
+            PhotoMachineCompany     = photo.MachineCompanyName ?? string.Empty;
+            PhotoMachineName        = photo.MachineName        ?? string.Empty;
+            PhotoOriginalExtension  = photo.OriginalExtension  ?? string.Empty;
+
+            if(photo.CreationDate.HasValue)
+                PhotoCreationDate = photo.CreationDate.Value.ToString("MMMM d, yyyy 'at' HH:mm");
+
+            // EXIF Camera Settings
+            PhotoAperture     = photo.Aperture != null ? $"f/{photo.Aperture}" : string.Empty;
+            PhotoExposureTime = photo.Exposure != null ? $"{photo.Exposure}s" : string.Empty;
+
+            PhotoExposureMode =
+                ExtractAndHumanizeEnum(photo.ExposureMethod?.MachinePhotoDtoExposureMethodMember1?.AdditionalData,
+                                       typeof(ExposureMode));
+
+            PhotoExposureProgram = photo.ExposureProgram?.ExposureProgram != null
+                                       ? ((ExposureProgram)ExtractInt(photo.ExposureProgram.ExposureProgram
+                                                                           .AdditionalData)).Humanize()
+                                       : string.Empty;
+
+            PhotoFocalLength           = photo.FocalLength     != null ? $"{photo.FocalLength}mm" : string.Empty;
+            PhotoFocalLengthEquivalent = photo.FocalEquivalent != null ? $"{photo.FocalEquivalent}mm" : string.Empty;
+            PhotoIsoRating             = photo.Iso             != null ? photo.Iso.ToString() : string.Empty;
+
+            PhotoFlash = photo.Flash?.Flash != null
+                             ? ((Flash)ExtractInt(photo.Flash.Flash.AdditionalData)).Humanize()
+                             : string.Empty;
+
+            PhotoLightSource = photo.LightSource?.LightSource != null
+                                   ? ((LightSource)ExtractInt(photo.LightSource.LightSource.AdditionalData)).Humanize()
+                                   : string.Empty;
+
+            PhotoMeteringMode = photo.MeteringMode?.MeteringMode != null
+                                    ? ((MeteringMode)ExtractInt(photo.MeteringMode.MeteringMode.AdditionalData))
+                                   .Humanize()
+                                    : string.Empty;
+
+            PhotoWhiteBalance = photo.WhiteBalance?.WhiteBalance != null
+                                    ? ((WhiteBalance)ExtractInt(photo.WhiteBalance.WhiteBalance.AdditionalData))
+                                   .Humanize()
+                                    : string.Empty;
+
+            // Photo Properties
+            PhotoColorSpace = ExtractAndHumanizeEnum(photo.Colorspace?.MachinePhotoDtoColorspaceMember1?.AdditionalData,
+                                                     typeof(ColorSpace));
+
+            PhotoContrast = photo.Contrast?.Contrast != null
+                                ? ((Contrast)ExtractInt(photo.Contrast.Contrast.AdditionalData)).Humanize()
+                                : string.Empty;
+
+            PhotoSaturation = photo.Saturation?.Saturation != null
+                                  ? ((Saturation)ExtractInt(photo.Saturation.Saturation.AdditionalData)).Humanize()
+                                  : string.Empty;
+
+            PhotoSharpness = photo.Sharpness?.Sharpness != null
+                                 ? ((Sharpness)ExtractInt(photo.Sharpness.Sharpness.AdditionalData)).Humanize()
+                                 : string.Empty;
+
+            PhotoOrientation = photo.Orientation?.Orientation != null
+                                   ? ((Orientation)ExtractInt(photo.Orientation.Orientation.AdditionalData)).Humanize()
+                                   : string.Empty;
+
+            PhotoSceneCaptureType = photo.SceneCaptureType?.SceneCaptureType != null
+                                        ? ((SceneCaptureType)ExtractInt(photo.SceneCaptureType.SceneCaptureType
+                                                                             .AdditionalData)).Humanize()
+                                        : string.Empty;
+
+            PhotoSensingMethod = photo.SensingMethod?.SensingMethod != null
+                                     ? ((SensingMethod)ExtractInt(photo.SensingMethod.SensingMethod.AdditionalData))
+                                    .Humanize()
+                                     : string.Empty;
+
+            PhotoSubjectDistanceRange = photo.SubjectDistanceRange?.SubjectDistanceRange != null
+                                            ? ((SubjectDistanceRange)ExtractInt(photo.SubjectDistanceRange
+                                                                                   .SubjectDistanceRange
+                                                                                   .AdditionalData)).Humanize()
+                                            : string.Empty;
+
+            // Resolution and Other
+            PhotoHorizontalResolution =
+                photo.HorizontalResolution != null ? $"{photo.HorizontalResolution} DPI" : string.Empty;
+
+            PhotoVerticalResolution =
+                photo.VerticalResolution != null ? $"{photo.VerticalResolution} DPI" : string.Empty;
+
+            PhotoResolutionUnit = photo.ResolutionUnit?.ResolutionUnit != null
+                                      ? ((ResolutionUnit)ExtractInt(photo.ResolutionUnit.ResolutionUnit.AdditionalData))
+                                     .Humanize()
+                                      : string.Empty;
+
+            PhotoDigitalZoomRatio = photo.DigitalZoom != null ? $"{photo.DigitalZoom}x" : string.Empty;
+            PhotoExifVersion      = photo.ExifVersion ?? string.Empty;
+            PhotoSoftwareUsed     = photo.Software    ?? string.Empty;
+
+            PhotoUploadDate = photo.UploadDate.HasValue
+                                  ? photo.UploadDate.Value.ToString("MMMM d, yyyy 'at' HH:mm")
+                                  : string.Empty;
+
+            PhotoSource = photo.Source ?? string.Empty;
+
+            // Load the full photo image
+            await LoadPhotoImageAsync(photoId);
+
+            IsLoading = false;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading photo details for {PhotoId}", photoId);
+            ErrorOccurred = true;
+            ErrorMessage  = ex.Message;
+            IsLoading     = false;
+        }
+    }
+
+    /// <summary>
+    ///     Updates the portrait/landscape orientation flag
+    /// </summary>
+    public void UpdateOrientation(bool isPortrait)
+    {
+        IsPortrait = isPortrait;
+    }
+
+    private async Task LoadPhotoImageAsync(Guid photoId)
+    {
+        try
+        {
+            Stream stream = await _photoCache.GetPhotoAsync(photoId);
+
+            var bitmap = new BitmapImage();
+
+            using(IRandomAccessStream randomStream = stream.AsRandomAccessStream())
+            {
+                await bitmap.SetSourceAsync(randomStream);
+            }
+
+            PhotoImageSource = bitmap;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading photo image {PhotoId}", photoId);
+            ErrorOccurred = true;
+            ErrorMessage  = "Failed to load photo image";
+        }
+    }
+
+    /// <summary>
+    ///     Extracts an integer value from AdditionalData dictionary
+    /// </summary>
+    private int ExtractInt(IDictionary<string, object> additionalData)
+    {
+        if(additionalData == null || additionalData.Count == 0) return 0;
+
+        object? value = additionalData.Values.FirstOrDefault();
+
+        if(value is int intValue) return intValue;
+        if(value is double dblValue) return (int)dblValue;
+        if(int.TryParse(value?.ToString() ?? "", out int parsed)) return parsed;
+
+        return 0;
+    }
+
+    /// <summary>
+    ///     Humanizes an enum value extracted from AdditionalData
+    /// </summary>
+    private string ExtractAndHumanizeEnum(IDictionary<string, object>? additionalData, Type enumType)
+    {
+        if(additionalData == null || additionalData.Count == 0) return string.Empty;
+
+        int intValue = ExtractInt(additionalData);
+
+        if(intValue == 0 && enumType != typeof(ExposureMode)) return string.Empty;
+
+        var enumValue = Enum.ToObject(enumType, intValue);
+
+        return ((Enum)enumValue).Humanize();
+    }
+}

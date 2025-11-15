@@ -235,4 +235,34 @@ public class ComputersService
             return [];
         }
     }
+
+    /// <summary>
+    ///     Fetches detailed information for a specific photo from the API
+    /// </summary>
+    public async Task<MachinePhotoDto?> GetMachinePhotoDetailsAsync(Guid photoId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching photo details for {PhotoId} from API", photoId);
+
+            MachinePhotoDto? photo = await _apiClient.Machines.Photos[photoId].GetAsync();
+
+            if(photo == null)
+            {
+                _logger.LogWarning("Photo {PhotoId} not found", photoId);
+
+                return null;
+            }
+
+            _logger.LogInformation("Successfully fetched photo details {PhotoId}", photoId);
+
+            return photo;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching photo details for {PhotoId} from API", photoId);
+
+            return null;
+        }
+    }
 }

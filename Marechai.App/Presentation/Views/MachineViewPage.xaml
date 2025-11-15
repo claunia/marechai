@@ -389,16 +389,21 @@
                                         HorizontalAlignment="Stretch">
                             <wctui:Carousel.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center">
-                                        <Image Source="{Binding ThumbnailImageSource}"
-                                               Stretch="Uniform"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               MaxWidth="256"
-                                               MaxHeight="256" />
-                                    </Grid>
+                                    <Button Command="{Binding DataContext.ViewPhotoDetailsCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding PhotoId}"
+                                            Padding="0"
+                                            Background="Transparent">
+                                        <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center">
+                                            <Image Source="{Binding ThumbnailImageSource}"
+                                                   Stretch="Uniform"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   MaxWidth="256"
+                                                   MaxHeight="256" />
+                                        </Grid>
+                                    </Button>
                                 </DataTemplate>
                             </wctui:Carousel.ItemTemplate>
                         </wctui:Carousel>

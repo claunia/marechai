@@ -171,6 +171,18 @@ public partial class MachineViewViewModel : ObservableObject
         await _navigator.GoBack(this);
     }
 
+    [RelayCommand]
+    public async Task ViewPhotoDetails(Guid photoId)
+    {
+        var navParam = new PhotoDetailNavigationParameter
+        {
+            PhotoId = photoId
+        };
+
+        _logger.LogInformation("Navigating to photo details for {PhotoId}", photoId);
+        await _navigator.NavigateViewModelAsync<PhotoDetailViewModel>(this, data: navParam);
+    }
+
     /// <summary>
     ///     Sets the navigation source (where we came from).
     /// </summary>
