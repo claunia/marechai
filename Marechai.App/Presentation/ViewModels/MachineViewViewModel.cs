@@ -32,7 +32,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Humanizer;
-using Marechai.App.Helpers;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
@@ -238,9 +237,9 @@ public partial class MachineViewViewModel : ObservableObject
                 foreach(ProcessorDto processor in machine.Processors)
                 {
                     var details = new List<string>();
-                    int speed   = UntypedNodeExtractor.ExtractInt(processor.Speed);
-                    int gprSize = UntypedNodeExtractor.ExtractInt(processor.GprSize);
-                    int cores   = UntypedNodeExtractor.ExtractInt(processor.Cores);
+                    var speed   = (int)(processor.Speed ?? 0);
+                    int gprSize = processor.GprSize ?? 0;
+                    int cores   = processor.Cores   ?? 0;
 
                     if(speed   > 0) details.Add($"{speed} MHz");
                     if(gprSize > 0) details.Add($"{gprSize} bits");
@@ -261,7 +260,7 @@ public partial class MachineViewViewModel : ObservableObject
             {
                 foreach(MemoryDto mem in machine.Memory)
                 {
-                    long size = UntypedNodeExtractor.ExtractLong(mem.Size);
+                    long size = mem.Size ?? 0;
 
                     string sizeStr = size > 0
                                          ? size > 1024 ? $"{size} bytes ({size.Bytes().Humanize()})" : $"{size} bytes"
@@ -299,7 +298,7 @@ public partial class MachineViewViewModel : ObservableObject
                 foreach(SoundSynthDto synth in machine.SoundSynthesizers)
                 {
                     var details = new List<string>();
-                    int voices  = UntypedNodeExtractor.ExtractInt(synth.Voices);
+                    int voices  = synth.Voices ?? 0;
 
                     if(voices > 0) details.Add($"{voices} voices");
 
@@ -317,7 +316,7 @@ public partial class MachineViewViewModel : ObservableObject
             {
                 foreach(StorageDto storage in machine.Storage)
                 {
-                    long capacity = UntypedNodeExtractor.ExtractLong(storage.Capacity);
+                    long capacity = storage.Capacity ?? 0;
 
                     string displayText = capacity > 0
                                              ? capacity > 1024

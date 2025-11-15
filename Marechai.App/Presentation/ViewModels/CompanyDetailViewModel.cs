@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Marechai.App.Helpers;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
@@ -139,7 +138,7 @@ public partial class CompanyDetailViewModel : ObservableObject
     }
 
     partial void OnCompanyLogosChanged(ObservableCollection<CompanyLogoItem>? oldValue,
-                                       ObservableCollection<CompanyLogoItem> newValue)
+                                       ObservableCollection<CompanyLogoItem>  newValue)
     {
         // Notify that HasMultipleLogos has changed
         OnPropertyChanged(nameof(HasMultipleLogos));
@@ -365,7 +364,7 @@ public partial class CompanyDetailViewModel : ObservableObject
             {
                 try
                 {
-                    var     countryCode = (short)UntypedNodeExtractor.ExtractInt(Company.CountryId);
+                    var     countryCode = (short)(Company.CountryId ?? 0);
                     Stream? flagStream  = await _flagCache.GetFlagAsync(countryCode);
 
                     var flagSource = new SvgImageSource();
@@ -386,7 +385,7 @@ public partial class CompanyDetailViewModel : ObservableObject
 
             if(Company.SoldToId != null)
             {
-                int soldToId                   = UntypedNodeExtractor.ExtractInt(Company.SoldToId);
+                int soldToId                   = Company.SoldToId ?? 0;
                 if(soldToId > 0) SoldToCompany = await _companyDetailService.GetSoldToCompanyAsync(soldToId);
             }
 
@@ -421,9 +420,7 @@ public partial class CompanyDetailViewModel : ObservableObject
                 var logosWithYears = logosList.Select(logo => new
                                                {
                                                    Logo = logo,
-                                                   Year = logo.Year != null
-                                                              ? (int?)UntypedNodeExtractor.ExtractInt(logo.Year)
-                                                              : null
+                                                   logo.Year
                                                })
                                               .OrderBy(l => l.Year)
                                               .ToList();
@@ -472,7 +469,7 @@ public partial class CompanyDetailViewModel : ObservableObject
 
             foreach(MachineDto machine in machines)
             {
-                int machineId = UntypedNodeExtractor.ExtractInt(machine.Id);
+                int machineId = machine.Id ?? 0;
 
                 var machineItem = new CompanyDetailMachine
                 {

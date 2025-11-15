@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Marechai.App.Helpers;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Uno.Extensions.Navigation;
@@ -184,7 +183,7 @@ public partial class ConsolesListViewModel : ObservableObject
             foreach(MachineDto console in consoles.OrderBy(c => c.Name))
             {
                 int year = console.Introduced?.Year ?? 0;
-                int id   = UntypedNodeExtractor.ExtractInt(console.Id);
+                int id   = console.Id               ?? 0;
 
                 _logger.LogInformation("Console: {Name}, Introduced: {Introduced}, Year: {Year}, Company: {Company}, ID: {Id}",
                                        console.Name,

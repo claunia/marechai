@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Marechai.App.Helpers;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Uno.Extensions.Navigation;
@@ -186,7 +185,7 @@ public partial class ComputersListViewModel : ObservableObject
             foreach(MachineDto computer in computers.OrderBy(c => c.Name))
             {
                 int year = computer.Introduced?.Year ?? 0;
-                int id   = UntypedNodeExtractor.ExtractInt(computer.Id);
+                int id   = computer.Id               ?? 0;
 
                 _logger.LogInformation("Computer: {Name}, Introduced: {Introduced}, Year: {Year}, Company: {Company}, ID: {Id}",
                                        computer.Name,

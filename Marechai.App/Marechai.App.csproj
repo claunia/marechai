@@ -40,10 +40,10 @@
     </UnoFeatures>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
+    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Humanizer"/>
+    <PackageReference Include="Humanizer" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Presentation\Views\Shell.xaml.cs">

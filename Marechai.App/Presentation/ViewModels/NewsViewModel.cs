@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Marechai.App.Helpers;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Marechai.Data;
@@ -94,7 +93,7 @@ public partial class NewsViewModel : ObservableObject
         // Extract the machine ID from AffectedId
         if(news.AffectedId is null) return;
 
-        int machineId = UntypedNodeExtractor.ExtractInt(news.AffectedId);
+        int machineId = news.AffectedId ?? 0;
 
         if(machineId <= 0) return;
 

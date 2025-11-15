@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.App.Helpers;
-using Microsoft.Kiota.Abstractions.Serialization;
 
 namespace Marechai.App.Services;
 
@@ -29,11 +27,9 @@ public class ConsolesService
         try
         {
             _logger.LogInformation("Fetching consoles count from API");
-            UntypedNode result = await _apiClient.Consoles.Count.GetAsync();
+            int? result = await _apiClient.Consoles.Count.GetAsync();
 
-            // Extract integer value from UntypedNode
-            // UntypedNode wraps a JsonElement, we need to parse it
-            int count = UntypedNodeExtractor.ExtractInt(result);
+            int count = result ?? 0;
             _logger.LogInformation("Successfully fetched consoles count: {Count}", count);
 
             return count;
@@ -55,10 +51,9 @@ public class ConsolesService
         try
         {
             _logger.LogInformation("Fetching minimum year from API");
-            UntypedNode result = await _apiClient.Consoles.MinimumYear.GetAsync();
+            int? result = await _apiClient.Consoles.MinimumYear.GetAsync();
 
-            // Extract integer value from UntypedNode
-            int year = UntypedNodeExtractor.ExtractInt(result);
+            int year = result ?? 0;
             _logger.LogInformation("Successfully fetched minimum year: {Year}", year);
 
             return year;
@@ -80,10 +75,9 @@ public class ConsolesService
         try
         {
             _logger.LogInformation("Fetching maximum year from API");
-            UntypedNode result = await _apiClient.Consoles.MaximumYear.GetAsync();
+            int? result = await _apiClient.Consoles.MaximumYear.GetAsync();
 
-            // Extract integer value from UntypedNode
-            int year = UntypedNodeExtractor.ExtractInt(result);
+            int year = result ?? 0;
             _logger.LogInformation("Successfully fetched maximum year: {Year}", year);
 
             return year;
