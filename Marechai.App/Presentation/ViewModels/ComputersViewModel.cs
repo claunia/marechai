@@ -155,7 +155,7 @@ public partial class ComputersViewModel : ObservableObject
             _logger.LogInformation("Navigating to computers by letter: {Letter}", letter);
             _filterContext.FilterType  = ComputerListFilterType.Letter;
             _filterContext.FilterValue = letter.ToString();
-            await _navigator.NavigateViewModelAsync<ComputersListViewModel>(this);
+            await _navigator.NavigateRouteAsync(this, "list-computers");
         }
         catch(Exception ex)
         {
@@ -175,7 +175,7 @@ public partial class ComputersViewModel : ObservableObject
             _logger.LogInformation("Navigating to computers by year: {Year}", year);
             _filterContext.FilterType  = ComputerListFilterType.Year;
             _filterContext.FilterValue = year.ToString();
-            await _navigator.NavigateViewModelAsync<ComputersListViewModel>(this);
+            await _navigator.NavigateRouteAsync(this, "list-computers");
         }
         catch(Exception ex)
         {
@@ -195,7 +195,7 @@ public partial class ComputersViewModel : ObservableObject
             _logger.LogInformation("Navigating to all computers");
             _filterContext.FilterType  = ComputerListFilterType.All;
             _filterContext.FilterValue = string.Empty;
-            await _navigator.NavigateViewModelAsync<ComputersListViewModel>(this);
+            await _navigator.NavigateRouteAsync(this, "list-computers");
         }
         catch(Exception ex)
         {

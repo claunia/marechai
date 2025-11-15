@@ -109,13 +109,20 @@ public partial class App : Application
                                                                  services.AddSingleton<NewsViewModel>();
                                                                  services.AddSingleton<ComputersService>();
                                                                  services.AddSingleton<ComputersViewModel>();
+                                                                 services.AddSingleton<ConsolesService>();
+                                                                 services.AddSingleton<ConsolesViewModel>();
                                                                  services.AddSingleton<MachineViewViewModel>();
 
                                                                  services
                                                                     .AddSingleton<IComputersListFilterContext,
                                                                          ComputersListFilterContext>();
 
+                                                                 services
+                                                                    .AddSingleton<IConsolesListFilterContext,
+                                                                         ConsolesListFilterContext>();
+
                                                                  services.AddTransient<ComputersListViewModel>();
+                                                                 services.AddTransient<ConsolesListViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
@@ -136,6 +143,8 @@ public partial class App : Application
                        new ViewMap<NewsPage, NewsViewModel>(),
                        new ViewMap<ComputersPage, ComputersViewModel>(),
                        new ViewMap<ComputersListPage, ComputersListViewModel>(),
+                       new ViewMap<ConsolesPage, ConsolesViewModel>(),
+                       new ViewMap<ConsolesListPage, ConsolesListViewModel>(),
                        new ViewMap<MachineViewPage, MachineViewViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
@@ -155,12 +164,20 @@ public partial class App : Application
                                                                        views.FindByViewModel<ComputersViewModel>(),
                                                                        Nested:
                                                                        [
-                                                                           new RouteMap("list",
+                                                                           new RouteMap("list-computers",
                                                                                views.FindByViewModel<
                                                                                    ComputersListViewModel>()),
                                                                            new RouteMap("view",
                                                                                views.FindByViewModel<
                                                                                    MachineViewViewModel>())
+                                                                       ]),
+                                                          new RouteMap("consoles",
+                                                                       views.FindByViewModel<ConsolesViewModel>(),
+                                                                       Nested:
+                                                                       [
+                                                                           new RouteMap("list-consoles",
+                                                                               views.FindByViewModel<
+                                                                                   ConsolesListViewModel>())
                                                                        ]),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())

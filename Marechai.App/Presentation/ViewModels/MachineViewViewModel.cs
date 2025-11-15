@@ -127,6 +127,22 @@ public partial class MachineViewViewModel : ObservableObject
             return;
         }
 
+        // If we came from ConsolesListViewModel, navigate back to consoles list
+        if(_navigationSource is ConsolesListViewModel)
+        {
+            await _navigator.NavigateViewModelAsync<ConsolesListViewModel>(this);
+
+            return;
+        }
+
+        // If we came from ComputersListViewModel, navigate back to computers list
+        if(_navigationSource is ComputersListViewModel)
+        {
+            await _navigator.NavigateViewModelAsync<ComputersListViewModel>(this);
+
+            return;
+        }
+
         // Otherwise, try to go back in the navigation stack
         await _navigator.GoBack(this);
     }

@@ -1,0 +1,261 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.ConsolesListPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button and Title -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="16,12,16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Back Button -->
+            <Button Grid.Column="0"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource AlternateButtonStyle}"
+                    ToolTipService.ToolTip="Go back"
+                    Padding="8"
+                    MinWidth="44"
+                    MinHeight="44"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE72B;"
+                          FontSize="16" />
+            </Button>
+
+            <!-- Page Title -->
+            <StackPanel Grid.Column="1"
+                        Margin="16,0,0,0"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding PageTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}" />
+                <TextBlock Text="{Binding FilterDescription}"
+                           FontSize="12"
+                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock Text="Loading consoles..."
+                           FontSize="14"
+                           TextAlignment="Center"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Error"
+                         Title="Unable to Load Consoles"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+                <Button Content="Retry"
+                        Command="{Binding LoadData}"
+                        HorizontalAlignment="Center"
+                        Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+
+            <!-- Consoles List -->
+            <Grid Visibility="{Binding IsDataLoaded}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <Grid Padding="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Count Header -->
+                        <StackPanel Grid.Row="0"
+                                    Padding="16,12"
+                                    Orientation="Horizontal"
+                                    Spacing="4">
+                            <TextBlock FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       Text="RESULTS:" />
+                            <TextBlock FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       Text="{Binding ConsolesList.Count}" />
+                            <TextBlock FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       Text="consoles" />
+                        </StackPanel>
+
+                        <!-- Consoles List -->
+                        <ItemsControl Grid.Row="1"
+                                      ItemsSource="{Binding ConsolesList}"
+                                      Padding="0"
+                                      Margin="0,8,0,0"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="0"
+                                                HorizontalAlignment="Stretch" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Padding="0"
+                                            Margin="0,0,0,8"
+                                            MinHeight="80"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{Binding DataContext.NavigateToConsoleCommand, ElementName=PageRoot}"
+                                            CommandParameter="{Binding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid MinHeight="80"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch">
+                                                    <!-- Shadow effect -->
+                                                    <Border x:Name="ShadowBorder"
+                                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="8"
+                                                            Padding="16,12"
+                                                            Translation="0, 0, 4"
+                                                            VerticalAlignment="Stretch">
+                                                        <Border.Shadow>
+                                                            <ThemeShadow />
+                                                        </Border.Shadow>
+
+                                                        <Grid ColumnSpacing="16">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <!-- Console Info -->
+                                                            <StackPanel Grid.Column="0"
+                                                                        Spacing="8"
+                                                                        VerticalAlignment="Center"
+                                                                        HorizontalAlignment="Stretch">
+                                                                <TextBlock Text="{Binding Name}"
+                                                                           FontSize="16"
+                                                                           FontWeight="SemiBold"
+                                                                           Foreground="{ThemeResource TextControlForeground}"
+                                                                           TextTrimming="CharacterEllipsis" />
+                                                                <Grid ColumnSpacing="16"
+                                                                      Height="20"
+                                                                      VerticalAlignment="Center">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                    </Grid.ColumnDefinitions>
+
+                                                                    <StackPanel Grid.Column="0"
+                                                                            Orientation="Horizontal"
+                                                                            Spacing="6"
+                                                                            VerticalAlignment="Center">
+                                                                        <FontIcon Glyph="&#xE731;"
+                                                                                FontSize="14"
+                                                                                Foreground="{ThemeResource SystemAccentColor}" />
+                                                                        <TextBlock Text="{Binding Manufacturer}"
+                                                                                FontSize="13"
+                                                                                Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                                    </StackPanel>
+
+                                                                    <StackPanel Grid.Column="1"
+                                                                            Orientation="Horizontal"
+                                                                            Spacing="6"
+                                                                            VerticalAlignment="Center">
+                                                                        <FontIcon Glyph="&#xE787;"
+                                                                                FontSize="14"
+                                                                                Foreground="{ThemeResource SystemAccentColor}" />
+                                                                        <TextBlock FontSize="13"
+                                                                                Foreground="{ThemeResource SystemBaseMediumColor}">
+                                                                            <Run Text="{Binding Year}" />
+                                                                        </TextBlock>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                            </StackPanel>
+
+                                                            <!-- Navigation Arrow -->
+                                                            <StackPanel Grid.Column="1"
+                                                                        VerticalAlignment="Center">
+                                                                <FontIcon Glyph="&#xE72A;"
+                                                                          FontSize="18"
+                                                                          Foreground="{ThemeResource SystemAccentColor}" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <VisualState x:Name="Normal" />
+                                                            <VisualState x:Name="PointerOver">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="ShadowBorder.Background"
+                                                                            Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                                                    <Setter Target="ShadowBorder.Translation"
+                                                                            Value="0, -2, 8" />
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                            <VisualState x:Name="Pressed">
+                                                                <VisualState.Setters>
+                                                                    <Setter Target="ShadowBorder.Background"
+                                                                            Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                                                                    <Setter Target="ShadowBorder.Translation"
+                                                                            Value="0, 0, 2" />
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+</Page>
