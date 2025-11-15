@@ -78,9 +78,10 @@ public class ConsolesController(MarechaiContext context) : ControllerBase
                                                                              .ThenBy(m => m.Name)
                                                                              .Select(m => new MachineDto
                                                                               {
-                                                                                  Id      = m.Id,
-                                                                                  Name    = m.Name,
-                                                                                  Company = m.Company.Name
+                                                                                  Id         = m.Id,
+                                                                                  Name       = m.Name,
+                                                                                  Company    = m.Company.Name,
+                                                                                  Introduced = m.Introduced
                                                                               })
                                                                              .ToListAsync();
 
@@ -97,9 +98,10 @@ public class ConsolesController(MarechaiContext context) : ControllerBase
                                                                              .ThenBy(m => m.Name)
                                                                              .Select(m => new MachineDto
                                                                               {
-                                                                                  Id      = m.Id,
-                                                                                  Name    = m.Name,
-                                                                                  Company = m.Company.Name
+                                                                                  Id         = m.Id,
+                                                                                  Name       = m.Name,
+                                                                                  Company    = m.Company.Name,
+                                                                                  Introduced = m.Introduced
                                                                               })
                                                                              .ToListAsync();
 
@@ -113,9 +115,10 @@ public class ConsolesController(MarechaiContext context) : ControllerBase
                                                                .ThenBy(m => m.Name)
                                                                .Select(m => new MachineDto
                                                                 {
-                                                                    Id      = m.Id,
-                                                                    Name    = m.Name,
-                                                                    Company = m.Company.Name
+                                                                    Id         = m.Id,
+                                                                    Name       = m.Name,
+                                                                    Company    = m.Company.Name,
+                                                                    Introduced = m.Introduced
                                                                 })
                                                                .ToListAsync();
 }

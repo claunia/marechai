@@ -102,6 +102,12 @@ public partial class App : Application
                                                                  services.AddSingleton<NewsViewModel>();
                                                                  services.AddSingleton<ComputersService>();
                                                                  services.AddSingleton<ComputersViewModel>();
+
+                                                                 services
+                                                                    .AddSingleton<IComputersListFilterContext,
+                                                                         ComputersListFilterContext>();
+
+                                                                 services.AddTransient<ComputersListViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
@@ -121,6 +127,7 @@ public partial class App : Application
                        new ViewMap<MainPage, MainViewModel>(),
                        new ViewMap<NewsPage, NewsViewModel>(),
                        new ViewMap<ComputersPage, ComputersViewModel>(),
+                       new ViewMap<ComputersListPage, ComputersListViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
         routes.Register(new RouteMap("",
@@ -136,7 +143,13 @@ public partial class App : Application
                                                                        views.FindByViewModel<NewsViewModel>(),
                                                                        true),
                                                           new RouteMap("computers",
-                                                                       views.FindByViewModel<ComputersViewModel>()),
+                                                                       views.FindByViewModel<ComputersViewModel>(),
+                                                                       Nested:
+                                                                       [
+                                                                           new RouteMap("list",
+                                                                               views.FindByViewModel<
+                                                                                   ComputersListViewModel>())
+                                                                       ]),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())
                                                       ])

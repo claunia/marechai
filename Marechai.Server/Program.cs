@@ -210,24 +210,19 @@ file class Program
         builder.Services.AddScoped<TokenService, TokenService>();
 
         // Read allowed CORS origins from configuration
-        string[] allowedOrigins = builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>();
+        string[] allowedOrigins = builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>() ??
+                                  Array.Empty<string>();
 
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowFrontend",
                               policy =>
                               {
-                                  switch(allowedOrigins)
-                                  {
-                                      case ["*"]:
-                                          policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-
-                                          break;
-                                      case { Length: > 0 }:
-                                          policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
-
-                                          break;
-                                  }
+                                  // Check if wildcard is in the allowed origins
+                                  if(allowedOrigins.Contains("*"))
+                                      policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                                  else if(allowedOrigins.Length > 0)
+                                      policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
                               });
         });
 

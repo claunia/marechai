@@ -10,6 +10,7 @@ namespace Marechai.App.Presentation;
 public partial class ComputersViewModel : ObservableObject
 {
     private readonly ComputersService            _computersService;
+    private readonly IComputersListFilterContext _filterContext;
     private readonly IStringLocalizer            _localizer;
     private readonly ILogger<ComputersViewModel> _logger;
     private readonly INavigator                  _navigator;
@@ -48,12 +49,14 @@ public partial class ComputersViewModel : ObservableObject
     private ObservableCollection<int> yearsList = new();
 
     public ComputersViewModel(ComputersService            computersService, IStringLocalizer localizer,
-                              ILogger<ComputersViewModel> logger,           INavigator       navigator)
+                              ILogger<ComputersViewModel> logger,           INavigator       navigator,
+                              IComputersListFilterContext filterContext)
     {
         _computersService           = computersService;
         _localizer                  = localizer;
         _logger                     = logger;
         _navigator                  = navigator;
+        _filterContext              = filterContext;
         LoadData                    = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand               = new AsyncRelayCommand(GoBackAsync);
         NavigateByLetterCommand     = new AsyncRelayCommand<char>(NavigateByLetterAsync);
@@ -147,10 +150,19 @@ public partial class ComputersViewModel : ObservableObject
     /// </summary>
     private async Task NavigateByLetterAsync(char letter)
     {
-        _logger.LogInformation("Navigating to computers by letter: {Letter}", letter);
-
-        // TODO: Implement navigation to letter-filtered view
-        await Task.CompletedTask;
+        try
+        {
+            _logger.LogInformation("Navigating to computers by letter: {Letter}", letter);
+            _filterContext.FilterType  = ComputerListFilterType.Letter;
+            _filterContext.FilterValue = letter.ToString();
+            await _navigator.NavigateViewModelAsync<ComputersListViewModel>(this);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError("Error navigating to letter computers: {Exception}", ex.Message);
+            ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
+            HasError     = true;
+        }
     }
 
     /// <summary>
@@ -158,10 +170,19 @@ public partial class ComputersViewModel : ObservableObject
     /// </summary>
     private async Task NavigateByYearAsync(int year)
     {
-        _logger.LogInformation("Navigating to computers by year: {Year}", year);
-
-        // TODO: Implement navigation to year-filtered view
-        await Task.CompletedTask;
+        try
+        {
+            _logger.LogInformation("Navigating to computers by year: {Year}", year);
+            _filterContext.FilterType  = ComputerListFilterType.Year;
+            _filterContext.FilterValue = year.ToString();
+            await _navigator.NavigateViewModelAsync<ComputersListViewModel>(this);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError("Error navigating to year computers: {Exception}", ex.Message);
+            ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
+            HasError     = true;
+        }
     }
 
     /// <summary>
@@ -169,9 +190,18 @@ public partial class ComputersViewModel : ObservableObject
     /// </summary>
     private async Task NavigateAllComputersAsync()
     {
-        _logger.LogInformation("Navigating to all computers");
-
-        // TODO: Implement navigation to all computers view
-        await Task.CompletedTask;
+        try
+        {
+            _logger.LogInformation("Navigating to all computers");
+            _filterContext.FilterType  = ComputerListFilterType.All;
+            _filterContext.FilterValue = string.Empty;
+            await _navigator.NavigateViewModelAsync<ComputersListViewModel>(this);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError("Error navigating to all computers: {Exception}", ex.Message);
+            ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
+            HasError     = true;
+        }
     }
 }

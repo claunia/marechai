@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Kiota.Abstractions.Serialization;
 
@@ -116,6 +117,83 @@ public class ComputersService
         catch
         {
             return 0;
+        }
+    }
+
+    /// <summary>
+    ///     Fetches computers filtered by starting letter from the API
+    /// </summary>
+    public async Task<List<MachineDto>> GetComputersByLetterAsync(char letter)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching computers starting with '{Letter}' from API", letter);
+
+            List<MachineDto> computers = await _apiClient.Computers.ByLetter[letter.ToString()].GetAsync();
+
+            if(computers == null) return new List<MachineDto>();
+
+            _logger.LogInformation("Successfully fetched {Count} computers starting with '{Letter}'",
+                                   computers.Count,
+                                   letter);
+
+            return computers;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching computers by letter '{Letter}' from API", letter);
+
+            return new List<MachineDto>();
+        }
+    }
+
+    /// <summary>
+    ///     Fetches computers filtered by year from the API
+    /// </summary>
+    public async Task<List<MachineDto>> GetComputersByYearAsync(int year)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching computers from year {Year} from API", year);
+
+            List<MachineDto> computers = await _apiClient.Computers.ByYear[year].GetAsync();
+
+            if(computers == null) return new List<MachineDto>();
+
+            _logger.LogInformation("Successfully fetched {Count} computers from year {Year}", computers.Count, year);
+
+            return computers;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching computers by year {Year} from API", year);
+
+            return new List<MachineDto>();
+        }
+    }
+
+    /// <summary>
+    ///     Fetches all computers from the API
+    /// </summary>
+    public async Task<List<MachineDto>> GetAllComputersAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Fetching all computers from API");
+
+            List<MachineDto> computers = await _apiClient.Computers.GetAsync();
+
+            if(computers == null) return new List<MachineDto>();
+
+            _logger.LogInformation("Successfully fetched {Count} total computers", computers.Count);
+
+            return computers;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching all computers from API");
+
+            return new List<MachineDto>();
         }
     }
 }
