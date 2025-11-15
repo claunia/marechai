@@ -33,11 +33,11 @@ namespace Marechai.Server.Helpers;
 
 public static class SvgRender
 {
-    public static void RenderCountries()
+    public static void RenderCountries(string assetRootPath)
     {
-        if(!Directory.Exists("wwwroot/assets/flags/countries")) return;
+        if(!Directory.Exists($"{assetRootPath}/flags/countries")) return;
 
-        foreach(string file in Directory.GetFiles("wwwroot/assets/flags/countries/",
+        foreach(string file in Directory.GetFiles($"{assetRootPath}/flags/countries/",
                                                   "*.svg",
                                                   SearchOption.TopDirectoryOnly))
         {
@@ -50,8 +50,8 @@ public static class SvgRender
                         "png", "webp"
                     })
             {
-                if(!Directory.Exists(Path.Combine("wwwroot/assets/flags/countries",          format)))
-                    Directory.CreateDirectory(Path.Combine("wwwroot/assets/flags/countries", format));
+                if(!Directory.Exists(Path.Combine($"{assetRootPath}/flags/countries",          format)))
+                    Directory.CreateDirectory(Path.Combine($"{assetRootPath}/flags/countries", format));
 
                 SKEncodedImageFormat skFormat;
 
@@ -72,14 +72,14 @@ public static class SvgRender
                             1, 2, 3
                         })
                 {
-                    if(!Directory.Exists(Path.Combine("wwwroot/assets/flags/countries", format, $"{multiplier}x")))
+                    if(!Directory.Exists(Path.Combine($"{assetRootPath}/flags/countries", format, $"{multiplier}x")))
                     {
-                        Directory.CreateDirectory(Path.Combine("wwwroot/assets/flags/countries",
+                        Directory.CreateDirectory(Path.Combine($"{assetRootPath}/flags/countries",
                                                                format,
                                                                $"{multiplier}x"));
                     }
 
-                    string rendered = Path.Combine("wwwroot/assets/flags/countries",
+                    string rendered = Path.Combine($"{assetRootPath}/flags/countries",
                                                    format,
                                                    $"{multiplier}x",
                                                    flagName + $".{format}");
@@ -102,11 +102,11 @@ public static class SvgRender
         }
     }
 
-    public static void ImportCompanyLogos(MarechaiContext context)
+    public static void ImportCompanyLogos(string assetRootPath, MarechaiContext context)
     {
-        if(!Directory.Exists("wwwroot/assets/incoming")) return;
+        if(!Directory.Exists($"{assetRootPath}/incoming")) return;
 
-        foreach(string file in Directory.GetFiles("wwwroot/assets/incoming",
+        foreach(string file in Directory.GetFiles($"{assetRootPath}/incoming",
                                                   "company_*.svg",
                                                   SearchOption.TopDirectoryOnly))
         {
@@ -153,8 +153,8 @@ public static class SvgRender
                         })
                 {
                     string outDir = minSize == 32
-                                        ? Path.Combine("wwwroot/assets/logos/thumbs", format)
-                                        : Path.Combine("wwwroot/assets/logos",        format);
+                                        ? Path.Combine($"{assetRootPath}/logos/thumbs", format)
+                                        : Path.Combine($"{assetRootPath}/logos",        format);
 
                     if(!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
 
@@ -200,7 +200,7 @@ public static class SvgRender
                 }
             }
 
-            File.Move(file, $"wwwroot/assets/logos/{guid}.svg");
+            File.Move(file, $"{assetRootPath}/logos/{guid}.svg");
         }
     }
 

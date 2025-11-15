@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,9 +13,11 @@ using Markdig;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Version = Marechai.Server.Interop.Version;
@@ -140,14 +143,36 @@ file class Program
             }
         }
 
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+        string assetRootPath = builder.Configuration["AssetRootPath"];
+
+        if(string.IsNullOrEmpty(assetRootPath))
+        {
+            Console.WriteLine("\e[31;1mAsset root path not set, cannot continue, check configuration...\e[0m");
+
+            return;
+        }
+
+        Directory.CreateDirectory(assetRootPath);
+
         DateTime start = DateTime.Now;
         Console.WriteLine("\e[31;1mRendering new country flags...\e[0m");
-        SvgRender.RenderCountries();
+        SvgRender.RenderCountries(assetRootPath);
         DateTime end = DateTime.Now;
 
         Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
 
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        start = DateTime.Now;
+        Console.WriteLine("\e[31;1mEnsuring photo folders exist...\e[0m");
+        Photos.EnsureCreated(assetRootPath, false, "machines");
+        Console.WriteLine("\e[31;1mEnsuring scan folders exist...\e[0m");
+        Photos.EnsureCreated(assetRootPath, true, "books");
+        Photos.EnsureCreated(assetRootPath, true, "documents");
+        Photos.EnsureCreated(assetRootPath, true, "magazines");
+        end = DateTime.Now;
+
+        Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
 
         // Add services to the container.
         builder.Services.AddControllers()
@@ -210,8 +235,7 @@ file class Program
         builder.Services.AddScoped<TokenService, TokenService>();
 
         // Read allowed CORS origins from configuration
-        string[] allowedOrigins = builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>() ??
-                                  Array.Empty<string>();
+        string[] allowedOrigins = builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>() ?? [];
 
         builder.Services.AddCors(options =>
         {
@@ -241,6 +265,28 @@ file class Program
 
         app.MapControllers();
 
+        // Set up custom content types - associating file extension to MIME type
+        var provider = new FileExtensionContentTypeProvider
+        {
+            Mappings =
+            {
+                // Add new mappings
+                [".avif"] = "image/avif",   // AVIF image format
+                [".heic"] = "image/heic",   // HEIC image format
+                [".heif"] = "image/heif",   // HEIF image format
+                [".jxl"]  = "image/jxl",    // JPEG-XL image format
+                [".webp"] = "image/webp",   // WebP image format
+                [".svg"]  = "image/svg+xml" // SVG image format
+            }
+        };
+
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider        = new PhysicalFileProvider(assetRootPath),
+            RequestPath         = "/assets",
+            ContentTypeProvider = provider
+        });
+
         using(IServiceScope scope = app.Services.CreateScope())
         {
             IServiceProvider services = scope.ServiceProvider;
@@ -257,7 +303,7 @@ file class Program
 
                 start = DateTime.Now;
                 Console.WriteLine("\e[31;1mImporting company logos...\e[0m");
-                SvgRender.ImportCompanyLogos(context);
+                SvgRender.ImportCompanyLogos(assetRootPath, context);
                 end = DateTime.Now;
 
                 Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
@@ -275,20 +321,6 @@ file class Program
 
                 context.SaveChanges();
 
-                end = DateTime.Now;
-
-                Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);
-
-                start = DateTime.Now;
-                Console.WriteLine("\e[31;1mEnsuring photo folders exist...\e[0m");
-                Photos.EnsureCreated("wwwroot", false, "machines");
-                end = DateTime.Now;
-
-                start = DateTime.Now;
-                Console.WriteLine("\e[31;1mEnsuring scan folders exist...\e[0m");
-                Photos.EnsureCreated("wwwroot", true, "books");
-                Photos.EnsureCreated("wwwroot", true, "documents");
-                Photos.EnsureCreated("wwwroot", true, "magazines");
                 end = DateTime.Now;
 
                 Console.WriteLine("\e[31;1mTook \e[32;1m{0} seconds\e[31;1m...\e[0m", (end - start).TotalSeconds);

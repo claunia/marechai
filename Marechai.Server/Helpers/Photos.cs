@@ -36,11 +36,11 @@ public class Photos
 {
     public delegate Task ConversionFinished(bool result);
 
-    public static void EnsureCreated(string webRootPath, bool scan, string item)
+    public static void EnsureCreated(string assetRootPath, bool scan, string item)
     {
         List<string> paths = [];
 
-        string photosRoot             = Path.Combine(webRootPath,    "assets", scan ? "scan" : "photos");
+        string photosRoot             = Path.Combine(assetRootPath,    scan ? "scan" : "photos");
         string itemPhotosRoot         = Path.Combine(photosRoot,     item);
         string itemThumbsRoot         = Path.Combine(itemPhotosRoot, "thumbs");
         string itemOriginalPhotosRoot = Path.Combine(itemPhotosRoot, "originals");
@@ -88,14 +88,14 @@ public class Photos
         foreach(string path in paths.Where(path => !Directory.Exists(path))) Directory.CreateDirectory(path);
     }
 
-    public static bool Convert(string webRootPath,  Guid   id,         string originalPath, string sourceFormat,
+    public static bool Convert(string assetRootPath,  Guid   id,         string originalPath, string sourceFormat,
                                string outputFormat, string resolution, bool   thumbnail,    bool   scan, string item)
     {
         outputFormat = outputFormat.ToLowerInvariant();
         resolution   = resolution.ToLowerInvariant();
         sourceFormat = sourceFormat.ToLowerInvariant();
 
-        string outputPath = Path.Combine(webRootPath, "assets", scan ? "scans" : "photos", item);
+        string outputPath = Path.Combine(assetRootPath, scan ? "scans" : "photos", item);
         int    width, height;
 
         if(thumbnail) outputPath = Path.Combine(outputPath, "thumbs");
@@ -268,12 +268,12 @@ public class Photos
         }
     }
 
-    public void ConversionWorker(string webRootPath, Guid id, string originalFilePath, string sourceFormat, bool scan,
+    public void ConversionWorker(string assetRootPath, Guid id, string originalFilePath, string sourceFormat, bool scan,
                                  string item)
     {
         List<Task> pool =
         [
-            new(() => FinishedRenderingJpeg4kThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJpeg4kThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -282,7 +282,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingJpeg1440Thumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJpeg1440Thumbnail?.Invoke(Convert(assetRootPath,
                                                                          id,
                                                                          originalFilePath,
                                                                          sourceFormat,
@@ -291,7 +291,7 @@ public class Photos
                                                                          true,
                                                                          scan,
                                                                          item))),
-            new(() => FinishedRenderingJpegHdThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJpegHdThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -300,7 +300,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingJpeg4K?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJpeg4K?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -309,7 +309,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingJpeg1440?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJpeg1440?.Invoke(Convert(assetRootPath,
                                                                 id,
                                                                 originalFilePath,
                                                                 sourceFormat,
@@ -318,7 +318,7 @@ public class Photos
                                                                 false,
                                                                 scan,
                                                                 item))),
-            new(() => FinishedRenderingJpegHd?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJpegHd?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -327,7 +327,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingJp2k4kThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJp2k4kThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -336,7 +336,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingJp2k1440Thumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJp2k1440Thumbnail?.Invoke(Convert(assetRootPath,
                                                                          id,
                                                                          originalFilePath,
                                                                          sourceFormat,
@@ -345,7 +345,7 @@ public class Photos
                                                                          true,
                                                                          scan,
                                                                          item))),
-            new(() => FinishedRenderingJp2kHdThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJp2kHdThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -354,7 +354,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingJp2k4k?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJp2k4k?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -363,7 +363,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingJp2k1440?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJp2k1440?.Invoke(Convert(assetRootPath,
                                                                 id,
                                                                 originalFilePath,
                                                                 sourceFormat,
@@ -372,7 +372,7 @@ public class Photos
                                                                 false,
                                                                 scan,
                                                                 item))),
-            new(() => FinishedRenderingJp2kHd?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingJp2kHd?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -381,7 +381,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingWebp4kThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingWebp4kThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -390,7 +390,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingWebp1440Thumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingWebp1440Thumbnail?.Invoke(Convert(assetRootPath,
                                                                          id,
                                                                          originalFilePath,
                                                                          sourceFormat,
@@ -399,7 +399,7 @@ public class Photos
                                                                          true,
                                                                          scan,
                                                                          item))),
-            new(() => FinishedRenderingWebpHdThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingWebpHdThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -408,7 +408,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingWebp4k?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingWebp4k?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -417,7 +417,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingWebp1440?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingWebp1440?.Invoke(Convert(assetRootPath,
                                                                 id,
                                                                 originalFilePath,
                                                                 sourceFormat,
@@ -426,7 +426,7 @@ public class Photos
                                                                 false,
                                                                 scan,
                                                                 item))),
-            new(() => FinishedRenderingWebpHd?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingWebpHd?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -435,7 +435,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingHeif4kThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingHeif4kThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -444,7 +444,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingHeif1440Thumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingHeif1440Thumbnail?.Invoke(Convert(assetRootPath,
                                                                          id,
                                                                          originalFilePath,
                                                                          sourceFormat,
@@ -453,7 +453,7 @@ public class Photos
                                                                          true,
                                                                          scan,
                                                                          item))),
-            new(() => FinishedRenderingHeifHdThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingHeifHdThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -462,7 +462,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingHeif4K?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingHeif4K?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -471,7 +471,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingHeif1440?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingHeif1440?.Invoke(Convert(assetRootPath,
                                                                 id,
                                                                 originalFilePath,
                                                                 sourceFormat,
@@ -480,7 +480,7 @@ public class Photos
                                                                 false,
                                                                 scan,
                                                                 item))),
-            new(() => FinishedRenderingHeifHd?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingHeifHd?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -489,7 +489,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingAvif4kThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingAvif4kThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -498,7 +498,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingAvif1440Thumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingAvif1440Thumbnail?.Invoke(Convert(assetRootPath,
                                                                          id,
                                                                          originalFilePath,
                                                                          sourceFormat,
@@ -507,7 +507,7 @@ public class Photos
                                                                          true,
                                                                          scan,
                                                                          item))),
-            new(() => FinishedRenderingAvifHdThumbnail?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingAvifHdThumbnail?.Invoke(Convert(assetRootPath,
                                                                        id,
                                                                        originalFilePath,
                                                                        sourceFormat,
@@ -516,7 +516,7 @@ public class Photos
                                                                        true,
                                                                        scan,
                                                                        item))),
-            new(() => FinishedRenderingAvif4K?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingAvif4K?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
@@ -525,7 +525,7 @@ public class Photos
                                                               false,
                                                               scan,
                                                               item))),
-            new(() => FinishedRenderingAvif1440?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingAvif1440?.Invoke(Convert(assetRootPath,
                                                                 id,
                                                                 originalFilePath,
                                                                 sourceFormat,
@@ -534,7 +534,7 @@ public class Photos
                                                                 false,
                                                                 scan,
                                                                 item))),
-            new(() => FinishedRenderingAvifHd?.Invoke(Convert(webRootPath,
+            new(() => FinishedRenderingAvifHd?.Invoke(Convert(assetRootPath,
                                                               id,
                                                               originalFilePath,
                                                               sourceFormat,
