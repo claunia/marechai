@@ -1,7 +1,7 @@
 <?xml version="1.0"
       encoding="utf-8"?>
 
-<Page x:Class="Marechai.App.Presentation.ComputersListPage"
+<Page x:Class="Marechai.App.Presentation.Views.ComputersListPage"
       x:Name="PageRoot"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

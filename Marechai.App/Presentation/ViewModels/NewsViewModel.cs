@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Marechai.App.Helpers;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Marechai.Data;
 using Uno.Extensions.Navigation;
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.ViewModels;
 
 /// <summary>
 ///     Wrapper for NewsDto with generated display text

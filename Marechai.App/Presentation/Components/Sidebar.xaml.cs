@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.Components;
 
 public sealed partial class Sidebar : UserControl
 {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Uno.Extensions.Navigation;
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {

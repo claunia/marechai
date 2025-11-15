@@ -1,6 +1,6 @@
 using Microsoft.Kiota.Abstractions.Serialization;
 
-namespace Marechai.App.Services;
+namespace Marechai.App.Helpers;
 
 /// <summary>
 ///     Helper class for extracting values from Kiota UntypedNode objects.

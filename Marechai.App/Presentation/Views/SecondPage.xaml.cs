@@ -1,11 +1,11 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.Views;
 
 public sealed partial class SecondPage : Page
 {
     public SecondPage()
     {
-        this.InitializeComponent();
+        InitializeComponent();
     }
 }

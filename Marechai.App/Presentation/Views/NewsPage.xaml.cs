@@ -1,10 +1,11 @@
 using System;
 using Windows.Foundation;
+using Marechai.App.Presentation.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.Views;
 
 public sealed partial class NewsPage : Page
 {

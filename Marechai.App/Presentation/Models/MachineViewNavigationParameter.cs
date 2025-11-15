@@ -23,7 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.Models;
 
 /// <summary>
 ///     Navigation parameter for the MachineViewPage containing both the machine ID and the navigation source.

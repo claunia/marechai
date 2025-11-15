@@ -1,4 +1,6 @@
 using System.Net.Http;
+using Marechai.App.Presentation.ViewModels;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Microsoft.UI.Xaml;
 using Uno.Extensions;
@@ -8,6 +10,11 @@ using Uno.Extensions.Http;
 using Uno.Extensions.Localization;
 using Uno.Extensions.Navigation;
 using Uno.UI;
+using ComputersListViewModel = Marechai.App.Presentation.ViewModels.ComputersListViewModel;
+using ComputersViewModel = Marechai.App.Presentation.ViewModels.ComputersViewModel;
+using MachineViewViewModel = Marechai.App.Presentation.ViewModels.MachineViewViewModel;
+using MainViewModel = Marechai.App.Presentation.ViewModels.MainViewModel;
+using NewsViewModel = Marechai.App.Presentation.ViewModels.NewsViewModel;
 
 namespace Marechai.App;
 

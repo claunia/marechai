@@ -1,13 +1,13 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Uno.Extensions.Hosting;
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.Views;
 
 public sealed partial class Shell : UserControl, IContentControlProvider
 {
     public Shell()
     {
-        this.InitializeComponent();
+        InitializeComponent();
     }
 
     public ContentControl ContentControl => Splash;

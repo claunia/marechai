@@ -44,5 +44,39 @@
   <ItemGroup>
     <PackageReference Include="Humanizer"/>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Presentation\Views\Shell.xaml.cs">
+      <DependentUpon>Shell.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+    <Compile Update="Presentation\Views\SecondPage.xaml.cs">
+      <DependentUpon>SecondPage.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+    <Compile Update="Presentation\Views\ComputersPage.xaml.cs">
+      <DependentUpon>ComputersPage.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+    <Compile Update="Presentation\Views\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+    <Compile Update="Presentation\Views\ComputersListPage.xaml.cs">
+      <DependentUpon>ComputersListPage.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+    <Compile Update="Presentation\Views\NewsPage.xaml.cs">
+      <DependentUpon>NewsPage.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+    <Compile Update="Presentation\Views\MachineViewPage.xaml.cs">
+      <DependentUpon>MachineViewPage.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+    <Compile Update="Presentation\Components\Sidebar.xaml.cs">
+      <DependentUpon>Sidebar.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
+  </ItemGroup>
 
 </Project>

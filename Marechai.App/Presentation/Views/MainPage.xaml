@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0"
       encoding="utf-8"?>
 
-<Page x:Class="Marechai.App.Presentation.MainPage"
+<Page x:Class="Marechai.App.Presentation.Views.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:Marechai.App.Presentation"
       xmlns:utu="using:Uno.Toolkit.UI"
       xmlns:uen="using:Uno.Extensions.Navigation.UI"
+      xmlns:components="clr-namespace:Marechai.App.Presentation.Components"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -27,9 +27,9 @@
               Grid.Column="0"
               Width="280"
               HorizontalAlignment="Left">
-            <local:Sidebar x:Name="SidebarPanel"
-                           DataContext="{Binding}"
-                           VerticalAlignment="Stretch" />
+            <components:Sidebar x:Name="SidebarPanel"
+                                DataContext="{Binding}"
+                                VerticalAlignment="Stretch" />
         </Grid>
 
         <!-- Header -->

@@ -1,5 +1,3 @@
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.ViewModels;
 
-public partial record SecondViewModel(Entity Entity)
-{
-}
+public record SecondViewModel(Entity Entity) {}

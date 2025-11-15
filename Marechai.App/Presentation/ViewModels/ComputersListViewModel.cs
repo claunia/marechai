@@ -6,10 +6,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Helpers;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Uno.Extensions.Navigation;
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.ViewModels;
 
 /// <summary>
 ///     ViewModel for displaying a filtered list of computers

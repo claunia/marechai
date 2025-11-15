@@ -30,12 +30,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Humanizer;
+using Marechai.App.Helpers;
 using Marechai.App.Services;
 using Marechai.Data;
 using Microsoft.UI.Xaml;
 using Uno.Extensions.Navigation;
 
-namespace Marechai.App.Presentation;
+namespace Marechai.App.Presentation.ViewModels;
 
 public partial class MachineViewViewModel : ObservableObject
 {
