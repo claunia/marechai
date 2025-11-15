@@ -138,7 +138,7 @@ public partial class CompanyDetailViewModel : ObservableObject
         OnPropertyChanged(nameof(HasLogoContent));
     }
 
-    partial void OnCompanyLogosChanged(ObservableCollection<CompanyLogoItem> oldValue,
+    partial void OnCompanyLogosChanged(ObservableCollection<CompanyLogoItem>? oldValue,
                                        ObservableCollection<CompanyLogoItem> newValue)
     {
         // Notify that HasMultipleLogos has changed

@@ -3,13 +3,16 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.App.Helpers;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
+using Marechai.App.Services.Caching;
 using Uno.Extensions.Navigation;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -17,6 +20,7 @@ public partial class CompaniesViewModel : ObservableObject
 {
     private readonly List<CompanyListItem>       _allCompanies = [];
     private readonly CompaniesService            _companiesService;
+    private readonly CompanyLogoCache            _logoCache;
     private readonly IStringLocalizer            _localizer;
     private readonly ILogger<CompaniesViewModel> _logger;
     private readonly INavigator                  _navigator;
@@ -45,10 +49,12 @@ public partial class CompaniesViewModel : ObservableObject
     [ObservableProperty]
     private string _searchQuery = string.Empty;
 
-    public CompaniesViewModel(CompaniesService            companiesService, IStringLocalizer localizer,
-                              ILogger<CompaniesViewModel> logger,           INavigator       navigator)
+    public CompaniesViewModel(CompaniesService            companiesService, CompanyLogoCache logoCache,
+                              IStringLocalizer localizer,  ILogger<CompaniesViewModel> logger,
+                              INavigator       navigator)
     {
         _companiesService        = companiesService;
+        _logoCache               = logoCache;
         _localizer               = localizer;
         _logger                  = logger;
         _navigator               = navigator;
@@ -98,11 +104,29 @@ public partial class CompaniesViewModel : ObservableObject
                 // Convert DateTimeOffset? to DateTime?
                 DateTime? foundedDate = company.Founded?.DateTime;
 
+                // Load logo if available
+                SvgImageSource? logoSource = null;
+                if(company.LastLogo.HasValue)
+                {
+                    try
+                    {
+                        var logoStream = await _logoCache.GetLogoAsync(company.LastLogo.Value);
+                        logoSource = new SvgImageSource();
+                        await logoSource.SetSourceAsync(logoStream.AsRandomAccessStream());
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.LogWarning("Failed to load logo for company {CompanyId}: {Exception}",
+                                          companyId, ex.Message);
+                    }
+                }
+
                 _allCompanies.Add(new CompanyListItem
                 {
                     Id             = companyId,
                     Name           = company.Name ?? string.Empty,
-                    FoundationDate = foundedDate
+                    FoundationDate = foundedDate,
+                    LogoImageSource = logoSource
                 });
             }
 
@@ -186,9 +210,10 @@ public partial class CompaniesViewModel : ObservableObject
 /// </summary>
 public class CompanyListItem
 {
-    public int       Id             { get; set; }
-    public string    Name           { get; set; } = string.Empty;
-    public DateTime? FoundationDate { get; set; }
+    public int              Id               { get; set; }
+    public string           Name             { get; set; } = string.Empty;
+    public DateTime?        FoundationDate   { get; set; }
+    public SvgImageSource?  LogoImageSource  { get; set; }
 
     public string FoundationDateDisplay =>
         FoundationDate.HasValue ? FoundationDate.Value.ToString("MMMM d, yyyy") : string.Empty;

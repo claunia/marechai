@@ -97,15 +97,34 @@
                                 <Button HorizontalAlignment="Stretch"
                                         Command="{Binding DataContext.NavigateToCompanyCommand, ElementName=PageRoot}"
                                         CommandParameter="{Binding}">
-                                    <StackPanel Spacing="4"
-                                               Padding="8">
-                                        <TextBlock Text="{Binding Name}"
-                                                   FontSize="16"
-                                                   FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding FoundationDateDisplay}"
-                                                   FontSize="12"
-                                                   Opacity="0.6" />
-                                    </StackPanel>
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Company Logo -->
+                                        <Image Grid.Column="0"
+                                               Width="48"
+                                               Height="48"
+                                               Stretch="Uniform"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Source="{Binding LogoImageSource}"
+                                               Visibility="{Binding LogoImageSource, Converter={StaticResource ObjectToVisibilityConverter}}" />
+
+                                        <!-- Company Details -->
+                                        <StackPanel Grid.Column="1"
+                                                   Spacing="4"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding FoundationDateDisplay}"
+                                                       FontSize="12"
+                                                       Opacity="0.6" />
+                                        </StackPanel>
+                                    </Grid>
                                 </Button>
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
