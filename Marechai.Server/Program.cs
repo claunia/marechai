@@ -182,7 +182,14 @@ file class Program
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.WriteIndented        = true;
                     options.JsonSerializerOptions.ReferenceHandler     = ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.NumberHandling       = JsonNumberHandling.Strict;
                 });
+
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            // Tell OpenAPI generator to report number fields as integers/floats only, not strings
+            options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
+        });
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
