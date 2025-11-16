@@ -330,7 +330,8 @@ public partial class GpuDetailViewModel : ObservableObject
 
         var navParam = new MachineViewNavigationParameter
         {
-            MachineId = machineId
+            MachineId        = machineId,
+            NavigationSource = this
         };
 
         await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this, data: navParam);
