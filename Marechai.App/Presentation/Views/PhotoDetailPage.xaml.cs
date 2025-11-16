@@ -38,4 +38,10 @@ public sealed partial class PhotoDetailPage : Page
         if(DataContext is PhotoDetailViewModel viewModel && _pendingPhotoId.HasValue)
             _ = viewModel.LoadPhotoCommand.ExecuteAsync(_pendingPhotoId.Value);
     }
+
+    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        base.OnNavigatingFrom(e);
+        _pendingPhotoId = null;
+    }
 }

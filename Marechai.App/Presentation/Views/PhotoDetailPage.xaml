@@ -80,14 +80,14 @@
 
             <!-- Responsive Layout -->
             <utu:ResponsiveView Visibility="{Binding PhotoImageSource, Converter={StaticResource ObjectToVisibilityConverter}}">
-                
+
                 <!-- Narrow Template -->
                 <utu:ResponsiveView.NarrowTemplate>
                     <DataTemplate>
                         <ScrollViewer VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled">
                             <StackPanel Padding="16" Spacing="24">
-                                
+
                                 <!-- Photo -->
                                 <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -98,7 +98,9 @@
                                         MinHeight="250">
                                     <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                                   VerticalScrollBarVisibility="Auto"
-                                                  ZoomMode="Enabled">
+                                                  ZoomMode="Enabled"
+                                                  MinZoomFactor="1.0"
+                                                  MaxZoomFactor="5.0">
                                         <Image Source="{Binding PhotoImageSource}"
                                                Stretch="Uniform"
                                                HorizontalAlignment="Center"
@@ -325,11 +327,13 @@
                                     BorderThickness="1"
                                     CornerRadius="8"
                                     Padding="8"
-                                    VerticalAlignment="Top">
+                                    VerticalAlignment="Top"
+                                    MaxHeight="500">
                                 <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                               VerticalScrollBarVisibility="Auto"
                                               ZoomMode="Enabled"
-                                              MaxHeight="500">
+                                              MinZoomFactor="1.0"
+                                              MaxZoomFactor="5.0">
                                     <Image Source="{Binding PhotoImageSource}"
                                            Stretch="Uniform"
                                            HorizontalAlignment="Center"

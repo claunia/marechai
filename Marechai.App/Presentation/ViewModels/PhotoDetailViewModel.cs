@@ -255,71 +255,73 @@ public partial class PhotoDetailViewModel : ObservableObject
             PhotoAperture     = photo.Aperture != null ? $"f/{photo.Aperture}" : string.Empty;
             PhotoExposureTime = photo.Exposure != null ? $"{photo.Exposure}s" : string.Empty;
 
-            PhotoExposureMode =
-                ExtractAndHumanizeEnum(photo.ExposureMethod?.MachinePhotoDtoExposureMethodMember1?.AdditionalData,
-                                       typeof(ExposureMode));
+            // Extract ExposureMode - simple nullable integer now
+            PhotoExposureMode = photo.ExposureMethod.HasValue
+                                    ? ((ExposureMode)photo.ExposureMethod.Value).Humanize()
+                                    : string.Empty;
 
-            PhotoExposureProgram = photo.ExposureProgram?.ExposureProgram != null
-                                       ? ((ExposureProgram)ExtractInt(photo.ExposureProgram.ExposureProgram
-                                                                           .AdditionalData)).Humanize()
+            // Extract ExposureProgram - simple nullable integer now
+            PhotoExposureProgram = photo.ExposureProgram.HasValue
+                                       ? ((ExposureProgram)photo.ExposureProgram.Value).Humanize()
                                        : string.Empty;
 
             PhotoFocalLength           = photo.FocalLength     != null ? $"{photo.FocalLength}mm" : string.Empty;
             PhotoFocalLengthEquivalent = photo.FocalEquivalent != null ? $"{photo.FocalEquivalent}mm" : string.Empty;
             PhotoIsoRating             = photo.Iso             != null ? photo.Iso.ToString() : string.Empty;
 
-            PhotoFlash = photo.Flash?.Flash != null
-                             ? ((Flash)ExtractInt(photo.Flash.Flash.AdditionalData)).Humanize()
-                             : string.Empty;
+            // Extract Flash - simple nullable integer now
+            PhotoFlash = photo.Flash.HasValue ? ((Flash)photo.Flash.Value).Humanize() : string.Empty;
 
-            PhotoLightSource = photo.LightSource?.LightSource != null
-                                   ? ((LightSource)ExtractInt(photo.LightSource.LightSource.AdditionalData)).Humanize()
+            // Extract LightSource - simple nullable integer now
+            PhotoLightSource = photo.LightSource.HasValue
+                                   ? ((LightSource)photo.LightSource.Value).Humanize()
                                    : string.Empty;
 
-            PhotoMeteringMode = photo.MeteringMode?.MeteringMode != null
-                                    ? ((MeteringMode)ExtractInt(photo.MeteringMode.MeteringMode.AdditionalData))
-                                   .Humanize()
+            // Extract MeteringMode - simple nullable integer now
+            PhotoMeteringMode = photo.MeteringMode.HasValue
+                                    ? ((MeteringMode)photo.MeteringMode.Value).Humanize()
                                     : string.Empty;
 
-            PhotoWhiteBalance = photo.WhiteBalance?.WhiteBalance != null
-                                    ? ((WhiteBalance)ExtractInt(photo.WhiteBalance.WhiteBalance.AdditionalData))
-                                   .Humanize()
+            // Extract WhiteBalance - simple nullable integer now
+            PhotoWhiteBalance = photo.WhiteBalance.HasValue
+                                    ? ((WhiteBalance)photo.WhiteBalance.Value).Humanize()
                                     : string.Empty;
 
             // Photo Properties
-            PhotoColorSpace = ExtractAndHumanizeEnum(photo.Colorspace?.MachinePhotoDtoColorspaceMember1?.AdditionalData,
-                                                     typeof(ColorSpace));
-
-            PhotoContrast = photo.Contrast?.Contrast != null
-                                ? ((Contrast)ExtractInt(photo.Contrast.Contrast.AdditionalData)).Humanize()
-                                : string.Empty;
-
-            PhotoSaturation = photo.Saturation?.Saturation != null
-                                  ? ((Saturation)ExtractInt(photo.Saturation.Saturation.AdditionalData)).Humanize()
+            // Extract ColorSpace - simple nullable integer now
+            PhotoColorSpace = photo.Colorspace.HasValue
+                                  ? ((ColorSpace)photo.Colorspace.Value).Humanize()
                                   : string.Empty;
 
-            PhotoSharpness = photo.Sharpness?.Sharpness != null
-                                 ? ((Sharpness)ExtractInt(photo.Sharpness.Sharpness.AdditionalData)).Humanize()
-                                 : string.Empty;
+            // Extract Contrast - simple nullable integer now
+            PhotoContrast = photo.Contrast.HasValue ? ((Contrast)photo.Contrast.Value).Humanize() : string.Empty;
 
-            PhotoOrientation = photo.Orientation?.Orientation != null
-                                   ? ((Orientation)ExtractInt(photo.Orientation.Orientation.AdditionalData)).Humanize()
+            // Extract Saturation - simple nullable integer now
+            PhotoSaturation = photo.Saturation.HasValue
+                                  ? ((Saturation)photo.Saturation.Value).Humanize()
+                                  : string.Empty;
+
+            // Extract Sharpness - simple nullable integer now
+            PhotoSharpness = photo.Sharpness.HasValue ? ((Sharpness)photo.Sharpness.Value).Humanize() : string.Empty;
+
+            // Extract Orientation - simple nullable integer now
+            PhotoOrientation = photo.Orientation.HasValue
+                                   ? ((Orientation)photo.Orientation.Value).Humanize()
                                    : string.Empty;
 
-            PhotoSceneCaptureType = photo.SceneCaptureType?.SceneCaptureType != null
-                                        ? ((SceneCaptureType)ExtractInt(photo.SceneCaptureType.SceneCaptureType
-                                                                             .AdditionalData)).Humanize()
+            // Extract SceneCaptureType - simple nullable integer now
+            PhotoSceneCaptureType = photo.SceneCaptureType.HasValue
+                                        ? ((SceneCaptureType)photo.SceneCaptureType.Value).Humanize()
                                         : string.Empty;
 
-            PhotoSensingMethod = photo.SensingMethod?.SensingMethod != null
-                                     ? ((SensingMethod)ExtractInt(photo.SensingMethod.SensingMethod.AdditionalData))
-                                    .Humanize()
+            // Extract SensingMethod - simple nullable integer now
+            PhotoSensingMethod = photo.SensingMethod.HasValue
+                                     ? ((SensingMethod)photo.SensingMethod.Value).Humanize()
                                      : string.Empty;
 
-            PhotoSubjectDistanceRange = photo.SubjectDistanceRange?.SubjectDistanceRange != null
-                                            ? ((SubjectDistanceRange)ExtractInt(photo.SubjectDistanceRange
-                                                                                   .SubjectDistanceRange
-                                                                                   .AdditionalData)).Humanize()
+            // Extract SubjectDistanceRange - simple nullable integer now
+            PhotoSubjectDistanceRange = photo.SubjectDistanceRange.HasValue
+                                            ? ((SubjectDistanceRange)photo.SubjectDistanceRange.Value).Humanize()
                                             : string.Empty;
 
             // Resolution and Other
@@ -329,9 +331,9 @@ public partial class PhotoDetailViewModel : ObservableObject
             PhotoVerticalResolution =
                 photo.VerticalResolution != null ? $"{photo.VerticalResolution} DPI" : string.Empty;
 
-            PhotoResolutionUnit = photo.ResolutionUnit?.ResolutionUnit != null
-                                      ? ((ResolutionUnit)ExtractInt(photo.ResolutionUnit.ResolutionUnit.AdditionalData))
-                                     .Humanize()
+            // Extract ResolutionUnit - simple nullable integer now
+            PhotoResolutionUnit = photo.ResolutionUnit.HasValue
+                                      ? ((ResolutionUnit)photo.ResolutionUnit.Value).Humanize()
                                       : string.Empty;
 
             PhotoDigitalZoomRatio = photo.DigitalZoom != null ? $"{photo.DigitalZoom}x" : string.Empty;
