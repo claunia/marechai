@@ -41,10 +41,11 @@
     </UnoFeatures>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj" />
+    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Humanizer" />
+    <PackageReference Include="Humanizer"/>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Presentation\Views\Shell.xaml.cs">
@@ -79,16 +80,20 @@
       <DependentUpon>Sidebar.xaml</DependentUpon>
       <IsDefaultItem>true</IsDefaultItem>
     </Compile>
+    <Compile Update="Presentation\Views\UsersPage.xaml.cs">
+      <DependentUpon>UsersPage.xaml</DependentUpon>
+      <IsDefaultItem>true</IsDefaultItem>
+    </Compile>
   </ItemGroup>
 
-<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
-  <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" />
-  <!-- Add more community toolkit references here -->
-</ItemGroup>
-<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'windows'">
-  <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls" />
-  <!-- Add more uno community toolkit references here -->
-</ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls"/>
+    <!-- Add more community toolkit references here -->
+  </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'windows'">
+    <PackageReference Include="Uno.CommunityToolkit.WinUI.UI.Controls"/>
+    <!-- Add more uno community toolkit references here -->
+  </ItemGroup>
 
 
 </Project>

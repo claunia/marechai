@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.App.Services;
+using Marechai.App.Services.Authentication;
 using Uno.Extensions.Authentication;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Toolkit;
@@ -13,10 +15,14 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     private readonly IAuthenticationService _authService;
+    private readonly IJwtService            _jwtService;
     private readonly IStringLocalizer       _localizer;
     private readonly INavigator             _navigator;
+    private readonly ITokenService          _tokenService;
     [ObservableProperty]
     private bool _isSidebarOpen = true;
+    [ObservableProperty]
+    private bool _isUberadminUser;
     [ObservableProperty]
     private Dictionary<string, string> _localizedStrings = new();
     [ObservableProperty]
@@ -31,11 +37,13 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, INavigator navigator,
                          NewsViewModel newsViewModel, IColorThemeService colorThemeService, IThemeService themeService,
-                         IAuthenticationService authService)
+                         IAuthenticationService authService, IJwtService jwtService, ITokenService tokenService)
     {
         _navigator    =  navigator;
         _localizer    =  localizer;
         _authService  =  authService;
+        _jwtService   =  jwtService;
+        _tokenService =  tokenService;
         NewsViewModel =  newsViewModel;
         Title         =  "Marechai";
         Title         += $" - {localizer["ApplicationName"]}";
@@ -63,6 +71,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToProcessorsCommand               = new AsyncRelayCommand(() => NavigateTo("processors"));
         NavigateToSoftwareCommand                 = new AsyncRelayCommand(() => NavigateTo("software"));
         NavigateToSoundSynthesizersCommand        = new AsyncRelayCommand(() => NavigateTo("sound-synths"));
+        NavigateToUsersCommand                    = new AsyncRelayCommand(() => NavigateTo("users"));
         NavigateToSettingsCommand                 = new AsyncRelayCommand(() => NavigateTo("settings"));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
@@ -71,6 +80,7 @@ public partial class MainViewModel : ObservableObject
         _authService.LoggedOut += OnLoggedOut;
 
         UpdateLoginLogoutButtonText();
+        UpdateUberadminStatus();
     }
 
     public string? Title { get; }
@@ -90,6 +100,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToProcessorsCommand               { get; }
     public ICommand NavigateToSoftwareCommand                 { get; }
     public ICommand NavigateToSoundSynthesizersCommand        { get; }
+    public ICommand NavigateToUsersCommand                    { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }
@@ -171,16 +182,38 @@ public partial class MainViewModel : ObservableObject
         LoginLogoutButtonText = isAuthenticated ? LocalizedStrings["Logout"] : LocalizedStrings["Login"];
     }
 
+    private void UpdateUberadminStatus()
+    {
+        try
+        {
+            string token = _tokenService.GetToken();
+
+            if(!string.IsNullOrWhiteSpace(token))
+            {
+                IEnumerable<string> roles = _jwtService.GetRoles(token);
+                IsUberadminUser = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase);
+            }
+            else
+                IsUberadminUser = false;
+        }
+        catch
+        {
+            IsUberadminUser = false;
+        }
+    }
+
     private void OnLoggedOut(object? sender, EventArgs e)
     {
         // Update button text when user logs out
         UpdateLoginLogoutButtonText();
+        UpdateUberadminStatus();
     }
 
     public void RefreshAuthenticationState()
     {
         // Public method to refresh authentication state (called after login)
         UpdateLoginLogoutButtonText();
+        UpdateUberadminStatus();
     }
 
     private async void HandleLoginLogout()
@@ -192,6 +225,7 @@ public partial class MainViewModel : ObservableObject
             // Logout
             await _authService.LogoutAsync(null, CancellationToken.None);
             UpdateLoginLogoutButtonText();
+            UpdateUberadminStatus();
         }
         else
         {

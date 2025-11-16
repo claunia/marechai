@@ -231,6 +231,19 @@
               Visibility="{Binding IsSidebarOpen}">
             <StackPanel Orientation="Vertical"
                         Spacing="0">
+                <!-- Users (Uberadmin only) -->
+                <Button Content="User Management"
+                        Command="{Binding NavigateToUsersCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        Visibility="{Binding IsUberadminUser, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                 <!-- Login/Logout -->
                 <Button Content="{Binding LoginLogoutButtonText}"
                         Command="{Binding LoginLogoutCommand}"

@@ -21,6 +21,7 @@
             <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <local:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter" />
             <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <local:RolesListConverter x:Key="RolesListConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

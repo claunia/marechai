@@ -129,6 +129,7 @@ public partial class App : Application
                                                                          AuthService>();
 
                                                                  services.AddSingleton<ITokenService, TokenService>();
+                                                                 services.AddSingleton<IJwtService, JwtService>();
                                                                  services.AddSingleton<FlagCache>();
                                                                  services.AddSingleton<CompanyLogoCache>();
                                                                  services.AddSingleton<MachinePhotoCache>();
@@ -200,6 +201,7 @@ public partial class App : Application
                        new ViewMap<SoundSynthListPage, SoundSynthsListViewModel>(),
                        new ViewMap<SoundSynthDetailPage, SoundSynthDetailViewModel>(),
                        new ViewMap<SettingsPage, SettingsViewModel>(),
+                       new ViewMap<UsersPage, UsersViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
         routes.Register(new RouteMap("",
@@ -247,7 +249,8 @@ public partial class App : Application
                                                                        ]),
                                                           new RouteMap("gpus",
                                                                        views.FindByViewModel<GpuListViewModel>(),
-                                                                       Nested:
+                                                                       Nested
+                                                                       :
                                                                        [
                                                                            new RouteMap("gpu-details",
                                                                                views.FindByViewModel<
@@ -275,6 +278,8 @@ public partial class App : Application
                                                                        ]),
                                                           new RouteMap("settings",
                                                                        views.FindByViewModel<SettingsViewModel>()),
+                                                          new RouteMap("users",
+                                                                       views.FindByViewModel<UsersViewModel>()),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())
                                                       ])
