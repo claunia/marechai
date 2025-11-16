@@ -38,11 +38,11 @@ public class BasePhotoDto : BaseDto<Guid>
     [JsonPropertyName("camera_model")]
     public string? CameraModel { get; set; }
     [JsonPropertyName("colorspace")]
-    public ColorSpace? ColorSpace { get; set; }
+    public ushort? ColorSpace { get; set; }
     [JsonPropertyName("comments")]
     public string? Comments { get; set; }
     [JsonPropertyName("contrast")]
-    public Contrast? Contrast { get; set; }
+    public ushort? Contrast { get; set; }
     [JsonPropertyName("creation_date")]
     public DateTime? CreationDate { get; set; }
     [JsonPropertyName("digital_zoom")]
@@ -52,11 +52,11 @@ public class BasePhotoDto : BaseDto<Guid>
     [JsonPropertyName("exposure")]
     public double? ExposureTime { get; set; }
     [JsonPropertyName("exposure_method")]
-    public ExposureMode? ExposureMethod { get; set; }
+    public ushort? ExposureMethod { get; set; }
     [JsonPropertyName("exposure_program")]
-    public ExposureProgram? ExposureProgram { get; set; }
+    public ushort? ExposureProgram { get; set; }
     [JsonPropertyName("flash")]
-    public Flash? Flash { get; set; }
+    public ushort? Flash { get; set; }
     [JsonPropertyName("focal")]
     public double? Focal { get; set; }
     [JsonPropertyName("focal_length")]
@@ -70,31 +70,31 @@ public class BasePhotoDto : BaseDto<Guid>
     [JsonPropertyName("lens")]
     public string? Lens { get; set; }
     [JsonPropertyName("light_source")]
-    public LightSource? LightSource { get; set; }
+    public ushort? LightSource { get; set; }
     [JsonPropertyName("metering_mode")]
-    public MeteringMode? MeteringMode { get; set; }
+    public ushort? MeteringMode { get; set; }
     [JsonPropertyName("resolution_unit")]
-    public ResolutionUnit? ResolutionUnit { get; set; }
+    public ushort? ResolutionUnit { get; set; }
     [JsonPropertyName("orientation")]
-    public Orientation? Orientation { get; set; }
+    public ushort? Orientation { get; set; }
     [JsonPropertyName("saturation")]
-    public Saturation? Saturation { get; set; }
+    public ushort? Saturation { get; set; }
     [JsonPropertyName("scene_capture_type")]
-    public SceneCaptureType? SceneCaptureType { get; set; }
+    public ushort? SceneCaptureType { get; set; }
     [JsonPropertyName("sensing_method")]
-    public SensingMethod? SensingMethod { get; set; }
+    public ushort? SensingMethod { get; set; }
     [JsonPropertyName("sharpness")]
-    public Sharpness? Sharpness { get; set; }
+    public ushort? Sharpness { get; set; }
     [JsonPropertyName("software")]
     public string? SoftwareUsed { get; set; }
     [JsonPropertyName("subject_distance_range")]
-    public SubjectDistanceRange? SubjectDistanceRange { get; set; }
+    public byte? SubjectDistanceRange { get; set; }
     [JsonPropertyName("upload_date")]
     public DateTime UploadDate { get; set; }
     [JsonPropertyName("vertical_resolution")]
     public double? VerticalResolution { get; set; }
     [JsonPropertyName("white_balance")]
-    public WhiteBalance? WhiteBalance { get; set; }
+    public ushort? WhiteBalance { get; set; }
     [JsonPropertyName("user_id")]
     public string? UserId { get; set; }
     [JsonPropertyName("license_name")]

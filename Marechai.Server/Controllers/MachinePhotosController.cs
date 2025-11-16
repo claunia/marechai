@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -61,16 +62,16 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
                                                                   Author                = p.Author,
                                                                   CameraManufacturer    = p.CameraManufacturer,
                                                                   CameraModel           = p.CameraModel,
-                                                                  ColorSpace            = p.ColorSpace,
+                                                                  ColorSpace            = (ushort?)p.ColorSpace,
                                                                   Comments              = p.Comments,
-                                                                  Contrast              = p.Contrast,
+                                                                  Contrast              = (ushort?)p.Contrast,
                                                                   CreationDate          = p.CreationDate,
                                                                   DigitalZoomRatio      = p.DigitalZoomRatio,
                                                                   ExifVersion           = p.ExifVersion,
                                                                   ExposureTime          = p.ExposureTime,
-                                                                  ExposureMethod        = p.ExposureMethod,
-                                                                  ExposureProgram       = p.ExposureProgram,
-                                                                  Flash                 = p.Flash,
+                                                                  ExposureMethod        = (ushort?)p.ExposureMethod,
+                                                                  ExposureProgram       = (ushort?)p.ExposureProgram,
+                                                                  Flash                 = (ushort?)p.Flash,
                                                                   Focal                 = p.Focal,
                                                                   FocalLength           = p.FocalLength,
                                                                   FocalLengthEquivalent = p.FocalLengthEquivalent,
@@ -80,25 +81,27 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
                                                                   Lens                  = p.Lens,
                                                                   LicenseId             = p.LicenseId,
                                                                   LicenseName           = p.License.Name,
-                                                                  LightSource           = p.LightSource,
-                                                                  MachineCompanyName    = p.Machine.Company.Name,
-                                                                  MachineId             = p.MachineId,
-                                                                  MachineName           = p.Machine.Name,
-                                                                  MeteringMode          = p.MeteringMode,
-                                                                  ResolutionUnit        = p.ResolutionUnit,
-                                                                  Orientation           = p.Orientation,
-                                                                  Saturation            = p.Saturation,
-                                                                  SceneCaptureType      = p.SceneCaptureType,
-                                                                  SensingMethod         = p.SensingMethod,
-                                                                  Sharpness             = p.Sharpness,
-                                                                  SoftwareUsed          = p.SoftwareUsed,
-                                                                  Source                = p.Source,
-                                                                  SubjectDistanceRange  = p.SubjectDistanceRange,
-                                                                  UploadDate            = p.UploadDate,
-                                                                  UserId                = p.UserId,
-                                                                  VerticalResolution    = p.VerticalResolution,
-                                                                  WhiteBalance          = p.WhiteBalance,
-                                                                  OriginalExtension     = p.OriginalExtension
+                                                                  LightSource = p.LightSource.HasValue
+                                                                      ? (ushort?)p.LightSource
+                                                                      : null,
+                                                                  MachineCompanyName   = p.Machine.Company.Name,
+                                                                  MachineId            = p.MachineId,
+                                                                  MachineName          = p.Machine.Name,
+                                                                  MeteringMode         = (ushort?)p.MeteringMode,
+                                                                  ResolutionUnit       = (ushort?)p.ResolutionUnit,
+                                                                  Orientation          = (ushort?)p.Orientation,
+                                                                  Saturation           = (ushort?)p.Saturation,
+                                                                  SceneCaptureType     = (ushort?)p.SceneCaptureType,
+                                                                  SensingMethod        = (ushort?)p.SensingMethod,
+                                                                  Sharpness            = (ushort?)p.Sharpness,
+                                                                  SoftwareUsed         = p.SoftwareUsed,
+                                                                  Source               = p.Source,
+                                                                  SubjectDistanceRange = (byte?)p.SubjectDistanceRange,
+                                                                  UploadDate           = p.UploadDate,
+                                                                  UserId               = p.UserId,
+                                                                  VerticalResolution   = p.VerticalResolution,
+                                                                  WhiteBalance         = (ushort?)p.WhiteBalance,
+                                                                  OriginalExtension    = p.OriginalExtension
                                                               })
                                                              .FirstOrDefaultAsync();
 
@@ -117,40 +120,44 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
 
         if(model is null) return NotFound();
 
-        model.Aperture              = dto.Aperture;
-        model.Author                = dto.Author;
-        model.CameraManufacturer    = dto.CameraManufacturer;
-        model.CameraModel           = dto.CameraModel;
-        model.ColorSpace            = dto.ColorSpace;
-        model.Comments              = dto.Comments;
-        model.Contrast              = dto.Contrast;
-        model.CreationDate          = dto.CreationDate;
-        model.DigitalZoomRatio      = dto.DigitalZoomRatio;
-        model.ExifVersion           = dto.ExifVersion;
-        model.ExposureTime          = dto.ExposureTime;
-        model.ExposureMethod        = dto.ExposureMethod;
-        model.ExposureProgram       = dto.ExposureProgram;
-        model.Flash                 = dto.Flash;
-        model.Focal                 = dto.Focal;
-        model.FocalLength           = dto.FocalLength;
+        model.Aperture = dto.Aperture;
+        model.Author = dto.Author;
+        model.CameraManufacturer = dto.CameraManufacturer;
+        model.CameraModel = dto.CameraModel;
+        model.ColorSpace = dto.ColorSpace.HasValue ? (ColorSpace)dto.ColorSpace.Value : null;
+        model.Comments = dto.Comments;
+        model.Contrast = dto.Contrast.HasValue ? (Contrast)dto.Contrast.Value : null;
+        model.CreationDate = dto.CreationDate;
+        model.DigitalZoomRatio = dto.DigitalZoomRatio;
+        model.ExifVersion = dto.ExifVersion;
+        model.ExposureTime = dto.ExposureTime;
+        model.ExposureMethod = dto.ExposureMethod.HasValue ? (ExposureMode)dto.ExposureMethod.Value : null;
+        model.ExposureProgram = dto.ExposureProgram.HasValue ? (ExposureProgram)dto.ExposureProgram.Value : null;
+        model.Flash = dto.Flash.HasValue ? (Flash)dto.Flash.Value : null;
+        model.Focal = dto.Focal;
+        model.FocalLength = dto.FocalLength;
         model.FocalLengthEquivalent = dto.FocalLengthEquivalent;
-        model.HorizontalResolution  = dto.HorizontalResolution;
-        model.IsoRating             = dto.IsoRating;
-        model.Lens                  = dto.Lens;
-        model.LicenseId             = dto.LicenseId;
-        model.LightSource           = dto.LightSource;
-        model.MeteringMode          = dto.MeteringMode;
-        model.ResolutionUnit        = dto.ResolutionUnit;
-        model.Orientation           = dto.Orientation;
-        model.Saturation            = dto.Saturation;
-        model.SceneCaptureType      = dto.SceneCaptureType;
-        model.SensingMethod         = dto.SensingMethod;
-        model.Sharpness             = dto.Sharpness;
-        model.SoftwareUsed          = dto.SoftwareUsed;
-        model.Source                = dto.Source;
-        model.SubjectDistanceRange  = dto.SubjectDistanceRange;
-        model.VerticalResolution    = dto.VerticalResolution;
-        model.WhiteBalance          = dto.WhiteBalance;
+        model.HorizontalResolution = dto.HorizontalResolution;
+        model.IsoRating = dto.IsoRating;
+        model.Lens = dto.Lens;
+        model.LicenseId = dto.LicenseId;
+        model.LightSource = dto.LightSource.HasValue ? (LightSource?)dto.LightSource : null;
+        model.MeteringMode = dto.MeteringMode.HasValue ? (MeteringMode)dto.MeteringMode.Value : null;
+        model.ResolutionUnit = dto.ResolutionUnit.HasValue ? (ResolutionUnit)dto.ResolutionUnit.Value : null;
+        model.Orientation = dto.Orientation.HasValue ? (Orientation)dto.Orientation.Value : null;
+        model.Saturation = dto.Saturation.HasValue ? (Saturation)dto.Saturation.Value : null;
+        model.SceneCaptureType = dto.SceneCaptureType.HasValue ? (SceneCaptureType)dto.SceneCaptureType.Value : null;
+        model.SensingMethod = dto.SensingMethod.HasValue ? (SensingMethod)dto.SensingMethod.Value : null;
+        model.Sharpness = dto.Sharpness.HasValue ? (Sharpness)dto.Sharpness.Value : null;
+        model.SoftwareUsed = dto.SoftwareUsed;
+        model.Source = dto.Source;
+
+        model.SubjectDistanceRange = dto.SubjectDistanceRange.HasValue
+                                         ? (SubjectDistanceRange)dto.SubjectDistanceRange.Value
+                                         : null;
+
+        model.VerticalResolution = dto.VerticalResolution;
+        model.WhiteBalance       = dto.WhiteBalance.HasValue ? (WhiteBalance)dto.WhiteBalance.Value : null;
 
         await context.SaveChangesWithUserAsync(userId);
 
@@ -174,16 +181,16 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
             Author                = dto.Author,
             CameraManufacturer    = dto.CameraManufacturer,
             CameraModel           = dto.CameraModel,
-            ColorSpace            = dto.ColorSpace,
+            ColorSpace            = dto.ColorSpace.HasValue ? (ColorSpace)dto.ColorSpace.Value : null,
             Comments              = dto.Comments,
-            Contrast              = dto.Contrast,
+            Contrast              = dto.Contrast.HasValue ? (Contrast)dto.Contrast.Value : null,
             CreationDate          = dto.CreationDate,
             DigitalZoomRatio      = dto.DigitalZoomRatio,
             ExifVersion           = dto.ExifVersion,
             ExposureTime          = dto.ExposureTime,
-            ExposureMethod        = dto.ExposureMethod,
-            ExposureProgram       = dto.ExposureProgram,
-            Flash                 = dto.Flash,
+            ExposureMethod        = dto.ExposureMethod.HasValue ? (ExposureMode)dto.ExposureMethod.Value : null,
+            ExposureProgram       = dto.ExposureProgram.HasValue ? (ExposureProgram)dto.ExposureProgram.Value : null,
+            Flash                 = dto.Flash.HasValue ? (Flash)dto.Flash.Value : null,
             Focal                 = dto.Focal,
             FocalLength           = dto.FocalLength,
             FocalLengthEquivalent = dto.FocalLengthEquivalent,
@@ -192,23 +199,24 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
             IsoRating             = dto.IsoRating,
             Lens                  = dto.Lens,
             LicenseId             = dto.LicenseId,
-            LightSource           = dto.LightSource,
+            LightSource           = dto.LightSource.HasValue ? (LightSource?)dto.LightSource : null,
             MachineId             = dto.MachineId,
-            MeteringMode          = dto.MeteringMode,
-            ResolutionUnit        = dto.ResolutionUnit,
-            Orientation           = dto.Orientation,
-            Saturation            = dto.Saturation,
-            SceneCaptureType      = dto.SceneCaptureType,
-            SensingMethod         = dto.SensingMethod,
-            Sharpness             = dto.Sharpness,
+            MeteringMode          = dto.MeteringMode.HasValue ? (MeteringMode)dto.MeteringMode.Value : null,
+            ResolutionUnit        = dto.ResolutionUnit.HasValue ? (ResolutionUnit)dto.ResolutionUnit.Value : null,
+            Orientation           = dto.Orientation.HasValue ? (Orientation)dto.Orientation.Value : null,
+            Saturation            = dto.Saturation.HasValue ? (Saturation)dto.Saturation.Value : null,
+            SceneCaptureType      = dto.SceneCaptureType.HasValue ? (SceneCaptureType)dto.SceneCaptureType.Value : null,
+            SensingMethod         = dto.SensingMethod.HasValue ? (SensingMethod)dto.SensingMethod.Value : null,
+            Sharpness             = dto.Sharpness.HasValue ? (Sharpness)dto.Sharpness.Value : null,
             SoftwareUsed          = dto.SoftwareUsed,
             Source                = dto.Source,
-            SubjectDistanceRange  = dto.SubjectDistanceRange,
-            UploadDate            = dto.UploadDate,
-            UserId                = dto.UserId,
-            VerticalResolution    = dto.VerticalResolution,
-            WhiteBalance          = dto.WhiteBalance,
-            OriginalExtension     = dto.OriginalExtension
+            SubjectDistanceRange =
+                dto.SubjectDistanceRange.HasValue ? (SubjectDistanceRange)dto.SubjectDistanceRange.Value : null,
+            UploadDate         = dto.UploadDate,
+            UserId             = dto.UserId,
+            VerticalResolution = dto.VerticalResolution,
+            WhiteBalance       = dto.WhiteBalance.HasValue ? (WhiteBalance)dto.WhiteBalance.Value : null,
+            OriginalExtension  = dto.OriginalExtension
         };
 
         await context.MachinePhotos.AddAsync(model);

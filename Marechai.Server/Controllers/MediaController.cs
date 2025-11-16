@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -71,7 +72,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
                                                           PhysicalBlockSize = d.PhysicalBlockSize,
                                                           LogicalBlockSize  = d.LogicalBlockSize,
                                                           BlockSizes        = d.BlockSizes,
-                                                          StorageInterface  = d.StorageInterface,
+                                                          StorageInterface  = (ushort?)d.StorageInterface,
                                                           TableOfContents   = d.TableOfContents
                                                       })
                                                      .ToListAsync();
@@ -119,7 +120,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
                                                             PhysicalBlockSize = d.PhysicalBlockSize,
                                                             LogicalBlockSize  = d.LogicalBlockSize,
                                                             BlockSizes        = d.BlockSizes,
-                                                            StorageInterface  = d.StorageInterface,
+                                                            StorageInterface  = (ushort?)d.StorageInterface,
                                                             TableOfContents   = d.TableOfContents
                                                         })
                                                        .FirstOrDefaultAsync();
@@ -162,7 +163,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
         model.PhysicalBlockSize = dto.PhysicalBlockSize;
         model.LogicalBlockSize  = dto.LogicalBlockSize;
         model.BlockSizes        = dto.BlockSizes;
-        model.StorageInterface  = dto.StorageInterface;
+        model.StorageInterface  = dto.StorageInterface.HasValue ? (StorageInterface)dto.StorageInterface.Value : null;
         model.TableOfContents   = dto.TableOfContents;
         await context.SaveChangesWithUserAsync(userId);
 
@@ -205,7 +206,7 @@ public class MediaController(MarechaiContext context) : ControllerBase
             PhysicalBlockSize = dto.PhysicalBlockSize,
             LogicalBlockSize  = dto.LogicalBlockSize,
             BlockSizes        = dto.BlockSizes,
-            StorageInterface  = dto.StorageInterface,
+            StorageInterface  = dto.StorageInterface.HasValue ? (StorageInterface)dto.StorageInterface.Value : null,
             TableOfContents   = dto.TableOfContents
         };
 

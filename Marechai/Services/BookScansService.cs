@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -39,33 +40,29 @@ public class BookScansService(MarechaiContext context)
         await context.BookScans.Where(p => p.BookId == bookId).Select(p => p.Id).ToListAsync();
 
     public async Task<BookScanDto> GetAsync(Guid id) => await context.BookScans.Where(p => p.Id == id)
-                                                                            .Select(p => new BookScanDto
-                                                                             {
-                                                                                 Author       = p.Author,
-                                                                                 BookId       = p.Book.Id,
-                                                                                 ColorSpace   = p.ColorSpace,
-                                                                                 Comments     = p.Comments,
-                                                                                 CreationDate = p.CreationDate,
-                                                                                 ExifVersion  = p.ExifVersion,
-                                                                                 HorizontalResolution =
-                                                                                     p.HorizontalResolution,
-                                                                                 Id = p.Id,
-                                                                                 ResolutionUnit =
-                                                                                     p.ResolutionUnit,
-                                                                                 Page = p.Page,
-                                                                                 ScannerManufacturer =
-                                                                                     p.ScannerManufacturer,
-                                                                                 ScannerModel = p.ScannerModel,
-                                                                                 SoftwareUsed = p.SoftwareUsed,
-                                                                                 Type         = p.Type,
-                                                                                 UploadDate   = p.UploadDate,
-                                                                                 UserId       = p.UserId,
-                                                                                 VerticalResolution =
-                                                                                     p.VerticalResolution,
-                                                                                 OriginalExtension =
-                                                                                     p.OriginalExtension
-                                                                             })
-                                                                            .FirstOrDefaultAsync();
+                                                                     .Select(p => new BookScanDto
+                                                                      {
+                                                                          Author               = p.Author,
+                                                                          BookId               = p.Book.Id,
+                                                                          ColorSpace           = (ushort?)p.ColorSpace,
+                                                                          Comments             = p.Comments,
+                                                                          CreationDate         = p.CreationDate,
+                                                                          ExifVersion          = p.ExifVersion,
+                                                                          HorizontalResolution = p.HorizontalResolution,
+                                                                          Id                   = p.Id,
+                                                                          ResolutionUnit =
+                                                                              (ushort?)p.ResolutionUnit,
+                                                                          Page                = p.Page,
+                                                                          ScannerManufacturer = p.ScannerManufacturer,
+                                                                          ScannerModel        = p.ScannerModel,
+                                                                          SoftwareUsed        = p.SoftwareUsed,
+                                                                          Type                = p.Type,
+                                                                          UploadDate          = p.UploadDate,
+                                                                          UserId              = p.UserId,
+                                                                          VerticalResolution  = p.VerticalResolution,
+                                                                          OriginalExtension   = p.OriginalExtension
+                                                                      })
+                                                                     .FirstOrDefaultAsync();
 
     public async Task UpdateAsync(BookScanDto dto, string userId)
     {
@@ -74,12 +71,12 @@ public class BookScansService(MarechaiContext context)
         if(model is null) return;
 
         model.Author               = dto.Author;
-        model.ColorSpace           = dto.ColorSpace;
+        model.ColorSpace           = dto.ColorSpace.HasValue ? (ColorSpace)dto.ColorSpace.Value : null;
         model.Comments             = dto.Comments;
         model.CreationDate         = dto.CreationDate;
         model.ExifVersion          = dto.ExifVersion;
         model.HorizontalResolution = dto.HorizontalResolution;
-        model.ResolutionUnit       = dto.ResolutionUnit;
+        model.ResolutionUnit       = dto.ResolutionUnit.HasValue ? (ResolutionUnit)dto.ResolutionUnit.Value : null;
         model.Page                 = dto.Page;
         model.ScannerManufacturer  = dto.ScannerManufacturer;
         model.ScannerModel         = dto.ScannerModel;
@@ -96,13 +93,13 @@ public class BookScansService(MarechaiContext context)
         {
             Author               = dto.Author,
             BookId               = dto.BookId,
-            ColorSpace           = dto.ColorSpace,
+            ColorSpace           = dto.ColorSpace.HasValue ? (ColorSpace)dto.ColorSpace.Value : null,
             Comments             = dto.Comments,
             CreationDate         = dto.CreationDate,
             ExifVersion          = dto.ExifVersion,
             HorizontalResolution = dto.HorizontalResolution,
             Id                   = dto.Id,
-            ResolutionUnit       = dto.ResolutionUnit,
+            ResolutionUnit       = dto.ResolutionUnit.HasValue ? (ResolutionUnit)dto.ResolutionUnit.Value : null,
             Page                 = dto.Page,
             ScannerManufacturer  = dto.ScannerManufacturer,
             ScannerModel         = dto.ScannerModel,

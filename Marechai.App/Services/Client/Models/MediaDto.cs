@@ -115,13 +115,7 @@ namespace Marechai.App.Models
         /// <summary>The size property</summary>
         public int? Size { get; set; }
         /// <summary>The storage_interface property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::Marechai.App.Models.MediaDto.MediaDto_storage_interface? StorageInterface { get; set; }
-#nullable restore
-#else
-        public global::Marechai.App.Models.MediaDto.MediaDto_storage_interface StorageInterface { get; set; }
-#endif
+        public int? StorageInterface { get; set; }
         /// <summary>The table_of_contents property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -189,7 +183,7 @@ namespace Marechai.App.Models
                 { "sessions", n => { Sessions = n.GetIntValue(); } },
                 { "sides", n => { Sides = n.GetIntValue(); } },
                 { "size", n => { Size = n.GetIntValue(); } },
-                { "storage_interface", n => { StorageInterface = n.GetObjectValue<global::Marechai.App.Models.MediaDto.MediaDto_storage_interface>(global::Marechai.App.Models.MediaDto.MediaDto_storage_interface.CreateFromDiscriminatorValue); } },
+                { "storage_interface", n => { StorageInterface = n.GetIntValue(); } },
                 { "table_of_contents", n => { TableOfContents = n.GetCollectionOfObjectValues<global::Marechai.App.Models.OpticalDiscTrack>(global::Marechai.App.Models.OpticalDiscTrack.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
                 { "tracks", n => { Tracks = n.GetIntValue(); } },
@@ -224,88 +218,13 @@ namespace Marechai.App.Models
             writer.WriteIntValue("sessions", Sessions);
             writer.WriteIntValue("sides", Sides);
             writer.WriteIntValue("size", Size);
-            writer.WriteObjectValue<global::Marechai.App.Models.MediaDto.MediaDto_storage_interface>("storage_interface", StorageInterface);
+            writer.WriteIntValue("storage_interface", StorageInterface);
             writer.WriteCollectionOfObjectValues<global::Marechai.App.Models.OpticalDiscTrack>("table_of_contents", TableOfContents);
             writer.WriteStringValue("title", Title);
             writer.WriteIntValue("tracks", Tracks);
             writer.WriteIntValue("type", Type);
             writer.WriteIntValue("write_offset", WriteOffset);
             writer.WriteAdditionalData(AdditionalData);
-        }
-        /// <summary>
-        /// Composed type wrapper for classes <see cref="global::Marechai.App.Models.MediaDto_storage_interfaceMember1"/>, <see cref="global::Marechai.App.Models.StorageInterface"/>
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class MediaDto_storage_interface : IComposedTypeWrapper, IParsable
-        {
-            /// <summary>Composed type representation for type <see cref="global::Marechai.App.Models.MediaDto_storage_interfaceMember1"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.App.Models.MediaDto_storage_interfaceMember1? MediaDtoStorageInterfaceMember1 { get; set; }
-#nullable restore
-#else
-            public global::Marechai.App.Models.MediaDto_storage_interfaceMember1 MediaDtoStorageInterfaceMember1 { get; set; }
-#endif
-            /// <summary>Composed type representation for type <see cref="global::Marechai.App.Models.StorageInterface"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.App.Models.StorageInterface? StorageInterface { get; set; }
-#nullable restore
-#else
-            public global::Marechai.App.Models.StorageInterface StorageInterface { get; set; }
-#endif
-            /// <summary>
-            /// Creates a new instance of the appropriate class based on discriminator value
-            /// </summary>
-            /// <returns>A <see cref="global::Marechai.App.Models.MediaDto.MediaDto_storage_interface"/></returns>
-            /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-            public static global::Marechai.App.Models.MediaDto.MediaDto_storage_interface CreateFromDiscriminatorValue(IParseNode parseNode)
-            {
-                if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-                var mappingValue = parseNode.GetChildNode("")?.GetStringValue();
-                var result = new global::Marechai.App.Models.MediaDto.MediaDto_storage_interface();
-                if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.MediaDtoStorageInterfaceMember1 = new global::Marechai.App.Models.MediaDto_storage_interfaceMember1();
-                }
-                else if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.StorageInterface = new global::Marechai.App.Models.StorageInterface();
-                }
-                return result;
-            }
-            /// <summary>
-            /// The deserialization information for the current model
-            /// </summary>
-            /// <returns>A IDictionary&lt;string, Action&lt;IParseNode&gt;&gt;</returns>
-            public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers()
-            {
-                if(MediaDtoStorageInterfaceMember1 != null)
-                {
-                    return MediaDtoStorageInterfaceMember1.GetFieldDeserializers();
-                }
-                else if(StorageInterface != null)
-                {
-                    return StorageInterface.GetFieldDeserializers();
-                }
-                return new Dictionary<string, Action<IParseNode>>();
-            }
-            /// <summary>
-            /// Serializes information the current object
-            /// </summary>
-            /// <param name="writer">Serialization writer to use to serialize this model</param>
-            public virtual void Serialize(ISerializationWriter writer)
-            {
-                if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-                if(MediaDtoStorageInterfaceMember1 != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.App.Models.MediaDto_storage_interfaceMember1>(null, MediaDtoStorageInterfaceMember1);
-                }
-                else if(StorageInterface != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.App.Models.StorageInterface>(null, StorageInterface);
-                }
-            }
         }
     }
 }

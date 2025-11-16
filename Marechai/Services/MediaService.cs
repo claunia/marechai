@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.EntityFrameworkCore;
@@ -35,76 +36,76 @@ namespace Marechai.Services;
 public class MediaService(MarechaiContext context)
 {
     public async Task<List<MediaDto>> GetAsync() => await context.Media.OrderBy(d => d.Title)
+                                                                 .Select(d => new MediaDto
+                                                                  {
+                                                                      Id                = d.Id,
+                                                                      Title             = d.Title,
+                                                                      Sequence          = d.Sequence,
+                                                                      LastSequence      = d.LastSequence,
+                                                                      Type              = d.Type,
+                                                                      WriteOffset       = d.WriteOffset,
+                                                                      Sides             = d.Sides,
+                                                                      Layers            = d.Layers,
+                                                                      Sessions          = d.Sessions,
+                                                                      Tracks            = d.Tracks,
+                                                                      Sectors           = d.Sectors,
+                                                                      Size              = d.Size,
+                                                                      CopyProtection    = d.CopyProtection,
+                                                                      PartNumber        = d.PartNumber,
+                                                                      SerialNumber      = d.SerialNumber,
+                                                                      Barcode           = d.Barcode,
+                                                                      CatalogueNumber   = d.CatalogueNumber,
+                                                                      Manufacturer      = d.Manufacturer,
+                                                                      Model             = d.Model,
+                                                                      Revision          = d.Revision,
+                                                                      Firmware          = d.Firmware,
+                                                                      PhysicalBlockSize = d.PhysicalBlockSize,
+                                                                      LogicalBlockSize  = d.LogicalBlockSize,
+                                                                      BlockSizes        = d.BlockSizes,
+                                                                      StorageInterface  = (ushort?)d.StorageInterface,
+                                                                      TableOfContents   = d.TableOfContents
+                                                                  })
+                                                                 .ToListAsync();
+
+    public async Task<List<MediaDto>> GetTitlesAsync() => await context.Media.OrderBy(d => d.Title)
                                                                        .Select(d => new MediaDto
                                                                         {
-                                                                            Id                = d.Id,
-                                                                            Title             = d.Title,
-                                                                            Sequence          = d.Sequence,
-                                                                            LastSequence      = d.LastSequence,
-                                                                            Type              = d.Type,
-                                                                            WriteOffset       = d.WriteOffset,
-                                                                            Sides             = d.Sides,
-                                                                            Layers            = d.Layers,
-                                                                            Sessions          = d.Sessions,
-                                                                            Tracks            = d.Tracks,
-                                                                            Sectors           = d.Sectors,
-                                                                            Size              = d.Size,
-                                                                            CopyProtection    = d.CopyProtection,
-                                                                            PartNumber        = d.PartNumber,
-                                                                            SerialNumber      = d.SerialNumber,
-                                                                            Barcode           = d.Barcode,
-                                                                            CatalogueNumber   = d.CatalogueNumber,
-                                                                            Manufacturer      = d.Manufacturer,
-                                                                            Model             = d.Model,
-                                                                            Revision          = d.Revision,
-                                                                            Firmware          = d.Firmware,
-                                                                            PhysicalBlockSize = d.PhysicalBlockSize,
-                                                                            LogicalBlockSize  = d.LogicalBlockSize,
-                                                                            BlockSizes        = d.BlockSizes,
-                                                                            StorageInterface  = d.StorageInterface,
-                                                                            TableOfContents   = d.TableOfContents
+                                                                            Id    = d.Id,
+                                                                            Title = d.Title
                                                                         })
                                                                        .ToListAsync();
 
-    public async Task<List<MediaDto>> GetTitlesAsync() => await context.Media.OrderBy(d => d.Title)
-                                                                              .Select(d => new MediaDto
-                                                                               {
-                                                                                   Id    = d.Id,
-                                                                                   Title = d.Title
-                                                                               })
-                                                                              .ToListAsync();
-
     public async Task<MediaDto> GetAsync(ulong id) => await context.Media.Where(d => d.Id == id)
-                                                                          .Select(d => new MediaDto
-                                                                           {
-                                                                               Id                = d.Id,
-                                                                               Title             = d.Title,
-                                                                               Sequence          = d.Sequence,
-                                                                               LastSequence      = d.LastSequence,
-                                                                               Type              = d.Type,
-                                                                               WriteOffset       = d.WriteOffset,
-                                                                               Sides             = d.Sides,
-                                                                               Layers            = d.Layers,
-                                                                               Sessions          = d.Sessions,
-                                                                               Tracks            = d.Tracks,
-                                                                               Sectors           = d.Sectors,
-                                                                               Size              = d.Size,
-                                                                               CopyProtection    = d.CopyProtection,
-                                                                               PartNumber        = d.PartNumber,
-                                                                               SerialNumber      = d.SerialNumber,
-                                                                               Barcode           = d.Barcode,
-                                                                               CatalogueNumber   = d.CatalogueNumber,
-                                                                               Manufacturer      = d.Manufacturer,
-                                                                               Model             = d.Model,
-                                                                               Revision          = d.Revision,
-                                                                               Firmware          = d.Firmware,
-                                                                               PhysicalBlockSize = d.PhysicalBlockSize,
-                                                                               LogicalBlockSize  = d.LogicalBlockSize,
-                                                                               BlockSizes        = d.BlockSizes,
-                                                                               StorageInterface  = d.StorageInterface,
-                                                                               TableOfContents   = d.TableOfContents
-                                                                           })
-                                                                          .FirstOrDefaultAsync();
+                                                                   .Select(d => new MediaDto
+                                                                    {
+                                                                        Id                = d.Id,
+                                                                        Title             = d.Title,
+                                                                        Sequence          = d.Sequence,
+                                                                        LastSequence      = d.LastSequence,
+                                                                        Type              = d.Type,
+                                                                        WriteOffset       = d.WriteOffset,
+                                                                        Sides             = d.Sides,
+                                                                        Layers            = d.Layers,
+                                                                        Sessions          = d.Sessions,
+                                                                        Tracks            = d.Tracks,
+                                                                        Sectors           = d.Sectors,
+                                                                        Size              = d.Size,
+                                                                        CopyProtection    = d.CopyProtection,
+                                                                        PartNumber        = d.PartNumber,
+                                                                        SerialNumber      = d.SerialNumber,
+                                                                        Barcode           = d.Barcode,
+                                                                        CatalogueNumber   = d.CatalogueNumber,
+                                                                        Manufacturer      = d.Manufacturer,
+                                                                        Model             = d.Model,
+                                                                        Revision          = d.Revision,
+                                                                        Firmware          = d.Firmware,
+                                                                        PhysicalBlockSize = d.PhysicalBlockSize,
+                                                                        LogicalBlockSize  = d.LogicalBlockSize,
+                                                                        BlockSizes        = d.BlockSizes,
+                                                                        StorageInterface  = (ushort?)d.StorageInterface,
+                                                                        TableOfContents   = d.TableOfContents
+                                                                    })
+                                                                   .FirstOrDefaultAsync();
 
     public async Task UpdateAsync(MediaDto dto, string userId)
     {
@@ -135,7 +136,7 @@ public class MediaService(MarechaiContext context)
         model.PhysicalBlockSize = dto.PhysicalBlockSize;
         model.LogicalBlockSize  = dto.LogicalBlockSize;
         model.BlockSizes        = dto.BlockSizes;
-        model.StorageInterface  = dto.StorageInterface;
+        model.StorageInterface  = dto.StorageInterface.HasValue ? (StorageInterface)dto.StorageInterface.Value : null;
         model.TableOfContents   = dto.TableOfContents;
         await context.SaveChangesWithUserAsync(userId);
     }
@@ -167,7 +168,7 @@ public class MediaService(MarechaiContext context)
             PhysicalBlockSize = dto.PhysicalBlockSize,
             LogicalBlockSize  = dto.LogicalBlockSize,
             BlockSizes        = dto.BlockSizes,
-            StorageInterface  = dto.StorageInterface,
+            StorageInterface  = dto.StorageInterface.HasValue ? (StorageInterface)dto.StorageInterface.Value : null,
             TableOfContents   = dto.TableOfContents
         };
 

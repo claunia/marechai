@@ -80,7 +80,7 @@ public class MediaDto : BaseDto<ulong>
     [JsonPropertyName("block_sizes")]
     public VariableBlockSize[]? BlockSizes { get; set; }
     [JsonPropertyName("storage_interface")]
-    public StorageInterface? StorageInterface { get; set; }
+    public ushort? StorageInterface { get; set; }
     [JsonPropertyName("table_of_contents")]
     public OpticalDiscTrack[]? TableOfContents { get; set; }
 }

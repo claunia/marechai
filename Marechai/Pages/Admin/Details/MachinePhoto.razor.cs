@@ -27,13 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Blazorise;
-using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Orientation = Marechai.Data.Orientation;
 
 namespace Marechai.Pages.Admin.Details;
 
@@ -92,7 +90,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.ColorSpace;
         }
-        set => _model.ColorSpace = (ColorSpace)value;
+        set => _model.ColorSpace = value;
     }
 
     ushort Contrast
@@ -103,7 +101,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.Contrast;
         }
-        set => _model.Contrast = (Contrast)value;
+        set => _model.Contrast = value;
     }
 
     ushort ExposureMode
@@ -114,7 +112,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.ExposureMethod;
         }
-        set => _model.ExposureMethod = (ExposureMode)value;
+        set => _model.ExposureMethod = value;
     }
 
     ushort ExposureProgram
@@ -125,7 +123,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.ExposureProgram;
         }
-        set => _model.ExposureProgram = (ExposureProgram)value;
+        set => _model.ExposureProgram = value;
     }
 
     ushort Flash
@@ -136,7 +134,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.Flash;
         }
-        set => _model.Flash = (Flash)value;
+        set => _model.Flash = value;
     }
 
     ushort LightSource
@@ -147,7 +145,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.LightSource;
         }
-        set => _model.LightSource = (LightSource)value;
+        set => _model.LightSource = value;
     }
 
     ushort MeteringMode
@@ -158,7 +156,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.MeteringMode;
         }
-        set => _model.MeteringMode = (MeteringMode)value;
+        set => _model.MeteringMode = value;
     }
 
     ushort ResolutionUnit
@@ -169,7 +167,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.ResolutionUnit;
         }
-        set => _model.ResolutionUnit = (ResolutionUnit)value;
+        set => _model.ResolutionUnit = value;
     }
 
     ushort Orientation
@@ -180,7 +178,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.Orientation;
         }
-        set => _model.Orientation = (Orientation)value;
+        set => _model.Orientation = value;
     }
 
     ushort Saturation
@@ -191,7 +189,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.Saturation;
         }
-        set => _model.Saturation = (Saturation)value;
+        set => _model.Saturation = value;
     }
 
     ushort SceneCaptureType
@@ -202,7 +200,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.SceneCaptureType;
         }
-        set => _model.SceneCaptureType = (SceneCaptureType)value;
+        set => _model.SceneCaptureType = value;
     }
 
     ushort SensingMethod
@@ -213,7 +211,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.SensingMethod;
         }
-        set => _model.SensingMethod = (SensingMethod)value;
+        set => _model.SensingMethod = value;
     }
 
     ushort Sharpness
@@ -224,7 +222,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.Sharpness;
         }
-        set => _model.Sharpness = (Sharpness)value;
+        set => _model.Sharpness = value;
     }
 
     ushort SubjectDistanceRange
@@ -235,7 +233,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.SubjectDistanceRange;
         }
-        set => _model.SubjectDistanceRange = (SubjectDistanceRange)value;
+        set => _model.SubjectDistanceRange = (byte?)value;
     }
 
     ushort WhiteBalance
@@ -246,7 +244,7 @@ public partial class MachinePhoto
 
             return (ushort)_model.WhiteBalance;
         }
-        set => _model.WhiteBalance = (WhiteBalance)value;
+        set => _model.WhiteBalance = value;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

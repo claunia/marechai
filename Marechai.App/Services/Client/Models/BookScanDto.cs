@@ -33,13 +33,7 @@ namespace Marechai.App.Models
         /// <summary>The book_id property</summary>
         public long? BookId { get; set; }
         /// <summary>The colorspace property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace? Colorspace { get; set; }
-#nullable restore
-#else
-        public global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace Colorspace { get; set; }
-#endif
+        public int? Colorspace { get; set; }
         /// <summary>The comments property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -73,13 +67,7 @@ namespace Marechai.App.Models
         /// <summary>The page property</summary>
         public int? Page { get; set; }
         /// <summary>The resolution_unit property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit? ResolutionUnit { get; set; }
-#nullable restore
-#else
-        public global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit ResolutionUnit { get; set; }
-#endif
+        public int? ResolutionUnit { get; set; }
         /// <summary>The scanner_manufacturer property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -146,7 +134,7 @@ namespace Marechai.App.Models
                 { "author", n => { Author = n.GetStringValue(); } },
                 { "book", n => { Book = n.GetStringValue(); } },
                 { "book_id", n => { BookId = n.GetLongValue(); } },
-                { "colorspace", n => { Colorspace = n.GetObjectValue<global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace>(global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace.CreateFromDiscriminatorValue); } },
+                { "colorspace", n => { Colorspace = n.GetIntValue(); } },
                 { "comments", n => { Comments = n.GetStringValue(); } },
                 { "creation_date", n => { CreationDate = n.GetDateTimeOffsetValue(); } },
                 { "exif_version", n => { ExifVersion = n.GetStringValue(); } },
@@ -154,7 +142,7 @@ namespace Marechai.App.Models
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "original_extension", n => { OriginalExtension = n.GetStringValue(); } },
                 { "page", n => { Page = n.GetIntValue(); } },
-                { "resolution_unit", n => { ResolutionUnit = n.GetObjectValue<global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit>(global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit.CreateFromDiscriminatorValue); } },
+                { "resolution_unit", n => { ResolutionUnit = n.GetIntValue(); } },
                 { "scanner_manufacturer", n => { ScannerManufacturer = n.GetStringValue(); } },
                 { "scanner_model", n => { ScannerModel = n.GetStringValue(); } },
                 { "software", n => { Software = n.GetStringValue(); } },
@@ -174,7 +162,7 @@ namespace Marechai.App.Models
             writer.WriteStringValue("author", Author);
             writer.WriteStringValue("book", Book);
             writer.WriteLongValue("book_id", BookId);
-            writer.WriteObjectValue<global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace>("colorspace", Colorspace);
+            writer.WriteIntValue("colorspace", Colorspace);
             writer.WriteStringValue("comments", Comments);
             writer.WriteDateTimeOffsetValue("creation_date", CreationDate);
             writer.WriteStringValue("exif_version", ExifVersion);
@@ -182,7 +170,7 @@ namespace Marechai.App.Models
             writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("original_extension", OriginalExtension);
             writer.WriteIntValue("page", Page);
-            writer.WriteObjectValue<global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit>("resolution_unit", ResolutionUnit);
+            writer.WriteIntValue("resolution_unit", ResolutionUnit);
             writer.WriteStringValue("scanner_manufacturer", ScannerManufacturer);
             writer.WriteStringValue("scanner_model", ScannerModel);
             writer.WriteStringValue("software", Software);
@@ -191,156 +179,6 @@ namespace Marechai.App.Models
             writer.WriteStringValue("user_id", UserId);
             writer.WriteDoubleValue("vertical_resolution", VerticalResolution);
             writer.WriteAdditionalData(AdditionalData);
-        }
-        /// <summary>
-        /// Composed type wrapper for classes <see cref="global::Marechai.App.Models.BookScanDto_colorspaceMember1"/>, <see cref="global::Marechai.App.Models.ColorSpace"/>
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class BookScanDto_colorspace : IComposedTypeWrapper, IParsable
-        {
-            /// <summary>Composed type representation for type <see cref="global::Marechai.App.Models.BookScanDto_colorspaceMember1"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.App.Models.BookScanDto_colorspaceMember1? BookScanDtoColorspaceMember1 { get; set; }
-#nullable restore
-#else
-            public global::Marechai.App.Models.BookScanDto_colorspaceMember1 BookScanDtoColorspaceMember1 { get; set; }
-#endif
-            /// <summary>Composed type representation for type <see cref="global::Marechai.App.Models.ColorSpace"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.App.Models.ColorSpace? ColorSpace { get; set; }
-#nullable restore
-#else
-            public global::Marechai.App.Models.ColorSpace ColorSpace { get; set; }
-#endif
-            /// <summary>
-            /// Creates a new instance of the appropriate class based on discriminator value
-            /// </summary>
-            /// <returns>A <see cref="global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace"/></returns>
-            /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-            public static global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace CreateFromDiscriminatorValue(IParseNode parseNode)
-            {
-                if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-                var mappingValue = parseNode.GetChildNode("")?.GetStringValue();
-                var result = new global::Marechai.App.Models.BookScanDto.BookScanDto_colorspace();
-                if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.BookScanDtoColorspaceMember1 = new global::Marechai.App.Models.BookScanDto_colorspaceMember1();
-                }
-                else if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.ColorSpace = new global::Marechai.App.Models.ColorSpace();
-                }
-                return result;
-            }
-            /// <summary>
-            /// The deserialization information for the current model
-            /// </summary>
-            /// <returns>A IDictionary&lt;string, Action&lt;IParseNode&gt;&gt;</returns>
-            public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers()
-            {
-                if(BookScanDtoColorspaceMember1 != null)
-                {
-                    return BookScanDtoColorspaceMember1.GetFieldDeserializers();
-                }
-                else if(ColorSpace != null)
-                {
-                    return ColorSpace.GetFieldDeserializers();
-                }
-                return new Dictionary<string, Action<IParseNode>>();
-            }
-            /// <summary>
-            /// Serializes information the current object
-            /// </summary>
-            /// <param name="writer">Serialization writer to use to serialize this model</param>
-            public virtual void Serialize(ISerializationWriter writer)
-            {
-                if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-                if(BookScanDtoColorspaceMember1 != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.App.Models.BookScanDto_colorspaceMember1>(null, BookScanDtoColorspaceMember1);
-                }
-                else if(ColorSpace != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.App.Models.ColorSpace>(null, ColorSpace);
-                }
-            }
-        }
-        /// <summary>
-        /// Composed type wrapper for classes <see cref="global::Marechai.App.Models.BookScanDto_resolution_unitMember1"/>, <see cref="global::Marechai.App.Models.ResolutionUnit"/>
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class BookScanDto_resolution_unit : IComposedTypeWrapper, IParsable
-        {
-            /// <summary>Composed type representation for type <see cref="global::Marechai.App.Models.BookScanDto_resolution_unitMember1"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.App.Models.BookScanDto_resolution_unitMember1? BookScanDtoResolutionUnitMember1 { get; set; }
-#nullable restore
-#else
-            public global::Marechai.App.Models.BookScanDto_resolution_unitMember1 BookScanDtoResolutionUnitMember1 { get; set; }
-#endif
-            /// <summary>Composed type representation for type <see cref="global::Marechai.App.Models.ResolutionUnit"/></summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            public global::Marechai.App.Models.ResolutionUnit? ResolutionUnit { get; set; }
-#nullable restore
-#else
-            public global::Marechai.App.Models.ResolutionUnit ResolutionUnit { get; set; }
-#endif
-            /// <summary>
-            /// Creates a new instance of the appropriate class based on discriminator value
-            /// </summary>
-            /// <returns>A <see cref="global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit"/></returns>
-            /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-            public static global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit CreateFromDiscriminatorValue(IParseNode parseNode)
-            {
-                if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-                var mappingValue = parseNode.GetChildNode("")?.GetStringValue();
-                var result = new global::Marechai.App.Models.BookScanDto.BookScanDto_resolution_unit();
-                if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.BookScanDtoResolutionUnitMember1 = new global::Marechai.App.Models.BookScanDto_resolution_unitMember1();
-                }
-                else if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.ResolutionUnit = new global::Marechai.App.Models.ResolutionUnit();
-                }
-                return result;
-            }
-            /// <summary>
-            /// The deserialization information for the current model
-            /// </summary>
-            /// <returns>A IDictionary&lt;string, Action&lt;IParseNode&gt;&gt;</returns>
-            public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers()
-            {
-                if(BookScanDtoResolutionUnitMember1 != null)
-                {
-                    return BookScanDtoResolutionUnitMember1.GetFieldDeserializers();
-                }
-                else if(ResolutionUnit != null)
-                {
-                    return ResolutionUnit.GetFieldDeserializers();
-                }
-                return new Dictionary<string, Action<IParseNode>>();
-            }
-            /// <summary>
-            /// Serializes information the current object
-            /// </summary>
-            /// <param name="writer">Serialization writer to use to serialize this model</param>
-            public virtual void Serialize(ISerializationWriter writer)
-            {
-                if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-                if(BookScanDtoResolutionUnitMember1 != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.App.Models.BookScanDto_resolution_unitMember1>(null, BookScanDtoResolutionUnitMember1);
-                }
-                else if(ResolutionUnit != null)
-                {
-                    writer.WriteObjectValue<global::Marechai.App.Models.ResolutionUnit>(null, ResolutionUnit);
-                }
-            }
         }
     }
 }

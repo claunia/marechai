@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -57,13 +58,13 @@ public class BookScansController(MarechaiContext context) : ControllerBase
                                                           {
                                                               Author               = p.Author,
                                                               BookId               = p.Book.Id,
-                                                              ColorSpace           = p.ColorSpace,
+                                                              ColorSpace           = (ushort?)p.ColorSpace,
                                                               Comments             = p.Comments,
                                                               CreationDate         = p.CreationDate,
                                                               ExifVersion          = p.ExifVersion,
                                                               HorizontalResolution = p.HorizontalResolution,
                                                               Id                   = p.Id,
-                                                              ResolutionUnit       = p.ResolutionUnit,
+                                                              ResolutionUnit       = (ushort?)p.ResolutionUnit,
                                                               Page                 = p.Page,
                                                               ScannerManufacturer  = p.ScannerManufacturer,
                                                               ScannerModel         = p.ScannerModel,
@@ -93,12 +94,12 @@ public class BookScansController(MarechaiContext context) : ControllerBase
         if(model is null) return NotFound();
 
         model.Author               = dto.Author;
-        model.ColorSpace           = dto.ColorSpace;
+        model.ColorSpace           = dto.ColorSpace.HasValue ? (ColorSpace)dto.ColorSpace.Value : null;
         model.Comments             = dto.Comments;
         model.CreationDate         = dto.CreationDate;
         model.ExifVersion          = dto.ExifVersion;
         model.HorizontalResolution = dto.HorizontalResolution;
-        model.ResolutionUnit       = dto.ResolutionUnit;
+        model.ResolutionUnit       = dto.ResolutionUnit.HasValue ? (ResolutionUnit)dto.ResolutionUnit.Value : null;
         model.Page                 = dto.Page;
         model.ScannerManufacturer  = dto.ScannerManufacturer;
         model.ScannerModel         = dto.ScannerModel;
@@ -126,13 +127,13 @@ public class BookScansController(MarechaiContext context) : ControllerBase
         {
             Author               = dto.Author,
             BookId               = dto.BookId,
-            ColorSpace           = dto.ColorSpace,
+            ColorSpace           = dto.ColorSpace.HasValue ? (ColorSpace)dto.ColorSpace.Value : null,
             Comments             = dto.Comments,
             CreationDate         = dto.CreationDate,
             ExifVersion          = dto.ExifVersion,
             HorizontalResolution = dto.HorizontalResolution,
             Id                   = dto.Id,
-            ResolutionUnit       = dto.ResolutionUnit,
+            ResolutionUnit       = dto.ResolutionUnit.HasValue ? (ResolutionUnit)dto.ResolutionUnit.Value : null,
             Page                 = dto.Page,
             ScannerManufacturer  = dto.ScannerManufacturer,
             ScannerModel         = dto.ScannerModel,

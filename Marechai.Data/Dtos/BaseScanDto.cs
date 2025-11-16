@@ -32,7 +32,7 @@ public class BaseScanDto : BaseDto<Guid>
     [JsonPropertyName("author")]
     public string? Author { get; set; }
     [JsonPropertyName("colorspace")]
-    public ColorSpace? ColorSpace { get; set; }
+    public ushort? ColorSpace { get; set; }
     [JsonPropertyName("comments")]
     public string? Comments { get; set; }
     [JsonPropertyName("creation_date")]
@@ -42,7 +42,7 @@ public class BaseScanDto : BaseDto<Guid>
     [JsonPropertyName("horizontal_resolution")]
     public double? HorizontalResolution { get; set; }
     [JsonPropertyName("resolution_unit")]
-    public ResolutionUnit? ResolutionUnit { get; set; }
+    public ushort? ResolutionUnit { get; set; }
     [JsonPropertyName("scanner_manufacturer")]
     public string? ScannerManufacturer { get; set; }
     [JsonPropertyName("scanner_model")]

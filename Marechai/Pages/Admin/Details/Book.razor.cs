@@ -166,7 +166,7 @@ public partial class Book
 
             return (ushort)_selectedScan.ColorSpace;
         }
-        set => _selectedScan.ColorSpace = (ColorSpace)value;
+        set => _selectedScan.ColorSpace = value;
     }
 
     ushort ScanResolutionUnit
@@ -177,7 +177,7 @@ public partial class Book
 
             return (ushort)_selectedScan.ResolutionUnit;
         }
-        set => _selectedScan.ResolutionUnit = (ResolutionUnit)value;
+        set => _selectedScan.ResolutionUnit = value;
     }
 
     uint ScanType

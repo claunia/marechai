@@ -90,23 +90,23 @@ public class Exif
         model.SoftwareUsed          = Software;
         model.VerticalResolution    = YResolution;
         model.Aperture              = ApertureValue;
-        model.ColorSpace            = ColorSpace;
-        model.Contrast              = Contrast;
-        model.ExposureMethod        = ExposureMode;
-        model.ExposureProgram       = ExposureProgram;
-        model.Flash                 = Flash;
+        model.ColorSpace            = (ushort?)ColorSpace;
+        model.Contrast              = (ushort?)Contrast;
+        model.ExposureMethod        = (ushort?)ExposureMode;
+        model.ExposureProgram       = (ushort?)ExposureProgram;
+        model.Flash                 = (ushort?)Flash;
         model.FocalLength           = FocalLength;
         model.FocalLengthEquivalent = FocalLengthIn35mmFormat;
-        model.LightSource           = LightSource;
-        model.MeteringMode          = MeteringMode;
-        model.ResolutionUnit        = ResolutionUnit;
-        model.Orientation           = Orientation;
-        model.Saturation            = Saturation;
-        model.SceneCaptureType      = SceneCaptureType;
-        model.SensingMethod         = SensingMethod;
-        model.Sharpness             = Sharpness;
-        model.SubjectDistanceRange  = SubjectDistanceRange;
-        model.WhiteBalance          = WhiteBalance;
+        model.LightSource           = (ushort?)LightSource;
+        model.MeteringMode          = (ushort?)MeteringMode;
+        model.ResolutionUnit        = (ushort?)ResolutionUnit;
+        model.Orientation           = (ushort?)Orientation;
+        model.Saturation            = (ushort?)Saturation;
+        model.SceneCaptureType      = (ushort?)SceneCaptureType;
+        model.SensingMethod         = (ushort?)SensingMethod;
+        model.Sharpness             = (ushort?)Sharpness;
+        model.SubjectDistanceRange  = (byte?)SubjectDistanceRange;
+        model.WhiteBalance          = (ushort?)WhiteBalance;
         model.Comments              = Description;
     }
 
@@ -120,8 +120,8 @@ public class Exif
         model.HorizontalResolution = XResolution;
         model.SoftwareUsed         = Software;
         model.VerticalResolution   = YResolution;
-        model.ColorSpace           = ColorSpace;
-        model.ResolutionUnit       = ResolutionUnit;
+        model.ColorSpace           = (ushort?)ColorSpace;
+        model.ResolutionUnit       = (ushort?)ResolutionUnit;
         model.Comments             = Description;
     }
 }
