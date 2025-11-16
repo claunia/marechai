@@ -222,6 +222,53 @@
     <value>Sistema de Design</value>
   </data>
   <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
-    <value>As alterações do sistema de design serão aplicadas na próxima vez que você iniciar o aplicativo. As alterações de tema de cor são aplicadas imediatamente.</value>
+    <value>As alterações no sistema de design serão aplicadas na próxima vez que você iniciar o aplicativo. As alterações no tema de cores são aplicadas imediatamente.</value>
+  </data>
+  
+  <!-- Login Page -->
+  <data name="LoginPage_Title.Text" xml:space="preserve">
+    <value>Entrar no Marechai</value>
+  </data>
+  <data name="LoginPage_WelcomeMessage.Text" xml:space="preserve">
+    <value>Bem-vindo de volta! Por favor, faça login para continuar.</value>
+  </data>
+  <data name="LoginPage_EmailLabel.Text" xml:space="preserve">
+    <value>Endereço de E-mail</value>
+  </data>
+  <data name="LoginPage_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>Digite seu e-mail</value>
+  </data>
+  <data name="LoginPage_PasswordLabel.Text" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="LoginPage_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Digite sua senha</value>
+  </data>
+  <data name="LoginPage_LoginButton.Content" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="LoginPage_LoginButtonText.Text" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="LoginPage_SigningInText.Text" xml:space="preserve">
+    <value>Entrando...</value>
+  </data>
+  <data name="LoginPage_ForgotPasswordLink.Content" xml:space="preserve">
+    <value>Esqueceu sua senha?</value>
+  </data>
+  <data name="LoginPage_NoAccountText.Text" xml:space="preserve">
+    <value>Não tem uma conta?</value>
+  </data>
+  <data name="LoginPage_SignUpLink.Content" xml:space="preserve">
+    <value>Cadastre-se</value>
+  </data>
+  <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
+    <value>O endereço de e-mail é obrigatório.</value>
+  </data>
+  <data name="LoginPage.Error.PasswordRequired" xml:space="preserve">
+    <value>A senha é obrigatória.</value>
+  </data>
+  <data name="LoginPage.Error.LoginFailed" xml:space="preserve">
+    <value>Falha no login. Por favor, verifique suas credenciais e tente novamente.</value>
   </data>
 </root>

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.App.Services;
+using Uno.Extensions.Authentication;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Toolkit;
 
@@ -10,8 +12,9 @@ namespace Marechai.App.Presentation.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    private readonly IStringLocalizer _localizer;
-    private readonly INavigator       _navigator;
+    private readonly IAuthenticationService _authService;
+    private readonly IStringLocalizer       _localizer;
+    private readonly INavigator             _navigator;
     [ObservableProperty]
     private bool _isSidebarOpen = true;
     [ObservableProperty]
@@ -27,10 +30,12 @@ public partial class MainViewModel : ObservableObject
     private bool _sidebarContentVisible = true;
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, INavigator navigator,
-                         NewsViewModel newsViewModel, IColorThemeService colorThemeService, IThemeService themeService)
+                         NewsViewModel newsViewModel, IColorThemeService colorThemeService, IThemeService themeService,
+                         IAuthenticationService authService)
     {
         _navigator    =  navigator;
         _localizer    =  localizer;
+        _authService  =  authService;
         NewsViewModel =  newsViewModel;
         Title         =  "Marechai";
         Title         += $" - {localizer["ApplicationName"]}";
@@ -61,6 +66,9 @@ public partial class MainViewModel : ObservableObject
         NavigateToSettingsCommand                 = new AsyncRelayCommand(() => NavigateTo("settings"));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
+
+        // Subscribe to authentication events
+        _authService.LoggedOut += OnLoggedOut;
 
         UpdateLoginLogoutButtonText();
     }
@@ -157,16 +165,39 @@ public partial class MainViewModel : ObservableObject
         };
     }
 
-    private void UpdateLoginLogoutButtonText()
+    private async void UpdateLoginLogoutButtonText()
     {
-        // TODO: Check if user is logged in
-        // For now, always show "Login"
-        LoginLogoutButtonText = LocalizedStrings["Login"];
+        bool isAuthenticated = await _authService.IsAuthenticated(CancellationToken.None);
+        LoginLogoutButtonText = isAuthenticated ? LocalizedStrings["Logout"] : LocalizedStrings["Login"];
     }
 
-    private static void HandleLoginLogout()
+    private void OnLoggedOut(object? sender, EventArgs e)
     {
-        // TODO: Implement login/logout logic
+        // Update button text when user logs out
+        UpdateLoginLogoutButtonText();
+    }
+
+    public void RefreshAuthenticationState()
+    {
+        // Public method to refresh authentication state (called after login)
+        UpdateLoginLogoutButtonText();
+    }
+
+    private async void HandleLoginLogout()
+    {
+        bool isAuthenticated = await _authService.IsAuthenticated(CancellationToken.None);
+
+        if(isAuthenticated)
+        {
+            // Logout
+            await _authService.LogoutAsync(null, CancellationToken.None);
+            UpdateLoginLogoutButtonText();
+        }
+        else
+        {
+            // Navigate to login page - use absolute path starting from root
+            await _navigator.NavigateRouteAsync(this, "/Login");
+        }
     }
 
     private async Task NavigateTo(string destination)

@@ -224,4 +224,51 @@
   <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
     <value>Los cambios del sistema de diseño se aplicarán la próxima vez que inicie la aplicación. Los cambios de tema de color se aplican inmediatamente.</value>
   </data>
+  
+  <!-- Login Page -->
+  <data name="LoginPage_Title.Text" xml:space="preserve">
+    <value>Iniciar Sesión en Marechai</value>
+  </data>
+  <data name="LoginPage_WelcomeMessage.Text" xml:space="preserve">
+    <value>¡Bienvenido de nuevo! Por favor, inicia sesión para continuar.</value>
+  </data>
+  <data name="LoginPage_EmailLabel.Text" xml:space="preserve">
+    <value>Dirección de Correo Electrónico</value>
+  </data>
+  <data name="LoginPage_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>Ingrese su correo electrónico</value>
+  </data>
+  <data name="LoginPage_PasswordLabel.Text" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="LoginPage_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Ingrese su contraseña</value>
+  </data>
+  <data name="LoginPage_LoginButton.Content" xml:space="preserve">
+    <value>Iniciar Sesión</value>
+  </data>
+  <data name="LoginPage_LoginButtonText.Text" xml:space="preserve">
+    <value>Iniciar Sesión</value>
+  </data>
+  <data name="LoginPage_SigningInText.Text" xml:space="preserve">
+    <value>Iniciando sesión...</value>
+  </data>
+  <data name="LoginPage_ForgotPasswordLink.Content" xml:space="preserve">
+    <value>¿Olvidó su contraseña?</value>
+  </data>
+  <data name="LoginPage_NoAccountText.Text" xml:space="preserve">
+    <value>¿No tiene una cuenta?</value>
+  </data>
+  <data name="LoginPage_SignUpLink.Content" xml:space="preserve">
+    <value>Registrarse</value>
+  </data>
+  <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
+    <value>La dirección de correo electrónico es obligatoria.</value>
+  </data>
+  <data name="LoginPage.Error.PasswordRequired" xml:space="preserve">
+    <value>La contraseña es obligatoria.</value>
+  </data>
+  <data name="LoginPage.Error.LoginFailed" xml:space="preserve">
+    <value>Error al iniciar sesión. Por favor, verifique sus credenciales e intente nuevamente.</value>
+  </data>
 </root>

@@ -27,6 +27,7 @@ using ProcessorsListViewModel = Marechai.App.Presentation.ViewModels.ProcessorsL
 using SettingsViewModel = Marechai.App.Presentation.ViewModels.SettingsViewModel;
 using SoundSynthDetailViewModel = Marechai.App.Presentation.ViewModels.SoundSynthDetailViewModel;
 using SoundSynthsListViewModel = Marechai.App.Presentation.ViewModels.SoundSynthsListViewModel;
+using LoginViewModel = Marechai.App.Presentation.ViewModels.LoginViewModel;
 
 namespace Marechai.App;
 
@@ -164,6 +165,7 @@ public partial class App : Application
                                                                  services.AddTransient<SoundSynthsListViewModel>();
                                                                  services.AddTransient<SoundSynthDetailViewModel>();
                                                                  services.AddTransient<SettingsViewModel>();
+                                                                 services.AddTransient<LoginViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
@@ -181,6 +183,7 @@ public partial class App : Application
     {
         views.Register(new ViewMap(ViewModel: typeof(ShellViewModel)),
                        new ViewMap<MainPage, MainViewModel>(),
+                       new ViewMap<LoginPage, LoginViewModel>(),
                        new ViewMap<NewsPage, NewsViewModel>(),
                        new ViewMap<ComputersPage, ComputersViewModel>(),
                        new ViewMap<ComputersListPage, ComputersListViewModel>(),
@@ -203,6 +206,7 @@ public partial class App : Application
                                      views.FindByViewModel<ShellViewModel>(),
                                      Nested:
                                      [
+                                         new RouteMap("Login", views.FindByViewModel<LoginViewModel>()),
                                          new RouteMap("Main",
                                                       views.FindByViewModel<MainViewModel>(),
                                                       true,

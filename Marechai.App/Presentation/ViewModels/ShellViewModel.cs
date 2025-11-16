@@ -8,5 +8,6 @@ public class ShellViewModel
 
     public ShellViewModel(INavigator navigator) => _navigator = navigator;
 
-    // Add code here to initialize or attach event handlers to singleton services
+    // Users can browse the app without authentication
+    // Login is available from the sidebar when needed
 }

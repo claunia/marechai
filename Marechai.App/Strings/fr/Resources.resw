@@ -222,6 +222,53 @@
     <value>Système de Conception</value>
   </data>
   <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
-    <value>Les modifications du système de conception seront appliquées au prochain démarrage de l'application. Les modifications du thème de couleur sont appliquées immédiatement.</value>
+    <value>Les modifications du système de conception seront appliquées la prochaine fois que vous démarrerez l'application. Les modifications du thème de couleur sont appliquées immédiatement.</value>
+  </data>
+  
+  <!-- Login Page -->
+  <data name="LoginPage_Title.Text" xml:space="preserve">
+    <value>Se Connecter à Marechai</value>
+  </data>
+  <data name="LoginPage_WelcomeMessage.Text" xml:space="preserve">
+    <value>Bienvenue ! Veuillez vous connecter pour continuer.</value>
+  </data>
+  <data name="LoginPage_EmailLabel.Text" xml:space="preserve">
+    <value>Adresse E-mail</value>
+  </data>
+  <data name="LoginPage_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>Entrez votre e-mail</value>
+  </data>
+  <data name="LoginPage_PasswordLabel.Text" xml:space="preserve">
+    <value>Mot de Passe</value>
+  </data>
+  <data name="LoginPage_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Entrez votre mot de passe</value>
+  </data>
+  <data name="LoginPage_LoginButton.Content" xml:space="preserve">
+    <value>Se Connecter</value>
+  </data>
+  <data name="LoginPage_LoginButtonText.Text" xml:space="preserve">
+    <value>Se Connecter</value>
+  </data>
+  <data name="LoginPage_SigningInText.Text" xml:space="preserve">
+    <value>Connexion en cours...</value>
+  </data>
+  <data name="LoginPage_ForgotPasswordLink.Content" xml:space="preserve">
+    <value>Mot de passe oublié ?</value>
+  </data>
+  <data name="LoginPage_NoAccountText.Text" xml:space="preserve">
+    <value>Vous n'avez pas de compte ?</value>
+  </data>
+  <data name="LoginPage_SignUpLink.Content" xml:space="preserve">
+    <value>S'inscrire</value>
+  </data>
+  <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
+    <value>L'adresse e-mail est requise.</value>
+  </data>
+  <data name="LoginPage.Error.PasswordRequired" xml:space="preserve">
+    <value>Le mot de passe est requis.</value>
+  </data>
+  <data name="LoginPage.Error.LoginFailed" xml:space="preserve">
+    <value>Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.</value>
   </data>
 </root>

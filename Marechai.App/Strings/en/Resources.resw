@@ -224,4 +224,51 @@
   <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
     <value>Design system changes will be applied the next time you start the application. Color theme changes are applied immediately.</value>
   </data>
+  
+  <!-- Login Page -->
+  <data name="LoginPage_Title.Text" xml:space="preserve">
+    <value>Sign In to Marechai</value>
+  </data>
+  <data name="LoginPage_WelcomeMessage.Text" xml:space="preserve">
+    <value>Welcome back! Please sign in to continue.</value>
+  </data>
+  <data name="LoginPage_EmailLabel.Text" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
+  <data name="LoginPage_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter your email</value>
+  </data>
+  <data name="LoginPage_PasswordLabel.Text" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="LoginPage_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Enter your password</value>
+  </data>
+  <data name="LoginPage_LoginButton.Content" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="LoginPage_LoginButtonText.Text" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="LoginPage_SigningInText.Text" xml:space="preserve">
+    <value>Signing in...</value>
+  </data>
+  <data name="LoginPage_ForgotPasswordLink.Content" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="LoginPage_NoAccountText.Text" xml:space="preserve">
+    <value>Don't have an account?</value>
+  </data>
+  <data name="LoginPage_SignUpLink.Content" xml:space="preserve">
+    <value>Sign up</value>
+  </data>
+  <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
+    <value>Email address is required.</value>
+  </data>
+  <data name="LoginPage.Error.PasswordRequired" xml:space="preserve">
+    <value>Password is required.</value>
+  </data>
+  <data name="LoginPage.Error.LoginFailed" xml:space="preserve">
+    <value>Login failed. Please check your credentials and try again.</value>
+  </data>
 </root>

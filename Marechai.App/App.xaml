@@ -8,7 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <!-- Load WinUI resources -->
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                
+
                 <!-- Load Uno.UI.Toolkit resources -->
                 <ToolkitResources xmlns="using:Uno.Toolkit.UI" />
             </ResourceDictionary.MergedDictionaries>
@@ -17,6 +17,10 @@
             <local:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
             <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
             <local:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+            <local:InvertBoolConverter x:Key="InvertBoolConverter" />
+            <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <local:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter" />
+            <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
 
         </ResourceDictionary>
     </Application.Resources>
