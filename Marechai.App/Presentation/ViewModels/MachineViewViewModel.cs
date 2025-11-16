@@ -195,6 +195,20 @@ public partial class MachineViewViewModel : ObservableObject
             return;
         }
 
+        // If we came from SoundSynthDetailViewModel, navigate back to sound synth details
+        if(_navigationSource is SoundSynthDetailViewModel soundSynthDetailVm)
+        {
+            var navParam = new SoundSynthDetailNavigationParameter
+            {
+                SoundSynthId     = soundSynthDetailVm.SoundSynthId,
+                NavigationSource = this
+            };
+
+            await _navigator.NavigateViewModelAsync<SoundSynthDetailViewModel>(this, data: navParam);
+
+            return;
+        }
+
         // Otherwise, try to go back in the navigation stack
         await _navigator.GoBack(this);
     }

@@ -52,7 +52,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToPeopleCommand                   = new AsyncRelayCommand(() => NavigateTo("people"));
         NavigateToProcessorsCommand               = new AsyncRelayCommand(() => NavigateTo("processors"));
         NavigateToSoftwareCommand                 = new AsyncRelayCommand(() => NavigateTo("software"));
-        NavigateToSoundSynthesizersCommand        = new AsyncRelayCommand(() => NavigateTo("soundsynthesizers"));
+        NavigateToSoundSynthesizersCommand        = new AsyncRelayCommand(() => NavigateTo("sound-synths"));
         NavigateToSettingsCommand                 = new AsyncRelayCommand(() => NavigateTo("settings"));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);

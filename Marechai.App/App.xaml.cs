@@ -22,6 +22,8 @@ using NewsViewModel = Marechai.App.Presentation.ViewModels.NewsViewModel;
 using PhotoDetailViewModel = Marechai.App.Presentation.ViewModels.PhotoDetailViewModel;
 using ProcessorDetailViewModel = Marechai.App.Presentation.ViewModels.ProcessorDetailViewModel;
 using ProcessorsListViewModel = Marechai.App.Presentation.ViewModels.ProcessorsListViewModel;
+using SoundSynthDetailViewModel = Marechai.App.Presentation.ViewModels.SoundSynthDetailViewModel;
+using SoundSynthsListViewModel = Marechai.App.Presentation.ViewModels.SoundSynthsListViewModel;
 
 namespace Marechai.App;
 
@@ -128,6 +130,7 @@ public partial class App : Application
                                                                  services.AddSingleton<MachineViewViewModel>();
                                                                  services.AddSingleton<GpusService>();
                                                                  services.AddSingleton<ProcessorsService>();
+                                                                 services.AddSingleton<SoundSynthsService>();
                                                                  services.AddTransient<PhotoDetailViewModel>();
 
                                                                  services
@@ -144,6 +147,8 @@ public partial class App : Application
                                                                  services.AddTransient<GpuDetailViewModel>();
                                                                  services.AddTransient<ProcessorsListViewModel>();
                                                                  services.AddTransient<ProcessorDetailViewModel>();
+                                                                 services.AddTransient<SoundSynthsListViewModel>();
+                                                                 services.AddTransient<SoundSynthDetailViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
@@ -174,6 +179,8 @@ public partial class App : Application
                        new ViewMap<GpuDetailPage, GpuDetailViewModel>(),
                        new ViewMap<ProcessorListPage, ProcessorsListViewModel>(),
                        new ViewMap<ProcessorDetailPage, ProcessorDetailViewModel>(),
+                       new ViewMap<SoundSynthListPage, SoundSynthsListViewModel>(),
+                       new ViewMap<SoundSynthDetailPage, SoundSynthDetailViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
         routes.Register(new RouteMap("",
@@ -230,6 +237,17 @@ public partial class App : Application
                                                                            new RouteMap("processor-details",
                                                                                views.FindByViewModel<
                                                                                    ProcessorDetailViewModel>())
+                                                                       ]),
+                                                          new RouteMap("sound-synths",
+                                                                       views.FindByViewModel<SoundSynthsListViewModel>(),
+                                                                       Nested:
+                                                                       [
+                                                                           new RouteMap("sound-synth-details",
+                                                                               views.FindByViewModel<
+                                                                                   SoundSynthDetailViewModel>()),
+                                                                           new RouteMap("machine-view",
+                                                                               views.FindByViewModel<
+                                                                                   MachineViewViewModel>())
                                                                        ]),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())
