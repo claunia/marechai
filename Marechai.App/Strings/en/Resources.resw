@@ -209,6 +209,9 @@
   <data name="AmigaTheme" xml:space="preserve">
     <value>Amiga Workbench</value>
   </data>
+  <data name="CDETheme" xml:space="preserve">
+    <value>CDE / Motif</value>
+  </data>
   <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
     <value>Brightness</value>
   </data>

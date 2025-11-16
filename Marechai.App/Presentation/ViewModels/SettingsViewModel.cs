@@ -105,6 +105,11 @@ public partial class SettingsViewModel : ObservableObject
             {
                 ThemeName   = "Amiga",
                 DisplayName = _localizer["AmigaTheme"]
+            },
+            new()
+            {
+                ThemeName   = "CDE",
+                DisplayName = _localizer["CDETheme"]
             }
         };
 
