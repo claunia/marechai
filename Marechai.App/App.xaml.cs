@@ -20,6 +20,8 @@ using MachineViewViewModel = Marechai.App.Presentation.ViewModels.MachineViewVie
 using MainViewModel = Marechai.App.Presentation.ViewModels.MainViewModel;
 using NewsViewModel = Marechai.App.Presentation.ViewModels.NewsViewModel;
 using PhotoDetailViewModel = Marechai.App.Presentation.ViewModels.PhotoDetailViewModel;
+using ProcessorDetailViewModel = Marechai.App.Presentation.ViewModels.ProcessorDetailViewModel;
+using ProcessorsListViewModel = Marechai.App.Presentation.ViewModels.ProcessorsListViewModel;
 
 namespace Marechai.App;
 
@@ -125,6 +127,7 @@ public partial class App : Application
                                                                  services.AddSingleton<CompanyDetailViewModel>();
                                                                  services.AddSingleton<MachineViewViewModel>();
                                                                  services.AddSingleton<GpusService>();
+                                                                 services.AddSingleton<ProcessorsService>();
                                                                  services.AddTransient<PhotoDetailViewModel>();
 
                                                                  services
@@ -139,6 +142,8 @@ public partial class App : Application
                                                                  services.AddTransient<ConsolesListViewModel>();
                                                                  services.AddTransient<GpuListViewModel>();
                                                                  services.AddTransient<GpuDetailViewModel>();
+                                                                 services.AddTransient<ProcessorsListViewModel>();
+                                                                 services.AddTransient<ProcessorDetailViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
@@ -167,6 +172,8 @@ public partial class App : Application
                        new ViewMap<PhotoDetailPage, PhotoDetailViewModel>(),
                        new ViewMap<GpuListPage, GpuListViewModel>(),
                        new ViewMap<GpuDetailPage, GpuDetailViewModel>(),
+                       new ViewMap<ProcessorListPage, ProcessorsListViewModel>(),
+                       new ViewMap<ProcessorDetailPage, ProcessorDetailViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
         routes.Register(new RouteMap("",
@@ -215,6 +222,14 @@ public partial class App : Application
                                                                            new RouteMap("gpu-details",
                                                                                views.FindByViewModel<
                                                                                    GpuDetailViewModel>())
+                                                                       ]),
+                                                          new RouteMap("processors",
+                                                                       views.FindByViewModel<ProcessorsListViewModel>(),
+                                                                       Nested:
+                                                                       [
+                                                                           new RouteMap("processor-details",
+                                                                               views.FindByViewModel<
+                                                                                   ProcessorDetailViewModel>())
                                                                        ]),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())

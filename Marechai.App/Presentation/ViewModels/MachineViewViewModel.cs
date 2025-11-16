@@ -181,6 +181,20 @@ public partial class MachineViewViewModel : ObservableObject
             return;
         }
 
+        // If we came from ProcessorDetailViewModel, navigate back to processor details
+        if(_navigationSource is ProcessorDetailViewModel processorDetailVm)
+        {
+            var navParam = new ProcessorDetailNavigationParameter
+            {
+                ProcessorId      = processorDetailVm.ProcessorId,
+                NavigationSource = this
+            };
+
+            await _navigator.NavigateViewModelAsync<ProcessorDetailViewModel>(this, data: navParam);
+
+            return;
+        }
+
         // Otherwise, try to go back in the navigation stack
         await _navigator.GoBack(this);
     }
