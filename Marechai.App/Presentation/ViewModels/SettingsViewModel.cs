@@ -95,6 +95,11 @@ public partial class SettingsViewModel : ObservableObject
             {
                 ThemeName   = "MacOS9",
                 DisplayName = _localizer["MacOS9Theme"]
+            },
+            new()
+            {
+                ThemeName   = "DOS",
+                DisplayName = _localizer["DOSTheme"]
             }
         };
 

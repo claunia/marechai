@@ -203,6 +203,9 @@
   <data name="MacOS9Theme" xml:space="preserve">
     <value>Mac OS 9</value>
   </data>
+  <data name="DOSTheme" xml:space="preserve">
+    <value>DOS / Turbo Vision</value>
+  </data>
   <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
     <value>Brilho</value>
   </data>

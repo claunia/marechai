@@ -34,7 +34,8 @@ public class ColorThemeService : IColorThemeService
     {
         DEFAULT_THEME,
         "Windows311",
-        "MacOS9"
+        "MacOS9",
+        "DOS"
     };
 
     public void SetThemeService(IThemeService themeService)
@@ -91,6 +92,7 @@ public class ColorThemeService : IColorThemeService
                                {
                                    "Windows311" => "ms-appx:///Styles/Win311ColorPalette.xaml",
                                    "MacOS9"     => "ms-appx:///Styles/MacOS9ColorPalette.xaml",
+                                   "DOS"        => "ms-appx:///Styles/DOSColorPalette.xaml",
                                    _            => null
                                };
 
