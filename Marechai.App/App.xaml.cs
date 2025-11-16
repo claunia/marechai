@@ -14,6 +14,7 @@ using Uno.UI;
 using CompanyDetailViewModel = Marechai.App.Presentation.ViewModels.CompanyDetailViewModel;
 using ComputersListViewModel = Marechai.App.Presentation.ViewModels.ComputersListViewModel;
 using ComputersViewModel = Marechai.App.Presentation.ViewModels.ComputersViewModel;
+using GpuListViewModel = Marechai.App.Presentation.ViewModels.GpusListViewModel;
 using MachineViewViewModel = Marechai.App.Presentation.ViewModels.MachineViewViewModel;
 using MainViewModel = Marechai.App.Presentation.ViewModels.MainViewModel;
 using NewsViewModel = Marechai.App.Presentation.ViewModels.NewsViewModel;
@@ -122,6 +123,7 @@ public partial class App : Application
                                                                  services.AddSingleton<CompanyDetailService>();
                                                                  services.AddSingleton<CompanyDetailViewModel>();
                                                                  services.AddSingleton<MachineViewViewModel>();
+                                                                 services.AddSingleton<GpusService>();
                                                                  services.AddTransient<PhotoDetailViewModel>();
 
                                                                  services
@@ -134,6 +136,7 @@ public partial class App : Application
 
                                                                  services.AddTransient<ComputersListViewModel>();
                                                                  services.AddTransient<ConsolesListViewModel>();
+                                                                 services.AddTransient<GpuListViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
@@ -160,6 +163,7 @@ public partial class App : Application
                        new ViewMap<CompanyDetailPage, CompanyDetailViewModel>(),
                        new ViewMap<MachineViewPage, MachineViewViewModel>(),
                        new ViewMap<PhotoDetailPage, PhotoDetailViewModel>(),
+                       new ViewMap<GpuListPage, GpuListViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
         routes.Register(new RouteMap("",
@@ -200,6 +204,15 @@ public partial class App : Application
                                                                            new RouteMap("detail",
                                                                                views.FindByViewModel<
                                                                                    CompanyDetailViewModel>())
+                                                                       ]),
+                                                          new RouteMap("gpus",
+                                                                       views.FindByViewModel<GpuListViewModel>(),
+                                                                       Nested:
+                                                                       [
+                                                                           new RouteMap("list-gpus",
+                                                                               views.FindByViewModel<
+                                                                                   GpuListViewModel>(),
+                                                                               true)
                                                                        ]),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())
