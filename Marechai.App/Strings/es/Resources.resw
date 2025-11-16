@@ -206,6 +206,9 @@
   <data name="DOSTheme" xml:space="preserve">
     <value>DOS / Turbo Vision</value>
   </data>
+  <data name="AmigaTheme" xml:space="preserve">
+    <value>Amiga Workbench</value>
+  </data>
   <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
     <value>Brillo</value>
   </data>
