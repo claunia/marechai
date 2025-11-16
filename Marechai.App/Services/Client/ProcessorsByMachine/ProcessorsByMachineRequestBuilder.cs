@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.App.Models;
 using Marechai.App.ProcessorsByMachine.ByMachine;
+using Marechai.App.ProcessorsByMachine.ByProcessor;
 using Marechai.App.ProcessorsByMachine.Item;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -23,6 +24,11 @@ namespace Marechai.App.ProcessorsByMachine
         public global::Marechai.App.ProcessorsByMachine.ByMachine.ByMachineRequestBuilder ByMachine
         {
             get => new global::Marechai.App.ProcessorsByMachine.ByMachine.ByMachineRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The byProcessor property</summary>
+        public global::Marechai.App.ProcessorsByMachine.ByProcessor.ByProcessorRequestBuilder ByProcessor
+        {
+            get => new global::Marechai.App.ProcessorsByMachine.ByProcessor.ByProcessorRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Marechai.App.processorsByMachine.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
