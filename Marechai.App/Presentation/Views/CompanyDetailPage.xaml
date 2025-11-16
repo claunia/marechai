@@ -19,7 +19,8 @@
 
         <!-- Header -->
         <utu:NavigationBar Grid.Row="0"
-                           Content="{Binding Path=Title}">
+                           Content="{Binding Path=Title}"
+                           MainCommandMode="Action">
             <utu:NavigationBar.MainCommand>
                 <AppBarButton Icon="Back"
                               Label="Back"

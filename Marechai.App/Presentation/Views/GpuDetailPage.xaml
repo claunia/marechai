@@ -17,26 +17,17 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Header with Back Button -->
-        <Grid Grid.Row="0"
-              Padding="8"
-              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <AppBarButton Grid.Column="0"
-                          Icon="Back"
-                          Label="Back"
-                          Command="{Binding GoBackCommand}"
-                          AutomationProperties.Name="Go back" />
-            <TextBlock Grid.Column="1"
-                       Text="GPU Details"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       FontSize="18"
-                       FontWeight="SemiBold" />
-        </Grid>
+        <!-- Header -->
+        <utu:NavigationBar Grid.Row="0"
+                           Content="{Binding Path=Title}"
+                           MainCommandMode="Action">
+            <utu:NavigationBar.MainCommand>
+                <AppBarButton Icon="Back"
+                              Label="Back"
+                              Command="{Binding GoBackCommand}"
+                              AutomationProperties.Name="Go back" />
+            </utu:NavigationBar.MainCommand>
+        </utu:NavigationBar>
 
         <!-- Content -->
         <ScrollViewer Grid.Row="1">
