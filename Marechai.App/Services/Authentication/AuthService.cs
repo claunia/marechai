@@ -19,9 +19,16 @@ public sealed class AuthService
     {
         if(credentials is null) return false;
 
-        string? email = credentials.FirstOrDefault(x => x.Key == "Email").Value;
+        string? email =
+            (credentials.FirstOrDefault(x => x.Key.Equals("Email", StringComparison.OrdinalIgnoreCase)).Value ??
+             credentials.FirstOrDefault(x => x.Key.Equals("email",    StringComparison.OrdinalIgnoreCase)).Value ??
+             credentials.FirstOrDefault(x => x.Key.Equals("Username", StringComparison.OrdinalIgnoreCase)).Value)
+          ?.Trim();
 
-        string? password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
+        string? password =
+            (credentials.FirstOrDefault(x => x.Key.Equals("Password", StringComparison.OrdinalIgnoreCase)).Value ??
+             credentials.FirstOrDefault(x => x.Key.Equals("password", StringComparison.OrdinalIgnoreCase)).Value)
+          ?.Trim();
 
         if(email is null)
         {
