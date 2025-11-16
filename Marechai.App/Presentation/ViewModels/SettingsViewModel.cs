@@ -1,48 +1,52 @@
 using System.Collections.Generic;
 using System.Linq;
-using Uno.Extensions.Toolkit;
+using System.Threading.Tasks;
 using Marechai.App.Services;
+using Uno.Extensions.Toolkit;
 
 namespace Marechai.App.Presentation.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
-    private readonly IStringLocalizer _localizer;
-    private readonly IThemeService _themeService;
     private readonly IColorThemeService _colorThemeService;
-
-    [ObservableProperty]
-    private List<ThemeOption> _availableThemes = new();
-
-    [ObservableProperty]
-    private ThemeOption _selectedTheme;
+    private readonly IStringLocalizer   _localizer;
+    private readonly IThemeService      _themeService;
 
     [ObservableProperty]
     private List<ColorThemeOption> _availableColorThemes = new();
 
     [ObservableProperty]
+    private List<ThemeOption> _availableThemes = new();
+
+    [ObservableProperty]
     private ColorThemeOption _selectedColorTheme;
 
-    public SettingsViewModel(IStringLocalizer localizer, IThemeService themeService, IColorThemeService colorThemeService)
+    [ObservableProperty]
+    private ThemeOption _selectedTheme;
+
+    public SettingsViewModel(IStringLocalizer   localizer, IThemeService themeService,
+                             IColorThemeService colorThemeService)
     {
-        _localizer = localizer;
-        _themeService = themeService;
+        _localizer         = localizer;
+        _themeService      = themeService;
         _colorThemeService = colorThemeService;
-        Title = _localizer["Settings"];
+        Title              = _localizer["Settings"];
 
         // Initialize immediately to ensure UI is populated
         InitializeOptions();
-        
+
         // Wait for theme service to initialize
         _ = InitializeThemeServiceAsync();
     }
 
-    private async System.Threading.Tasks.Task InitializeThemeServiceAsync()
+    public string Title { get; }
+
+    private async Task InitializeThemeServiceAsync()
     {
         try
         {
             await _themeService.InitializeAsync();
-            
+
             // Ensure the color theme service has a reference to the theme service
             _colorThemeService.SetThemeService(_themeService);
         }
@@ -52,23 +56,46 @@ public partial class SettingsViewModel : ObservableObject
         }
     }
 
-    public string Title { get; }
-
     private void InitializeOptions()
     {
         // Initialize Light/Dark/System Themes
         AvailableThemes = new List<ThemeOption>
         {
-            new() { Theme = AppTheme.Light, DisplayName = _localizer["LightTheme"] },
-            new() { Theme = AppTheme.Dark, DisplayName = _localizer["DarkTheme"] },
-            new() { Theme = AppTheme.System, DisplayName = _localizer["SystemTheme"] }
+            new()
+            {
+                Theme       = AppTheme.Light,
+                DisplayName = _localizer["LightTheme"]
+            },
+            new()
+            {
+                Theme       = AppTheme.Dark,
+                DisplayName = _localizer["DarkTheme"]
+            },
+            new()
+            {
+                Theme       = AppTheme.System,
+                DisplayName = _localizer["SystemTheme"]
+            }
         };
 
         // Initialize Color Themes
         AvailableColorThemes = new List<ColorThemeOption>
         {
-            new() { ThemeName = "Default", DisplayName = _localizer["DefaultColorTheme"] },
-            new() { ThemeName = "Windows311", DisplayName = _localizer["Windows311Theme"] }
+            new()
+            {
+                ThemeName   = "Default",
+                DisplayName = _localizer["DefaultColorTheme"]
+            },
+            new()
+            {
+                ThemeName   = "Windows311",
+                DisplayName = _localizer["Windows311Theme"]
+            },
+            new()
+            {
+                ThemeName   = "MacOS9",
+                DisplayName = _localizer["MacOS9Theme"]
+            }
         };
 
         // Try to load saved preferences
@@ -80,39 +107,33 @@ public partial class SettingsViewModel : ObservableObject
         try
         {
             // Load current theme from ThemeService
-            var currentTheme = _themeService.Theme;
-            SelectedTheme = AvailableThemes.FirstOrDefault(t => t.Theme == currentTheme)
-                            ?? AvailableThemes.FirstOrDefault(t => t.Theme == AppTheme.System)
-                            ?? AvailableThemes.First();
+            AppTheme currentTheme = _themeService.Theme;
+
+            SelectedTheme = AvailableThemes.FirstOrDefault(t => t.Theme == currentTheme) ??
+                            AvailableThemes.FirstOrDefault(t => t.Theme == AppTheme.System) ?? AvailableThemes.First();
 
             // Load current color theme
-            var currentColorTheme = _colorThemeService.CurrentColorTheme;
-            SelectedColorTheme = AvailableColorThemes.FirstOrDefault(t => t.ThemeName == currentColorTheme)
-                                ?? AvailableColorThemes.First();
+            string currentColorTheme = _colorThemeService.CurrentColorTheme;
+
+            SelectedColorTheme = AvailableColorThemes.FirstOrDefault(t => t.ThemeName == currentColorTheme) ??
+                                 AvailableColorThemes.First();
         }
         catch
         {
             // If loading fails, use defaults
-            SelectedTheme = AvailableThemes.FirstOrDefault(t => t.Theme == AppTheme.System)
-                            ?? AvailableThemes.First();
+            SelectedTheme = AvailableThemes.FirstOrDefault(t => t.Theme == AppTheme.System) ?? AvailableThemes.First();
             SelectedColorTheme = AvailableColorThemes.First();
         }
     }
 
     partial void OnSelectedThemeChanged(ThemeOption value)
     {
-        if (value != null)
-        {
-            ApplyTheme(value);
-        }
+        if(value != null) ApplyTheme(value);
     }
 
     partial void OnSelectedColorThemeChanged(ColorThemeOption value)
     {
-        if (value != null)
-        {
-            ApplyColorTheme(value);
-        }
+        if(value != null) ApplyColorTheme(value);
     }
 
     private async void ApplyTheme(ThemeOption theme)
@@ -143,12 +164,12 @@ public partial class SettingsViewModel : ObservableObject
 
 public class ThemeOption
 {
-    public AppTheme Theme { get; set; }
-    public string DisplayName { get; set; } = string.Empty;
+    public AppTheme Theme       { get; set; }
+    public string   DisplayName { get; set; } = string.Empty;
 }
 
 public class ColorThemeOption
 {
-    public string ThemeName { get; set; } = string.Empty;
+    public string ThemeName   { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
 }

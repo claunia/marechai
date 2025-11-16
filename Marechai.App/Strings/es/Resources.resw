@@ -200,6 +200,9 @@
   <data name="Windows311Theme" xml:space="preserve">
     <value>Windows 3.11</value>
   </data>
+  <data name="MacOS9Theme" xml:space="preserve">
+    <value>Mac OS 9</value>
+  </data>
   <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
     <value>Brillo</value>
   </data>

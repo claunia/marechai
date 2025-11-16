@@ -33,7 +33,8 @@ public class ColorThemeService : IColorThemeService
     public IReadOnlyList<string> AvailableColorThemes => new List<string>
     {
         DEFAULT_THEME,
-        "Windows311"
+        "Windows311",
+        "MacOS9"
     };
 
     public void SetThemeService(IThemeService themeService)
@@ -74,7 +75,7 @@ public class ColorThemeService : IColorThemeService
 
         // Store the existing merged dictionaries (except color overrides)
         var existingDictionaries = app.Resources.MergedDictionaries
-                                      .Where(d => d.Source?.OriginalString?.Contains("ColorPaletteOverride") != true)
+                                      .Where(d => d.Source?.OriginalString?.Contains("ColorPalette") != true)
                                       .ToList();
 
         // Clear all merged dictionaries
@@ -86,12 +87,22 @@ public class ColorThemeService : IColorThemeService
         // Add the new color theme if not default
         if(themeName != DEFAULT_THEME)
         {
-            var newDictionary = new ResourceDictionary
-            {
-                Source = new Uri("ms-appx:///Styles/ColorPaletteOverride.xaml")
-            };
+            string themeFile = themeName switch
+                               {
+                                   "Windows311" => "ms-appx:///Styles/Win311ColorPalette.xaml",
+                                   "MacOS9"     => "ms-appx:///Styles/MacOS9ColorPalette.xaml",
+                                   _            => null
+                               };
 
-            app.Resources.MergedDictionaries.Add(newDictionary);
+            if(themeFile != null)
+            {
+                var newDictionary = new ResourceDictionary
+                {
+                    Source = new Uri(themeFile)
+                };
+
+                app.Resources.MergedDictionaries.Add(newDictionary);
+            }
         }
 
         // Force UI refresh by toggling the theme temporarily
