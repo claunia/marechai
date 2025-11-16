@@ -2,9 +2,11 @@ using System.Net.Http;
 using Marechai.App.Presentation.ViewModels;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.App.Services.Authentication;
 using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 using Uno.Extensions;
+using Uno.Extensions.Authentication;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Http;
@@ -94,6 +96,8 @@ public partial class App : Application
                                                             .UseLocalization()
                                                             .UseHttp((context, services) =>
                                                              {
+                                                                 services.AddTransient<DelegatingHandler,
+                                                                     HttpAuthHandler>();
 #if DEBUG
 
                                                                  // DelegatingHandler will be automatically injected
@@ -119,6 +123,11 @@ public partial class App : Application
                                                                     .AddSingleton<IColorThemeService,
                                                                          ColorThemeService>();
 
+                                                                 services
+                                                                    .AddSingleton<IAuthenticationService,
+                                                                         AuthService>();
+
+                                                                 services.AddSingleton<ITokenService, TokenService>();
                                                                  services.AddSingleton<FlagCache>();
                                                                  services.AddSingleton<CompanyLogoCache>();
                                                                  services.AddSingleton<MachinePhotoCache>();
