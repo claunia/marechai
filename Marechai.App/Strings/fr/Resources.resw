@@ -166,4 +166,50 @@
   <data name="Company was renamed on an unknown date to an unknown name." xml:space="preserve">
     <value>L'entreprise a été renommée à une date inconnue en un nom inconnu.</value>
   </data>
+
+  <data name="SettingsPage_ThemeSection_Header.Text" xml:space="preserve">
+    <value>Apparence</value>
+  </data>
+  <data name="SettingsPage_ThemeSection_Description.Text" xml:space="preserve">
+    <value>Sélectionnez votre thème préféré</value>
+  </data>
+  <data name="SettingsPage_ThemeSelector.Header" xml:space="preserve">
+    <value>Thème</value>
+  </data>
+  <data name="SettingsPage_ThemeChange_Notice.Text" xml:space="preserve">
+    <value>Les modifications du thème seront appliquées au prochain démarrage de l'application.</value>
+  </data>
+  <data name="SettingsPage_AboutSection_Header.Text" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="SettingsPage_Version.Text" xml:space="preserve">
+    <value>Version 1.0</value>
+  </data>
+  <data name="LightTheme" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="DarkTheme" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="SystemTheme" xml:space="preserve">
+    <value>Système</value>
+  </data>
+  <data name="DefaultColorTheme" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="Windows311Theme" xml:space="preserve">
+    <value>Windows 3.11</value>
+  </data>
+  <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
+    <value>Luminosité</value>
+  </data>
+  <data name="SettingsPage_ColorThemeSelector.Header" xml:space="preserve">
+    <value>Thème de Couleur</value>
+  </data>
+  <data name="SettingsPage_DesignSystemSelector.Header" xml:space="preserve">
+    <value>Système de Conception</value>
+  </data>
+  <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
+    <value>Les modifications du système de conception seront appliquées au prochain démarrage de l'application. Les modifications du thème de couleur sont appliquées immédiatement.</value>
+  </data>
 </root>

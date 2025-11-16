@@ -22,6 +22,7 @@ using NewsViewModel = Marechai.App.Presentation.ViewModels.NewsViewModel;
 using PhotoDetailViewModel = Marechai.App.Presentation.ViewModels.PhotoDetailViewModel;
 using ProcessorDetailViewModel = Marechai.App.Presentation.ViewModels.ProcessorDetailViewModel;
 using ProcessorsListViewModel = Marechai.App.Presentation.ViewModels.ProcessorsListViewModel;
+using SettingsViewModel = Marechai.App.Presentation.ViewModels.SettingsViewModel;
 using SoundSynthDetailViewModel = Marechai.App.Presentation.ViewModels.SoundSynthDetailViewModel;
 using SoundSynthsListViewModel = Marechai.App.Presentation.ViewModels.SoundSynthsListViewModel;
 
@@ -114,6 +115,10 @@ public partial class App : Application
                                                             .ConfigureServices((context, services) =>
                                                              {
                                                                  // Register application services
+                                                                 services
+                                                                    .AddSingleton<IColorThemeService,
+                                                                         ColorThemeService>();
+
                                                                  services.AddSingleton<FlagCache>();
                                                                  services.AddSingleton<CompanyLogoCache>();
                                                                  services.AddSingleton<MachinePhotoCache>();
@@ -149,6 +154,7 @@ public partial class App : Application
                                                                  services.AddTransient<ProcessorDetailViewModel>();
                                                                  services.AddTransient<SoundSynthsListViewModel>();
                                                                  services.AddTransient<SoundSynthDetailViewModel>();
+                                                                 services.AddTransient<SettingsViewModel>();
                                                              })
                                                             .UseNavigation(RegisterRoutes));
 
@@ -181,6 +187,7 @@ public partial class App : Application
                        new ViewMap<ProcessorDetailPage, ProcessorDetailViewModel>(),
                        new ViewMap<SoundSynthListPage, SoundSynthsListViewModel>(),
                        new ViewMap<SoundSynthDetailPage, SoundSynthDetailViewModel>(),
+                       new ViewMap<SettingsPage, SettingsViewModel>(),
                        new DataViewMap<SecondPage, SecondViewModel, Entity>());
 
         routes.Register(new RouteMap("",
@@ -197,7 +204,8 @@ public partial class App : Application
                                                                        true),
                                                           new RouteMap("computers",
                                                                        views.FindByViewModel<ComputersViewModel>(),
-                                                                       Nested:
+                                                                       Nested
+                                                                       :
                                                                        [
                                                                            new RouteMap("list-computers",
                                                                                views.FindByViewModel<
@@ -208,7 +216,8 @@ public partial class App : Application
                                                                        ]),
                                                           new RouteMap("consoles",
                                                                        views.FindByViewModel<ConsolesViewModel>(),
-                                                                       Nested:
+                                                                       Nested
+                                                                       :
                                                                        [
                                                                            new RouteMap("list-consoles",
                                                                                views.FindByViewModel<
@@ -216,7 +225,8 @@ public partial class App : Application
                                                                        ]),
                                                           new RouteMap("companies",
                                                                        views.FindByViewModel<CompaniesViewModel>(),
-                                                                       Nested:
+                                                                       Nested
+                                                                       :
                                                                        [
                                                                            new RouteMap("company-details",
                                                                                views.FindByViewModel<
@@ -239,7 +249,8 @@ public partial class App : Application
                                                                                    ProcessorDetailViewModel>())
                                                                        ]),
                                                           new RouteMap("sound-synths",
-                                                                       views.FindByViewModel<SoundSynthsListViewModel>(),
+                                                                       views.FindByViewModel<
+                                                                           SoundSynthsListViewModel>(),
                                                                        Nested:
                                                                        [
                                                                            new RouteMap("sound-synth-details",
@@ -249,6 +260,8 @@ public partial class App : Application
                                                                                views.FindByViewModel<
                                                                                    MachineViewViewModel>())
                                                                        ]),
+                                                          new RouteMap("settings",
+                                                                       views.FindByViewModel<SettingsViewModel>()),
                                                           new RouteMap("Second",
                                                                        views.FindByViewModel<SecondViewModel>())
                                                       ])

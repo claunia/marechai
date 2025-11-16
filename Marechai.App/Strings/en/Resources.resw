@@ -166,4 +166,50 @@
   <data name="Company was renamed on an unknown date to an unknown name." xml:space="preserve">
     <value>Company was renamed on an unknown date to an unknown name.</value>
   </data>
+
+  <data name="SettingsPage_ThemeSection_Header.Text" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="SettingsPage_ThemeSection_Description.Text" xml:space="preserve">
+    <value>Select your preferred theme</value>
+  </data>
+  <data name="SettingsPage_ThemeSelector.Header" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsPage_ThemeChange_Notice.Text" xml:space="preserve">
+    <value>Theme changes will be applied the next time you start the application.</value>
+  </data>
+  <data name="SettingsPage_AboutSection_Header.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="SettingsPage_Version.Text" xml:space="preserve">
+    <value>Version 1.0</value>
+  </data>
+  <data name="LightTheme" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="DarkTheme" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SystemTheme" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="DefaultColorTheme" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Windows311Theme" xml:space="preserve">
+    <value>Windows 3.11</value>
+  </data>
+  <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
+    <value>Brightness</value>
+  </data>
+  <data name="SettingsPage_ColorThemeSelector.Header" xml:space="preserve">
+    <value>Color Theme</value>
+  </data>
+  <data name="SettingsPage_DesignSystemSelector.Header" xml:space="preserve">
+    <value>Design System</value>
+  </data>
+  <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
+    <value>Design system changes will be applied the next time you start the application. Color theme changes are applied immediately.</value>
+  </data>
 </root>

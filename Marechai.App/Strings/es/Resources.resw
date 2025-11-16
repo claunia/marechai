@@ -166,4 +166,50 @@
   <data name="Company was renamed on an unknown date to an unknown name." xml:space="preserve">
     <value>La empresa fue renombrada en una fecha desconocida a un nombre desconocido.</value>
   </data>
+
+  <data name="SettingsPage_ThemeSection_Header.Text" xml:space="preserve">
+    <value>Apariencia</value>
+  </data>
+  <data name="SettingsPage_ThemeSection_Description.Text" xml:space="preserve">
+    <value>Seleccione su tema preferido</value>
+  </data>
+  <data name="SettingsPage_ThemeSelector.Header" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="SettingsPage_ThemeChange_Notice.Text" xml:space="preserve">
+    <value>Los cambios de tema se aplicarán la próxima vez que inicie la aplicación.</value>
+  </data>
+  <data name="SettingsPage_AboutSection_Header.Text" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="SettingsPage_Version.Text" xml:space="preserve">
+    <value>Versión 1.0</value>
+  </data>
+  <data name="LightTheme" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="DarkTheme" xml:space="preserve">
+    <value>Oscuro</value>
+  </data>
+  <data name="SystemTheme" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="DefaultColorTheme" xml:space="preserve">
+    <value>Predeterminado</value>
+  </data>
+  <data name="Windows311Theme" xml:space="preserve">
+    <value>Windows 3.11</value>
+  </data>
+  <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
+    <value>Brillo</value>
+  </data>
+  <data name="SettingsPage_ColorThemeSelector.Header" xml:space="preserve">
+    <value>Tema de Color</value>
+  </data>
+  <data name="SettingsPage_DesignSystemSelector.Header" xml:space="preserve">
+    <value>Sistema de Diseño</value>
+  </data>
+  <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
+    <value>Los cambios del sistema de diseño se aplicarán la próxima vez que inicie la aplicación. Los cambios de tema de color se aplican inmediatamente.</value>
+  </data>
 </root>

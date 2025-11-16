@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Services;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Toolkit;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -25,7 +27,7 @@ public partial class MainViewModel : ObservableObject
     private bool _sidebarContentVisible = true;
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, INavigator navigator,
-                         NewsViewModel    newsViewModel)
+                         NewsViewModel newsViewModel, IColorThemeService colorThemeService, IThemeService themeService)
     {
         _navigator    =  navigator;
         _localizer    =  localizer;
@@ -35,6 +37,9 @@ public partial class MainViewModel : ObservableObject
         if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
 
         GoToSecond = new AsyncRelayCommand(GoToSecondView);
+
+        // Initialize color theme service with theme service
+        _ = InitializeThemeServicesAsync(colorThemeService, themeService);
 
         // Initialize localized strings
         InitializeLocalizedStrings();
@@ -80,6 +85,22 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }
+
+    private async Task InitializeThemeServicesAsync(IColorThemeService colorThemeService, IThemeService themeService)
+    {
+        try
+        {
+            // Wait for theme service to be ready
+            await themeService.InitializeAsync();
+
+            // Set the theme service reference and reapply the saved theme
+            colorThemeService.SetThemeService(themeService);
+        }
+        catch
+        {
+            // Silently fail - theme will work but without refresh on startup
+        }
+    }
 
     private void InitializeLocalizedStrings()
     {
