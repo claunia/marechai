@@ -41,6 +41,7 @@ using Marechai.App.Software;
 using Marechai.App.SoundSynths;
 using Marechai.App.SoundSynthsByMachine;
 using Marechai.App.StorageByMachine;
+using Marechai.App.Users;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Serialization.Form;
@@ -263,6 +264,11 @@ namespace Marechai.App
         public global::Marechai.App.StorageByMachine.StorageByMachineRequestBuilder StorageByMachine
         {
             get => new global::Marechai.App.StorageByMachine.StorageByMachineRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The users property</summary>
+        public global::Marechai.App.Users.UsersRequestBuilder Users
+        {
+            get => new global::Marechai.App.Users.UsersRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.ApiClient"/> and sets the default values.
