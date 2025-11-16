@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Refit;
+using Microsoft.Kiota.Abstractions;
 using Uno.Extensions;
 using Uno.Extensions.Authentication;
 
@@ -30,9 +29,16 @@ public sealed class AuthService
              credentials.FirstOrDefault(x => x.Key.Equals("password", StringComparison.OrdinalIgnoreCase)).Value)
           ?.Trim();
 
-        if(email is null)
+        if(string.IsNullOrWhiteSpace(email))
         {
             credentials["error"] = stringLocalizer["Auth.EmailIsRequired"];
+
+            return false;
+        }
+
+        if(string.IsNullOrWhiteSpace(password))
+        {
+            credentials["error"] = stringLocalizer["Auth.PasswordIsRequired"];
 
             return false;
         }
@@ -50,44 +56,25 @@ public sealed class AuthService
             tokenService.RemoveToken();
             authResponse = await client.Auth.Login.PostAsync(loginModel);
         }
-        catch(ValidationApiException ex)
+        catch(ProblemDetails ex)
         {
-            switch(ex.StatusCode)
-            {
-                case HttpStatusCode.BadRequest:
-                    if(ex.Content is {} problemDetails)
-                    {
-                        if(problemDetails.Errors.Count > 0)
-                        {
-                            credentials["error"] = problemDetails.Errors.FirstOrDefault().Value?.FirstOrDefault() ??
-                                                   stringLocalizer["Http.BadRequest"];
-
-                            return false;
-                        }
-
-                        credentials["error"] = stringLocalizer["Http.BadRequest"];
-
-                        return false;
-                    }
-
-                    break;
-            }
-
-            credentials["error"] = stringLocalizer["Http.BadRequest"];
+            if(ex.Status == 400)
+                credentials["error"] = ex.Detail ?? ex.Title ?? stringLocalizer["Http.BadRequest"];
+            else if(ex.Status == 401)
+                credentials["error"] = stringLocalizer["Auth.InvalidCredentials"];
+            else
+                credentials["error"] = ex.Detail ?? ex.Title ?? stringLocalizer["Http.BadRequest"];
 
             return false;
         }
         catch(ApiException ex)
         {
-            switch(ex.StatusCode)
-            {
-                case HttpStatusCode.Unauthorized:
-                    credentials["error"] = stringLocalizer["Auth.InvalidCredentials"];
-
-                    return false;
-            }
-
-            credentials["error"] = stringLocalizer["Http.BadRequest"];
+            if(ex.ResponseStatusCode == 401)
+                credentials["error"] = stringLocalizer["Auth.InvalidCredentials"];
+            else if(ex.ResponseStatusCode == 400)
+                credentials["error"] = stringLocalizer["Http.BadRequest"];
+            else
+                credentials["error"] = ex.Message ?? stringLocalizer["Http.BadRequest"];
 
             return false;
         }
