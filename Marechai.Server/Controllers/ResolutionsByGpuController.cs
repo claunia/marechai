@@ -40,39 +40,36 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class ResolutionsByGpuController(MarechaiContext context) : ControllerBase
 {
-    [HttpGet("gpus/{resolutionId:int}/resolutions")]
+    [HttpGet("gpus/{gpuId:int}/resolutions")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<List<ResolutionByGpuDto>> GetByGpu(int resolutionId) => (await context.ResolutionsByGpu
-                                                                                  .Where(r => r.ResolutionId ==
-                                                                                       resolutionId)
-                                                                                  .Select(r => new ResolutionByGpuDto
-                                                                                   {
-                                                                                       Id    = r.Id,
-                                                                                       GpuId = r.GpuId,
-                                                                                       Resolution = new ResolutionDto
-                                                                                       {
-                                                                                           Id     = r.Resolution.Id,
-                                                                                           Width  = r.Resolution.Width,
-                                                                                           Height = r.Resolution.Height,
-                                                                                           Colors = r.Resolution.Colors,
-                                                                                           Palette = r.Resolution
-                                                                                              .Palette,
-                                                                                           Chars = r.Resolution.Chars,
-                                                                                           Grayscale = r.Resolution
-                                                                                              .Grayscale
-                                                                                       },
-                                                                                       ResolutionId = r.ResolutionId
-                                                                                   })
-                                                                                  .ToListAsync())
-                                                                             .OrderBy(r => r.Resolution.Width)
-                                                                             .ThenBy(r => r.Resolution.Height)
-                                                                             .ThenBy(r => r.Resolution.Chars)
-                                                                             .ThenBy(r => r.Resolution.Grayscale)
-                                                                             .ThenBy(r => r.Resolution.Colors)
-                                                                             .ThenBy(r => r.Resolution.Palette)
-                                                                             .ToList();
+    public async Task<List<ResolutionByGpuDto>> GetByGpu(int gpuId) => (await context.ResolutionsByGpu
+                                                                           .Where(r => r.GpuId == gpuId)
+                                                                           .Select(r => new ResolutionByGpuDto
+                                                                            {
+                                                                                Id    = r.Id,
+                                                                                GpuId = r.GpuId,
+                                                                                Resolution = new ResolutionDto
+                                                                                {
+                                                                                    Id        = r.Resolution.Id,
+                                                                                    Width     = r.Resolution.Width,
+                                                                                    Height    = r.Resolution.Height,
+                                                                                    Colors    = r.Resolution.Colors,
+                                                                                    Palette   = r.Resolution.Palette,
+                                                                                    Chars     = r.Resolution.Chars,
+                                                                                    Grayscale = r.Resolution.Grayscale
+                                                                                },
+                                                                                ResolutionId = r.ResolutionId
+                                                                            })
+                                                                           .ToListAsync())
+                                                                      .OrderBy(r => r.Resolution.Width)
+                                                                      .ThenBy(r => r.Resolution.Height)
+                                                                      .ThenBy(r => r.Resolution.Chars)
+                                                                      .ThenBy(r => r.Resolution.Grayscale)
+                                                                      .ThenBy(r => r.Resolution.Colors)
+                                                                      .ThenBy(r => r.Resolution.Palette)
+                                                                      .ToList();
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
