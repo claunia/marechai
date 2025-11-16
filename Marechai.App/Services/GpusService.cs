@@ -72,4 +72,91 @@ public class GpusService
             return null;
         }
     }
+
+    /// <summary>
+    ///     Fetches resolutions supported by a GPU
+    /// </summary>
+    public async Task<List<ResolutionByGpuDto>> GetResolutionsByGpuAsync(int gpuId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching resolutions for GPU {GpuId}", gpuId);
+
+            // Fetch from the resolutions-by-gpu/gpus/{gpuId}/resolutions endpoint
+            List<ResolutionByGpuDto> resolutions = await _apiClient.ResolutionsByGpu.Gpus[gpuId].Resolutions.GetAsync();
+
+            if(resolutions == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} resolutions for GPU {GpuId}",
+                                   resolutions.Count,
+                                   gpuId);
+
+            return resolutions;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching resolutions for GPU {GpuId}", gpuId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Fetches machines that use a specific GPU
+    /// </summary>
+    public async Task<List<MachineDto>> GetMachinesByGpuAsync(int gpuId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching machines for GPU {GpuId}", gpuId);
+
+            // Fetch from the gpus/{gpuId}/machines endpoint
+            List<MachineDto> machines = await _apiClient.Gpus[gpuId].Machines.GetAsync();
+
+            if(machines == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} machines for GPU {GpuId}", machines.Count, gpuId);
+
+            return machines;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching machines for GPU {GpuId}", gpuId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Fetches a single resolution by ID from the API
+    /// </summary>
+    public async Task<ResolutionDto?> GetResolutionByIdAsync(int resolutionId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching resolution {ResolutionId} from API", resolutionId);
+
+            ResolutionDto? resolution = await _apiClient.Resolutions[resolutionId].GetAsync();
+
+            if(resolution == null)
+            {
+                _logger.LogWarning("Resolution {ResolutionId} not found", resolutionId);
+
+                return null;
+            }
+
+            _logger.LogInformation("Successfully fetched resolution {ResolutionId}: {Width}x{Height}",
+                                   resolutionId,
+                                   resolution.Width,
+                                   resolution.Height);
+
+            return resolution;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "Error fetching resolution {ResolutionId} from API", resolutionId);
+
+            return null;
+        }
+    }
 }

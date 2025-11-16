@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page x:Class="Marechai.App.Presentation.Views.GpuDetailPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+      NavigationCacheMode="Required"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+    </Page.Resources>
+
+    <Grid utu:SafeArea.Insets="VisibleBounds">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button -->
+        <Grid Grid.Row="0"
+              Padding="8"
+              Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <AppBarButton Grid.Column="0"
+                          Icon="Back"
+                          Label="Back"
+                          Command="{Binding GoBackCommand}"
+                          AutomationProperties.Name="Go back" />
+            <TextBlock Grid.Column="1"
+                       Text="GPU Details"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       FontSize="18"
+                       FontWeight="SemiBold" />
+        </Grid>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Padding="16"
+                        Spacing="16">
+
+                <!-- Loading State -->
+                <StackPanel Visibility="{Binding IsLoading}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Padding="32"
+                            Spacing="16">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="48"
+                                  Width="48" />
+                    <TextBlock Text="Loading..."
+                               TextAlignment="Center"
+                               FontSize="14" />
+                </StackPanel>
+
+                <!-- Error State -->
+                <StackPanel Visibility="{Binding HasError}"
+                            Padding="16"
+                            Background="{ThemeResource SystemErrorBackgroundColor}"
+                            CornerRadius="8"
+                            Spacing="8">
+                    <TextBlock Text="Error"
+                               FontWeight="Bold"
+                               Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="{ThemeResource SystemErrorTextForegroundColor}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- GPU Details -->
+                <StackPanel Visibility="{Binding IsDataLoaded}"
+                            Spacing="16">
+
+                    <!-- GPU Name -->
+                    <TextBlock Text="{Binding Gpu.Name}"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap" />
+
+                    <!-- Company/Manufacturer -->
+                    <StackPanel Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8"
+                                Padding="12"
+                                Spacing="8">
+                        <TextBlock Text="Manufacturer"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding ManufacturerName}"
+                                   FontSize="14"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <!-- Model Code -->
+                    <StackPanel Visibility="{Binding Gpu.ModelCode, Converter={StaticResource StringToVisibilityConverter}}"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8"
+                                Padding="12"
+                                Spacing="8">
+                        <TextBlock Text="Model Code"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding Gpu.ModelCode}"
+                                   FontSize="14"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <!-- Introduced Date -->
+                    <StackPanel Visibility="{Binding Gpu.Introduced, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8"
+                                Padding="12"
+                                Spacing="8">
+                        <TextBlock Text="Introduced"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding Gpu.Introduced}"
+                                   FontSize="14" />
+                    </StackPanel>
+
+                    <!-- Package -->
+                    <StackPanel Visibility="{Binding Gpu.Package, Converter={StaticResource StringToVisibilityConverter}}"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8"
+                                Padding="12"
+                                Spacing="8">
+                        <TextBlock Text="Package"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding Gpu.Package}"
+                                   FontSize="14"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <!-- Process -->
+                    <StackPanel Visibility="{Binding Gpu.Process, Converter={StaticResource StringToVisibilityConverter}}"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8"
+                                Padding="12"
+                                Spacing="8">
+                        <TextBlock Text="Process"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding Gpu.Process}"
+                                   FontSize="14"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <!-- Process (nm) -->
+                    <StackPanel Visibility="{Binding Gpu.ProcessNm, Converter={StaticResource StringToVisibilityConverter}}"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8"
+                                Padding="12"
+                                Spacing="8">
+                        <TextBlock Text="Process (nm)"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding Gpu.ProcessNm}"
+                                   FontSize="14"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <!-- Die Size -->
+                    <StackPanel Visibility="{Binding Gpu.DieSize, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8"
+                                Padding="12"
+                                Spacing="8">
+                        <TextBlock Text="Die Size (mm²)"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding Gpu.DieSize}"
+                                   FontSize="14"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <!-- Transistors -->
+                    <StackPanel Visibility="{Binding Gpu.Transistors, Converter={StaticResource ObjectToVisibilityConverter}}"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8"
+                                Padding="12"
+                                Spacing="8">
+                        <TextBlock Text="Transistors"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <TextBlock Text="{Binding Gpu.Transistors}"
+                                   FontSize="14"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <!-- Resolutions Section -->
+                    <StackPanel Visibility="{Binding Resolutions.Count, Converter={StaticResource ZeroToVisibilityConverter}}"
+                                Spacing="8">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8">
+                            <TextBlock Text="Supported Resolutions"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Resolutions.Count}"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="{ThemeResource SystemAccentColor}" />
+                        </StackPanel>
+
+                        <!-- Scrollable Resolutions List -->
+                        <ScrollViewer Height="200"
+                                      BorderThickness="1"
+                                      BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                      CornerRadius="8">
+                            <ItemsRepeater ItemsSource="{Binding Resolutions}"
+                                           Margin="0">
+                                <ItemsRepeater.Layout>
+                                    <StackLayout Spacing="4" />
+                                </ItemsRepeater.Layout>
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="12,8"
+                                                HorizontalAlignment="Stretch"
+                                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                CornerRadius="4"
+                                                Margin="0,4">
+                                            <StackPanel Spacing="4">
+                                                <!-- First line: Resolution dimensions or format -->
+                                                <TextBlock Text="{Binding ResolutionDisplay}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold" />
+                                                <!-- Second line: Color/palette information -->
+                                                <TextBlock Text="{Binding ColorDisplay}"
+                                                           FontSize="12"
+                                                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                        </ScrollViewer>
+                    </StackPanel>
+
+                    <!-- Computers Section -->
+                    <StackPanel Visibility="{Binding HasComputers}"
+                                Spacing="8">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8">
+                            <TextBlock Text="Computers"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Computers.Count}"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="{ThemeResource SystemAccentColor}" />
+                        </StackPanel>
+
+                        <!-- Filter Box -->
+                        <AutoSuggestBox PlaceholderText="Filter computers..."
+                                        Text="{Binding ComputersFilterText, Mode=TwoWay}"
+                                        TextChanged="ComputersSearchBox_TextChanged"
+                                        BorderThickness="1"
+                                        BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
+
+                        <!-- Scrollable Computers List -->
+                        <ScrollViewer Height="200"
+                                      BorderThickness="1"
+                                      BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                      CornerRadius="8">
+                            <ItemsRepeater ItemsSource="{Binding FilteredComputers}"
+                                           Margin="0">
+                                <ItemsRepeater.Layout>
+                                    <StackLayout Spacing="4" />
+                                </ItemsRepeater.Layout>
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Click="Computer_Click"
+                                                Tag="{Binding Id}"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Left"
+                                                Padding="12"
+                                                Margin="0,4">
+                                            <StackPanel Spacing="4"
+                                                        HorizontalAlignment="Left">
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold" />
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="8">
+                                                    <TextBlock Text="{Binding Manufacturer}"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    <TextBlock Text="{Binding YearDisplay}"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                        </ScrollViewer>
+                    </StackPanel>
+
+                    <!-- Consoles Section -->
+                    <StackPanel Visibility="{Binding HasConsoles}"
+                                Spacing="8">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="8">
+                            <TextBlock Text="Consoles"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <TextBlock Text="{Binding Consoles.Count}"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="{ThemeResource SystemAccentColor}" />
+                        </StackPanel>
+
+                        <!-- Filter Box -->
+                        <AutoSuggestBox PlaceholderText="Filter consoles..."
+                                        Text="{Binding ConsoelsFilterText, Mode=TwoWay}"
+                                        TextChanged="ConsolesSearchBox_TextChanged"
+                                        BorderThickness="1"
+                                        BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
+
+                        <!-- Scrollable Consoles List -->
+                        <ScrollViewer Height="200"
+                                      BorderThickness="1"
+                                      BorderBrush="{ThemeResource ControlElevationBorderBrush}"
+                                      CornerRadius="8">
+                            <ItemsRepeater ItemsSource="{Binding FilteredConsoles}"
+                                           Margin="0">
+                                <ItemsRepeater.Layout>
+                                    <StackLayout Spacing="4" />
+                                </ItemsRepeater.Layout>
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Click="Console_Click"
+                                                Tag="{Binding Id}"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Left"
+                                                Padding="12"
+                                                Margin="0,4">
+                                            <StackPanel Spacing="4"
+                                                        HorizontalAlignment="Left">
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold" />
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="8">
+                                                    <TextBlock Text="{Binding Manufacturer}"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                    <TextBlock Text="{Binding YearDisplay}"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource SystemBaseMediumColor}" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                        </ScrollViewer>
+                    </StackPanel>
+
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+</Page>

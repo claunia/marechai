@@ -47,7 +47,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToConsolesCommand                 = new AsyncRelayCommand(() => NavigateTo("consoles"));
         NavigateToDocumentsCommand                = new AsyncRelayCommand(() => NavigateTo("documents"));
         NavigateToDumpsCommand                    = new AsyncRelayCommand(() => NavigateTo("dumps"));
-        NavigateToGraphicalProcessingUnitsCommand = new AsyncRelayCommand(() => NavigateTo("gpus/list-gpus"));
+        NavigateToGraphicalProcessingUnitsCommand = new AsyncRelayCommand(() => NavigateTo("gpus"));
         NavigateToMagazinesCommand                = new AsyncRelayCommand(() => NavigateTo("magazines"));
         NavigateToPeopleCommand                   = new AsyncRelayCommand(() => NavigateTo("people"));
         NavigateToProcessorsCommand               = new AsyncRelayCommand(() => NavigateTo("processors"));

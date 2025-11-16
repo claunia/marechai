@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Uno.Extensions.Navigation;
 
@@ -187,8 +188,14 @@ public partial class GpusListViewModel : ObservableObject
 
         _logger.LogInformation("Navigating to GPU detail: {GpuName} (ID: {GpuId})", gpu.Name, gpu.Id);
 
-        // For now, we'll just log it. Implement detail page navigation when ready.
-        // await _navigator.NavigateViewModelAsync<GpuDetailViewModel>(this, data: gpu);
+        // Navigate to GPU detail view with navigation parameter
+        var navParam = new GpuDetailNavigationParameter
+        {
+            GpuId            = gpu.Id,
+            NavigationSource = this
+        };
+
+        await _navigator.NavigateViewModelAsync<GpuDetailViewModel>(this, data: navParam);
     }
 }
 

@@ -167,6 +167,20 @@ public partial class MachineViewViewModel : ObservableObject
             return;
         }
 
+        // If we came from GpuDetailViewModel, navigate back to GPU details
+        if(_navigationSource is GpuDetailViewModel gpuDetailVm)
+        {
+            var navParam = new GpuDetailNavigationParameter
+            {
+                GpuId            = gpuDetailVm.GpuId,
+                NavigationSource = this
+            };
+
+            await _navigator.NavigateViewModelAsync<GpuDetailViewModel>(this, data: navParam);
+
+            return;
+        }
+
         // Otherwise, try to go back in the navigation stack
         await _navigator.GoBack(this);
     }
