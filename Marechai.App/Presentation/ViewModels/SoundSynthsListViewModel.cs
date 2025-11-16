@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
@@ -56,14 +55,46 @@ public partial class SoundSynthsListViewModel : ObservableObject
 
             List<SoundSynthDto> soundSynths = await _soundSynthsService.GetAllSoundSynthsAsync();
 
-            SoundSynths = new ObservableCollection<SoundSynthListItem>(soundSynths.Select(ss => new SoundSynthListItem
-                                                                           {
-                                                                               Id      = ss.Id      ?? 0,
-                                                                               Name    = ss.Name    ?? "Unknown",
-                                                                               Company = ss.Company ?? "Unknown"
-                                                                           })
-                                                                          .OrderBy(ss => ss.Company)
-                                                                          .ThenBy(ss => ss.Name));
+            // Separate special sound synths from regular ones
+            var specialSoundSynths = new List<SoundSynthListItem>();
+            var regularSoundSynths = new List<SoundSynthListItem>();
+
+            foreach(SoundSynthDto ss in soundSynths)
+            {
+                string displayName = ss.Name ?? "Unknown";
+
+                // Replace special database name
+                if(displayName == "DB_SOFTWARE") displayName = "Software";
+
+                var soundSynthItem = new SoundSynthListItem
+                {
+                    Id        = ss.Id ?? 0,
+                    Name      = displayName,
+                    Company   = ss.Company ?? "Unknown",
+                    IsSpecial = ss.Name == "DB_SOFTWARE"
+                };
+
+                if(soundSynthItem.IsSpecial)
+                    specialSoundSynths.Add(soundSynthItem);
+                else
+                    regularSoundSynths.Add(soundSynthItem);
+
+                _logger.LogInformation("Sound Synth: {Name}, Company: {Company}, ID: {Id}, IsSpecial: {IsSpecial}",
+                                       displayName,
+                                       ss.Company,
+                                       ss.Id,
+                                       soundSynthItem.IsSpecial);
+            }
+
+            // Sort regular sound synths alphabetically by name
+            regularSoundSynths.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
+
+            // Add special sound synths first (Software), then regular sound synths
+            SoundSynths.Clear();
+
+            foreach(SoundSynthListItem ss in specialSoundSynths) SoundSynths.Add(ss);
+
+            foreach(SoundSynthListItem ss in regularSoundSynths) SoundSynths.Add(ss);
 
             _logger.LogInformation("Successfully loaded {Count} Sound Synthesizers", SoundSynths.Count);
             IsDataLoaded = true;
@@ -96,8 +127,9 @@ public partial class SoundSynthsListViewModel : ObservableObject
 
     public class SoundSynthListItem
     {
-        public int     Id      { get; set; }
-        public string  Name    { get; set; } = string.Empty;
-        public string? Company { get; set; }
+        public int     Id        { get; set; }
+        public string  Name      { get; set; } = string.Empty;
+        public string? Company   { get; set; }
+        public bool    IsSpecial { get; set; }
     }
 }
