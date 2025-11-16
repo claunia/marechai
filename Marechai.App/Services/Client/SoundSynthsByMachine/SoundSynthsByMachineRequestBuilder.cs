@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.App.Models;
 using Marechai.App.SoundSynthsByMachine.ByMachine;
+using Marechai.App.SoundSynthsByMachine.BySoundSynth;
 using Marechai.App.SoundSynthsByMachine.Item;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -23,6 +24,11 @@ namespace Marechai.App.SoundSynthsByMachine
         public global::Marechai.App.SoundSynthsByMachine.ByMachine.ByMachineRequestBuilder ByMachine
         {
             get => new global::Marechai.App.SoundSynthsByMachine.ByMachine.ByMachineRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The bySoundSynth property</summary>
+        public global::Marechai.App.SoundSynthsByMachine.BySoundSynth.BySoundSynthRequestBuilder BySoundSynth
+        {
+            get => new global::Marechai.App.SoundSynthsByMachine.BySoundSynth.BySoundSynthRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Marechai.App.soundSynthsByMachine.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>

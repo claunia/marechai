@@ -58,6 +58,24 @@ public class SoundSynthsByMachineController(MarechaiContext context) : Controlle
        .ThenBy(g => g.Name)
        .ToListAsync();
 
+    [HttpGet("by-sound-synth/{soundSynthId:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoundSynthByMachineDto>> GetBySoundSynth(int soundSynthId) => context.SoundByMachine
+       .Where(g => g.SoundSynthId == soundSynthId)
+       .Select(g => new SoundSynthByMachineDto
+        {
+            Id           = g.Id,
+            Name         = g.Machine.Name,
+            CompanyName  = g.Machine.Company.Name,
+            SoundSynthId = g.SoundSynthId,
+            MachineId    = g.MachineId
+        })
+       .OrderBy(g => g.CompanyName)
+       .ThenBy(g => g.Name)
+       .ToListAsync();
+
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
