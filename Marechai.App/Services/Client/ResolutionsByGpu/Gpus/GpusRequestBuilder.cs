@@ -17,27 +17,27 @@ namespace Marechai.App.ResolutionsByGpu.Gpus
     {
         /// <summary>Gets an item from the Marechai.App.resolutionsByGpu.gpus.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithResolutionItemRequestBuilder"/></returns>
-        public global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithResolutionItemRequestBuilder this[int position]
+        /// <returns>A <see cref="global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithGpuItemRequestBuilder"/></returns>
+        public global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithGpuItemRequestBuilder this[int position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("resolutionId", position);
-                return new global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithResolutionItemRequestBuilder(urlTplParams, RequestAdapter);
+                urlTplParams.Add("gpuId", position);
+                return new global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithGpuItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>Gets an item from the Marechai.App.resolutionsByGpu.gpus.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithResolutionItemRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithGpuItemRequestBuilder"/></returns>
         [Obsolete("This indexer is deprecated and will be removed in the next major version. Use the one with the typed parameter instead.")]
-        public global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithResolutionItemRequestBuilder this[string position]
+        public global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithGpuItemRequestBuilder this[string position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("resolutionId", position);
-                return new global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithResolutionItemRequestBuilder(urlTplParams, RequestAdapter);
+                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("gpuId", position);
+                return new global::Marechai.App.ResolutionsByGpu.Gpus.Item.WithGpuItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>

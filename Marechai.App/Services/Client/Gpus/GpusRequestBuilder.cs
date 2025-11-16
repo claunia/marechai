@@ -20,27 +20,27 @@ namespace Marechai.App.Gpus
     {
         /// <summary>Gets an item from the Marechai.App.gpus.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Marechai.App.Gpus.Item.GpusItemRequestBuilder"/></returns>
-        public global::Marechai.App.Gpus.Item.GpusItemRequestBuilder this[int position]
+        /// <returns>A <see cref="global::Marechai.App.Gpus.Item.GpuItemRequestBuilder"/></returns>
+        public global::Marechai.App.Gpus.Item.GpuItemRequestBuilder this[int position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("id", position);
-                return new global::Marechai.App.Gpus.Item.GpusItemRequestBuilder(urlTplParams, RequestAdapter);
+                urlTplParams.Add("gpu%2Did", position);
+                return new global::Marechai.App.Gpus.Item.GpuItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>Gets an item from the Marechai.App.gpus.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Marechai.App.Gpus.Item.GpusItemRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::Marechai.App.Gpus.Item.GpuItemRequestBuilder"/></returns>
         [Obsolete("This indexer is deprecated and will be removed in the next major version. Use the one with the typed parameter instead.")]
-        public global::Marechai.App.Gpus.Item.GpusItemRequestBuilder this[string position]
+        public global::Marechai.App.Gpus.Item.GpuItemRequestBuilder this[string position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("id", position);
-                return new global::Marechai.App.Gpus.Item.GpusItemRequestBuilder(urlTplParams, RequestAdapter);
+                if (!string.IsNullOrWhiteSpace(position)) urlTplParams.Add("gpu%2Did", position);
+                return new global::Marechai.App.Gpus.Item.GpuItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>

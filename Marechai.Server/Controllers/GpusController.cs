@@ -82,6 +82,27 @@ public class GpusController(MarechaiContext context) : ControllerBase
                                                                           })
                                                                          .ToListAsync();
 
+    [HttpGet("{gpuId:int}/machines")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MachineDto>> GetMachinesByGpuAsync(int gpuId) => context.GpusByMachine.Where(g => g.GpuId == gpuId)
+                                                                             .Select(g => g.Machine)
+                                                                             .OrderBy(m => m.Company.Name)
+                                                                             .ThenBy(m => m.Name)
+                                                                             .Select(m => new MachineDto
+                                                                              {
+                                                                                  Id         = m.Id,
+                                                                                  Company    = m.Company.Name,
+                                                                                  CompanyId  = m.Company.Id,
+                                                                                  Name       = m.Name,
+                                                                                  Model      = m.Model,
+                                                                                  Introduced = m.Introduced,
+                                                                                  Type       = m.Type,
+                                                                                  FamilyId   = m.FamilyId
+                                                                              })
+                                                                             .ToListAsync();
+
     [HttpGet("{id:int}")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
