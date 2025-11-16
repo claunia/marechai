@@ -257,7 +257,8 @@ file class Program
         // Configure the HTTP request pipeline.
         if(app.Environment.IsDevelopment()) app.MapOpenApi();
 
-        app.UseHttpsRedirection();
+        // Only redirect to HTTPS in production
+        if(!app.Environment.IsDevelopment()) app.UseHttpsRedirection();
 
         // Use CORS before authentication/authorization
         app.UseCors("AllowFrontend");
