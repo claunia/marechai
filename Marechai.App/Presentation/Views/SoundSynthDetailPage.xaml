@@ -23,7 +23,7 @@
                            MainCommandMode="Action">
             <utu:NavigationBar.MainCommand>
                 <AppBarButton Icon="Back"
-                              Label="Back"
+                              x:Uid="BackButton"
                               Command="{Binding GoBackCommand}"
                               AutomationProperties.Name="Go back" />
             </utu:NavigationBar.MainCommand>
@@ -44,7 +44,8 @@
                                   IsIndeterminate="True"
                                   Height="48"
                                   Width="48" />
-                    <TextBlock Text="Loading..."
+                    <TextBlock x:Uid="LoadingText"
+                               Text="Loading..."
                                TextAlignment="Center"
                                FontSize="14" />
                 </StackPanel>
@@ -55,7 +56,8 @@
                             Background="{ThemeResource SystemErrorBackgroundColor}"
                             CornerRadius="8"
                             Spacing="8">
-                    <TextBlock Text="Error"
+                    <TextBlock x:Uid="ErrorText"
+                               Text="Error"
                                FontWeight="Bold"
                                Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
                     <TextBlock Text="{Binding ErrorMessage}"
@@ -78,7 +80,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Manufacturer"
+                        <TextBlock x:Uid="ManufacturerText"
+                                   Text="Manufacturer"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -93,7 +96,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Model Code"
+                        <TextBlock x:Uid="ModelCodeText"
+                                   Text="Model Code"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -108,7 +112,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Introduced"
+                        <TextBlock x:Uid="IntroducedText"
+                                   Text="Introduced"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -122,7 +127,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Voices"
+                        <TextBlock x:Uid="VoicesText"
+                                   Text="Voices"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -137,7 +143,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Frequency (Hz)"
+                        <TextBlock x:Uid="FrequencyText"
+                                   Text="Frequency (Hz)"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -152,7 +159,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Depth (bit)"
+                        <TextBlock x:Uid="DepthText"
+                                   Text="Depth (bits)"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -167,7 +175,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Type"
+                        <TextBlock x:Uid="TypeText"
+                                   Text="Type"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -181,7 +190,8 @@
                                 Spacing="8">
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8">
-                            <TextBlock Text="Computers"
+                            <TextBlock x:Uid="ComputersText"
+                                       Text="Computers"
                                        FontSize="14"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -192,7 +202,8 @@
                         </StackPanel>
 
                         <!-- Filter Box -->
-                        <AutoSuggestBox PlaceholderText="Filter computers..."
+                        <AutoSuggestBox x:Uid="ComputersFilterBox"
+                                        PlaceholderText="Filter computers..."
                                         Text="{Binding ComputersFilterText, Mode=TwoWay}"
                                         TextChanged="ComputersSearchBox_TextChanged"
                                         BorderThickness="1"
@@ -243,7 +254,8 @@
                                 Spacing="8">
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8">
-                            <TextBlock Text="Consoles"
+                            <TextBlock x:Uid="ConsolesText"
+                                       Text="Consoles"
                                        FontSize="14"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -254,8 +266,9 @@
                         </StackPanel>
 
                         <!-- Filter Box -->
-                        <AutoSuggestBox PlaceholderText="Filter consoles..."
-                                        Text="{Binding ConsoelsFilterText, Mode=TwoWay}"
+                        <AutoSuggestBox x:Uid="ConsolesFilterBox"
+                                        PlaceholderText="Filter consoles..."
+                                        Text="{Binding ConsolesFilterText, Mode=TwoWay}"
                                         TextChanged="ConsolesSearchBox_TextChanged"
                                         BorderThickness="1"
                                         BorderBrush="{ThemeResource ControlElevationBorderBrush}" />

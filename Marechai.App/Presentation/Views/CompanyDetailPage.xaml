@@ -23,7 +23,7 @@
                            MainCommandMode="Action">
             <utu:NavigationBar.MainCommand>
                 <AppBarButton Icon="Back"
-                              Label="Back"
+                              x:Uid="BackButton"
                               Command="{Binding GoBackCommand}"
                               AutomationProperties.Name="Go back" />
             </utu:NavigationBar.MainCommand>
@@ -53,7 +53,7 @@
                                   IsIndeterminate="True"
                                   Height="48"
                                   Width="48" />
-                    <TextBlock Text="Loading..."
+                    <TextBlock x:Uid="LoadingText"
                                TextAlignment="Center"
                                FontSize="14" />
                 </StackPanel>
@@ -64,7 +64,7 @@
                             Background="{ThemeResource SystemErrorBackgroundColor}"
                             CornerRadius="8"
                             Spacing="8">
-                    <TextBlock Text="Error"
+                    <TextBlock x:Uid="ErrorText"
                                FontWeight="Bold"
                                Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
                     <TextBlock Text="{Binding ErrorMessage}"
@@ -87,7 +87,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Status"
+                        <TextBlock x:Uid="StatusText"
+                                   Text="Status"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -102,7 +103,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Founded"
+                        <TextBlock x:Uid="FoundedText"
+                                   Text="Founded"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -116,7 +118,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Legal Name"
+                        <TextBlock x:Uid="LegalNameText"
+                                   Text="Legal Name"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -137,7 +140,8 @@
                             <!-- Country Name and Label -->
                             <StackPanel Grid.Column="0"
                                         Spacing="4">
-                                <TextBlock Text="Country"
+                                <TextBlock x:Uid="CountryText"
+                                           Text="Country"
                                            FontSize="14"
                                            FontWeight="SemiBold"
                                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -153,6 +157,7 @@
                                    Stretch="UniformToFill"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"
+                                   Margin="8"
                                    Source="{Binding FlagImageSource}"
                                    Visibility="{Binding HasFlagContent, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Grid>
@@ -164,7 +169,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock Text="Address"
+                        <TextBlock x:Uid="AddressText"
+                                   Text="Address"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -178,7 +184,8 @@
 
                     <!-- Links Section -->
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Links"
+                        <TextBlock x:Uid="LinksText"
+                                   Text="Links"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -186,26 +193,26 @@
                         <!-- Website -->
                         <HyperlinkButton Visibility="{Binding Company.Website, Converter={StaticResource StringToVisibilityConverter}}"
                                          NavigateUri="{Binding Company.Website}">
-                            <TextBlock Text="Website" />
+                            <TextBlock x:Uid="WebsiteText" Text="Website" />
                         </HyperlinkButton>
 
                         <!-- Twitter -->
                         <HyperlinkButton Visibility="{Binding Company.Twitter, Converter={StaticResource StringToVisibilityConverter}}"
                                          Click="OnTwitterClick">
-                            <TextBlock Text="Twitter" />
+                            <TextBlock x:Uid="TwitterText" Text="Twitter" />
                         </HyperlinkButton>
 
                         <!-- Facebook -->
                         <HyperlinkButton Visibility="{Binding Company.Facebook, Converter={StaticResource StringToVisibilityConverter}}"
                                          Click="OnFacebookClick">
-                            <TextBlock Text="Facebook" />
+                            <TextBlock x:Uid="FacebookText" Text="Facebook" />
                         </HyperlinkButton>
                     </StackPanel>
 
                     <!-- Logo Carousel Section -->
                     <StackPanel Visibility="{Binding HasMultipleLogos, Converter={StaticResource BoolToVisibilityConverter}}"
                                 Spacing="8">
-                        <TextBlock Text="Logo History"
+                        <TextBlock x:Uid="LogoHistoryText" Text="Logo History"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -250,7 +257,7 @@
                                 Spacing="8">
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8">
-                            <TextBlock Text="Computers"
+                            <TextBlock x:Uid="ComputersText" Text="Computers"
                                        FontSize="14"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -261,7 +268,7 @@
                         </StackPanel>
 
                         <!-- Filter Box -->
-                        <AutoSuggestBox PlaceholderText="Filter computers..."
+                        <AutoSuggestBox x:Uid="ComputersFilterBox" PlaceholderText="Filter computers..."
                                         Text="{Binding ComputersFilterText, Mode=TwoWay}"
                                         BorderThickness="1"
                                         BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
@@ -298,7 +305,7 @@
                                 Spacing="8">
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8">
-                            <TextBlock Text="Consoles"
+                            <TextBlock x:Uid="ConsolesText" Text="Consoles"
                                        FontSize="14"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -309,8 +316,8 @@
                         </StackPanel>
 
                         <!-- Filter Box -->
-                        <AutoSuggestBox PlaceholderText="Filter consoles..."
-                                        Text="{Binding ConsoelsFilterText, Mode=TwoWay}"
+                        <AutoSuggestBox x:Uid="ConsolesFilterBox" PlaceholderText="Filter consoles..."
+                                        Text="{Binding ConsolesFilterText, Mode=TwoWay}"
                                         BorderThickness="1"
                                         BorderBrush="{ThemeResource ControlElevationBorderBrush}" />
 

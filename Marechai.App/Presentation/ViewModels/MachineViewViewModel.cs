@@ -49,7 +49,7 @@ public partial class MachineViewViewModel : ObservableObject
     private readonly ILogger<MachineViewViewModel> _logger;
     private readonly INavigator                    _navigator;
     private readonly MachinePhotoCache             _photoCache;
-
+    private IStringLocalizer _localizer;
     [ObservableProperty]
     private string _companyName = string.Empty;
 
@@ -112,12 +112,13 @@ public partial class MachineViewViewModel : ObservableObject
     private Visibility _showStorage = Visibility.Collapsed;
 
     public MachineViewViewModel(ILogger<MachineViewViewModel> logger,           INavigator        navigator,
-                                ComputersService              computersService, MachinePhotoCache photoCache)
+                                ComputersService              computersService, MachinePhotoCache photoCache, IStringLocalizer localizer)
     {
         _logger           = logger;
         _navigator        = navigator;
         _computersService = computersService;
         _photoCache       = photoCache;
+        _localizer        = localizer;
     }
 
     public ObservableCollection<ProcessorDisplayItem>        Processors        { get; } = [];
@@ -266,7 +267,7 @@ public partial class MachineViewViewModel : ObservableObject
             if(machine is null)
             {
                 HasError     = true;
-                ErrorMessage = "Machine not found";
+                ErrorMessage = _localizer["Machine not found"];
                 IsLoading    = false;
 
                 return;
@@ -295,9 +296,9 @@ public partial class MachineViewViewModel : ObservableObject
                     int gprSize = processor.GprSize ?? 0;
                     int cores   = processor.Cores   ?? 0;
 
-                    if(speed   > 0) details.Add($"{speed} MHz");
-                    if(gprSize > 0) details.Add($"{gprSize} bits");
-                    if(cores   > 1) details.Add($"{cores} cores");
+                    if(speed   > 0) details.Add(string.Format(_localizer["_0_MHz"], speed));
+                    if(gprSize > 0) details.Add(string.Format(_localizer["_0_bits"], gprSize));
+                    if(cores   > 1) details.Add(string.Format(_localizer["_0_cores"], cores));
 
                     Processors.Add(new ProcessorDisplayItem
                     {
@@ -317,13 +318,13 @@ public partial class MachineViewViewModel : ObservableObject
                     long size = mem.Size ?? 0;
 
                     string sizeStr = size > 0
-                                         ? size > 1024 ? $"{size} bytes ({size.Bytes().Humanize()})" : $"{size} bytes"
-                                         : "Unknown";
+                                         ? size > 1024 ? string.Format(_localizer["_0_bytes_1_"], size,size.Bytes().Humanize()) : string.Format(_localizer["_0_bytes"], size)
+                                         : _localizer["Unknown_male"];
 
                     // Get humanized memory usage description
                     string usageDescription = mem.Usage.HasValue
                                                   ? ((MemoryUsage)mem.Usage.Value).Humanize()
-                                                  : "Unknown";
+                                                  : _localizer["Unknown_male"];
 
                     Memory.Add(new MemoryDisplayItem
                     {
@@ -354,7 +355,7 @@ public partial class MachineViewViewModel : ObservableObject
                     var details = new List<string>();
                     int voices  = synth.Voices ?? 0;
 
-                    if(voices > 0) details.Add($"{voices} voices");
+                    if(voices > 0) details.Add(string.Format(_localizer["_0_voices"], voices));
 
                     SoundSynthesizers.Add(new SoundSynthesizerDisplayItem
                     {
@@ -373,13 +374,11 @@ public partial class MachineViewViewModel : ObservableObject
                     long capacity = storage.Capacity ?? 0;
 
                     string displayText = capacity > 0
-                                             ? capacity > 1024
-                                                   ? $"{capacity} bytes ({capacity.Bytes().Humanize()})"
-                                                   : $"{capacity} bytes"
-                                             : "Storage";
+                                         ? capacity > 1024 ? string.Format(_localizer["_0_bytes_1_"], capacity, capacity.Bytes().Humanize()) : string.Format(_localizer["_0_bytes"], capacity)
+                                             : _localizer["Storage"];
 
                     // Get humanized storage type description
-                    string typeNote = storage.Type.HasValue ? ((StorageType)storage.Type.Value).Humanize() : "Unknown";
+                    string typeNote = storage.Type.HasValue ? ((StorageType)storage.Type.Value).Humanize() : _localizer["Unknown_male"];
 
                     Storage.Add(new StorageDisplayItem
                     {

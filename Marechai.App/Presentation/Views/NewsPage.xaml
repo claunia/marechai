@@ -20,12 +20,14 @@
                     <!-- News Title Section -->
                     <StackPanel Grid.Row="0"
                                 Margin="0,0,0,16">
-                        <TextBlock Text="Latest News"
+                        <TextBlock x:Uid="LatestNewsTitle"
+                                   Text="Latest News"
                                    FontSize="32"
                                    FontWeight="Bold"
                                    Foreground="{ThemeResource SystemAccentColor}"
                                    Margin="0,0,0,8" />
-                        <TextBlock Text="Stay updated with the latest additions to the database"
+                        <TextBlock x:Uid="LatestNewsSubtitle"
+                                   Text="Stay updated with the latest additions to the database"
                                    FontSize="14"
                                    Foreground="{ThemeResource SystemBaseMediumColor}"
                                    TextWrapping="Wrap" />
@@ -43,7 +45,8 @@
                                       Height="48"
                                       Width="48"
                                       Foreground="{ThemeResource SystemAccentColor}" />
-                        <TextBlock Text="Loading latest news..."
+                        <TextBlock x:Uid="LoadingNewsText"
+                                   Text="Loading latest news..."
                                    FontSize="16"
                                    TextAlignment="Center"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -57,10 +60,12 @@
                                 Padding="32">
                         <InfoBar IsOpen="True"
                                  Severity="Error"
+                                 x:Uid="ErrorLoadingNewsInfoBar"
                                  Title="Unable to Load News"
                                  Message="{Binding ErrorMessage}"
                                  IsClosable="False" />
-                        <Button Content="Retry"
+                        <Button x:Uid="RetryButton"
+                                Content="Retry"
                                 Command="{Binding LoadNews}"
                                 HorizontalAlignment="Center"
                                 Style="{ThemeResource AccentButtonStyle}" />

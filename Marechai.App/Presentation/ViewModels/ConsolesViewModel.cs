@@ -62,6 +62,7 @@ public partial class ConsolesViewModel : ObservableObject
         NavigateByLetterCommand    = new AsyncRelayCommand<char>(NavigateByLetterAsync);
         NavigateByYearCommand      = new AsyncRelayCommand<int>(NavigateByYearAsync);
         NavigateAllConsolesCommand = new AsyncRelayCommand(NavigateAllConsolesAsync);
+        Title = _localizer["Consoles"];
 
         InitializeLetters();
     }
@@ -71,7 +72,7 @@ public partial class ConsolesViewModel : ObservableObject
     public IAsyncRelayCommand<char> NavigateByLetterCommand    { get; }
     public IAsyncRelayCommand<int>  NavigateByYearCommand      { get; }
     public IAsyncRelayCommand       NavigateAllConsolesCommand { get; }
-    public string                   Title                      { get; } = "Consoles";
+    public string                   Title                      { get; }
 
     /// <summary>
     ///     Initializes the alphabet list (A-Z)
@@ -114,7 +115,7 @@ public partial class ConsolesViewModel : ObservableObject
             {
                 for(int year = MinimumYear; year <= MaximumYear; year++) YearsList.Add(year);
 
-                YearsGridTitle = $"Browse by Year ({MinimumYear} - {MaximumYear})";
+                YearsGridTitle = string.Format(_localizer["Browse by Year ({0} - {1})"], MinimumYear, MaximumYear);
             }
 
             if(ConsoleCount == 0)

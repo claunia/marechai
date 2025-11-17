@@ -16,6 +16,7 @@
 
         <!-- Header -->
         <utu:NavigationBar Grid.Row="0"
+                           x:Uid="ProcessorsNavBar"
                            Content="Processors">
         </utu:NavigationBar>
 
@@ -33,7 +34,8 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock Text="Loading processors..."
+                <TextBlock x:Uid="LoadingProcessorsText"
+                           Text="Loading processors..."
                            FontSize="14"
                            TextAlignment="Center"
                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -48,10 +50,12 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
+                         x:Uid="ErrorLoadingProcessorsInfoBar"
                          Title="Unable to Load Processors"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button Content="Retry"
+                <Button x:Uid="RetryButton"
+                        Content="Retry"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
                         Style="{ThemeResource AccentButtonStyle}" />
@@ -74,6 +78,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       x:Uid="ResultsLabel"
                                        Text="RESULTS:" />
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
@@ -82,6 +87,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       x:Uid="ProcessorsLabel"
                                        Text="processors" />
                         </StackPanel>
 

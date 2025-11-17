@@ -68,7 +68,7 @@ public partial class PhotoDetailViewModel : ObservableObject
     private readonly ILogger<PhotoDetailViewModel> _logger;
     private readonly INavigator                    _navigator;
     private readonly MachinePhotoCache             _photoCache;
-
+    private IStringLocalizer _localizer;
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
@@ -199,12 +199,13 @@ public partial class PhotoDetailViewModel : ObservableObject
     private string _photoWhiteBalance = string.Empty;
 
     public PhotoDetailViewModel(ILogger<PhotoDetailViewModel> logger,           INavigator        navigator,
-                                ComputersService              computersService, MachinePhotoCache photoCache)
+                                ComputersService              computersService, MachinePhotoCache photoCache, IStringLocalizer localizer)
     {
         _logger           = logger;
         _navigator        = navigator;
         _computersService = computersService;
         _photoCache       = photoCache;
+        _localizer = localizer;
     }
 
     [RelayCommand]
@@ -231,7 +232,7 @@ public partial class PhotoDetailViewModel : ObservableObject
             if(photo is null)
             {
                 ErrorOccurred = true;
-                ErrorMessage  = "Photo not found";
+                ErrorMessage  = _localizer["Photo not found"];
                 IsLoading     = false;
 
                 return;
@@ -326,10 +327,10 @@ public partial class PhotoDetailViewModel : ObservableObject
 
             // Resolution and Other
             PhotoHorizontalResolution =
-                photo.HorizontalResolution != null ? $"{photo.HorizontalResolution} DPI" : string.Empty;
+                photo.HorizontalResolution != null ? string.Format(_localizer["_0_DPI"], photo.HorizontalResolution) : string.Empty;
 
             PhotoVerticalResolution =
-                photo.VerticalResolution != null ? $"{photo.VerticalResolution} DPI" : string.Empty;
+                photo.VerticalResolution != null ? string.Format(_localizer["_0_DPI"], photo.VerticalResolution) : string.Empty;
 
             // Extract ResolutionUnit - simple nullable integer now
             PhotoResolutionUnit = photo.ResolutionUnit.HasValue
@@ -341,7 +342,7 @@ public partial class PhotoDetailViewModel : ObservableObject
             PhotoSoftwareUsed     = photo.Software    ?? string.Empty;
 
             PhotoUploadDate = photo.UploadDate.HasValue
-                                  ? photo.UploadDate.Value.ToString("MMMM d, yyyy 'at' HH:mm")
+                                  ? photo.UploadDate.Value.ToString(_localizer["MMMM_d_yyyy_at_HH_mm"])
                                   : string.Empty;
 
             PhotoSource = photo.Source ?? string.Empty;
@@ -387,7 +388,7 @@ public partial class PhotoDetailViewModel : ObservableObject
         {
             _logger.LogError(ex, "Error loading photo image {PhotoId}", photoId);
             ErrorOccurred = true;
-            ErrorMessage  = "Failed to load photo image";
+            ErrorMessage  = _localizer["Failed to load photo image"];
         }
     }
 

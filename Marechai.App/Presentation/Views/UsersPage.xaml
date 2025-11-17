@@ -23,11 +23,13 @@
 
             <!-- Page Title -->
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="User Management"
+                <TextBlock x:Uid="UserManagementTitle"
+                           Text="User Management"
                            FontSize="20"
                            FontWeight="SemiBold"
                            Foreground="{ThemeResource TextControlForeground}" />
-                <TextBlock Text="Manage users, roles, and permissions"
+                <TextBlock x:Uid="UserManagementSubtitle"
+                           Text="Manage users, roles, and permissions"
                            FontSize="12"
                            Foreground="{ThemeResource SystemBaseMediumColor}"
                            Margin="0,4,0,0" />
@@ -46,6 +48,7 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Warning"
+                         x:Uid="UserMgmtAccessDeniedInfoBar"
                          Title="Access Denied"
                          Message="You must be an Uberadmin to access user management."
                          IsClosable="False" />
@@ -66,7 +69,8 @@
                                   Height="64"
                                   Width="64"
                                   Foreground="{ThemeResource SystemAccentColor}" />
-                    <TextBlock Text="Loading users..."
+                    <TextBlock x:Uid="LoadingText"
+                               Text="Loading users..."
                                FontSize="14"
                                TextAlignment="Center"
                                Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -82,6 +86,7 @@
                             Canvas.ZIndex="100">
                     <InfoBar IsOpen="True"
                              Severity="Error"
+                             x:Uid="ErrorLoadingUsersInfoBar"
                              Title="Unable to Load Users"
                              Message="{Binding ErrorMessage}"
                              IsClosable="False" />
@@ -102,9 +107,11 @@
                     <CommandBar Grid.Row="0"
                                 DefaultLabelPosition="Right">
                         <AppBarButton Icon="Add"
+                                      x:Uid="AddUserButton"
                                       Label="Add User"
                                       Command="{Binding OpenAddUserDialogCommand}" />
                         <AppBarButton Icon="Refresh"
+                                      x:Uid="RefreshUsersButton"
                                       Label="Refresh"
                                       Command="{Binding LoadUsersCommand}" />
                     </CommandBar>
@@ -127,23 +134,28 @@
                                        VerticalScrollBarVisibility="Auto">
 
                         <controls:DataGrid.Columns>
-                            <controls:DataGridTextColumn Header="Email"
+                            <controls:DataGridTextColumn x:Uid="EmailColumn"
+                                                         Header="Email"
                                                          Binding="{Binding Email}"
                                                          Width="2*" />
 
-                            <controls:DataGridTextColumn Header="Username"
+                            <controls:DataGridTextColumn x:Uid="UsernameColumn"
+                                                         Header="Username"
                                                          Binding="{Binding UserName}"
                                                          Width="*" />
 
-                            <controls:DataGridTextColumn Header="Phone"
+                            <controls:DataGridTextColumn x:Uid="PhoneColumn"
+                                                         Header="Phone"
                                                          Binding="{Binding PhoneNumber}"
                                                          Width="*" />
 
-                            <controls:DataGridTextColumn Header="Roles"
+                            <controls:DataGridTextColumn x:Uid="RolesColumn"
+                                                         Header="Roles"
                                                          Width="2*"
                                                          Binding="{Binding Roles, Converter={StaticResource RolesListConverter}}" />
 
-                            <controls:DataGridTemplateColumn Header="Actions"
+                            <controls:DataGridTemplateColumn x:Uid="ActionsColumn"
+                                                             Header="Actions"
                                                              Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -153,22 +165,26 @@
                                                     Command="{Binding DataContext.OpenEditUserDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
+                                                    x:Uid="EditUserButton"
                                                     Padding="8,4" />
                                             <Button Content="Password"
                                                     Command="{Binding DataContext.OpenChangePasswordDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
+                                                    x:Uid="ChangePasswordButton"
                                                     Padding="8,4" />
                                             <Button Content="Roles"
                                                     Command="{Binding DataContext.OpenManageRolesDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
+                                                    x:Uid="ManageRolesButton"
                                                     Padding="8,4" />
                                             <Button Content="Delete"
                                                     Command="{Binding DataContext.DeleteUserCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Foreground="{ThemeResource SystemErrorTextColor}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
+                                                    x:Uid="DeleteUserButton"
                                                     Padding="8,4" />
                                         </StackPanel>
                                     </DataTemplate>

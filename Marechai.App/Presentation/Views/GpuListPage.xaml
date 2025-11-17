@@ -33,7 +33,7 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock Text="Loading graphics processing units..."
+                <TextBlock x:Uid="LoadingText" Text="Loading graphics processing units..."
                            FontSize="14"
                            TextAlignment="Center"
                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -48,10 +48,12 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
+                         x:Uid="GpuErrorInfoBar"
                          Title="Unable to Load Graphics Processing Units"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button Content="Retry"
+                <Button x:Uid="RetryButton"
+                        Content="Retry"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
                         Style="{ThemeResource AccentButtonStyle}" />
@@ -74,6 +76,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       x:Uid="ResultsLabel"
                                        Text="RESULTS:" />
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
@@ -82,6 +85,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
+                                       x:Uid="GpuLabel"
                                        Text="graphics processing units" />
                         </StackPanel>
 

@@ -27,7 +27,7 @@ public partial class ProcessorDetailViewModel : ObservableObject
     private string _computersFilterText = string.Empty;
 
     [ObservableProperty]
-    private string _consoelsFilterText = string.Empty;
+    private string _consolesFilterText = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<MachineItem> _consoles = [];
@@ -81,6 +81,7 @@ public partial class ProcessorDetailViewModel : ObservableObject
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
+        Title = _localizer["Processor Details"];
     }
 
     public IAsyncRelayCommand LoadData               { get; }
@@ -89,7 +90,7 @@ public partial class ProcessorDetailViewModel : ObservableObject
     public ICommand           ComputersFilterCommand { get; }
     public ICommand           ConsolesFilterCommand  { get; }
 
-    public string Title { get; } = "Processor Details";
+    public string Title { get; }
 
     /// <summary>
     ///     Loads Processor details
@@ -253,14 +254,14 @@ public partial class ProcessorDetailViewModel : ObservableObject
     /// </summary>
     private void FilterConsoles()
     {
-        if(string.IsNullOrWhiteSpace(ConsoelsFilterText))
+        if(string.IsNullOrWhiteSpace(ConsolesFilterText))
         {
             FilteredConsoles.Clear();
             foreach(MachineItem console in Consoles) FilteredConsoles.Add(console);
         }
         else
         {
-            var filtered = Consoles.Where(c => c.Name.Contains(ConsoelsFilterText, StringComparison.OrdinalIgnoreCase))
+            var filtered = Consoles.Where(c => c.Name.Contains(ConsolesFilterText, StringComparison.OrdinalIgnoreCase))
                                    .ToList();
 
             FilteredConsoles.Clear();

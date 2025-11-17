@@ -41,7 +41,7 @@ public partial class CompanyDetailViewModel : ObservableObject
     private string _computersFilterText = string.Empty;
 
     [ObservableProperty]
-    private string _consoelsFilterText = string.Empty;
+    private string _consolesFilterText = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<CompanyDetailMachine> _consoles = [];
@@ -86,6 +86,7 @@ public partial class CompanyDetailViewModel : ObservableObject
         LoadData                 = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
         NavigateToMachineCommand = new AsyncRelayCommand<CompanyDetailMachine>(NavigateToMachineAsync);
+        Title= _localizer["Company Details"];
     }
 
     /// <summary>
@@ -116,7 +117,7 @@ public partial class CompanyDetailViewModel : ObservableObject
     public IAsyncRelayCommand                       LoadData                 { get; }
     public ICommand                                 GoBackCommand            { get; }
     public IAsyncRelayCommand<CompanyDetailMachine> NavigateToMachineCommand { get; }
-    public string                                   Title                    { get; } = "Company Details";
+    public string                                   Title                    { get; }
 
     partial void OnCompanyChanged(CompanyDto? oldValue, CompanyDto? newValue)
     {
@@ -149,7 +150,7 @@ public partial class CompanyDetailViewModel : ObservableObject
         FilterComputers(value);
     }
 
-    partial void OnConsoelsFilterTextChanged(string value)
+    partial void OnConsolesFilterTextChanged(string value)
     {
         FilterConsoles(value);
     }

@@ -19,7 +19,7 @@
                            Content="{Binding Path=Title}">
             <utu:NavigationBar.MainCommand>
                 <AppBarButton Icon="Back"
-                              Label="Back"
+                              x:Uid="BackButton"
                               Command="{Binding GoBackCommand}"
                               AutomationProperties.Name="Go back" />
             </utu:NavigationBar.MainCommand>
@@ -55,7 +55,8 @@
                                   IsIndeterminate="True"
                                   Height="48"
                                   Width="48" />
-                    <TextBlock Text="Loading..."
+                    <TextBlock x:Uid="LoadingText"
+                               Text="Loading..."
                                TextAlignment="Center"
                                FontSize="14" />
                 </StackPanel>
@@ -66,7 +67,8 @@
                             Background="{ThemeResource SystemErrorBackgroundColor}"
                             CornerRadius="8"
                             Spacing="8">
-                    <TextBlock Text="Error"
+                    <TextBlock x:Uid="ErrorTitleText"
+                               Text="Error"
                                FontWeight="Bold"
                                Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
                     <TextBlock Text="{Binding ErrorMessage}"
@@ -80,7 +82,8 @@
 
                     <!-- Letters Grid Section -->
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Browse by Letter"
+                        <TextBlock x:Uid="BrowseByLetterText"
+                                   Text="Browse by Letter"
                                    FontSize="16"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -118,7 +121,8 @@
 
                     <!-- All Consoles and Search Section -->
                     <StackPanel Spacing="12">
-                        <Button Content="All Consoles"
+                        <Button x:Uid="AllConsolesButton"
+                                Content="All Consoles"
                                 Padding="16,12"
                                 HorizontalAlignment="Stretch"
                                 FontSize="16"
@@ -127,7 +131,8 @@
                                 Style="{StaticResource AccentButtonStyle}" />
 
                         <!-- Search Field (placeholder for future implementation) -->
-                        <TextBox PlaceholderText="Search consoles..."
+                        <TextBox x:Uid="ConsolesSearchBox"
+                                 PlaceholderText="Search consoles..."
                                  Padding="12"
                                  IsEnabled="False"
                                  Opacity="0.5" />

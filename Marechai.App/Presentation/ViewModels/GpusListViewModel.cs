@@ -122,10 +122,10 @@ public partial class GpusListViewModel : ObservableObject
 
                 // Replace special database names
                 if(displayName == "DB_FRAMEBUFFER")
-                    displayName = "Framebuffer";
+                    displayName = _localizer["Framebuffer"];
                 else if(displayName == "DB_SOFTWARE")
-                    displayName                               = "Software";
-                else if(displayName == "DB_NONE") displayName = "None";
+                    displayName                               = _localizer["Software"];
+                else if(displayName == "DB_NONE") displayName = _localizer["None_female"];
 
                 var gpuItem = new GpuListItem
                 {
@@ -150,15 +150,15 @@ public partial class GpusListViewModel : ObservableObject
             // Sort special GPUs: Framebuffer first, then Software, then None
             specialGpus.Sort((a, b) =>
             {
-                int orderA = a.Name == "Framebuffer"
+                int orderA = a.Name == _localizer["Framebuffer"]
                                  ? 0
-                                 : a.Name == "Software"
+                                 : a.Name == _localizer["Software"]
                                      ? 1
                                      : 2;
 
-                int orderB = b.Name == "Framebuffer"
+                int orderB = b.Name == _localizer["Framebuffer"]
                                  ? 0
-                                 : b.Name == "Software"
+                                 : b.Name == _localizer["Software"]
                                      ? 1
                                      : 2;
 

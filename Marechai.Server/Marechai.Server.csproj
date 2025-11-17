@@ -3,21 +3,22 @@
     <TargetFramework>net10.0</TargetFramework>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\Generated</CompilerGeneratedFilesOutputPath>
+    <UserSecretsId>f752169f-4aaa-411d-a6ba-684cc1ad5349</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aaru.CommonTypes"/>
-    <PackageReference Include="Markdig"/>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
-    <PackageReference Include="Svg.Skia"/>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
+    <PackageReference Include="Aaru.CommonTypes" />
+    <PackageReference Include="Markdig" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Svg.Skia" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj"/>
-    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
+    <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj" />
+    <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj" />
   </ItemGroup>
 
 </Project>

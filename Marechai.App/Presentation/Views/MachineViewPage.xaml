@@ -67,7 +67,8 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock Text="Loading machine details..."
+                <TextBlock x:Uid="LoadingText"
+                           Text="Loading machine details..."
                            FontSize="14"
                            TextAlignment="Center"
                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -82,10 +83,12 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
+                         x:Uid="MachineErrorInfoBar"
                          Title="Unable to Load Machine"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button Content="Retry"
+                <Button x:Uid="RetryButton"
+                        Content="Retry"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
                         Style="{ThemeResource AccentButtonStyle}" />
@@ -105,7 +108,8 @@
                                 BorderThickness="1"
                                 CornerRadius="8"
                                 Padding="16,12">
-                            <TextBlock Text="PROTOTYPE"
+                            <TextBlock x:Uid="PrototypeBadgeText"
+                                       Text="PROTOTYPE"
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"
@@ -116,7 +120,8 @@
                     <!-- Introduction Date -->
                     <StackPanel Visibility="{Binding ShowIntroductionDate}"
                                 Spacing="8">
-                        <TextBlock Text="Introduction Date"
+                        <TextBlock x:Uid="IntroductionDateLabel"
+                                   Text="Introduction Date"
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -142,7 +147,8 @@
                         <StackPanel Grid.Column="0"
                                     Visibility="{Binding ShowFamily}"
                                     Spacing="8">
-                            <TextBlock Text="Family"
+                            <TextBlock x:Uid="FamilyLabel"
+                                       Text="Family"
                                        FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -162,7 +168,8 @@
                         <StackPanel Grid.Column="1"
                                     Visibility="{Binding ShowModel}"
                                     Spacing="8">
-                            <TextBlock Text="Model"
+                            <TextBlock x:Uid="ModelLabel"
+                                       Text="Model"
                                        FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -182,7 +189,8 @@
                     <!-- Processors Section -->
                     <StackPanel Visibility="{Binding ShowProcessors}"
                                 Spacing="12">
-                        <TextBlock Text="Processors"
+                        <TextBlock x:Uid="ProcessorsLabel"
+                                   Text="Processors"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -224,7 +232,8 @@
                     <!-- Memory Section -->
                     <StackPanel Visibility="{Binding ShowMemory}"
                                 Spacing="12">
-                        <TextBlock Text="Memory"
+                        <TextBlock x:Uid="MemoryLabel"
+                                   Text="Memory"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -261,7 +270,8 @@
                     <!-- GPUs Section -->
                     <StackPanel Visibility="{Binding ShowGpus}"
                                 Spacing="12">
-                        <TextBlock Text="Graphics Processing Units"
+                        <TextBlock x:Uid="GpusLabel"
+                                   Text="Graphics Processing Units"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -299,7 +309,8 @@
                     <!-- Sound Synthesizers Section -->
                     <StackPanel Visibility="{Binding ShowSoundSynthesizers}"
                                 Spacing="12">
-                        <TextBlock Text="Sound Synthesizers"
+                        <TextBlock x:Uid="SoundSynthesizersLabel"
+                                   Text="Sound Synthesizers"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -338,7 +349,8 @@
                     <!-- Storage Section -->
                     <StackPanel Visibility="{Binding ShowStorage}"
                                 Spacing="12">
-                        <TextBlock Text="Storage"
+                        <TextBlock x:Uid="StorageLabel"
+                                   Text="Storage"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -376,7 +388,8 @@
                     <!-- Photos Carousel (Last element before spacing) -->
                     <StackPanel Visibility="{Binding ShowPhotos}"
                                 Spacing="12">
-                        <TextBlock Text="Photos"
+                        <TextBlock x:Uid="PhotosLabel"
+                                   Text="Photos"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />

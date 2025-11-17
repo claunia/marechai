@@ -33,7 +33,7 @@
 
             <!-- Sidebar Title - Hidden when collapsed -->
             <TextBlock Grid.Column="0"
-                       Text="Navigation"
+                       x:Uid="SidebarTitle"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
@@ -66,7 +66,7 @@
                         Spacing="0"
                         Padding="0">
                 <!-- News -->
-                <Button Content="{Binding LocalizedStrings[News]}"
+                <Button x:Uid="NewsButton"
                         Command="{Binding NavigateToNewsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -78,7 +78,7 @@
                         CornerRadius="0" />
 
                 <!-- Books -->
-                <Button Content="{Binding LocalizedStrings[Books]}"
+                <Button x:Uid="BooksButton"
                         Command="{Binding NavigateToBooksCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -90,7 +90,7 @@
                         CornerRadius="0" />
 
                 <!-- Companies -->
-                <Button Content="{Binding LocalizedStrings[Companies]}"
+                <Button x:Uid="CompaniesButton"
                         Command="{Binding NavigateToCompaniesCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -102,7 +102,7 @@
                         CornerRadius="0" />
 
                 <!-- Computers -->
-                <Button Content="{Binding LocalizedStrings[Computers]}"
+                <Button x:Uid="ComputersButton"
                         Command="{Binding NavigateToComputersCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -114,7 +114,7 @@
                         CornerRadius="0" />
 
                 <!-- Consoles -->
-                <Button Content="{Binding LocalizedStrings[Consoles]}"
+                <Button x:Uid="ConsolesButton"
                         Command="{Binding NavigateToConsolesCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -126,7 +126,7 @@
                         CornerRadius="0" />
 
                 <!-- Documents -->
-                <Button Content="{Binding LocalizedStrings[Documents]}"
+                <Button x:Uid="DocumentsButton" 
                         Command="{Binding NavigateToDocumentsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -138,7 +138,7 @@
                         CornerRadius="0" />
 
                 <!-- Dumps -->
-                <Button Content="{Binding LocalizedStrings[Dumps]}"
+                <Button x:Uid="DumpsButton"
                         Command="{Binding NavigateToDumpsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -150,7 +150,7 @@
                         CornerRadius="0" />
 
                 <!-- Graphical Processing Units -->
-                <Button Content="{Binding LocalizedStrings[GraphicalProcessingUnits]}"
+                <Button x:Uid="GraphicalProcessingUnitsButton"
                         Command="{Binding NavigateToGraphicalProcessingUnitsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -162,7 +162,7 @@
                         CornerRadius="0" />
 
                 <!-- Magazines -->
-                <Button Content="{Binding LocalizedStrings[Magazines]}"
+                <Button x:Uid="MagazinesButton"
                         Command="{Binding NavigateToMagazinesCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -174,7 +174,7 @@
                         CornerRadius="0" />
 
                 <!-- People -->
-                <Button Content="{Binding LocalizedStrings[People]}"
+                <Button x:Uid="PeopleButton"
                         Command="{Binding NavigateToPeopleCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -186,7 +186,7 @@
                         CornerRadius="0" />
 
                 <!-- Processors -->
-                <Button Content="{Binding LocalizedStrings[Processors]}"
+                <Button x:Uid="ProcessorsButton"
                         Command="{Binding NavigateToProcessorsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -198,7 +198,7 @@
                         CornerRadius="0" />
 
                 <!-- Software -->
-                <Button Content="{Binding LocalizedStrings[Software]}"
+                <Button x:Uid="SoftwareButton"
                         Command="{Binding NavigateToSoftwareCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -210,7 +210,7 @@
                         CornerRadius="0" />
 
                 <!-- Sound Synthesizers -->
-                <Button Content="{Binding LocalizedStrings[SoundSynthesizers]}"
+                <Button x:Uid="SoundSynthesizersButton"
                         Command="{Binding NavigateToSoundSynthesizersCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -232,7 +232,7 @@
             <StackPanel Orientation="Vertical"
                         Spacing="0">
                 <!-- Users (Uberadmin only) -->
-                <Button Content="User Management"
+                <Button x:Uid="UserManagementButton"
                         Command="{Binding NavigateToUsersCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -257,7 +257,7 @@
                         CornerRadius="0" />
 
                 <!-- Settings -->
-                <Button Content="{Binding LocalizedStrings[Settings]}"
+                <Button x:Uid="SettingsButton"
                         Command="{Binding NavigateToSettingsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"

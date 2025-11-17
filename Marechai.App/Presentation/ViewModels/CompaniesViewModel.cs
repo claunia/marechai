@@ -59,12 +59,14 @@ public partial class CompaniesViewModel : ObservableObject
         LoadData                 = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
         NavigateToCompanyCommand = new AsyncRelayCommand<CompanyListItem>(NavigateToCompanyAsync);
+
+        Title=_localizer["Companies"];
     }
 
     public IAsyncRelayCommand                  LoadData                 { get; }
     public ICommand                            GoBackCommand            { get; }
     public IAsyncRelayCommand<CompanyListItem> NavigateToCompanyCommand { get; }
-    public string                              Title                    { get; } = "Companies";
+    public string                              Title                    { get; }
 
     partial void OnSearchQueryChanged(string value)
     {

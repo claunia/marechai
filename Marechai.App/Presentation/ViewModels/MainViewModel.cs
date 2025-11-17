@@ -24,8 +24,6 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isUberadminUser;
     [ObservableProperty]
-    private Dictionary<string, string> _localizedStrings = new();
-    [ObservableProperty]
     private string _loginLogoutButtonText = "";
 
     [ObservableProperty]
@@ -45,17 +43,13 @@ public partial class MainViewModel : ObservableObject
         _jwtService   =  jwtService;
         _tokenService =  tokenService;
         NewsViewModel =  newsViewModel;
-        Title         =  "Marechai";
-        Title         += $" - {localizer["ApplicationName"]}";
+        Title         =  localizer["ApplicationName"];
         if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
 
         GoToSecond = new AsyncRelayCommand(GoToSecondView);
 
         // Initialize color theme service with theme service
         _ = InitializeThemeServicesAsync(colorThemeService, themeService);
-
-        // Initialize localized strings
-        InitializeLocalizedStrings();
 
         // Initialize commands
         NavigateToNewsCommand                     = new AsyncRelayCommand(NavigateToMainAsync);
@@ -121,65 +115,10 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private void InitializeLocalizedStrings()
-    {
-        LocalizedStrings = new Dictionary<string, string>
-        {
-            {
-                "News", _localizer["News"]
-            },
-            {
-                "Books", _localizer["Books"]
-            },
-            {
-                "Companies", _localizer["Companies"]
-            },
-            {
-                "Computers", _localizer["Computers"]
-            },
-            {
-                "Consoles", _localizer["Consoles"]
-            },
-            {
-                "Documents", _localizer["Documents"]
-            },
-            {
-                "Dumps", _localizer["Dumps"]
-            },
-            {
-                "GraphicalProcessingUnits", _localizer["GraphicalProcessingUnits"]
-            },
-            {
-                "Magazines", _localizer["Magazines"]
-            },
-            {
-                "People", _localizer["People"]
-            },
-            {
-                "Processors", _localizer["Processors"]
-            },
-            {
-                "Software", _localizer["Software"]
-            },
-            {
-                "SoundSynthesizers", _localizer["SoundSynthesizers"]
-            },
-            {
-                "Settings", _localizer["Settings"]
-            },
-            {
-                "Login", _localizer["Login"]
-            },
-            {
-                "Logout", _localizer["Logout"]
-            }
-        };
-    }
-
     private async void UpdateLoginLogoutButtonText()
     {
         bool isAuthenticated = await _authService.IsAuthenticated(CancellationToken.None);
-        LoginLogoutButtonText = isAuthenticated ? LocalizedStrings["Logout"] : LocalizedStrings["Login"];
+        LoginLogoutButtonText = isAuthenticated ? _localizer["Logout"] : _localizer["Login"];
     }
 
     private void UpdateUberadminStatus()

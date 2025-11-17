@@ -27,7 +27,7 @@ public partial class GpuDetailViewModel : ObservableObject
     private string _computersFilterText = string.Empty;
 
     [ObservableProperty]
-    private string _consoelsFilterText = string.Empty;
+    private string _consolesFilterText = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<MachineItem> _consoles = [];
@@ -82,6 +82,7 @@ public partial class GpuDetailViewModel : ObservableObject
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
+        Title = _localizer["GPU Details"];
     }
 
     public IAsyncRelayCommand LoadData               { get; }
@@ -90,7 +91,7 @@ public partial class GpuDetailViewModel : ObservableObject
     public ICommand           ComputersFilterCommand { get; }
     public ICommand           ConsolesFilterCommand  { get; }
 
-    public string Title { get; } = "GPU Details";
+    public string Title { get; }
 
     /// <summary>
     ///     Loads GPU details including resolutions, computers, and consoles
@@ -148,10 +149,10 @@ public partial class GpuDetailViewModel : ObservableObject
             string displayName = Gpu.Name ?? string.Empty;
 
             if(displayName == "DB_FRAMEBUFFER")
-                displayName = "Framebuffer";
+                displayName = _localizer["Framebuffer"];
             else if(displayName == "DB_SOFTWARE")
-                displayName                               = "Software";
-            else if(displayName == "DB_NONE") displayName = "None";
+                displayName                               = _localizer["Software"];
+            else if(displayName == "DB_NONE") displayName = _localizer["None_female"];
 
             _logger.LogInformation("GPU loaded: {Name}, Company: {Company}", displayName, ManufacturerName);
 
@@ -289,14 +290,14 @@ public partial class GpuDetailViewModel : ObservableObject
     /// </summary>
     private void FilterConsoles()
     {
-        if(string.IsNullOrWhiteSpace(ConsoelsFilterText))
+        if(string.IsNullOrWhiteSpace(ConsolesFilterText))
         {
             FilteredConsoles.Clear();
             foreach(MachineItem console in Consoles) FilteredConsoles.Add(console);
         }
         else
         {
-            var filtered = Consoles.Where(c => c.Name.Contains(ConsoelsFilterText, StringComparison.OrdinalIgnoreCase))
+            var filtered = Consoles.Where(c => c.Name.Contains(ConsolesFilterText, StringComparison.OrdinalIgnoreCase))
                                    .ToList();
 
             FilteredConsoles.Clear();

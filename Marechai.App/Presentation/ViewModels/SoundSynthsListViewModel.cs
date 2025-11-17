@@ -13,6 +13,7 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class SoundSynthsListViewModel : ObservableObject
 {
     private readonly ILogger<SoundSynthsListViewModel> _logger;
+    private IStringLocalizer _localizer;
     private readonly INavigator                        _navigator;
     private readonly SoundSynthsService                _soundSynthsService;
 
@@ -32,11 +33,12 @@ public partial class SoundSynthsListViewModel : ObservableObject
     private ObservableCollection<SoundSynthListItem> _soundSynths = [];
 
     public SoundSynthsListViewModel(SoundSynthsService                soundSynthsService, INavigator navigator,
-                                    ILogger<SoundSynthsListViewModel> logger)
+                                    ILogger<SoundSynthsListViewModel> logger, IStringLocalizer localizer)
     {
         _soundSynthsService         = soundSynthsService;
         _navigator                  = navigator;
         _logger                     = logger;
+        _localizer = localizer;
         LoadData                    = new AsyncRelayCommand(LoadDataAsync);
         NavigateToSoundSynthCommand = new AsyncRelayCommand<SoundSynthListItem>(NavigateToSoundSynthAsync);
     }
@@ -61,16 +63,16 @@ public partial class SoundSynthsListViewModel : ObservableObject
 
             foreach(SoundSynthDto ss in soundSynths)
             {
-                string displayName = ss.Name ?? "Unknown";
+                string displayName = ss.Name ?? _localizer["Unknown_male"];
 
                 // Replace special database name
-                if(displayName == "DB_SOFTWARE") displayName = "Software";
+                if(displayName == "DB_SOFTWARE") displayName = _localizer["Software"];
 
                 var soundSynthItem = new SoundSynthListItem
                 {
                     Id        = ss.Id ?? 0,
                     Name      = displayName,
-                    Company   = ss.Company ?? "Unknown",
+                    Company   = ss.Company ?? _localizer["Unknown_female"],
                     IsSpecial = ss.Name == "DB_SOFTWARE"
                 };
 

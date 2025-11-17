@@ -18,8 +18,8 @@
         <utu:NavigationBar Grid.Row="0"
                            Content="{Binding Path=Title}">
             <utu:NavigationBar.MainCommand>
-                <AppBarButton Icon="Back"
-                              Label="Back"
+                <AppBarButton x:Uid="BackButton"
+                              Icon="Back"
                               Command="{Binding GoBackCommand}"
                               AutomationProperties.Name="Go back" />
             </utu:NavigationBar.MainCommand>
@@ -46,9 +46,9 @@
                 </StackPanel>
 
                 <!-- Search Box -->
-                <AutoSuggestBox x:Name="CompaniesSearchBox"
+                <AutoSuggestBox x:Uid="CompaniesSearchBox"
+                                x:Name="CompaniesSearchBox"
                                 HorizontalAlignment="Stretch"
-                                PlaceholderText="Search companies..."
                                 Text="{Binding SearchQuery, Mode=TwoWay}"
                                 QuerySubmitted="OnSearchQuerySubmitted"
                                 TextChanged="OnSearchTextChanged">
@@ -69,7 +69,7 @@
                                   IsIndeterminate="True"
                                   Height="48"
                                   Width="48" />
-                    <TextBlock Text="Loading..."
+                    <TextBlock x:Uid="LoadingText"
                                TextAlignment="Center"
                                FontSize="14" />
                 </StackPanel>
@@ -80,7 +80,7 @@
                             Background="{ThemeResource SystemErrorBackgroundColor}"
                             CornerRadius="8"
                             Spacing="8">
-                    <TextBlock Text="Error"
+                    <TextBlock x:Uid="ErrorText"
                                FontWeight="Bold"
                                Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
                     <TextBlock Text="{Binding ErrorMessage}"
