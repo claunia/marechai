@@ -37,14 +37,54 @@ public class StringToVisibilityConverter : IValueConverter
 /// </summary>
 public class ZeroToVisibilityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if(value is int count && count > 0) return Visibility.Visible;
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is > 0 or long and > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-        if(value is long longCount && longCount > 0) return Visibility.Visible;
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotImplementedException();
+}
 
-        return Visibility.Collapsed;
-    }
+/// <summary>
+///     Converts a boolean value to its inverse
+/// </summary>
+public class InvertBoolConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) => value is false;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) => value is false;
+}
+
+/// <summary>
+///     Converts a boolean value to Visibility (true = Visible, false = Collapsed)
+/// </summary>
+public class BoolToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is true ? Visibility.Visible : Visibility.Collapsed;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        value is Visibility.Visible;
+}
+
+/// <summary>
+///     Converts a boolean value to inverted Visibility (true = Collapsed, false = Visible)
+/// </summary>
+public class InvertBoolToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is true ? Visibility.Collapsed : Visibility.Visible;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        value is Visibility.Collapsed;
+}
+
+/// <summary>
+///     Converts null to Visibility (null = Collapsed, not null = Visible)
+/// </summary>
+public class NullToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value != null ? Visibility.Visible : Visibility.Collapsed;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         throw new NotImplementedException();
