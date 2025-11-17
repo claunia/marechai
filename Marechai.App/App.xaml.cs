@@ -201,8 +201,7 @@ public partial class App : Application
                        new ViewMap<SoundSynthListPage, SoundSynthsListViewModel>(),
                        new ViewMap<SoundSynthDetailPage, SoundSynthDetailViewModel>(),
                        new ViewMap<SettingsPage, SettingsViewModel>(),
-                       new ViewMap<UsersPage, UsersViewModel>(),
-                       new DataViewMap<SecondPage, SecondViewModel, Entity>());
+                       new ViewMap<UsersPage, UsersViewModel>());
 
         routes.Register(new RouteMap("",
                                      views.FindByViewModel<ShellViewModel>(),
@@ -278,10 +277,7 @@ public partial class App : Application
                                                                        ]),
                                                           new RouteMap("settings",
                                                                        views.FindByViewModel<SettingsViewModel>()),
-                                                          new RouteMap("users",
-                                                                       views.FindByViewModel<UsersViewModel>()),
-                                                          new RouteMap("Second",
-                                                                       views.FindByViewModel<SecondViewModel>())
+                                                          new RouteMap("users", views.FindByViewModel<UsersViewModel>())
                                                       ])
                                      ]));
     }

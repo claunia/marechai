@@ -52,10 +52,6 @@
       <DependentUpon>Shell.xaml</DependentUpon>
       <IsDefaultItem>true</IsDefaultItem>
     </Compile>
-    <Compile Update="Presentation\Views\SecondPage.xaml.cs">
-      <DependentUpon>SecondPage.xaml</DependentUpon>
-      <IsDefaultItem>true</IsDefaultItem>
-    </Compile>
     <Compile Update="Presentation\Views\ComputersPage.xaml.cs">
       <DependentUpon>ComputersPage.xaml</DependentUpon>
       <IsDefaultItem>true</IsDefaultItem>

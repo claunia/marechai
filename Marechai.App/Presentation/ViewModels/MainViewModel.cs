@@ -46,8 +46,6 @@ public partial class MainViewModel : ObservableObject
         Title         =  localizer["ApplicationName"];
         if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
 
-        GoToSecond = new AsyncRelayCommand(GoToSecondView);
-
         // Initialize color theme service with theme service
         _ = InitializeThemeServicesAsync(colorThemeService, themeService);
 
@@ -78,8 +76,6 @@ public partial class MainViewModel : ObservableObject
     }
 
     public string? Title { get; }
-
-    public ICommand GoToSecond { get; }
 
     public ICommand NavigateToNewsCommand                     { get; }
     public ICommand NavigateToBooksCommand                    { get; }
@@ -192,11 +188,5 @@ public partial class MainViewModel : ObservableObject
     {
         // Navigate to News page (the default/home page)
         await NavigateTo("News");
-    }
-
-    private async Task GoToSecondView()
-    {
-        // Navigate to Second view model providing qualifier and data
-        await _navigator.NavigateViewModelAsync<SecondViewModel>(this, "Second", new Entity(Name ?? ""));
     }
 }
