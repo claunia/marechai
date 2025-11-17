@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -328,693 +328,693 @@
     <value>Falha no login. Por favor, verifique suas credenciais e tente novamente.</value>
   </data>
   <data name="UserManagementButton.Content" xml:space="preserve">
-    <value />
+    <value>Gerenciamento de Usuários</value>
   </data>
   <data name="SidebarTitle.Text" xml:space="preserve">
-    <value />
+    <value>Menu</value>
   </data>
   <data name="Companies" xml:space="preserve">
-    <value />
+    <value>Empresas</value>
   </data>
   <data name="Companies in the database" xml:space="preserve">
-    <value />
+    <value>Empresas no banco de dados</value>
   </data>
   <data name="No companies found" xml:space="preserve">
-    <value />
+    <value>Nenhuma empresa encontrada</value>
   </data>
   <data name="Failed to load companies data. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar dados de empresas. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Company Details" xml:space="preserve">
-    <value />
+    <value>Detalhes da Empresa</value>
   </data>
   <data name="Invalid company ID." xml:space="preserve">
-    <value />
+    <value>ID de empresa inválido.</value>
   </data>
   <data name="Company not found." xml:space="preserve">
-    <value />
+    <value>Empresa não encontrada.</value>
   </data>
   <data name="Failed to load company details. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar detalhes da empresa. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="No computers found for this filter" xml:space="preserve">
-    <value />
+    <value>Nenhum computador encontrado para este filtro</value>
   </data>
   <data name="Failed to load computers. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar computadores. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="All Computers" xml:space="preserve">
-    <value />
+    <value>Todos os Computadores</value>
   </data>
   <data name="Browsing all computers in the database" xml:space="preserve">
-    <value />
+    <value>Navegando por todos os computadores no banco de dados</value>
   </data>
   <data name="Computers Starting with" xml:space="preserve">
-    <value />
+    <value>Computadores Começando com</value>
   </data>
   <data name="Showing computers that start with" xml:space="preserve">
-    <value />
+    <value>Mostrando computadores que começam com</value>
   </data>
-  <data name="ç" xml:space="preserve">
-    <value />
+  <data name="Computers from" xml:space="preserve">
+    <value>Computadores de</value>
   </data>
   <data name="Showing computers released in" xml:space="preserve">
-    <value />
+    <value>Mostrando computadores lançados em</value>
   </data>
   <data name="Computers" xml:space="preserve">
-    <value />
+    <value>Computadores</value>
   </data>
   <data name="Computers in the database" xml:space="preserve">
-    <value />
+    <value>Computadores no banco de dados</value>
   </data>
   <data name="Browse by Year ({0} - {1})" xml:space="preserve">
-    <value />
+    <value>Navegar por Ano ({0} - {1})</value>
   </data>
   <data name="No computers found" xml:space="preserve">
-    <value />
+    <value>Nenhum computador encontrado</value>
   </data>
   <data name="Failed to load computers data. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar dados de computadores. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Failed to navigate. Please try again." xml:space="preserve">
-    <value />
+    <value>Falha ao navegar. Por favor, tente novamente.</value>
   </data>
   <data name="No consoles found for this filter" xml:space="preserve">
-    <value />
+    <value>Nenhum console encontrado para este filtro</value>
   </data>
   <data name="Failed to load consoles. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar consoles. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Browsing all consoles in the database" xml:space="preserve">
-    <value />
+    <value>Navegando por todos os consoles no banco de dados</value>
   </data>
   <data name="Showing consoles that start with" xml:space="preserve">
-    <value />
+    <value>Mostrando consoles que começam com</value>
   </data>
   <data name="Showing consoles released in" xml:space="preserve">
-    <value />
+    <value>Mostrando consoles lançados em</value>
   </data>
   <data name="Consoles" xml:space="preserve">
-    <value />
+    <value>Consoles</value>
   </data>
   <data name="Consoles in the database" xml:space="preserve">
-    <value />
+    <value>Consoles no banco de dados</value>
   </data>
   <data name="Failed to load consoles data. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar dados de consoles. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="GPU Details" xml:space="preserve">
-    <value />
+    <value>Detalhes da GPU</value>
   </data>
   <data name="Invalid GPU ID" xml:space="preserve">
-    <value />
+    <value>ID de GPU inválido</value>
   </data>
   <data name="Graphics processing unit not found" xml:space="preserve">
-    <value />
+    <value>Unidade de processamento gráfico não encontrada</value>
   </data>
   <data name="Framebuffer" xml:space="preserve">
-    <value />
+    <value>Framebuffer</value>
   </data>
   <data name="Software" xml:space="preserve">
-    <value />
+    <value>Software</value>
   </data>
   <data name="None_female" xml:space="preserve">
-    <value />
+    <value>Nenhuma</value>
   </data>
   <data name="Text" xml:space="preserve">
-    <value />
+    <value>Texto</value>
   </data>
   <data name="Pixel" xml:space="preserve">
-    <value />
+    <value>Pixel</value>
   </data>
   <data name="_0_x_1__characters" xml:space="preserve">
-    <value />
+    <value>{0} x {1} caracteres</value>
   </data>
   <data name="GraphicalProcessingUnits" xml:space="preserve">
-    <value />
+    <value>Unidades de Processamento Gráfico</value>
   </data>
   <data name="No graphics processing units found" xml:space="preserve">
-    <value />
+    <value>Nenhuma unidade de processamento gráfico encontrada</value>
   </data>
   <data name="Failed to load graphics processing units. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar unidades de processamento gráfico. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Machine not found" xml:space="preserve">
-    <value />
+    <value>Máquina não encontrada</value>
   </data>
   <data name="_0_MHz" xml:space="preserve">
-    <value />
+    <value>{0} MHz</value>
   </data>
   <data name="_0_bits" xml:space="preserve">
-    <value />
+    <value>{0} bits</value>
   </data>
   <data name="_0_cores" xml:space="preserve">
-    <value />
+    <value>{0} núcleos</value>
   </data>
   <data name="_0_bytes_1_" xml:space="preserve">
-    <value />
+    <value>{0} bytes ({1})</value>
   </data>
   <data name="_0_bytes" xml:space="preserve">
-    <value />
+    <value>{0} bytes</value>
   </data>
   <data name="Unknown_male" xml:space="preserve">
-    <value />
+    <value>Desconhecido</value>
   </data>
   <data name="_0_voices" xml:space="preserve">
-    <value />
+    <value>{0} vozes</value>
   </data>
   <data name="Storage" xml:space="preserve">
-    <value />
+    <value>Armazenamento</value>
   </data>
   <data name="New computer in database" xml:space="preserve">
-    <value />
+    <value>Novo computador no banco de dados</value>
   </data>
   <data name="New console in database" xml:space="preserve">
-    <value />
+    <value>Novo console no banco de dados</value>
   </data>
   <data name="New computer in collection" xml:space="preserve">
-    <value />
+    <value>Novo computador na coleção</value>
   </data>
   <data name="New console in collection" xml:space="preserve">
-    <value />
+    <value>Novo console na coleção</value>
   </data>
   <data name="Updated computer in database" xml:space="preserve">
-    <value />
+    <value>Computador atualizado no banco de dados</value>
   </data>
   <data name="Updated console in database" xml:space="preserve">
-    <value />
+    <value>Console atualizado no banco de dados</value>
   </data>
   <data name="Updated computer in collection" xml:space="preserve">
-    <value />
+    <value>Computador atualizado na coleção</value>
   </data>
   <data name="Updated console in collection" xml:space="preserve">
-    <value />
+    <value>Console atualizado na coleção</value>
   </data>
   <data name="No news available" xml:space="preserve">
-    <value />
+    <value>Nenhuma notícia disponível</value>
   </data>
   <data name="Failed to load news. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar notícias. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Photo not found" xml:space="preserve">
-    <value />
+    <value>Foto não encontrada</value>
   </data>
   <data name="_0_DPI" xml:space="preserve">
-    <value />
+    <value>{0} DPI</value>
   </data>
   <data name="MMMM_d_yyyy_at_HH_mm" xml:space="preserve">
-    <value />
+    <value>d 'de' MMMM 'de' yyyy 'às' HH:mm</value>
   </data>
   <data name="Failed to load photo image" xml:space="preserve">
-    <value />
+    <value>Falha ao carregar imagem da foto</value>
   </data>
   <data name="Processor Details" xml:space="preserve">
-    <value />
+    <value>Detalhes do Processador</value>
   </data>
   <data name="Invalid Processor ID" xml:space="preserve">
-    <value />
+    <value>ID de Processador inválido</value>
   </data>
   <data name="Processor not found" xml:space="preserve">
-    <value />
+    <value>Processador não encontrado</value>
   </data>
   <data name="Failed to load processor details. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar detalhes do processador. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Processors" xml:space="preserve">
-    <value />
+    <value>Processadores</value>
   </data>
   <data name="No processors found" xml:space="preserve">
-    <value />
+    <value>Nenhum processador encontrado</value>
   </data>
   <data name="Failed to load processors. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar processadores. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value />
+    <value>Configurações</value>
   </data>
   <data name="Sound Synthesizer Details" xml:space="preserve">
-    <value />
+    <value>Detalhes do Sintetizador de Som</value>
   </data>
   <data name="Invalid Sound Synthesizer ID" xml:space="preserve">
-    <value />
+    <value>ID de Sintetizador de Som inválido</value>
   </data>
   <data name="Sound Synthesizer not found" xml:space="preserve">
-    <value />
+    <value>Sintetizador de Som não encontrado</value>
   </data>
   <data name="Failed to load Sound Synthesizer details. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar detalhes do Sintetizador de Som. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Unknown_female" xml:space="preserve">
-    <value />
+    <value>Desconhecida</value>
   </data>
   <data name="Failed to load Sound Synthesizers. Please try again later." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar Sintetizadores de Som. Por favor, tente novamente mais tarde.</value>
   </data>
   <data name="Failed to load users. Please try again." xml:space="preserve">
-    <value />
+    <value>Falha ao carregar usuários. Por favor, tente novamente.</value>
   </data>
   <data name="Failed to delete user." xml:space="preserve">
-    <value />
+    <value>Falha ao excluir usuário.</value>
   </data>
   <data name="Add User" xml:space="preserve">
-    <value />
+    <value>Adicionar Usuário</value>
   </data>
   <data name="Edit User" xml:space="preserve">
-    <value />
+    <value>Editar Usuário</value>
   </data>
   <data name="Change Password" xml:space="preserve">
-    <value />
+    <value>Alterar Senha</value>
   </data>
   <data name="Manage Roles" xml:space="preserve">
-    <value />
+    <value>Gerenciar Funções</value>
   </data>
   <data name="Email and username are required." xml:space="preserve">
-    <value />
+    <value>E-mail e nome de usuário são obrigatórios.</value>
   </data>
   <data name="Password is required for new users." xml:space="preserve">
-    <value />
+    <value>Senha é obrigatória para novos usuários.</value>
   </data>
   <data name="Passwords do not match." xml:space="preserve">
-    <value />
+    <value>As senhas não coincidem.</value>
   </data>
   <data name="Failed to save user." xml:space="preserve">
-    <value />
+    <value>Falha ao salvar usuário.</value>
   </data>
   <data name="Password is required." xml:space="preserve">
-    <value />
+    <value>Senha é obrigatória.</value>
   </data>
   <data name="Failed to change password." xml:space="preserve">
-    <value />
+    <value>Falha ao alterar senha.</value>
   </data>
   <data name="User already has this role." xml:space="preserve">
-    <value />
+    <value>Usuário já possui esta função.</value>
   </data>
   <data name="Failed to add role." xml:space="preserve">
-    <value />
+    <value>Falha ao adicionar função.</value>
   </data>
   <data name="Failed to remove role." xml:space="preserve">
-    <value />
+    <value>Falha ao remover função.</value>
   </data>
   <data name="BackButton.Label" xml:space="preserve">
-    <value />
+    <value>Voltar</value>
   </data>
   <data name="CompaniesSearchBox.PlaceholderText" xml:space="preserve">
-    <value />
+    <value>Pesquisar empresas...</value>
   </data>
   <data name="LoadingText.Text" xml:space="preserve">
-    <value />
+    <value>Carregando...</value>
   </data>
   <data name="ErrorText.Text" xml:space="preserve">
-    <value />
+    <value>Erro</value>
   </data>
   <data name="StatusText.Text" xml:space="preserve">
-    <value />
+    <value>Status</value>
   </data>
   <data name="FoundedText.Text" xml:space="preserve">
-    <value />
+    <value>Fundada</value>
   </data>
   <data name="LegalNameText" xml:space="preserve">
-    <value />
+    <value>Nome Legal</value>
   </data>
   <data name="CountryText.Text" xml:space="preserve">
-    <value />
+    <value>País</value>
   </data>
   <data name="AddressText.Text" xml:space="preserve">
-    <value />
+    <value>Endereço</value>
   </data>
   <data name="LinksText.Text" xml:space="preserve">
-    <value />
+    <value>Links</value>
   </data>
   <data name="WebsiteText.Text" xml:space="preserve">
-    <value />
+    <value>Site</value>
   </data>
   <data name="TwitterText.Text" xml:space="preserve">
-    <value />
+    <value>Twitter</value>
   </data>
   <data name="FacebookText.Text" xml:space="preserve">
-    <value />
+    <value>Facebook</value>
   </data>
   <data name="LogoHistoryText.Text" xml:space="preserve">
-    <value />
+    <value>Histórico de Logotipos</value>
   </data>
   <data name="ComputersText.Text" xml:space="preserve">
-    <value />
+    <value>Computadores</value>
   </data>
   <data name="ComputersFilterBox.PlaceholderText" xml:space="preserve">
-    <value />
+    <value>Filtrar computadores...</value>
   </data>
   <data name="ConsolesText.Text" xml:space="preserve">
-    <value />
+    <value>Consoles</value>
   </data>
   <data name="ConsolesFilterBox.PlaceholderText" xml:space="preserve">
-    <value />
+    <value>Filtrar consoles...</value>
   </data>
   <data name="ComputersErrorInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Computadores</value>
   </data>
   <data name="RetryButton.Content" xml:space="preserve">
-    <value />
+    <value>Tentar Novamente</value>
   </data>
   <data name="ResultsText.Text" xml:space="preserve">
-    <value />
+    <value>RESULTADOS:</value>
   </data>
   <data name="ComputersLabel.Text" xml:space="preserve">
-    <value />
+    <value>computadores</value>
   </data>
   <data name="BrowseByLetterText.Text" xml:space="preserve">
-    <value />
+    <value>Navegar por Letra</value>
   </data>
   <data name="AllComputersButton.Content" xml:space="preserve">
-    <value />
+    <value>Todos os Computadores</value>
   </data>
   <data name="ComputersSearchBox.PlaceholderText" xml:space="preserve">
-    <value />
+    <value>Pesquisar computadores...</value>
   </data>
   <data name="ConsolesErrorInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Consoles</value>
   </data>
   <data name="ConsolesLabel.Text" xml:space="preserve">
-    <value />
+    <value>consoles</value>
   </data>
   <data name="AllConsolesButton.Content" xml:space="preserve">
-    <value />
+    <value>Todos os Consoles</value>
   </data>
   <data name="ConsolesSearchBox.PlaceholderText" xml:space="preserve">
-    <value />
+    <value>Pesquisar consoles...</value>
   </data>
   <data name="ManufacturerText.Text" xml:space="preserve">
-    <value />
+    <value>Fabricante</value>
   </data>
   <data name="ModelCodeText.Text" xml:space="preserve">
-    <value />
+    <value>Código do Modelo</value>
   </data>
   <data name="IntroducedText" xml:space="preserve">
-    <value />
+    <value>Lançado</value>
   </data>
   <data name="PackageText.Text" xml:space="preserve">
-    <value />
+    <value>Encapsulamento</value>
   </data>
   <data name="ProcessText.Text" xml:space="preserve">
-    <value />
+    <value>Processo</value>
   </data>
   <data name="ProcessNmText.Text" xml:space="preserve">
-    <value />
+    <value>Processo (nm)</value>
   </data>
   <data name="DieSizeText.Text" xml:space="preserve">
-    <value />
+    <value>Tamanho do Die (mm²)</value>
   </data>
   <data name="TransistorsText.Text" xml:space="preserve">
-    <value />
+    <value>Transistores</value>
   </data>
   <data name="SupportedResolutionsText.Text" xml:space="preserve">
-    <value />
+    <value>Resoluções Suportadas</value>
   </data>
   <data name="GpuErrorInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Unidades de Processamento Gráfico</value>
   </data>
   <data name="GpuLabel.Text" xml:space="preserve">
-    <value />
+    <value>unidades de processamento gráfico</value>
   </data>
   <data name="MachineErrorInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Máquina</value>
   </data>
   <data name="PrototypeBadgeText.Text" xml:space="preserve">
-    <value />
+    <value>PROTÓTIPO</value>
   </data>
   <data name="IntroductionDateLabel.Text" xml:space="preserve">
-    <value />
+    <value>Data de Lançamento</value>
   </data>
   <data name="FamilyLabel.Text" xml:space="preserve">
-    <value />
+    <value>Família</value>
   </data>
   <data name="ModelLabel.Text" xml:space="preserve">
-    <value />
+    <value>Modelo</value>
   </data>
   <data name="ProcessorsLabel.Text" xml:space="preserve">
-    <value />
+    <value>Processadores</value>
   </data>
   <data name="MemoryLabel.Text" xml:space="preserve">
-    <value />
+    <value>Memória</value>
   </data>
   <data name="GpusLabel.Text" xml:space="preserve">
-    <value />
+    <value>Unidades de Processamento Gráfico</value>
   </data>
   <data name="SoundSynthesizersLabel.Text" xml:space="preserve">
-    <value />
+    <value>Sintetizadores de Som</value>
   </data>
   <data name="StorageLabel.Text" xml:space="preserve">
-    <value />
+    <value>Armazenamento</value>
   </data>
   <data name="PhotosLabel.Text" xml:space="preserve">
-    <value />
+    <value>Fotos</value>
   </data>
   <data name="LatestNewsTitle.Text" xml:space="preserve">
-    <value />
+    <value>Últimas Notícias</value>
   </data>
   <data name="LatestNewsSubtitle.Text" xml:space="preserve">
-    <value />
+    <value>Fique atualizado com as últimas adições ao banco de dados</value>
   </data>
   <data name="LoadingNewsText.Text" xml:space="preserve">
-    <value />
+    <value>Carregando últimas notícias...</value>
   </data>
   <data name="ErrorLoadingNewsInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Notícias</value>
   </data>
   <data name="LoadingPhotoText.Text" xml:space="preserve">
-    <value />
+    <value>Carregando foto...</value>
   </data>
   <data name="ErrorLoadingPhotoInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Foto</value>
   </data>
   <data name="PhotoMachineLabel.Text" xml:space="preserve">
-    <value />
+    <value>Máquina</value>
   </data>
   <data name="PhotoMachineNameLabel.Text" xml:space="preserve">
-    <value />
+    <value>Nome</value>
   </data>
   <data name="PhotoMachineCompanyLabel.Text" xml:space="preserve">
-    <value />
+    <value>Empresa</value>
   </data>
   <data name="PhotoCameraLabel.Text" xml:space="preserve">
-    <value />
+    <value>Câmera</value>
   </data>
   <data name="PhotoCameraManufacturerLabel.Text" xml:space="preserve">
-    <value />
+    <value>Fabricante</value>
   </data>
   <data name="PhotoCameraModelLabel.Text" xml:space="preserve">
-    <value />
+    <value>Modelo</value>
   </data>
   <data name="PhotoLensModelLabel.Text" xml:space="preserve">
-    <value />
+    <value>Lente</value>
   </data>
   <data name="PhotoSoftwareUsedLabel.Text" xml:space="preserve">
-    <value />
+    <value>Software</value>
   </data>
   <data name="PhotoExposureSettingsLabel.Text" xml:space="preserve">
-    <value />
+    <value>Configurações de Exposição</value>
   </data>
   <data name="PhotoApertureLabel.Text" xml:space="preserve">
-    <value />
+    <value>Abertura</value>
   </data>
   <data name="PhotoExposureTimeLabel.Text" xml:space="preserve">
-    <value />
+    <value>Tempo de Exposição</value>
   </data>
   <data name="PhotoExposureModeLabel.Text" xml:space="preserve">
-    <value />
+    <value>Modo de Exposição</value>
   </data>
   <data name="PhotoExposureProgramLabel.Text" xml:space="preserve">
-    <value />
+    <value>Programa de Exposição</value>
   </data>
   <data name="PhotoIsoRatingLabel.Text" xml:space="preserve">
-    <value />
+    <value>Classificação ISO</value>
   </data>
   <data name="PhotoFlashAndLightLabel.Text" xml:space="preserve">
-    <value />
+    <value>Flash &amp; Luz</value>
   </data>
   <data name="PhotoFlashLabel.Text" xml:space="preserve">
-    <value />
+    <value>Flash</value>
   </data>
   <data name="PhotoLightSourceLabel.Text" xml:space="preserve">
-    <value />
+    <value>Fonte de Luz</value>
   </data>
   <data name="PhotoMeteringModeLabel.Text" xml:space="preserve">
-    <value />
+    <value>Modo de Medição</value>
   </data>
   <data name="PhotoWhiteBalanceLabel.Text" xml:space="preserve">
-    <value />
+    <value>Balanço de Branco</value>
   </data>
   <data name="PhotoFocalLengthLabel.Text" xml:space="preserve">
-    <value />
+    <value>Distância Focal</value>
   </data>
   <data name="PhotoFocalLengthEquivalentLabel.Text" xml:space="preserve">
-    <value />
+    <value>Equivalente 35mm</value>
   </data>
   <data name="PhotoDigitalZoomLabel.Text" xml:space="preserve">
-    <value />
+    <value>Zoom Digital</value>
   </data>
   <data name="PhotoImagePropertiesLabel.Text" xml:space="preserve">
-    <value />
+    <value>Propriedades da Imagem</value>
   </data>
   <data name="PhotoColorSpaceLabel.Text" xml:space="preserve">
-    <value />
+    <value>Espaço de Cor</value>
   </data>
   <data name="PhotoContrastLabel.Text" xml:space="preserve">
-    <value />
+    <value>Contraste</value>
   </data>
   <data name="PhotoSaturationLabel.Text" xml:space="preserve">
-    <value />
+    <value>Saturação</value>
   </data>
   <data name="PhotoSharpnessLabel.Text" xml:space="preserve">
-    <value />
+    <value>Nitidez</value>
   </data>
   <data name="PhotoOrientationLabel.Text" xml:space="preserve">
-    <value />
+    <value>Orientação</value>
   </data>
   <data name="PhotoSceneCaptureTypeLabel.Text" xml:space="preserve">
-    <value />
+    <value>Tipo de Captura de Cena</value>
   </data>
   <data name="PhotoResolutionLabel.Text" xml:space="preserve">
-    <value />
+    <value>Resolução</value>
   </data>
   <data name="PhotoHorizontalResolutionLabel.Text" xml:space="preserve">
-    <value />
+    <value>Resolução Horizontal</value>
   </data>
   <data name="PhotoVerticalResolutionLabel.Text" xml:space="preserve">
-    <value />
+    <value>Resolução Vertical</value>
   </data>
   <data name="PhotoResolutionUnitLabel.Text" xml:space="preserve">
-    <value />
+    <value>Unidade de Resolução</value>
   </data>
   <data name="PhotoFileMetadataLabel.Text" xml:space="preserve">
-    <value />
+    <value>Arquivo &amp; Metadados</value>
   </data>
   <data name="PhotoOriginalFormatLabel.Text" xml:space="preserve">
-    <value />
+    <value>Formato Original</value>
   </data>
   <data name="PhotoCreationDateLabel.Text" xml:space="preserve">
-    <value />
+    <value>Data da Foto</value>
   </data>
   <data name="PhotoUploadDateLabel.Text" xml:space="preserve">
-    <value />
+    <value>Data de Upload</value>
   </data>
   <data name="PhotoExifVersionLabel.Text" xml:space="preserve">
-    <value />
+    <value>Versão EXIF</value>
   </data>
   <data name="PhotoAuthorLabel.Text" xml:space="preserve">
-    <value />
+    <value>Autor</value>
   </data>
   <data name="PhotoLicenseNameLabel.Text" xml:space="preserve">
-    <value />
+    <value>Licença</value>
   </data>
   <data name="PhotoCommentsLabel.Text" xml:space="preserve">
-    <value />
+    <value>Comentários</value>
   </data>
   <data name="PhotoSourceLabel.Text" xml:space="preserve">
-    <value />
+    <value>Fonte</value>
   </data>
   <data name="PhotoAdvancedLabel.Text" xml:space="preserve">
-    <value />
+    <value>Avançado</value>
   </data>
   <data name="PhotoSensingMethodLabel.Text" xml:space="preserve">
-    <value />
+    <value>Método de Detecção</value>
   </data>
   <data name="PhotoSubjectDistanceRangeLabel.Text" xml:space="preserve">
-    <value />
+    <value>Faixa de Distância do Assunto</value>
   </data>
   <data name="SpeedText.Text" xml:space="preserve">
-    <value />
+    <value>Velocidade (MHz)</value>
   </data>
   <data name="CoresText.Text" xml:space="preserve">
-    <value />
+    <value>Núcleos</value>
   </data>
   <data name="ThreadsPerCoreText.Text" xml:space="preserve">
-    <value />
+    <value>Threads por Núcleo</value>
   </data>
   <data name="ProcessorsNavBar.Content" xml:space="preserve">
-    <value />
+    <value>Processadores</value>
   </data>
   <data name="LoadingProcessorsText.Text" xml:space="preserve">
-    <value />
+    <value>Carregando processadores...</value>
   </data>
   <data name="ErrorLoadingProcessorsInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Processadores</value>
   </data>
   <data name="VoicesText.Text" xml:space="preserve">
-    <value />
+    <value>Vozes</value>
   </data>
   <data name="FrequencyText.Text" xml:space="preserve">
-    <value />
+    <value>Frequência (Hz)</value>
   </data>
   <data name="DepthText.Text" xml:space="preserve">
-    <value />
+    <value>Profundidade (bits)</value>
   </data>
   <data name="TypeText.Text" xml:space="preserve">
-    <value />
+    <value>Tipo</value>
   </data>
   <data name="SoundSynthsErrorInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Sintetizadores de Som</value>
   </data>
   <data name="SoundSynthsLabel.Text" xml:space="preserve">
-    <value />
+    <value>sintetizadores de som</value>
   </data>
   <data name="UserManagementTitle.Text" xml:space="preserve">
-    <value />
+    <value>Gerenciamento de Usuários</value>
   </data>
   <data name="UserManagementSubtitle.Text" xml:space="preserve">
-    <value />
+    <value>Gerenciar usuários, funções e permissões</value>
   </data>
   <data name="UserMgmtAccessDeniedInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Acesso Negado</value>
   </data>
   <data name="UserMgmtAccessDeniedInfoBar.Message" xml:space="preserve">
-    <value />
+    <value>Você deve ser um Super-administrador para acessar o gerenciamento de usuários.</value>
   </data>
   <data name="ErrorLoadingUsersInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Não foi Possível Carregar Usuários</value>
   </data>
   <data name="AddUserButton.Label" xml:space="preserve">
-    <value />
+    <value>Adicionar Usuário</value>
   </data>
   <data name="RefreshUsersButton.Label" xml:space="preserve">
-    <value />
+    <value>Atualizar</value>
   </data>
   <data name="EmailColumn.Header" xml:space="preserve">
-    <value />
+    <value>E-mail</value>
   </data>
   <data name="UsernameColumn.Header" xml:space="preserve">
-    <value />
+    <value>Nome de Usuário</value>
   </data>
   <data name="PhoneColumn.Header" xml:space="preserve">
-    <value />
+    <value>Telefone</value>
   </data>
   <data name="RolesColumn.Header" xml:space="preserve">
-    <value />
+    <value>Funções</value>
   </data>
   <data name="ActionsColumn.Header" xml:space="preserve">
-    <value />
+    <value>Ações</value>
   </data>
   <data name="EditUserButton.Content" xml:space="preserve">
-    <value />
+    <value>Editar</value>
   </data>
   <data name="ChangePasswordButton.Content" xml:space="preserve">
-    <value />
+    <value>Senha</value>
   </data>
   <data name="ManageRolesButton.Content" xml:space="preserve">
-    <value />
+    <value>Funções</value>
   </data>
   <data name="DeleteUserButton.Content" xml:space="preserve">
-    <value />
+    <value>Excluir</value>
   </data>
   <data name="Auth.EmailIsRequired" xml:space="preserve">
-    <value />
+    <value>O e-mail é obrigatório</value>
   </data>
   <data name="Auth.PasswordIsRequired" xml:space="preserve">
-    <value />
+    <value>A senha é obrigatória</value>
   </data>
   <data name="Http.BadRequest" xml:space="preserve">
-    <value />
+    <value>Requisição inválida</value>
   </data>
   <data name="Auth.InvalidCredentials" xml:space="preserve">
-    <value />
+    <value>Credenciais inválidas</value>
   </data>
 </root>
