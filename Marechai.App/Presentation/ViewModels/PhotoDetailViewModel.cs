@@ -54,21 +54,13 @@ using WhiteBalance = Marechai.Data.WhiteBalance;
 
 namespace Marechai.App.Presentation.ViewModels;
 
-/// <summary>
-///     Navigation parameter for photo detail page
-/// </summary>
-public class PhotoDetailNavigationParameter
-{
-    public Guid PhotoId { get; set; }
-}
-
 public partial class PhotoDetailViewModel : ObservableObject
 {
     private readonly ComputersService              _computersService;
+    private readonly IStringLocalizer              _localizer;
     private readonly ILogger<PhotoDetailViewModel> _logger;
     private readonly INavigator                    _navigator;
     private readonly MachinePhotoCache             _photoCache;
-    private IStringLocalizer _localizer;
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
@@ -199,13 +191,14 @@ public partial class PhotoDetailViewModel : ObservableObject
     private string _photoWhiteBalance = string.Empty;
 
     public PhotoDetailViewModel(ILogger<PhotoDetailViewModel> logger,           INavigator        navigator,
-                                ComputersService              computersService, MachinePhotoCache photoCache, IStringLocalizer localizer)
+                                ComputersService              computersService, MachinePhotoCache photoCache,
+                                IStringLocalizer              localizer)
     {
         _logger           = logger;
         _navigator        = navigator;
         _computersService = computersService;
         _photoCache       = photoCache;
-        _localizer = localizer;
+        _localizer        = localizer;
     }
 
     [RelayCommand]
@@ -326,11 +319,13 @@ public partial class PhotoDetailViewModel : ObservableObject
                                             : string.Empty;
 
             // Resolution and Other
-            PhotoHorizontalResolution =
-                photo.HorizontalResolution != null ? string.Format(_localizer["_0_DPI"], photo.HorizontalResolution) : string.Empty;
+            PhotoHorizontalResolution = photo.HorizontalResolution != null
+                                            ? string.Format(_localizer["_0_DPI"], photo.HorizontalResolution)
+                                            : string.Empty;
 
-            PhotoVerticalResolution =
-                photo.VerticalResolution != null ? string.Format(_localizer["_0_DPI"], photo.VerticalResolution) : string.Empty;
+            PhotoVerticalResolution = photo.VerticalResolution != null
+                                          ? string.Format(_localizer["_0_DPI"], photo.VerticalResolution)
+                                          : string.Empty;
 
             // Extract ResolutionUnit - simple nullable integer now
             PhotoResolutionUnit = photo.ResolutionUnit.HasValue

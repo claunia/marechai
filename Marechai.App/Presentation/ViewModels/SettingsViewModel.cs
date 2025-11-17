@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Services;
 using Uno.Extensions.Toolkit;
 
@@ -175,16 +176,4 @@ public partial class SettingsViewModel : ObservableObject
             // Silently fail
         }
     }
-}
-
-public class ThemeOption
-{
-    public AppTheme Theme       { get; set; }
-    public string   DisplayName { get; set; } = string.Empty;
-}
-
-public class ColorThemeOption
-{
-    public string ThemeName   { get; set; } = string.Empty;
-    public string DisplayName { get; set; } = string.Empty;
 }

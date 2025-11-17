@@ -12,8 +12,8 @@ namespace Marechai.App.Presentation.ViewModels;
 
 public partial class SoundSynthsListViewModel : ObservableObject
 {
+    private readonly IStringLocalizer                  _localizer;
     private readonly ILogger<SoundSynthsListViewModel> _logger;
-    private IStringLocalizer _localizer;
     private readonly INavigator                        _navigator;
     private readonly SoundSynthsService                _soundSynthsService;
 
@@ -32,13 +32,13 @@ public partial class SoundSynthsListViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<SoundSynthListItem> _soundSynths = [];
 
-    public SoundSynthsListViewModel(SoundSynthsService                soundSynthsService, INavigator navigator,
-                                    ILogger<SoundSynthsListViewModel> logger, IStringLocalizer localizer)
+    public SoundSynthsListViewModel(SoundSynthsService                soundSynthsService, INavigator       navigator,
+                                    ILogger<SoundSynthsListViewModel> logger,             IStringLocalizer localizer)
     {
         _soundSynthsService         = soundSynthsService;
         _navigator                  = navigator;
         _logger                     = logger;
-        _localizer = localizer;
+        _localizer                  = localizer;
         LoadData                    = new AsyncRelayCommand(LoadDataAsync);
         NavigateToSoundSynthCommand = new AsyncRelayCommand<SoundSynthListItem>(NavigateToSoundSynthAsync);
     }
@@ -125,13 +125,5 @@ public partial class SoundSynthsListViewModel : ObservableObject
                                                                                SoundSynthId     = item.Id,
                                                                                NavigationSource = this
                                                                            });
-    }
-
-    public class SoundSynthListItem
-    {
-        public int     Id        { get; set; }
-        public string  Name      { get; set; } = string.Empty;
-        public string? Company   { get; set; }
-        public bool    IsSpecial { get; set; }
     }
 }

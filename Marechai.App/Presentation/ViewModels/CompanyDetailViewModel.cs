@@ -41,10 +41,10 @@ public partial class CompanyDetailViewModel : ObservableObject
     private string _computersFilterText = string.Empty;
 
     [ObservableProperty]
-    private string _consolesFilterText = string.Empty;
+    private ObservableCollection<CompanyDetailMachine> _consoles = [];
 
     [ObservableProperty]
-    private ObservableCollection<CompanyDetailMachine> _consoles = [];
+    private string _consolesFilterText = string.Empty;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -86,7 +86,7 @@ public partial class CompanyDetailViewModel : ObservableObject
         LoadData                 = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
         NavigateToMachineCommand = new AsyncRelayCommand<CompanyDetailMachine>(NavigateToMachineAsync);
-        Title= _localizer["Company Details"];
+        Title                    = _localizer["Company Details"];
     }
 
     /// <summary>
@@ -509,23 +509,4 @@ public partial class CompanyDetailViewModel : ObservableObject
     {
         await _navigator.NavigateViewModelAsync<CompaniesViewModel>(this);
     }
-}
-
-/// <summary>
-///     Data model for a machine in the company detail view
-/// </summary>
-public class CompanyDetailMachine
-{
-    public int    Id   { get; set; }
-    public string Name { get; set; } = string.Empty;
-}
-
-/// <summary>
-///     Data model for a company logo in the carousel
-/// </summary>
-public class CompanyLogoItem
-{
-    public Guid            LogoGuid   { get; set; }
-    public SvgImageSource? LogoSource { get; set; }
-    public int?            Year       { get; set; }
 }

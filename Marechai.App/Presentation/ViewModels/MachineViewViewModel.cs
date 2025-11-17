@@ -37,7 +37,6 @@ using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Marechai.Data;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Uno.Extensions.Navigation;
 
@@ -46,10 +45,10 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class MachineViewViewModel : ObservableObject
 {
     private readonly ComputersService              _computersService;
+    private readonly IStringLocalizer              _localizer;
     private readonly ILogger<MachineViewViewModel> _logger;
     private readonly INavigator                    _navigator;
     private readonly MachinePhotoCache             _photoCache;
-    private IStringLocalizer _localizer;
     [ObservableProperty]
     private string _companyName = string.Empty;
 
@@ -112,7 +111,8 @@ public partial class MachineViewViewModel : ObservableObject
     private Visibility _showStorage = Visibility.Collapsed;
 
     public MachineViewViewModel(ILogger<MachineViewViewModel> logger,           INavigator        navigator,
-                                ComputersService              computersService, MachinePhotoCache photoCache, IStringLocalizer localizer)
+                                ComputersService              computersService, MachinePhotoCache photoCache,
+                                IStringLocalizer              localizer)
     {
         _logger           = logger;
         _navigator        = navigator;
@@ -296,8 +296,8 @@ public partial class MachineViewViewModel : ObservableObject
                     int gprSize = processor.GprSize ?? 0;
                     int cores   = processor.Cores   ?? 0;
 
-                    if(speed   > 0) details.Add(string.Format(_localizer["_0_MHz"], speed));
-                    if(gprSize > 0) details.Add(string.Format(_localizer["_0_bits"], gprSize));
+                    if(speed   > 0) details.Add(string.Format(_localizer["_0_MHz"],   speed));
+                    if(gprSize > 0) details.Add(string.Format(_localizer["_0_bits"],  gprSize));
                     if(cores   > 1) details.Add(string.Format(_localizer["_0_cores"], cores));
 
                     Processors.Add(new ProcessorDisplayItem
@@ -318,7 +318,9 @@ public partial class MachineViewViewModel : ObservableObject
                     long size = mem.Size ?? 0;
 
                     string sizeStr = size > 0
-                                         ? size > 1024 ? string.Format(_localizer["_0_bytes_1_"], size,size.Bytes().Humanize()) : string.Format(_localizer["_0_bytes"], size)
+                                         ? size > 1024
+                                               ? string.Format(_localizer["_0_bytes_1_"], size, size.Bytes().Humanize())
+                                               : string.Format(_localizer["_0_bytes"],    size)
                                          : _localizer["Unknown_male"];
 
                     // Get humanized memory usage description
@@ -374,11 +376,17 @@ public partial class MachineViewViewModel : ObservableObject
                     long capacity = storage.Capacity ?? 0;
 
                     string displayText = capacity > 0
-                                         ? capacity > 1024 ? string.Format(_localizer["_0_bytes_1_"], capacity, capacity.Bytes().Humanize()) : string.Format(_localizer["_0_bytes"], capacity)
+                                             ? capacity > 1024
+                                                   ? string.Format(_localizer["_0_bytes_1_"],
+                                                                   capacity,
+                                                                   capacity.Bytes().Humanize())
+                                                   : string.Format(_localizer["_0_bytes"], capacity)
                                              : _localizer["Storage"];
 
                     // Get humanized storage type description
-                    string typeNote = storage.Type.HasValue ? ((StorageType)storage.Type.Value).Humanize() : _localizer["Unknown_male"];
+                    string typeNote = storage.Type.HasValue
+                                          ? ((StorageType)storage.Type.Value).Humanize()
+                                          : _localizer["Unknown_male"];
 
                     Storage.Add(new StorageDisplayItem
                     {
@@ -460,64 +468,4 @@ public partial class MachineViewViewModel : ObservableObject
             _logger.LogError(ex, "Error loading photo thumbnail {PhotoId}", photoItem.PhotoId);
         }
     }
-}
-
-/// <summary>
-///     Display item for processor information
-/// </summary>
-public class ProcessorDisplayItem
-{
-    public string DisplayName  { get; set; } = string.Empty;
-    public string Manufacturer { get; set; } = string.Empty;
-    public bool   HasDetails   { get; set; }
-    public string DetailsText  { get; set; } = string.Empty;
-}
-
-/// <summary>
-///     Display item for memory information
-/// </summary>
-public class MemoryDisplayItem
-{
-    public string SizeDisplay { get; set; } = string.Empty;
-    public string TypeDisplay { get; set; } = string.Empty;
-}
-
-/// <summary>
-///     Display item for GPU information
-/// </summary>
-public class GpuDisplayItem
-{
-    public string DisplayName     { get; set; } = string.Empty;
-    public string Manufacturer    { get; set; } = string.Empty;
-    public bool   HasManufacturer { get; set; }
-}
-
-/// <summary>
-///     Display item for sound synthesizer information
-/// </summary>
-public class SoundSynthesizerDisplayItem
-{
-    public string DisplayName { get; set; } = string.Empty;
-    public bool   HasDetails  { get; set; }
-    public string DetailsText { get; set; } = string.Empty;
-}
-
-/// <summary>
-///     Display item for storage information
-/// </summary>
-public class StorageDisplayItem
-{
-    public string DisplayText { get; set; } = string.Empty;
-    public string TypeNote    { get; set; } = string.Empty;
-}
-
-/// <summary>
-///     Display item for photo carousel
-/// </summary>
-public class PhotoCarouselDisplayItem
-{
-    // Thumbnail constraints
-    public const int          ThumbnailMaxSize = 256;
-    public       Guid         PhotoId              { get; set; }
-    public       ImageSource? ThumbnailImageSource { get; set; }
 }

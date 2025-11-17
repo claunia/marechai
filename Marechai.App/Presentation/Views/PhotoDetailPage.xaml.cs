@@ -1,4 +1,5 @@
 using System;
+using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

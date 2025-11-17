@@ -37,13 +37,13 @@ public partial class MainViewModel : ObservableObject
                          NewsViewModel newsViewModel, IColorThemeService colorThemeService, IThemeService themeService,
                          IAuthenticationService authService, IJwtService jwtService, ITokenService tokenService)
     {
-        _navigator    =  navigator;
-        _localizer    =  localizer;
-        _authService  =  authService;
-        _jwtService   =  jwtService;
-        _tokenService =  tokenService;
-        NewsViewModel =  newsViewModel;
-        Title         =  localizer["ApplicationName"];
+        _navigator    = navigator;
+        _localizer    = localizer;
+        _authService  = authService;
+        _jwtService   = jwtService;
+        _tokenService = tokenService;
+        NewsViewModel = newsViewModel;
+        Title         = localizer["ApplicationName"];
         if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
 
         // Initialize color theme service with theme service

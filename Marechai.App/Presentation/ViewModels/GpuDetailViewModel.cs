@@ -27,10 +27,10 @@ public partial class GpuDetailViewModel : ObservableObject
     private string _computersFilterText = string.Empty;
 
     [ObservableProperty]
-    private string _consolesFilterText = string.Empty;
+    private ObservableCollection<MachineItem> _consoles = [];
 
     [ObservableProperty]
-    private ObservableCollection<MachineItem> _consoles = [];
+    private string _consolesFilterText = string.Empty;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -82,7 +82,7 @@ public partial class GpuDetailViewModel : ObservableObject
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
         ComputersFilterCommand = new RelayCommand(() => FilterComputers());
         ConsolesFilterCommand  = new RelayCommand(() => FilterConsoles());
-        Title = _localizer["GPU Details"];
+        Title                  = _localizer["GPU Details"];
     }
 
     public IAsyncRelayCommand LoadData               { get; }
@@ -345,44 +345,4 @@ public partial class GpuDetailViewModel : ObservableObject
     {
         _navigationSource = source;
     }
-}
-
-/// <summary>
-///     Resolution item for displaying GPU supported resolutions
-/// </summary>
-public class ResolutionItem
-{
-    public int    Id        { get; set; }
-    public string Name      { get; set; } = string.Empty;
-    public int    Width     { get; set; }
-    public int    Height    { get; set; }
-    public long   Colors    { get; set; }
-    public long   Palette   { get; set; }
-    public bool   Chars     { get; set; }
-    public bool   Grayscale { get; set; }
-
-    public string Resolution => $"{Width}x{Height}";
-
-    public string ResolutionType => Chars ? "Text" : "Pixel";
-
-    public string ResolutionDisplay => Chars ? $"{Width}x{Height} characters" : $"{Width}x{Height}";
-
-    public string ColorDisplay => Grayscale
-                                      ? $"{Colors} grays"
-                                      : Palette > 0
-                                          ? $"{Colors} colors from a palette of {Palette} colors"
-                                          : $"{Colors} colors";
-}
-
-/// <summary>
-///     Machine item for displaying computers or consoles that use the GPU
-/// </summary>
-public class MachineItem
-{
-    public int    Id           { get; set; }
-    public string Name         { get; set; } = string.Empty;
-    public string Manufacturer { get; set; } = string.Empty;
-    public int    Year         { get; set; }
-
-    public string YearDisplay => Year > 0 ? Year.ToString() : "Unknown";
 }

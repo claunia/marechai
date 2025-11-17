@@ -60,7 +60,7 @@ public partial class CompaniesViewModel : ObservableObject
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
         NavigateToCompanyCommand = new AsyncRelayCommand<CompanyListItem>(NavigateToCompanyAsync);
 
-        Title=_localizer["Companies"];
+        Title = _localizer["Companies"];
     }
 
     public IAsyncRelayCommand                  LoadData                 { get; }
@@ -205,18 +205,4 @@ public partial class CompaniesViewModel : ObservableObject
             foreach(CompanyListItem company in filtered) CompaniesList.Add(company);
         }
     }
-}
-
-/// <summary>
-///     Data model for a company in the list
-/// </summary>
-public class CompanyListItem
-{
-    public int             Id              { get; set; }
-    public string          Name            { get; set; } = string.Empty;
-    public DateTime?       FoundationDate  { get; set; }
-    public SvgImageSource? LogoImageSource { get; set; }
-
-    public string FoundationDateDisplay =>
-        FoundationDate.HasValue ? FoundationDate.Value.ToString("MMMM d, yyyy") : string.Empty;
 }

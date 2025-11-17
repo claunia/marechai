@@ -27,10 +27,10 @@ public partial class SoundSynthDetailViewModel : ObservableObject
     private string _computersFilterText = string.Empty;
 
     [ObservableProperty]
-    private string _consolesFilterText = string.Empty;
+    private ObservableCollection<MachineItem> _consoles = [];
 
     [ObservableProperty]
-    private ObservableCollection<MachineItem> _consoles = [];
+    private string _consolesFilterText = string.Empty;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -293,18 +293,5 @@ public partial class SoundSynthDetailViewModel : ObservableObject
     public void SetNavigationSource(object? source)
     {
         _navigationSource = source;
-    }
-
-    /// <summary>
-    ///     Machine item for displaying computers or consoles that use the Sound Synthesizer
-    /// </summary>
-    public class MachineItem
-    {
-        public int    Id           { get; set; }
-        public string Name         { get; set; } = string.Empty;
-        public string Manufacturer { get; set; } = string.Empty;
-        public int    Year         { get; set; }
-
-        public string YearDisplay => Year > 0 ? Year.ToString() : "Unknown";
     }
 }
