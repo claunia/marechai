@@ -2303,5 +2303,31 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasOne(x => x.Company).WithMany(x => x.SoftwareRoles).HasForeignKey(x => x.CompanyId);
         });
+
+        modelBuilder.Entity<MinimumGpuBySoftwareRelease>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.ReleaseId,
+                x.GpuId
+            });
+
+            entity.HasOne(x => x.Release).WithMany(x => x.MinimumGpus).HasForeignKey(x => x.ReleaseId);
+
+            entity.HasOne(x => x.Gpu).WithMany(x => x.MinimumForSoftwareReleases).HasForeignKey(x => x.GpuId);
+        });
+
+        modelBuilder.Entity<RecommendedGpuBySoftwareRelease>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.ReleaseId,
+                x.GpuId
+            });
+
+            entity.HasOne(x => x.Release).WithMany(x => x.RecommendedGpus).HasForeignKey(x => x.ReleaseId);
+
+            entity.HasOne(x => x.Gpu).WithMany(x => x.RecommendedForSoftwareReleases).HasForeignKey(x => x.GpuId);
+        });
     }
 }

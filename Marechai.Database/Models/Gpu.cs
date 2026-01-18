@@ -34,8 +34,10 @@ public class Gpu : BaseModel<int>
 {
     public Gpu()
     {
-        GpusByMachine    = new HashSet<GpusByMachine>();
-        ResolutionsByGpu = new HashSet<ResolutionsByGpu>();
+        GpusByMachine                  = new HashSet<GpusByMachine>();
+        ResolutionsByGpu               = new HashSet<ResolutionsByGpu>();
+        MinimumForSoftwareReleases     = new HashSet<MinimumGpuBySoftwareRelease>();
+        RecommendedForSoftwareReleases = new HashSet<RecommendedGpuBySoftwareRelease>();
     }
 
     [Required]
@@ -59,7 +61,9 @@ public class Gpu : BaseModel<int>
     [Range(1, long.MaxValue)]
     public long? Transistors { get; set; }
 
-    public virtual Company                       Company          { get; set; }
-    public virtual ICollection<GpusByMachine>    GpusByMachine    { get; set; }
-    public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
+    public virtual Company                                      Company                        { get; set; }
+    public virtual ICollection<GpusByMachine>                   GpusByMachine                  { get; set; }
+    public virtual ICollection<ResolutionsByGpu>                ResolutionsByGpu               { get; set; }
+    public virtual ICollection<MinimumGpuBySoftwareRelease>     MinimumForSoftwareReleases     { get; set; }
+    public virtual ICollection<RecommendedGpuBySoftwareRelease> RecommendedForSoftwareReleases { get; set; }
 }
