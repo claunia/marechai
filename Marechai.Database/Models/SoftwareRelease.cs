@@ -28,8 +28,9 @@ public class SoftwareRelease : BaseModel<ulong>
 
     public DateTime? ReleaseDate { get; set; }
 
-    public virtual ICollection<SoftwareBarcode>                 Barcodes        { get; set; }
-    public virtual ICollection<SoftwareProductCode>             ProductCodes    { get; set; }
-    public virtual ICollection<MinimumGpuBySoftwareRelease>     MinimumGpus     { get; set; }
-    public virtual ICollection<RecommendedGpuBySoftwareRelease> RecommendedGpus { get; set; }
+    public virtual ICollection<SoftwareBarcode>                 Barcodes             { get; set; }
+    public virtual ICollection<SoftwareProductCode>             ProductCodes         { get; set; }
+    public virtual ICollection<MinimumGpuBySoftwareRelease>     MinimumGpus          { get; set; }
+    public virtual ICollection<RecommendedGpuBySoftwareRelease> RecommendedGpus      { get; set; }
+    public virtual ICollection<SoundSynthBySoftwareRelease>     SupportedSoundSynths { get; set; }
 }

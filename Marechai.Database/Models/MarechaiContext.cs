@@ -2329,5 +2329,20 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasOne(x => x.Gpu).WithMany(x => x.RecommendedForSoftwareReleases).HasForeignKey(x => x.GpuId);
         });
+
+        modelBuilder.Entity<SoundSynthBySoftwareRelease>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.ReleaseId,
+                x.SoundSynthId
+            });
+
+            entity.HasOne(x => x.Release).WithMany(x => x.SupportedSoundSynths).HasForeignKey(x => x.ReleaseId);
+
+            entity.HasOne(x => x.SoundSynth)
+                  .WithMany(x => x.SupportedBySoftwareReleases)
+                  .HasForeignKey(x => x.SoundSynthId);
+        });
     }
 }

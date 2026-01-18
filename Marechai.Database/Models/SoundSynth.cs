@@ -32,7 +32,11 @@ namespace Marechai.Database.Models;
 
 public class SoundSynth : BaseModel<int>
 {
-    public SoundSynth() => SoundByMachine = new HashSet<SoundByMachine>();
+    public SoundSynth()
+    {
+        SoundByMachine              = new HashSet<SoundByMachine>();
+        SupportedBySoftwareReleases = new HashSet<SoundSynthBySoftwareRelease>();
+    }
 
     [Required]
     [StringLength(50)]
@@ -60,6 +64,7 @@ public class SoundSynth : BaseModel<int>
     public int? WhiteNoise { get; set; }
     public int? Type { get;       set; }
 
-    public virtual Company                     Company        { get; set; }
-    public virtual ICollection<SoundByMachine> SoundByMachine { get; set; }
+    public virtual Company                                  Company                     { get; set; }
+    public virtual ICollection<SoundByMachine>              SoundByMachine              { get; set; }
+    public virtual ICollection<SoundSynthBySoftwareRelease> SupportedBySoftwareReleases { get; set; }
 }
