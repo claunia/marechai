@@ -60,7 +60,6 @@ public class SoundSynth : BaseModel<int>
     public int? WhiteNoise { get; set; }
     public int? Type { get;       set; }
 
-    public virtual Company                             Company        { get; set; }
-    public virtual ICollection<SoundByMachine>         SoundByMachine { get; set; }
-    public virtual ICollection<SoundBySoftwareVariant> Software       { get; set; }
+    public virtual Company                     Company        { get; set; }
+    public virtual ICollection<SoundByMachine> SoundByMachine { get; set; }
 }

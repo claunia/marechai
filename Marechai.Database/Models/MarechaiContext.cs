@@ -54,9 +54,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
     public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
     public virtual DbSet<CompaniesByMagazine>                 CompaniesByMagazines                { get; set; }
-    public virtual DbSet<CompaniesBySoftwareFamily>           CompaniesBySoftwareFamilies         { get; set; }
-    public virtual DbSet<CompaniesBySoftwareVariant>          CompaniesBySoftwareVariants         { get; set; }
-    public virtual DbSet<CompaniesBySoftwareVersion>          CompaniesBySoftwareVersions         { get; set; }
     public virtual DbSet<Company>                             Companies                           { get; set; }
     public virtual DbSet<CompanyDescription>                  CompanyDescriptions                 { get; set; }
     public virtual DbSet<CompanyLogo>                         CompanyLogos                        { get; set; }
@@ -125,9 +122,19 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<Screen>                              Screens                             { get; set; }
     public virtual DbSet<ScreensByMachine>                    ScreensByMachine                    { get; set; }
     public virtual DbSet<SoftwareFamily>                      SoftwareFamilies                    { get; set; }
-    public virtual DbSet<SoftwareVariant>                     SoftwareVariants                    { get; set; }
-    public virtual DbSet<SoftwareVariantByCompilationMedia>   SoftwareVariantByCompilationMedia   { get; set; }
+    public virtual DbSet<Software>                            Softwares                           { get; set; }
     public virtual DbSet<SoftwareVersion>                     SoftwareVersions                    { get; set; }
+    public virtual DbSet<SoftwareVariant>                     SoftwareVariants                    { get; set; }
+    public virtual DbSet<SoftwareSubvariant>                  SoftwareSubvariants                 { get; set; }
+    public virtual DbSet<SoftwareVariantLanguage>             SoftwareVariantLanguages            { get; set; }
+    public virtual DbSet<SoftwareSubvariantLanguage>          SoftwareSubvariantLanguages         { get; set; }
+    public virtual DbSet<SoftwarePlatform>                    SoftwarePlatforms                   { get; set; }
+    public virtual DbSet<SoftwareRelease>                     SoftwareReleases                    { get; set; }
+    public virtual DbSet<SoftwareBarcode>                     SoftwareBarcodes                    { get; set; }
+    public virtual DbSet<SoftwareProductCode>                 SoftwareProductCodes                { get; set; }
+    public virtual DbSet<SoftwareRequirement>                 SoftwareRequirements                { get; set; }
+    public virtual DbSet<SoftwareOSCompatibility>             SoftwareOSCompatibility             { get; set; }
+    public virtual DbSet<SoftwareCompanyRole>                 SoftwareCompanyRoles                { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
@@ -1973,148 +1980,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(e => e.Parent).WithMany(e => e.Children).OnDelete(DeleteBehavior.SetNull);
         });
 
-        modelBuilder.Entity<CompaniesBySoftwareFamily>(entity =>
-        {
-            entity.ToTable("CompaniesBySoftwareFamily");
-
-            entity.HasOne(d => d.Company).WithMany(p => p.SoftwareFamilies).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareFamily).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<PeopleBySoftwareFamily>(entity =>
-        {
-            entity.HasOne(d => d.Person).WithMany(p => p.SoftwareFamilies).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareFamily).WithMany(p => p.People).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<SoftwareVersion>(entity =>
-        {
-            entity.ToTable("SoftwareVersion");
-
-            entity.HasIndex(e => e.Name);
-            entity.HasIndex(e => e.Introduced);
-            entity.HasIndex(e => e.Codename);
-            entity.HasIndex(e => e.Version);
-
-            entity.HasOne(e => e.Family).WithMany(e => e.Versions).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(e => e.Previous).WithOne(e => e.Next).OnDelete(DeleteBehavior.SetNull);
-        });
-
-        modelBuilder.Entity<CompaniesBySoftwareVersion>(entity =>
-        {
-            entity.ToTable("CompaniesBySoftwareVersion");
-
-            entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVersions).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVersion).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<PeopleBySoftwareVersion>(entity =>
-        {
-            entity.HasOne(d => d.Person).WithMany(p => p.SoftwareVersions).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVersion).WithMany(p => p.People).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<SoftwareVariant>(entity =>
-        {
-            entity.HasIndex(e => e.Introduced);
-            entity.HasIndex(e => e.Name);
-            entity.HasIndex(e => e.CatalogueNumber);
-            entity.HasIndex(e => e.DistributionMode);
-            entity.HasIndex(e => e.MinimumMemory);
-            entity.HasIndex(e => e.PartNumber);
-            entity.HasIndex(e => e.ProductCode);
-            entity.HasIndex(e => e.RecommendedMemory);
-            entity.HasIndex(e => e.RequiredStorage);
-            entity.HasIndex(e => e.SerialNumber);
-            entity.HasIndex(e => e.Version);
-
-            entity.HasOne(e => e.Parent).WithMany(e => e.Derivates).OnDelete(DeleteBehavior.SetNull);
-            entity.HasOne(e => e.SoftwareVersion).WithMany(e => e.Variants).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<CompaniesBySoftwareVariant>(entity =>
-        {
-            entity.ToTable("CompaniesBySoftwareVariant");
-
-            entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVariants).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Companies).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<GpusBySoftwareVariant>(entity =>
-        {
-            entity.HasIndex(e => e.Minimum);
-            entity.HasIndex(e => e.Recommended);
-
-            entity.HasOne(d => d.Gpu).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Gpus).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<InstructionSetsBySoftwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.InstructionSet).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Architectures).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<LanguagesBySoftwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.Language).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Languages).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<MachineFamiliesBySoftwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.MachineFamily).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.MachineFamilies).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<MachinesBySoftwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.Machine).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Machines).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<MediaBySoftwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.Media).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Media).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<PeopleBySoftwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.Person).WithMany(p => p.SoftwareVariants).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.People).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<ProcessorsBySoftwareVariant>(entity =>
-        {
-            entity.HasIndex(e => e.Minimum);
-            entity.HasIndex(e => e.Recommended);
-            entity.HasIndex(e => e.Speed);
-
-            entity.HasOne(d => d.Processor).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Processors).OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<RequiredOperatingSystemsBySofwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.SoftwareVariant)
-                  .WithMany(p => p.RequiredOperatingSystems)
-                  .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<RequiredSoftwareBySoftwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.SoftwareVariant)
-                  .WithMany(p => p.RequiredSoftware)
-                  .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<SoundBySoftwareVariant>(entity =>
-        {
-            entity.HasOne(d => d.SoundSynth).WithMany(p => p.Software).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.SupportedSound).OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<FileDataStreamsByStandaloneFile>(entity =>
         {
             entity.HasOne(d => d.StandaloneFile)
@@ -2134,8 +1999,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.LastWriteDate);
             entity.HasIndex(e => e.GroupId);
             entity.HasIndex(e => e.UserId);
-
-            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Files).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<MasteringText>(entity =>
@@ -2151,8 +2014,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasOne(e => e.MediaDump).WithMany(e => e.Tags).OnDelete(DeleteBehavior.Cascade);
         });
-
-        modelBuilder.Entity<SoftwareVariantByCompilationMedia>(entity => { entity.HasIndex(e => e.Path); });
 
         modelBuilder.Entity<BookScan>(entity =>
         {
@@ -2257,6 +2118,190 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(d => d.Magazine).WithMany(p => p.Scans).OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(d => d.User).WithMany(p => p.MagazineScans).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<SoftwareFamily>(entity =>
+        {
+            entity.HasIndex(x => x.Name);
+
+            entity.HasOne(x => x.Parent)
+                  .WithMany(x => x.Children)
+                  .HasForeignKey(x => x.ParentId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Software>(entity =>
+        {
+            entity.HasIndex(x => x.Name);
+
+            entity.HasOne(x => x.Family)
+                  .WithMany(x => x.Softwares)
+                  .HasForeignKey(x => x.FamilyId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<SoftwareVersion>(entity =>
+        {
+            entity.HasIndex(x => x.VersionString);
+
+            entity.HasOne(x => x.Software)
+                  .WithMany(x => x.Versions)
+                  .HasForeignKey(x => x.SoftwareId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.ParentVersion)
+                  .WithMany(x => x.Children)
+                  .HasForeignKey(x => x.ParentVersionId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SoftwareVariant>(entity =>
+        {
+            entity.HasIndex(x => new
+                   {
+                       x.SoftwareId,
+                       x.Name
+                   })
+                  .IsUnique();
+
+            entity.HasOne(x => x.Software).WithMany(x => x.Variants).HasForeignKey(x => x.SoftwareId);
+        });
+
+        modelBuilder.Entity<SoftwareSubvariant>(entity =>
+        {
+            entity.HasIndex(x => new
+                   {
+                       x.VariantId,
+                       x.Name
+                   })
+                  .IsUnique();
+
+            entity.HasOne(x => x.Variant).WithMany(x => x.Subvariants).HasForeignKey(x => x.VariantId);
+        });
+
+        modelBuilder.Entity<SoftwareVariantLanguage>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.VariantId,
+                x.LanguageCode
+            });
+        });
+
+        modelBuilder.Entity<SoftwareSubvariantLanguage>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.SubvariantId,
+                x.LanguageCode
+            });
+        });
+
+        modelBuilder.Entity<SoftwarePlatform>(entity => { entity.HasIndex(x => x.Name).IsUnique(); });
+
+        modelBuilder.Entity<SoftwareRelease>(entity =>
+        {
+            entity.HasIndex(x => new
+            {
+                x.SoftwareVersionId,
+                x.RegionId,
+                x.PlatformId
+            });
+
+            entity.HasOne(x => x.SoftwareVersion).WithMany(x => x.Releases).HasForeignKey(x => x.SoftwareVersionId);
+
+            entity.HasOne(x => x.Variant).WithMany().HasForeignKey(x => x.VariantId).OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(x => x.Subvariant)
+                  .WithMany()
+                  .HasForeignKey(x => x.SubvariantId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(x => x.Platform)
+                  .WithMany(x => x.SoftwareReleases)
+                  .HasForeignKey(x => x.PlatformId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(x => x.Region)
+                  .WithMany(x => x.SoftwareReleases)
+                  .HasForeignKey(x => x.RegionId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.Publisher)
+                  .WithMany(x => x.SoftwareReleases)
+                  .HasForeignKey(x => x.PublisherId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SoftwareBarcode>(entity =>
+        {
+            entity.HasIndex(x => x.Code).IsUnique();
+
+            entity.HasOne(x => x.Release).WithMany(x => x.Barcodes).HasForeignKey(x => x.ReleaseId);
+        });
+
+        modelBuilder.Entity<SoftwareProductCode>(entity =>
+        {
+            entity.HasIndex(x => new
+                   {
+                       x.Issuer,
+                       x.Code
+                   })
+                  .IsUnique();
+
+            entity.HasOne(x => x.Release).WithMany(x => x.ProductCodes).HasForeignKey(x => x.ReleaseId);
+        });
+
+        modelBuilder.Entity<SoftwareRequirement>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.SoftwareVersionId,
+                x.RequiredSoftwareVersionId,
+                x.RequirementType
+            });
+
+            entity.HasOne(x => x.SoftwareVersion)
+                  .WithMany(x => x.Requirements)
+                  .HasForeignKey(x => x.SoftwareVersionId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.RequiredSoftwareVersion)
+                  .WithMany()
+                  .HasForeignKey(x => x.RequiredSoftwareVersionId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SoftwareOSCompatibility>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.SoftwareVersionId,
+                x.OSVersionId
+            });
+
+            entity.HasOne(x => x.SoftwareVersion)
+                  .WithMany(x => x.OSCompatibility)
+                  .HasForeignKey(x => x.SoftwareVersionId);
+
+            entity.HasOne(x => x.OSVersion)
+                  .WithMany()
+                  .HasForeignKey(x => x.OSVersionId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SoftwareCompanyRole>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.SoftwareId,
+                x.CompanyId,
+                x.Role
+            });
+
+            entity.HasOne(x => x.Software).WithMany(x => x.CompanyRoles).HasForeignKey(x => x.SoftwareId);
+
+            entity.HasOne(x => x.Company).WithMany(x => x.SoftwareRoles).HasForeignKey(x => x.CompanyId);
         });
     }
 }

@@ -59,8 +59,7 @@ public class Gpu : BaseModel<int>
     [Range(1, long.MaxValue)]
     public long? Transistors { get; set; }
 
-    public virtual Company                            Company          { get; set; }
-    public virtual ICollection<GpusByMachine>         GpusByMachine    { get; set; }
-    public virtual ICollection<ResolutionsByGpu>      ResolutionsByGpu { get; set; }
-    public virtual ICollection<GpusBySoftwareVariant> Software         { get; set; }
+    public virtual Company                       Company          { get; set; }
+    public virtual ICollection<GpusByMachine>    GpusByMachine    { get; set; }
+    public virtual ICollection<ResolutionsByGpu> ResolutionsByGpu { get; set; }
 }

@@ -32,13 +32,10 @@ namespace Marechai.Database.Models;
 public class SoftwareFamily : BaseModel<ulong>
 {
     [Required]
-    public string Name { get;                       set; }
-    public         DateTime?      Introduced { get; set; }
-    public virtual SoftwareFamily Parent     { get; set; }
-    public         ulong?         ParentId   { get; set; }
-
-    public virtual ICollection<SoftwareFamily>            Children  { get; set; }
-    public virtual ICollection<CompaniesBySoftwareFamily> Companies { get; set; }
-    public virtual ICollection<PeopleBySoftwareFamily>    People    { get; set; }
-    public virtual ICollection<SoftwareVersion>           Versions  { get; set; }
+    public string Name { get;                                    set; }
+    public         ulong?                      ParentId   { get; set; }
+    public         DateTime?                   Introduced { get; set; }
+    public virtual SoftwareFamily              Parent     { get; set; }
+    public virtual ICollection<SoftwareFamily> Children   { get; set; }
+    public virtual ICollection<Software>       Softwares  { get; set; }
 }

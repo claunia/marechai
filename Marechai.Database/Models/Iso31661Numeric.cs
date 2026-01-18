@@ -45,9 +45,10 @@ public class Iso31661Numeric
     [StringLength(64)]
     public string Name { get; set; }
 
-    public virtual ICollection<Company>  Companies { get; set; }
-    public virtual ICollection<Person>   People    { get; set; }
-    public virtual ICollection<Document> Documents { get; set; }
-    public virtual ICollection<Book>     Books     { get; set; }
-    public virtual ICollection<Magazine> Magazines { get; set; }
+    public virtual ICollection<Company>         Companies        { get; set; }
+    public virtual ICollection<Person>          People           { get; set; }
+    public virtual ICollection<Document>        Documents        { get; set; }
+    public virtual ICollection<Book>            Books            { get; set; }
+    public virtual ICollection<Magazine>        Magazines        { get; set; }
+    public virtual ICollection<SoftwareRelease> SoftwareReleases { get; set; }
 }

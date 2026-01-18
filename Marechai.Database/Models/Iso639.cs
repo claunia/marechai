@@ -24,7 +24,6 @@
 *******************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -59,6 +58,4 @@ public class Iso639
     public string ReferenceName { get; set; }
     [Column(TypeName = "varchar(150)")]
     public string Comment { get; set; }
-
-    public virtual ICollection<LanguagesBySoftwareVariant> Software { get; set; }
 }

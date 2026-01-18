@@ -23,7 +23,6 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -32,20 +31,19 @@ namespace Marechai.Database.Models;
 public class SoftwareVersion : BaseModel<ulong>
 {
     [Required]
-    public virtual SoftwareFamily Family { get; set; }
-    public string Name     { get;               set; }
-    public string Codename { get;               set; }
+    public ulong SoftwareId { get;          set; }
+    public virtual Software Software { get; set; }
+    public         string   Codename { get; set; }
     [Required]
-    public string Version { get;                                             set; }
-    public         DateTime?                               Introduced { get; set; }
-    public virtual License                                 License    { get; set; }
-    public virtual SoftwareVersion                         Previous   { get; set; }
-    public virtual SoftwareVersion                         Next       { get; set; }
-    public virtual ICollection<CompaniesBySoftwareVersion> Companies  { get; set; }
-    public virtual ICollection<PeopleBySoftwareVersion>    People     { get; set; }
-    public virtual ICollection<SoftwareVariant>            Variants   { get; set; }
-
-    public ulong  FamilyId   { get; set; }
-    public int?   LicenseId  { get; set; }
-    public ulong? PreviousId { get; set; }
+    public string VersionString { get;                                         set; } // e.g. "4.00.950"
+    public         string                               PublicVersion   { get; set; } // e.g. "Windows 95"
+    public         ulong?                               ParentVersionId { get; set; }
+    public         int?                                 LicenseId       { get; set; }
+    public virtual SoftwareVersion                      ParentVersion   { get; set; }
+    public virtual License                              License         { get; set; }
+    public virtual ICollection<SoftwareVersion>         Children        { get; set; }
+    public virtual ICollection<SoftwareVariant>         Variants        { get; set; }
+    public virtual ICollection<SoftwareRequirement>     Requirements    { get; set; }
+    public virtual ICollection<SoftwareOSCompatibility> OSCompatibility { get; set; }
+    public virtual ICollection<SoftwareRelease>         Releases        { get; set; }
 }

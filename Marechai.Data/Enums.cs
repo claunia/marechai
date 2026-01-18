@@ -755,3 +755,38 @@ public enum DocumentScanType : uint
     Index           = 4,
     CopyrightPage   = 5
 }
+
+public enum SoftwareRequirementType : byte
+{
+    None        = 0,
+    Run         = 1,
+    Install     = 2,
+    ExpansionOf = 3
+}
+
+public enum ProductCodeIssuer : byte
+{
+    Microsoft      = 0,
+    Nintendo       = 1,
+    Sony           = 2,
+    Activision     = 3,
+    ElectronicArts = 4,
+    Ubisoft        = 5,
+    Bethesda       = 6,
+    Sega           = 7
+}
+
+public enum BarcodeType : byte
+{
+    Unknown = 0,
+    UPC_A   = 1,
+    UPC_E   = 2,
+    EAN_13  = 3,
+    EAN_8   = 4,
+    ISBN_10 = 5,
+    ISBN_13 = 6,
+    ISSN    = 7,
+    Code39  = 8,
+    Code128 = 9,
+    QRCode  = 10
+}

@@ -95,5 +95,4 @@ public class Processor : BaseModel<int>
     public virtual InstructionSet InstructionSet { get;                                             set; }
     public virtual ICollection<InstructionSetExtensionsByProcessor> InstructionSetExtensions { get; set; }
     public virtual ICollection<ProcessorsByMachine>                 ProcessorsByMachine      { get; set; }
-    public virtual ICollection<ProcessorsBySoftwareVariant>         Software                 { get; set; }
 }

@@ -38,6 +38,5 @@ public class InstructionSet : BaseModel<int>
     [Remote("VerifyUnique", "InstructionSets", "Admin")]
     public string Name { get; set; }
 
-    public virtual ICollection<Processor>                        Processors { get; set; }
-    public virtual ICollection<InstructionSetsBySoftwareVariant> Software   { get; set; }
+    public virtual ICollection<Processor> Processors { get; set; }
 }

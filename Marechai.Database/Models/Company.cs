@@ -87,18 +87,17 @@ public class Company : BaseModel<int>
     public virtual Iso31661Numeric Country { get; set; }
     [DisplayName("Sold to")]
     public virtual Company SoldTo { get; set; }
-    public virtual ICollection<CompanyDescription> Descriptions { get; set; }
-    public virtual ICollection<CompanyLogo> Logos { get; set; }
-    public virtual ICollection<Gpu> Gpus { get; set; }
-    public virtual ICollection<Company> InverseSoldToNavigation { get; set; }
-    public virtual ICollection<MachineFamily> MachineFamilies { get; set; }
-    public virtual ICollection<Machine> Machines { get; set; }
-    public virtual ICollection<Processor> Processors { get; set; }
-    public virtual ICollection<SoundSynth> SoundSynths { get; set; }
-    public virtual ICollection<PeopleByCompany> People { get; set; }
-    public virtual CompanyLogo LastLogo => Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
-    public virtual DocumentCompany DocumentCompany { get; set; }
-    public virtual ICollection<CompaniesBySoftwareFamily> SoftwareFamilies { get; set; }
-    public virtual ICollection<CompaniesBySoftwareVersion> SoftwareVersions { get; set; }
-    public virtual ICollection<CompaniesBySoftwareVariant> SoftwareVariants { get; set; }
+    public virtual ICollection<CompanyDescription>  Descriptions { get; set; }
+    public virtual ICollection<CompanyLogo>         Logos { get; set; }
+    public virtual ICollection<Gpu>                 Gpus { get; set; }
+    public virtual ICollection<Company>             InverseSoldToNavigation { get; set; }
+    public virtual ICollection<MachineFamily>       MachineFamilies { get; set; }
+    public virtual ICollection<Machine>             Machines { get; set; }
+    public virtual ICollection<Processor>           Processors { get; set; }
+    public virtual ICollection<SoundSynth>          SoundSynths { get; set; }
+    public virtual ICollection<PeopleByCompany>     People { get; set; }
+    public virtual CompanyLogo                      LastLogo => Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
+    public virtual DocumentCompany                  DocumentCompany { get; set; }
+    public virtual ICollection<SoftwareCompanyRole> SoftwareRoles { get; set; }
+    public virtual ICollection<SoftwareRelease>     SoftwareReleases { get; set; }
 }
