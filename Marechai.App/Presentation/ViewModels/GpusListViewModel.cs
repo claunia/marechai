@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -18,7 +19,7 @@ public partial class GpusListViewModel : ObservableObject
     private readonly GpusService                _gpusService;
     private readonly IStringLocalizer           _localizer;
     private readonly ILogger<GpusListViewModel> _logger;
-    private readonly INavigator                 _navigator;
+    private readonly IRegionManager              _regionManager;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -39,12 +40,12 @@ public partial class GpusListViewModel : ObservableObject
     private string _pageTitle = string.Empty;
 
     public GpusListViewModel(GpusService gpusService, IStringLocalizer localizer, ILogger<GpusListViewModel> logger,
-                             INavigator  navigator)
+                             IRegionManager regionManager)
     {
         _gpusService         = gpusService;
         _localizer           = localizer;
         _logger              = logger;
-        _navigator           = navigator;
+        _regionManager       = regionManager;
         LoadData             = new AsyncRelayCommand(LoadDataAsync);
         NavigateToGpuCommand = new AsyncRelayCommand<GpuListItem>(NavigateToGpuAsync);
     }
@@ -182,19 +183,20 @@ public partial class GpusListViewModel : ObservableObject
     /// <summary>
     ///     Navigates to the GPU detail view
     /// </summary>
-    private async Task NavigateToGpuAsync(GpuListItem? gpu)
+    private Task NavigateToGpuAsync(GpuListItem? gpu)
     {
-        if(gpu is null) return;
+        if(gpu is null) return Task.CompletedTask;
 
         _logger.LogInformation("Navigating to GPU detail: {GpuName} (ID: {GpuId})", gpu.Name, gpu.Id);
 
-        // Navigate to GPU detail view with navigation parameter
-        var navParam = new GpuDetailNavigationParameter
+        var parameters = new NavigationParameters
         {
-            GpuId            = gpu.Id,
-            NavigationSource = this
+            { NavParamKeys.GpuId, gpu.Id },
+            { NavParamKeys.NavigationSource, nameof(GpusListViewModel) }
         };
 
-        await _navigator.NavigateViewModelAsync<GpuDetailViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(GpuDetailPage), parameters);
+
+        return Task.CompletedTask;
     }
 }

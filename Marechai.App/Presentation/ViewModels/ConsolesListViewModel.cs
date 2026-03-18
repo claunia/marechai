@@ -6,9 +6,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -21,7 +22,7 @@ public partial class ConsolesListViewModel : ObservableObject
     private readonly IConsolesListFilterContext     _filterContext;
     private readonly IStringLocalizer               _localizer;
     private readonly ILogger<ConsolesListViewModel> _logger;
-    private readonly INavigator                     _navigator;
+    private readonly IRegionManager                 _regionManager;
 
     [ObservableProperty]
     private ObservableCollection<ConsoleListItem> _consolesList = [];
@@ -45,13 +46,13 @@ public partial class ConsolesListViewModel : ObservableObject
     private string _pageTitle = string.Empty;
 
     public ConsolesListViewModel(ConsolesService                consolesService, IStringLocalizer localizer,
-                                 ILogger<ConsolesListViewModel> logger,          INavigator       navigator,
+                                 ILogger<ConsolesListViewModel> logger,          IRegionManager    regionManager,
                                  IConsolesListFilterContext     filterContext)
     {
         _consolesService         = consolesService;
         _localizer               = localizer;
         _logger                  = logger;
-        _navigator               = navigator;
+        _regionManager           = regionManager;
         _filterContext           = filterContext;
         LoadData                 = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
@@ -210,28 +211,32 @@ public partial class ConsolesListViewModel : ObservableObject
     /// <summary>
     ///     Navigates back to the consoles main view
     /// </summary>
-    private async Task GoBackAsync()
+    private Task GoBackAsync()
     {
-        await _navigator.NavigateViewModelAsync<ConsolesViewModel>(this);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ConsolesPage));
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to the console detail view
     /// </summary>
-    private async Task NavigateToConsoleAsync(ConsoleListItem? console)
+    private Task NavigateToConsoleAsync(ConsoleListItem? console)
     {
-        if(console is null) return;
+        if(console is null) return Task.CompletedTask;
 
         _logger.LogInformation("Navigating to console detail: {ConsoleName} (ID: {ConsoleId})",
                                console.Name,
                                console.Id);
 
-        var navParam = new MachineViewNavigationParameter
+        var parameters = new NavigationParameters
         {
-            MachineId        = console.Id,
-            NavigationSource = this
+            { NavParamKeys.MachineId, console.Id },
+            { NavParamKeys.NavigationSource, nameof(ConsolesListViewModel) }
         };
 
-        await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
+
+        return Task.CompletedTask;
     }
 }

@@ -2,8 +2,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -13,7 +14,7 @@ public partial class ConsolesViewModel : ObservableObject
     private readonly IConsolesListFilterContext _filterContext;
     private readonly IStringLocalizer           _localizer;
     private readonly ILogger<ConsolesViewModel> _logger;
-    private readonly INavigator                 _navigator;
+    private readonly IRegionManager             _regionManager;
 
     [ObservableProperty]
     private int _consoleCount;
@@ -49,13 +50,13 @@ public partial class ConsolesViewModel : ObservableObject
     private ObservableCollection<int> _yearsList = [];
 
     public ConsolesViewModel(ConsolesService            consolesService, IStringLocalizer localizer,
-                             ILogger<ConsolesViewModel> logger,          INavigator       navigator,
+                             ILogger<ConsolesViewModel> logger,          IRegionManager   regionManager,
                              IConsolesListFilterContext filterContext)
     {
         _consolesService           = consolesService;
         _localizer                 = localizer;
         _logger                    = logger;
-        _navigator                 = navigator;
+        _regionManager             = regionManager;
         _filterContext             = filterContext;
         LoadData                   = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand              = new AsyncRelayCommand(GoBackAsync);
@@ -141,22 +142,24 @@ public partial class ConsolesViewModel : ObservableObject
     /// <summary>
     ///     Handles back navigation
     /// </summary>
-    private async Task GoBackAsync()
+    private Task GoBackAsync()
     {
-        await _navigator.NavigateViewModelAsync<MainViewModel>(this);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to consoles filtered by letter
     /// </summary>
-    private async Task NavigateByLetterAsync(char letter)
+    private Task NavigateByLetterAsync(char letter)
     {
         try
         {
             _logger.LogInformation("Navigating to consoles by letter: {Letter}", letter);
             _filterContext.FilterType  = ConsoleListFilterType.Letter;
             _filterContext.FilterValue = letter.ToString();
-            await _navigator.NavigateRouteAsync(this, "list-consoles");
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ConsolesListPage));
         }
         catch(Exception ex)
         {
@@ -164,19 +167,21 @@ public partial class ConsolesViewModel : ObservableObject
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to consoles filtered by year
     /// </summary>
-    private async Task NavigateByYearAsync(int year)
+    private Task NavigateByYearAsync(int year)
     {
         try
         {
             _logger.LogInformation("Navigating to consoles by year: {Year}", year);
             _filterContext.FilterType  = ConsoleListFilterType.Year;
             _filterContext.FilterValue = year.ToString();
-            await _navigator.NavigateRouteAsync(this, "list-consoles");
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ConsolesListPage));
         }
         catch(Exception ex)
         {
@@ -184,19 +189,21 @@ public partial class ConsolesViewModel : ObservableObject
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to all consoles view
     /// </summary>
-    private async Task NavigateAllConsolesAsync()
+    private Task NavigateAllConsolesAsync()
     {
         try
         {
             _logger.LogInformation("Navigating to all consoles");
             _filterContext.FilterType  = ConsoleListFilterType.All;
             _filterContext.FilterValue = string.Empty;
-            await _navigator.NavigateRouteAsync(this, "list-consoles");
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ConsolesListPage));
         }
         catch(Exception ex)
         {
@@ -204,5 +211,7 @@ public partial class ConsolesViewModel : ObservableObject
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }
+
+        return Task.CompletedTask;
     }
 }

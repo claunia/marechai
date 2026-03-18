@@ -32,22 +32,23 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Humanizer;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Marechai.Data;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
-public partial class MachineViewViewModel : ObservableObject
+public partial class MachineViewViewModel : ObservableObject, IRegionAware
 {
     private readonly ComputersService              _computersService;
     private readonly IStringLocalizer              _localizer;
     private readonly ILogger<MachineViewViewModel> _logger;
-    private readonly INavigator                    _navigator;
+    private readonly IRegionManager                _regionManager;
     private readonly MachinePhotoCache             _photoCache;
     [ObservableProperty]
     private string _companyName = string.Empty;
@@ -78,7 +79,11 @@ public partial class MachineViewViewModel : ObservableObject
 
     [ObservableProperty]
     private string? _modelName;
-    private object? _navigationSource;
+    private string? _navigationSource;
+    private int     _sourceCompanyId;
+    private int     _sourceGpuId;
+    private int     _sourceProcessorId;
+    private int     _sourceSoundSynthId;
 
     [ObservableProperty]
     private Visibility _showFamily = Visibility.Collapsed;
@@ -110,12 +115,12 @@ public partial class MachineViewViewModel : ObservableObject
     [ObservableProperty]
     private Visibility _showStorage = Visibility.Collapsed;
 
-    public MachineViewViewModel(ILogger<MachineViewViewModel> logger,           INavigator        navigator,
+    public MachineViewViewModel(ILogger<MachineViewViewModel> logger,           IRegionManager    regionManager,
                                 ComputersService              computersService, MachinePhotoCache photoCache,
                                 IStringLocalizer              localizer)
     {
         _logger           = logger;
-        _navigator        = navigator;
+        _regionManager    = regionManager;
         _computersService = computersService;
         _photoCache       = photoCache;
         _localizer        = localizer;
@@ -128,110 +133,131 @@ public partial class MachineViewViewModel : ObservableObject
     public ObservableCollection<StorageDisplayItem>          Storage           { get; } = [];
     public ObservableCollection<PhotoCarouselDisplayItem>    Photos            { get; } = [];
 
-    [RelayCommand]
-    public async Task GoBack()
+    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
     {
-        // If we came from News, navigate back to News
-        if(_navigationSource is NewsViewModel)
-        {
-            await _navigator.NavigateViewModelAsync<NewsViewModel>(this);
+        SetNavigationSource(navigationContext.Parameters);
 
-            return;
-        }
-
-        // If we came from CompanyDetailViewModel, navigate back to company details
-        if(_navigationSource is CompanyDetailViewModel companyVm)
-        {
-            var navParam = new CompanyDetailNavigationParameter
-            {
-                CompanyId = companyVm.CompanyId
-            };
-
-            await _navigator.NavigateViewModelAsync<CompanyDetailViewModel>(this, data: navParam);
-
-            return;
-        }
-
-        // If we came from ConsolesListViewModel, navigate back to consoles list
-        if(_navigationSource is ConsolesListViewModel)
-        {
-            await _navigator.NavigateViewModelAsync<ConsolesListViewModel>(this);
-
-            return;
-        }
-
-        // If we came from ComputersListViewModel, navigate back to computers list
-        if(_navigationSource is ComputersListViewModel)
-        {
-            await _navigator.NavigateViewModelAsync<ComputersListViewModel>(this);
-
-            return;
-        }
-
-        // If we came from GpuDetailViewModel, navigate back to GPU details
-        if(_navigationSource is GpuDetailViewModel gpuDetailVm)
-        {
-            var navParam = new GpuDetailNavigationParameter
-            {
-                GpuId            = gpuDetailVm.GpuId,
-                NavigationSource = this
-            };
-
-            await _navigator.NavigateViewModelAsync<GpuDetailViewModel>(this, data: navParam);
-
-            return;
-        }
-
-        // If we came from ProcessorDetailViewModel, navigate back to processor details
-        if(_navigationSource is ProcessorDetailViewModel processorDetailVm)
-        {
-            var navParam = new ProcessorDetailNavigationParameter
-            {
-                ProcessorId      = processorDetailVm.ProcessorId,
-                NavigationSource = this
-            };
-
-            await _navigator.NavigateViewModelAsync<ProcessorDetailViewModel>(this, data: navParam);
-
-            return;
-        }
-
-        // If we came from SoundSynthDetailViewModel, navigate back to sound synth details
-        if(_navigationSource is SoundSynthDetailViewModel soundSynthDetailVm)
-        {
-            var navParam = new SoundSynthDetailNavigationParameter
-            {
-                SoundSynthId     = soundSynthDetailVm.SoundSynthId,
-                NavigationSource = this
-            };
-
-            await _navigator.NavigateViewModelAsync<SoundSynthDetailViewModel>(this, data: navParam);
-
-            return;
-        }
-
-        // Otherwise, try to go back in the navigation stack
-        await _navigator.GoBack(this);
+        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.MachineId, out int machineId))
+            _ = LoadMachineAsync(machineId);
     }
 
     [RelayCommand]
-    public async Task ViewPhotoDetails(Guid photoId)
+    public Task GoBack()
     {
-        var navParam = new PhotoDetailNavigationParameter
+        switch(_navigationSource)
         {
-            PhotoId = photoId
+            case nameof(NewsViewModel):
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
+
+                break;
+
+            case nameof(CompanyDetailViewModel):
+            {
+                var parameters = new NavigationParameters
+                {
+                    { NavParamKeys.CompanyId, _sourceCompanyId }
+                };
+
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(CompanyDetailPage), parameters);
+
+                break;
+            }
+
+            case nameof(ConsolesListViewModel):
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(ConsolesListPage));
+
+                break;
+
+            case nameof(ComputersListViewModel):
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(ComputersListPage));
+
+                break;
+
+            case nameof(GpuDetailViewModel):
+            {
+                var parameters = new NavigationParameters
+                {
+                    { NavParamKeys.GpuId, _sourceGpuId },
+                    { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
+                };
+
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(GpuDetailPage), parameters);
+
+                break;
+            }
+
+            case nameof(ProcessorDetailViewModel):
+            {
+                var parameters = new NavigationParameters
+                {
+                    { NavParamKeys.ProcessorId, _sourceProcessorId },
+                    { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
+                };
+
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(ProcessorDetailPage), parameters);
+
+                break;
+            }
+
+            case nameof(SoundSynthDetailViewModel):
+            {
+                var parameters = new NavigationParameters
+                {
+                    { NavParamKeys.SoundSynthId, _sourceSoundSynthId },
+                    { NavParamKeys.NavigationSource, nameof(MachineViewViewModel) }
+                };
+
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(SoundSynthDetailPage), parameters);
+
+                break;
+            }
+
+            default:
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
+
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public Task ViewPhotoDetails(Guid photoId)
+    {
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.PhotoId, photoId }
         };
 
         _logger.LogInformation("Navigating to photo details for {PhotoId}", photoId);
-        await _navigator.NavigateViewModelAsync<PhotoDetailViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(PhotoDetailPage), parameters);
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
-    ///     Sets the navigation source (where we came from).
+    ///     Sets the navigation source context from navigation parameters.
     /// </summary>
-    public void SetNavigationSource(object? source)
+    public void SetNavigationSource(INavigationParameters parameters)
     {
-        _navigationSource = source;
+        if(parameters.TryGetValue<string>(NavParamKeys.NavigationSource, out string source))
+            _navigationSource = source;
+
+        if(parameters.TryGetValue<int>(NavParamKeys.CompanyId, out int companyId))
+            _sourceCompanyId = companyId;
+
+        if(parameters.TryGetValue<int>(NavParamKeys.GpuId, out int gpuId))
+            _sourceGpuId = gpuId;
+
+        if(parameters.TryGetValue<int>(NavParamKeys.ProcessorId, out int processorId))
+            _sourceProcessorId = processorId;
+
+        if(parameters.TryGetValue<int>(NavParamKeys.SoundSynthId, out int soundSynthId))
+            _sourceSoundSynthId = soundSynthId;
     }
 
     [RelayCommand]

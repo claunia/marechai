@@ -11,7 +11,7 @@ public partial class SettingsViewModel : ObservableObject
 {
     private readonly IColorThemeService _colorThemeService;
     private readonly IStringLocalizer   _localizer;
-    private readonly IThemeService      _themeService;
+    private          IThemeService?     _themeService;
 
     [ObservableProperty]
     private List<ColorThemeOption> _availableColorThemes = new();
@@ -25,11 +25,10 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private ThemeOption _selectedTheme;
 
-    public SettingsViewModel(IStringLocalizer   localizer, IThemeService themeService,
+    public SettingsViewModel(IStringLocalizer   localizer,
                              IColorThemeService colorThemeService)
     {
         _localizer         = localizer;
-        _themeService      = themeService;
         _colorThemeService = colorThemeService;
         Title              = _localizer["Settings"];
 
@@ -46,10 +45,15 @@ public partial class SettingsViewModel : ObservableObject
     {
         try
         {
-            await _themeService.InitializeAsync();
+            // Resolve IThemeService lazily from the host
+            var host = App.Current is PrismApplication prismApp ? prismApp.Host : null;
+            _themeService = host?.Services?.GetService<IThemeService>();
 
-            // Ensure the color theme service has a reference to the theme service
-            _colorThemeService.SetThemeService(_themeService);
+            if(_themeService != null)
+            {
+                await _themeService.InitializeAsync();
+                _colorThemeService.SetThemeService(_themeService);
+            }
         }
         catch
         {
@@ -123,7 +127,7 @@ public partial class SettingsViewModel : ObservableObject
         try
         {
             // Load current theme from ThemeService
-            AppTheme currentTheme = _themeService.Theme;
+            AppTheme currentTheme = _themeService?.Theme ?? AppTheme.System;
 
             SelectedTheme = AvailableThemes.FirstOrDefault(t => t.Theme == currentTheme) ??
                             AvailableThemes.FirstOrDefault(t => t.Theme == AppTheme.System) ?? AvailableThemes.First();
@@ -156,8 +160,8 @@ public partial class SettingsViewModel : ObservableObject
     {
         try
         {
-            // Apply theme immediately using ThemeService
-            await _themeService.SetThemeAsync(theme.Theme);
+            if(_themeService != null)
+                await _themeService.SetThemeAsync(theme.Theme);
         }
         catch
         {

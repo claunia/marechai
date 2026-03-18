@@ -6,18 +6,19 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
-public partial class SoundSynthDetailViewModel : ObservableObject
+public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly CompaniesService                   _companiesService;
     private readonly IStringLocalizer                   _localizer;
     private readonly ILogger<SoundSynthDetailViewModel> _logger;
-    private readonly INavigator                         _navigator;
+    private readonly IRegionManager                     _regionManager;
     private readonly SoundSynthsService                 _soundSynthsService;
 
     [ObservableProperty]
@@ -68,13 +69,13 @@ public partial class SoundSynthDetailViewModel : ObservableObject
 
     public SoundSynthDetailViewModel(SoundSynthsService soundSynthsService, CompaniesService companiesService,
                                      IStringLocalizer   localizer,          ILogger<SoundSynthDetailViewModel> logger,
-                                     INavigator         navigator)
+                                 IRegionManager     regionManager)
     {
         _soundSynthsService    = soundSynthsService;
         _companiesService      = companiesService;
         _localizer             = localizer;
         _logger                = logger;
-        _navigator             = navigator;
+        _regionManager         = regionManager;
         LoadData               = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand          = new AsyncRelayCommand(GoBackAsync);
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
@@ -257,41 +258,57 @@ public partial class SoundSynthDetailViewModel : ObservableObject
     /// <summary>
     ///     Navigates back to the Sound Synthesizer list
     /// </summary>
-    private async Task GoBackAsync()
+    private Task GoBackAsync()
     {
-        // If we came from a machine view, go back to machine view
-        if(_navigationSource is MachineViewViewModel machineVm)
-        {
-            await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this);
+        if(_navigationSource == nameof(MachineViewViewModel))
+            _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
+        else
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(SoundSynthListPage));
 
-            return;
-        }
-
-        // Default: go back to Sound Synthesizer list
-        await _navigator.NavigateViewModelAsync<SoundSynthsListViewModel>(this);
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to machine detail view
     /// </summary>
-    private async Task SelectMachineAsync(int machineId)
+    private Task SelectMachineAsync(int machineId)
     {
-        if(machineId <= 0) return;
+        if(machineId <= 0) return Task.CompletedTask;
 
-        var navParam = new MachineViewNavigationParameter
+        var parameters = new NavigationParameters
         {
-            MachineId        = machineId,
-            NavigationSource = this
+            { NavParamKeys.MachineId, machineId },
+            { NavParamKeys.NavigationSource, nameof(SoundSynthDetailViewModel) },
+            { NavParamKeys.SoundSynthId, SoundSynthId }
         };
 
-        await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Sets the navigation source (where we came from).
     /// </summary>
-    public void SetNavigationSource(object? source)
+    public void SetNavigationSource(string? source)
     {
         _navigationSource = source;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.SoundSynthId, out int soundSynthId))
+        {
+            SoundSynthId = soundSynthId;
+
+            if(navigationContext.Parameters.TryGetValue<string>(NavParamKeys.NavigationSource, out string source))
+                SetNavigationSource(source);
+
+            _ = LoadData.ExecuteAsync(null);
+        }
     }
 }

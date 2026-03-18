@@ -5,6 +5,7 @@
       x:Name="PageRoot"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -65,7 +66,7 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock x:Uid="LoadingText" Text="Loading computers..."
+                <TextBlock loc:Loc.Key="LoadingText" Text="Loading computers..."
                            FontSize="14"
                            TextAlignment="Center"
                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -80,11 +81,11 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
-                         x:Uid="ComputersErrorInfoBar"
+                         loc:Loc.Key="ComputersErrorInfoBar"
                          Title="Unable to Load Computers"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button x:Uid="RetryButton" Content="Retry"
+                <Button loc:Loc.Key="RetryButton" Content="Retry"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
                         Style="{ThemeResource AccentButtonStyle}" />
@@ -107,7 +108,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       x:Uid="ResultsText"
+                                       loc:Loc.Key="ResultsText"
                                        Text="RESULTS:" />
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
@@ -116,7 +117,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       x:Uid="ComputersLabel"
+                                       loc:Loc.Key="ComputersLabel"
                                        Text="computers" />
                         </StackPanel>
 

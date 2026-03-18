@@ -2,7 +2,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Logging;
 
 namespace Marechai.App.Services.Endpoints;
 
@@ -24,21 +23,21 @@ internal class DebugHttpHandler : DelegatingHandler
 #if DEBUG
         if (!response.IsSuccessStatusCode)
         {
-            _logger.LogDebugMessage("Unsuccessful API Call");
+            _logger.LogDebug("Unsuccessful API Call");
             if (request.RequestUri is not null)
             {
-                _logger.LogDebugMessage($"{request.RequestUri} ({request.Method})");
+                _logger.LogDebug("{Uri} ({Method})", request.RequestUri, request.Method);
             }
 
             foreach ((var key, var values) in request.Headers.ToDictionary(x => x.Key, x => string.Join(", ", x.Value)))
             {
-                _logger.LogDebugMessage($"{key}: {values}");
+                _logger.LogDebug("{HeaderKey}: {HeaderValues}", key, values);
             }
 
             var content = request.Content is not null ? await request.Content.ReadAsStringAsync() : null;
             if (!string.IsNullOrEmpty(content))
             {
-                _logger.LogDebugMessage(content);
+                _logger.LogDebug("{Content}", content);
             }
 
             // Uncomment to automatically break when an API call fails while debugging

@@ -6,9 +6,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -21,7 +22,7 @@ public partial class ComputersListViewModel : ObservableObject
     private readonly IComputersListFilterContext     _filterContext;
     private readonly IStringLocalizer                _localizer;
     private readonly ILogger<ComputersListViewModel> _logger;
-    private readonly INavigator                      _navigator;
+    private readonly IRegionManager                  _regionManager;
 
     [ObservableProperty]
     private ObservableCollection<ComputerListItem> _computersList = [];
@@ -45,13 +46,13 @@ public partial class ComputersListViewModel : ObservableObject
     private string _pageTitle = string.Empty;
 
     public ComputersListViewModel(ComputersService                computersService, IStringLocalizer localizer,
-                                  ILogger<ComputersListViewModel> logger,           INavigator       navigator,
+                                  ILogger<ComputersListViewModel> logger,           IRegionManager   regionManager,
                                   IComputersListFilterContext     filterContext)
     {
         _computersService         = computersService;
         _localizer                = localizer;
         _logger                   = logger;
-        _navigator                = navigator;
+        _regionManager            = regionManager;
         _filterContext            = filterContext;
         LoadData                  = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand             = new AsyncRelayCommand(GoBackAsync);
@@ -212,28 +213,32 @@ public partial class ComputersListViewModel : ObservableObject
     /// <summary>
     ///     Navigates back to the computers main view
     /// </summary>
-    private async Task GoBackAsync()
+    private Task GoBackAsync()
     {
-        await _navigator.NavigateViewModelAsync<ComputersViewModel>(this);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ComputersPage));
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to the computer detail view
     /// </summary>
-    private async Task NavigateToComputerAsync(ComputerListItem? computer)
+    private Task NavigateToComputerAsync(ComputerListItem? computer)
     {
-        if(computer is null) return;
+        if(computer is null) return Task.CompletedTask;
 
         _logger.LogInformation("Navigating to computer detail: {ComputerName} (ID: {ComputerId})",
                                computer.Name,
                                computer.Id);
 
-        var navParam = new MachineViewNavigationParameter
+        var parameters = new NavigationParameters
         {
-            MachineId        = computer.Id,
-            NavigationSource = this
+            { NavParamKeys.MachineId, computer.Id },
+            { NavParamKeys.NavigationSource, nameof(ComputersListViewModel) }
         };
 
-        await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
+
+        return Task.CompletedTask;
     }
 }

@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.Data;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -44,7 +45,7 @@ public partial class NewsViewModel : ObservableObject
 {
     private readonly IStringLocalizer       _localizer;
     private readonly ILogger<NewsViewModel> _logger;
-    private readonly INavigator             _navigator;
+    private readonly IRegionManager         _regionManager;
     private readonly NewsService            _newsService;
 
     [ObservableProperty]
@@ -60,13 +61,13 @@ public partial class NewsViewModel : ObservableObject
     private ObservableCollection<NewsItemViewModel> _newsList = [];
 
     public NewsViewModel(NewsService newsService, IStringLocalizer localizer, ILogger<NewsViewModel> logger,
-                         INavigator  navigator)
+                         IRegionManager regionManager)
     {
-        _newsService = newsService;
-        _localizer   = localizer;
-        _logger      = logger;
-        _navigator   = navigator;
-        LoadNews     = new AsyncRelayCommand(LoadNewsAsync);
+        _newsService   = newsService;
+        _localizer     = localizer;
+        _logger        = logger;
+        _regionManager = regionManager;
+        LoadNews       = new AsyncRelayCommand(LoadNewsAsync);
     }
 
     public IAsyncRelayCommand LoadNews { get; }
@@ -98,13 +99,13 @@ public partial class NewsViewModel : ObservableObject
         if(machineId <= 0) return;
 
         // Navigate to machine view with source information
-        var navParam = new MachineViewNavigationParameter
+        var parameters = new NavigationParameters
         {
-            MachineId        = machineId,
-            NavigationSource = this
+            { NavParamKeys.MachineId, machineId },
+            { NavParamKeys.NavigationSource, nameof(NewsViewModel) }
         };
 
-        await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
     }
 
     /// <summary>

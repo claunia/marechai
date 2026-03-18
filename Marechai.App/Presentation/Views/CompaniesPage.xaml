@@ -5,6 +5,7 @@
       x:Name="PageRoot"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:utu="using:Uno.Toolkit.UI"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -18,7 +19,7 @@
         <utu:NavigationBar Grid.Row="0"
                            Content="{Binding Path=Title}">
             <utu:NavigationBar.MainCommand>
-                <AppBarButton x:Uid="BackButton"
+                <AppBarButton loc:Loc.Key="BackButton"
                               Icon="Back"
                               Command="{Binding GoBackCommand}"
                               AutomationProperties.Name="Go back" />
@@ -46,7 +47,7 @@
                 </StackPanel>
 
                 <!-- Search Box -->
-                <AutoSuggestBox x:Uid="CompaniesSearchBox"
+                <AutoSuggestBox loc:Loc.Key="CompaniesSearchBox"
                                 x:Name="CompaniesSearchBox"
                                 HorizontalAlignment="Stretch"
                                 Text="{Binding SearchQuery, Mode=TwoWay}"
@@ -69,7 +70,7 @@
                                   IsIndeterminate="True"
                                   Height="48"
                                   Width="48" />
-                    <TextBlock x:Uid="LoadingText"
+                    <TextBlock loc:Loc.Key="LoadingText"
                                TextAlignment="Center"
                                FontSize="14" />
                 </StackPanel>
@@ -80,7 +81,7 @@
                             Background="{ThemeResource SystemErrorBackgroundColor}"
                             CornerRadius="8"
                             Spacing="8">
-                    <TextBlock x:Uid="ErrorText"
+                    <TextBlock loc:Loc.Key="ErrorText"
                                FontWeight="Bold"
                                Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
                     <TextBlock Text="{Binding ErrorMessage}"

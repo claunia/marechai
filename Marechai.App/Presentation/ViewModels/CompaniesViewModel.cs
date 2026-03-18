@@ -7,11 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -22,7 +23,7 @@ public partial class CompaniesViewModel : ObservableObject
     private readonly IStringLocalizer            _localizer;
     private readonly ILogger<CompaniesViewModel> _logger;
     private readonly CompanyLogoCache            _logoCache;
-    private readonly INavigator                  _navigator;
+    private readonly IRegionManager              _regionManager;
 
     [ObservableProperty]
     private ObservableCollection<CompanyListItem> _companiesList = [];
@@ -49,13 +50,13 @@ public partial class CompaniesViewModel : ObservableObject
     private string _searchQuery = string.Empty;
 
     public CompaniesViewModel(CompaniesService companiesService, CompanyLogoCache logoCache, IStringLocalizer localizer,
-                              ILogger<CompaniesViewModel> logger, INavigator navigator)
+                              ILogger<CompaniesViewModel> logger, IRegionManager regionManager)
     {
         _companiesService        = companiesService;
         _logoCache               = logoCache;
         _localizer               = localizer;
         _logger                  = logger;
-        _navigator               = navigator;
+        _regionManager           = regionManager;
         LoadData                 = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
         NavigateToCompanyCommand = new AsyncRelayCommand<CompanyListItem>(NavigateToCompanyAsync);
@@ -158,28 +159,31 @@ public partial class CompaniesViewModel : ObservableObject
     /// <summary>
     ///     Handles back navigation
     /// </summary>
-    private async Task GoBackAsync()
+    private Task GoBackAsync()
     {
-        await _navigator.NavigateViewModelAsync<MainViewModel>(this);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to company detail view
     /// </summary>
-    private async Task NavigateToCompanyAsync(CompanyListItem? company)
+    private Task NavigateToCompanyAsync(CompanyListItem? company)
     {
-        if(company is null) return;
+        if(company is null) return Task.CompletedTask;
 
         _logger.LogInformation("Navigating to company: {CompanyName} (ID: {CompanyId})", company.Name, company.Id);
 
-        // Navigate to company detail view with navigation parameter
-        var navParam = new CompanyDetailNavigationParameter
+        var parameters = new NavigationParameters
         {
-            CompanyId        = company.Id,
-            NavigationSource = this
+            { NavParamKeys.CompanyId, company.Id },
+            { NavParamKeys.NavigationSource, nameof(CompaniesViewModel) }
         };
 
-        await _navigator.NavigateViewModelAsync<CompanyDetailViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(CompanyDetailPage), parameters);
+
+        return Task.CompletedTask;
     }
 
     /// <summary>

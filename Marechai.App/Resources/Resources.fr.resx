@@ -1,0 +1,1020 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ApplicationName" xml:space="preserve">
+    <value>Marechai.App-fr</value>
+  </data>
+  <data name="NewsButton.Content" xml:space="preserve">
+    <value>Actualités</value>
+  </data>
+  <data name="BooksButton.Content" xml:space="preserve">
+    <value>Livres</value>
+  </data>
+  <data name="CompaniesButton.Content" xml:space="preserve">
+    <value>Entreprises</value>
+  </data>
+  <data name="ComputersButton.Content" xml:space="preserve">
+    <value>Ordinateurs</value>
+  </data>
+  <data name="ConsolesButton.Content" xml:space="preserve">
+    <value>Consoles</value>
+  </data>
+  <data name="DocumentsButton.Content" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="DumpsButton.Content" xml:space="preserve">
+    <value>Vidages</value>
+  </data>
+  <data name="GraphicalProcessingUnitsButton.Content" xml:space="preserve">
+    <value>Processeurs Graphiques</value>
+  </data>
+  <data name="MagazinesButton.Content" xml:space="preserve">
+    <value>Magazines</value>
+  </data>
+  <data name="PeopleButton.Content" xml:space="preserve">
+    <value>Personnes</value>
+  </data>
+  <data name="ProcessorsButton.Content" xml:space="preserve">
+    <value>Processeurs</value>
+  </data>
+  <data name="SoftwareButton.Content" xml:space="preserve">
+    <value>Logiciels</value>
+  </data>
+  <data name="SoundSynthesizersButton.Content" xml:space="preserve">
+    <value>Synthétiseurs de Son</value>
+  </data>
+  <data name="SettingsButton.Content" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Connexion</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Déconnexion</value>
+  </data>
+  <data name="Company is active." xml:space="preserve">
+    <value>L'entreprise est active.</value>
+  </data>
+  <data name="Company sold to {0} on {1}." xml:space="preserve">
+    <value>L'entreprise a été vendue à {0} le {1}.</value>
+  </data>
+  <data name="Company sold on {0} to an unknown company." xml:space="preserve">
+    <value>L'entreprise a été vendue le {0} à une entreprise inconnue.</value>
+  </data>
+  <data name="Company sold to {0} on an unknown date." xml:space="preserve">
+    <value>L'entreprise a été vendue à {0} à une date inconnue.</value>
+  </data>
+  <data name="Company was sold to an unknown company on an unknown date." xml:space="preserve">
+    <value>L'entreprise a été vendue à une entreprise inconnue à une date inconnue.</value>
+  </data>
+  <data name="Company merged on {0} to form {1}." xml:space="preserve">
+    <value>L'entreprise a fusionné le {0} pour former {1}.</value>
+  </data>
+  <data name="Company merged on {0} to form an unknown company." xml:space="preserve">
+    <value>L'entreprise a fusionné le {0} pour former une entreprise inconnue.</value>
+  </data>
+  <data name="Company merged on an unknown date to form {0}." xml:space="preserve">
+    <value>L'entreprise a fusionné à une date inconnue pour former {0}.</value>
+  </data>
+  <data name="Company merged to form an unknown company on an unknown date." xml:space="preserve">
+    <value>L'entreprise a fusionné pour former une entreprise inconnue à une date inconnue.</value>
+  </data>
+  <data name="Current company status is unknown." xml:space="preserve">
+    <value>L'état actuel de l'entreprise est inconnu.</value>
+  </data>
+  <data name="unknown date" xml:space="preserve">
+    <value>date inconnue</value>
+  </data>
+  <data name="Company declared bankruptcy on {0}." xml:space="preserve">
+    <value>L'entreprise a déclaré faillite le {0}.</value>
+  </data>
+  <data name="Company declared bankruptcy on an unknown date." xml:space="preserve">
+    <value>L'entreprise a déclaré faillite à une date inconnue.</value>
+  </data>
+  <data name="Company ceased operations on {0}." xml:space="preserve">
+    <value>L'entreprise a cessé ses activités le {0}.</value>
+  </data>
+  <data name="Company ceased operations on an unknown date." xml:space="preserve">
+    <value>L'entreprise a cessé ses activités à une date inconnue.</value>
+  </data>
+  <data name="Company renamed to {0} on {1}." xml:space="preserve">
+    <value>L'entreprise a été renommée en {0} le {1}.</value>
+  </data>
+  <data name="Company was renamed on {0} to an unknown name." xml:space="preserve">
+    <value>L'entreprise a été renommée le {0} en un nom inconnu.</value>
+  </data>
+  <data name="Company renamed to {0} on an unknown date." xml:space="preserve">
+    <value>L'entreprise a été renommée en {0} à une date inconnue.</value>
+  </data>
+  <data name="Company was renamed on an unknown date to an unknown name." xml:space="preserve">
+    <value>L'entreprise a été renommée à une date inconnue en un nom inconnu.</value>
+  </data>
+  <data name="SettingsPage_ThemeSection_Header.Text" xml:space="preserve">
+    <value>Apparence</value>
+  </data>
+  <data name="SettingsPage_ThemeSection_Description.Text" xml:space="preserve">
+    <value>Sélectionnez votre thème préféré</value>
+  </data>
+  <data name="SettingsPage_ThemeSelector.Header" xml:space="preserve">
+    <value>Thème</value>
+  </data>
+  <data name="SettingsPage_ThemeChange_Notice.Text" xml:space="preserve">
+    <value>Les modifications du thème seront appliquées au prochain démarrage de l'application.</value>
+  </data>
+  <data name="SettingsPage_AboutSection_Header.Text" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="SettingsPage_Version.Text" xml:space="preserve">
+    <value>Version 1.0</value>
+  </data>
+  <data name="LightTheme" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="DarkTheme" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="SystemTheme" xml:space="preserve">
+    <value>Système</value>
+  </data>
+  <data name="DefaultColorTheme" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="Windows311Theme" xml:space="preserve">
+    <value>Windows 3.11</value>
+  </data>
+  <data name="MacOS9Theme" xml:space="preserve">
+    <value>Mac OS 9</value>
+  </data>
+  <data name="DOSTheme" xml:space="preserve">
+    <value>DOS / Turbo Vision</value>
+  </data>
+  <data name="AmigaTheme" xml:space="preserve">
+    <value>Amiga Workbench</value>
+  </data>
+  <data name="CDETheme" xml:space="preserve">
+    <value>CDE / Motif</value>
+  </data>
+  <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
+    <value>Luminosité</value>
+  </data>
+  <data name="SettingsPage_ColorThemeSelector.Header" xml:space="preserve">
+    <value>Thème de Couleur</value>
+  </data>
+  <data name="SettingsPage_DesignSystemSelector.Header" xml:space="preserve">
+    <value>Système de Conception</value>
+  </data>
+  <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
+    <value>Les modifications du système de conception seront appliquées la prochaine fois que vous démarrerez l'application. Les modifications du thème de couleur sont appliquées immédiatement.</value>
+  </data>
+  <data name="LoginPage_Title.Text" xml:space="preserve">
+    <value>Se Connecter à Marechai</value>
+  </data>
+  <data name="LoginPage_WelcomeMessage.Text" xml:space="preserve">
+    <value>Bienvenue ! Veuillez vous connecter pour continuer.</value>
+  </data>
+  <data name="LoginPage_EmailLabel.Text" xml:space="preserve">
+    <value>Adresse E-mail</value>
+  </data>
+  <data name="LoginPage_EmailTextBox.PlaceholderText" xml:space="preserve">
+    <value>Entrez votre e-mail</value>
+  </data>
+  <data name="LoginPage_PasswordLabel.Text" xml:space="preserve">
+    <value>Mot de Passe</value>
+  </data>
+  <data name="LoginPage_PasswordBox.PlaceholderText" xml:space="preserve">
+    <value>Entrez votre mot de passe</value>
+  </data>
+  <data name="LoginPage_LoginButton.Content" xml:space="preserve">
+    <value>Se Connecter</value>
+  </data>
+  <data name="LoginPage_LoginButtonText.Text" xml:space="preserve">
+    <value>Se Connecter</value>
+  </data>
+  <data name="LoginPage_SigningInText.Text" xml:space="preserve">
+    <value>Connexion en cours...</value>
+  </data>
+  <data name="LoginPage_ForgotPasswordLink.Content" xml:space="preserve">
+    <value>Mot de passe oublié ?</value>
+  </data>
+  <data name="LoginPage_NoAccountText.Text" xml:space="preserve">
+    <value>Vous n'avez pas de compte ?</value>
+  </data>
+  <data name="LoginPage_SignUpLink.Content" xml:space="preserve">
+    <value>S'inscrire</value>
+  </data>
+  <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
+    <value>L'adresse e-mail est requise.</value>
+  </data>
+  <data name="LoginPage.Error.PasswordRequired" xml:space="preserve">
+    <value>Le mot de passe est requis.</value>
+  </data>
+  <data name="LoginPage.Error.LoginFailed" xml:space="preserve">
+    <value>Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.</value>
+  </data>
+  <data name="UserManagementButton.Content" xml:space="preserve">
+    <value>Gestion des Utilisateurs</value>
+  </data>
+  <data name="SidebarTitle.Text" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="Companies" xml:space="preserve">
+    <value>Entreprises</value>
+  </data>
+  <data name="Companies in the database" xml:space="preserve">
+    <value>Entreprises dans la base de données</value>
+  </data>
+  <data name="No companies found" xml:space="preserve">
+    <value>Aucune entreprise trouvée</value>
+  </data>
+  <data name="Failed to load companies data. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des données d'entreprises. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Company Details" xml:space="preserve">
+    <value>Détails de l'Entreprise</value>
+  </data>
+  <data name="Invalid company ID." xml:space="preserve">
+    <value>ID d'entreprise invalide.</value>
+  </data>
+  <data name="Company not found." xml:space="preserve">
+    <value>Entreprise introuvable.</value>
+  </data>
+  <data name="Failed to load company details. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des détails de l'entreprise. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="No computers found for this filter" xml:space="preserve">
+    <value>Aucun ordinateur trouvé pour ce filtre</value>
+  </data>
+  <data name="Failed to load computers. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des ordinateurs. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="All Computers" xml:space="preserve">
+    <value>Tous les Ordinateurs</value>
+  </data>
+  <data name="Browsing all computers in the database" xml:space="preserve">
+    <value>Parcourir tous les ordinateurs dans la base de données</value>
+  </data>
+  <data name="Computers Starting with" xml:space="preserve">
+    <value>Ordinateurs Commençant par</value>
+  </data>
+  <data name="Showing computers that start with" xml:space="preserve">
+    <value>Affichage des ordinateurs qui commencent par</value>
+  </data>
+  <data name="Computers from" xml:space="preserve">
+    <value>Ordinateurs de</value>
+  </data>
+  <data name="Showing computers released in" xml:space="preserve">
+    <value>Affichage des ordinateurs sortis en</value>
+  </data>
+  <data name="Computers" xml:space="preserve">
+    <value>Ordinateurs</value>
+  </data>
+  <data name="Computers in the database" xml:space="preserve">
+    <value>Ordinateurs dans la base de données</value>
+  </data>
+  <data name="Browse by Year ({0} - {1})" xml:space="preserve">
+    <value>Parcourir par Année ({0} - {1})</value>
+  </data>
+  <data name="No computers found" xml:space="preserve">
+    <value>Aucun ordinateur trouvé</value>
+  </data>
+  <data name="Failed to load computers data. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des données d'ordinateurs. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Failed to navigate. Please try again." xml:space="preserve">
+    <value>Échec de la navigation. Veuillez réessayer.</value>
+  </data>
+  <data name="No consoles found for this filter" xml:space="preserve">
+    <value>Aucune console trouvée pour ce filtre</value>
+  </data>
+  <data name="Failed to load consoles. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des consoles. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Browsing all consoles in the database" xml:space="preserve">
+    <value>Parcourir toutes les consoles dans la base de données</value>
+  </data>
+  <data name="Showing consoles that start with" xml:space="preserve">
+    <value>Affichage des consoles qui commencent par</value>
+  </data>
+  <data name="Showing consoles released in" xml:space="preserve">
+    <value>Affichage des consoles sorties en</value>
+  </data>
+  <data name="Consoles" xml:space="preserve">
+    <value>Consoles</value>
+  </data>
+  <data name="Consoles in the database" xml:space="preserve">
+    <value>Consoles dans la base de données</value>
+  </data>
+  <data name="Failed to load consoles data. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des données de consoles. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="GPU Details" xml:space="preserve">
+    <value>Détails du GPU</value>
+  </data>
+  <data name="Invalid GPU ID" xml:space="preserve">
+    <value>ID GPU invalide</value>
+  </data>
+  <data name="Graphics processing unit not found" xml:space="preserve">
+    <value>Processeur graphique introuvable</value>
+  </data>
+  <data name="Framebuffer" xml:space="preserve">
+    <value>Framebuffer</value>
+  </data>
+  <data name="Software" xml:space="preserve">
+    <value>Logiciel</value>
+  </data>
+  <data name="None_female" xml:space="preserve">
+    <value>Aucune</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Texte</value>
+  </data>
+  <data name="Pixel" xml:space="preserve">
+    <value>Pixel</value>
+  </data>
+  <data name="_0_x_1__characters" xml:space="preserve">
+    <value>{0}x{1} caractères</value>
+  </data>
+  <data name="GraphicalProcessingUnits" xml:space="preserve">
+    <value>Processeurs Graphiques</value>
+  </data>
+  <data name="No graphics processing units found" xml:space="preserve">
+    <value>Aucun processeur graphique trouvé</value>
+  </data>
+  <data name="Failed to load graphics processing units. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des processeurs graphiques. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Machine not found" xml:space="preserve">
+    <value>Machine introuvable</value>
+  </data>
+  <data name="_0_MHz" xml:space="preserve">
+    <value>{0} MHz</value>
+  </data>
+  <data name="_0_bits" xml:space="preserve">
+    <value>{0} bits</value>
+  </data>
+  <data name="_0_cores" xml:space="preserve">
+    <value>{0} cœurs</value>
+  </data>
+  <data name="_0_bytes_1_" xml:space="preserve">
+    <value>{0} octets ({1})</value>
+  </data>
+  <data name="_0_bytes" xml:space="preserve">
+    <value>{0} octets</value>
+  </data>
+  <data name="Unknown_male" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="_0_voices" xml:space="preserve">
+    <value>{0} voix</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Stockage</value>
+  </data>
+  <data name="New computer in database" xml:space="preserve">
+    <value>Nouvel ordinateur dans la base de données</value>
+  </data>
+  <data name="New console in database" xml:space="preserve">
+    <value>Nouvelle console dans la base de données</value>
+  </data>
+  <data name="New computer in collection" xml:space="preserve">
+    <value>Nouvel ordinateur dans la collection</value>
+  </data>
+  <data name="New console in collection" xml:space="preserve">
+    <value>Nouvelle console dans la collection</value>
+  </data>
+  <data name="Updated computer in database" xml:space="preserve">
+    <value>Ordinateur mis à jour dans la base de données</value>
+  </data>
+  <data name="Updated console in database" xml:space="preserve">
+    <value>Console mise à jour dans la base de données</value>
+  </data>
+  <data name="Updated computer in collection" xml:space="preserve">
+    <value>Ordinateur mis à jour dans la collection</value>
+  </data>
+  <data name="Updated console in collection" xml:space="preserve">
+    <value>Console mise à jour dans la collection</value>
+  </data>
+  <data name="No news available" xml:space="preserve">
+    <value>Aucune actualité disponible</value>
+  </data>
+  <data name="Failed to load news. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des actualités. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Photo not found" xml:space="preserve">
+    <value>Photo introuvable</value>
+  </data>
+  <data name="_0_DPI" xml:space="preserve">
+    <value>{0} DPI</value>
+  </data>
+  <data name="MMMM_d_yyyy_at_HH_mm" xml:space="preserve">
+    <value>d MMMM yyyy 'à' HH:mm</value>
+  </data>
+  <data name="Failed to load photo image" xml:space="preserve">
+    <value>Échec du chargement de l'image de la photo</value>
+  </data>
+  <data name="Processor Details" xml:space="preserve">
+    <value>Détails du Processeur</value>
+  </data>
+  <data name="Invalid Processor ID" xml:space="preserve">
+    <value>ID de processeur invalide</value>
+  </data>
+  <data name="Processor not found" xml:space="preserve">
+    <value>Processeur introuvable</value>
+  </data>
+  <data name="Failed to load processor details. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des détails du processeur. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Processors" xml:space="preserve">
+    <value>Processeurs</value>
+  </data>
+  <data name="No processors found" xml:space="preserve">
+    <value>Aucun processeur trouvé</value>
+  </data>
+  <data name="Failed to load processors. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des processeurs. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="Sound Synthesizer Details" xml:space="preserve">
+    <value>Détails du Synthétiseur de Son</value>
+  </data>
+  <data name="Invalid Sound Synthesizer ID" xml:space="preserve">
+    <value>ID de synthétiseur de son invalide</value>
+  </data>
+  <data name="Sound Synthesizer not found" xml:space="preserve">
+    <value>Synthétiseur de son introuvable</value>
+  </data>
+  <data name="Failed to load Sound Synthesizer details. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des détails du synthétiseur de son. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Unknown_female" xml:space="preserve">
+    <value>Inconnue</value>
+  </data>
+  <data name="Failed to load Sound Synthesizers. Please try again later." xml:space="preserve">
+    <value>Échec du chargement des synthétiseurs de son. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Failed to load users. Please try again." xml:space="preserve">
+    <value>Échec du chargement des utilisateurs. Veuillez réessayer.</value>
+  </data>
+  <data name="Failed to delete user." xml:space="preserve">
+    <value>Échec de la suppression de l'utilisateur.</value>
+  </data>
+  <data name="Add User" xml:space="preserve">
+    <value>Ajouter un Utilisateur</value>
+  </data>
+  <data name="Edit User" xml:space="preserve">
+    <value>Modifier l'Utilisateur</value>
+  </data>
+  <data name="Change Password" xml:space="preserve">
+    <value>Changer le Mot de Passe</value>
+  </data>
+  <data name="Manage Roles" xml:space="preserve">
+    <value>Gérer les Rôles</value>
+  </data>
+  <data name="Email and username are required." xml:space="preserve">
+    <value>L'e-mail et le nom d'utilisateur sont requis.</value>
+  </data>
+  <data name="Password is required for new users." xml:space="preserve">
+    <value>Le mot de passe est requis pour les nouveaux utilisateurs.</value>
+  </data>
+  <data name="Passwords do not match." xml:space="preserve">
+    <value>Les mots de passe ne correspondent pas.</value>
+  </data>
+  <data name="Failed to save user." xml:space="preserve">
+    <value>Échec de l'enregistrement de l'utilisateur.</value>
+  </data>
+  <data name="Password is required." xml:space="preserve">
+    <value>Le mot de passe est requis.</value>
+  </data>
+  <data name="Failed to change password." xml:space="preserve">
+    <value>Échec du changement de mot de passe.</value>
+  </data>
+  <data name="User already has this role." xml:space="preserve">
+    <value>L'utilisateur a déjà ce rôle.</value>
+  </data>
+  <data name="Failed to add role." xml:space="preserve">
+    <value>Échec de l'ajout du rôle.</value>
+  </data>
+  <data name="Failed to remove role." xml:space="preserve">
+    <value>Échec de la suppression du rôle.</value>
+  </data>
+  <data name="BackButton.Label" xml:space="preserve">
+    <value>Retour</value>
+  </data>
+  <data name="CompaniesSearchBox.PlaceholderText" xml:space="preserve">
+    <value>Rechercher des entreprises...</value>
+  </data>
+  <data name="LoadingText.Text" xml:space="preserve">
+    <value>Chargement...</value>
+  </data>
+  <data name="ErrorText.Text" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="StatusText.Text" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="FoundedText.Text" xml:space="preserve">
+    <value>Fondée</value>
+  </data>
+  <data name="LegalNameText" xml:space="preserve">
+    <value>Nom Légal</value>
+  </data>
+  <data name="CountryText.Text" xml:space="preserve">
+    <value>Pays</value>
+  </data>
+  <data name="AddressText.Text" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="LinksText.Text" xml:space="preserve">
+    <value>Liens</value>
+  </data>
+  <data name="WebsiteText.Text" xml:space="preserve">
+    <value>Site Web</value>
+  </data>
+  <data name="TwitterText.Text" xml:space="preserve">
+    <value>Twitter</value>
+  </data>
+  <data name="FacebookText.Text" xml:space="preserve">
+    <value>Facebook</value>
+  </data>
+  <data name="LogoHistoryText.Text" xml:space="preserve">
+    <value>Historique des Logos</value>
+  </data>
+  <data name="ComputersText.Text" xml:space="preserve">
+    <value>Ordinateurs</value>
+  </data>
+  <data name="ComputersFilterBox.PlaceholderText" xml:space="preserve">
+    <value>Filtrer les ordinateurs...</value>
+  </data>
+  <data name="ConsolesText.Text" xml:space="preserve">
+    <value>Consoles</value>
+  </data>
+  <data name="ConsolesFilterBox.PlaceholderText" xml:space="preserve">
+    <value>Filtrer les consoles...</value>
+  </data>
+  <data name="ComputersErrorInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger les Ordinateurs</value>
+  </data>
+  <data name="RetryButton.Content" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="ResultsText.Text" xml:space="preserve">
+    <value>RÉSULTATS :</value>
+  </data>
+  <data name="ComputersLabel.Text" xml:space="preserve">
+    <value>ordinateurs</value>
+  </data>
+  <data name="BrowseByLetterText.Text" xml:space="preserve">
+    <value>Parcourir par Lettre</value>
+  </data>
+  <data name="AllComputersButton.Content" xml:space="preserve">
+    <value>Tous les Ordinateurs</value>
+  </data>
+  <data name="ComputersSearchBox.PlaceholderText" xml:space="preserve">
+    <value>Rechercher des ordinateurs...</value>
+  </data>
+  <data name="ConsolesErrorInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger les Consoles</value>
+  </data>
+  <data name="ConsolesLabel.Text" xml:space="preserve">
+    <value>consoles</value>
+  </data>
+  <data name="AllConsolesButton.Content" xml:space="preserve">
+    <value>Toutes les Consoles</value>
+  </data>
+  <data name="ConsolesSearchBox.PlaceholderText" xml:space="preserve">
+    <value>Rechercher des consoles...</value>
+  </data>
+  <data name="ManufacturerText.Text" xml:space="preserve">
+    <value>Fabricant</value>
+  </data>
+  <data name="ModelCodeText.Text" xml:space="preserve">
+    <value>Code du Modèle</value>
+  </data>
+  <data name="IntroducedText" xml:space="preserve">
+    <value>Introduit</value>
+  </data>
+  <data name="PackageText.Text" xml:space="preserve">
+    <value>Boîtier</value>
+  </data>
+  <data name="ProcessText.Text" xml:space="preserve">
+    <value>Procédé</value>
+  </data>
+  <data name="ProcessNmText.Text" xml:space="preserve">
+    <value>Procédé (nm)</value>
+  </data>
+  <data name="DieSizeText.Text" xml:space="preserve">
+    <value>Taille de la Puce (mm²)</value>
+  </data>
+  <data name="TransistorsText.Text" xml:space="preserve">
+    <value>Transistors</value>
+  </data>
+  <data name="SupportedResolutionsText.Text" xml:space="preserve">
+    <value>Résolutions Prises en Charge</value>
+  </data>
+  <data name="GpuErrorInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger les Processeurs Graphiques</value>
+  </data>
+  <data name="GpuLabel.Text" xml:space="preserve">
+    <value>processeurs graphiques</value>
+  </data>
+  <data name="MachineErrorInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger la Machine</value>
+  </data>
+  <data name="PrototypeBadgeText.Text" xml:space="preserve">
+    <value>PROTOTYPE</value>
+  </data>
+  <data name="IntroductionDateLabel.Text" xml:space="preserve">
+    <value>Date d'Introduction</value>
+  </data>
+  <data name="FamilyLabel.Text" xml:space="preserve">
+    <value>Famille</value>
+  </data>
+  <data name="ModelLabel.Text" xml:space="preserve">
+    <value>Modèle</value>
+  </data>
+  <data name="ProcessorsLabel.Text" xml:space="preserve">
+    <value>Processeurs</value>
+  </data>
+  <data name="MemoryLabel.Text" xml:space="preserve">
+    <value>Mémoire</value>
+  </data>
+  <data name="GpusLabel.Text" xml:space="preserve">
+    <value>Processeurs Graphiques</value>
+  </data>
+  <data name="SoundSynthesizersLabel.Text" xml:space="preserve">
+    <value>Synthétiseurs de Son</value>
+  </data>
+  <data name="StorageLabel.Text" xml:space="preserve">
+    <value>Stockage</value>
+  </data>
+  <data name="PhotosLabel.Text" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="LatestNewsTitle.Text" xml:space="preserve">
+    <value>Dernières Actualités</value>
+  </data>
+  <data name="LatestNewsSubtitle.Text" xml:space="preserve">
+    <value>Restez informé des derniers ajouts à la base de données</value>
+  </data>
+  <data name="LoadingNewsText.Text" xml:space="preserve">
+    <value>Chargement des dernières actualités...</value>
+  </data>
+  <data name="ErrorLoadingNewsInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger les Actualités</value>
+  </data>
+  <data name="LoadingPhotoText.Text" xml:space="preserve">
+    <value>Chargement de la photo...</value>
+  </data>
+  <data name="ErrorLoadingPhotoInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger la Photo</value>
+  </data>
+  <data name="PhotoMachineLabel.Text" xml:space="preserve">
+    <value>Machine</value>
+  </data>
+  <data name="PhotoMachineNameLabel.Text" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="PhotoMachineCompanyLabel.Text" xml:space="preserve">
+    <value>Entreprise</value>
+  </data>
+  <data name="PhotoCameraLabel.Text" xml:space="preserve">
+    <value>Appareil Photo</value>
+  </data>
+  <data name="PhotoCameraManufacturerLabel.Text" xml:space="preserve">
+    <value>Fabricant</value>
+  </data>
+  <data name="PhotoCameraModelLabel.Text" xml:space="preserve">
+    <value>Modèle</value>
+  </data>
+  <data name="PhotoLensModelLabel.Text" xml:space="preserve">
+    <value>Objectif</value>
+  </data>
+  <data name="PhotoSoftwareUsedLabel.Text" xml:space="preserve">
+    <value>Logiciel</value>
+  </data>
+  <data name="PhotoExposureSettingsLabel.Text" xml:space="preserve">
+    <value>Paramètres d'Exposition</value>
+  </data>
+  <data name="PhotoApertureLabel.Text" xml:space="preserve">
+    <value>Ouverture</value>
+  </data>
+  <data name="PhotoExposureTimeLabel.Text" xml:space="preserve">
+    <value>Temps d'Exposition</value>
+  </data>
+  <data name="PhotoExposureModeLabel.Text" xml:space="preserve">
+    <value>Mode d'Exposition</value>
+  </data>
+  <data name="PhotoExposureProgramLabel.Text" xml:space="preserve">
+    <value>Programme d'Exposition</value>
+  </data>
+  <data name="PhotoIsoRatingLabel.Text" xml:space="preserve">
+    <value>Sensibilité ISO</value>
+  </data>
+  <data name="PhotoFlashAndLightLabel.Text" xml:space="preserve">
+    <value>Flash et Lumière</value>
+  </data>
+  <data name="PhotoFlashLabel.Text" xml:space="preserve">
+    <value>Flash</value>
+  </data>
+  <data name="PhotoLightSourceLabel.Text" xml:space="preserve">
+    <value>Source de Lumière</value>
+  </data>
+  <data name="PhotoMeteringModeLabel.Text" xml:space="preserve">
+    <value>Mode de Mesure</value>
+  </data>
+  <data name="PhotoWhiteBalanceLabel.Text" xml:space="preserve">
+    <value>Balance des Blancs</value>
+  </data>
+  <data name="PhotoFocalLengthLabel.Text" xml:space="preserve">
+    <value>Distance Focale</value>
+  </data>
+  <data name="PhotoFocalLengthEquivalentLabel.Text" xml:space="preserve">
+    <value>Équivalent 35mm</value>
+  </data>
+  <data name="PhotoDigitalZoomLabel.Text" xml:space="preserve">
+    <value>Zoom Numérique</value>
+  </data>
+  <data name="PhotoImagePropertiesLabel.Text" xml:space="preserve">
+    <value>Propriétés de l'Image</value>
+  </data>
+  <data name="PhotoColorSpaceLabel.Text" xml:space="preserve">
+    <value>Espace Colorimétrique</value>
+  </data>
+  <data name="PhotoContrastLabel.Text" xml:space="preserve">
+    <value>Contraste</value>
+  </data>
+  <data name="PhotoSaturationLabel.Text" xml:space="preserve">
+    <value>Saturation</value>
+  </data>
+  <data name="PhotoSharpnessLabel.Text" xml:space="preserve">
+    <value>Netteté</value>
+  </data>
+  <data name="PhotoOrientationLabel.Text" xml:space="preserve">
+    <value>Orientation</value>
+  </data>
+  <data name="PhotoSceneCaptureTypeLabel.Text" xml:space="preserve">
+    <value>Type de Capture de Scène</value>
+  </data>
+  <data name="PhotoResolutionLabel.Text" xml:space="preserve">
+    <value>Résolution</value>
+  </data>
+  <data name="PhotoHorizontalResolutionLabel.Text" xml:space="preserve">
+    <value>Résolution Horizontale</value>
+  </data>
+  <data name="PhotoVerticalResolutionLabel.Text" xml:space="preserve">
+    <value>Résolution Verticale</value>
+  </data>
+  <data name="PhotoResolutionUnitLabel.Text" xml:space="preserve">
+    <value>Unité de Résolution</value>
+  </data>
+  <data name="PhotoFileMetadataLabel.Text" xml:space="preserve">
+    <value>Fichier et Métadonnées</value>
+  </data>
+  <data name="PhotoOriginalFormatLabel.Text" xml:space="preserve">
+    <value>Format Original</value>
+  </data>
+  <data name="PhotoCreationDateLabel.Text" xml:space="preserve">
+    <value>Date de Prise</value>
+  </data>
+  <data name="PhotoUploadDateLabel.Text" xml:space="preserve">
+    <value>Date de Téléchargement</value>
+  </data>
+  <data name="PhotoExifVersionLabel.Text" xml:space="preserve">
+    <value>Version EXIF</value>
+  </data>
+  <data name="PhotoAuthorLabel.Text" xml:space="preserve">
+    <value>Auteur</value>
+  </data>
+  <data name="PhotoLicenseNameLabel.Text" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="PhotoCommentsLabel.Text" xml:space="preserve">
+    <value>Commentaires</value>
+  </data>
+  <data name="PhotoSourceLabel.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="PhotoAdvancedLabel.Text" xml:space="preserve">
+    <value>Avancé</value>
+  </data>
+  <data name="PhotoSensingMethodLabel.Text" xml:space="preserve">
+    <value>Méthode de Détection</value>
+  </data>
+  <data name="PhotoSubjectDistanceRangeLabel.Text" xml:space="preserve">
+    <value>Plage de Distance du Sujet</value>
+  </data>
+  <data name="SpeedText.Text" xml:space="preserve">
+    <value>Vitesse (MHz)</value>
+  </data>
+  <data name="CoresText.Text" xml:space="preserve">
+    <value>Cœurs</value>
+  </data>
+  <data name="ThreadsPerCoreText.Text" xml:space="preserve">
+    <value>Threads par Cœur</value>
+  </data>
+  <data name="ProcessorsNavBar.Content" xml:space="preserve">
+    <value>Processeurs</value>
+  </data>
+  <data name="LoadingProcessorsText.Text" xml:space="preserve">
+    <value>Chargement des processeurs...</value>
+  </data>
+  <data name="ErrorLoadingProcessorsInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger les Processeurs</value>
+  </data>
+  <data name="VoicesText.Text" xml:space="preserve">
+    <value>Voix</value>
+  </data>
+  <data name="FrequencyText.Text" xml:space="preserve">
+    <value>Fréquence (Hz)</value>
+  </data>
+  <data name="DepthText.Text" xml:space="preserve">
+    <value>Profondeur (bits)</value>
+  </data>
+  <data name="TypeText.Text" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="SoundSynthsErrorInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger les Synthétiseurs de Son</value>
+  </data>
+  <data name="SoundSynthsLabel.Text" xml:space="preserve">
+    <value>synthétiseurs de son</value>
+  </data>
+  <data name="UserManagementTitle.Text" xml:space="preserve">
+    <value>Gestion des Utilisateurs</value>
+  </data>
+  <data name="UserManagementSubtitle.Text" xml:space="preserve">
+    <value>Gérer les utilisateurs, les rôles et les permissions</value>
+  </data>
+  <data name="UserMgmtAccessDeniedInfoBar.Title" xml:space="preserve">
+    <value>Accès Refusé</value>
+  </data>
+  <data name="UserMgmtAccessDeniedInfoBar.Message" xml:space="preserve">
+    <value>Vous devez être un Super-administrateur pour accéder à la gestion des utilisateurs.</value>
+  </data>
+  <data name="ErrorLoadingUsersInfoBar.Title" xml:space="preserve">
+    <value>Impossible de Charger les Utilisateurs</value>
+  </data>
+  <data name="AddUserButton.Label" xml:space="preserve">
+    <value>Ajouter un Utilisateur</value>
+  </data>
+  <data name="RefreshUsersButton.Label" xml:space="preserve">
+    <value>Actualiser</value>
+  </data>
+  <data name="EmailColumn.Header" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="UsernameColumn.Header" xml:space="preserve">
+    <value>Nom d'Utilisateur</value>
+  </data>
+  <data name="PhoneColumn.Header" xml:space="preserve">
+    <value>Téléphone</value>
+  </data>
+  <data name="RolesColumn.Header" xml:space="preserve">
+    <value>Rôles</value>
+  </data>
+  <data name="ActionsColumn.Header" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="EditUserButton.Content" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="ChangePasswordButton.Content" xml:space="preserve">
+    <value>Mot de Passe</value>
+  </data>
+  <data name="ManageRolesButton.Content" xml:space="preserve">
+    <value>Rôles</value>
+  </data>
+  <data name="DeleteUserButton.Content" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Auth.EmailIsRequired" xml:space="preserve">
+    <value>L'e-mail est requis</value>
+  </data>
+  <data name="Auth.PasswordIsRequired" xml:space="preserve">
+    <value>Le mot de passe est requis</value>
+  </data>
+  <data name="Http.BadRequest" xml:space="preserve">
+    <value>Requête incorrecte</value>
+  </data>
+  <data name="Auth.InvalidCredentials" xml:space="preserve">
+    <value>Identifiants invalides</value>
+  </data>
+</root>

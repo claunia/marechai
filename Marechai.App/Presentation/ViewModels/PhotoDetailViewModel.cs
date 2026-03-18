@@ -32,10 +32,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Humanizer;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Uno.Extensions.Navigation;
 using ColorSpace = Marechai.Data.ColorSpace;
 using Contrast = Marechai.Data.Contrast;
 using ExposureMode = Marechai.Data.ExposureMode;
@@ -54,12 +55,12 @@ using WhiteBalance = Marechai.Data.WhiteBalance;
 
 namespace Marechai.App.Presentation.ViewModels;
 
-public partial class PhotoDetailViewModel : ObservableObject
+public partial class PhotoDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly ComputersService              _computersService;
     private readonly IStringLocalizer              _localizer;
     private readonly ILogger<PhotoDetailViewModel> _logger;
-    private readonly INavigator                    _navigator;
+    private readonly IRegionManager                _regionManager;
     private readonly MachinePhotoCache             _photoCache;
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -190,21 +191,33 @@ public partial class PhotoDetailViewModel : ObservableObject
     [ObservableProperty]
     private string _photoWhiteBalance = string.Empty;
 
-    public PhotoDetailViewModel(ILogger<PhotoDetailViewModel> logger,           INavigator        navigator,
+    public PhotoDetailViewModel(ILogger<PhotoDetailViewModel> logger,           IRegionManager    regionManager,
                                 ComputersService              computersService, MachinePhotoCache photoCache,
                                 IStringLocalizer              localizer)
     {
         _logger           = logger;
-        _navigator        = navigator;
+        _regionManager    = regionManager;
         _computersService = computersService;
         _photoCache       = photoCache;
         _localizer        = localizer;
     }
 
-    [RelayCommand]
-    public async Task GoBack()
+    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
     {
-        await _navigator.GoBack(this);
+        if(navigationContext.Parameters.TryGetValue<Guid>(NavParamKeys.PhotoId, out Guid photoId))
+            _ = LoadPhotoCommand.ExecuteAsync(photoId);
+    }
+
+    [RelayCommand]
+    public Task GoBack()
+    {
+        _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
+
+        return Task.CompletedTask;
     }
 
     [RelayCommand]

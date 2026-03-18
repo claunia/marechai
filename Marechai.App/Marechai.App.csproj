@@ -33,7 +33,6 @@
       HttpKiota;
       Serialization;
       Localization;
-      Navigation;
       ThemeService;
       Storage;
       SkiaRenderer;
@@ -44,7 +43,14 @@
     <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Strings\**\*.resw">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Humanizer"/>
+    <PackageReference Include="Microsoft.Extensions.Localization"/>
+    <PackageReference Include="Prism.DryIoc.Uno.WinUI"/>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
   </ItemGroup>
   <ItemGroup>

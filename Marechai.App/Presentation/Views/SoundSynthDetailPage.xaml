@@ -3,6 +3,7 @@
       x:Name="PageRoot"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:utu="using:Uno.Toolkit.UI"
       xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
       NavigationCacheMode="Required"
@@ -23,7 +24,7 @@
                            MainCommandMode="Action">
             <utu:NavigationBar.MainCommand>
                 <AppBarButton Icon="Back"
-                              x:Uid="BackButton"
+                              loc:Loc.Key="BackButton"
                               Command="{Binding GoBackCommand}"
                               AutomationProperties.Name="Go back" />
             </utu:NavigationBar.MainCommand>
@@ -44,7 +45,7 @@
                                   IsIndeterminate="True"
                                   Height="48"
                                   Width="48" />
-                    <TextBlock x:Uid="LoadingText"
+                    <TextBlock loc:Loc.Key="LoadingText"
                                Text="Loading..."
                                TextAlignment="Center"
                                FontSize="14" />
@@ -56,7 +57,7 @@
                             Background="{ThemeResource SystemErrorBackgroundColor}"
                             CornerRadius="8"
                             Spacing="8">
-                    <TextBlock x:Uid="ErrorText"
+                    <TextBlock loc:Loc.Key="ErrorText"
                                Text="Error"
                                FontWeight="Bold"
                                Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
@@ -80,7 +81,7 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock x:Uid="ManufacturerText"
+                        <TextBlock loc:Loc.Key="ManufacturerText"
                                    Text="Manufacturer"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -96,7 +97,7 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock x:Uid="ModelCodeText"
+                        <TextBlock loc:Loc.Key="ModelCodeText"
                                    Text="Model Code"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -112,7 +113,7 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock x:Uid="IntroducedText"
+                        <TextBlock loc:Loc.Key="IntroducedText"
                                    Text="Introduced"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -127,7 +128,7 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock x:Uid="VoicesText"
+                        <TextBlock loc:Loc.Key="VoicesText"
                                    Text="Voices"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -143,7 +144,7 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock x:Uid="FrequencyText"
+                        <TextBlock loc:Loc.Key="FrequencyText"
                                    Text="Frequency (Hz)"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -159,7 +160,7 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock x:Uid="DepthText"
+                        <TextBlock loc:Loc.Key="DepthText"
                                    Text="Depth (bits)"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -175,7 +176,7 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock x:Uid="TypeText"
+                        <TextBlock loc:Loc.Key="TypeText"
                                    Text="Type"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -190,7 +191,7 @@
                                 Spacing="8">
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8">
-                            <TextBlock x:Uid="ComputersText"
+                            <TextBlock loc:Loc.Key="ComputersText"
                                        Text="Computers"
                                        FontSize="14"
                                        FontWeight="SemiBold"
@@ -202,7 +203,7 @@
                         </StackPanel>
 
                         <!-- Filter Box -->
-                        <AutoSuggestBox x:Uid="ComputersFilterBox"
+                        <AutoSuggestBox loc:Loc.Key="ComputersFilterBox"
                                         PlaceholderText="Filter computers..."
                                         Text="{Binding ComputersFilterText, Mode=TwoWay}"
                                         TextChanged="ComputersSearchBox_TextChanged"
@@ -254,7 +255,7 @@
                                 Spacing="8">
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8">
-                            <TextBlock x:Uid="ConsolesText"
+                            <TextBlock loc:Loc.Key="ConsolesText"
                                        Text="Consoles"
                                        FontSize="14"
                                        FontWeight="SemiBold"
@@ -266,7 +267,7 @@
                         </StackPanel>
 
                         <!-- Filter Box -->
-                        <AutoSuggestBox x:Uid="ConsolesFilterBox"
+                        <AutoSuggestBox loc:Loc.Key="ConsolesFilterBox"
                                         PlaceholderText="Filter consoles..."
                                         Text="{Binding ConsolesFilterText, Mode=TwoWay}"
                                         TextChanged="ConsolesSearchBox_TextChanged"

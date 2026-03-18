@@ -4,6 +4,7 @@
 <Page x:Class="Marechai.App.Presentation.Views.UsersPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
       x:Name="PageRoot"
       NavigationCacheMode="Required"
@@ -23,12 +24,12 @@
 
             <!-- Page Title -->
             <StackPanel VerticalAlignment="Center">
-                <TextBlock x:Uid="UserManagementTitle"
+                <TextBlock loc:Loc.Key="UserManagementTitle"
                            Text="User Management"
                            FontSize="20"
                            FontWeight="SemiBold"
                            Foreground="{ThemeResource TextControlForeground}" />
-                <TextBlock x:Uid="UserManagementSubtitle"
+                <TextBlock loc:Loc.Key="UserManagementSubtitle"
                            Text="Manage users, roles, and permissions"
                            FontSize="12"
                            Foreground="{ThemeResource SystemBaseMediumColor}"
@@ -48,7 +49,7 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Warning"
-                         x:Uid="UserMgmtAccessDeniedInfoBar"
+                         loc:Loc.Key="UserMgmtAccessDeniedInfoBar"
                          Title="Access Denied"
                          Message="You must be an Uberadmin to access user management."
                          IsClosable="False" />
@@ -69,7 +70,7 @@
                                   Height="64"
                                   Width="64"
                                   Foreground="{ThemeResource SystemAccentColor}" />
-                    <TextBlock x:Uid="LoadingText"
+                    <TextBlock loc:Loc.Key="LoadingText"
                                Text="Loading users..."
                                FontSize="14"
                                TextAlignment="Center"
@@ -86,7 +87,7 @@
                             Canvas.ZIndex="100">
                     <InfoBar IsOpen="True"
                              Severity="Error"
-                             x:Uid="ErrorLoadingUsersInfoBar"
+                             loc:Loc.Key="ErrorLoadingUsersInfoBar"
                              Title="Unable to Load Users"
                              Message="{Binding ErrorMessage}"
                              IsClosable="False" />
@@ -107,11 +108,11 @@
                     <CommandBar Grid.Row="0"
                                 DefaultLabelPosition="Right">
                         <AppBarButton Icon="Add"
-                                      x:Uid="AddUserButton"
+                                      loc:Loc.Key="AddUserButton"
                                       Label="Add User"
                                       Command="{Binding OpenAddUserDialogCommand}" />
                         <AppBarButton Icon="Refresh"
-                                      x:Uid="RefreshUsersButton"
+                                      loc:Loc.Key="RefreshUsersButton"
                                       Label="Refresh"
                                       Command="{Binding LoadUsersCommand}" />
                     </CommandBar>
@@ -134,27 +135,27 @@
                                        VerticalScrollBarVisibility="Auto">
 
                         <controls:DataGrid.Columns>
-                            <controls:DataGridTextColumn x:Uid="EmailColumn"
+                            <controls:DataGridTextColumn loc:Loc.Key="EmailColumn"
                                                          Header="Email"
                                                          Binding="{Binding Email}"
                                                          Width="2*" />
 
-                            <controls:DataGridTextColumn x:Uid="UsernameColumn"
+                            <controls:DataGridTextColumn loc:Loc.Key="UsernameColumn"
                                                          Header="Username"
                                                          Binding="{Binding UserName}"
                                                          Width="*" />
 
-                            <controls:DataGridTextColumn x:Uid="PhoneColumn"
+                            <controls:DataGridTextColumn loc:Loc.Key="PhoneColumn"
                                                          Header="Phone"
                                                          Binding="{Binding PhoneNumber}"
                                                          Width="*" />
 
-                            <controls:DataGridTextColumn x:Uid="RolesColumn"
+                            <controls:DataGridTextColumn loc:Loc.Key="RolesColumn"
                                                          Header="Roles"
                                                          Width="2*"
                                                          Binding="{Binding Roles, Converter={StaticResource RolesListConverter}}" />
 
-                            <controls:DataGridTemplateColumn x:Uid="ActionsColumn"
+                            <controls:DataGridTemplateColumn loc:Loc.Key="ActionsColumn"
                                                              Header="Actions"
                                                              Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
@@ -165,26 +166,26 @@
                                                     Command="{Binding DataContext.OpenEditUserDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
-                                                    x:Uid="EditUserButton"
+                                                    loc:Loc.Key="EditUserButton"
                                                     Padding="8,4" />
                                             <Button Content="Password"
                                                     Command="{Binding DataContext.OpenChangePasswordDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
-                                                    x:Uid="ChangePasswordButton"
+                                                    loc:Loc.Key="ChangePasswordButton"
                                                     Padding="8,4" />
                                             <Button Content="Roles"
                                                     Command="{Binding DataContext.OpenManageRolesDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
-                                                    x:Uid="ManageRolesButton"
+                                                    loc:Loc.Key="ManageRolesButton"
                                                     Padding="8,4" />
                                             <Button Content="Delete"
                                                     Command="{Binding DataContext.DeleteUserCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Foreground="{ThemeResource SystemErrorTextColor}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
-                                                    x:Uid="DeleteUserButton"
+                                                    loc:Loc.Key="DeleteUserButton"
                                                     Padding="8,4" />
                                         </StackPanel>
                                     </DataTemplate>

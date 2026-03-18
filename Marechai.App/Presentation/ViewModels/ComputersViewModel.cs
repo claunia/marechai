@@ -2,8 +2,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -13,7 +14,7 @@ public partial class ComputersViewModel : ObservableObject
     private readonly IComputersListFilterContext _filterContext;
     private readonly IStringLocalizer            _localizer;
     private readonly ILogger<ComputersViewModel> _logger;
-    private readonly INavigator                  _navigator;
+    private readonly IRegionManager              _regionManager;
 
     [ObservableProperty]
     private int _computerCount;
@@ -49,13 +50,13 @@ public partial class ComputersViewModel : ObservableObject
     private ObservableCollection<int> _yearsList = [];
 
     public ComputersViewModel(ComputersService            computersService, IStringLocalizer localizer,
-                              ILogger<ComputersViewModel> logger,           INavigator       navigator,
+                              ILogger<ComputersViewModel> logger,           IRegionManager   regionManager,
                               IComputersListFilterContext filterContext)
     {
         _computersService           = computersService;
         _localizer                  = localizer;
         _logger                     = logger;
-        _navigator                  = navigator;
+        _regionManager              = regionManager;
         _filterContext              = filterContext;
         LoadData                    = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand               = new AsyncRelayCommand(GoBackAsync);
@@ -143,20 +144,20 @@ public partial class ComputersViewModel : ObservableObject
     /// </summary>
     private async Task GoBackAsync()
     {
-        await _navigator.NavigateViewModelAsync<MainViewModel>(this);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
     }
 
     /// <summary>
     ///     Navigates to computers filtered by letter
     /// </summary>
-    private async Task NavigateByLetterAsync(char letter)
+    private Task NavigateByLetterAsync(char letter)
     {
         try
         {
             _logger.LogInformation("Navigating to computers by letter: {Letter}", letter);
             _filterContext.FilterType  = ComputerListFilterType.Letter;
             _filterContext.FilterValue = letter.ToString();
-            await _navigator.NavigateRouteAsync(this, "list-computers");
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ComputersListPage));
         }
         catch(Exception ex)
         {
@@ -164,19 +165,21 @@ public partial class ComputersViewModel : ObservableObject
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to computers filtered by year
     /// </summary>
-    private async Task NavigateByYearAsync(int year)
+    private Task NavigateByYearAsync(int year)
     {
         try
         {
             _logger.LogInformation("Navigating to computers by year: {Year}", year);
             _filterContext.FilterType  = ComputerListFilterType.Year;
             _filterContext.FilterValue = year.ToString();
-            await _navigator.NavigateRouteAsync(this, "list-computers");
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ComputersListPage));
         }
         catch(Exception ex)
         {
@@ -184,19 +187,21 @@ public partial class ComputersViewModel : ObservableObject
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Navigates to all computers view
     /// </summary>
-    private async Task NavigateAllComputersAsync()
+    private Task NavigateAllComputersAsync()
     {
         try
         {
             _logger.LogInformation("Navigating to all computers");
             _filterContext.FilterType  = ComputerListFilterType.All;
             _filterContext.FilterValue = string.Empty;
-            await _navigator.NavigateRouteAsync(this, "list-computers");
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ComputersListPage));
         }
         catch(Exception ex)
         {
@@ -204,5 +209,7 @@ public partial class ComputersViewModel : ObservableObject
             ErrorMessage = _localizer["Failed to navigate. Please try again."].Value;
             HasError     = true;
         }
+
+        return Task.CompletedTask;
     }
 }

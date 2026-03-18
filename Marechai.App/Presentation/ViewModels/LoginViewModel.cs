@@ -4,15 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views;
 using Uno.Extensions.Authentication;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
     private readonly IAuthenticationService _authService;
-    private readonly INavigator             _navigator;
+    private readonly IRegionManager         _regionManager;
     private readonly IStringLocalizer       _stringLocalizer;
 
     [ObservableProperty]
@@ -24,9 +25,10 @@ public partial class LoginViewModel : ObservableObject
     [ObservableProperty]
     private string _password = string.Empty;
 
-    public LoginViewModel(INavigator navigator, IAuthenticationService authService, IStringLocalizer stringLocalizer)
+    public LoginViewModel(IRegionManager regionManager, IAuthenticationService authService,
+                          IStringLocalizer stringLocalizer)
     {
-        _navigator       = navigator;
+        _regionManager   = regionManager;
         _authService     = authService;
         _stringLocalizer = stringLocalizer;
     }
@@ -67,7 +69,7 @@ public partial class LoginViewModel : ObservableObject
             if(success)
             {
                 // Navigate back to main page on successful login
-                await _navigator.NavigateRouteAsync(this, "/Main");
+                _regionManager.RequestNavigate(RegionNames.Shell, nameof(MainPage));
             }
             else
             {

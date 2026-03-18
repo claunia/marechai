@@ -1,9 +1,10 @@
-<Application x:Class="Marechai.App.App"
+<prism:PrismApplication x:Class="Marechai.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="using:Prism.DryIoc"
              xmlns:local="using:Marechai.App.Presentation.Converters">
 
-    <Application.Resources>
+    <prism:PrismApplication.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- Load WinUI resources -->
@@ -24,6 +25,6 @@
             <local:RolesListConverter x:Key="RolesListConverter" />
 
         </ResourceDictionary>
-    </Application.Resources>
+    </prism:PrismApplication.Resources>
 
-</Application>
+</prism:PrismApplication>

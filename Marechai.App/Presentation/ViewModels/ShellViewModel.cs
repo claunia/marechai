@@ -1,10 +1,8 @@
-using Uno.Extensions.Navigation;
-
 namespace Marechai.App.Presentation.ViewModels;
 
 public class ShellViewModel
 {
-    private readonly INavigator _navigator;
+    private readonly IRegionManager _regionManager;
 
-    public ShellViewModel(INavigator navigator) => _navigator = navigator;
+    public ShellViewModel(IRegionManager regionManager) => _regionManager = regionManager;
 }

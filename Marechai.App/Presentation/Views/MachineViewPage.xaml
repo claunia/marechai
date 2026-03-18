@@ -5,6 +5,7 @@
       x:Name="PageRoot"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:wctui="using:CommunityToolkit.WinUI.UI.Controls"
       NavigationCacheMode="Disabled"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -67,7 +68,7 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock x:Uid="LoadingText"
+                <TextBlock loc:Loc.Key="LoadingText"
                            Text="Loading machine details..."
                            FontSize="14"
                            TextAlignment="Center"
@@ -83,11 +84,11 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
-                         x:Uid="MachineErrorInfoBar"
+                         loc:Loc.Key="MachineErrorInfoBar"
                          Title="Unable to Load Machine"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button x:Uid="RetryButton"
+                <Button loc:Loc.Key="RetryButton"
                         Content="Retry"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
@@ -108,7 +109,7 @@
                                 BorderThickness="1"
                                 CornerRadius="8"
                                 Padding="16,12">
-                            <TextBlock x:Uid="PrototypeBadgeText"
+                            <TextBlock loc:Loc.Key="PrototypeBadgeText"
                                        Text="PROTOTYPE"
                                        FontSize="14"
                                        FontWeight="Bold"
@@ -120,7 +121,7 @@
                     <!-- Introduction Date -->
                     <StackPanel Visibility="{Binding ShowIntroductionDate}"
                                 Spacing="8">
-                        <TextBlock x:Uid="IntroductionDateLabel"
+                        <TextBlock loc:Loc.Key="IntroductionDateLabel"
                                    Text="Introduction Date"
                                    FontSize="12"
                                    FontWeight="SemiBold"
@@ -147,7 +148,7 @@
                         <StackPanel Grid.Column="0"
                                     Visibility="{Binding ShowFamily}"
                                     Spacing="8">
-                            <TextBlock x:Uid="FamilyLabel"
+                            <TextBlock loc:Loc.Key="FamilyLabel"
                                        Text="Family"
                                        FontSize="12"
                                        FontWeight="SemiBold"
@@ -168,7 +169,7 @@
                         <StackPanel Grid.Column="1"
                                     Visibility="{Binding ShowModel}"
                                     Spacing="8">
-                            <TextBlock x:Uid="ModelLabel"
+                            <TextBlock loc:Loc.Key="ModelLabel"
                                        Text="Model"
                                        FontSize="12"
                                        FontWeight="SemiBold"
@@ -189,7 +190,7 @@
                     <!-- Processors Section -->
                     <StackPanel Visibility="{Binding ShowProcessors}"
                                 Spacing="12">
-                        <TextBlock x:Uid="ProcessorsLabel"
+                        <TextBlock loc:Loc.Key="ProcessorsLabel"
                                    Text="Processors"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -232,7 +233,7 @@
                     <!-- Memory Section -->
                     <StackPanel Visibility="{Binding ShowMemory}"
                                 Spacing="12">
-                        <TextBlock x:Uid="MemoryLabel"
+                        <TextBlock loc:Loc.Key="MemoryLabel"
                                    Text="Memory"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -270,7 +271,7 @@
                     <!-- GPUs Section -->
                     <StackPanel Visibility="{Binding ShowGpus}"
                                 Spacing="12">
-                        <TextBlock x:Uid="GpusLabel"
+                        <TextBlock loc:Loc.Key="GpusLabel"
                                    Text="Graphics Processing Units"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -309,7 +310,7 @@
                     <!-- Sound Synthesizers Section -->
                     <StackPanel Visibility="{Binding ShowSoundSynthesizers}"
                                 Spacing="12">
-                        <TextBlock x:Uid="SoundSynthesizersLabel"
+                        <TextBlock loc:Loc.Key="SoundSynthesizersLabel"
                                    Text="Sound Synthesizers"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -349,7 +350,7 @@
                     <!-- Storage Section -->
                     <StackPanel Visibility="{Binding ShowStorage}"
                                 Spacing="12">
-                        <TextBlock x:Uid="StorageLabel"
+                        <TextBlock loc:Loc.Key="StorageLabel"
                                    Text="Storage"
                                    FontSize="14"
                                    FontWeight="SemiBold"
@@ -388,7 +389,7 @@
                     <!-- Photos Carousel (Last element before spacing) -->
                     <StackPanel Visibility="{Binding ShowPhotos}"
                                 Spacing="12">
-                        <TextBlock x:Uid="PhotosLabel"
+                        <TextBlock loc:Loc.Key="PhotosLabel"
                                    Text="Photos"
                                    FontSize="14"
                                    FontWeight="SemiBold"

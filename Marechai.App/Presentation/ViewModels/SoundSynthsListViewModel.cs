@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -14,7 +15,7 @@ public partial class SoundSynthsListViewModel : ObservableObject
 {
     private readonly IStringLocalizer                  _localizer;
     private readonly ILogger<SoundSynthsListViewModel> _logger;
-    private readonly INavigator                        _navigator;
+    private readonly IRegionManager                    _regionManager;
     private readonly SoundSynthsService                _soundSynthsService;
 
     [ObservableProperty]
@@ -32,11 +33,11 @@ public partial class SoundSynthsListViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<SoundSynthListItem> _soundSynths = [];
 
-    public SoundSynthsListViewModel(SoundSynthsService                soundSynthsService, INavigator       navigator,
-                                    ILogger<SoundSynthsListViewModel> logger,             IStringLocalizer localizer)
+    public SoundSynthsListViewModel(SoundSynthsService                soundSynthsService, IRegionManager   regionManager,
+                                ILogger<SoundSynthsListViewModel> logger,             IStringLocalizer localizer)
     {
         _soundSynthsService         = soundSynthsService;
-        _navigator                  = navigator;
+        _regionManager              = regionManager;
         _logger                     = logger;
         _localizer                  = localizer;
         LoadData                    = new AsyncRelayCommand(LoadDataAsync);
@@ -113,17 +114,20 @@ public partial class SoundSynthsListViewModel : ObservableObject
         }
     }
 
-    private async Task NavigateToSoundSynthAsync(SoundSynthListItem? item)
+    private Task NavigateToSoundSynthAsync(SoundSynthListItem? item)
     {
-        if(item == null) return;
+        if(item == null) return Task.CompletedTask;
 
         _logger.LogInformation("Navigating to Sound Synthesizer {SoundSynthId}", item.Id);
 
-        await _navigator.NavigateViewModelAsync<SoundSynthDetailViewModel>(this,
-                                                                           data: new SoundSynthDetailNavigationParameter
-                                                                           {
-                                                                               SoundSynthId     = item.Id,
-                                                                               NavigationSource = this
-                                                                           });
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.SoundSynthId, item.Id },
+            { NavParamKeys.NavigationSource, nameof(SoundSynthsListViewModel) }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(SoundSynthDetailPage), parameters);
+
+        return Task.CompletedTask;
     }
 }

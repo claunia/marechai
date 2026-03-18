@@ -7,23 +7,24 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Caching;
 using Marechai.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
-public partial class CompanyDetailViewModel : ObservableObject
+public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly CompanyDetailService            _companyDetailService;
     private readonly FlagCache                       _flagCache;
     private readonly IStringLocalizer                _localizer;
     private readonly ILogger<CompanyDetailViewModel> _logger;
     private readonly CompanyLogoCache                _logoCache;
-    private readonly INavigator                      _navigator;
+    private readonly IRegionManager                  _regionManager;
 
     [ObservableProperty]
     private CompanyDto? _company;
@@ -75,14 +76,14 @@ public partial class CompanyDetailViewModel : ObservableObject
 
     public CompanyDetailViewModel(CompanyDetailService            companyDetailService, FlagCache        flagCache,
                                   CompanyLogoCache                logoCache,            IStringLocalizer localizer,
-                                  ILogger<CompanyDetailViewModel> logger,               INavigator       navigator)
+                                  ILogger<CompanyDetailViewModel> logger,               IRegionManager   regionManager)
     {
         _companyDetailService    = companyDetailService;
         _flagCache               = flagCache;
         _logoCache               = logoCache;
         _localizer               = localizer;
         _logger                  = logger;
-        _navigator               = navigator;
+        _regionManager           = regionManager;
         LoadData                 = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
         NavigateToMachineCommand = new AsyncRelayCommand<CompanyDetailMachine>(NavigateToMachineAsync);
@@ -185,17 +186,20 @@ public partial class CompanyDetailViewModel : ObservableObject
         FilteredConsoles = filtered;
     }
 
-    private async Task NavigateToMachineAsync(CompanyDetailMachine? machine)
+    private Task NavigateToMachineAsync(CompanyDetailMachine? machine)
     {
-        if(machine == null) return;
+        if(machine == null) return Task.CompletedTask;
 
-        var navParam = new MachineViewNavigationParameter
+        var parameters = new NavigationParameters
         {
-            MachineId        = machine.Id,
-            NavigationSource = this
+            { NavParamKeys.MachineId, machine.Id },
+            { NavParamKeys.NavigationSource, nameof(CompanyDetailViewModel) },
+            { NavParamKeys.CompanyId, CompanyId }
         };
 
-        await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -505,8 +509,23 @@ public partial class CompanyDetailViewModel : ObservableObject
     /// <summary>
     ///     Handles back navigation
     /// </summary>
-    private async Task GoBackAsync()
+    private Task GoBackAsync()
     {
-        await _navigator.NavigateViewModelAsync<CompaniesViewModel>(this);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(CompaniesPage));
+
+        return Task.CompletedTask;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.CompanyId, out int companyId))
+        {
+            CompanyId = companyId;
+            _ = LoadData.ExecuteAsync(null);
+        }
     }
 }

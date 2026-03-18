@@ -33,7 +33,7 @@
 
             <!-- Sidebar Title - Hidden when collapsed -->
             <TextBlock Grid.Column="0"
-                       x:Uid="SidebarTitle"
+                       Text="{Binding SidebarTitleText}"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
@@ -66,7 +66,7 @@
                         Spacing="0"
                         Padding="0">
                 <!-- News -->
-                <Button x:Uid="NewsButton"
+                <Button Content="{Binding NewsButtonText}"
                         Command="{Binding NavigateToNewsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -78,7 +78,7 @@
                         CornerRadius="0" />
 
                 <!-- Books -->
-                <Button x:Uid="BooksButton"
+                <Button Content="{Binding BooksButtonText}"
                         Command="{Binding NavigateToBooksCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -90,7 +90,7 @@
                         CornerRadius="0" />
 
                 <!-- Companies -->
-                <Button x:Uid="CompaniesButton"
+                <Button Content="{Binding CompaniesButtonText}"
                         Command="{Binding NavigateToCompaniesCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -102,7 +102,7 @@
                         CornerRadius="0" />
 
                 <!-- Computers -->
-                <Button x:Uid="ComputersButton"
+                <Button Content="{Binding ComputersButtonText}"
                         Command="{Binding NavigateToComputersCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -114,7 +114,7 @@
                         CornerRadius="0" />
 
                 <!-- Consoles -->
-                <Button x:Uid="ConsolesButton"
+                <Button Content="{Binding ConsolesButtonText}"
                         Command="{Binding NavigateToConsolesCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -126,7 +126,7 @@
                         CornerRadius="0" />
 
                 <!-- Documents -->
-                <Button x:Uid="DocumentsButton" 
+                <Button Content="{Binding DocumentsButtonText}"
                         Command="{Binding NavigateToDocumentsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -138,7 +138,7 @@
                         CornerRadius="0" />
 
                 <!-- Dumps -->
-                <Button x:Uid="DumpsButton"
+                <Button Content="{Binding DumpsButtonText}"
                         Command="{Binding NavigateToDumpsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -150,7 +150,7 @@
                         CornerRadius="0" />
 
                 <!-- Graphical Processing Units -->
-                <Button x:Uid="GraphicalProcessingUnitsButton"
+                <Button Content="{Binding GpuButtonText}"
                         Command="{Binding NavigateToGraphicalProcessingUnitsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -162,7 +162,7 @@
                         CornerRadius="0" />
 
                 <!-- Magazines -->
-                <Button x:Uid="MagazinesButton"
+                <Button Content="{Binding MagazinesButtonText}"
                         Command="{Binding NavigateToMagazinesCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -174,7 +174,7 @@
                         CornerRadius="0" />
 
                 <!-- People -->
-                <Button x:Uid="PeopleButton"
+                <Button Content="{Binding PeopleButtonText}"
                         Command="{Binding NavigateToPeopleCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -186,7 +186,7 @@
                         CornerRadius="0" />
 
                 <!-- Processors -->
-                <Button x:Uid="ProcessorsButton"
+                <Button Content="{Binding ProcessorsButtonText}"
                         Command="{Binding NavigateToProcessorsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -198,7 +198,7 @@
                         CornerRadius="0" />
 
                 <!-- Software -->
-                <Button x:Uid="SoftwareButton"
+                <Button Content="{Binding SoftwareButtonText}"
                         Command="{Binding NavigateToSoftwareCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -210,7 +210,7 @@
                         CornerRadius="0" />
 
                 <!-- Sound Synthesizers -->
-                <Button x:Uid="SoundSynthesizersButton"
+                <Button Content="{Binding SoundSynthesizersButtonText}"
                         Command="{Binding NavigateToSoundSynthesizersCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -232,7 +232,7 @@
             <StackPanel Orientation="Vertical"
                         Spacing="0">
                 <!-- Users (Uberadmin only) -->
-                <Button x:Uid="UserManagementButton"
+                <Button Content="{Binding UserManagementButtonText}"
                         Command="{Binding NavigateToUsersCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
@@ -257,7 +257,7 @@
                         CornerRadius="0" />
 
                 <!-- Settings -->
-                <Button x:Uid="SettingsButton"
+                <Button Content="{Binding SettingsButtonText}"
                         Command="{Binding NavigateToSettingsCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"

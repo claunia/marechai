@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Uno.Extensions.Authentication;
-using Uno.Extensions.Navigation;
 using Uno.Extensions.Toolkit;
 
 namespace Marechai.App.Presentation.ViewModels;
@@ -17,7 +18,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IAuthenticationService _authService;
     private readonly IJwtService            _jwtService;
     private readonly IStringLocalizer       _localizer;
-    private readonly INavigator             _navigator;
+    private readonly IRegionManager         _regionManager;
     private readonly ITokenService          _tokenService;
     [ObservableProperty]
     private bool _isSidebarOpen = true;
@@ -26,6 +27,24 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _loginLogoutButtonText = "";
 
+    // Sidebar localized labels (x:Uid doesn't work under PrismApplication)
+    public string SidebarTitleText               => _localizer["SidebarTitle.Text"];
+    public string NewsButtonText                 => _localizer["NewsButton.Content"];
+    public string BooksButtonText                => _localizer["BooksButton.Content"];
+    public string CompaniesButtonText            => _localizer["CompaniesButton.Content"];
+    public string ComputersButtonText            => _localizer["ComputersButton.Content"];
+    public string ConsolesButtonText             => _localizer["ConsolesButton.Content"];
+    public string DocumentsButtonText            => _localizer["DocumentsButton.Content"];
+    public string DumpsButtonText                => _localizer["DumpsButton.Content"];
+    public string GpuButtonText                  => _localizer["GraphicalProcessingUnitsButton.Content"];
+    public string MagazinesButtonText            => _localizer["MagazinesButton.Content"];
+    public string PeopleButtonText               => _localizer["PeopleButton.Content"];
+    public string ProcessorsButtonText           => _localizer["ProcessorsButton.Content"];
+    public string SoftwareButtonText             => _localizer["SoftwareButton.Content"];
+    public string SoundSynthesizersButtonText    => _localizer["SoundSynthesizersButton.Content"];
+    public string UserManagementButtonText       => _localizer["UserManagementButton.Content"];
+    public string SettingsButtonText             => _localizer["SettingsButton.Content"];
+
     [ObservableProperty]
     private string? _name;
     [ObservableProperty]
@@ -33,38 +52,38 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _sidebarContentVisible = true;
 
-    public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, INavigator navigator,
-                         NewsViewModel newsViewModel, IColorThemeService colorThemeService, IThemeService themeService,
+    public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, IRegionManager regionManager,
+                         NewsViewModel newsViewModel, IColorThemeService colorThemeService,
                          IAuthenticationService authService, IJwtService jwtService, ITokenService tokenService)
     {
-        _navigator    = navigator;
-        _localizer    = localizer;
-        _authService  = authService;
-        _jwtService   = jwtService;
-        _tokenService = tokenService;
-        NewsViewModel = newsViewModel;
-        Title         = localizer["ApplicationName"];
+        _regionManager = regionManager;
+        _localizer     = localizer;
+        _authService   = authService;
+        _jwtService    = jwtService;
+        _tokenService  = tokenService;
+        NewsViewModel  = newsViewModel;
+        Title          = localizer["ApplicationName"];
         if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
 
-        // Initialize color theme service with theme service
-        _ = InitializeThemeServicesAsync(colorThemeService, themeService);
+        // Initialize color theme service
+        _ = InitializeThemeServicesAsync(colorThemeService);
 
         // Initialize commands
-        NavigateToNewsCommand                     = new AsyncRelayCommand(NavigateToMainAsync);
-        NavigateToBooksCommand                    = new AsyncRelayCommand(() => NavigateTo("books"));
-        NavigateToCompaniesCommand                = new AsyncRelayCommand(() => NavigateTo("companies"));
-        NavigateToComputersCommand                = new AsyncRelayCommand(() => NavigateTo("computers"));
-        NavigateToConsolesCommand                 = new AsyncRelayCommand(() => NavigateTo("consoles"));
-        NavigateToDocumentsCommand                = new AsyncRelayCommand(() => NavigateTo("documents"));
-        NavigateToDumpsCommand                    = new AsyncRelayCommand(() => NavigateTo("dumps"));
-        NavigateToGraphicalProcessingUnitsCommand = new AsyncRelayCommand(() => NavigateTo("gpus"));
-        NavigateToMagazinesCommand                = new AsyncRelayCommand(() => NavigateTo("magazines"));
-        NavigateToPeopleCommand                   = new AsyncRelayCommand(() => NavigateTo("people"));
-        NavigateToProcessorsCommand               = new AsyncRelayCommand(() => NavigateTo("processors"));
-        NavigateToSoftwareCommand                 = new AsyncRelayCommand(() => NavigateTo("software"));
-        NavigateToSoundSynthesizersCommand        = new AsyncRelayCommand(() => NavigateTo("sound-synths"));
-        NavigateToUsersCommand                    = new AsyncRelayCommand(() => NavigateTo("users"));
-        NavigateToSettingsCommand                 = new AsyncRelayCommand(() => NavigateTo("settings"));
+        NavigateToNewsCommand                     = new RelayCommand(() => NavigateTo(nameof(NewsPage)));
+        NavigateToBooksCommand                    = new RelayCommand(() => NavigateTo("books"));
+        NavigateToCompaniesCommand                = new RelayCommand(() => NavigateTo(nameof(CompaniesPage)));
+        NavigateToComputersCommand                = new RelayCommand(() => NavigateTo(nameof(ComputersPage)));
+        NavigateToConsolesCommand                 = new RelayCommand(() => NavigateTo(nameof(ConsolesPage)));
+        NavigateToDocumentsCommand                = new RelayCommand(() => NavigateTo("documents"));
+        NavigateToDumpsCommand                    = new RelayCommand(() => NavigateTo("dumps"));
+        NavigateToGraphicalProcessingUnitsCommand = new RelayCommand(() => NavigateTo(nameof(GpuListPage)));
+        NavigateToMagazinesCommand                = new RelayCommand(() => NavigateTo("magazines"));
+        NavigateToPeopleCommand                   = new RelayCommand(() => NavigateTo("people"));
+        NavigateToProcessorsCommand               = new RelayCommand(() => NavigateTo(nameof(ProcessorListPage)));
+        NavigateToSoftwareCommand                 = new RelayCommand(() => NavigateTo("software"));
+        NavigateToSoundSynthesizersCommand        = new RelayCommand(() => NavigateTo(nameof(SoundSynthListPage)));
+        NavigateToUsersCommand                    = new RelayCommand(() => NavigateTo(nameof(UsersPage)));
+        NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
 
@@ -95,15 +114,19 @@ public partial class MainViewModel : ObservableObject
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }
 
-    private async Task InitializeThemeServicesAsync(IColorThemeService colorThemeService, IThemeService themeService)
+    private async Task InitializeThemeServicesAsync(IColorThemeService colorThemeService)
     {
         try
         {
-            // Wait for theme service to be ready
-            await themeService.InitializeAsync();
+            // Try to get IThemeService from the host if available
+            var host = App.Current is PrismApplication prismApp ? prismApp.Host : null;
+            var themeService = host?.Services?.GetService<IThemeService>();
 
-            // Set the theme service reference and reapply the saved theme
-            colorThemeService.SetThemeService(themeService);
+            if(themeService != null)
+            {
+                await themeService.InitializeAsync();
+                colorThemeService.SetThemeService(themeService);
+            }
         }
         catch
         {
@@ -164,29 +187,13 @@ public partial class MainViewModel : ObservableObject
         }
         else
         {
-            // Navigate to login page - use absolute path starting from root
-            await _navigator.NavigateRouteAsync(this, "/Login");
+            // Navigate to login page in the shell region
+            _regionManager.RequestNavigate(RegionNames.Shell, nameof(LoginPage));
         }
     }
 
-    private async Task NavigateTo(string destination)
+    private void NavigateTo(string viewName)
     {
-        try
-        {
-            // Navigate within the Main region using relative navigation
-            // The "./" prefix means navigate within the current page's region
-            await _navigator.NavigateRouteAsync(this, $"./{destination}");
-        }
-        catch(Exception)
-        {
-            // Navigation error - fail silently for now
-            // TODO: Add error handling/logging
-        }
-    }
-
-    private async Task NavigateToMainAsync()
-    {
-        // Navigate to News page (the default/home page)
-        await NavigateTo("News");
+        _regionManager.RequestNavigate(RegionNames.Content, viewName);
     }
 }

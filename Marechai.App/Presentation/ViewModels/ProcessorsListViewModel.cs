@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -17,7 +18,7 @@ public partial class ProcessorsListViewModel : ObservableObject
 {
     private readonly IStringLocalizer                 _localizer;
     private readonly ILogger<ProcessorsListViewModel> _logger;
-    private readonly INavigator                       _navigator;
+    private readonly IRegionManager                   _regionManager;
     private readonly ProcessorsService                _processorsService;
 
     [ObservableProperty]
@@ -39,12 +40,12 @@ public partial class ProcessorsListViewModel : ObservableObject
     private ObservableCollection<ProcessorListItem> _processorsList = [];
 
     public ProcessorsListViewModel(ProcessorsService                processorsService, IStringLocalizer localizer,
-                                   ILogger<ProcessorsListViewModel> logger,            INavigator       navigator)
+                                   ILogger<ProcessorsListViewModel> logger,            IRegionManager   regionManager)
     {
         _processorsService         = processorsService;
         _localizer                 = localizer;
         _logger                    = logger;
-        _navigator                 = navigator;
+        _regionManager             = regionManager;
         LoadData                   = new AsyncRelayCommand(LoadDataAsync);
         NavigateToProcessorCommand = new AsyncRelayCommand<ProcessorListItem>(NavigateToProcessorAsync);
     }
@@ -147,21 +148,22 @@ public partial class ProcessorsListViewModel : ObservableObject
     /// <summary>
     ///     Navigates to the Processor detail view
     /// </summary>
-    private async Task NavigateToProcessorAsync(ProcessorListItem? processor)
+    private Task NavigateToProcessorAsync(ProcessorListItem? processor)
     {
-        if(processor is null) return;
+        if(processor is null) return Task.CompletedTask;
 
         _logger.LogInformation("Navigating to Processor detail: {ProcessorName} (ID: {ProcessorId})",
                                processor.Name,
                                processor.Id);
 
-        // Navigate to Processor detail view with navigation parameter
-        var navParam = new ProcessorDetailNavigationParameter
+        var parameters = new NavigationParameters
         {
-            ProcessorId      = processor.Id,
-            NavigationSource = this
+            { NavParamKeys.ProcessorId, processor.Id },
+            { NavParamKeys.NavigationSource, nameof(ProcessorsListViewModel) }
         };
 
-        await _navigator.NavigateViewModelAsync<ProcessorDetailViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ProcessorDetailPage), parameters);
+
+        return Task.CompletedTask;
     }
 }

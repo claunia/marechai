@@ -1,284 +1,183 @@
+using System;
 using System.Net.Http;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.ViewModels;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.App.Services.Caching;
+using Microsoft.Extensions.Localization;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
+using Microsoft.Kiota.Serialization.Json;
+using Microsoft.Kiota.Serialization.Multipart;
 using Microsoft.UI.Xaml;
-using Uno.Extensions;
+using Serilog;
+using Serilog.Events;
 using Uno.Extensions.Authentication;
-using Uno.Extensions.Configuration;
-using Uno.Extensions.Hosting;
-using Uno.Extensions.Http;
-using Uno.Extensions.Localization;
-using Uno.Extensions.Navigation;
 using Uno.UI;
-using CompanyDetailViewModel = Marechai.App.Presentation.ViewModels.CompanyDetailViewModel;
-using ComputersListViewModel = Marechai.App.Presentation.ViewModels.ComputersListViewModel;
-using ComputersViewModel = Marechai.App.Presentation.ViewModels.ComputersViewModel;
-using GpuDetailViewModel = Marechai.App.Presentation.ViewModels.GpuDetailViewModel;
-using GpuListViewModel = Marechai.App.Presentation.ViewModels.GpusListViewModel;
-using MachineViewViewModel = Marechai.App.Presentation.ViewModels.MachineViewViewModel;
-using MainViewModel = Marechai.App.Presentation.ViewModels.MainViewModel;
-using NewsViewModel = Marechai.App.Presentation.ViewModels.NewsViewModel;
-using PhotoDetailViewModel = Marechai.App.Presentation.ViewModels.PhotoDetailViewModel;
-using ProcessorDetailViewModel = Marechai.App.Presentation.ViewModels.ProcessorDetailViewModel;
-using ProcessorsListViewModel = Marechai.App.Presentation.ViewModels.ProcessorsListViewModel;
-using SettingsViewModel = Marechai.App.Presentation.ViewModels.SettingsViewModel;
-using SoundSynthDetailViewModel = Marechai.App.Presentation.ViewModels.SoundSynthDetailViewModel;
-using SoundSynthsListViewModel = Marechai.App.Presentation.ViewModels.SoundSynthsListViewModel;
-using LoginViewModel = Marechai.App.Presentation.ViewModels.LoginViewModel;
 
 namespace Marechai.App;
 
-public partial class App : Application
+public partial class App : PrismApplication
 {
-    /// <summary>
-    ///     Initializes the singleton application object. This is the first line of authored code
-    ///     executed, and as such is the logical equivalent of main() or WinMain().
-    /// </summary>
-    public App()
+    protected override UIElement CreateShell() => Container.Resolve<MainPage>();
+
+    protected override void ConfigureHost(IHostBuilder builder)
     {
-        InitializeComponent();
+        builder
+           .UseSerilog((context, config) =>
+            {
+                config.MinimumLevel.Is(LogEventLevel.Information)
+                      .WriteTo.Console();
+            });
     }
 
-    protected Window? MainWindow { get; private set; }
-    public    IHost?  Host       { get; private set; }
-
-    protected override async void OnLaunched(LaunchActivatedEventArgs args)
+    protected override void ConfigureWindow(Window window)
     {
-        IApplicationBuilder builder = this.CreateBuilder(args)
-
-                                           // Add navigation support for toolkit controls such as TabBar and NavigationView
-                                          .UseToolkitNavigation()
-                                          .Configure(host => host
 #if DEBUG
-
-                                                             // Switch to Development environment when running in DEBUG
-                                                            .UseEnvironment(Environments.Development)
+        window.UseStudio();
 #endif
-                                                            .UseLogging((context, logBuilder) =>
-                                                                        {
-                                                                            // Configure log levels for different categories of logging
-                                                                            logBuilder
-                                                                               .SetMinimumLevel(context
-                                                                                   .HostingEnvironment
-                                                                                   .IsDevelopment()
-                                                                                    ? LogLevel.Information
-                                                                                    : LogLevel.Warning)
-
-                                                                                // Default filters for core Uno Platform namespaces
-                                                                               .CoreLogLevel(LogLevel.Warning);
-
-                                                                            // Uno Platform namespace filter groups
-                                                                            // Uncomment individual methods to see more detailed logging
-                                                                            //// Generic Xaml events
-                                                                            //logBuilder.XamlLogLevel(LogLevel.Debug);
-                                                                            //// Layout specific messages
-                                                                            //logBuilder.XamlLayoutLogLevel(LogLevel.Debug);
-                                                                            //// Storage messages
-                                                                            //logBuilder.StorageLogLevel(LogLevel.Debug);
-                                                                            //// Binding related messages
-                                                                            //logBuilder.XamlBindingLogLevel(LogLevel.Debug);
-                                                                            //// Binder memory references tracking
-                                                                            //logBuilder.BinderMemoryReferenceLogLevel(LogLevel.Debug);
-                                                                            //// DevServer and HotReload related
-                                                                            //logBuilder.HotReloadCoreLogLevel(LogLevel.Information);
-                                                                            //// Debug JS interop
-                                                                            //logBuilder.WebAssemblyLogLevel(LogLevel.Debug);
-                                                                        },
-                                                                        true)
-                                                            .UseSerilog(true, true)
-                                                            .UseConfiguration(configure: configBuilder =>
-                                                                                  configBuilder.EmbeddedSource<App>()
-                                                                                     .Section<AppConfig>())
-
-                                                             // Enable localization (see appsettings.json for supported languages)
-                                                            .UseLocalization()
-                                                            .UseHttp((context, services) =>
-                                                             {
-                                                                 services.AddTransient<DelegatingHandler,
-                                                                     HttpAuthHandler>();
-#if DEBUG
-
-                                                                 // DelegatingHandler will be automatically injected
-                                                                 services
-                                                                    .AddTransient<DelegatingHandler,
-                                                                         DebugHttpHandler>();
-#endif
-                                                                 services.AddKiotaClientV2<ApiClient>(context,
-                                                                     new EndpointOptions
-                                                                     {
-                                                                         Url = context.Configuration
-                                                                                  .GetSection("ApiClient:Url")
-                                                                                  .Value ??
-
-                                                                               // Fallback to a default URL if not configured
-                                                                               "https://localhost:5023"
-                                                                     });
-                                                             })
-                                                            .ConfigureServices((context, services) =>
-                                                             {
-                                                                 // Register application services
-                                                                 services
-                                                                    .AddSingleton<IColorThemeService,
-                                                                         ColorThemeService>();
-
-                                                                 services
-                                                                    .AddSingleton<IAuthenticationService,
-                                                                         AuthService>();
-
-                                                                 services.AddSingleton<ITokenService, TokenService>();
-                                                                 services.AddSingleton<IJwtService, JwtService>();
-                                                                 services.AddSingleton<FlagCache>();
-                                                                 services.AddSingleton<CompanyLogoCache>();
-                                                                 services.AddSingleton<MachinePhotoCache>();
-                                                                 services.AddSingleton<NewsService>();
-                                                                 services.AddSingleton<NewsViewModel>();
-                                                                 services.AddSingleton<ComputersService>();
-                                                                 services.AddSingleton<ComputersViewModel>();
-                                                                 services.AddSingleton<ConsolesService>();
-                                                                 services.AddSingleton<ConsolesViewModel>();
-                                                                 services.AddSingleton<CompaniesService>();
-                                                                 services.AddSingleton<CompaniesViewModel>();
-                                                                 services.AddSingleton<CompanyDetailService>();
-                                                                 services.AddSingleton<CompanyDetailViewModel>();
-                                                                 services.AddSingleton<MachineViewViewModel>();
-                                                                 services.AddSingleton<GpusService>();
-                                                                 services.AddSingleton<ProcessorsService>();
-                                                                 services.AddSingleton<SoundSynthsService>();
-                                                                 services.AddTransient<PhotoDetailViewModel>();
-
-                                                                 services
-                                                                    .AddSingleton<IComputersListFilterContext,
-                                                                         ComputersListFilterContext>();
-
-                                                                 services
-                                                                    .AddSingleton<IConsolesListFilterContext,
-                                                                         ConsolesListFilterContext>();
-
-                                                                 services.AddTransient<ComputersListViewModel>();
-                                                                 services.AddTransient<ConsolesListViewModel>();
-                                                                 services.AddTransient<GpuListViewModel>();
-                                                                 services.AddTransient<GpuDetailViewModel>();
-                                                                 services.AddTransient<ProcessorsListViewModel>();
-                                                                 services.AddTransient<ProcessorDetailViewModel>();
-                                                                 services.AddTransient<SoundSynthsListViewModel>();
-                                                                 services.AddTransient<SoundSynthDetailViewModel>();
-                                                                 services.AddTransient<SettingsViewModel>();
-                                                                 services.AddTransient<LoginViewModel>();
-                                                             })
-                                                            .UseNavigation(RegisterRoutes));
-
-        MainWindow = builder.Window;
-
-#if DEBUG
-        MainWindow.UseStudio();
-#endif
-        MainWindow.SetWindowIcon();
-
-        Host = await builder.NavigateAsync<Shell>();
+        window.SetWindowIcon();
     }
 
-    private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
-        views.Register(new ViewMap(ViewModel: typeof(ShellViewModel)),
-                       new ViewMap<MainPage, MainViewModel>(),
-                       new ViewMap<LoginPage, LoginViewModel>(),
-                       new ViewMap<NewsPage, NewsViewModel>(),
-                       new ViewMap<ComputersPage, ComputersViewModel>(),
-                       new ViewMap<ComputersListPage, ComputersListViewModel>(),
-                       new ViewMap<ConsolesPage, ConsolesViewModel>(),
-                       new ViewMap<ConsolesListPage, ConsolesListViewModel>(),
-                       new ViewMap<CompaniesPage, CompaniesViewModel>(),
-                       new ViewMap<CompanyDetailPage, CompanyDetailViewModel>(),
-                       new ViewMap<MachineViewPage, MachineViewViewModel>(),
-                       new ViewMap<PhotoDetailPage, PhotoDetailViewModel>(),
-                       new ViewMap<GpuListPage, GpuListViewModel>(),
-                       new ViewMap<GpuDetailPage, GpuDetailViewModel>(),
-                       new ViewMap<ProcessorListPage, ProcessorsListViewModel>(),
-                       new ViewMap<ProcessorDetailPage, ProcessorDetailViewModel>(),
-                       new ViewMap<SoundSynthListPage, SoundSynthsListViewModel>(),
-                       new ViewMap<SoundSynthDetailPage, SoundSynthDetailViewModel>(),
-                       new ViewMap<SettingsPage, SettingsViewModel>(),
-                       new ViewMap<UsersPage, UsersViewModel>());
+        // Logging — create first since other services depend on it
+        var loggerFactory = LoggerFactory.Create(logging =>
+        {
+            logging.SetMinimumLevel(LogLevel.Information);
+            logging.AddSerilog(dispose: true);
+        });
 
-        routes.Register(new RouteMap("",
-                                     views.FindByViewModel<ShellViewModel>(),
-                                     Nested:
-                                     [
-                                         new RouteMap("Login", views.FindByViewModel<LoginViewModel>()),
-                                         new RouteMap("Main",
-                                                      views.FindByViewModel<MainViewModel>(),
-                                                      true,
-                                                      Nested:
-                                                      [
-                                                          new RouteMap("News",
-                                                                       views.FindByViewModel<NewsViewModel>(),
-                                                                       true),
-                                                          new RouteMap("computers",
-                                                                       views.FindByViewModel<ComputersViewModel>(),
-                                                                       Nested
-                                                                       :
-                                                                       [
-                                                                           new RouteMap("list-computers",
-                                                                               views.FindByViewModel<
-                                                                                   ComputersListViewModel>()),
-                                                                           new RouteMap("view",
-                                                                               views.FindByViewModel<
-                                                                                   MachineViewViewModel>())
-                                                                       ]),
-                                                          new RouteMap("consoles",
-                                                                       views.FindByViewModel<ConsolesViewModel>(),
-                                                                       Nested
-                                                                       :
-                                                                       [
-                                                                           new RouteMap("list-consoles",
-                                                                               views.FindByViewModel<
-                                                                                   ConsolesListViewModel>())
-                                                                       ]),
-                                                          new RouteMap("companies",
-                                                                       views.FindByViewModel<CompaniesViewModel>(),
-                                                                       Nested
-                                                                       :
-                                                                       [
-                                                                           new RouteMap("company-details",
-                                                                               views.FindByViewModel<
-                                                                                   CompanyDetailViewModel>())
-                                                                       ]),
-                                                          new RouteMap("gpus",
-                                                                       views.FindByViewModel<GpuListViewModel>(),
-                                                                       Nested
-                                                                       :
-                                                                       [
-                                                                           new RouteMap("gpu-details",
-                                                                               views.FindByViewModel<
-                                                                                   GpuDetailViewModel>())
-                                                                       ]),
-                                                          new RouteMap("processors",
-                                                                       views.FindByViewModel<ProcessorsListViewModel>(),
-                                                                       Nested:
-                                                                       [
-                                                                           new RouteMap("processor-details",
-                                                                               views.FindByViewModel<
-                                                                                   ProcessorDetailViewModel>())
-                                                                       ]),
-                                                          new RouteMap("sound-synths",
-                                                                       views.FindByViewModel<
-                                                                           SoundSynthsListViewModel>(),
-                                                                       Nested:
-                                                                       [
-                                                                           new RouteMap("sound-synth-details",
-                                                                               views.FindByViewModel<
-                                                                                   SoundSynthDetailViewModel>()),
-                                                                           new RouteMap("machine-view",
-                                                                               views.FindByViewModel<
-                                                                                   MachineViewViewModel>())
-                                                                       ]),
-                                                          new RouteMap("settings",
-                                                                       views.FindByViewModel<SettingsViewModel>()),
-                                                          new RouteMap("users", views.FindByViewModel<UsersViewModel>())
-                                                      ])
-                                     ]));
+        containerRegistry.RegisterInstance<ILoggerFactory>(loggerFactory);
+        containerRegistry.RegisterSingleton(typeof(ILogger<>), typeof(Logger<>));
+
+        // Localization via Microsoft.Extensions.Localization
+        var locServices = new ServiceCollection();
+        locServices.AddSingleton<ILoggerFactory>(loggerFactory);
+        locServices.AddLocalization(options => options.ResourcesPath = "Resources");
+
+        ServiceProvider locProvider = locServices.BuildServiceProvider();
+
+        containerRegistry.RegisterInstance<IStringLocalizerFactory>(
+            locProvider.GetRequiredService<IStringLocalizerFactory>());
+
+        containerRegistry.RegisterSingleton<IStringLocalizer>(() =>
+            Container.Resolve<IStringLocalizerFactory>().Create("Resources", typeof(App).Assembly.GetName().Name!));
+
+        containerRegistry.RegisterInstance<IOptions<AppConfig>>(Options.Create(new AppConfig()));
+
+        // HTTP client + Kiota ApiClient
+        containerRegistry.RegisterSingleton<HttpAuthHandler>();
+#if DEBUG
+        containerRegistry.RegisterSingleton<DebugHttpHandler>();
+#endif
+        containerRegistry.RegisterSingleton<ApiClient>(() =>
+        {
+            var tokenService = Container.Resolve<ITokenService>();
+
+            var authHandler = new HttpAuthHandler(tokenService);
+
+#if DEBUG
+            var debugLogger  = loggerFactory.CreateLogger<DebugHttpHandler>();
+            var debugHandler = new DebugHttpHandler(debugLogger, new HttpClientHandler());
+            authHandler.InnerHandler = debugHandler;
+#else
+            authHandler.InnerHandler = new HttpClientHandler();
+#endif
+
+            var httpClient = new HttpClient(authHandler)
+            {
+                BaseAddress = new Uri("http://localhost:5023")
+            };
+
+            var authProvider              = new AnonymousAuthenticationProvider();
+            var parseNodeFactory          = new JsonParseNodeFactory();
+            var serializationWriterFactory = new CompositeSerializationWriterFactory();
+            serializationWriterFactory.AddFactory(new JsonSerializationWriterFactory());
+            serializationWriterFactory.AddFactory(new MultipartSerializationWriterFactory());
+
+            var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory,
+                                                              serializationWriterFactory, httpClient);
+
+            return new ApiClient(requestAdapter);
+        });
+
+        // Application services
+        containerRegistry.RegisterSingleton<IColorThemeService, ColorThemeService>();
+        containerRegistry.RegisterSingleton<IAuthenticationService, AuthService>();
+        containerRegistry.RegisterSingleton<ITokenService, TokenService>();
+        containerRegistry.RegisterSingleton<IJwtService, JwtService>();
+        containerRegistry.RegisterSingleton<FlagCache>();
+        containerRegistry.RegisterSingleton<CompanyLogoCache>();
+        containerRegistry.RegisterSingleton<MachinePhotoCache>();
+        containerRegistry.RegisterSingleton<NewsService>();
+        containerRegistry.RegisterSingleton<ComputersService>();
+        containerRegistry.RegisterSingleton<ConsolesService>();
+        containerRegistry.RegisterSingleton<CompaniesService>();
+        containerRegistry.RegisterSingleton<CompanyDetailService>();
+        containerRegistry.RegisterSingleton<GpusService>();
+        containerRegistry.RegisterSingleton<ProcessorsService>();
+        containerRegistry.RegisterSingleton<SoundSynthsService>();
+        containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
+        containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
+
+        // Register ViewModels explicitly — RegisterForNavigation creates conditional
+        // (keyed) registrations that the ViewModelLocator can't resolve by type alone
+        containerRegistry.RegisterSingleton<NewsViewModel>();
+        containerRegistry.Register<MainViewModel>();
+        containerRegistry.Register<LoginViewModel>();
+        containerRegistry.Register<ComputersViewModel>();
+        containerRegistry.Register<ComputersListViewModel>();
+        containerRegistry.Register<ConsolesViewModel>();
+        containerRegistry.Register<ConsolesListViewModel>();
+        containerRegistry.Register<CompaniesViewModel>();
+        containerRegistry.Register<CompanyDetailViewModel>();
+        containerRegistry.Register<MachineViewViewModel>();
+        containerRegistry.Register<PhotoDetailViewModel>();
+        containerRegistry.Register<GpusListViewModel>();
+        containerRegistry.Register<GpuDetailViewModel>();
+        containerRegistry.Register<ProcessorsListViewModel>();
+        containerRegistry.Register<ProcessorDetailViewModel>();
+        containerRegistry.Register<SoundSynthsListViewModel>();
+        containerRegistry.Register<SoundSynthDetailViewModel>();
+        containerRegistry.Register<SettingsViewModel>();
+        containerRegistry.Register<UsersViewModel>();
+
+        // Register views for navigation
+        containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
+        containerRegistry.RegisterForNavigation<LoginPage, LoginViewModel>();
+        containerRegistry.RegisterForNavigation<NewsPage, NewsViewModel>();
+        containerRegistry.RegisterForNavigation<ComputersPage, ComputersViewModel>();
+        containerRegistry.RegisterForNavigation<ComputersListPage, ComputersListViewModel>();
+        containerRegistry.RegisterForNavigation<ConsolesPage, ConsolesViewModel>();
+        containerRegistry.RegisterForNavigation<ConsolesListPage, ConsolesListViewModel>();
+        containerRegistry.RegisterForNavigation<CompaniesPage, CompaniesViewModel>();
+        containerRegistry.RegisterForNavigation<CompanyDetailPage, CompanyDetailViewModel>();
+        containerRegistry.RegisterForNavigation<MachineViewPage, MachineViewViewModel>();
+        containerRegistry.RegisterForNavigation<PhotoDetailPage, PhotoDetailViewModel>();
+        containerRegistry.RegisterForNavigation<GpuListPage, GpusListViewModel>();
+        containerRegistry.RegisterForNavigation<GpuDetailPage, GpuDetailViewModel>();
+        containerRegistry.RegisterForNavigation<ProcessorListPage, ProcessorsListViewModel>();
+        containerRegistry.RegisterForNavigation<ProcessorDetailPage, ProcessorDetailViewModel>();
+        containerRegistry.RegisterForNavigation<SoundSynthListPage, SoundSynthsListViewModel>();
+        containerRegistry.RegisterForNavigation<SoundSynthDetailPage, SoundSynthDetailViewModel>();
+        containerRegistry.RegisterForNavigation<SettingsPage, SettingsViewModel>();
+        containerRegistry.RegisterForNavigation<UsersPage, UsersViewModel>();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        // Initialize the Loc attached property with the IStringLocalizer
+        // so x:Uid replacements (loc:Loc.Key="...") work in XAML
+        var localizer = Container.Resolve<IStringLocalizer>();
+        Presentation.Converters.Loc.Initialize(localizer);
+        Presentation.Converters.LocalizeConverter.Initialize(localizer);
+
+        // Navigate to NewsPage as the default content view
+        RegionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
     }
 }

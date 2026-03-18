@@ -5,6 +5,7 @@
       x:Name="PageRoot"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:utu="using:Uno.Toolkit.UI"
       NavigationCacheMode="Required"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -16,7 +17,7 @@
 
         <!-- Header -->
         <utu:NavigationBar Grid.Row="0"
-                           x:Uid="ProcessorsNavBar"
+                           loc:Loc.Key="ProcessorsNavBar"
                            Content="Processors">
         </utu:NavigationBar>
 
@@ -34,7 +35,7 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock x:Uid="LoadingProcessorsText"
+                <TextBlock loc:Loc.Key="LoadingProcessorsText"
                            Text="Loading processors..."
                            FontSize="14"
                            TextAlignment="Center"
@@ -50,11 +51,11 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
-                         x:Uid="ErrorLoadingProcessorsInfoBar"
+                         loc:Loc.Key="ErrorLoadingProcessorsInfoBar"
                          Title="Unable to Load Processors"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button x:Uid="RetryButton"
+                <Button loc:Loc.Key="RetryButton"
                         Content="Retry"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
@@ -78,7 +79,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       x:Uid="ResultsLabel"
+                                       loc:Loc.Key="ResultsLabel"
                                        Text="RESULTS:" />
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
@@ -87,7 +88,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       x:Uid="ProcessorsLabel"
+                                       loc:Loc.Key="ProcessorsLabel"
                                        Text="processors" />
                         </StackPanel>
 

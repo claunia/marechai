@@ -2,6 +2,7 @@
 <Page x:Class="Marechai.App.Presentation.Views.SettingsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:vm="using:Marechai.App.Presentation.ViewModels"
@@ -28,11 +29,11 @@
                 
                 <!-- Theme Section -->
                 <StackPanel Spacing="8">
-                    <TextBlock x:Uid="SettingsPage_ThemeSection_Header"
+                    <TextBlock loc:Loc.Key="SettingsPage_ThemeSection_Header"
                                Text="Appearance"
                                Style="{ThemeResource SubtitleTextBlockStyle}"/>
                     
-                    <TextBlock x:Uid="SettingsPage_ThemeSection_Description"
+                    <TextBlock loc:Loc.Key="SettingsPage_ThemeSection_Description"
                                Text="Select your preferred color theme"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -41,7 +42,7 @@
 
                     <!-- Brightness Theme Selector (Light/Dark/System) -->
                     <ComboBox x:Name="BrightnessThemeSelector"
-                              x:Uid="SettingsPage_BrightnessThemeSelector"
+                              loc:Loc.Key="SettingsPage_BrightnessThemeSelector"
                               Header="Brightness"
                               ItemsSource="{Binding AvailableThemes}"
                               SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
@@ -57,7 +58,7 @@
 
                     <!-- Color Theme Selector (Default/Windows 3.11) -->
                     <ComboBox x:Name="ColorThemeSelector"
-                              x:Uid="SettingsPage_ColorThemeSelector"
+                              loc:Loc.Key="SettingsPage_ColorThemeSelector"
                               Header="Color Theme"
                               ItemsSource="{Binding AvailableColorThemes}"
                               SelectedItem="{Binding SelectedColorTheme, Mode=TwoWay}"
@@ -73,11 +74,11 @@
 
                 <!-- Placeholder for future settings sections -->
                 <StackPanel Spacing="8">
-                    <TextBlock x:Uid="SettingsPage_AboutSection_Header"
+                    <TextBlock loc:Loc.Key="SettingsPage_AboutSection_Header"
                                Text="About"
                                Style="{ThemeResource SubtitleTextBlockStyle}"/>
                     
-                    <TextBlock x:Uid="SettingsPage_Version"
+                    <TextBlock loc:Loc.Key="SettingsPage_Version"
                                Text="Version 1.0"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>

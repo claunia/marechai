@@ -6,18 +6,19 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
+using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
-using Uno.Extensions.Navigation;
 
 namespace Marechai.App.Presentation.ViewModels;
 
-public partial class ProcessorDetailViewModel : ObservableObject
+public partial class ProcessorDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly CompaniesService                  _companiesService;
     private readonly IStringLocalizer                  _localizer;
     private readonly ILogger<ProcessorDetailViewModel> _logger;
-    private readonly INavigator                        _navigator;
+    private readonly IRegionManager                    _regionManager;
     private readonly ProcessorsService                 _processorsService;
 
     [ObservableProperty]
@@ -69,13 +70,13 @@ public partial class ProcessorDetailViewModel : ObservableObject
 
     public ProcessorDetailViewModel(ProcessorsService processorsService, CompaniesService companiesService,
                                     IStringLocalizer  localizer,         ILogger<ProcessorDetailViewModel> logger,
-                                    INavigator        navigator)
+                                IRegionManager    regionManager)
     {
         _processorsService     = processorsService;
         _companiesService      = companiesService;
         _localizer             = localizer;
         _logger                = logger;
-        _navigator             = navigator;
+        _regionManager         = regionManager;
         LoadData               = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand          = new AsyncRelayCommand(GoBackAsync);
         SelectMachineCommand   = new AsyncRelayCommand<int>(SelectMachineAsync);
@@ -214,18 +215,14 @@ public partial class ProcessorDetailViewModel : ObservableObject
     /// <summary>
     ///     Navigates back to the Processor list
     /// </summary>
-    private async Task GoBackAsync()
+    private Task GoBackAsync()
     {
-        // If we came from a machine view, go back to machine view
-        if(_navigationSource is MachineViewViewModel machineVm)
-        {
-            await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this);
+        if(_navigationSource == nameof(MachineViewViewModel))
+            _regionManager.Regions[RegionNames.Content].NavigationService.Journal.GoBack();
+        else
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(ProcessorListPage));
 
-            return;
-        }
-
-        // Default: go back to Processor list
-        await _navigator.NavigateViewModelAsync<ProcessorsListViewModel>(this);
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -272,24 +269,44 @@ public partial class ProcessorDetailViewModel : ObservableObject
     /// <summary>
     ///     Navigates to machine detail view
     /// </summary>
-    private async Task SelectMachineAsync(int machineId)
+    private Task SelectMachineAsync(int machineId)
     {
-        if(machineId <= 0) return;
+        if(machineId <= 0) return Task.CompletedTask;
 
-        var navParam = new MachineViewNavigationParameter
+        var parameters = new NavigationParameters
         {
-            MachineId        = machineId,
-            NavigationSource = this
+            { NavParamKeys.MachineId, machineId },
+            { NavParamKeys.NavigationSource, nameof(ProcessorDetailViewModel) },
+            { NavParamKeys.ProcessorId, ProcessorId }
         };
 
-        await _navigator.NavigateViewModelAsync<MachineViewViewModel>(this, data: navParam);
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(MachineViewPage), parameters);
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
     ///     Sets the navigation source (where we came from).
     /// </summary>
-    public void SetNavigationSource(object? source)
+    public void SetNavigationSource(string? source)
     {
         _navigationSource = source;
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        if(navigationContext.Parameters.TryGetValue<int>(NavParamKeys.ProcessorId, out int processorId))
+        {
+            ProcessorId = processorId;
+
+            if(navigationContext.Parameters.TryGetValue<string>(NavParamKeys.NavigationSource, out string source))
+                SetNavigationSource(source);
+
+            _ = LoadData.ExecuteAsync(null);
+        }
     }
 }
