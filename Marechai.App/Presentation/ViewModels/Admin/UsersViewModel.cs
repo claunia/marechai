@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Services.Authentication;
 
-namespace Marechai.App.Presentation.ViewModels;
+namespace Marechai.App.Presentation.ViewModels.Admin;
 
 /// <summary>
 ///     ViewModel for user management page (Uberadmin only)

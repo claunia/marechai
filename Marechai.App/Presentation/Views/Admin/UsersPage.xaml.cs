@@ -1,13 +1,13 @@
 using System;
 using System.Diagnostics;
-using Marechai.App.Presentation.ViewModels;
+using Marechai.App.Presentation.ViewModels.Admin;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 
-namespace Marechai.App.Presentation.Views;
+namespace Marechai.App.Presentation.Views.Admin;
 
 /// <summary>
 ///     User management page for Uberadmins

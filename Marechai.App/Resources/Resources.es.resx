@@ -1017,4 +1017,13 @@
   <data name="Auth.InvalidCredentials" xml:space="preserve">
     <value>Credenciales inválidas</value>
   </data>
+  <data name="AdminSidebarTitle" xml:space="preserve">
+    <value>Administración</value>
+  </data>
+  <data name="AdminSwitchButton" xml:space="preserve">
+    <value>Administración</value>
+  </data>
+  <data name="BackToMainButton" xml:space="preserve">
+    <value>Volver a Navegación</value>
+  </data>
 </root>

@@ -231,9 +231,9 @@
               Visibility="{Binding IsSidebarOpen}">
             <StackPanel Orientation="Vertical"
                         Spacing="0">
-                <!-- Users (Uberadmin only) -->
-                <Button Content="{Binding UserManagementButtonText}"
-                        Command="{Binding NavigateToUsersCommand}"
+                <!-- Administration (Admin/UberAdmin only) -->
+                <Button Content="{Binding AdminSwitchButtonText}"
+                        Command="{Binding SwitchToAdminSidebarCommand}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
                         Padding="16,10,16,10"
@@ -242,7 +242,7 @@
                         Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                         BorderThickness="0"
                         CornerRadius="0"
-                        Visibility="{Binding IsUberadminUser, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding IsAdminUser, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                 <!-- Login/Logout -->
                 <Button Content="{Binding LoginLogoutButtonText}"
