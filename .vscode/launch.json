@@ -1,0 +1,74 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Server (Marechai.Server)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Marechai.Server/bin/Debug/net10.0/Marechai.Server.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Marechai.Server",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "serverReadyAction": {
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s",
+                "action": "openExternally"
+            },
+            "preLaunchTask": "build-server"
+        },
+        {
+            "name": "Desktop App (Marechai.App - net10.0-desktop)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Marechai.App/bin/Debug/net10.0-desktop/Marechai.App.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Marechai.App",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "preLaunchTask": "build-app-desktop"
+        },
+        {
+            "name": "WebAssembly (Marechai.App - net10.0-browserwasm)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Marechai.App/bin/Debug/net10.0-browserwasm/Marechai.App.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Marechai.App",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "serverReadyAction": {
+                "pattern": "Now listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s",
+                "action": "openExternally"
+            },
+            "preLaunchTask": "build-app-wasm"
+        },
+        {
+            "name": "Server + Desktop App",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Marechai.Server/bin/Debug/net10.0/Marechai.Server.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Marechai.Server",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "preLaunchTask": "build-and-run-both",
+            "presentation": {
+                "group": "3-combined",
+                "order": 1
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Server + Desktop App (Compound)",
+            "configurations": [
+                "Server (Marechai.Server)",
+                "Desktop App (Marechai.App - net10.0-desktop)"
+            ],
+            "stopAll": true,
+            "preLaunchTask": "build-all"
+        }
+    ]
+}
