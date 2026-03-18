@@ -34,7 +34,7 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock loc:Loc.Key="LoadingText" Text="Loading graphics processing units..."
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
                            FontSize="14"
                            TextAlignment="Center"
                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -49,12 +49,11 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
-                         loc:Loc.Key="GpuErrorInfoBar"
-                         Title="Unable to Load Graphics Processing Units"
+                         Title="{Binding Source={StaticResource Strings}, Path=GpuErrorInfoBar_Title}"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button loc:Loc.Key="RetryButton"
-                        Content="Retry"
+                <Button
+                        Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
                         Style="{ThemeResource AccentButtonStyle}" />
@@ -77,8 +76,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       loc:Loc.Key="ResultsLabel"
-                                       Text="RESULTS:" />
+                                       Text="{Binding Source={StaticResource Strings}, Path=ResultsLabel}" />
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
@@ -86,8 +84,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       loc:Loc.Key="GpuLabel"
-                                       Text="graphics processing units" />
+                                       Text="{Binding Source={StaticResource Strings}, Path=GpuLabel}" />
                         </StackPanel>
 
                         <!-- GPUs List -->

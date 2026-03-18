@@ -21,14 +21,14 @@
                     <!-- News Title Section -->
                     <StackPanel Grid.Row="0"
                                 Margin="0,0,0,16">
-                        <TextBlock loc:Loc.Key="LatestNewsTitle"
-                                   Text="Latest News"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=LatestNewsTitle}"
                                    FontSize="32"
                                    FontWeight="Bold"
                                    Foreground="{ThemeResource SystemAccentColor}"
                                    Margin="0,0,0,8" />
-                        <TextBlock loc:Loc.Key="LatestNewsSubtitle"
-                                   Text="Stay updated with the latest additions to the database"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=LatestNewsSubtitle}"
                                    FontSize="14"
                                    Foreground="{ThemeResource SystemBaseMediumColor}"
                                    TextWrapping="Wrap" />
@@ -46,8 +46,8 @@
                                       Height="48"
                                       Width="48"
                                       Foreground="{ThemeResource SystemAccentColor}" />
-                        <TextBlock loc:Loc.Key="LoadingNewsText"
-                                   Text="Loading latest news..."
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=LoadingNewsText}"
                                    FontSize="16"
                                    TextAlignment="Center"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -61,12 +61,11 @@
                                 Padding="32">
                         <InfoBar IsOpen="True"
                                  Severity="Error"
-                                 loc:Loc.Key="ErrorLoadingNewsInfoBar"
-                                 Title="Unable to Load News"
+                                 Title="{Binding Source={StaticResource Strings}, Path=ErrorLoadingNewsInfoBar_Title}"
                                  Message="{Binding ErrorMessage}"
                                  IsClosable="False" />
-                        <Button loc:Loc.Key="RetryButton"
-                                Content="Retry"
+                        <Button
+                                Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
                                 Command="{Binding LoadNews}"
                                 HorizontalAlignment="Center"
                                 Style="{ThemeResource AccentButtonStyle}" />

@@ -67,11 +67,20 @@ public partial class App : PrismApplication
 
         ServiceProvider locProvider = locServices.BuildServiceProvider();
 
-        containerRegistry.RegisterInstance<IStringLocalizerFactory>(
-            locProvider.GetRequiredService<IStringLocalizerFactory>());
+        var locFactory = locProvider.GetRequiredService<IStringLocalizerFactory>();
+        var stringLocalizer = locFactory.Create("Resources", typeof(App).Assembly.GetName().Name!);
 
-        containerRegistry.RegisterSingleton<IStringLocalizer>(() =>
-            Container.Resolve<IStringLocalizerFactory>().Create("Resources", typeof(App).Assembly.GetName().Name!));
+        containerRegistry.RegisterInstance<IStringLocalizerFactory>(locFactory);
+        containerRegistry.RegisterInstance<IStringLocalizer>(stringLocalizer);
+
+        // Initialize localization helpers
+        Presentation.Converters.Loc.Initialize(stringLocalizer);
+        Presentation.Converters.LocalizeConverter.Initialize(stringLocalizer);
+
+        // Create LocalizedStrings and add as XAML resource for binding
+        var localizedStrings = new LocalizedStrings(stringLocalizer);
+        containerRegistry.RegisterInstance(localizedStrings);
+        Resources["Strings"] = localizedStrings;
 
         containerRegistry.RegisterInstance<IOptions<AppConfig>>(Options.Create(new AppConfig()));
 
@@ -177,12 +186,6 @@ public partial class App : PrismApplication
     protected override async void OnInitialized()
     {
         base.OnInitialized();
-
-        // Initialize the Loc attached property with the IStringLocalizer
-        // so x:Uid replacements (loc:Loc.Key="...") work in XAML
-        var localizer = Container.Resolve<IStringLocalizer>();
-        Presentation.Converters.Loc.Initialize(localizer);
-        Presentation.Converters.LocalizeConverter.Initialize(localizer);
 
         // Navigate to NewsPage as the default content view
         RegionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));

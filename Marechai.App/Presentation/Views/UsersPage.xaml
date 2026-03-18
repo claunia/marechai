@@ -24,13 +24,13 @@
 
             <!-- Page Title -->
             <StackPanel VerticalAlignment="Center">
-                <TextBlock loc:Loc.Key="UserManagementTitle"
-                           Text="User Management"
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=UserManagementTitle}"
                            FontSize="20"
                            FontWeight="SemiBold"
                            Foreground="{ThemeResource TextControlForeground}" />
-                <TextBlock loc:Loc.Key="UserManagementSubtitle"
-                           Text="Manage users, roles, and permissions"
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=UserManagementSubtitle}"
                            FontSize="12"
                            Foreground="{ThemeResource SystemBaseMediumColor}"
                            Margin="0,4,0,0" />
@@ -49,8 +49,7 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Warning"
-                         loc:Loc.Key="UserMgmtAccessDeniedInfoBar"
-                         Title="Access Denied"
+                         Title="{Binding Source={StaticResource Strings}, Path=UserMgmtAccessDeniedInfoBar_Title}"
                          Message="You must be an Uberadmin to access user management."
                          IsClosable="False" />
             </StackPanel>
@@ -70,8 +69,8 @@
                                   Height="64"
                                   Width="64"
                                   Foreground="{ThemeResource SystemAccentColor}" />
-                    <TextBlock loc:Loc.Key="LoadingText"
-                               Text="Loading users..."
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
                                FontSize="14"
                                TextAlignment="Center"
                                Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -87,8 +86,7 @@
                             Canvas.ZIndex="100">
                     <InfoBar IsOpen="True"
                              Severity="Error"
-                             loc:Loc.Key="ErrorLoadingUsersInfoBar"
-                             Title="Unable to Load Users"
+                             Title="{Binding Source={StaticResource Strings}, Path=ErrorLoadingUsersInfoBar_Title}"
                              Message="{Binding ErrorMessage}"
                              IsClosable="False" />
                     <Button Content="Retry"
@@ -108,12 +106,10 @@
                     <CommandBar Grid.Row="0"
                                 DefaultLabelPosition="Right">
                         <AppBarButton Icon="Add"
-                                      loc:Loc.Key="AddUserButton"
-                                      Label="Add User"
+                                      Label="{Binding Source={StaticResource Strings}, Path=AddUserButton}"
                                       Command="{Binding OpenAddUserDialogCommand}" />
                         <AppBarButton Icon="Refresh"
-                                      loc:Loc.Key="RefreshUsersButton"
-                                      Label="Refresh"
+                                      Label="{Binding Source={StaticResource Strings}, Path=RefreshUsersButton}"
                                       Command="{Binding LoadUsersCommand}" />
                     </CommandBar>
 
@@ -135,57 +131,53 @@
                                        VerticalScrollBarVisibility="Auto">
 
                         <controls:DataGrid.Columns>
-                            <controls:DataGridTextColumn loc:Loc.Key="EmailColumn"
-                                                         Header="Email"
+                            <controls:DataGridTextColumn
+                                                         Header="{Binding Source={StaticResource Strings}, Path=EmailColumn_Header}"
                                                          Binding="{Binding Email}"
                                                          Width="2*" />
 
-                            <controls:DataGridTextColumn loc:Loc.Key="UsernameColumn"
-                                                         Header="Username"
+                            <controls:DataGridTextColumn
+                                                         Header="{Binding Source={StaticResource Strings}, Path=UsernameColumn_Header}"
                                                          Binding="{Binding UserName}"
                                                          Width="*" />
 
-                            <controls:DataGridTextColumn loc:Loc.Key="PhoneColumn"
-                                                         Header="Phone"
+                            <controls:DataGridTextColumn
+                                                         Header="{Binding Source={StaticResource Strings}, Path=PhoneColumn_Header}"
                                                          Binding="{Binding PhoneNumber}"
                                                          Width="*" />
 
-                            <controls:DataGridTextColumn loc:Loc.Key="RolesColumn"
-                                                         Header="Roles"
+                            <controls:DataGridTextColumn
+                                                         Header="{Binding Source={StaticResource Strings}, Path=RolesColumn_Header}"
                                                          Width="2*"
                                                          Binding="{Binding Roles, Converter={StaticResource RolesListConverter}}" />
 
-                            <controls:DataGridTemplateColumn loc:Loc.Key="ActionsColumn"
+                            <controls:DataGridTemplateColumn Text="{Binding Source={StaticResource Strings}, Path=ActionsColumn}"
                                                              Header="Actions"
                                                              Width="Auto">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal"
                                                     Spacing="4">
-                                            <Button Content="Edit"
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=EditUserButton}"
                                                     Command="{Binding DataContext.OpenEditUserDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
-                                                    loc:Loc.Key="EditUserButton"
                                                     Padding="8,4" />
-                                            <Button Content="Password"
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=ChangePasswordButton}"
                                                     Command="{Binding DataContext.OpenChangePasswordDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
-                                                    loc:Loc.Key="ChangePasswordButton"
                                                     Padding="8,4" />
-                                            <Button Content="Roles"
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=ManageRolesButton}"
                                                     Command="{Binding DataContext.OpenManageRolesDialogCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
-                                                    loc:Loc.Key="ManageRolesButton"
                                                     Padding="8,4" />
-                                            <Button Content="Delete"
+                                            <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteUserButton}"
                                                     Command="{Binding DataContext.DeleteUserCommand, ElementName=PageRoot}"
                                                     CommandParameter="{Binding}"
                                                     Foreground="{ThemeResource SystemErrorTextColor}"
                                                     Style="{ThemeResource TextBlockButtonStyle}"
-                                                    loc:Loc.Key="DeleteUserButton"
                                                     Padding="8,4" />
                                         </StackPanel>
                                     </DataTemplate>

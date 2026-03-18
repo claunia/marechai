@@ -23,8 +23,7 @@
                            Content="{Binding Path=Title}"
                            MainCommandMode="Action">
             <utu:NavigationBar.MainCommand>
-                <AppBarButton Icon="Back"
-                              loc:Loc.Key="BackButton"
+                <AppBarButton Label="{Binding Source={StaticResource Strings}, Path=BackButton}" Icon="Back"
                               Command="{Binding GoBackCommand}"
                               AutomationProperties.Name="Go back" />
             </utu:NavigationBar.MainCommand>
@@ -45,8 +44,8 @@
                                   IsIndeterminate="True"
                                   Height="48"
                                   Width="48" />
-                    <TextBlock loc:Loc.Key="LoadingText"
-                               Text="Loading..."
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
                                TextAlignment="Center"
                                FontSize="14" />
                 </StackPanel>
@@ -57,8 +56,8 @@
                             Background="{ThemeResource SystemErrorBackgroundColor}"
                             CornerRadius="8"
                             Spacing="8">
-                    <TextBlock loc:Loc.Key="ErrorText"
-                               Text="Error"
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=ErrorText}"
                                FontWeight="Bold"
                                Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
                     <TextBlock Text="{Binding ErrorMessage}"
@@ -81,8 +80,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock loc:Loc.Key="ManufacturerText"
-                                   Text="Manufacturer"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=ManufacturerText}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -97,8 +96,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock loc:Loc.Key="ModelCodeText"
-                                   Text="Model Code"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=ModelCodeText}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -113,8 +112,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock loc:Loc.Key="IntroducedText"
-                                   Text="Introduced"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=IntroducedText}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -128,8 +127,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock loc:Loc.Key="VoicesText"
-                                   Text="Voices"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=VoicesText}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -144,8 +143,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock loc:Loc.Key="FrequencyText"
-                                   Text="Frequency (Hz)"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=FrequencyText}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -160,8 +159,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock loc:Loc.Key="DepthText"
-                                   Text="Depth (bits)"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=DepthText}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -176,8 +175,8 @@
                                 CornerRadius="8"
                                 Padding="12"
                                 Spacing="8">
-                        <TextBlock loc:Loc.Key="TypeText"
-                                   Text="Type"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=TypeText}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -191,8 +190,8 @@
                                 Spacing="8">
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8">
-                            <TextBlock loc:Loc.Key="ComputersText"
-                                       Text="Computers"
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=ComputersText}"
                                        FontSize="14"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -203,8 +202,8 @@
                         </StackPanel>
 
                         <!-- Filter Box -->
-                        <AutoSuggestBox loc:Loc.Key="ComputersFilterBox"
-                                        PlaceholderText="Filter computers..."
+                        <AutoSuggestBox
+                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=ComputersFilterBox_Placeholder}"
                                         Text="{Binding ComputersFilterText, Mode=TwoWay}"
                                         TextChanged="ComputersSearchBox_TextChanged"
                                         BorderThickness="1"
@@ -255,8 +254,8 @@
                                 Spacing="8">
                         <StackPanel Orientation="Horizontal"
                                     Spacing="8">
-                            <TextBlock loc:Loc.Key="ConsolesText"
-                                       Text="Consoles"
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=ConsolesText}"
                                        FontSize="14"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -267,8 +266,8 @@
                         </StackPanel>
 
                         <!-- Filter Box -->
-                        <AutoSuggestBox loc:Loc.Key="ConsolesFilterBox"
-                                        PlaceholderText="Filter consoles..."
+                        <AutoSuggestBox
+                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=ConsolesFilterBox_Placeholder}"
                                         Text="{Binding ConsolesFilterText, Mode=TwoWay}"
                                         TextChanged="ConsolesSearchBox_TextChanged"
                                         BorderThickness="1"

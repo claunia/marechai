@@ -29,12 +29,12 @@
                 
                 <!-- Theme Section -->
                 <StackPanel Spacing="8">
-                    <TextBlock loc:Loc.Key="SettingsPage_ThemeSection_Header"
-                               Text="Appearance"
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_ThemeSection_Header}"
                                Style="{ThemeResource SubtitleTextBlockStyle}"/>
                     
-                    <TextBlock loc:Loc.Key="SettingsPage_ThemeSection_Description"
-                               Text="Select your preferred color theme"
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_ThemeSection_Description}"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                TextWrapping="Wrap"
@@ -42,8 +42,7 @@
 
                     <!-- Brightness Theme Selector (Light/Dark/System) -->
                     <ComboBox x:Name="BrightnessThemeSelector"
-                              loc:Loc.Key="SettingsPage_BrightnessThemeSelector"
-                              Header="Brightness"
+                              Header="{Binding Source={StaticResource Strings}, Path=SettingsPage_BrightnessThemeSelector_Header}"
                               ItemsSource="{Binding AvailableThemes}"
                               SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
                               HorizontalAlignment="Stretch"
@@ -58,8 +57,7 @@
 
                     <!-- Color Theme Selector (Default/Windows 3.11) -->
                     <ComboBox x:Name="ColorThemeSelector"
-                              loc:Loc.Key="SettingsPage_ColorThemeSelector"
-                              Header="Color Theme"
+                              Header="{Binding Source={StaticResource Strings}, Path=SettingsPage_ColorThemeSelector_Header}"
                               ItemsSource="{Binding AvailableColorThemes}"
                               SelectedItem="{Binding SelectedColorTheme, Mode=TwoWay}"
                               HorizontalAlignment="Stretch"
@@ -74,12 +72,12 @@
 
                 <!-- Placeholder for future settings sections -->
                 <StackPanel Spacing="8">
-                    <TextBlock loc:Loc.Key="SettingsPage_AboutSection_Header"
-                               Text="About"
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_AboutSection_Header}"
                                Style="{ThemeResource SubtitleTextBlockStyle}"/>
                     
-                    <TextBlock loc:Loc.Key="SettingsPage_Version"
-                               Text="Version 1.0"
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=SettingsPage_Version}"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>

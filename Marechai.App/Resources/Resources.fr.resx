@@ -120,46 +120,46 @@
   <data name="ApplicationName" xml:space="preserve">
     <value>Marechai.App-fr</value>
   </data>
-  <data name="NewsButton.Content" xml:space="preserve">
+  <data name="NewsButton" xml:space="preserve">
     <value>Actualités</value>
   </data>
-  <data name="BooksButton.Content" xml:space="preserve">
+  <data name="BooksButton" xml:space="preserve">
     <value>Livres</value>
   </data>
-  <data name="CompaniesButton.Content" xml:space="preserve">
+  <data name="CompaniesButton" xml:space="preserve">
     <value>Entreprises</value>
   </data>
-  <data name="ComputersButton.Content" xml:space="preserve">
+  <data name="ComputersButton" xml:space="preserve">
     <value>Ordinateurs</value>
   </data>
-  <data name="ConsolesButton.Content" xml:space="preserve">
+  <data name="ConsolesButton" xml:space="preserve">
     <value>Consoles</value>
   </data>
-  <data name="DocumentsButton.Content" xml:space="preserve">
+  <data name="DocumentsButton" xml:space="preserve">
     <value>Documents</value>
   </data>
-  <data name="DumpsButton.Content" xml:space="preserve">
+  <data name="DumpsButton" xml:space="preserve">
     <value>Vidages</value>
   </data>
-  <data name="GraphicalProcessingUnitsButton.Content" xml:space="preserve">
+  <data name="GraphicalProcessingUnitsButton" xml:space="preserve">
     <value>Processeurs Graphiques</value>
   </data>
-  <data name="MagazinesButton.Content" xml:space="preserve">
+  <data name="MagazinesButton" xml:space="preserve">
     <value>Magazines</value>
   </data>
-  <data name="PeopleButton.Content" xml:space="preserve">
+  <data name="PeopleButton" xml:space="preserve">
     <value>Personnes</value>
   </data>
-  <data name="ProcessorsButton.Content" xml:space="preserve">
+  <data name="ProcessorsButton" xml:space="preserve">
     <value>Processeurs</value>
   </data>
-  <data name="SoftwareButton.Content" xml:space="preserve">
+  <data name="SoftwareButton" xml:space="preserve">
     <value>Logiciels</value>
   </data>
-  <data name="SoundSynthesizersButton.Content" xml:space="preserve">
+  <data name="SoundSynthesizersButton" xml:space="preserve">
     <value>Synthétiseurs de Son</value>
   </data>
-  <data name="SettingsButton.Content" xml:space="preserve">
+  <data name="SettingsButton" xml:space="preserve">
     <value>Paramètres</value>
   </data>
   <data name="Login" xml:space="preserve">
@@ -225,22 +225,22 @@
   <data name="Company was renamed on an unknown date to an unknown name." xml:space="preserve">
     <value>L'entreprise a été renommée à une date inconnue en un nom inconnu.</value>
   </data>
-  <data name="SettingsPage_ThemeSection_Header.Text" xml:space="preserve">
+  <data name="SettingsPage_ThemeSection_Header" xml:space="preserve">
     <value>Apparence</value>
   </data>
-  <data name="SettingsPage_ThemeSection_Description.Text" xml:space="preserve">
+  <data name="SettingsPage_ThemeSection_Description" xml:space="preserve">
     <value>Sélectionnez votre thème préféré</value>
   </data>
-  <data name="SettingsPage_ThemeSelector.Header" xml:space="preserve">
+  <data name="SettingsPage_ThemeSelector_Header" xml:space="preserve">
     <value>Thème</value>
   </data>
-  <data name="SettingsPage_ThemeChange_Notice.Text" xml:space="preserve">
+  <data name="SettingsPage_ThemeChange_Notice" xml:space="preserve">
     <value>Les modifications du thème seront appliquées au prochain démarrage de l'application.</value>
   </data>
-  <data name="SettingsPage_AboutSection_Header.Text" xml:space="preserve">
+  <data name="SettingsPage_AboutSection_Header" xml:space="preserve">
     <value>À propos</value>
   </data>
-  <data name="SettingsPage_Version.Text" xml:space="preserve">
+  <data name="SettingsPage_Version" xml:space="preserve">
     <value>Version 1.0</value>
   </data>
   <data name="LightTheme" xml:space="preserve">
@@ -270,52 +270,52 @@
   <data name="CDETheme" xml:space="preserve">
     <value>CDE / Motif</value>
   </data>
-  <data name="SettingsPage_BrightnessThemeSelector.Header" xml:space="preserve">
+  <data name="SettingsPage_BrightnessThemeSelector_Header" xml:space="preserve">
     <value>Luminosité</value>
   </data>
-  <data name="SettingsPage_ColorThemeSelector.Header" xml:space="preserve">
+  <data name="SettingsPage_ColorThemeSelector_Header" xml:space="preserve">
     <value>Thème de Couleur</value>
   </data>
-  <data name="SettingsPage_DesignSystemSelector.Header" xml:space="preserve">
+  <data name="SettingsPage_DesignSystemSelector_Header" xml:space="preserve">
     <value>Système de Conception</value>
   </data>
-  <data name="SettingsPage_DesignSystemChange_Notice.Text" xml:space="preserve">
+  <data name="SettingsPage_DesignSystemChange_Notice" xml:space="preserve">
     <value>Les modifications du système de conception seront appliquées la prochaine fois que vous démarrerez l'application. Les modifications du thème de couleur sont appliquées immédiatement.</value>
   </data>
-  <data name="LoginPage_Title.Text" xml:space="preserve">
+  <data name="LoginPage_Title" xml:space="preserve">
     <value>Se Connecter à Marechai</value>
   </data>
-  <data name="LoginPage_WelcomeMessage.Text" xml:space="preserve">
+  <data name="LoginPage_WelcomeMessage" xml:space="preserve">
     <value>Bienvenue ! Veuillez vous connecter pour continuer.</value>
   </data>
-  <data name="LoginPage_EmailLabel.Text" xml:space="preserve">
+  <data name="LoginPage_EmailLabel" xml:space="preserve">
     <value>Adresse E-mail</value>
   </data>
-  <data name="LoginPage_EmailTextBox.PlaceholderText" xml:space="preserve">
+  <data name="LoginPage_EmailTextBox_Placeholder" xml:space="preserve">
     <value>Entrez votre e-mail</value>
   </data>
-  <data name="LoginPage_PasswordLabel.Text" xml:space="preserve">
+  <data name="LoginPage_PasswordLabel" xml:space="preserve">
     <value>Mot de Passe</value>
   </data>
-  <data name="LoginPage_PasswordBox.PlaceholderText" xml:space="preserve">
+  <data name="LoginPage_PasswordBox_Placeholder" xml:space="preserve">
     <value>Entrez votre mot de passe</value>
   </data>
-  <data name="LoginPage_LoginButton.Content" xml:space="preserve">
+  <data name="LoginPage_LoginButton" xml:space="preserve">
     <value>Se Connecter</value>
   </data>
-  <data name="LoginPage_LoginButtonText.Text" xml:space="preserve">
+  <data name="LoginPage_LoginButtonText" xml:space="preserve">
     <value>Se Connecter</value>
   </data>
-  <data name="LoginPage_SigningInText.Text" xml:space="preserve">
+  <data name="LoginPage_SigningInText" xml:space="preserve">
     <value>Connexion en cours...</value>
   </data>
-  <data name="LoginPage_ForgotPasswordLink.Content" xml:space="preserve">
+  <data name="LoginPage_ForgotPasswordLink" xml:space="preserve">
     <value>Mot de passe oublié ?</value>
   </data>
-  <data name="LoginPage_NoAccountText.Text" xml:space="preserve">
+  <data name="LoginPage_NoAccountText" xml:space="preserve">
     <value>Vous n'avez pas de compte ?</value>
   </data>
-  <data name="LoginPage_SignUpLink.Content" xml:space="preserve">
+  <data name="LoginPage_SignUpLink" xml:space="preserve">
     <value>S'inscrire</value>
   </data>
   <data name="LoginPage.Error.EmailRequired" xml:space="preserve">
@@ -327,10 +327,10 @@
   <data name="LoginPage.Error.LoginFailed" xml:space="preserve">
     <value>Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.</value>
   </data>
-  <data name="UserManagementButton.Content" xml:space="preserve">
+  <data name="UserManagementButton" xml:space="preserve">
     <value>Gestion des Utilisateurs</value>
   </data>
-  <data name="SidebarTitle.Text" xml:space="preserve">
+  <data name="SidebarTitle" xml:space="preserve">
     <value>Navigation</value>
   </data>
   <data name="Companies" xml:space="preserve">
@@ -615,394 +615,394 @@
   <data name="Failed to remove role." xml:space="preserve">
     <value>Échec de la suppression du rôle.</value>
   </data>
-  <data name="BackButton.Label" xml:space="preserve">
+  <data name="BackButton_Label" xml:space="preserve">
     <value>Retour</value>
   </data>
-  <data name="CompaniesSearchBox.PlaceholderText" xml:space="preserve">
+  <data name="CompaniesSearchBox_Placeholder" xml:space="preserve">
     <value>Rechercher des entreprises...</value>
   </data>
-  <data name="LoadingText.Text" xml:space="preserve">
+  <data name="LoadingText" xml:space="preserve">
     <value>Chargement...</value>
   </data>
-  <data name="ErrorText.Text" xml:space="preserve">
+  <data name="ErrorText" xml:space="preserve">
     <value>Erreur</value>
   </data>
-  <data name="StatusText.Text" xml:space="preserve">
+  <data name="StatusText" xml:space="preserve">
     <value>Statut</value>
   </data>
-  <data name="FoundedText.Text" xml:space="preserve">
+  <data name="FoundedText" xml:space="preserve">
     <value>Fondée</value>
   </data>
   <data name="LegalNameText" xml:space="preserve">
     <value>Nom Légal</value>
   </data>
-  <data name="CountryText.Text" xml:space="preserve">
+  <data name="CountryText" xml:space="preserve">
     <value>Pays</value>
   </data>
-  <data name="AddressText.Text" xml:space="preserve">
+  <data name="AddressText" xml:space="preserve">
     <value>Adresse</value>
   </data>
-  <data name="LinksText.Text" xml:space="preserve">
+  <data name="LinksText" xml:space="preserve">
     <value>Liens</value>
   </data>
-  <data name="WebsiteText.Text" xml:space="preserve">
+  <data name="WebsiteText" xml:space="preserve">
     <value>Site Web</value>
   </data>
-  <data name="TwitterText.Text" xml:space="preserve">
+  <data name="TwitterText" xml:space="preserve">
     <value>Twitter</value>
   </data>
-  <data name="FacebookText.Text" xml:space="preserve">
+  <data name="FacebookText" xml:space="preserve">
     <value>Facebook</value>
   </data>
-  <data name="LogoHistoryText.Text" xml:space="preserve">
+  <data name="LogoHistoryText" xml:space="preserve">
     <value>Historique des Logos</value>
   </data>
-  <data name="ComputersText.Text" xml:space="preserve">
+  <data name="ComputersText" xml:space="preserve">
     <value>Ordinateurs</value>
   </data>
-  <data name="ComputersFilterBox.PlaceholderText" xml:space="preserve">
+  <data name="ComputersFilterBox_Placeholder" xml:space="preserve">
     <value>Filtrer les ordinateurs...</value>
   </data>
-  <data name="ConsolesText.Text" xml:space="preserve">
+  <data name="ConsolesText" xml:space="preserve">
     <value>Consoles</value>
   </data>
-  <data name="ConsolesFilterBox.PlaceholderText" xml:space="preserve">
+  <data name="ConsolesFilterBox_Placeholder" xml:space="preserve">
     <value>Filtrer les consoles...</value>
   </data>
-  <data name="ComputersErrorInfoBar.Title" xml:space="preserve">
+  <data name="ComputersErrorInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger les Ordinateurs</value>
   </data>
-  <data name="RetryButton.Content" xml:space="preserve">
+  <data name="RetryButton" xml:space="preserve">
     <value>Réessayer</value>
   </data>
-  <data name="ResultsText.Text" xml:space="preserve">
+  <data name="ResultsText" xml:space="preserve">
     <value>RÉSULTATS :</value>
   </data>
-  <data name="ComputersLabel.Text" xml:space="preserve">
+  <data name="ComputersLabel" xml:space="preserve">
     <value>ordinateurs</value>
   </data>
-  <data name="BrowseByLetterText.Text" xml:space="preserve">
+  <data name="BrowseByLetterText" xml:space="preserve">
     <value>Parcourir par Lettre</value>
   </data>
-  <data name="AllComputersButton.Content" xml:space="preserve">
+  <data name="AllComputersButton" xml:space="preserve">
     <value>Tous les Ordinateurs</value>
   </data>
-  <data name="ComputersSearchBox.PlaceholderText" xml:space="preserve">
+  <data name="ComputersSearchBox_Placeholder" xml:space="preserve">
     <value>Rechercher des ordinateurs...</value>
   </data>
-  <data name="ConsolesErrorInfoBar.Title" xml:space="preserve">
+  <data name="ConsolesErrorInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger les Consoles</value>
   </data>
-  <data name="ConsolesLabel.Text" xml:space="preserve">
+  <data name="ConsolesLabel" xml:space="preserve">
     <value>consoles</value>
   </data>
-  <data name="AllConsolesButton.Content" xml:space="preserve">
+  <data name="AllConsolesButton" xml:space="preserve">
     <value>Toutes les Consoles</value>
   </data>
-  <data name="ConsolesSearchBox.PlaceholderText" xml:space="preserve">
+  <data name="ConsolesSearchBox_Placeholder" xml:space="preserve">
     <value>Rechercher des consoles...</value>
   </data>
-  <data name="ManufacturerText.Text" xml:space="preserve">
+  <data name="ManufacturerText" xml:space="preserve">
     <value>Fabricant</value>
   </data>
-  <data name="ModelCodeText.Text" xml:space="preserve">
+  <data name="ModelCodeText" xml:space="preserve">
     <value>Code du Modèle</value>
   </data>
   <data name="IntroducedText" xml:space="preserve">
     <value>Introduit</value>
   </data>
-  <data name="PackageText.Text" xml:space="preserve">
+  <data name="PackageText" xml:space="preserve">
     <value>Boîtier</value>
   </data>
-  <data name="ProcessText.Text" xml:space="preserve">
+  <data name="ProcessText" xml:space="preserve">
     <value>Procédé</value>
   </data>
-  <data name="ProcessNmText.Text" xml:space="preserve">
+  <data name="ProcessNmText" xml:space="preserve">
     <value>Procédé (nm)</value>
   </data>
-  <data name="DieSizeText.Text" xml:space="preserve">
+  <data name="DieSizeText" xml:space="preserve">
     <value>Taille de la Puce (mm²)</value>
   </data>
-  <data name="TransistorsText.Text" xml:space="preserve">
+  <data name="TransistorsText" xml:space="preserve">
     <value>Transistors</value>
   </data>
-  <data name="SupportedResolutionsText.Text" xml:space="preserve">
+  <data name="SupportedResolutionsText" xml:space="preserve">
     <value>Résolutions Prises en Charge</value>
   </data>
-  <data name="GpuErrorInfoBar.Title" xml:space="preserve">
+  <data name="GpuErrorInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger les Processeurs Graphiques</value>
   </data>
-  <data name="GpuLabel.Text" xml:space="preserve">
+  <data name="GpuLabel" xml:space="preserve">
     <value>processeurs graphiques</value>
   </data>
-  <data name="MachineErrorInfoBar.Title" xml:space="preserve">
+  <data name="MachineErrorInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger la Machine</value>
   </data>
-  <data name="PrototypeBadgeText.Text" xml:space="preserve">
+  <data name="PrototypeBadgeText" xml:space="preserve">
     <value>PROTOTYPE</value>
   </data>
-  <data name="IntroductionDateLabel.Text" xml:space="preserve">
+  <data name="IntroductionDateLabel" xml:space="preserve">
     <value>Date d'Introduction</value>
   </data>
-  <data name="FamilyLabel.Text" xml:space="preserve">
+  <data name="FamilyLabel" xml:space="preserve">
     <value>Famille</value>
   </data>
-  <data name="ModelLabel.Text" xml:space="preserve">
+  <data name="ModelLabel" xml:space="preserve">
     <value>Modèle</value>
   </data>
-  <data name="ProcessorsLabel.Text" xml:space="preserve">
+  <data name="ProcessorsLabel" xml:space="preserve">
     <value>Processeurs</value>
   </data>
-  <data name="MemoryLabel.Text" xml:space="preserve">
+  <data name="MemoryLabel" xml:space="preserve">
     <value>Mémoire</value>
   </data>
-  <data name="GpusLabel.Text" xml:space="preserve">
+  <data name="GpusLabel" xml:space="preserve">
     <value>Processeurs Graphiques</value>
   </data>
-  <data name="SoundSynthesizersLabel.Text" xml:space="preserve">
+  <data name="SoundSynthesizersLabel" xml:space="preserve">
     <value>Synthétiseurs de Son</value>
   </data>
-  <data name="StorageLabel.Text" xml:space="preserve">
+  <data name="StorageLabel" xml:space="preserve">
     <value>Stockage</value>
   </data>
-  <data name="PhotosLabel.Text" xml:space="preserve">
+  <data name="PhotosLabel" xml:space="preserve">
     <value>Photos</value>
   </data>
-  <data name="LatestNewsTitle.Text" xml:space="preserve">
+  <data name="LatestNewsTitle" xml:space="preserve">
     <value>Dernières Actualités</value>
   </data>
-  <data name="LatestNewsSubtitle.Text" xml:space="preserve">
+  <data name="LatestNewsSubtitle" xml:space="preserve">
     <value>Restez informé des derniers ajouts à la base de données</value>
   </data>
-  <data name="LoadingNewsText.Text" xml:space="preserve">
+  <data name="LoadingNewsText" xml:space="preserve">
     <value>Chargement des dernières actualités...</value>
   </data>
-  <data name="ErrorLoadingNewsInfoBar.Title" xml:space="preserve">
+  <data name="ErrorLoadingNewsInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger les Actualités</value>
   </data>
-  <data name="LoadingPhotoText.Text" xml:space="preserve">
+  <data name="LoadingPhotoText" xml:space="preserve">
     <value>Chargement de la photo...</value>
   </data>
-  <data name="ErrorLoadingPhotoInfoBar.Title" xml:space="preserve">
+  <data name="ErrorLoadingPhotoInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger la Photo</value>
   </data>
-  <data name="PhotoMachineLabel.Text" xml:space="preserve">
+  <data name="PhotoMachineLabel" xml:space="preserve">
     <value>Machine</value>
   </data>
-  <data name="PhotoMachineNameLabel.Text" xml:space="preserve">
+  <data name="PhotoMachineNameLabel" xml:space="preserve">
     <value>Nom</value>
   </data>
-  <data name="PhotoMachineCompanyLabel.Text" xml:space="preserve">
+  <data name="PhotoMachineCompanyLabel" xml:space="preserve">
     <value>Entreprise</value>
   </data>
-  <data name="PhotoCameraLabel.Text" xml:space="preserve">
+  <data name="PhotoCameraLabel" xml:space="preserve">
     <value>Appareil Photo</value>
   </data>
-  <data name="PhotoCameraManufacturerLabel.Text" xml:space="preserve">
+  <data name="PhotoCameraManufacturerLabel" xml:space="preserve">
     <value>Fabricant</value>
   </data>
-  <data name="PhotoCameraModelLabel.Text" xml:space="preserve">
+  <data name="PhotoCameraModelLabel" xml:space="preserve">
     <value>Modèle</value>
   </data>
-  <data name="PhotoLensModelLabel.Text" xml:space="preserve">
+  <data name="PhotoLensModelLabel" xml:space="preserve">
     <value>Objectif</value>
   </data>
-  <data name="PhotoSoftwareUsedLabel.Text" xml:space="preserve">
+  <data name="PhotoSoftwareUsedLabel" xml:space="preserve">
     <value>Logiciel</value>
   </data>
-  <data name="PhotoExposureSettingsLabel.Text" xml:space="preserve">
+  <data name="PhotoExposureSettingsLabel" xml:space="preserve">
     <value>Paramètres d'Exposition</value>
   </data>
-  <data name="PhotoApertureLabel.Text" xml:space="preserve">
+  <data name="PhotoApertureLabel" xml:space="preserve">
     <value>Ouverture</value>
   </data>
-  <data name="PhotoExposureTimeLabel.Text" xml:space="preserve">
+  <data name="PhotoExposureTimeLabel" xml:space="preserve">
     <value>Temps d'Exposition</value>
   </data>
-  <data name="PhotoExposureModeLabel.Text" xml:space="preserve">
+  <data name="PhotoExposureModeLabel" xml:space="preserve">
     <value>Mode d'Exposition</value>
   </data>
-  <data name="PhotoExposureProgramLabel.Text" xml:space="preserve">
+  <data name="PhotoExposureProgramLabel" xml:space="preserve">
     <value>Programme d'Exposition</value>
   </data>
-  <data name="PhotoIsoRatingLabel.Text" xml:space="preserve">
+  <data name="PhotoIsoRatingLabel" xml:space="preserve">
     <value>Sensibilité ISO</value>
   </data>
-  <data name="PhotoFlashAndLightLabel.Text" xml:space="preserve">
+  <data name="PhotoFlashAndLightLabel" xml:space="preserve">
     <value>Flash et Lumière</value>
   </data>
-  <data name="PhotoFlashLabel.Text" xml:space="preserve">
+  <data name="PhotoFlashLabel" xml:space="preserve">
     <value>Flash</value>
   </data>
-  <data name="PhotoLightSourceLabel.Text" xml:space="preserve">
+  <data name="PhotoLightSourceLabel" xml:space="preserve">
     <value>Source de Lumière</value>
   </data>
-  <data name="PhotoMeteringModeLabel.Text" xml:space="preserve">
+  <data name="PhotoMeteringModeLabel" xml:space="preserve">
     <value>Mode de Mesure</value>
   </data>
-  <data name="PhotoWhiteBalanceLabel.Text" xml:space="preserve">
+  <data name="PhotoWhiteBalanceLabel" xml:space="preserve">
     <value>Balance des Blancs</value>
   </data>
-  <data name="PhotoFocalLengthLabel.Text" xml:space="preserve">
+  <data name="PhotoFocalLengthLabel" xml:space="preserve">
     <value>Distance Focale</value>
   </data>
-  <data name="PhotoFocalLengthEquivalentLabel.Text" xml:space="preserve">
+  <data name="PhotoFocalLengthEquivalentLabel" xml:space="preserve">
     <value>Équivalent 35mm</value>
   </data>
-  <data name="PhotoDigitalZoomLabel.Text" xml:space="preserve">
+  <data name="PhotoDigitalZoomLabel" xml:space="preserve">
     <value>Zoom Numérique</value>
   </data>
-  <data name="PhotoImagePropertiesLabel.Text" xml:space="preserve">
+  <data name="PhotoImagePropertiesLabel" xml:space="preserve">
     <value>Propriétés de l'Image</value>
   </data>
-  <data name="PhotoColorSpaceLabel.Text" xml:space="preserve">
+  <data name="PhotoColorSpaceLabel" xml:space="preserve">
     <value>Espace Colorimétrique</value>
   </data>
-  <data name="PhotoContrastLabel.Text" xml:space="preserve">
+  <data name="PhotoContrastLabel" xml:space="preserve">
     <value>Contraste</value>
   </data>
-  <data name="PhotoSaturationLabel.Text" xml:space="preserve">
+  <data name="PhotoSaturationLabel" xml:space="preserve">
     <value>Saturation</value>
   </data>
-  <data name="PhotoSharpnessLabel.Text" xml:space="preserve">
+  <data name="PhotoSharpnessLabel" xml:space="preserve">
     <value>Netteté</value>
   </data>
-  <data name="PhotoOrientationLabel.Text" xml:space="preserve">
+  <data name="PhotoOrientationLabel" xml:space="preserve">
     <value>Orientation</value>
   </data>
-  <data name="PhotoSceneCaptureTypeLabel.Text" xml:space="preserve">
+  <data name="PhotoSceneCaptureTypeLabel" xml:space="preserve">
     <value>Type de Capture de Scène</value>
   </data>
-  <data name="PhotoResolutionLabel.Text" xml:space="preserve">
+  <data name="PhotoResolutionLabel" xml:space="preserve">
     <value>Résolution</value>
   </data>
-  <data name="PhotoHorizontalResolutionLabel.Text" xml:space="preserve">
+  <data name="PhotoHorizontalResolutionLabel" xml:space="preserve">
     <value>Résolution Horizontale</value>
   </data>
-  <data name="PhotoVerticalResolutionLabel.Text" xml:space="preserve">
+  <data name="PhotoVerticalResolutionLabel" xml:space="preserve">
     <value>Résolution Verticale</value>
   </data>
-  <data name="PhotoResolutionUnitLabel.Text" xml:space="preserve">
+  <data name="PhotoResolutionUnitLabel" xml:space="preserve">
     <value>Unité de Résolution</value>
   </data>
-  <data name="PhotoFileMetadataLabel.Text" xml:space="preserve">
+  <data name="PhotoFileMetadataLabel" xml:space="preserve">
     <value>Fichier et Métadonnées</value>
   </data>
-  <data name="PhotoOriginalFormatLabel.Text" xml:space="preserve">
+  <data name="PhotoOriginalFormatLabel" xml:space="preserve">
     <value>Format Original</value>
   </data>
-  <data name="PhotoCreationDateLabel.Text" xml:space="preserve">
+  <data name="PhotoCreationDateLabel" xml:space="preserve">
     <value>Date de Prise</value>
   </data>
-  <data name="PhotoUploadDateLabel.Text" xml:space="preserve">
+  <data name="PhotoUploadDateLabel" xml:space="preserve">
     <value>Date de Téléchargement</value>
   </data>
-  <data name="PhotoExifVersionLabel.Text" xml:space="preserve">
+  <data name="PhotoExifVersionLabel" xml:space="preserve">
     <value>Version EXIF</value>
   </data>
-  <data name="PhotoAuthorLabel.Text" xml:space="preserve">
+  <data name="PhotoAuthorLabel" xml:space="preserve">
     <value>Auteur</value>
   </data>
-  <data name="PhotoLicenseNameLabel.Text" xml:space="preserve">
+  <data name="PhotoLicenseNameLabel" xml:space="preserve">
     <value>Licence</value>
   </data>
-  <data name="PhotoCommentsLabel.Text" xml:space="preserve">
+  <data name="PhotoCommentsLabel" xml:space="preserve">
     <value>Commentaires</value>
   </data>
-  <data name="PhotoSourceLabel.Text" xml:space="preserve">
+  <data name="PhotoSourceLabel" xml:space="preserve">
     <value>Source</value>
   </data>
-  <data name="PhotoAdvancedLabel.Text" xml:space="preserve">
+  <data name="PhotoAdvancedLabel" xml:space="preserve">
     <value>Avancé</value>
   </data>
-  <data name="PhotoSensingMethodLabel.Text" xml:space="preserve">
+  <data name="PhotoSensingMethodLabel" xml:space="preserve">
     <value>Méthode de Détection</value>
   </data>
-  <data name="PhotoSubjectDistanceRangeLabel.Text" xml:space="preserve">
+  <data name="PhotoSubjectDistanceRangeLabel" xml:space="preserve">
     <value>Plage de Distance du Sujet</value>
   </data>
-  <data name="SpeedText.Text" xml:space="preserve">
+  <data name="SpeedText" xml:space="preserve">
     <value>Vitesse (MHz)</value>
   </data>
-  <data name="CoresText.Text" xml:space="preserve">
+  <data name="CoresText" xml:space="preserve">
     <value>Cœurs</value>
   </data>
-  <data name="ThreadsPerCoreText.Text" xml:space="preserve">
+  <data name="ThreadsPerCoreText" xml:space="preserve">
     <value>Threads par Cœur</value>
   </data>
-  <data name="ProcessorsNavBar.Content" xml:space="preserve">
+  <data name="ProcessorsNavBar" xml:space="preserve">
     <value>Processeurs</value>
   </data>
-  <data name="LoadingProcessorsText.Text" xml:space="preserve">
+  <data name="LoadingProcessorsText" xml:space="preserve">
     <value>Chargement des processeurs...</value>
   </data>
-  <data name="ErrorLoadingProcessorsInfoBar.Title" xml:space="preserve">
+  <data name="ErrorLoadingProcessorsInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger les Processeurs</value>
   </data>
-  <data name="VoicesText.Text" xml:space="preserve">
+  <data name="VoicesText" xml:space="preserve">
     <value>Voix</value>
   </data>
-  <data name="FrequencyText.Text" xml:space="preserve">
+  <data name="FrequencyText" xml:space="preserve">
     <value>Fréquence (Hz)</value>
   </data>
-  <data name="DepthText.Text" xml:space="preserve">
+  <data name="DepthText" xml:space="preserve">
     <value>Profondeur (bits)</value>
   </data>
-  <data name="TypeText.Text" xml:space="preserve">
+  <data name="TypeText" xml:space="preserve">
     <value>Type</value>
   </data>
-  <data name="SoundSynthsErrorInfoBar.Title" xml:space="preserve">
+  <data name="SoundSynthsErrorInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger les Synthétiseurs de Son</value>
   </data>
-  <data name="SoundSynthsLabel.Text" xml:space="preserve">
+  <data name="SoundSynthsLabel" xml:space="preserve">
     <value>synthétiseurs de son</value>
   </data>
-  <data name="UserManagementTitle.Text" xml:space="preserve">
+  <data name="UserManagementTitle" xml:space="preserve">
     <value>Gestion des Utilisateurs</value>
   </data>
-  <data name="UserManagementSubtitle.Text" xml:space="preserve">
+  <data name="UserManagementSubtitle" xml:space="preserve">
     <value>Gérer les utilisateurs, les rôles et les permissions</value>
   </data>
-  <data name="UserMgmtAccessDeniedInfoBar.Title" xml:space="preserve">
+  <data name="UserMgmtAccessDeniedInfoBar_Title" xml:space="preserve">
     <value>Accès Refusé</value>
   </data>
-  <data name="UserMgmtAccessDeniedInfoBar.Message" xml:space="preserve">
+  <data name="UserMgmtAccessDeniedInfoBar_Message" xml:space="preserve">
     <value>Vous devez être un Super-administrateur pour accéder à la gestion des utilisateurs.</value>
   </data>
-  <data name="ErrorLoadingUsersInfoBar.Title" xml:space="preserve">
+  <data name="ErrorLoadingUsersInfoBar_Title" xml:space="preserve">
     <value>Impossible de Charger les Utilisateurs</value>
   </data>
-  <data name="AddUserButton.Label" xml:space="preserve">
+  <data name="AddUserButton_Label" xml:space="preserve">
     <value>Ajouter un Utilisateur</value>
   </data>
-  <data name="RefreshUsersButton.Label" xml:space="preserve">
+  <data name="RefreshUsersButton_Label" xml:space="preserve">
     <value>Actualiser</value>
   </data>
-  <data name="EmailColumn.Header" xml:space="preserve">
+  <data name="EmailColumn_Header" xml:space="preserve">
     <value>E-mail</value>
   </data>
-  <data name="UsernameColumn.Header" xml:space="preserve">
+  <data name="UsernameColumn_Header" xml:space="preserve">
     <value>Nom d'Utilisateur</value>
   </data>
-  <data name="PhoneColumn.Header" xml:space="preserve">
+  <data name="PhoneColumn_Header" xml:space="preserve">
     <value>Téléphone</value>
   </data>
-  <data name="RolesColumn.Header" xml:space="preserve">
+  <data name="RolesColumn_Header" xml:space="preserve">
     <value>Rôles</value>
   </data>
-  <data name="ActionsColumn.Header" xml:space="preserve">
+  <data name="ActionsColumn_Header" xml:space="preserve">
     <value>Actions</value>
   </data>
-  <data name="EditUserButton.Content" xml:space="preserve">
+  <data name="EditUserButton" xml:space="preserve">
     <value>Modifier</value>
   </data>
-  <data name="ChangePasswordButton.Content" xml:space="preserve">
+  <data name="ChangePasswordButton" xml:space="preserve">
     <value>Mot de Passe</value>
   </data>
-  <data name="ManageRolesButton.Content" xml:space="preserve">
+  <data name="ManageRolesButton" xml:space="preserve">
     <value>Rôles</value>
   </data>
-  <data name="DeleteUserButton.Content" xml:space="preserve">
+  <data name="DeleteUserButton" xml:space="preserve">
     <value>Supprimer</value>
   </data>
   <data name="Auth.EmailIsRequired" xml:space="preserve">

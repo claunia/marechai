@@ -34,8 +34,8 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock loc:Loc.Key="LoadingText"
-                           Text="Loading sound synthesizers..."
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
                            FontSize="14"
                            TextAlignment="Center"
                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -50,8 +50,7 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
-                         loc:Loc.Key="SoundSynthsErrorInfoBar"
-                         Title="Unable to Load Sound Synthesizers"
+                         Title="{Binding Source={StaticResource Strings}, Path=SoundSynthsErrorInfoBar_Title}"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
                 <Button Content="Retry"
@@ -77,8 +76,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       loc:Loc.Key="ResultsLabel"
-                                       Text="RESULTS:" />
+                                       Text="{Binding Source={StaticResource Strings}, Path=ResultsLabel}" />
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
@@ -86,8 +84,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       loc:Loc.Key="SoundSynthsLabel"
-                                       Text="sound synthesizers" />
+                                       Text="{Binding Source={StaticResource Strings}, Path=SoundSynthsLabel}" />
                         </StackPanel>
 
                         <!-- Sound Synthesizers List -->

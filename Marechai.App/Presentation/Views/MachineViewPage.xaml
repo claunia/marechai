@@ -68,8 +68,8 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock loc:Loc.Key="LoadingText"
-                           Text="Loading machine details..."
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
                            FontSize="14"
                            TextAlignment="Center"
                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -84,12 +84,11 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
-                         loc:Loc.Key="MachineErrorInfoBar"
-                         Title="Unable to Load Machine"
+                         Title="{Binding Source={StaticResource Strings}, Path=MachineErrorInfoBar_Title}"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button loc:Loc.Key="RetryButton"
-                        Content="Retry"
+                <Button
+                        Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
                         Style="{ThemeResource AccentButtonStyle}" />
@@ -109,8 +108,8 @@
                                 BorderThickness="1"
                                 CornerRadius="8"
                                 Padding="16,12">
-                            <TextBlock loc:Loc.Key="PrototypeBadgeText"
-                                       Text="PROTOTYPE"
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=PrototypeBadgeText}"
                                        FontSize="14"
                                        FontWeight="Bold"
                                        Foreground="{ThemeResource WarningForegroundColorDefaultBrush}"
@@ -121,8 +120,8 @@
                     <!-- Introduction Date -->
                     <StackPanel Visibility="{Binding ShowIntroductionDate}"
                                 Spacing="8">
-                        <TextBlock loc:Loc.Key="IntroductionDateLabel"
-                                   Text="Introduction Date"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=IntroductionDateLabel}"
                                    FontSize="12"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -148,8 +147,8 @@
                         <StackPanel Grid.Column="0"
                                     Visibility="{Binding ShowFamily}"
                                     Spacing="8">
-                            <TextBlock loc:Loc.Key="FamilyLabel"
-                                       Text="Family"
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=FamilyLabel}"
                                        FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -169,8 +168,8 @@
                         <StackPanel Grid.Column="1"
                                     Visibility="{Binding ShowModel}"
                                     Spacing="8">
-                            <TextBlock loc:Loc.Key="ModelLabel"
-                                       Text="Model"
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=ModelLabel}"
                                        FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -190,8 +189,8 @@
                     <!-- Processors Section -->
                     <StackPanel Visibility="{Binding ShowProcessors}"
                                 Spacing="12">
-                        <TextBlock loc:Loc.Key="ProcessorsLabel"
-                                   Text="Processors"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=ProcessorsLabel}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -233,8 +232,8 @@
                     <!-- Memory Section -->
                     <StackPanel Visibility="{Binding ShowMemory}"
                                 Spacing="12">
-                        <TextBlock loc:Loc.Key="MemoryLabel"
-                                   Text="Memory"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=MemoryLabel}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -271,8 +270,8 @@
                     <!-- GPUs Section -->
                     <StackPanel Visibility="{Binding ShowGpus}"
                                 Spacing="12">
-                        <TextBlock loc:Loc.Key="GpusLabel"
-                                   Text="Graphics Processing Units"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=GpusLabel}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -310,8 +309,8 @@
                     <!-- Sound Synthesizers Section -->
                     <StackPanel Visibility="{Binding ShowSoundSynthesizers}"
                                 Spacing="12">
-                        <TextBlock loc:Loc.Key="SoundSynthesizersLabel"
-                                   Text="Sound Synthesizers"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=SoundSynthesizersLabel}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -350,8 +349,8 @@
                     <!-- Storage Section -->
                     <StackPanel Visibility="{Binding ShowStorage}"
                                 Spacing="12">
-                        <TextBlock loc:Loc.Key="StorageLabel"
-                                   Text="Storage"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=StorageLabel}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />
@@ -389,8 +388,8 @@
                     <!-- Photos Carousel (Last element before spacing) -->
                     <StackPanel Visibility="{Binding ShowPhotos}"
                                 Spacing="12">
-                        <TextBlock loc:Loc.Key="PhotosLabel"
-                                   Text="Photos"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PhotosLabel}"
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource TextControlForeground}" />

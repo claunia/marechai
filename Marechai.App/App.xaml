@@ -23,6 +23,7 @@
             <local:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter" />
             <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <local:RolesListConverter x:Key="RolesListConverter" />
+            <local:LocalizeConverter x:Key="LocalizeConverter" />
 
         </ResourceDictionary>
     </prism:PrismApplication.Resources>

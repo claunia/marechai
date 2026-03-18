@@ -18,10 +18,14 @@ public sealed class LocalizeConverter : IValueConverter
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {
+        System.Diagnostics.Debug.WriteLine($"LocalizeConverter.Convert: value={value?.GetType().Name} param={parameter} localizer={_localizer != null}");
+
         if(parameter is not string key || _localizer is null)
-            return value?.ToString() ?? string.Empty;
+            return parameter?.ToString() ?? string.Empty;
 
         LocalizedString result = _localizer[key];
+
+        System.Diagnostics.Debug.WriteLine($"LocalizeConverter: key='{key}' found={!result.ResourceNotFound} value='{result.Value}'");
 
         return result.ResourceNotFound ? key : result.Value;
     }
@@ -50,16 +54,21 @@ public static class Loc
 
     private static void OnKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        System.Diagnostics.Debug.WriteLine($"Loc.OnKeyChanged: key='{e.NewValue}' localizer={_localizer != null} element={d.GetType().Name}");
+
         if(e.NewValue is not string key || _localizer is null)
             return;
 
-        // Look up "<key>.Text" for TextBlock, "<key>.Content" for Button, "<key>.Header" for ComboBox, etc.
-        // Also try "<key>.Title" for InfoBar, "<key>.PlaceholderText" for search boxes
+        // Look up resource keys. In .resx files, ".Text" and ".Content" suffixes are stripped
+        // (e.g., "LatestNewsTitle" instead of "LatestNewsTitle.Text").
+        // Other suffixes use underscore: "_Placeholder", "_Title", "_Message", "_Label", "_Header"
         switch(d)
         {
             case Microsoft.UI.Xaml.Controls.TextBlock textBlock:
             {
-                string value = TryGetValue($"{key}.Text") ?? TryGetValue(key);
+                string value = TryGetValue(key);
+
+                System.Diagnostics.Debug.WriteLine($"Loc TextBlock key='{key}' value='{value}' localizer={_localizer != null}");
 
                 if(value != null)
                     textBlock.Text = value;
@@ -70,7 +79,7 @@ public static class Loc
             // AppBarButton must come before Button (it's a subclass)
             case Microsoft.UI.Xaml.Controls.AppBarButton appBarButton:
             {
-                string label = TryGetValue($"{key}.Label") ?? TryGetValue($"{key}.Content") ?? TryGetValue(key);
+                string label = TryGetValue($"{key}_Label") ?? TryGetValue(key);
 
                 if(label != null)
                     appBarButton.Label = label;
@@ -80,7 +89,7 @@ public static class Loc
 
             case Microsoft.UI.Xaml.Controls.Button button:
             {
-                string value = TryGetValue($"{key}.Content") ?? TryGetValue(key);
+                string value = TryGetValue(key);
 
                 if(value != null)
                     button.Content = value;
@@ -90,7 +99,7 @@ public static class Loc
 
             case Microsoft.UI.Xaml.Controls.AutoSuggestBox autoSuggestBox:
             {
-                string placeholder = TryGetValue($"{key}.PlaceholderText") ?? TryGetValue(key);
+                string placeholder = TryGetValue($"{key}_Placeholder") ?? TryGetValue(key);
 
                 if(placeholder != null)
                     autoSuggestBox.PlaceholderText = placeholder;
@@ -100,7 +109,7 @@ public static class Loc
 
             case Microsoft.UI.Xaml.Controls.ComboBox comboBox:
             {
-                string header = TryGetValue($"{key}.Header") ?? TryGetValue(key);
+                string header = TryGetValue($"{key}_Header") ?? TryGetValue(key);
 
                 if(header != null)
                     comboBox.Header = header;
@@ -110,12 +119,12 @@ public static class Loc
 
             case Microsoft.UI.Xaml.Controls.InfoBar infoBar:
             {
-                string title = TryGetValue($"{key}.Title");
+                string title = TryGetValue($"{key}_Title");
 
                 if(title != null)
                     infoBar.Title = title;
 
-                string message = TryGetValue($"{key}.Message");
+                string message = TryGetValue($"{key}_Message");
 
                 if(message != null)
                     infoBar.Message = message;
@@ -125,7 +134,7 @@ public static class Loc
 
             case Microsoft.UI.Xaml.Controls.TextBox textBox:
             {
-                string placeholder = TryGetValue($"{key}.PlaceholderText") ?? TryGetValue(key);
+                string placeholder = TryGetValue($"{key}_Placeholder") ?? TryGetValue(key);
 
                 if(placeholder != null)
                     textBox.PlaceholderText = placeholder;
@@ -139,7 +148,16 @@ public static class Loc
     {
         if(_localizer == null) return null;
 
+        // Try exact key first (handles "LatestNewsTitle.Text" from .resx)
         LocalizedString result = _localizer[key];
+
+        if(!result.ResourceNotFound)
+            return result.Value;
+
+        // .resx ResourceManager may need dots replaced — try common alternatives
+        // Some resource managers store "Key.Property" keys with dots intact
+        string withUnderscore = key.Replace('.', '_');
+        result = _localizer[withUnderscore];
 
         return result.ResourceNotFound ? null : result.Value;
     }

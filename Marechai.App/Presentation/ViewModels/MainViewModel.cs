@@ -26,23 +26,23 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _loginLogoutButtonText = "";
 
-    // Sidebar localized labels (x:Uid doesn't work under PrismApplication)
-    public string SidebarTitleText               => _localizer["SidebarTitle.Text"];
-    public string NewsButtonText                 => _localizer["NewsButton.Content"];
-    public string BooksButtonText                => _localizer["BooksButton.Content"];
-    public string CompaniesButtonText            => _localizer["CompaniesButton.Content"];
-    public string ComputersButtonText            => _localizer["ComputersButton.Content"];
-    public string ConsolesButtonText             => _localizer["ConsolesButton.Content"];
-    public string DocumentsButtonText            => _localizer["DocumentsButton.Content"];
-    public string DumpsButtonText                => _localizer["DumpsButton.Content"];
-    public string GpuButtonText                  => _localizer["GraphicalProcessingUnitsButton.Content"];
-    public string MagazinesButtonText            => _localizer["MagazinesButton.Content"];
-    public string PeopleButtonText               => _localizer["PeopleButton.Content"];
-    public string ProcessorsButtonText           => _localizer["ProcessorsButton.Content"];
-    public string SoftwareButtonText             => _localizer["SoftwareButton.Content"];
-    public string SoundSynthesizersButtonText    => _localizer["SoundSynthesizersButton.Content"];
-    public string UserManagementButtonText       => _localizer["UserManagementButton.Content"];
-    public string SettingsButtonText             => _localizer["SettingsButton.Content"];
+    // Sidebar localized labels
+    public string SidebarTitleText               => _localizer["SidebarTitle"];
+    public string NewsButtonText                 => _localizer["NewsButton"];
+    public string BooksButtonText                => _localizer["BooksButton"];
+    public string CompaniesButtonText            => _localizer["CompaniesButton"];
+    public string ComputersButtonText            => _localizer["ComputersButton"];
+    public string ConsolesButtonText             => _localizer["ConsolesButton"];
+    public string DocumentsButtonText            => _localizer["DocumentsButton"];
+    public string DumpsButtonText                => _localizer["DumpsButton"];
+    public string GpuButtonText                  => _localizer["GraphicalProcessingUnitsButton"];
+    public string MagazinesButtonText            => _localizer["MagazinesButton"];
+    public string PeopleButtonText               => _localizer["PeopleButton"];
+    public string ProcessorsButtonText           => _localizer["ProcessorsButton"];
+    public string SoftwareButtonText             => _localizer["SoftwareButton"];
+    public string SoundSynthesizersButtonText    => _localizer["SoundSynthesizersButton"];
+    public string UserManagementButtonText       => _localizer["UserManagementButton"];
+    public string SettingsButtonText             => _localizer["SettingsButton"];
 
     [ObservableProperty]
     private string? _name;

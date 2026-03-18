@@ -19,8 +19,7 @@
         <utu:NavigationBar Grid.Row="0"
                            Content="{Binding Path=Title}">
             <utu:NavigationBar.MainCommand>
-                <AppBarButton Icon="Back"
-                              loc:Loc.Key="BackButton"
+                <AppBarButton Label="{Binding Source={StaticResource Strings}, Path=BackButton}" Icon="Back"
                               Command="{Binding GoBackCommand}"
                               AutomationProperties.Name="Go back" />
             </utu:NavigationBar.MainCommand>
@@ -56,8 +55,8 @@
                                   IsIndeterminate="True"
                                   Height="48"
                                   Width="48" />
-                    <TextBlock loc:Loc.Key="LoadingText"
-                               Text="Loading..."
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
                                TextAlignment="Center"
                                FontSize="14" />
                 </StackPanel>
@@ -68,8 +67,8 @@
                             Background="{ThemeResource SystemErrorBackgroundColor}"
                             CornerRadius="8"
                             Spacing="8">
-                    <TextBlock loc:Loc.Key="ErrorTitleText"
-                               Text="Error"
+                    <TextBlock
+                               Text="{Binding Source={StaticResource Strings}, Path=ErrorTitleText}"
                                FontWeight="Bold"
                                Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
                     <TextBlock Text="{Binding ErrorMessage}"
@@ -83,8 +82,8 @@
 
                     <!-- Letters Grid Section -->
                     <StackPanel Spacing="12">
-                        <TextBlock loc:Loc.Key="BrowseByLetterText"
-                                   Text="Browse by Letter"
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BrowseByLetterText}"
                                    FontSize="16"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -122,8 +121,8 @@
 
                     <!-- All Consoles and Search Section -->
                     <StackPanel Spacing="12">
-                        <Button loc:Loc.Key="AllConsolesButton"
-                                Content="All Consoles"
+                        <Button
+                                Content="{Binding Source={StaticResource Strings}, Path=AllConsolesButton}"
                                 Padding="16,12"
                                 HorizontalAlignment="Stretch"
                                 FontSize="16"
@@ -132,8 +131,8 @@
                                 Style="{StaticResource AccentButtonStyle}" />
 
                         <!-- Search Field (placeholder for future implementation) -->
-                        <TextBox loc:Loc.Key="ConsolesSearchBox"
-                                 PlaceholderText="Search consoles..."
+                        <TextBox
+                                 PlaceholderText="{Binding Source={StaticResource Strings}, Path=ConsolesSearchBox_Placeholder}"
                                  Padding="12"
                                  IsEnabled="False"
                                  Opacity="0.5" />

@@ -56,8 +56,7 @@
 
                             <!-- Title -->
                             <TextBlock Grid.Column="1"
-                                       loc:Loc.Key="LoginPage_Title"
-                                       Text="Sign In to Marechai"
+                                       Text="{Binding Source={StaticResource Strings}, Path=LoginPage_Title}"
                                        Style="{StaticResource TitleTextBlockStyle}"
                                        Foreground="White"
                                        VerticalAlignment="Center" />
@@ -71,8 +70,8 @@
                                     Spacing="24">
 
                             <!-- Welcome Message -->
-                            <TextBlock loc:Loc.Key="LoginPage_WelcomeMessage"
-                                       Text="Welcome back! Please sign in to continue."
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=LoginPage_WelcomeMessage}"
                                        Style="{StaticResource BodyTextBlockStyle}"
                                        TextWrapping="Wrap"
                                        HorizontalAlignment="Center"
@@ -80,13 +79,12 @@
 
                             <!-- Email Input -->
                             <StackPanel Spacing="8">
-                                <TextBlock loc:Loc.Key="LoginPage_EmailLabel"
-                                           Text="Email Address"
+                                <TextBlock
+                                           Text="{Binding Source={StaticResource Strings}, Path=LoginPage_EmailLabel}"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
                                 <TextBox x:Name="EmailTextBox"
-                                         loc:Loc.Key="LoginPage_EmailTextBox"
                                          Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         PlaceholderText="Enter your email"
+                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=LoginPage_EmailTextBox_Placeholder}"
                                          InputScope="EmailSmtpAddress"
                                          IsSpellCheckEnabled="False"
                                          AutomationProperties.Name="Email address"
@@ -95,13 +93,12 @@
 
                             <!-- Password Input -->
                             <StackPanel Spacing="8">
-                                <TextBlock loc:Loc.Key="LoginPage_PasswordLabel"
-                                           Text="Password"
+                                <TextBlock
+                                           Text="{Binding Source={StaticResource Strings}, Path=LoginPage_PasswordLabel}"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
                                 <PasswordBox x:Name="PasswordBox"
-                                             loc:Loc.Key="LoginPage_PasswordBox"
                                              Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             PlaceholderText="Enter your password"
+                                             PlaceholderText="{Binding Source={StaticResource Strings}, Path=LoginPage_PasswordBox_Placeholder}"
                                              AutomationProperties.Name="Password"
                                              KeyDown="OnPasswordKeyDown" />
                             </StackPanel>
@@ -152,8 +149,7 @@
                             </Border>
 
                             <!-- Login Button -->
-                            <Button x:Name="LoginButton"
-                                    loc:Loc.Key="LoginPage_LoginButton"
+                            <Button Content="{Binding Source={StaticResource Strings}, Path=LoginPage_LoginButton}" x:Name="LoginButton"
                                     Command="{Binding LoginCommand}"
                                     IsEnabled="{Binding IsLoggingIn, Converter={StaticResource InvertBoolConverter}}"
                                     HorizontalAlignment="Stretch"
@@ -162,8 +158,8 @@
                                     AutomationProperties.Name="Sign in button">
                                 <Button.Content>
                                     <Grid>
-                                        <TextBlock loc:Loc.Key="LoginPage_LoginButtonText"
-                                                   Text="Sign In"
+                                        <TextBlock
+                                                   Text="{Binding Source={StaticResource Strings}, Path=LoginPage_LoginButtonText}"
                                                    Visibility="{Binding IsLoggingIn, Converter={StaticResource InvertBoolToVisibilityConverter}}" />
                                         <StackPanel Orientation="Horizontal"
                                                     HorizontalAlignment="Center"
@@ -173,8 +169,8 @@
                                                           Width="20"
                                                           Height="20"
                                                           Foreground="White" />
-                                            <TextBlock loc:Loc.Key="LoginPage_SigningInText"
-                                                       Text="Signing in..."
+                                            <TextBlock
+                                                       Text="{Binding Source={StaticResource Strings}, Path=LoginPage_SigningInText}"
                                                        Foreground="White" />
                                         </StackPanel>
                                     </Grid>
@@ -184,8 +180,8 @@
                             <!-- Additional Options -->
                             <StackPanel Spacing="8"
                                         HorizontalAlignment="Center">
-                                <HyperlinkButton loc:Loc.Key="LoginPage_ForgotPasswordLink"
-                                                 Content="Forgot your password?"
+                                <HyperlinkButton
+                                                 Content="{Binding Source={StaticResource Strings}, Path=LoginPage_ForgotPasswordLink}"
                                                  HorizontalAlignment="Center"
                                                  Visibility="Collapsed" />
 
@@ -193,11 +189,11 @@
                                             HorizontalAlignment="Center"
                                             Spacing="4"
                                             Visibility="Collapsed">
-                                    <TextBlock loc:Loc.Key="LoginPage_NoAccountText"
-                                               Text="Don't have an account?"
+                                    <TextBlock
+                                               Text="{Binding Source={StaticResource Strings}, Path=LoginPage_NoAccountText}"
                                                VerticalAlignment="Center" />
-                                    <HyperlinkButton loc:Loc.Key="LoginPage_SignUpLink"
-                                                     Content="Sign up"
+                                    <HyperlinkButton
+                                                     Content="{Binding Source={StaticResource Strings}, Path=LoginPage_SignUpLink}"
                                                      Padding="4,0" />
                                 </StackPanel>
                             </StackPanel>

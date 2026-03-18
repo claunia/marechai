@@ -17,8 +17,7 @@
 
         <!-- Header -->
         <utu:NavigationBar Grid.Row="0"
-                           loc:Loc.Key="ProcessorsNavBar"
-                           Content="Processors">
+                           Content="{Binding Source={StaticResource Strings}, Path=ProcessorsNavBar}">
         </utu:NavigationBar>
 
         <!-- Main Content -->
@@ -35,8 +34,8 @@
                               Height="64"
                               Width="64"
                               Foreground="{ThemeResource SystemAccentColor}" />
-                <TextBlock loc:Loc.Key="LoadingProcessorsText"
-                           Text="Loading processors..."
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingProcessorsText}"
                            FontSize="14"
                            TextAlignment="Center"
                            Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -51,12 +50,11 @@
                         MaxWidth="400">
                 <InfoBar IsOpen="True"
                          Severity="Error"
-                         loc:Loc.Key="ErrorLoadingProcessorsInfoBar"
-                         Title="Unable to Load Processors"
+                         Title="{Binding Source={StaticResource Strings}, Path=ErrorLoadingProcessorsInfoBar_Title}"
                          Message="{Binding ErrorMessage}"
                          IsClosable="False" />
-                <Button loc:Loc.Key="RetryButton"
-                        Content="Retry"
+                <Button
+                        Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
                         Command="{Binding LoadData}"
                         HorizontalAlignment="Center"
                         Style="{ThemeResource AccentButtonStyle}" />
@@ -79,8 +77,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       loc:Loc.Key="ResultsLabel"
-                                       Text="RESULTS:" />
+                                       Text="{Binding Source={StaticResource Strings}, Path=ResultsLabel}" />
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
@@ -88,8 +85,7 @@
                             <TextBlock FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}"
-                                       loc:Loc.Key="ProcessorsLabel"
-                                       Text="processors" />
+                                       Text="{Binding Source={StaticResource Strings}, Path=ProcessorsLabel}" />
                         </StackPanel>
 
                         <!-- Processors List -->
