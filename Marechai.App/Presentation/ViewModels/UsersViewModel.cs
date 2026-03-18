@@ -12,7 +12,7 @@ namespace Marechai.App.Presentation.ViewModels;
 /// <summary>
 ///     ViewModel for user management page (Uberadmin only)
 /// </summary>
-public partial class UsersViewModel : ObservableObject
+public partial class UsersViewModel : ObservableObject, IRegionAware
 {
     private readonly ApiClient               _apiClient;
     private readonly IJwtService             _jwtService;
@@ -59,6 +59,9 @@ public partial class UsersViewModel : ObservableObject
     private string? _selectedRole;
 
     [ObservableProperty]
+    private bool _isUberadmin;
+
+    [ObservableProperty]
     private UserDto? _selectedUser;
 
     [ObservableProperty]
@@ -90,6 +93,31 @@ public partial class UsersViewModel : ObservableObject
         AddRoleCommand                  = new AsyncRelayCommand(AddRoleAsync);
         RemoveRoleCommand               = new AsyncRelayCommand<string>(RemoveRoleAsync);
         CloseDialogCommand              = new RelayCommand(CloseDialog);
+
+        // Check role immediately
+        CheckUberadminRole();
+    }
+
+    private void CheckUberadminRole()
+    {
+        try
+        {
+            string token = _tokenService.GetToken();
+
+            if(string.IsNullOrWhiteSpace(token))
+            {
+                IsUberadmin = false;
+
+                return;
+            }
+
+            IEnumerable<string> roles = _jwtService.GetRoles(token);
+            IsUberadmin = roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            IsUberadmin = false;
+        }
     }
 
     public IAsyncRelayCommand          LoadUsersCommand                { get; }
@@ -104,21 +132,20 @@ public partial class UsersViewModel : ObservableObject
     public IAsyncRelayCommand<string>  RemoveRoleCommand               { get; }
     public IRelayCommand               CloseDialogCommand              { get; }
 
-    /// <summary>
-    ///     Checks if the current user is Uberadmin
-    /// </summary>
-    public bool IsUberadmin
-    {
-        get
-        {
-            string?              token = _tokenService.GetToken();
-            IEnumerable<string>? roles = _jwtService.GetRoles(token);
-
-            return roles.Contains("Uberadmin", StringComparer.OrdinalIgnoreCase);
-        }
-    }
-
     public event EventHandler<string>? ShowDialogRequested;
+
+    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        // Re-check role when navigated to — ensures binding updates after DataContext is set
+        CheckUberadminRole();
+
+        if(IsUberadmin)
+            _ = LoadUsersCommand.ExecuteAsync(null);
+    }
 
     private async Task LoadUsersAsync()
     {

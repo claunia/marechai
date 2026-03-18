@@ -86,6 +86,9 @@ public partial class MainViewModel : ObservableObject
         // Subscribe to authentication events
         _authService.LoggedOut += OnLoggedOut;
 
+        if(_authService is AuthService concreteAuthService)
+            concreteAuthService.LoggedIn += OnLoggedIn;
+
         UpdateLoginLogoutButtonText();
         UpdateUberadminStatus();
     }
@@ -138,7 +141,12 @@ public partial class MainViewModel : ObservableObject
 
     private void OnLoggedOut(object? sender, EventArgs e)
     {
-        // Update button text when user logs out
+        UpdateLoginLogoutButtonText();
+        UpdateUberadminStatus();
+    }
+
+    private void OnLoggedIn(object? sender, EventArgs e)
+    {
         UpdateLoginLogoutButtonText();
         UpdateUberadminStatus();
     }
@@ -163,8 +171,8 @@ public partial class MainViewModel : ObservableObject
         }
         else
         {
-            // Navigate to login page in the shell region
-            _regionManager.RequestNavigate(RegionNames.Shell, nameof(LoginPage));
+            // Navigate to login page in the content region
+            _regionManager.RequestNavigate(RegionNames.Content, nameof(LoginPage));
         }
     }
 

@@ -16,7 +16,17 @@ public sealed class TokenService : ITokenService
     readonly ApplicationDataContainer _settings = ApplicationData.Current.LocalSettings;
 
     /// <inheritdoc />
-    public string GetToken() => (string)_settings.Values["token"];
+    public string GetToken()
+    {
+        try
+        {
+            return _settings.Values.ContainsKey("token") ? (string)_settings.Values["token"] : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     /// <inheritdoc />
     public void RemoveToken()

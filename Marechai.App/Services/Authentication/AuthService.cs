@@ -91,6 +91,8 @@ public sealed class AuthService
 
         tokenService.SetToken(authResponse.Token);
 
+        LoggedIn?.Invoke(this, EventArgs.Empty);
+
         return true;
     }
 
@@ -120,4 +122,5 @@ public sealed class AuthService
     public string[] Providers { get; } = [];
     /// <inheritdoc />
     public event EventHandler? LoggedOut;
+    public event EventHandler? LoggedIn;
 }

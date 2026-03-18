@@ -13,10 +13,10 @@ public class LocalizedStrings
     public LocalizedStrings(IStringLocalizer localizer) => _l = localizer;
     public string ActionsColumn => _l["ActionsColumn"];
     public string AddressText => _l["AddressText"];
-    public string AddUserButton => _l["AddUserButton"];
+    public string AddUserButton => _l["AddUserButton_Label"];
     public string AllComputersButton => _l["AllComputersButton"];
     public string AllConsolesButton => _l["AllConsolesButton"];
-    public string BackButton => _l["BackButton"];
+    public string BackButton => _l["BackButton_Label"];
     public string BrowseByLetterText => _l["BrowseByLetterText"];
     public string ChangePasswordButton => _l["ChangePasswordButton"];
     public string CompaniesSearchBox_Placeholder => _l["CompaniesSearchBox_Placeholder"];
@@ -133,7 +133,7 @@ public class LocalizedStrings
     public string ProcessorsNavBar => _l["ProcessorsNavBar"];
     public string ProcessText => _l["ProcessText"];
     public string PrototypeBadgeText => _l["PrototypeBadgeText"];
-    public string RefreshUsersButton => _l["RefreshUsersButton"];
+    public string RefreshUsersButton => _l["RefreshUsersButton_Label"];
     public string ResultsLabel => _l["ResultsLabel"];
     public string ResultsText => _l["ResultsText"];
     public string RetryButton => _l["RetryButton"];

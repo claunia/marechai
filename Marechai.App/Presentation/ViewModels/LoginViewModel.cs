@@ -68,8 +68,8 @@ public partial class LoginViewModel : ObservableObject
 
             if(success)
             {
-                // Navigate back to main page on successful login
-                _regionManager.RequestNavigate(RegionNames.Shell, nameof(MainPage));
+                // Navigate back to news page and refresh auth state
+                _regionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
             }
             else
             {
