@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,15 +46,11 @@ public partial class SettingsViewModel : ObservableObject
     {
         try
         {
-            // Resolve IThemeService lazily from the host
-            var host = App.Current is PrismApplication prismApp ? prismApp.Host : null;
-            _themeService = host?.Services?.GetService<IThemeService>();
+            // Get IThemeService from ColorThemeService (initialized by App.OnInitialized)
+            _themeService = _colorThemeService.ThemeService;
 
             if(_themeService != null)
-            {
                 await _themeService.InitializeAsync();
-                _colorThemeService.SetThemeService(_themeService);
-            }
         }
         catch
         {

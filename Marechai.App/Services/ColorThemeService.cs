@@ -12,6 +12,7 @@ public interface IColorThemeService
 {
     string                CurrentColorTheme    { get; }
     IReadOnlyList<string> AvailableColorThemes { get; }
+    IThemeService?        ThemeService         { get; }
     void                  ApplyColorTheme(string        themeName);
     void                  SetThemeService(IThemeService themeService);
     void                  ReapplyCurrentTheme();
@@ -30,6 +31,8 @@ public class ColorThemeService : IColorThemeService
 
     public string CurrentColorTheme { get; private set; } = DEFAULT_THEME;
 
+    public IThemeService? ThemeService => _themeService;
+
     public IReadOnlyList<string> AvailableColorThemes => new List<string>
     {
         DEFAULT_THEME,
@@ -44,8 +47,8 @@ public class ColorThemeService : IColorThemeService
     {
         _themeService = themeService;
 
-        // Reapply the current theme now that we have the theme service
-        if(CurrentColorTheme != DEFAULT_THEME) ReapplyCurrentTheme();
+        // Now that we have the theme service, reapply saved theme (even default needs refresh)
+        ReapplyCurrentTheme();
     }
 
     public void ReapplyCurrentTheme()
@@ -90,25 +93,27 @@ public class ColorThemeService : IColorThemeService
         // Add the new color theme if not default
         if(themeName != DEFAULT_THEME)
         {
-            string themeFile = themeName switch
-                               {
-                                   "Windows311" => "ms-appx:///Styles/Win311ColorPalette.xaml",
-                                   "MacOS9"     => "ms-appx:///Styles/MacOS9ColorPalette.xaml",
-                                   "DOS"        => "ms-appx:///Styles/DOSColorPalette.xaml",
-                                   "Amiga"      => "ms-appx:///Styles/AmigaColorPalette.xaml",
-                                   "CDE"        => "ms-appx:///Styles/CDEColorPalette.xaml",
-                                   _            => null
-                               };
+            ResourceDictionary newDictionary = null;
 
-            if(themeFile != null)
+            try
             {
-                var newDictionary = new ResourceDictionary
-                {
-                    Source = new Uri(themeFile)
-                };
-
-                app.Resources.MergedDictionaries.Add(newDictionary);
+                newDictionary = themeName switch
+                                {
+                                    "Windows311" => new Marechai.App.Styles.Win311ColorPalette(),
+                                    "MacOS9"     => new Marechai.App.Styles.MacOS9ColorPalette(),
+                                    "DOS"        => new Marechai.App.Styles.DOSColorPalette(),
+                                    "Amiga"      => new Marechai.App.Styles.AmigaColorPalette(),
+                                    "CDE"        => new Marechai.App.Styles.CDEColorPalette(),
+                                    _            => null
+                                };
             }
+            catch
+            {
+                // Palette class might not exist
+            }
+
+            if(newDictionary != null)
+                app.Resources.MergedDictionaries.Add(newDictionary);
         }
 
         // Force UI refresh by toggling the theme temporarily
@@ -144,17 +149,10 @@ public class ColorThemeService : IColorThemeService
 
         try
         {
-            // Get current theme
             AppTheme currentTheme = _themeService.Theme;
-
-            // Toggle to opposite theme briefly
             AppTheme tempTheme = currentTheme == AppTheme.Light ? AppTheme.Dark : AppTheme.Light;
             await _themeService.SetThemeAsync(tempTheme);
-
-            // Small delay to ensure the change is applied
             await Task.Delay(50);
-
-            // Switch back to original theme
             await _themeService.SetThemeAsync(currentTheme);
         }
         catch

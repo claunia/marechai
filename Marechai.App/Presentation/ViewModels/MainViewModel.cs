@@ -9,7 +9,6 @@ using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Uno.Extensions.Authentication;
-using Uno.Extensions.Toolkit;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -53,7 +52,7 @@ public partial class MainViewModel : ObservableObject
     private bool _sidebarContentVisible = true;
 
     public MainViewModel(IStringLocalizer localizer, IOptions<AppConfig> appInfo, IRegionManager regionManager,
-                         NewsViewModel newsViewModel, IColorThemeService colorThemeService,
+                         NewsViewModel newsViewModel,
                          IAuthenticationService authService, IJwtService jwtService, ITokenService tokenService)
     {
         _regionManager = regionManager;
@@ -64,9 +63,6 @@ public partial class MainViewModel : ObservableObject
         NewsViewModel  = newsViewModel;
         Title          = localizer["ApplicationName"];
         if(appInfo?.Value?.Environment != null) Title += $" - {appInfo.Value.Environment}";
-
-        // Initialize color theme service
-        _ = InitializeThemeServicesAsync(colorThemeService);
 
         // Initialize commands
         NavigateToNewsCommand                     = new RelayCommand(() => NavigateTo(nameof(NewsPage)));
@@ -113,26 +109,6 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }
-
-    private async Task InitializeThemeServicesAsync(IColorThemeService colorThemeService)
-    {
-        try
-        {
-            // Try to get IThemeService from the host if available
-            var host = App.Current is PrismApplication prismApp ? prismApp.Host : null;
-            var themeService = host?.Services?.GetService<IThemeService>();
-
-            if(themeService != null)
-            {
-                await themeService.InitializeAsync();
-                colorThemeService.SetThemeService(themeService);
-            }
-        }
-        catch
-        {
-            // Silently fail - theme will work but without refresh on startup
-        }
-    }
 
     private async void UpdateLoginLogoutButtonText()
     {

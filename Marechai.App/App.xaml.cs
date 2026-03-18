@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.ViewModels;
 using Marechai.App.Presentation.Views;
@@ -14,13 +15,18 @@ using Microsoft.Kiota.Serialization.Multipart;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Serilog.Events;
+using Uno.Extensions;
 using Uno.Extensions.Authentication;
+using Uno.Extensions.Hosting;
+using Uno.Extensions.Toolkit;
 using Uno.UI;
 
 namespace Marechai.App;
 
 public partial class App : PrismApplication
 {
+    private Window _mainWindow;
+
     protected override UIElement CreateShell() => Container.Resolve<MainPage>();
 
     protected override void ConfigureHost(IHostBuilder builder)
@@ -35,6 +41,7 @@ public partial class App : PrismApplication
 
     protected override void ConfigureWindow(Window window)
     {
+        _mainWindow = window;
 #if DEBUG
         window.UseStudio();
 #endif
@@ -167,7 +174,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<UsersPage, UsersViewModel>();
     }
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         base.OnInitialized();
 
@@ -179,5 +186,28 @@ public partial class App : PrismApplication
 
         // Navigate to NewsPage as the default content view
         RegionManager.RequestNavigate(RegionNames.Content, nameof(NewsPage));
+
+        // Initialize theming directly — window and content are ready
+        try
+        {
+            var window = _mainWindow;
+
+            if(window != null)
+            {
+                var themeService = Uno.Extensions.WindowExtensions.GetThemeService(window);
+
+                if(themeService != null)
+                {
+                    await themeService.InitializeAsync();
+
+                    var colorThemeService = Container.Resolve<IColorThemeService>();
+                    colorThemeService.SetThemeService(themeService);
+                }
+            }
+        }
+        catch
+        {
+            // Theme initialization is optional
+        }
     }
 }
