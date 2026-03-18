@@ -18,14 +18,10 @@ public sealed class LocalizeConverter : IValueConverter
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        System.Diagnostics.Debug.WriteLine($"LocalizeConverter.Convert: value={value?.GetType().Name} param={parameter} localizer={_localizer != null}");
-
         if(parameter is not string key || _localizer is null)
             return parameter?.ToString() ?? string.Empty;
 
         LocalizedString result = _localizer[key];
-
-        System.Diagnostics.Debug.WriteLine($"LocalizeConverter: key='{key}' found={!result.ResourceNotFound} value='{result.Value}'");
 
         return result.ResourceNotFound ? key : result.Value;
     }
@@ -54,8 +50,6 @@ public static class Loc
 
     private static void OnKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        System.Diagnostics.Debug.WriteLine($"Loc.OnKeyChanged: key='{e.NewValue}' localizer={_localizer != null} element={d.GetType().Name}");
-
         if(e.NewValue is not string key || _localizer is null)
             return;
 
@@ -67,8 +61,6 @@ public static class Loc
             case Microsoft.UI.Xaml.Controls.TextBlock textBlock:
             {
                 string value = TryGetValue(key);
-
-                System.Diagnostics.Debug.WriteLine($"Loc TextBlock key='{key}' value='{value}' localizer={_localizer != null}");
 
                 if(value != null)
                     textBlock.Text = value;

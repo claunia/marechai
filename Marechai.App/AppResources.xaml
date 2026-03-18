@@ -1,0 +1,16 @@
+<ResourceDictionary x:Class="Marechai.App.AppResources"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Marechai.App.Presentation.Converters">
+
+    <local:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
+    <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+    <local:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+    <local:InvertBoolConverter x:Key="InvertBoolConverter" />
+    <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <local:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter" />
+    <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+    <local:RolesListConverter x:Key="RolesListConverter" />
+    <local:LocalizeConverter x:Key="Localize" />
+
+</ResourceDictionary>

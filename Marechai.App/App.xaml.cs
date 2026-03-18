@@ -29,6 +29,11 @@ public partial class App : PrismApplication
 
     protected override UIElement CreateShell() => Container.Resolve<MainPage>();
 
+    protected override void ConfigureApp(IApplicationBuilder builder)
+    {
+        Resources.MergedDictionaries.Add(new AppResources());
+    }
+
     protected override void ConfigureHost(IHostBuilder builder)
     {
         builder
