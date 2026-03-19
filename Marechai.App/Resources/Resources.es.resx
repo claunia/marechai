@@ -1470,4 +1470,32 @@
   <data name="FailedToLoadISExtensions" xml:space="preserve"><value>Error al cargar las extensiones.</value></data>
   <data name="FailedToSaveISExtension" xml:space="preserve"><value>Error al guardar la extensión.</value></data>
   <data name="FailedToDeleteISExtension" xml:space="preserve"><value>Error al eliminar la extensión.</value></data>
+  <data name="ResolutionManagementButton" xml:space="preserve"><value>Gestión de Resoluciones</value></data>
+  <data name="ResolutionManagementTitle" xml:space="preserve"><value>Gestión de Resoluciones</value></data>
+  <data name="ResolutionManagementSubtitle" xml:space="preserve"><value>Administrar resoluciones de pantalla</value></data>
+  <data name="ResolutionMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso Denegado</value></data>
+  <data name="ResolutionMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser un Administrador para acceder a la gestión de resoluciones.</value></data>
+  <data name="AddResolutionButton" xml:space="preserve"><value>Añadir Resolución</value></data>
+  <data name="RefreshResolutionsButton" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="ResolutionSearchPlaceholder" xml:space="preserve"><value>Filtrar resoluciones...</value></data>
+  <data name="ResolutionWidthColumn" xml:space="preserve"><value>Ancho</value></data>
+  <data name="ResolutionHeightColumn" xml:space="preserve"><value>Alto</value></data>
+  <data name="ResolutionColorsColumn" xml:space="preserve"><value>Colores</value></data>
+  <data name="ResolutionPaletteColumn" xml:space="preserve"><value>Paleta</value></data>
+  <data name="ResolutionCharsColumn" xml:space="preserve"><value>Caracteres</value></data>
+  <data name="ResolutionGrayscaleColumn" xml:space="preserve"><value>Grises</value></data>
+  <data name="EditResolutionButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteResolutionButton" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="AddResolutionDialog_Title" xml:space="preserve"><value>Añadir Resolución</value></data>
+  <data name="EditResolutionDialog_Title" xml:space="preserve"><value>Editar Resolución</value></data>
+  <data name="ResolutionWidthLabel" xml:space="preserve"><value>Ancho (píxeles)</value></data>
+  <data name="ResolutionHeightLabel" xml:space="preserve"><value>Alto (píxeles)</value></data>
+  <data name="ResolutionColorsLabel" xml:space="preserve"><value>Colores</value></data>
+  <data name="ResolutionPaletteLabel" xml:space="preserve"><value>Tamaño de Paleta</value></data>
+  <data name="ResolutionCharsLabel" xml:space="preserve"><value>Basado en caracteres</value></data>
+  <data name="ResolutionGrayscaleLabel" xml:space="preserve"><value>Escala de grises</value></data>
+  <data name="ResolutionDimensionsRequired" xml:space="preserve"><value>El ancho y alto deben ser al menos 1.</value></data>
+  <data name="FailedToLoadResolutions" xml:space="preserve"><value>Error al cargar las resoluciones.</value></data>
+  <data name="FailedToSaveResolution" xml:space="preserve"><value>Error al guardar la resolución.</value></data>
+  <data name="FailedToDeleteResolution" xml:space="preserve"><value>Error al eliminar la resolución.</value></data>
 </root>

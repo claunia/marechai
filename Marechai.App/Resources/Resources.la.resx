@@ -1332,4 +1332,32 @@
   <data name="FailedToLoadISExtensions" xml:space="preserve"><value>Extensiones onerare non potuit.</value></data>
   <data name="FailedToSaveISExtension" xml:space="preserve"><value>Extensionem servare non potuit.</value></data>
   <data name="FailedToDeleteISExtension" xml:space="preserve"><value>Extensionem delere non potuit.</value></data>
+  <data name="ResolutionManagementButton" xml:space="preserve"><value>Administratio Resolutionum</value></data>
+  <data name="ResolutionManagementTitle" xml:space="preserve"><value>Administratio Resolutionum</value></data>
+  <data name="ResolutionManagementSubtitle" xml:space="preserve"><value>Resolutiones scrinii administrare</value></data>
+  <data name="ResolutionMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus Negatus</value></data>
+  <data name="ResolutionMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ad resolutionum administrationem.</value></data>
+  <data name="AddResolutionButton" xml:space="preserve"><value>Resolutionem Addere</value></data>
+  <data name="RefreshResolutionsButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="ResolutionSearchPlaceholder" xml:space="preserve"><value>Resolutiones filtrare...</value></data>
+  <data name="ResolutionWidthColumn" xml:space="preserve"><value>Latitudo</value></data>
+  <data name="ResolutionHeightColumn" xml:space="preserve"><value>Altitudo</value></data>
+  <data name="ResolutionColorsColumn" xml:space="preserve"><value>Colores</value></data>
+  <data name="ResolutionPaletteColumn" xml:space="preserve"><value>Paleta</value></data>
+  <data name="ResolutionCharsColumn" xml:space="preserve"><value>Char.</value></data>
+  <data name="ResolutionGrayscaleColumn" xml:space="preserve"><value>Gris.</value></data>
+  <data name="EditResolutionButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="DeleteResolutionButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="AddResolutionDialog_Title" xml:space="preserve"><value>Resolutionem Addere</value></data>
+  <data name="EditResolutionDialog_Title" xml:space="preserve"><value>Resolutionem Mutare</value></data>
+  <data name="ResolutionWidthLabel" xml:space="preserve"><value>Latitudo (puncta)</value></data>
+  <data name="ResolutionHeightLabel" xml:space="preserve"><value>Altitudo (puncta)</value></data>
+  <data name="ResolutionColorsLabel" xml:space="preserve"><value>Colores</value></data>
+  <data name="ResolutionPaletteLabel" xml:space="preserve"><value>Magnitudo Paletae</value></data>
+  <data name="ResolutionCharsLabel" xml:space="preserve"><value>Characteribus fundatum</value></data>
+  <data name="ResolutionGrayscaleLabel" xml:space="preserve"><value>Gradatio grisea</value></data>
+  <data name="ResolutionDimensionsRequired" xml:space="preserve"><value>Latitudo et altitudo saltem 1 esse debent.</value></data>
+  <data name="FailedToLoadResolutions" xml:space="preserve"><value>Resolutiones onerare non potuit.</value></data>
+  <data name="FailedToSaveResolution" xml:space="preserve"><value>Resolutionem servare non potuit.</value></data>
+  <data name="FailedToDeleteResolution" xml:space="preserve"><value>Resolutionem delere non potuit.</value></data>
 </root>

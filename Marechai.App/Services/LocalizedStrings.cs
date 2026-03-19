@@ -292,4 +292,27 @@ public class LocalizedStrings
     public string EditISExtensionButton => _l["EditISExtensionButton"];
     public string DeleteISExtensionButton => _l["DeleteISExtensionButton"];
     public string ISExtensionNameLabel => _l["ISExtensionNameLabel"];
+
+    // Resolution management
+    public string ResolutionManagementTitle => _l["ResolutionManagementTitle"];
+    public string ResolutionManagementSubtitle => _l["ResolutionManagementSubtitle"];
+    public string ResolutionMgmtAccessDeniedTitle => _l["ResolutionMgmtAccessDeniedTitle"];
+    public string ResolutionMgmtAccessDeniedMessage => _l["ResolutionMgmtAccessDeniedMessage"];
+    public string AddResolutionButton => _l["AddResolutionButton"];
+    public string RefreshResolutionsButton => _l["RefreshResolutionsButton"];
+    public string ResolutionSearchPlaceholder => _l["ResolutionSearchPlaceholder"];
+    public string ResolutionWidthColumn => _l["ResolutionWidthColumn"];
+    public string ResolutionHeightColumn => _l["ResolutionHeightColumn"];
+    public string ResolutionColorsColumn => _l["ResolutionColorsColumn"];
+    public string ResolutionPaletteColumn => _l["ResolutionPaletteColumn"];
+    public string ResolutionCharsColumn => _l["ResolutionCharsColumn"];
+    public string ResolutionGrayscaleColumn => _l["ResolutionGrayscaleColumn"];
+    public string EditResolutionButton => _l["EditResolutionButton"];
+    public string DeleteResolutionButton => _l["DeleteResolutionButton"];
+    public string ResolutionWidthLabel => _l["ResolutionWidthLabel"];
+    public string ResolutionHeightLabel => _l["ResolutionHeightLabel"];
+    public string ResolutionColorsLabel => _l["ResolutionColorsLabel"];
+    public string ResolutionPaletteLabel => _l["ResolutionPaletteLabel"];
+    public string ResolutionCharsLabel => _l["ResolutionCharsLabel"];
+    public string ResolutionGrayscaleLabel => _l["ResolutionGrayscaleLabel"];
 }

@@ -190,6 +190,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminProcessorsViewModel>();
         containerRegistry.Register<AdminInstructionSetsViewModel>();
         containerRegistry.Register<AdminInstructionSetExtensionsViewModel>();
+        containerRegistry.Register<AdminResolutionsViewModel>();
 
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
@@ -216,6 +217,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminProcessorsPage, AdminProcessorsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInstructionSetsPage, AdminInstructionSetsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInstructionSetExtensionsPage, AdminInstructionSetExtensionsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminResolutionsPage, AdminResolutionsViewModel>();
     }
 
     protected override async void OnInitialized()

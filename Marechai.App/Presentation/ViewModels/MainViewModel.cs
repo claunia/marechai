@@ -50,6 +50,7 @@ public partial class MainViewModel : ObservableObject
     public string ProcessorManagementButtonText   => _localizer["ProcessorManagementButton"];
     public string InstructionSetManagementButtonText => _localizer["InstructionSetManagementButton"];
     public string ISExtensionManagementButtonText   => _localizer["ISExtensionManagementButton"];
+    public string ResolutionManagementButtonText    => _localizer["ResolutionManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
     public string AdminSidebarTitleText          => _localizer["AdminSidebarTitle"];
     public string AdminSwitchButtonText          => _localizer["AdminSwitchButton"];
@@ -95,6 +96,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminProcessorsCommand            = new RelayCommand(() => NavigateTo(nameof(AdminProcessorsPage)));
         NavigateToAdminInstructionSetsCommand        = new RelayCommand(() => NavigateTo(nameof(AdminInstructionSetsPage)));
         NavigateToAdminISExtensionsCommand           = new RelayCommand(() => NavigateTo(nameof(AdminInstructionSetExtensionsPage)));
+        NavigateToAdminResolutionsCommand             = new RelayCommand(() => NavigateTo(nameof(AdminResolutionsPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
@@ -132,6 +134,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminProcessorsCommand          { get; }
     public ICommand NavigateToAdminInstructionSetsCommand     { get; }
     public ICommand NavigateToAdminISExtensionsCommand        { get; }
+    public ICommand NavigateToAdminResolutionsCommand         { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }
