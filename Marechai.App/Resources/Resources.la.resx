@@ -1422,4 +1422,37 @@
   <data name="FailedToLoadScreens" xml:space="preserve"><value>Scrinia onerare non potuit.</value></data>
   <data name="FailedToSaveScreen" xml:space="preserve"><value>Scrinium servare non potuit.</value></data>
   <data name="FailedToDeleteScreen" xml:space="preserve"><value>Scrinium delere non potuit.</value></data>
+  <data name="MachineManagementButton" xml:space="preserve"><value>Administratio Machinarum</value></data>
+  <data name="MachineManagementTitle" xml:space="preserve"><value>Administratio Machinarum</value></data>
+  <data name="MachineManagementSubtitle" xml:space="preserve"><value>Computatores et consolia administrare</value></data>
+  <data name="MachineMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus Negatus</value></data>
+  <data name="MachineMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ad machinarum administrationem.</value></data>
+  <data name="AddMachineButton" xml:space="preserve"><value>Machinam Addere</value></data>
+  <data name="RefreshMachinesButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="MachineSearchPlaceholder" xml:space="preserve"><value>Machinas filtrare...</value></data>
+  <data name="MachineNameColumn" xml:space="preserve"><value>Nomen</value></data>
+  <data name="MachineCompanyColumn" xml:space="preserve"><value>Societas</value></data>
+  <data name="MachineModelColumn" xml:space="preserve"><value>Exemplar</value></data>
+  <data name="EditMachineButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="DeleteMachineButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="MachineBasicInfoHeader" xml:space="preserve"><value>Informationes Fundamentales</value></data>
+  <data name="MachineNameLabel" xml:space="preserve"><value>Nomen</value></data>
+  <data name="MachineModelLabel" xml:space="preserve"><value>Exemplar</value></data>
+  <data name="MachineTypeLabel" xml:space="preserve"><value>Genus</value></data>
+  <data name="MachineIntroducedLabel" xml:space="preserve"><value>Introductum</value></data>
+  <data name="MachineCompanyLabel" xml:space="preserve"><value>Societas</value></data>
+  <data name="MachineFamilyLabel" xml:space="preserve"><value>Familia</value></data>
+  <data name="MachineGpusHeader" xml:space="preserve"><value>GPUs</value></data>
+  <data name="MachineProcessorsHeader" xml:space="preserve"><value>Processores</value></data>
+  <data name="MachineSoundsHeader" xml:space="preserve"><value>Synthetizatores Soni</value></data>
+  <data name="MachineScreensHeader" xml:space="preserve"><value>Scrinia</value></data>
+  <data name="MachineMemoryHeader" xml:space="preserve"><value>Memoria</value></data>
+  <data name="MachineStorageHeader" xml:space="preserve"><value>Repositorium</value></data>
+  <data name="MachineCompanyRequired" xml:space="preserve"><value>Societas eligi debet.</value></data>
+  <data name="MachineTypeUnknown" xml:space="preserve"><value>Ignotum</value></data>
+  <data name="MachineTypeComputer" xml:space="preserve"><value>Computator</value></data>
+  <data name="MachineTypeConsole" xml:space="preserve"><value>Consolium</value></data>
+  <data name="FailedToLoadMachines" xml:space="preserve"><value>Machinas onerare non potuit.</value></data>
+  <data name="FailedToSaveMachine" xml:space="preserve"><value>Machinam servare non potuit.</value></data>
+  <data name="FailedToDeleteMachine" xml:space="preserve"><value>Machinam delere non potuit.</value></data>
 </root>

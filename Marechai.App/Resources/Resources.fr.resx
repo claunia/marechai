@@ -1524,4 +1524,39 @@
   <data name="FailedToLoadScreens" xml:space="preserve"><value>Échec du chargement des écrans.</value></data>
   <data name="FailedToSaveScreen" xml:space="preserve"><value>Échec de la sauvegarde de l'écran.</value></data>
   <data name="FailedToDeleteScreen" xml:space="preserve"><value>Échec de la suppression de l'écran.</value></data>
+  <data name="MachineManagementButton" xml:space="preserve"><value>Gestion des Machines</value></data>
+  <data name="MachineManagementTitle" xml:space="preserve"><value>Gestion des Machines</value></data>
+  <data name="MachineManagementSubtitle" xml:space="preserve"><value>Gérer les ordinateurs et consoles</value></data>
+  <data name="MachineMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès Refusé</value></data>
+  <data name="MachineMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour accéder à la gestion des machines.</value></data>
+  <data name="AddMachineButton" xml:space="preserve"><value>Ajouter une Machine</value></data>
+  <data name="RefreshMachinesButton" xml:space="preserve"><value>Actualiser</value></data>
+  <data name="MachineSearchPlaceholder" xml:space="preserve"><value>Filtrer les machines...</value></data>
+  <data name="MachineNameColumn" xml:space="preserve"><value>Nom</value></data>
+  <data name="MachineCompanyColumn" xml:space="preserve"><value>Entreprise</value></data>
+  <data name="MachineModelColumn" xml:space="preserve"><value>Modèle</value></data>
+  <data name="EditMachineButton" xml:space="preserve"><value>Modifier</value></data>
+  <data name="DeleteMachineButton" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="AddMachineDialog_Title" xml:space="preserve"><value>Ajouter une Machine</value></data>
+  <data name="EditMachineDialog_Title" xml:space="preserve"><value>Modifier la Machine</value></data>
+  <data name="MachineBasicInfoHeader" xml:space="preserve"><value>Informations de Base</value></data>
+  <data name="MachineNameLabel" xml:space="preserve"><value>Nom</value></data>
+  <data name="MachineModelLabel" xml:space="preserve"><value>Modèle</value></data>
+  <data name="MachineTypeLabel" xml:space="preserve"><value>Type</value></data>
+  <data name="MachineIntroducedLabel" xml:space="preserve"><value>Introduit</value></data>
+  <data name="MachineCompanyLabel" xml:space="preserve"><value>Entreprise</value></data>
+  <data name="MachineFamilyLabel" xml:space="preserve"><value>Famille</value></data>
+  <data name="MachineGpusHeader" xml:space="preserve"><value>GPUs</value></data>
+  <data name="MachineProcessorsHeader" xml:space="preserve"><value>Processeurs</value></data>
+  <data name="MachineSoundsHeader" xml:space="preserve"><value>Synthétiseurs Sonores</value></data>
+  <data name="MachineScreensHeader" xml:space="preserve"><value>Écrans</value></data>
+  <data name="MachineMemoryHeader" xml:space="preserve"><value>Mémoire</value></data>
+  <data name="MachineStorageHeader" xml:space="preserve"><value>Stockage</value></data>
+  <data name="MachineCompanyRequired" xml:space="preserve"><value>Une entreprise doit être sélectionnée.</value></data>
+  <data name="MachineTypeUnknown" xml:space="preserve"><value>Inconnu</value></data>
+  <data name="MachineTypeComputer" xml:space="preserve"><value>Ordinateur</value></data>
+  <data name="MachineTypeConsole" xml:space="preserve"><value>Console</value></data>
+  <data name="FailedToLoadMachines" xml:space="preserve"><value>Échec du chargement des machines.</value></data>
+  <data name="FailedToSaveMachine" xml:space="preserve"><value>Échec de la sauvegarde de la machine.</value></data>
+  <data name="FailedToDeleteMachine" xml:space="preserve"><value>Échec de la suppression de la machine.</value></data>
 </root>

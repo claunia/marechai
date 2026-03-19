@@ -363,4 +363,31 @@ public class LocalizedStrings
     public string ScreenNativeResolutionLabel => _l["ScreenNativeResolutionLabel"];
     public string ScreenSupportedResolutionsHeader => _l["ScreenSupportedResolutionsHeader"];
     public string ScreenAddResolutionPlaceholder => _l["ScreenAddResolutionPlaceholder"];
+
+    // Machine management
+    public string MachineManagementTitle => _l["MachineManagementTitle"];
+    public string MachineManagementSubtitle => _l["MachineManagementSubtitle"];
+    public string MachineMgmtAccessDeniedTitle => _l["MachineMgmtAccessDeniedTitle"];
+    public string MachineMgmtAccessDeniedMessage => _l["MachineMgmtAccessDeniedMessage"];
+    public string AddMachineButton => _l["AddMachineButton"];
+    public string RefreshMachinesButton => _l["RefreshMachinesButton"];
+    public string MachineSearchPlaceholder => _l["MachineSearchPlaceholder"];
+    public string MachineNameColumn => _l["MachineNameColumn"];
+    public string MachineCompanyColumn => _l["MachineCompanyColumn"];
+    public string MachineModelColumn => _l["MachineModelColumn"];
+    public string EditMachineButton => _l["EditMachineButton"];
+    public string DeleteMachineButton => _l["DeleteMachineButton"];
+    public string MachineBasicInfoHeader => _l["MachineBasicInfoHeader"];
+    public string MachineNameLabel => _l["MachineNameLabel"];
+    public string MachineModelLabel => _l["MachineModelLabel"];
+    public string MachineTypeLabel => _l["MachineTypeLabel"];
+    public string MachineIntroducedLabel => _l["MachineIntroducedLabel"];
+    public string MachineCompanyLabel => _l["MachineCompanyLabel"];
+    public string MachineFamilyLabel => _l["MachineFamilyLabel"];
+    public string MachineGpusHeader => _l["MachineGpusHeader"];
+    public string MachineProcessorsHeader => _l["MachineProcessorsHeader"];
+    public string MachineSoundsHeader => _l["MachineSoundsHeader"];
+    public string MachineScreensHeader => _l["MachineScreensHeader"];
+    public string MachineMemoryHeader => _l["MachineMemoryHeader"];
+    public string MachineStorageHeader => _l["MachineStorageHeader"];
 }
