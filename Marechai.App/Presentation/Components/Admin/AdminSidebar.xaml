@@ -165,6 +165,18 @@
                         Foreground="{StaticResource AdminSidebarForeground}"
                         BorderThickness="0"
                         CornerRadius="0" />
+
+                <!-- Screen Management -->
+                <Button Content="{Binding ScreenManagementButtonText}"
+                        Command="{Binding NavigateToAdminScreensCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
             </StackPanel>
         </ScrollViewer>
 

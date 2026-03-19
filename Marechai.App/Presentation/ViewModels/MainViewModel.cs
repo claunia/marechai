@@ -52,6 +52,7 @@ public partial class MainViewModel : ObservableObject
     public string ISExtensionManagementButtonText   => _localizer["ISExtensionManagementButton"];
     public string ResolutionManagementButtonText    => _localizer["ResolutionManagementButton"];
     public string SoundSynthManagementButtonText    => _localizer["SoundSynthManagementButton"];
+    public string ScreenManagementButtonText         => _localizer["ScreenManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
     public string AdminSidebarTitleText          => _localizer["AdminSidebarTitle"];
     public string AdminSwitchButtonText          => _localizer["AdminSwitchButton"];
@@ -99,6 +100,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminISExtensionsCommand           = new RelayCommand(() => NavigateTo(nameof(AdminInstructionSetExtensionsPage)));
         NavigateToAdminResolutionsCommand             = new RelayCommand(() => NavigateTo(nameof(AdminResolutionsPage)));
         NavigateToAdminSoundSynthsCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoundSynthsPage)));
+        NavigateToAdminScreensCommand                   = new RelayCommand(() => NavigateTo(nameof(AdminScreensPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
@@ -138,6 +140,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminISExtensionsCommand        { get; }
     public ICommand NavigateToAdminResolutionsCommand         { get; }
     public ICommand NavigateToAdminSoundSynthsCommand         { get; }
+    public ICommand NavigateToAdminScreensCommand              { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }

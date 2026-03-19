@@ -341,4 +341,26 @@ public class LocalizedStrings
     public string SoundSynthSquareWaveLabel => _l["SoundSynthSquareWaveLabel"];
     public string SoundSynthWhiteNoiseLabel => _l["SoundSynthWhiteNoiseLabel"];
     public string SoundSynthTypeLabel => _l["SoundSynthTypeLabel"];
+
+    // Screen management
+    public string ScreenManagementTitle => _l["ScreenManagementTitle"];
+    public string ScreenManagementSubtitle => _l["ScreenManagementSubtitle"];
+    public string ScreenMgmtAccessDeniedTitle => _l["ScreenMgmtAccessDeniedTitle"];
+    public string ScreenMgmtAccessDeniedMessage => _l["ScreenMgmtAccessDeniedMessage"];
+    public string AddScreenButton => _l["AddScreenButton"];
+    public string RefreshScreensButton => _l["RefreshScreensButton"];
+    public string ScreenSearchPlaceholder => _l["ScreenSearchPlaceholder"];
+    public string ScreenDiagonalColumn => _l["ScreenDiagonalColumn"];
+    public string ScreenTypeColumn => _l["ScreenTypeColumn"];
+    public string ScreenSizeColumn => _l["ScreenSizeColumn"];
+    public string EditScreenButton => _l["EditScreenButton"];
+    public string DeleteScreenButton => _l["DeleteScreenButton"];
+    public string ScreenDiagonalLabel => _l["ScreenDiagonalLabel"];
+    public string ScreenTypeLabel => _l["ScreenTypeLabel"];
+    public string ScreenWidthLabel => _l["ScreenWidthLabel"];
+    public string ScreenHeightLabel => _l["ScreenHeightLabel"];
+    public string ScreenEffectiveColorsLabel => _l["ScreenEffectiveColorsLabel"];
+    public string ScreenNativeResolutionLabel => _l["ScreenNativeResolutionLabel"];
+    public string ScreenSupportedResolutionsHeader => _l["ScreenSupportedResolutionsHeader"];
+    public string ScreenAddResolutionPlaceholder => _l["ScreenAddResolutionPlaceholder"];
 }

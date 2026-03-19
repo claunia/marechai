@@ -192,6 +192,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminInstructionSetExtensionsViewModel>();
         containerRegistry.Register<AdminResolutionsViewModel>();
         containerRegistry.Register<AdminSoundSynthsViewModel>();
+        containerRegistry.Register<AdminScreensViewModel>();
 
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
@@ -220,6 +221,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminInstructionSetExtensionsPage, AdminInstructionSetExtensionsViewModel>();
         containerRegistry.RegisterForNavigation<AdminResolutionsPage, AdminResolutionsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoundSynthsPage, AdminSoundSynthsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminScreensPage, AdminScreensViewModel>();
     }
 
     protected override async void OnInitialized()

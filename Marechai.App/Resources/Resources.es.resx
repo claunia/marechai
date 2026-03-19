@@ -1532,4 +1532,32 @@
   <data name="FailedToLoadSoundSynths" xml:space="preserve"><value>Error al cargar los sintetizadores.</value></data>
   <data name="FailedToSaveSoundSynth" xml:space="preserve"><value>Error al guardar el sintetizador.</value></data>
   <data name="FailedToDeleteSoundSynth" xml:space="preserve"><value>Error al eliminar el sintetizador.</value></data>
+  <data name="ScreenManagementButton" xml:space="preserve"><value>Gestión de Pantallas</value></data>
+  <data name="ScreenManagementTitle" xml:space="preserve"><value>Gestión de Pantallas</value></data>
+  <data name="ScreenManagementSubtitle" xml:space="preserve"><value>Administrar pantallas de visualización</value></data>
+  <data name="ScreenMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso Denegado</value></data>
+  <data name="ScreenMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser un Administrador para acceder a la gestión de pantallas.</value></data>
+  <data name="AddScreenButton" xml:space="preserve"><value>Añadir Pantalla</value></data>
+  <data name="RefreshScreensButton" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="ScreenSearchPlaceholder" xml:space="preserve"><value>Filtrar pantallas...</value></data>
+  <data name="ScreenDiagonalColumn" xml:space="preserve"><value>Diagonal (")</value></data>
+  <data name="ScreenTypeColumn" xml:space="preserve"><value>Tipo</value></data>
+  <data name="ScreenSizeColumn" xml:space="preserve"><value>Tamaño</value></data>
+  <data name="EditScreenButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteScreenButton" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="AddScreenDialog_Title" xml:space="preserve"><value>Añadir Pantalla</value></data>
+  <data name="EditScreenDialog_Title" xml:space="preserve"><value>Editar Pantalla</value></data>
+  <data name="ScreenDiagonalLabel" xml:space="preserve"><value>Diagonal (pulgadas)</value></data>
+  <data name="ScreenTypeLabel" xml:space="preserve"><value>Tipo (ej. CRT, LCD, OLED)</value></data>
+  <data name="ScreenWidthLabel" xml:space="preserve"><value>Ancho (mm)</value></data>
+  <data name="ScreenHeightLabel" xml:space="preserve"><value>Alto (mm)</value></data>
+  <data name="ScreenEffectiveColorsLabel" xml:space="preserve"><value>Colores Efectivos</value></data>
+  <data name="ScreenNativeResolutionLabel" xml:space="preserve"><value>Resolución Nativa</value></data>
+  <data name="ScreenSupportedResolutionsHeader" xml:space="preserve"><value>Resoluciones Soportadas</value></data>
+  <data name="ScreenAddResolutionPlaceholder" xml:space="preserve"><value>Seleccionar resolución para añadir...</value></data>
+  <data name="ScreenDiagonalRequired" xml:space="preserve"><value>La diagonal debe ser mayor que 0.</value></data>
+  <data name="ScreenResolutionRequired" xml:space="preserve"><value>Se debe seleccionar una resolución nativa.</value></data>
+  <data name="FailedToLoadScreens" xml:space="preserve"><value>Error al cargar las pantallas.</value></data>
+  <data name="FailedToSaveScreen" xml:space="preserve"><value>Error al guardar la pantalla.</value></data>
+  <data name="FailedToDeleteScreen" xml:space="preserve"><value>Error al eliminar la pantalla.</value></data>
 </root>

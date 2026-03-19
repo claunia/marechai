@@ -1394,4 +1394,32 @@
   <data name="FailedToLoadSoundSynths" xml:space="preserve"><value>Falha ao carregar os sintetizadores.</value></data>
   <data name="FailedToSaveSoundSynth" xml:space="preserve"><value>Falha ao salvar o sintetizador.</value></data>
   <data name="FailedToDeleteSoundSynth" xml:space="preserve"><value>Falha ao excluir o sintetizador.</value></data>
+  <data name="ScreenManagementButton" xml:space="preserve"><value>Gestão de Telas</value></data>
+  <data name="ScreenManagementTitle" xml:space="preserve"><value>Gestão de Telas</value></data>
+  <data name="ScreenManagementSubtitle" xml:space="preserve"><value>Gerenciar telas de exibição</value></data>
+  <data name="ScreenMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso Negado</value></data>
+  <data name="ScreenMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa ser Administrador para acessar a gestão de telas.</value></data>
+  <data name="AddScreenButton" xml:space="preserve"><value>Adicionar Tela</value></data>
+  <data name="RefreshScreensButton" xml:space="preserve"><value>Atualizar</value></data>
+  <data name="ScreenSearchPlaceholder" xml:space="preserve"><value>Filtrar telas...</value></data>
+  <data name="ScreenDiagonalColumn" xml:space="preserve"><value>Diagonal (")</value></data>
+  <data name="ScreenTypeColumn" xml:space="preserve"><value>Tipo</value></data>
+  <data name="ScreenSizeColumn" xml:space="preserve"><value>Tamanho</value></data>
+  <data name="EditScreenButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteScreenButton" xml:space="preserve"><value>Excluir</value></data>
+  <data name="AddScreenDialog_Title" xml:space="preserve"><value>Adicionar Tela</value></data>
+  <data name="EditScreenDialog_Title" xml:space="preserve"><value>Editar Tela</value></data>
+  <data name="ScreenDiagonalLabel" xml:space="preserve"><value>Diagonal (polegadas)</value></data>
+  <data name="ScreenTypeLabel" xml:space="preserve"><value>Tipo (ex. CRT, LCD, OLED)</value></data>
+  <data name="ScreenWidthLabel" xml:space="preserve"><value>Largura (mm)</value></data>
+  <data name="ScreenHeightLabel" xml:space="preserve"><value>Altura (mm)</value></data>
+  <data name="ScreenEffectiveColorsLabel" xml:space="preserve"><value>Cores Efetivas</value></data>
+  <data name="ScreenNativeResolutionLabel" xml:space="preserve"><value>Resolução Nativa</value></data>
+  <data name="ScreenSupportedResolutionsHeader" xml:space="preserve"><value>Resoluções Suportadas</value></data>
+  <data name="ScreenAddResolutionPlaceholder" xml:space="preserve"><value>Selecionar resolução para adicionar...</value></data>
+  <data name="ScreenDiagonalRequired" xml:space="preserve"><value>A diagonal deve ser maior que 0.</value></data>
+  <data name="ScreenResolutionRequired" xml:space="preserve"><value>Uma resolução nativa deve ser selecionada.</value></data>
+  <data name="FailedToLoadScreens" xml:space="preserve"><value>Falha ao carregar as telas.</value></data>
+  <data name="FailedToSaveScreen" xml:space="preserve"><value>Falha ao salvar a tela.</value></data>
+  <data name="FailedToDeleteScreen" xml:space="preserve"><value>Falha ao excluir a tela.</value></data>
 </root>

@@ -1394,4 +1394,32 @@
   <data name="FailedToLoadSoundSynths" xml:space="preserve"><value>Synthetizatores onerare non potuit.</value></data>
   <data name="FailedToSaveSoundSynth" xml:space="preserve"><value>Synthetizatorem servare non potuit.</value></data>
   <data name="FailedToDeleteSoundSynth" xml:space="preserve"><value>Synthetizatorem delere non potuit.</value></data>
+  <data name="ScreenManagementButton" xml:space="preserve"><value>Administratio Scriniorum</value></data>
+  <data name="ScreenManagementTitle" xml:space="preserve"><value>Administratio Scriniorum</value></data>
+  <data name="ScreenManagementSubtitle" xml:space="preserve"><value>Scrinia ostendendi administrare</value></data>
+  <data name="ScreenMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus Negatus</value></data>
+  <data name="ScreenMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ad scriniorum administrationem.</value></data>
+  <data name="AddScreenButton" xml:space="preserve"><value>Scrinium Addere</value></data>
+  <data name="RefreshScreensButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="ScreenSearchPlaceholder" xml:space="preserve"><value>Scrinia filtrare...</value></data>
+  <data name="ScreenDiagonalColumn" xml:space="preserve"><value>Diagonalis (")</value></data>
+  <data name="ScreenTypeColumn" xml:space="preserve"><value>Genus</value></data>
+  <data name="ScreenSizeColumn" xml:space="preserve"><value>Magnitudo</value></data>
+  <data name="EditScreenButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="DeleteScreenButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="AddScreenDialog_Title" xml:space="preserve"><value>Scrinium Addere</value></data>
+  <data name="EditScreenDialog_Title" xml:space="preserve"><value>Scrinium Mutare</value></data>
+  <data name="ScreenDiagonalLabel" xml:space="preserve"><value>Diagonalis (unciae)</value></data>
+  <data name="ScreenTypeLabel" xml:space="preserve"><value>Genus (e.g. CRT, LCD, OLED)</value></data>
+  <data name="ScreenWidthLabel" xml:space="preserve"><value>Latitudo (mm)</value></data>
+  <data name="ScreenHeightLabel" xml:space="preserve"><value>Altitudo (mm)</value></data>
+  <data name="ScreenEffectiveColorsLabel" xml:space="preserve"><value>Colores Efficaces</value></data>
+  <data name="ScreenNativeResolutionLabel" xml:space="preserve"><value>Resolutio Nativa</value></data>
+  <data name="ScreenSupportedResolutionsHeader" xml:space="preserve"><value>Resolutiones Sustentae</value></data>
+  <data name="ScreenAddResolutionPlaceholder" xml:space="preserve"><value>Resolutionem ad addendum eligere...</value></data>
+  <data name="ScreenDiagonalRequired" xml:space="preserve"><value>Diagonalis maior quam 0 esse debet.</value></data>
+  <data name="ScreenResolutionRequired" xml:space="preserve"><value>Resolutio nativa eligi debet.</value></data>
+  <data name="FailedToLoadScreens" xml:space="preserve"><value>Scrinia onerare non potuit.</value></data>
+  <data name="FailedToSaveScreen" xml:space="preserve"><value>Scrinium servare non potuit.</value></data>
+  <data name="FailedToDeleteScreen" xml:space="preserve"><value>Scrinium delere non potuit.</value></data>
 </root>
