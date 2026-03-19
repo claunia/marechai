@@ -1468,4 +1468,32 @@
   <data name="FailedToLoadResolutions" xml:space="preserve"><value>Échec du chargement des résolutions.</value></data>
   <data name="FailedToSaveResolution" xml:space="preserve"><value>Échec de la sauvegarde de la résolution.</value></data>
   <data name="FailedToDeleteResolution" xml:space="preserve"><value>Échec de la suppression de la résolution.</value></data>
+  <data name="SoundSynthManagementButton" xml:space="preserve"><value>Gestion des Synthétiseurs</value></data>
+  <data name="SoundSynthManagementTitle" xml:space="preserve"><value>Gestion des Synthétiseurs Sonores</value></data>
+  <data name="SoundSynthManagementSubtitle" xml:space="preserve"><value>Gérer les synthétiseurs sonores et puces audio</value></data>
+  <data name="SoundSynthMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès Refusé</value></data>
+  <data name="SoundSynthMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour accéder à la gestion des synthétiseurs.</value></data>
+  <data name="AddSoundSynthButton" xml:space="preserve"><value>Ajouter un Synthétiseur</value></data>
+  <data name="RefreshSoundSynthsButton" xml:space="preserve"><value>Actualiser</value></data>
+  <data name="SoundSynthSearchPlaceholder" xml:space="preserve"><value>Filtrer les synthétiseurs...</value></data>
+  <data name="SoundSynthNameColumn" xml:space="preserve"><value>Nom</value></data>
+  <data name="SoundSynthCompanyColumn" xml:space="preserve"><value>Entreprise</value></data>
+  <data name="SoundSynthModelCodeColumn" xml:space="preserve"><value>Code Modèle</value></data>
+  <data name="EditSoundSynthButton" xml:space="preserve"><value>Modifier</value></data>
+  <data name="DeleteSoundSynthButton" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="AddSoundSynthDialog_Title" xml:space="preserve"><value>Ajouter un Synthétiseur</value></data>
+  <data name="EditSoundSynthDialog_Title" xml:space="preserve"><value>Modifier le Synthétiseur</value></data>
+  <data name="SoundSynthNameLabel" xml:space="preserve"><value>Nom</value></data>
+  <data name="SoundSynthCompanyLabel" xml:space="preserve"><value>Entreprise</value></data>
+  <data name="SoundSynthModelCodeLabel" xml:space="preserve"><value>Code Modèle</value></data>
+  <data name="SoundSynthIntroducedLabel" xml:space="preserve"><value>Introduit</value></data>
+  <data name="SoundSynthVoicesLabel" xml:space="preserve"><value>Voix PCM</value></data>
+  <data name="SoundSynthFrequencyLabel" xml:space="preserve"><value>Fréquence (Hz)</value></data>
+  <data name="SoundSynthDepthLabel" xml:space="preserve"><value>Profondeur en Bits</value></data>
+  <data name="SoundSynthSquareWaveLabel" xml:space="preserve"><value>Canaux Onde Carrée</value></data>
+  <data name="SoundSynthWhiteNoiseLabel" xml:space="preserve"><value>Canaux Bruit Blanc</value></data>
+  <data name="SoundSynthTypeLabel" xml:space="preserve"><value>Type</value></data>
+  <data name="FailedToLoadSoundSynths" xml:space="preserve"><value>Échec du chargement des synthétiseurs.</value></data>
+  <data name="FailedToSaveSoundSynth" xml:space="preserve"><value>Échec de la sauvegarde du synthétiseur.</value></data>
+  <data name="FailedToDeleteSoundSynth" xml:space="preserve"><value>Échec de la suppression du synthétiseur.</value></data>
 </root>

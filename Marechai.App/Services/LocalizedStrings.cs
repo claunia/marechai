@@ -317,4 +317,28 @@ public class LocalizedStrings
     public string ResolutionPaletteLabel => _l["ResolutionPaletteLabel"];
     public string ResolutionCharsLabel => _l["ResolutionCharsLabel"];
     public string ResolutionGrayscaleLabel => _l["ResolutionGrayscaleLabel"];
+
+    // Sound synth management
+    public string SoundSynthManagementTitle => _l["SoundSynthManagementTitle"];
+    public string SoundSynthManagementSubtitle => _l["SoundSynthManagementSubtitle"];
+    public string SoundSynthMgmtAccessDeniedTitle => _l["SoundSynthMgmtAccessDeniedTitle"];
+    public string SoundSynthMgmtAccessDeniedMessage => _l["SoundSynthMgmtAccessDeniedMessage"];
+    public string AddSoundSynthButton => _l["AddSoundSynthButton"];
+    public string RefreshSoundSynthsButton => _l["RefreshSoundSynthsButton"];
+    public string SoundSynthSearchPlaceholder => _l["SoundSynthSearchPlaceholder"];
+    public string SoundSynthNameColumn => _l["SoundSynthNameColumn"];
+    public string SoundSynthCompanyColumn => _l["SoundSynthCompanyColumn"];
+    public string SoundSynthModelCodeColumn => _l["SoundSynthModelCodeColumn"];
+    public string EditSoundSynthButton => _l["EditSoundSynthButton"];
+    public string DeleteSoundSynthButton => _l["DeleteSoundSynthButton"];
+    public string SoundSynthNameLabel => _l["SoundSynthNameLabel"];
+    public string SoundSynthCompanyLabel => _l["SoundSynthCompanyLabel"];
+    public string SoundSynthModelCodeLabel => _l["SoundSynthModelCodeLabel"];
+    public string SoundSynthIntroducedLabel => _l["SoundSynthIntroducedLabel"];
+    public string SoundSynthVoicesLabel => _l["SoundSynthVoicesLabel"];
+    public string SoundSynthFrequencyLabel => _l["SoundSynthFrequencyLabel"];
+    public string SoundSynthDepthLabel => _l["SoundSynthDepthLabel"];
+    public string SoundSynthSquareWaveLabel => _l["SoundSynthSquareWaveLabel"];
+    public string SoundSynthWhiteNoiseLabel => _l["SoundSynthWhiteNoiseLabel"];
+    public string SoundSynthTypeLabel => _l["SoundSynthTypeLabel"];
 }

@@ -1596,4 +1596,88 @@
   <data name="FailedToDeleteResolution" xml:space="preserve">
     <value>Failed to delete resolution.</value>
   </data>
+  <data name="SoundSynthManagementButton" xml:space="preserve">
+    <value>Sound Synth Management</value>
+  </data>
+  <data name="SoundSynthManagementTitle" xml:space="preserve">
+    <value>Sound Synthesizer Management</value>
+  </data>
+  <data name="SoundSynthManagementSubtitle" xml:space="preserve">
+    <value>Manage sound synthesizers and audio chips</value>
+  </data>
+  <data name="SoundSynthMgmtAccessDeniedTitle" xml:space="preserve">
+    <value>Access Denied</value>
+  </data>
+  <data name="SoundSynthMgmtAccessDeniedMessage" xml:space="preserve">
+    <value>You must be an Administrator to access sound synth management.</value>
+  </data>
+  <data name="AddSoundSynthButton" xml:space="preserve">
+    <value>Add Sound Synth</value>
+  </data>
+  <data name="RefreshSoundSynthsButton" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="SoundSynthSearchPlaceholder" xml:space="preserve">
+    <value>Filter sound synths...</value>
+  </data>
+  <data name="SoundSynthNameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SoundSynthCompanyColumn" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="SoundSynthModelCodeColumn" xml:space="preserve">
+    <value>Model Code</value>
+  </data>
+  <data name="EditSoundSynthButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DeleteSoundSynthButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AddSoundSynthDialog_Title" xml:space="preserve">
+    <value>Add Sound Synthesizer</value>
+  </data>
+  <data name="EditSoundSynthDialog_Title" xml:space="preserve">
+    <value>Edit Sound Synthesizer</value>
+  </data>
+  <data name="SoundSynthNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SoundSynthCompanyLabel" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="SoundSynthModelCodeLabel" xml:space="preserve">
+    <value>Model Code</value>
+  </data>
+  <data name="SoundSynthIntroducedLabel" xml:space="preserve">
+    <value>Introduced</value>
+  </data>
+  <data name="SoundSynthVoicesLabel" xml:space="preserve">
+    <value>PCM Voices</value>
+  </data>
+  <data name="SoundSynthFrequencyLabel" xml:space="preserve">
+    <value>Frequency (Hz)</value>
+  </data>
+  <data name="SoundSynthDepthLabel" xml:space="preserve">
+    <value>Bit Depth</value>
+  </data>
+  <data name="SoundSynthSquareWaveLabel" xml:space="preserve">
+    <value>Square Wave Channels</value>
+  </data>
+  <data name="SoundSynthWhiteNoiseLabel" xml:space="preserve">
+    <value>White Noise Channels</value>
+  </data>
+  <data name="SoundSynthTypeLabel" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="FailedToLoadSoundSynths" xml:space="preserve">
+    <value>Failed to load sound synths.</value>
+  </data>
+  <data name="FailedToSaveSoundSynth" xml:space="preserve">
+    <value>Failed to save sound synth.</value>
+  </data>
+  <data name="FailedToDeleteSoundSynth" xml:space="preserve">
+    <value>Failed to delete sound synth.</value>
+  </data>
 </root>

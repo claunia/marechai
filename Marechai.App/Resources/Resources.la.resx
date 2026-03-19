@@ -1366,4 +1366,32 @@
   <data name="FailedToLoadResolutions" xml:space="preserve"><value>Resolutiones onerare non potuit.</value></data>
   <data name="FailedToSaveResolution" xml:space="preserve"><value>Resolutionem servare non potuit.</value></data>
   <data name="FailedToDeleteResolution" xml:space="preserve"><value>Resolutionem delere non potuit.</value></data>
+  <data name="SoundSynthManagementButton" xml:space="preserve"><value>Administratio Synthetizatorum</value></data>
+  <data name="SoundSynthManagementTitle" xml:space="preserve"><value>Administratio Synthetizatorum Soni</value></data>
+  <data name="SoundSynthManagementSubtitle" xml:space="preserve"><value>Synthetizatores soni et microchipas audio administrare</value></data>
+  <data name="SoundSynthMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus Negatus</value></data>
+  <data name="SoundSynthMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ad synthetizatorum administrationem.</value></data>
+  <data name="AddSoundSynthButton" xml:space="preserve"><value>Synthetizatorem Addere</value></data>
+  <data name="RefreshSoundSynthsButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="SoundSynthSearchPlaceholder" xml:space="preserve"><value>Synthetizatores filtrare...</value></data>
+  <data name="SoundSynthNameColumn" xml:space="preserve"><value>Nomen</value></data>
+  <data name="SoundSynthCompanyColumn" xml:space="preserve"><value>Societas</value></data>
+  <data name="SoundSynthModelCodeColumn" xml:space="preserve"><value>Codex Exemplaris</value></data>
+  <data name="EditSoundSynthButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="DeleteSoundSynthButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="AddSoundSynthDialog_Title" xml:space="preserve"><value>Synthetizatorem Addere</value></data>
+  <data name="EditSoundSynthDialog_Title" xml:space="preserve"><value>Synthetizatorem Mutare</value></data>
+  <data name="SoundSynthNameLabel" xml:space="preserve"><value>Nomen</value></data>
+  <data name="SoundSynthCompanyLabel" xml:space="preserve"><value>Societas</value></data>
+  <data name="SoundSynthModelCodeLabel" xml:space="preserve"><value>Codex Exemplaris</value></data>
+  <data name="SoundSynthIntroducedLabel" xml:space="preserve"><value>Introductum</value></data>
+  <data name="SoundSynthVoicesLabel" xml:space="preserve"><value>Voces PCM</value></data>
+  <data name="SoundSynthFrequencyLabel" xml:space="preserve"><value>Frequentia (Hz)</value></data>
+  <data name="SoundSynthDepthLabel" xml:space="preserve"><value>Profunditas Bitorum</value></data>
+  <data name="SoundSynthSquareWaveLabel" xml:space="preserve"><value>Canales Undae Quadratae</value></data>
+  <data name="SoundSynthWhiteNoiseLabel" xml:space="preserve"><value>Canales Strepitus Albi</value></data>
+  <data name="SoundSynthTypeLabel" xml:space="preserve"><value>Genus</value></data>
+  <data name="FailedToLoadSoundSynths" xml:space="preserve"><value>Synthetizatores onerare non potuit.</value></data>
+  <data name="FailedToSaveSoundSynth" xml:space="preserve"><value>Synthetizatorem servare non potuit.</value></data>
+  <data name="FailedToDeleteSoundSynth" xml:space="preserve"><value>Synthetizatorem delere non potuit.</value></data>
 </root>
