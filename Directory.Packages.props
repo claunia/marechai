@@ -19,7 +19,7 @@
     <PackageVersion Include="MySql.Data" Version="8.0.22"/>
     <PackageVersion Include="SkiaSharp" Version="3.119.1"/>
     <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.119.1"/>
-    <PackageVersion Include="Svg.Skia" Version="0.4.1"/>
+    <PackageVersion Include="Svg.Skia" Version="3.0.6"/>
     <PackageVersion Include="Tewr.Blazor.FileReader" Version="3.0.0.20340"/>
     <PackageVersion Include="Unclassified.NetRevisionTask" Version="0.3.0"/>
     <!-- Unique to Marechai.Database.csproj -->

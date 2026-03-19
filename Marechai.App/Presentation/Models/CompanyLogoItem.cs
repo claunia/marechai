@@ -9,6 +9,6 @@ namespace Marechai.App.Presentation.Models;
 public class CompanyLogoItem
 {
     public Guid            LogoGuid   { get; set; }
-    public SvgImageSource? LogoSource { get; set; }
+    public BitmapImage?  LogoSource { get; set; }
     public int?            Year       { get; set; }
 }

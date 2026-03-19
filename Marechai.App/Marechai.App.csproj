@@ -51,6 +51,7 @@
     <PackageReference Include="Humanizer"/>
     <PackageReference Include="Microsoft.Extensions.Localization"/>
     <PackageReference Include="Prism.DryIoc.Uno.WinUI"/>
+    <PackageReference Include="Svg.Skia"/>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
   </ItemGroup>
   <ItemGroup>

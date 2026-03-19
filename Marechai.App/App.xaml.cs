@@ -9,7 +9,9 @@ using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.App.Services.Caching;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
+using Microsoft.UI.Dispatching;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using Microsoft.Kiota.Serialization.Json;
@@ -28,6 +30,10 @@ namespace Marechai.App;
 public partial class App : PrismApplication
 {
     private Window _mainWindow;
+
+    public App()
+    {
+    }
 
     protected override UIElement CreateShell() => Container.Resolve<MainPage>();
 
@@ -66,6 +72,16 @@ public partial class App : PrismApplication
 
         containerRegistry.RegisterInstance<ILoggerFactory>(loggerFactory);
         containerRegistry.RegisterSingleton(typeof(ILogger<>), typeof(Logger<>));
+
+        // Configuration — build from appsettings files so services can resolve IConfiguration
+        var configuration = new ConfigurationBuilder()
+                           .AddJsonStream(typeof(App).Assembly
+                                                     .GetManifestResourceStream("Marechai.App.appsettings.json"))
+                           .AddJsonStream(typeof(App).Assembly
+                                                     .GetManifestResourceStream("Marechai.App.appsettings.development.json"))
+                           .Build();
+
+        containerRegistry.RegisterInstance<IConfiguration>(configuration);
 
         // Localization via Microsoft.Extensions.Localization
         var locServices = new ServiceCollection();
@@ -135,6 +151,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<FlagCache>();
         containerRegistry.RegisterSingleton<CompanyLogoCache>();
         containerRegistry.RegisterSingleton<MachinePhotoCache>();
+        containerRegistry.RegisterSingleton<ImageSourceFactory>(
+            () => new ImageSourceFactory(DispatcherQueue.GetForCurrentThread()));
         containerRegistry.RegisterSingleton<NewsService>();
         containerRegistry.RegisterSingleton<ComputersService>();
         containerRegistry.RegisterSingleton<ConsolesService>();

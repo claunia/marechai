@@ -46,6 +46,7 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class MachineViewViewModel : ObservableObject, IRegionAware
 {
     private readonly ComputersService              _computersService;
+    private readonly ImageSourceFactory            _imageSourceFactory;
     private readonly IStringLocalizer              _localizer;
     private readonly ILogger<MachineViewViewModel> _logger;
     private readonly IRegionManager                _regionManager;
@@ -115,15 +116,16 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showStorage = Visibility.Collapsed;
 
-    public MachineViewViewModel(ILogger<MachineViewViewModel> logger,           IRegionManager    regionManager,
-                                ComputersService              computersService, MachinePhotoCache photoCache,
-                                IStringLocalizer              localizer)
+    public MachineViewViewModel(ILogger<MachineViewViewModel> logger,             IRegionManager     regionManager,
+                                ComputersService              computersService,   MachinePhotoCache  photoCache,
+                                IStringLocalizer              localizer,          ImageSourceFactory imageSourceFactory)
     {
-        _logger           = logger;
-        _regionManager    = regionManager;
-        _computersService = computersService;
-        _photoCache       = photoCache;
-        _localizer        = localizer;
+        _logger             = logger;
+        _regionManager      = regionManager;
+        _computersService   = computersService;
+        _photoCache         = photoCache;
+        _localizer          = localizer;
+        _imageSourceFactory = imageSourceFactory;
     }
 
     public ObservableCollection<ProcessorDisplayItem>        Processors        { get; } = [];
@@ -480,14 +482,7 @@ public partial class MachineViewViewModel : ObservableObject, IRegionAware
         {
             Stream stream = await _photoCache.GetThumbnailAsync(photoItem.PhotoId);
 
-            var bitmap = new BitmapImage();
-
-            using(IRandomAccessStream randomStream = stream.AsRandomAccessStream())
-            {
-                await bitmap.SetSourceAsync(randomStream);
-            }
-
-            photoItem.ThumbnailImageSource = bitmap;
+            photoItem.ThumbnailImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
         }
         catch(Exception ex)
         {

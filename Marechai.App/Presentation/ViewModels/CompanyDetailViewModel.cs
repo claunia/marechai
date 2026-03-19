@@ -21,6 +21,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly CompanyDetailService            _companyDetailService;
     private readonly FlagCache                       _flagCache;
+    private readonly ImageSourceFactory              _imageSourceFactory;
     private readonly IStringLocalizer                _localizer;
     private readonly ILogger<CompanyDetailViewModel> _logger;
     private readonly CompanyLogoCache                _logoCache;
@@ -57,7 +58,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     private ObservableCollection<CompanyDetailMachine> _filteredConsoles = [];
 
     [ObservableProperty]
-    private SvgImageSource? _flagImageSource;
+    private BitmapImage? _flagImageSource;
 
     [ObservableProperty]
     private bool _hasError;
@@ -69,14 +70,15 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     private bool _isLoading;
 
     [ObservableProperty]
-    private SvgImageSource? _logoImageSource;
+    private BitmapImage? _logoImageSource;
 
     [ObservableProperty]
     private CompanyDto? _soldToCompany;
 
-    public CompanyDetailViewModel(CompanyDetailService            companyDetailService, FlagCache        flagCache,
-                                  CompanyLogoCache                logoCache,            IStringLocalizer localizer,
-                                  ILogger<CompanyDetailViewModel> logger,               IRegionManager   regionManager)
+    public CompanyDetailViewModel(CompanyDetailService            companyDetailService, FlagCache          flagCache,
+                                  CompanyLogoCache                logoCache,            IStringLocalizer   localizer,
+                                  ILogger<CompanyDetailViewModel> logger,               IRegionManager     regionManager,
+                                  ImageSourceFactory              imageSourceFactory)
     {
         _companyDetailService    = companyDetailService;
         _flagCache               = flagCache;
@@ -84,6 +86,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
         _localizer               = localizer;
         _logger                  = logger;
         _regionManager           = regionManager;
+        _imageSourceFactory      = imageSourceFactory;
         LoadData                 = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
         NavigateToMachineCommand = new AsyncRelayCommand<CompanyDetailMachine>(NavigateToMachineAsync);
@@ -127,13 +130,13 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
         OnPropertyChanged(nameof(CompanyFoundedDateDisplay));
     }
 
-    partial void OnFlagImageSourceChanged(SvgImageSource? oldValue, SvgImageSource? newValue)
+    partial void OnFlagImageSourceChanged(BitmapImage? oldValue, BitmapImage? newValue)
     {
         // Notify that HasFlagContent has changed
         OnPropertyChanged(nameof(HasFlagContent));
     }
 
-    partial void OnLogoImageSourceChanged(SvgImageSource? oldValue, SvgImageSource? newValue)
+    partial void OnLogoImageSourceChanged(BitmapImage? oldValue, BitmapImage? newValue)
     {
         // Notify that HasLogoContent has changed
         OnPropertyChanged(nameof(HasLogoContent));
@@ -372,9 +375,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
                     var     countryCode = (short)(Company.CountryId ?? 0);
                     Stream? flagStream  = await _flagCache.GetFlagAsync(countryCode);
 
-                    var flagSource = new SvgImageSource();
-                    await flagSource.SetSourceAsync(flagStream.AsRandomAccessStream());
-                    FlagImageSource = flagSource;
+                    FlagImageSource = await _imageSourceFactory.CreateSvgImageSourceAsync(flagStream);
 
                     _logger.LogInformation("Successfully loaded flag for country code {CountryCode}", countryCode);
                 }
@@ -401,9 +402,7 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
                 {
                     Stream? logoStream = await _logoCache.GetLogoAsync(Company.LastLogo.Value);
 
-                    var logoSource = new SvgImageSource();
-                    await logoSource.SetSourceAsync(logoStream.AsRandomAccessStream());
-                    LogoImageSource = logoSource;
+                    LogoImageSource = await _imageSourceFactory.CreateSvgImageSourceAsync(logoStream);
 
                     _logger.LogInformation("Successfully loaded logo for company {CompanyId}", CompanyId);
                 }
@@ -439,15 +438,19 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
                         if(logoData.Logo.Guid == null) continue;
 
                         Stream? logoStream = await _logoCache.GetLogoAsync(logoData.Logo.Guid.Value);
-                        var     logoSource = new SvgImageSource();
-                        await logoSource.SetSourceAsync(logoStream.AsRandomAccessStream());
 
-                        loadedLogos.Add(new CompanyLogoItem
+                        BitmapImage? logoSource =
+                            await _imageSourceFactory.CreateSvgImageSourceAsync(logoStream);
+
+                        if(logoSource != null)
                         {
-                            LogoGuid   = logoData.Logo.Guid.Value,
-                            LogoSource = logoSource,
-                            Year       = logoData.Year
-                        });
+                            loadedLogos.Add(new CompanyLogoItem
+                            {
+                                LogoGuid   = logoData.Logo.Guid.Value,
+                                LogoSource = logoSource,
+                                Year       = logoData.Year
+                            });
+                        }
                     }
                     catch(Exception ex)
                     {

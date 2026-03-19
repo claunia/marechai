@@ -20,6 +20,7 @@ public partial class CompaniesViewModel : ObservableObject
 {
     private readonly List<CompanyListItem>       _allCompanies = [];
     private readonly CompaniesService            _companiesService;
+    private readonly ImageSourceFactory          _imageSourceFactory;
     private readonly IStringLocalizer            _localizer;
     private readonly ILogger<CompaniesViewModel> _logger;
     private readonly CompanyLogoCache            _logoCache;
@@ -50,13 +51,15 @@ public partial class CompaniesViewModel : ObservableObject
     private string _searchQuery = string.Empty;
 
     public CompaniesViewModel(CompaniesService companiesService, CompanyLogoCache logoCache, IStringLocalizer localizer,
-                              ILogger<CompaniesViewModel> logger, IRegionManager regionManager)
+                              ILogger<CompaniesViewModel> logger, IRegionManager regionManager,
+                              ImageSourceFactory imageSourceFactory)
     {
         _companiesService        = companiesService;
         _logoCache               = logoCache;
         _localizer               = localizer;
         _logger                  = logger;
         _regionManager           = regionManager;
+        _imageSourceFactory      = imageSourceFactory;
         LoadData                 = new AsyncRelayCommand(LoadDataAsync);
         GoBackCommand            = new AsyncRelayCommand(GoBackAsync);
         NavigateToCompanyCommand = new AsyncRelayCommand<CompanyListItem>(NavigateToCompanyAsync);
@@ -106,15 +109,14 @@ public partial class CompaniesViewModel : ObservableObject
                 DateTime? foundedDate = company.Founded?.DateTime;
 
                 // Load logo if available
-                SvgImageSource? logoSource = null;
+                BitmapImage? logoSource = null;
 
                 if(company.LastLogo.HasValue)
                 {
                     try
                     {
                         Stream? logoStream = await _logoCache.GetLogoAsync(company.LastLogo.Value);
-                        logoSource = new SvgImageSource();
-                        await logoSource.SetSourceAsync(logoStream.AsRandomAccessStream());
+                        logoSource = await _imageSourceFactory.CreateSvgImageSourceAsync(logoStream);
                     }
                     catch(Exception ex)
                     {

@@ -58,6 +58,7 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class PhotoDetailViewModel : ObservableObject, IRegionAware
 {
     private readonly ComputersService              _computersService;
+    private readonly ImageSourceFactory            _imageSourceFactory;
     private readonly IStringLocalizer              _localizer;
     private readonly ILogger<PhotoDetailViewModel> _logger;
     private readonly IRegionManager                _regionManager;
@@ -191,15 +192,16 @@ public partial class PhotoDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private string _photoWhiteBalance = string.Empty;
 
-    public PhotoDetailViewModel(ILogger<PhotoDetailViewModel> logger,           IRegionManager    regionManager,
-                                ComputersService              computersService, MachinePhotoCache photoCache,
-                                IStringLocalizer              localizer)
+    public PhotoDetailViewModel(ILogger<PhotoDetailViewModel> logger,             IRegionManager     regionManager,
+                                ComputersService              computersService,   MachinePhotoCache  photoCache,
+                                IStringLocalizer              localizer,          ImageSourceFactory imageSourceFactory)
     {
-        _logger           = logger;
-        _regionManager    = regionManager;
-        _computersService = computersService;
-        _photoCache       = photoCache;
-        _localizer        = localizer;
+        _logger             = logger;
+        _regionManager      = regionManager;
+        _computersService   = computersService;
+        _photoCache         = photoCache;
+        _localizer          = localizer;
+        _imageSourceFactory = imageSourceFactory;
     }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -383,14 +385,7 @@ public partial class PhotoDetailViewModel : ObservableObject, IRegionAware
         {
             Stream stream = await _photoCache.GetPhotoAsync(photoId);
 
-            var bitmap = new BitmapImage();
-
-            using(IRandomAccessStream randomStream = stream.AsRandomAccessStream())
-            {
-                await bitmap.SetSourceAsync(randomStream);
-            }
-
-            PhotoImageSource = bitmap;
+            PhotoImageSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
         }
         catch(Exception ex)
         {

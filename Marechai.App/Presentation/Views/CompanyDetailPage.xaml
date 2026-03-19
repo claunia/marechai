@@ -154,7 +154,7 @@
                             <Image Grid.Column="1"
                                    Width="48"
                                    Height="32"
-                                   Stretch="UniformToFill"
+                                   Stretch="Uniform"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Right"
                                    Margin="8"
