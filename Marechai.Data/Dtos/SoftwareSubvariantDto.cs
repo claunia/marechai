@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -28,26 +28,14 @@ using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
 
-public class SoftwareVersionDto : BaseDto<ulong>
+public class SoftwareSubvariantDto : BaseDto<ulong>
 {
-    [JsonPropertyName("software_id")]
+    [JsonPropertyName("variant_id")]
     [Required]
-    public ulong SoftwareId { get; set; }
-    [JsonPropertyName("software")]
-    public string? Software { get; set; }
-    [JsonPropertyName("codename")]
-    public string? Codename { get; set; }
-    [JsonPropertyName("version_string")]
+    public ulong VariantId { get; set; }
+    [JsonPropertyName("variant")]
+    public string? Variant { get; set; }
+    [JsonPropertyName("name")]
     [Required]
-    public required string VersionString { get; set; }
-    [JsonPropertyName("public_version")]
-    public string? PublicVersion { get; set; }
-    [JsonPropertyName("parent_version_id")]
-    public ulong? ParentVersionId { get; set; }
-    [JsonPropertyName("parent_version")]
-    public string? ParentVersion { get; set; }
-    [JsonPropertyName("license_id")]
-    public int? LicenseId { get; set; }
-    [JsonPropertyName("license")]
-    public string? License { get; set; }
+    public required string Name { get; set; }
 }

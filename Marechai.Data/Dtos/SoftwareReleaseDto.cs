@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -28,26 +28,35 @@ using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
 
-public class SoftwareVersionDto : BaseDto<ulong>
+public class SoftwareReleaseDto : BaseDto<ulong>
 {
-    [JsonPropertyName("software_id")]
+    [JsonPropertyName("software_version_id")]
     [Required]
-    public ulong SoftwareId { get; set; }
-    [JsonPropertyName("software")]
-    public string? Software { get; set; }
-    [JsonPropertyName("codename")]
-    public string? Codename { get; set; }
-    [JsonPropertyName("version_string")]
+    public ulong SoftwareVersionId { get; set; }
+    [JsonPropertyName("software_version")]
+    public string? SoftwareVersion { get; set; }
+    [JsonPropertyName("variant_id")]
+    public ulong? VariantId { get; set; }
+    [JsonPropertyName("variant")]
+    public string? Variant { get; set; }
+    [JsonPropertyName("subvariant_id")]
+    public ulong? SubvariantId { get; set; }
+    [JsonPropertyName("subvariant")]
+    public string? Subvariant { get; set; }
+    [JsonPropertyName("platform_id")]
+    public ulong? PlatformId { get; set; }
+    [JsonPropertyName("platform")]
+    public string? Platform { get; set; }
+    [JsonPropertyName("region_id")]
     [Required]
-    public required string VersionString { get; set; }
-    [JsonPropertyName("public_version")]
-    public string? PublicVersion { get; set; }
-    [JsonPropertyName("parent_version_id")]
-    public ulong? ParentVersionId { get; set; }
-    [JsonPropertyName("parent_version")]
-    public string? ParentVersion { get; set; }
-    [JsonPropertyName("license_id")]
-    public int? LicenseId { get; set; }
-    [JsonPropertyName("license")]
-    public string? License { get; set; }
+    public short RegionId { get; set; }
+    [JsonPropertyName("region")]
+    public string? Region { get; set; }
+    [JsonPropertyName("publisher_id")]
+    [Required]
+    public int PublisherId { get; set; }
+    [JsonPropertyName("publisher")]
+    public string? Publisher { get; set; }
+    [JsonPropertyName("release_date")]
+    public DateTime? ReleaseDate { get; set; }
 }
