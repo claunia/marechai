@@ -12,7 +12,9 @@
 
     <Grid utu:SafeArea.Insets="VisibleBounds">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
@@ -26,70 +28,76 @@
             </utu:NavigationBar.MainCommand>
         </utu:NavigationBar>
 
-        <!-- Content -->
-        <ScrollViewer Grid.Row="1"
+        <!-- Static Header: Count + Search + Loading/Error -->
+        <StackPanel Grid.Row="1"
+                    Padding="16"
+                    Spacing="16">
+
+            <!-- Company Count Display -->
+            <StackPanel HorizontalAlignment="Center"
+                        Spacing="8">
+                <TextBlock Text="{Binding CompanyCountText}"
+                           TextAlignment="Center"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+                <TextBlock Text="{Binding CompanyCount}"
+                           TextAlignment="Center"
+                           FontSize="48"
+                           FontWeight="Bold"
+                           Foreground="{ThemeResource SystemAccentColor}" />
+            </StackPanel>
+
+            <!-- Search Box -->
+            <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompaniesSearchBox_Placeholder}"
+                            x:Name="CompaniesSearchBox"
+                            HorizontalAlignment="Stretch"
+                            Text="{Binding SearchQuery, Mode=TwoWay}"
+                            QuerySubmitted="OnSearchQuerySubmitted"
+                            TextChanged="OnSearchTextChanged">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="48"
+                              Width="48" />
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           TextAlignment="Center"
+                           FontSize="14" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        Padding="16"
+                        Background="{ThemeResource SystemErrorBackgroundColor}"
+                        CornerRadius="8"
+                        Spacing="8">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ErrorText}"
+                           FontWeight="Bold"
+                           Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="{ThemeResource SystemErrorTextForegroundColor}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Scrollable Companies List -->
+        <ScrollViewer Grid.Row="2"
                       x:Name="ContentScrollViewer"
                       ViewChanged="OnScrollViewerViewChanged">
-            <StackPanel Padding="16"
-                        Spacing="16">
-
-                <!-- Company Count Display -->
-                <StackPanel HorizontalAlignment="Center"
-                            Spacing="8">
-                    <TextBlock Text="{Binding CompanyCountText}"
-                               TextAlignment="Center"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="{ThemeResource SystemBaseMediumColor}" />
-                    <TextBlock Text="{Binding CompanyCount}"
-                               TextAlignment="Center"
-                               FontSize="48"
-                               FontWeight="Bold"
-                               Foreground="{ThemeResource SystemAccentColor}" />
-                </StackPanel>
-
-                <!-- Search Box -->
-                <AutoSuggestBox PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompaniesSearchBox_Placeholder}"
-                                x:Name="CompaniesSearchBox"
-                                HorizontalAlignment="Stretch"
-                                Text="{Binding SearchQuery, Mode=TwoWay}"
-                                QuerySubmitted="OnSearchQuerySubmitted"
-                                TextChanged="OnSearchTextChanged">
-                    <AutoSuggestBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </AutoSuggestBox.ItemTemplate>
-                </AutoSuggestBox>
-
-                <!-- Loading State -->
-                <StackPanel Visibility="{Binding IsLoading}"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Padding="32"
-                            Spacing="16">
-                    <ProgressRing IsActive="True"
-                                  IsIndeterminate="True"
-                                  Height="48"
-                                  Width="48" />
-                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
-                               TextAlignment="Center"
-                               FontSize="14" />
-                </StackPanel>
-
-                <!-- Error State -->
-                <StackPanel Visibility="{Binding HasError}"
-                            Padding="16"
-                            Background="{ThemeResource SystemErrorBackgroundColor}"
-                            CornerRadius="8"
-                            Spacing="8">
-                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ErrorText}"
-                               FontWeight="Bold"
-                               Foreground="{ThemeResource SystemErrorTextForegroundColor}" />
-                    <TextBlock Text="{Binding ErrorMessage}"
-                               Foreground="{ThemeResource SystemErrorTextForegroundColor}"
-                               TextWrapping="Wrap" />
-                </StackPanel>
+            <StackPanel Padding="16,0,16,16"
+                        Spacing="8">
 
                 <!-- Companies List -->
                 <StackPanel Visibility="{Binding IsDataLoaded}"
