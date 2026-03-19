@@ -1291,6 +1291,8 @@
   <data name="ProcessorManufacturingHeader" xml:space="preserve"><value>Fabricatio</value></data>
   <data name="ProcessorRegistersHeader" xml:space="preserve"><value>Registra</value></data>
   <data name="ProcessorCacheHeader" xml:space="preserve"><value>Cache</value></data>
+  <data name="ProcessorExtensionsHeader" xml:space="preserve"><value>Extensiones ISA</value></data>
+  <data name="ProcessorAddExtensionPlaceholder" xml:space="preserve"><value>Extensionem ad addendum eligere...</value></data>
   <data name="FailedToLoadProcessors" xml:space="preserve"><value>Processores onerare non potuit.</value></data>
   <data name="FailedToSaveProcessor" xml:space="preserve"><value>Processorem servare non potuit.</value></data>
   <data name="FailedToDeleteProcessor" xml:space="preserve"><value>Processorem delere non potuit.</value></data>

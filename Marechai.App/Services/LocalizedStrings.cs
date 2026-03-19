@@ -264,6 +264,8 @@ public class LocalizedStrings
     public string ProcessorManufacturingHeader => _l["ProcessorManufacturingHeader"];
     public string ProcessorRegistersHeader => _l["ProcessorRegistersHeader"];
     public string ProcessorCacheHeader => _l["ProcessorCacheHeader"];
+    public string ProcessorExtensionsHeader => _l["ProcessorExtensionsHeader"];
+    public string ProcessorAddExtensionPlaceholder => _l["ProcessorAddExtensionPlaceholder"];
 
     // Instruction set management
     public string InstructionSetManagementTitle => _l["InstructionSetManagementTitle"];

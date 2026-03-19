@@ -402,6 +402,55 @@
                                                    Minimum="0"
                                                    SmallChange="0.5"
                                                    HorizontalAlignment="Stretch" />
+
+                                        <!-- ISA Extensions -->
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProcessorExtensionsHeader}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,8,0,0" />
+
+                                        <!-- Add extension -->
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <ComboBox Grid.Column="0"
+                                                      ItemsSource="{Binding AvailableExtensions}"
+                                                      SelectedItem="{Binding SelectedAvailableExtension, Mode=TwoWay}"
+                                                      DisplayMemberPath="Extension"
+                                                      PlaceholderText="{Binding Source={StaticResource Strings}, Path=ProcessorAddExtensionPlaceholder}"
+                                                      HorizontalAlignment="Stretch" />
+                                            <Button Grid.Column="1"
+                                                    Content="+"
+                                                    Command="{Binding AddExtensionCommand}"
+                                                    VerticalAlignment="Bottom"
+                                                    Padding="10,6" />
+                                        </Grid>
+
+                                        <!-- Current extensions list -->
+                                        <ItemsRepeater ItemsSource="{Binding ProcessorExtensions}">
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="0,2" ColumnSpacing="8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="{Binding Extensions}"
+                                                                   VerticalAlignment="Center" />
+                                                        <Button Grid.Column="1"
+                                                                Content="{Binding Source={StaticResource Strings}, Path=DeleteProcessorButton}"
+                                                                Command="{Binding DataContext.RemoveExtensionCommand, ElementName=PageRoot}"
+                                                                CommandParameter="{Binding}"
+                                                                Foreground="{ThemeResource SystemErrorTextColor}"
+                                                                Style="{ThemeResource TextBlockButtonStyle}"
+                                                                Padding="8,4" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
                                     </StackPanel>
                                 </ScrollViewer>
 

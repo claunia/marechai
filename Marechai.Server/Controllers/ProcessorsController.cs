@@ -129,6 +129,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
     public Task<ProcessorDto> GetAsync(int id) => context.Processors.Where(p => p.Id == id)
                                                          .Select(p => new ProcessorDto
                                                           {
+                                                              Id               = p.Id,
                                                               Name             = p.Name,
                                                               CompanyName      = p.Company.Name,
                                                               CompanyId        = p.Company.Id,

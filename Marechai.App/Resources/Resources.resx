@@ -1383,6 +1383,12 @@
   <data name="ProcessorCacheHeader" xml:space="preserve">
     <value>Cache</value>
   </data>
+  <data name="ProcessorExtensionsHeader" xml:space="preserve">
+    <value>ISA Extensions</value>
+  </data>
+  <data name="ProcessorAddExtensionPlaceholder" xml:space="preserve">
+    <value>Select extension to add...</value>
+  </data>
   <data name="FailedToLoadProcessors" xml:space="preserve">
     <value>Failed to load processors.</value>
   </data>

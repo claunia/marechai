@@ -1291,6 +1291,8 @@
   <data name="ProcessorManufacturingHeader" xml:space="preserve"><value>Fabricação</value></data>
   <data name="ProcessorRegistersHeader" xml:space="preserve"><value>Registradores</value></data>
   <data name="ProcessorCacheHeader" xml:space="preserve"><value>Cache</value></data>
+  <data name="ProcessorExtensionsHeader" xml:space="preserve"><value>Extensões ISA</value></data>
+  <data name="ProcessorAddExtensionPlaceholder" xml:space="preserve"><value>Selecionar extensão para adicionar...</value></data>
   <data name="FailedToLoadProcessors" xml:space="preserve"><value>Falha ao carregar os processadores.</value></data>
   <data name="FailedToSaveProcessor" xml:space="preserve"><value>Falha ao salvar o processador.</value></data>
   <data name="FailedToDeleteProcessor" xml:space="preserve"><value>Falha ao excluir o processador.</value></data>

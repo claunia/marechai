@@ -145,6 +145,18 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private ObservableCollection<InstructionSetDto> _instructionSets = [];
 
+    // --- ISA extensions by processor ---
+    [ObservableProperty]
+    private ObservableCollection<InstructionSetExtensionByProcessorDto> _processorExtensions = [];
+
+    [ObservableProperty]
+    private ObservableCollection<InstructionSetExtensionDto> _availableExtensions = [];
+
+    [ObservableProperty]
+    private InstructionSetExtensionDto? _selectedAvailableExtension;
+
+    private List<InstructionSetExtensionDto>? _allAvailableExtensions;
+
     public AdminProcessorsViewModel(ApiClient                          apiClient,
                                     IJwtService                        jwtService,
                                     ITokenService                      tokenService,
@@ -163,6 +175,8 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         DeleteProcessorCommand   = new AsyncRelayCommand<ProcessorDto>(DeleteProcessorAsync);
         SaveProcessorCommand     = new AsyncRelayCommand(SaveProcessorAsync);
         CancelEditCommand        = new RelayCommand(CancelEdit);
+        AddExtensionCommand      = new AsyncRelayCommand(AddExtensionAsync);
+        RemoveExtensionCommand   = new AsyncRelayCommand<InstructionSetExtensionByProcessorDto>(RemoveExtensionAsync);
 
         CheckAdminRole();
     }
@@ -174,6 +188,8 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<ProcessorDto> DeleteProcessorCommand   { get; }
     public IAsyncRelayCommand               SaveProcessorCommand     { get; }
     public IRelayCommand                    CancelEditCommand        { get; }
+    public IAsyncRelayCommand               AddExtensionCommand      { get; }
+    public IAsyncRelayCommand<InstructionSetExtensionByProcessorDto> RemoveExtensionCommand { get; }
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -266,9 +282,13 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
 
             if(full == null) return;
 
-            _editingProcessorId = full.Id;
+            _editingProcessorId = proc.Id;
             EditPanelTitle      = _localizer["EditProcessorDialog_Title"];
             PopulateForm(full);
+
+            if(proc.Id.HasValue)
+                await LoadProcessorExtensionsAsync(proc.Id.Value);
+
             IsEditing = true;
         }
         catch(Exception ex)
@@ -435,6 +455,96 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
                 _logger.LogError(ex, "Error loading instruction sets");
             }
         }
+
+        if(_allAvailableExtensions == null)
+        {
+            try
+            {
+                _allAvailableExtensions = await _apiClient.InstructionSetExtensions.GetAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error loading instruction set extensions");
+            }
+        }
+    }
+
+    // --- ISA extension management ---
+    private async Task LoadProcessorExtensionsAsync(int processorId)
+    {
+        ProcessorExtensions.Clear();
+
+        try
+        {
+            List<InstructionSetExtensionByProcessorDto>? exts =
+                await _apiClient.Processor[processorId].InstructionSetExtensions.GetAsync();
+
+            if(exts != null)
+                foreach(InstructionSetExtensionByProcessorDto ext in exts)
+                    ProcessorExtensions.Add(ext);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading extensions for processor {Id}", processorId);
+        }
+
+        RefreshAvailableExtensions();
+    }
+
+    private void RefreshAvailableExtensions()
+    {
+        AvailableExtensions.Clear();
+
+        if(_allAvailableExtensions == null) return;
+
+        HashSet<int> assignedIds = new(ProcessorExtensions
+                                     .Where(e => e.ExtensionId.HasValue)
+                                     .Select(e => e.ExtensionId!.Value));
+
+        foreach(InstructionSetExtensionDto ext in _allAvailableExtensions)
+            if(ext.Id.HasValue && !assignedIds.Contains(ext.Id.Value))
+                AvailableExtensions.Add(ext);
+    }
+
+    private async Task AddExtensionAsync()
+    {
+        if(_editingProcessorId == null || SelectedAvailableExtension?.Id == null) return;
+
+        try
+        {
+            var dto = new InstructionSetExtensionByProcessorDto
+            {
+                ProcessorId = _editingProcessorId.Value,
+                ExtensionId = SelectedAvailableExtension.Id.Value
+            };
+
+            await _apiClient.InstructionSetExtensionsByProcessor.PostAsync(dto);
+            SelectedAvailableExtension = null;
+            await LoadProcessorExtensionsAsync(_editingProcessorId.Value);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding extension to processor");
+            ErrorMessage = _localizer["FailedToSaveProcessor"];
+            HasError     = true;
+        }
+    }
+
+    private async Task RemoveExtensionAsync(InstructionSetExtensionByProcessorDto? ext)
+    {
+        if(ext?.Id == null || _editingProcessorId == null) return;
+
+        try
+        {
+            await _apiClient.InstructionSetExtensionsByProcessor[ext.Id.Value].DeleteAsync();
+            await LoadProcessorExtensionsAsync(_editingProcessorId.Value);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing extension from processor");
+            ErrorMessage = _localizer["FailedToSaveProcessor"];
+            HasError     = true;
+        }
     }
 
     // --- Helpers ---
@@ -466,6 +576,9 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         SelectedCompany       = null;
         CompanySearchText     = string.Empty;
         SelectedInstructionSet = null;
+        ProcessorExtensions.Clear();
+        AvailableExtensions.Clear();
+        SelectedAvailableExtension = null;
         HasError              = false;
         ErrorMessage          = string.Empty;
     }

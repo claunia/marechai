@@ -68,7 +68,8 @@ public class InstructionSetExtensionsByProcessorController(MarechaiContext conte
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        InstructionSetExtensionsByProcessor item = await context.InstructionSetExtensionsByProcessor.FindAsync(id);
+        InstructionSetExtensionsByProcessor item =
+            await context.InstructionSetExtensionsByProcessor.FirstOrDefaultAsync(e => e.Id == id);
 
         if(item is null) return NotFound();
 
