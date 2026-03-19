@@ -27,7 +27,9 @@
         </utu:NavigationBar>
 
         <!-- Content -->
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1"
+                      x:Name="ContentScrollViewer"
+                      ViewChanged="OnScrollViewerViewChanged">
             <StackPanel Padding="16"
                         Spacing="16">
 
@@ -130,6 +132,17 @@
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>
+                </StackPanel>
+
+                <!-- Loading More Indicator -->
+                <StackPanel Visibility="{Binding IsLoadingNextPage}"
+                            HorizontalAlignment="Center"
+                            Padding="16"
+                            Spacing="8">
+                    <ProgressRing IsActive="True"
+                                  IsIndeterminate="True"
+                                  Height="32"
+                                  Width="32" />
                 </StackPanel>
 
             </StackPanel>

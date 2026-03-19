@@ -44,36 +44,62 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<CompanyDto>> GetAsync() => context.Companies.Include(c => c.Logos)
-                                                       .OrderBy(c => c.Name)
-                                                       .Select(c => new CompanyDto
-                                                        {
-                                                            Id = c.Id,
-                                                            LastLogo =
-                                                                c.Logos.OrderByDescending(l => l.Year)
-                                                                 .FirstOrDefault()
-                                                                 .Guid,
-                                                            Name                  = c.Name,
-                                                            Founded               = c.Founded,
-                                                            Sold                  = c.Sold,
-                                                            SoldToId              = c.SoldToId,
-                                                            CountryId             = c.CountryId,
-                                                            Status                = c.Status,
-                                                            Website               = c.Website,
-                                                            Twitter               = c.Twitter,
-                                                            Facebook              = c.Facebook,
-                                                            Address               = c.Address,
-                                                            City                  = c.City,
-                                                            Province              = c.Province,
-                                                            PostalCode            = c.PostalCode,
-                                                            Country               = c.Country.Name,
-                                                            FoundedDayIsUnknown   = c.FoundedDayIsUnknown,
-                                                            FoundedMonthIsUnknown = c.FoundedMonthIsUnknown,
-                                                            SoldDayIsUnknown      = c.SoldDayIsUnknown,
-                                                            SoldMonthIsUnknown    = c.SoldMonthIsUnknown,
-                                                            LegalName             = c.LegalName
-                                                        })
-                                                       .ToListAsync();
+    public Task<List<CompanyDto>> GetAsync([FromQuery] int? skip   = null, [FromQuery] int? take = null,
+                                           [FromQuery] string search = null)
+    {
+        IQueryable<Company> query = context.Companies.Include(c => c.Logos);
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(c => c.Name.Contains(search) || (c.LegalName != null && c.LegalName.Contains(search)));
+
+        query = query.OrderBy(c => c.Name);
+
+        if(skip.HasValue) query = query.Skip(skip.Value);
+
+        if(take.HasValue) query = query.Take(take.Value);
+
+        return query.Select(c => new CompanyDto
+                     {
+                         Id = c.Id,
+                         LastLogo =
+                             c.Logos.OrderByDescending(l => l.Year)
+                              .FirstOrDefault()
+                              .Guid,
+                         Name                  = c.Name,
+                         Founded               = c.Founded,
+                         Sold                  = c.Sold,
+                         SoldToId              = c.SoldToId,
+                         CountryId             = c.CountryId,
+                         Status                = c.Status,
+                         Website               = c.Website,
+                         Twitter               = c.Twitter,
+                         Facebook              = c.Facebook,
+                         Address               = c.Address,
+                         City                  = c.City,
+                         Province              = c.Province,
+                         PostalCode            = c.PostalCode,
+                         Country               = c.Country.Name,
+                         FoundedDayIsUnknown   = c.FoundedDayIsUnknown,
+                         FoundedMonthIsUnknown = c.FoundedMonthIsUnknown,
+                         SoldDayIsUnknown      = c.SoldDayIsUnknown,
+                         SoldMonthIsUnknown    = c.SoldMonthIsUnknown,
+                         LegalName             = c.LegalName
+                     })
+                    .ToListAsync();
+    }
+
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<int> GetCountAsync([FromQuery] string search = null)
+    {
+        IQueryable<Company> query = context.Companies;
+
+        if(!string.IsNullOrWhiteSpace(search))
+            query = query.Where(c => c.Name.Contains(search) || (c.LegalName != null && c.LegalName.Contains(search)));
+
+        return query.CountAsync();
+    }
 
     [HttpGet("{id:int}")]
     [AllowAnonymous]

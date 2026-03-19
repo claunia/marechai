@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Marechai.App.Navigation;
@@ -18,13 +17,18 @@ namespace Marechai.App.Presentation.ViewModels;
 
 public partial class CompaniesViewModel : ObservableObject
 {
-    private readonly List<CompanyListItem>       _allCompanies = [];
+    private const int PageSize = 50;
+
     private readonly CompaniesService            _companiesService;
     private readonly ImageSourceFactory          _imageSourceFactory;
     private readonly IStringLocalizer            _localizer;
     private readonly ILogger<CompaniesViewModel> _logger;
     private readonly CompanyLogoCache            _logoCache;
     private readonly IRegionManager              _regionManager;
+
+    private bool   _hasMoreItems = true;
+    private bool   _isLoadingMore;
+    private string _lastSearchQuery = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<CompanyListItem> _companiesList = [];
@@ -46,6 +50,9 @@ public partial class CompaniesViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isLoading;
+
+    [ObservableProperty]
+    private bool _isLoadingNextPage;
 
     [ObservableProperty]
     private string _searchQuery = string.Empty;
@@ -74,41 +81,82 @@ public partial class CompaniesViewModel : ObservableObject
 
     partial void OnSearchQueryChanged(string value)
     {
-        // Automatically filter when SearchQuery changes
-        UpdateFilter(value);
+        // Debounce: just trigger a fresh search
+        _ = SearchAsync(value);
     }
 
     /// <summary>
-    ///     Loads companies count and list from the API
+    ///     Resets and loads from the beginning with the current search query
+    /// </summary>
+    private async Task SearchAsync(string query)
+    {
+        string trimmed = query?.Trim() ?? string.Empty;
+
+        // Avoid re-fetching if query hasn't changed
+        if(trimmed == _lastSearchQuery) return;
+
+        _lastSearchQuery = trimmed;
+
+        CompaniesList.Clear();
+        _hasMoreItems = true;
+        IsDataLoaded  = false;
+
+        await LoadPageAsync(true);
+    }
+
+    /// <summary>
+    ///     Initial data load
     /// </summary>
     private async Task LoadDataAsync()
     {
+        _lastSearchQuery = string.Empty;
+        SearchQuery      = string.Empty;
+        CompaniesList.Clear();
+        _hasMoreItems = true;
+        await LoadPageAsync(true);
+    }
+
+    /// <summary>
+    ///     Loads the next page of companies
+    /// </summary>
+    private async Task LoadPageAsync(bool isInitial)
+    {
+        if(_isLoadingMore || !_hasMoreItems) return;
+
+        _isLoadingMore = true;
+
         try
         {
-            IsLoading    = true;
-            ErrorMessage = string.Empty;
-            HasError     = false;
-            IsDataLoaded = false;
-            CompaniesList.Clear();
-            _allCompanies.Clear();
+            if(isInitial)
+            {
+                IsLoading    = true;
+                ErrorMessage = string.Empty;
+                HasError     = false;
+            }
+            else
+                IsLoadingNextPage = true;
 
-            // Load companies
-            List<CompanyDto> companies = await _companiesService.GetAllCompaniesAsync();
+            string? search = string.IsNullOrEmpty(_lastSearchQuery) ? null : _lastSearchQuery;
 
-            // Set count
-            CompanyCount     = companies.Count;
-            CompanyCountText = _localizer["Companies in the database"];
+            // Fetch count on initial load
+            if(isInitial)
+            {
+                int count = await _companiesService.GetCompaniesCountAsync(search);
+                CompanyCount     = count;
+                CompanyCountText = _localizer["Companies in the database"];
+            }
 
-            // Build the full list in memory
+            int skip = CompaniesList.Count;
+
+            List<CompanyDto> companies = await _companiesService.GetCompaniesPageAsync(skip, PageSize, search);
+
+            if(companies.Count < PageSize) _hasMoreItems = false;
+
             foreach(CompanyDto company in companies)
             {
-                // Extract id from company
-                int companyId = company.Id ?? 0;
-
-                // Convert DateTimeOffset? to DateTime?
+                int      companyId   = company.Id ?? 0;
                 DateTime? foundedDate = company.Founded?.DateTime;
 
-                // Load logo if available
                 BitmapImage? logoSource = null;
 
                 if(company.LastLogo.HasValue)
@@ -126,7 +174,7 @@ public partial class CompaniesViewModel : ObservableObject
                     }
                 }
 
-                _allCompanies.Add(new CompanyListItem
+                CompaniesList.Add(new CompanyListItem
                 {
                     Id              = companyId,
                     Name            = company.Name ?? string.Empty,
@@ -134,9 +182,6 @@ public partial class CompaniesViewModel : ObservableObject
                     LogoImageSource = logoSource
                 });
             }
-
-            // Apply current filter (will show all if SearchQuery is empty)
-            UpdateFilter(SearchQuery);
 
             if(CompaniesList.Count == 0)
             {
@@ -154,9 +199,16 @@ public partial class CompaniesViewModel : ObservableObject
         }
         finally
         {
-            IsLoading = false;
+            IsLoading         = false;
+            IsLoadingNextPage = false;
+            _isLoadingMore    = false;
         }
     }
+
+    /// <summary>
+    ///     Called by the view when the user scrolls near the end
+    /// </summary>
+    public Task LoadMoreAsync() => LoadPageAsync(false);
 
     /// <summary>
     ///     Handles back navigation
@@ -186,29 +238,5 @@ public partial class CompaniesViewModel : ObservableObject
         _regionManager.RequestNavigate(RegionNames.Content, nameof(CompanyDetailPage), parameters);
 
         return Task.CompletedTask;
-    }
-
-    /// <summary>
-    ///     Updates the filtered list based on search query
-    /// </summary>
-    private void UpdateFilter(string? query)
-    {
-        string lowerQuery = string.IsNullOrWhiteSpace(query) ? string.Empty : query.Trim().ToLowerInvariant();
-
-        CompaniesList.Clear();
-
-        if(string.IsNullOrEmpty(lowerQuery))
-        {
-            // No filter, show all companies
-            foreach(CompanyListItem company in _allCompanies) CompaniesList.Add(company);
-        }
-        else
-        {
-            // Filter companies by name (case-insensitive)
-            var filtered = _allCompanies.Where(c => c.Name.Contains(lowerQuery, StringComparison.OrdinalIgnoreCase))
-                                        .ToList();
-
-            foreach(CompanyListItem company in filtered) CompaniesList.Add(company);
-        }
     }
 }

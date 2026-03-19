@@ -56,4 +56,17 @@ public sealed partial class CompaniesPage : Page
         // The two-way binding will automatically update SearchQuery in ViewModel,
         // which will trigger OnSearchQueryChanged and filter the list
     }
+
+    private void OnScrollViewerViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+    {
+        if(e.IsIntermediate) return;
+
+        if(sender is not ScrollViewer scroller) return;
+
+        double distanceToEnd = scroller.ExtentHeight - (scroller.VerticalOffset + scroller.ViewportHeight);
+
+        // Load more when within 2 viewports of the end
+        if(distanceToEnd <= 2.0 * scroller.ViewportHeight && DataContext is CompaniesViewModel viewModel)
+            _ = viewModel.LoadMoreAsync();
+    }
 }
