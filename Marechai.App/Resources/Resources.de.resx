@@ -1164,4 +1164,85 @@
   <data name="StatusRenamed" xml:space="preserve">
     <value>Umbenannt</value>
   </data>
+  <data name="GpuManagementButton" xml:space="preserve">
+    <value>GPU-Verwaltung</value>
+  </data>
+  <data name="GpuManagementTitle" xml:space="preserve">
+    <value>GPU-Verwaltung</value>
+  </data>
+  <data name="GpuManagementSubtitle" xml:space="preserve">
+    <value>Grafikprozessoren verwalten</value>
+  </data>
+  <data name="GpuMgmtAccessDeniedTitle" xml:space="preserve">
+    <value>Zugriff verweigert</value>
+  </data>
+  <data name="GpuMgmtAccessDeniedMessage" xml:space="preserve">
+    <value>Sie müssen ein Administrator sein, um die GPU-Verwaltung zu nutzen.</value>
+  </data>
+  <data name="AddGpuButton" xml:space="preserve">
+    <value>GPU hinzufügen</value>
+  </data>
+  <data name="RefreshGpusButton" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="GpuSearchPlaceholder" xml:space="preserve">
+    <value>GPUs filtern...</value>
+  </data>
+  <data name="GpuNameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="GpuCompanyColumn" xml:space="preserve">
+    <value>Unternehmen</value>
+  </data>
+  <data name="GpuModelCodeColumn" xml:space="preserve">
+    <value>Modellcode</value>
+  </data>
+  <data name="EditGpuButton" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="DeleteGpuButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="AddGpuDialog_Title" xml:space="preserve">
+    <value>GPU hinzufügen</value>
+  </data>
+  <data name="EditGpuDialog_Title" xml:space="preserve">
+    <value>GPU bearbeiten</value>
+  </data>
+  <data name="GpuNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="GpuCompanyLabel" xml:space="preserve">
+    <value>Unternehmen</value>
+  </data>
+  <data name="GpuModelCodeLabel" xml:space="preserve">
+    <value>Modellcode</value>
+  </data>
+  <data name="GpuIntroducedLabel" xml:space="preserve">
+    <value>Eingeführt</value>
+  </data>
+  <data name="GpuPackageLabel" xml:space="preserve">
+    <value>Gehäuse</value>
+  </data>
+  <data name="GpuProcessLabel" xml:space="preserve">
+    <value>Prozess</value>
+  </data>
+  <data name="GpuProcessNmLabel" xml:space="preserve">
+    <value>Prozess (nm)</value>
+  </data>
+  <data name="GpuDieSizeLabel" xml:space="preserve">
+    <value>Die-Größe (mm²)</value>
+  </data>
+  <data name="GpuTransistorsLabel" xml:space="preserve">
+    <value>Transistoren</value>
+  </data>
+  <data name="FailedToLoadGpus" xml:space="preserve">
+    <value>Fehler beim Laden der GPUs.</value>
+  </data>
+  <data name="FailedToSaveGpu" xml:space="preserve">
+    <value>Fehler beim Speichern der GPU.</value>
+  </data>
+  <data name="FailedToDeleteGpu" xml:space="preserve">
+    <value>Fehler beim Löschen der GPU.</value>
+  </data>
 </root>

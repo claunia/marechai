@@ -46,6 +46,7 @@ public partial class MainViewModel : ObservableObject
     public string SoundSynthesizersButtonText    => _localizer["SoundSynthesizersButton"];
     public string UserManagementButtonText       => _localizer["UserManagementButton"];
     public string CompanyManagementButtonText    => _localizer["CompanyManagementButton"];
+    public string GpuManagementButtonText         => _localizer["GpuManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
     public string AdminSidebarTitleText          => _localizer["AdminSidebarTitle"];
     public string AdminSwitchButtonText          => _localizer["AdminSwitchButton"];
@@ -87,6 +88,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToSoundSynthesizersCommand        = new RelayCommand(() => NavigateTo(nameof(SoundSynthListPage)));
         NavigateToUsersCommand                    = new RelayCommand(() => NavigateTo(nameof(UsersPage)));
         NavigateToAdminCompaniesCommand            = new RelayCommand(() => NavigateTo(nameof(AdminCompaniesPage)));
+        NavigateToAdminGpusCommand                 = new RelayCommand(() => NavigateTo(nameof(AdminGpusPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
@@ -120,6 +122,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToSoundSynthesizersCommand        { get; }
     public ICommand NavigateToUsersCommand                    { get; }
     public ICommand NavigateToAdminCompaniesCommand           { get; }
+    public ICommand NavigateToAdminGpusCommand                { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }

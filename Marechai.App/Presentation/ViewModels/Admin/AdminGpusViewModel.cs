@@ -1,0 +1,407 @@
+#nullable enable
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Marechai.App.Services.Authentication;
+
+namespace Marechai.App.Presentation.ViewModels.Admin;
+
+public partial class AdminGpusViewModel : ObservableObject, IRegionAware
+{
+    private readonly ApiClient                    _apiClient;
+    private readonly IJwtService                  _jwtService;
+    private readonly IStringLocalizer             _localizer;
+    private readonly ILogger<AdminGpusViewModel>  _logger;
+    private readonly ITokenService                _tokenService;
+
+    // --- List state ---
+    [ObservableProperty]
+    private ObservableCollection<GpuDto> _gpus = [];
+
+    [ObservableProperty]
+    private ObservableCollection<GpuDto> _filteredGpus = [];
+
+    [ObservableProperty]
+    private string _filterText = string.Empty;
+
+    [ObservableProperty]
+    private GpuDto? _selectedGpu;
+
+    private List<GpuDto>? _allGpus;
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private bool _isDataLoaded;
+
+    [ObservableProperty]
+    private bool _hasError;
+
+    [ObservableProperty]
+    private string _errorMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool _isAdmin;
+
+    // --- Edit panel state ---
+    [ObservableProperty]
+    private bool _isEditing;
+
+    [ObservableProperty]
+    private string _editPanelTitle = string.Empty;
+
+    private int? _editingGpuId;
+
+    // --- Form fields ---
+    [ObservableProperty]
+    private string _gpuName = string.Empty;
+
+    [ObservableProperty]
+    private string _modelCode = string.Empty;
+
+    [ObservableProperty]
+    private DateTimeOffset? _introduced;
+
+    [ObservableProperty]
+    private string _package = string.Empty;
+
+    [ObservableProperty]
+    private string _process = string.Empty;
+
+    [ObservableProperty]
+    private double? _processNm;
+
+    [ObservableProperty]
+    private double? _dieSize;
+
+    [ObservableProperty]
+    private long? _transistors;
+
+    // --- Company picker ---
+    [ObservableProperty]
+    private CompanyDto? _selectedCompany;
+
+    [ObservableProperty]
+    private string _companySearchText = string.Empty;
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDto> _companySuggestions = [];
+
+    private List<CompanyDto>? _allCompanies;
+
+    public AdminGpusViewModel(ApiClient                    apiClient,
+                              IJwtService                  jwtService,
+                              ITokenService                tokenService,
+                              ILogger<AdminGpusViewModel>  logger,
+                              IStringLocalizer             localizer)
+    {
+        _apiClient    = apiClient;
+        _jwtService   = jwtService;
+        _tokenService = tokenService;
+        _logger       = logger;
+        _localizer    = localizer;
+
+        LoadGpusCommand       = new AsyncRelayCommand(LoadGpusAsync);
+        OpenAddGpuCommand     = new RelayCommand(OpenAddGpu);
+        OpenEditGpuCommand    = new RelayCommand<GpuDto>(OpenEditGpu);
+        DeleteGpuCommand      = new AsyncRelayCommand<GpuDto>(DeleteGpuAsync);
+        SaveGpuCommand        = new AsyncRelayCommand(SaveGpuAsync);
+        CancelEditCommand     = new RelayCommand(CancelEdit);
+
+        CheckAdminRole();
+    }
+
+    // --- Commands ---
+    public IAsyncRelayCommand          LoadGpusCommand    { get; }
+    public IRelayCommand               OpenAddGpuCommand  { get; }
+    public IRelayCommand<GpuDto>       OpenEditGpuCommand { get; }
+    public IAsyncRelayCommand<GpuDto>  DeleteGpuCommand   { get; }
+    public IAsyncRelayCommand          SaveGpuCommand     { get; }
+    public IRelayCommand               CancelEditCommand  { get; }
+
+    // --- IRegionAware ---
+    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        CheckAdminRole();
+
+        if(IsAdmin)
+            _ = LoadGpusCommand.ExecuteAsync(null);
+    }
+
+    // --- Role check ---
+    private void CheckAdminRole()
+    {
+        try
+        {
+            string token = _tokenService.GetToken();
+
+            if(string.IsNullOrWhiteSpace(token))
+            {
+                IsAdmin = false;
+
+                return;
+            }
+
+            IEnumerable<string> roles = _jwtService.GetRoles(token);
+
+            IsAdmin = roles.Contains("Uberadmin",      StringComparer.OrdinalIgnoreCase) ||
+                      roles.Contains("Administrator", StringComparer.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            IsAdmin = false;
+        }
+    }
+
+    // --- Load GPUs ---
+    private async Task LoadGpusAsync()
+    {
+        try
+        {
+            IsLoading    = true;
+            HasError     = false;
+            ErrorMessage = string.Empty;
+            Gpus.Clear();
+
+            List<GpuDto>? response = await _apiClient.Gpus.GetAsync();
+            _allGpus = response;
+
+            if(response != null)
+                foreach(GpuDto gpu in response)
+                    Gpus.Add(gpu);
+
+            ApplyFilter();
+            IsDataLoaded = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading GPUs");
+            ErrorMessage = _localizer["FailedToLoadGpus"];
+            HasError     = true;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    // --- Add GPU ---
+    private void OpenAddGpu()
+    {
+        _editingGpuId = null;
+        EditPanelTitle = _localizer["AddGpuDialog_Title"];
+        ClearForm();
+        IsEditing = true;
+    }
+
+    // --- Edit GPU ---
+    private async void OpenEditGpu(GpuDto? gpu)
+    {
+        if(gpu?.Id == null) return;
+
+        try
+        {
+            // Fetch full details (list endpoint returns partial data)
+            GpuDto? full = await _apiClient.Gpus[gpu.Id.Value].GetAsync();
+
+            if(full == null) return;
+
+            _editingGpuId  = full.Id;
+            EditPanelTitle = _localizer["EditGpuDialog_Title"];
+            PopulateForm(full);
+            IsEditing = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading GPU details for {Id}", gpu.Id);
+            ErrorMessage = _localizer["FailedToLoadGpus"];
+            HasError     = true;
+        }
+    }
+
+    // --- Delete GPU ---
+    private async Task DeleteGpuAsync(GpuDto? gpu)
+    {
+        if(gpu?.Id == null) return;
+
+        try
+        {
+            await _apiClient.Gpus[gpu.Id.Value].DeleteAsync();
+            await LoadGpusAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting GPU {Id}", gpu.Id);
+            ErrorMessage = _localizer["FailedToDeleteGpu"];
+            HasError     = true;
+        }
+    }
+
+    // --- Save GPU ---
+    private async Task SaveGpuAsync()
+    {
+        try
+        {
+            if(string.IsNullOrWhiteSpace(GpuName))
+            {
+                ErrorMessage = _localizer["NameIsRequired"];
+                HasError     = true;
+
+                return;
+            }
+
+            var dto = new GpuDto
+            {
+                Name        = GpuName,
+                CompanyId   = SelectedCompany?.Id,
+                ModelCode   = string.IsNullOrWhiteSpace(ModelCode) ? null : ModelCode,
+                Introduced  = Introduced,
+                Package     = string.IsNullOrWhiteSpace(Package)   ? null : Package,
+                Process     = string.IsNullOrWhiteSpace(Process)   ? null : Process,
+                ProcessNm   = ProcessNm.HasValue ? (float)ProcessNm.Value : null,
+                DieSize     = DieSize.HasValue   ? (float)DieSize.Value   : null,
+                Transistors = Transistors
+            };
+
+            if(_editingGpuId == null)
+                await _apiClient.Gpus.PostAsync(dto);
+            else
+            {
+                dto.Id = _editingGpuId;
+                await _apiClient.Gpus[_editingGpuId.Value].PutAsync(dto);
+            }
+
+            IsEditing = false;
+            ClearForm();
+            await LoadGpusAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving GPU");
+            ErrorMessage = _localizer["FailedToSaveGpu"];
+            HasError     = true;
+        }
+    }
+
+    // --- Cancel edit ---
+    private void CancelEdit()
+    {
+        IsEditing     = false;
+        _editingGpuId = null;
+        ClearForm();
+        HasError     = false;
+        ErrorMessage = string.Empty;
+    }
+
+    // --- Filtering ---
+    public void ApplyFilter()
+    {
+        FilteredGpus.Clear();
+
+        IEnumerable<GpuDto> source = (IEnumerable<GpuDto>?)_allGpus ?? Gpus;
+
+        if(!string.IsNullOrWhiteSpace(FilterText))
+            source = source.Where(g => (g.Name != null &&
+                                        g.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
+                                       (g.Company != null &&
+                                        g.Company.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
+                                       (g.ModelCode != null &&
+                                        g.ModelCode.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
+
+        foreach(GpuDto gpu in source)
+            FilteredGpus.Add(gpu);
+    }
+
+    // --- Company search ---
+    public void UpdateCompanySuggestions(string query)
+    {
+        CompanySuggestions.Clear();
+
+        if(_allCompanies == null) return;
+
+        IEnumerable<CompanyDto> source = _allCompanies;
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(c => c.Name != null &&
+                                       c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+        foreach(CompanyDto match in source.Take(50))
+            CompanySuggestions.Add(match);
+    }
+
+    // --- Load picker data ---
+    public async Task LoadPickerDataAsync()
+    {
+        if(_allCompanies == null)
+        {
+            try
+            {
+                _allCompanies = await _apiClient.Companies.GetAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error loading companies for picker");
+            }
+        }
+    }
+
+    // --- Helpers ---
+    private void ClearForm()
+    {
+        GpuName           = string.Empty;
+        ModelCode          = string.Empty;
+        Introduced         = null;
+        Package            = string.Empty;
+        Process            = string.Empty;
+        ProcessNm          = null;
+        DieSize            = null;
+        Transistors        = null;
+        SelectedCompany    = null;
+        CompanySearchText  = string.Empty;
+        HasError           = false;
+        ErrorMessage       = string.Empty;
+    }
+
+    private void PopulateForm(GpuDto gpu)
+    {
+        GpuName           = gpu.Name      ?? string.Empty;
+        ModelCode         = gpu.ModelCode  ?? string.Empty;
+        Introduced        = gpu.Introduced;
+        Package           = gpu.Package   ?? string.Empty;
+        Process           = gpu.Process   ?? string.Empty;
+        ProcessNm         = gpu.ProcessNm;
+        DieSize           = gpu.DieSize;
+        Transistors       = gpu.Transistors;
+
+        // Set company via picker
+        if(gpu.CompanyId.HasValue && _allCompanies != null)
+        {
+            CompanyDto? company = _allCompanies.FirstOrDefault(c => c.Id == gpu.CompanyId.Value);
+
+            if(company != null)
+            {
+                CompanySearchText = company.Name ?? string.Empty;
+                UpdateCompanySuggestions(CompanySearchText);
+                SelectedCompany = CompanySuggestions.FirstOrDefault(c => c.Id == company.Id);
+            }
+            else
+            {
+                CompanySearchText = gpu.Company ?? string.Empty;
+                SelectedCompany   = null;
+            }
+        }
+        else
+        {
+            CompanySearchText = string.Empty;
+            SelectedCompany   = null;
+        }
+    }
+}

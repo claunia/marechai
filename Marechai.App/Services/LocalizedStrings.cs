@@ -196,4 +196,27 @@ public class LocalizedStrings
     public string SoldDayUnknownLabel => _l["SoldDayUnknownLabel"];
     public string SaveButton => _l["SaveButton"];
     public string CancelButton => _l["CancelButton"];
+
+    // GPU management
+    public string GpuManagementTitle => _l["GpuManagementTitle"];
+    public string GpuManagementSubtitle => _l["GpuManagementSubtitle"];
+    public string GpuMgmtAccessDeniedTitle => _l["GpuMgmtAccessDeniedTitle"];
+    public string GpuMgmtAccessDeniedMessage => _l["GpuMgmtAccessDeniedMessage"];
+    public string AddGpuButton => _l["AddGpuButton"];
+    public string RefreshGpusButton => _l["RefreshGpusButton"];
+    public string GpuSearchPlaceholder => _l["GpuSearchPlaceholder"];
+    public string GpuNameColumn => _l["GpuNameColumn"];
+    public string GpuCompanyColumn => _l["GpuCompanyColumn"];
+    public string GpuModelCodeColumn => _l["GpuModelCodeColumn"];
+    public string EditGpuButton => _l["EditGpuButton"];
+    public string DeleteGpuButton => _l["DeleteGpuButton"];
+    public string GpuNameLabel => _l["GpuNameLabel"];
+    public string GpuCompanyLabel => _l["GpuCompanyLabel"];
+    public string GpuModelCodeLabel => _l["GpuModelCodeLabel"];
+    public string GpuIntroducedLabel => _l["GpuIntroducedLabel"];
+    public string GpuPackageLabel => _l["GpuPackageLabel"];
+    public string GpuProcessLabel => _l["GpuProcessLabel"];
+    public string GpuProcessNmLabel => _l["GpuProcessNmLabel"];
+    public string GpuDieSizeLabel => _l["GpuDieSizeLabel"];
+    public string GpuTransistorsLabel => _l["GpuTransistorsLabel"];
 }

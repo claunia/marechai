@@ -1164,4 +1164,85 @@
   <data name="StatusRenamed" xml:space="preserve">
     <value>Renamed</value>
   </data>
+  <data name="GpuManagementButton" xml:space="preserve">
+    <value>GPU Management</value>
+  </data>
+  <data name="GpuManagementTitle" xml:space="preserve">
+    <value>GPU Management</value>
+  </data>
+  <data name="GpuManagementSubtitle" xml:space="preserve">
+    <value>Manage graphical processing units</value>
+  </data>
+  <data name="GpuMgmtAccessDeniedTitle" xml:space="preserve">
+    <value>Access Denied</value>
+  </data>
+  <data name="GpuMgmtAccessDeniedMessage" xml:space="preserve">
+    <value>You must be an Administrator to access GPU management.</value>
+  </data>
+  <data name="AddGpuButton" xml:space="preserve">
+    <value>Add GPU</value>
+  </data>
+  <data name="RefreshGpusButton" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="GpuSearchPlaceholder" xml:space="preserve">
+    <value>Filter GPUs...</value>
+  </data>
+  <data name="GpuNameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="GpuCompanyColumn" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="GpuModelCodeColumn" xml:space="preserve">
+    <value>Model Code</value>
+  </data>
+  <data name="EditGpuButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DeleteGpuButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AddGpuDialog_Title" xml:space="preserve">
+    <value>Add GPU</value>
+  </data>
+  <data name="EditGpuDialog_Title" xml:space="preserve">
+    <value>Edit GPU</value>
+  </data>
+  <data name="GpuNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="GpuCompanyLabel" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="GpuModelCodeLabel" xml:space="preserve">
+    <value>Model Code</value>
+  </data>
+  <data name="GpuIntroducedLabel" xml:space="preserve">
+    <value>Introduced</value>
+  </data>
+  <data name="GpuPackageLabel" xml:space="preserve">
+    <value>Package</value>
+  </data>
+  <data name="GpuProcessLabel" xml:space="preserve">
+    <value>Process</value>
+  </data>
+  <data name="GpuProcessNmLabel" xml:space="preserve">
+    <value>Process (nm)</value>
+  </data>
+  <data name="GpuDieSizeLabel" xml:space="preserve">
+    <value>Die Size (mm²)</value>
+  </data>
+  <data name="GpuTransistorsLabel" xml:space="preserve">
+    <value>Transistors</value>
+  </data>
+  <data name="FailedToLoadGpus" xml:space="preserve">
+    <value>Failed to load GPUs.</value>
+  </data>
+  <data name="FailedToSaveGpu" xml:space="preserve">
+    <value>Failed to save GPU.</value>
+  </data>
+  <data name="FailedToDeleteGpu" xml:space="preserve">
+    <value>Failed to delete GPU.</value>
+  </data>
 </root>
