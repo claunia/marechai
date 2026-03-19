@@ -233,7 +233,8 @@ file class Program
                                                                            new
                                                                                MariaDbServerVersion(new System.
                                                                                    Version(10, 5, 0)),
-                                                                           b => b.UseMicrosoftJson()));
+                                                                           b => b.UseMicrosoftJson()
+                                                                                    .EnableStringComparisonTranslations()));
 
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                .AddRoles<ApplicationRole>()
