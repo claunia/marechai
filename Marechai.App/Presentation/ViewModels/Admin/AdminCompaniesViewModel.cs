@@ -1,0 +1,587 @@
+#nullable enable
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Marechai.App.Services.Authentication;
+
+namespace Marechai.App.Presentation.ViewModels.Admin;
+
+public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
+{
+    private readonly ApiClient                        _apiClient;
+    private readonly IJwtService                      _jwtService;
+    private readonly IStringLocalizer                 _localizer;
+    private readonly ILogger<AdminCompaniesViewModel> _logger;
+    private readonly ITokenService                    _tokenService;
+
+    // --- List state ---
+    [ObservableProperty]
+    private ObservableCollection<CompanyDto> _companies = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDto> _filteredCompanies = [];
+
+    [ObservableProperty]
+    private string _filterText = string.Empty;
+
+    [ObservableProperty]
+    private CompanyDto? _selectedCompany;
+
+    private List<CompanyDto>? _allCompanies;
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private bool _isDataLoaded;
+
+    [ObservableProperty]
+    private bool _hasError;
+
+    [ObservableProperty]
+    private string _errorMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool _isAdmin;
+
+    // --- Edit panel state ---
+    [ObservableProperty]
+    private bool _isEditing;
+
+    [ObservableProperty]
+    private string _editPanelTitle = string.Empty;
+
+    private int? _editingCompanyId;
+
+    // --- Form fields ---
+    [ObservableProperty]
+    private string _companyName = string.Empty;
+
+    [ObservableProperty]
+    private string _legalName = string.Empty;
+
+    [ObservableProperty]
+    private int _statusIndex;
+
+    [ObservableProperty]
+    private DateTimeOffset? _founded;
+
+    [ObservableProperty]
+    private bool _foundedDayIsUnknown;
+
+    [ObservableProperty]
+    private bool _foundedMonthIsUnknown;
+
+    [ObservableProperty]
+    private DateTimeOffset? _sold;
+
+    [ObservableProperty]
+    private bool _soldDayIsUnknown;
+
+    [ObservableProperty]
+    private bool _soldMonthIsUnknown;
+
+    [ObservableProperty]
+    private string _website = string.Empty;
+
+    [ObservableProperty]
+    private string _twitter = string.Empty;
+
+    [ObservableProperty]
+    private string _facebook = string.Empty;
+
+    [ObservableProperty]
+    private string _address = string.Empty;
+
+    [ObservableProperty]
+    private string _city = string.Empty;
+
+    [ObservableProperty]
+    private string _province = string.Empty;
+
+    [ObservableProperty]
+    private string _postalCode = string.Empty;
+
+    [ObservableProperty]
+    private Iso31661NumericDto? _selectedCountry;
+
+    [ObservableProperty]
+    private CompanyDto? _selectedSoldToCompany;
+
+    [ObservableProperty]
+    private string _soldToSearchText = string.Empty;
+
+    // --- Description panel state ---
+    [ObservableProperty]
+    private bool _isEditingDescription;
+
+    [ObservableProperty]
+    private string _descriptionMarkdown = string.Empty;
+
+    [ObservableProperty]
+    private int? _descriptionCompanyId;
+
+    // --- Picker data ---
+    [ObservableProperty]
+    private ObservableCollection<Iso31661NumericDto> _countries = [];
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDto> _soldToSuggestions = [];
+
+    private List<CompanyDto>? _allCompaniesForSearch;
+
+    // --- Status items for ComboBox (index must match CompanyStatus enum) ---
+    [ObservableProperty]
+    private List<string> _statusItems = [];
+
+    public AdminCompaniesViewModel(ApiClient                        apiClient,
+                                   IJwtService                      jwtService,
+                                   ITokenService                    tokenService,
+                                   ILogger<AdminCompaniesViewModel> logger,
+                                   IStringLocalizer                 localizer)
+    {
+        _apiClient    = apiClient;
+        _jwtService   = jwtService;
+        _tokenService = tokenService;
+        _logger       = logger;
+        _localizer    = localizer;
+
+        StatusItems =
+        [
+            localizer["StatusUnknown"],
+            localizer["StatusActive"],
+            localizer["StatusSold"],
+            localizer["StatusMerged"],
+            localizer["StatusBankrupt"],
+            localizer["StatusDefunct"],
+            localizer["StatusRenamed"]
+        ];
+
+        LoadCompaniesCommand       = new AsyncRelayCommand(LoadCompaniesAsync);
+        OpenAddCompanyCommand      = new RelayCommand(OpenAddCompany);
+        OpenEditCompanyCommand     = new RelayCommand<CompanyDto>(OpenEditCompany);
+        DeleteCompanyCommand       = new AsyncRelayCommand<CompanyDto>(DeleteCompanyAsync);
+        SaveCompanyCommand         = new AsyncRelayCommand(SaveCompanyAsync);
+        CancelEditCommand          = new RelayCommand(CancelEdit);
+        OpenDescriptionCommand     = new AsyncRelayCommand<CompanyDto>(OpenDescriptionAsync);
+        SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
+        CancelDescriptionCommand   = new RelayCommand(CancelDescription);
+
+        CheckAdminRole();
+    }
+
+    // --- Commands ---
+    public IAsyncRelayCommand             LoadCompaniesCommand     { get; }
+    public IRelayCommand                  OpenAddCompanyCommand    { get; }
+    public IRelayCommand<CompanyDto>      OpenEditCompanyCommand   { get; }
+    public IAsyncRelayCommand<CompanyDto> DeleteCompanyCommand     { get; }
+    public IAsyncRelayCommand             SaveCompanyCommand       { get; }
+    public IRelayCommand                  CancelEditCommand        { get; }
+    public IAsyncRelayCommand<CompanyDto> OpenDescriptionCommand   { get; }
+    public IAsyncRelayCommand             SaveDescriptionCommand   { get; }
+    public IRelayCommand                  CancelDescriptionCommand { get; }
+
+    // --- IRegionAware ---
+    public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+    public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        CheckAdminRole();
+
+        if(IsAdmin)
+            _ = LoadCompaniesCommand.ExecuteAsync(null);
+    }
+
+    // --- Role check ---
+    private void CheckAdminRole()
+    {
+        try
+        {
+            string token = _tokenService.GetToken();
+
+            if(string.IsNullOrWhiteSpace(token))
+            {
+                IsAdmin = false;
+
+                return;
+            }
+
+            IEnumerable<string> roles = _jwtService.GetRoles(token);
+
+            IsAdmin = roles.Contains("Uberadmin",      StringComparer.OrdinalIgnoreCase) ||
+                      roles.Contains("Administrator", StringComparer.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            IsAdmin = false;
+        }
+    }
+
+    // --- Load companies ---
+    private async Task LoadCompaniesAsync()
+    {
+        try
+        {
+            IsLoading    = true;
+            HasError     = false;
+            ErrorMessage = string.Empty;
+            Companies.Clear();
+
+            List<CompanyDto>? response = await _apiClient.Companies.GetAsync();
+            _allCompanies = response;
+
+            // Also use as search source so we don't need a second API call
+            _allCompaniesForSearch ??= response;
+
+            if(response != null)
+            {
+                // Resolve SoldTo names client-side (server only returns SoldToId)
+                foreach(CompanyDto company in response)
+                {
+                    if(company.SoldToId.HasValue && company.SoldTo == null)
+                        company.SoldTo = response.FirstOrDefault(c => c.Id == company.SoldToId.Value)?.Name;
+
+                    Companies.Add(company);
+                }
+            }
+
+            ApplyFilter();
+            IsDataLoaded = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading companies");
+            ErrorMessage = _localizer["FailedToLoadCompanies"];
+            HasError     = true;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    // --- Add company ---
+    private void OpenAddCompany()
+    {
+        _editingCompanyId = null;
+        EditPanelTitle    = _localizer["AddCompanyDialog_Title"];
+        ClearForm();
+        IsEditingDescription = false;
+        IsEditing            = true;
+    }
+
+    // --- Edit company ---
+    private void OpenEditCompany(CompanyDto? company)
+    {
+        if(company == null) return;
+
+        _editingCompanyId = company.Id;
+        EditPanelTitle    = _localizer["EditCompanyDialog_Title"];
+        PopulateForm(company);
+        IsEditingDescription = false;
+        IsEditing            = true;
+    }
+
+    // --- Delete company ---
+    private async Task DeleteCompanyAsync(CompanyDto? company)
+    {
+        if(company?.Id == null) return;
+
+        try
+        {
+            await _apiClient.Companies[company.Id.Value].DeleteAsync();
+            await LoadCompaniesAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting company {Id}", company.Id);
+            ErrorMessage = _localizer["FailedToDeleteCompany"];
+            HasError     = true;
+        }
+    }
+
+    // --- Save company ---
+    private async Task SaveCompanyAsync()
+    {
+        try
+        {
+            if(string.IsNullOrWhiteSpace(CompanyName))
+            {
+                ErrorMessage = _localizer["NameIsRequired"];
+                HasError     = true;
+
+                return;
+            }
+
+            var dto = new CompanyDto
+            {
+                Name                 = CompanyName,
+                LegalName            = string.IsNullOrWhiteSpace(LegalName) ? null : LegalName,
+                Status               = StatusIndex,
+                Founded              = Founded,
+                FoundedDayIsUnknown  = FoundedDayIsUnknown,
+                FoundedMonthIsUnknown= FoundedMonthIsUnknown,
+                Sold                 = Sold,
+                SoldDayIsUnknown     = SoldDayIsUnknown,
+                SoldMonthIsUnknown   = SoldMonthIsUnknown,
+                SoldToId             = SelectedSoldToCompany?.Id,
+                Website              = string.IsNullOrWhiteSpace(Website)    ? null : Website,
+                Twitter              = string.IsNullOrWhiteSpace(Twitter)    ? null : Twitter,
+                Facebook             = string.IsNullOrWhiteSpace(Facebook)   ? null : Facebook,
+                Address              = string.IsNullOrWhiteSpace(Address)    ? null : Address,
+                City                 = string.IsNullOrWhiteSpace(City)       ? null : City,
+                Province             = string.IsNullOrWhiteSpace(Province)   ? null : Province,
+                PostalCode           = string.IsNullOrWhiteSpace(PostalCode) ? null : PostalCode,
+                CountryId            = SelectedCountry?.Id
+            };
+
+            if(_editingCompanyId == null)
+                await _apiClient.Companies.PostAsync(dto);
+            else
+            {
+                dto.Id = _editingCompanyId;
+                await _apiClient.Companies[_editingCompanyId.Value].PutAsync(dto);
+            }
+
+            IsEditing = false;
+            ClearForm();
+            await LoadCompaniesAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving company");
+            ErrorMessage = _localizer["FailedToSaveCompany"];
+            HasError     = true;
+        }
+    }
+
+    // --- Cancel edit ---
+    private void CancelEdit()
+    {
+        IsEditing         = false;
+        _editingCompanyId = null;
+        ClearForm();
+        HasError     = false;
+        ErrorMessage = string.Empty;
+    }
+
+    // --- Description ---
+    private async Task OpenDescriptionAsync(CompanyDto? company)
+    {
+        if(company?.Id == null) return;
+
+        try
+        {
+            DescriptionCompanyId = company.Id;
+            DescriptionMarkdown  = string.Empty;
+            IsEditing            = false;
+
+            CompanyDescriptionDto? desc = await _apiClient.Companies[company.Id.Value].Description.GetAsync();
+
+            if(desc != null)
+                DescriptionMarkdown = desc.Markdown ?? string.Empty;
+
+            IsEditingDescription = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading description for company {Id}", company.Id);
+            DescriptionMarkdown  = string.Empty;
+            IsEditingDescription = true;
+        }
+    }
+
+    private async Task SaveDescriptionAsync()
+    {
+        if(DescriptionCompanyId == null) return;
+
+        try
+        {
+            var dto = new CompanyDescriptionDto
+            {
+                CompanyId = DescriptionCompanyId.Value,
+                Markdown  = DescriptionMarkdown
+            };
+
+            await _apiClient.Companies[DescriptionCompanyId.Value].Description.PostAsync(dto);
+
+            IsEditingDescription = false;
+            DescriptionCompanyId = null;
+            DescriptionMarkdown  = string.Empty;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error saving description");
+            ErrorMessage = _localizer["FailedToSaveDescription"];
+            HasError     = true;
+        }
+    }
+
+    private void CancelDescription()
+    {
+        IsEditingDescription = false;
+        DescriptionCompanyId = null;
+        DescriptionMarkdown  = string.Empty;
+    }
+
+    // --- Filtering ---
+    public void ApplyFilter()
+    {
+        FilteredCompanies.Clear();
+
+        IEnumerable<CompanyDto> source = (IEnumerable<CompanyDto>?)_allCompanies ?? Companies;
+
+        if(!string.IsNullOrWhiteSpace(FilterText))
+            source = source.Where(c => (c.Name != null &&
+                                        c.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
+                                       (c.LegalName != null &&
+                                        c.LegalName.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
+                                       (c.Country != null &&
+                                        c.Country.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
+
+        foreach(CompanyDto company in source)
+            FilteredCompanies.Add(company);
+    }
+
+    // --- SoldTo search ---
+    public void UpdateSoldToSuggestions(string query)
+    {
+        SoldToSuggestions.Clear();
+
+        if(_allCompaniesForSearch == null) return;
+
+        IEnumerable<CompanyDto> source = _allCompaniesForSearch;
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(c => c.Name != null &&
+                                       c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+        foreach(CompanyDto match in source.Take(50))
+            SoldToSuggestions.Add(match);
+    }
+
+    // --- Load picker data ---
+    public async Task LoadPickerDataAsync()
+    {
+        if(Countries.Count == 0)
+        {
+            try
+            {
+                List<Iso31661NumericDto>? countriesResponse = await _apiClient.Iso31661Numeric.GetAsync();
+
+                if(countriesResponse != null)
+                    foreach(Iso31661NumericDto c in countriesResponse)
+                        Countries.Add(c);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error loading countries");
+            }
+        }
+
+        if(_allCompaniesForSearch == null)
+        {
+            try
+            {
+                _allCompaniesForSearch = await _apiClient.Companies.GetAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error loading companies for search");
+            }
+        }
+    }
+
+    // --- Helpers ---
+    private void ClearForm()
+    {
+        CompanyName           = string.Empty;
+        LegalName             = string.Empty;
+        StatusIndex           = 0;
+        Founded               = null;
+        FoundedDayIsUnknown   = false;
+        FoundedMonthIsUnknown = false;
+        Sold                  = null;
+        SoldDayIsUnknown      = false;
+        SoldMonthIsUnknown    = false;
+        Website               = string.Empty;
+        Twitter               = string.Empty;
+        Facebook              = string.Empty;
+        Address               = string.Empty;
+        City                  = string.Empty;
+        Province              = string.Empty;
+        PostalCode            = string.Empty;
+        SelectedCountry       = null;
+        SelectedSoldToCompany = null;
+        SoldToSearchText      = string.Empty;
+        HasError              = false;
+        ErrorMessage          = string.Empty;
+    }
+
+    private void PopulateForm(CompanyDto company)
+    {
+        CompanyName           = company.Name           ?? string.Empty;
+        LegalName             = company.LegalName      ?? string.Empty;
+        StatusIndex           = company.Status         ?? 0;
+        Founded               = company.Founded;
+        FoundedDayIsUnknown   = company.FoundedDayIsUnknown   ?? false;
+        FoundedMonthIsUnknown = company.FoundedMonthIsUnknown ?? false;
+        Sold                  = company.Sold;
+        SoldDayIsUnknown      = company.SoldDayIsUnknown      ?? false;
+        SoldMonthIsUnknown    = company.SoldMonthIsUnknown    ?? false;
+        Website               = company.Website        ?? string.Empty;
+        Twitter               = company.Twitter        ?? string.Empty;
+        Facebook              = company.Facebook       ?? string.Empty;
+        Address               = company.Address        ?? string.Empty;
+        City                  = company.City           ?? string.Empty;
+        Province              = company.Province       ?? string.Empty;
+        PostalCode            = company.PostalCode     ?? string.Empty;
+        // Find matching country
+        SelectedCountry = company.CountryId.HasValue
+                              ? Countries.FirstOrDefault(c => c.Id == company.CountryId.Value)
+                              : null;
+
+        // Set SoldTo: populate the ComboBox source first, then select the matching item
+        if(company.SoldToId.HasValue && _allCompaniesForSearch != null)
+        {
+            CompanyDto? soldToCompany = _allCompaniesForSearch.FirstOrDefault(c => c.Id == company.SoldToId.Value);
+
+            if(soldToCompany != null)
+            {
+                SoldToSearchText = soldToCompany.Name ?? string.Empty;
+                UpdateSoldToSuggestions(SoldToSearchText);
+                SelectedSoldToCompany = SoldToSuggestions.FirstOrDefault(c => c.Id == soldToCompany.Id);
+            }
+            else
+            {
+                SoldToSearchText      = string.Empty;
+                SelectedSoldToCompany = null;
+            }
+        }
+        else
+        {
+            SoldToSearchText      = string.Empty;
+            SelectedSoldToCompany = null;
+        }
+    }
+
+    public string GetStatusDisplay(int? status)
+    {
+        return status switch
+        {
+            0 => _localizer["StatusUnknown"],
+            1 => _localizer["StatusActive"],
+            2 => _localizer["StatusSold"],
+            3 => _localizer["StatusMerged"],
+            4 => _localizer["StatusBankrupt"],
+            5 => _localizer["StatusDefunct"],
+            6 => _localizer["StatusRenamed"],
+            _ => _localizer["StatusUnknown"]
+        };
+    }
+}

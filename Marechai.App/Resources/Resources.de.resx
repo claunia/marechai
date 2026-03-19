@@ -1026,4 +1026,142 @@
   <data name="BackToMainButton" xml:space="preserve">
     <value>Zurück zur Navigation</value>
   </data>
+  <data name="CompanyManagementButton" xml:space="preserve">
+    <value>Firmenverwaltung</value>
+  </data>
+  <data name="CompanyManagementTitle" xml:space="preserve">
+    <value>Firmenverwaltung</value>
+  </data>
+  <data name="CompanyManagementSubtitle" xml:space="preserve">
+    <value>Firmen und ihre Details verwalten</value>
+  </data>
+  <data name="CompanyMgmtAccessDeniedTitle" xml:space="preserve">
+    <value>Zugriff verweigert</value>
+  </data>
+  <data name="CompanyMgmtAccessDeniedMessage" xml:space="preserve">
+    <value>Sie müssen ein Administrator sein, um die Firmenverwaltung zu nutzen.</value>
+  </data>
+  <data name="AddCompanyButton" xml:space="preserve">
+    <value>Firma hinzufügen</value>
+  </data>
+  <data name="RefreshCompaniesButton" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="CompanyNameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CompanyLegalNameColumn" xml:space="preserve">
+    <value>Firmenname</value>
+  </data>
+  <data name="CompanyCountryColumn" xml:space="preserve">
+    <value>Land</value>
+  </data>
+  <data name="CompanySoldToColumn" xml:space="preserve">
+    <value>Verkauft An</value>
+  </data>
+  <data name="EditCompanyButton" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="DeleteCompanyButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="DescriptionButton" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="AddCompanyDialog_Title" xml:space="preserve">
+    <value>Firma hinzufügen</value>
+  </data>
+  <data name="EditCompanyDialog_Title" xml:space="preserve">
+    <value>Firma bearbeiten</value>
+  </data>
+  <data name="DescriptionDialogTitle" xml:space="preserve">
+    <value>Beschreibung bearbeiten</value>
+  </data>
+  <data name="CompanyNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CompanyLegalNameLabel" xml:space="preserve">
+    <value>Firmenname</value>
+  </data>
+  <data name="CompanyStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CompanyFoundedLabel" xml:space="preserve">
+    <value>Gegründet</value>
+  </data>
+  <data name="CompanySoldLabel" xml:space="preserve">
+    <value>Verkaufsdatum</value>
+  </data>
+  <data name="CompanySoldToLabel" xml:space="preserve">
+    <value>Verkauft An</value>
+  </data>
+  <data name="CompanyCountryLabel" xml:space="preserve">
+    <value>Land</value>
+  </data>
+  <data name="CompanyAddressLabel" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="CompanyCityLabel" xml:space="preserve">
+    <value>Stadt</value>
+  </data>
+  <data name="CompanyProvinceLabel" xml:space="preserve">
+    <value>Bundesland/Provinz</value>
+  </data>
+  <data name="CompanyPostalCodeLabel" xml:space="preserve">
+    <value>Postleitzahl</value>
+  </data>
+  <data name="FoundedMonthUnknownLabel" xml:space="preserve">
+    <value>Gründungsmonat unbekannt</value>
+  </data>
+  <data name="FoundedDayUnknownLabel" xml:space="preserve">
+    <value>Gründungstag unbekannt</value>
+  </data>
+  <data name="SoldMonthUnknownLabel" xml:space="preserve">
+    <value>Verkaufsmonat unbekannt</value>
+  </data>
+  <data name="SoldDayUnknownLabel" xml:space="preserve">
+    <value>Verkaufstag unbekannt</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Name ist erforderlich.</value>
+  </data>
+  <data name="FailedToLoadCompanies" xml:space="preserve">
+    <value>Fehler beim Laden der Firmen.</value>
+  </data>
+  <data name="FailedToSaveCompany" xml:space="preserve">
+    <value>Fehler beim Speichern der Firma.</value>
+  </data>
+  <data name="FailedToDeleteCompany" xml:space="preserve">
+    <value>Fehler beim Löschen der Firma.</value>
+  </data>
+  <data name="FailedToSaveDescription" xml:space="preserve">
+    <value>Fehler beim Speichern der Beschreibung.</value>
+  </data>
+  <data name="StatusUnknown" xml:space="preserve">
+    <value>Unbekannt</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="StatusSold" xml:space="preserve">
+    <value>Verkauft</value>
+  </data>
+  <data name="StatusMerged" xml:space="preserve">
+    <value>Fusioniert</value>
+  </data>
+  <data name="StatusBankrupt" xml:space="preserve">
+    <value>Bankrott</value>
+  </data>
+  <data name="StatusDefunct" xml:space="preserve">
+    <value>Aufgelöst</value>
+  </data>
+  <data name="StatusRenamed" xml:space="preserve">
+    <value>Umbenannt</value>
+  </data>
 </root>

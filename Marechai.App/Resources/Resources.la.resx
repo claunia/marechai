@@ -1026,4 +1026,142 @@
   <data name="BackToMainButton" xml:space="preserve">
     <value>Reditus ad Navigationem</value>
   </data>
+  <data name="CompanyManagementButton" xml:space="preserve">
+    <value>Administratio Societatum</value>
+  </data>
+  <data name="CompanyManagementTitle" xml:space="preserve">
+    <value>Administratio Societatum</value>
+  </data>
+  <data name="CompanyManagementSubtitle" xml:space="preserve">
+    <value>Societates earumque singula administrare</value>
+  </data>
+  <data name="CompanyMgmtAccessDeniedTitle" xml:space="preserve">
+    <value>Aditus Negatus</value>
+  </data>
+  <data name="CompanyMgmtAccessDeniedMessage" xml:space="preserve">
+    <value>Administrator esse debes ad societatum administrationem.</value>
+  </data>
+  <data name="AddCompanyButton" xml:space="preserve">
+    <value>Societatem Addere</value>
+  </data>
+  <data name="RefreshCompaniesButton" xml:space="preserve">
+    <value>Renovare</value>
+  </data>
+  <data name="CompanyNameColumn" xml:space="preserve">
+    <value>Nomen</value>
+  </data>
+  <data name="CompanyLegalNameColumn" xml:space="preserve">
+    <value>Nomen Legale</value>
+  </data>
+  <data name="CompanyCountryColumn" xml:space="preserve">
+    <value>Natio</value>
+  </data>
+  <data name="CompanySoldToColumn" xml:space="preserve">
+    <value>Vendita Ad</value>
+  </data>
+  <data name="EditCompanyButton" xml:space="preserve">
+    <value>Mutare</value>
+  </data>
+  <data name="DeleteCompanyButton" xml:space="preserve">
+    <value>Delere</value>
+  </data>
+  <data name="DescriptionButton" xml:space="preserve">
+    <value>Descriptio</value>
+  </data>
+  <data name="AddCompanyDialog_Title" xml:space="preserve">
+    <value>Societatem Addere</value>
+  </data>
+  <data name="EditCompanyDialog_Title" xml:space="preserve">
+    <value>Societatem Mutare</value>
+  </data>
+  <data name="DescriptionDialogTitle" xml:space="preserve">
+    <value>Descriptionem Mutare</value>
+  </data>
+  <data name="CompanyNameLabel" xml:space="preserve">
+    <value>Nomen</value>
+  </data>
+  <data name="CompanyLegalNameLabel" xml:space="preserve">
+    <value>Nomen Legale</value>
+  </data>
+  <data name="CompanyStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CompanyFoundedLabel" xml:space="preserve">
+    <value>Condita</value>
+  </data>
+  <data name="CompanySoldLabel" xml:space="preserve">
+    <value>Dies Venditionis</value>
+  </data>
+  <data name="CompanySoldToLabel" xml:space="preserve">
+    <value>Vendita Ad</value>
+  </data>
+  <data name="CompanyCountryLabel" xml:space="preserve">
+    <value>Natio</value>
+  </data>
+  <data name="CompanyAddressLabel" xml:space="preserve">
+    <value>Inscriptio</value>
+  </data>
+  <data name="CompanyCityLabel" xml:space="preserve">
+    <value>Urbs</value>
+  </data>
+  <data name="CompanyProvinceLabel" xml:space="preserve">
+    <value>Provincia</value>
+  </data>
+  <data name="CompanyPostalCodeLabel" xml:space="preserve">
+    <value>Numerus Postalis</value>
+  </data>
+  <data name="FoundedMonthUnknownLabel" xml:space="preserve">
+    <value>Mensis conditionis ignotus</value>
+  </data>
+  <data name="FoundedDayUnknownLabel" xml:space="preserve">
+    <value>Dies conditionis ignotus</value>
+  </data>
+  <data name="SoldMonthUnknownLabel" xml:space="preserve">
+    <value>Mensis venditionis ignotus</value>
+  </data>
+  <data name="SoldDayUnknownLabel" xml:space="preserve">
+    <value>Dies venditionis ignotus</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Servare</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Rescindere</value>
+  </data>
+  <data name="NameIsRequired" xml:space="preserve">
+    <value>Nomen necessarium est.</value>
+  </data>
+  <data name="FailedToLoadCompanies" xml:space="preserve">
+    <value>Societates onerare non potuit.</value>
+  </data>
+  <data name="FailedToSaveCompany" xml:space="preserve">
+    <value>Societatem servare non potuit.</value>
+  </data>
+  <data name="FailedToDeleteCompany" xml:space="preserve">
+    <value>Societatem delere non potuit.</value>
+  </data>
+  <data name="FailedToSaveDescription" xml:space="preserve">
+    <value>Descriptionem servare non potuit.</value>
+  </data>
+  <data name="StatusUnknown" xml:space="preserve">
+    <value>Ignotum</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Activa</value>
+  </data>
+  <data name="StatusSold" xml:space="preserve">
+    <value>Vendita</value>
+  </data>
+  <data name="StatusMerged" xml:space="preserve">
+    <value>Coniuncta</value>
+  </data>
+  <data name="StatusBankrupt" xml:space="preserve">
+    <value>Decoctrix</value>
+  </data>
+  <data name="StatusDefunct" xml:space="preserve">
+    <value>Exstincta</value>
+  </data>
+  <data name="StatusRenamed" xml:space="preserve">
+    <value>Renominata</value>
+  </data>
 </root>

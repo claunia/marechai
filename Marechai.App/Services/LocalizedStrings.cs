@@ -11,7 +11,7 @@ public class LocalizedStrings
     private readonly IStringLocalizer _l;
 
     public LocalizedStrings(IStringLocalizer localizer) => _l = localizer;
-    public string ActionsColumn => _l["ActionsColumn"];
+    public string ActionsColumn => _l["ActionsColumn_Header"];
     public string AddressText => _l["AddressText"];
     public string AddUserButton => _l["AddUserButton_Label"];
     public string AllComputersButton => _l["AllComputersButton"];
@@ -161,4 +161,39 @@ public class LocalizedStrings
     public string UsernameColumn_Header => _l["UsernameColumn_Header"];
     public string VoicesText => _l["VoicesText"];
     public string WebsiteText => _l["WebsiteText"];
+
+    // Company management
+    public string CompanyManagementTitle => _l["CompanyManagementTitle"];
+    public string CompanyManagementSubtitle => _l["CompanyManagementSubtitle"];
+    public string CompanyMgmtAccessDeniedTitle => _l["CompanyMgmtAccessDeniedTitle"];
+    public string CompanyMgmtAccessDeniedMessage => _l["CompanyMgmtAccessDeniedMessage"];
+    public string AddCompanyButton => _l["AddCompanyButton"];
+    public string RefreshCompaniesButton => _l["RefreshCompaniesButton"];
+    public string CompanyNameColumn => _l["CompanyNameColumn"];
+    public string CompanyLegalNameColumn => _l["CompanyLegalNameColumn"];
+    public string CompanyCountryColumn => _l["CompanyCountryColumn"];
+    public string CompanySoldToColumn => _l["CompanySoldToColumn"];
+    public string EditCompanyButton => _l["EditCompanyButton"];
+    public string DeleteCompanyButton => _l["DeleteCompanyButton"];
+    public string DescriptionButton => _l["DescriptionButton"];
+    public string AddCompanyDialog_Title => _l["AddCompanyDialog_Title"];
+    public string EditCompanyDialog_Title => _l["EditCompanyDialog_Title"];
+    public string DescriptionDialogTitle => _l["DescriptionDialogTitle"];
+    public string CompanyNameLabel => _l["CompanyNameLabel"];
+    public string CompanyLegalNameLabel => _l["CompanyLegalNameLabel"];
+    public string CompanyStatusLabel => _l["CompanyStatusLabel"];
+    public string CompanyFoundedLabel => _l["CompanyFoundedLabel"];
+    public string CompanySoldLabel => _l["CompanySoldLabel"];
+    public string CompanySoldToLabel => _l["CompanySoldToLabel"];
+    public string CompanyCountryLabel => _l["CompanyCountryLabel"];
+    public string CompanyAddressLabel => _l["CompanyAddressLabel"];
+    public string CompanyCityLabel => _l["CompanyCityLabel"];
+    public string CompanyProvinceLabel => _l["CompanyProvinceLabel"];
+    public string CompanyPostalCodeLabel => _l["CompanyPostalCodeLabel"];
+    public string FoundedMonthUnknownLabel => _l["FoundedMonthUnknownLabel"];
+    public string FoundedDayUnknownLabel => _l["FoundedDayUnknownLabel"];
+    public string SoldMonthUnknownLabel => _l["SoldMonthUnknownLabel"];
+    public string SoldDayUnknownLabel => _l["SoldDayUnknownLabel"];
+    public string SaveButton => _l["SaveButton"];
+    public string CancelButton => _l["CancelButton"];
 }
