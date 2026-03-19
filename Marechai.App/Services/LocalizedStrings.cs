@@ -277,4 +277,17 @@ public class LocalizedStrings
     public string EditInstructionSetButton => _l["EditInstructionSetButton"];
     public string DeleteInstructionSetButton => _l["DeleteInstructionSetButton"];
     public string InstructionSetNameLabel => _l["InstructionSetNameLabel"];
+
+    // Instruction set extension management
+    public string ISExtensionManagementTitle => _l["ISExtensionManagementTitle"];
+    public string ISExtensionManagementSubtitle => _l["ISExtensionManagementSubtitle"];
+    public string ISExtensionMgmtAccessDeniedTitle => _l["ISExtensionMgmtAccessDeniedTitle"];
+    public string ISExtensionMgmtAccessDeniedMessage => _l["ISExtensionMgmtAccessDeniedMessage"];
+    public string AddISExtensionButton => _l["AddISExtensionButton"];
+    public string RefreshISExtensionsButton => _l["RefreshISExtensionsButton"];
+    public string ISExtensionSearchPlaceholder => _l["ISExtensionSearchPlaceholder"];
+    public string ISExtensionNameColumn => _l["ISExtensionNameColumn"];
+    public string EditISExtensionButton => _l["EditISExtensionButton"];
+    public string DeleteISExtensionButton => _l["DeleteISExtensionButton"];
+    public string ISExtensionNameLabel => _l["ISExtensionNameLabel"];
 }

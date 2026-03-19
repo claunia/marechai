@@ -1312,4 +1312,22 @@
   <data name="FailedToLoadInstructionSets" xml:space="preserve"><value>Falha ao carregar os conjuntos de instruções.</value></data>
   <data name="FailedToSaveInstructionSet" xml:space="preserve"><value>Falha ao salvar o conjunto de instruções.</value></data>
   <data name="FailedToDeleteInstructionSet" xml:space="preserve"><value>Falha ao excluir o conjunto de instruções.</value></data>
+  <data name="ISExtensionManagementButton" xml:space="preserve"><value>Gestão de Extensões ISA</value></data>
+  <data name="ISExtensionManagementTitle" xml:space="preserve"><value>Gestão de Extensões de Conjuntos de Instruções</value></data>
+  <data name="ISExtensionManagementSubtitle" xml:space="preserve"><value>Gerenciar extensões de conjuntos de instruções</value></data>
+  <data name="ISExtensionMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso Negado</value></data>
+  <data name="ISExtensionMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa ser Administrador para acessar a gestão de extensões ISA.</value></data>
+  <data name="AddISExtensionButton" xml:space="preserve"><value>Adicionar Extensão</value></data>
+  <data name="RefreshISExtensionsButton" xml:space="preserve"><value>Atualizar</value></data>
+  <data name="ISExtensionSearchPlaceholder" xml:space="preserve"><value>Filtrar extensões...</value></data>
+  <data name="ISExtensionNameColumn" xml:space="preserve"><value>Extensão</value></data>
+  <data name="EditISExtensionButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteISExtensionButton" xml:space="preserve"><value>Excluir</value></data>
+  <data name="AddISExtensionDialog_Title" xml:space="preserve"><value>Adicionar Extensão</value></data>
+  <data name="EditISExtensionDialog_Title" xml:space="preserve"><value>Editar Extensão</value></data>
+  <data name="ISExtensionNameLabel" xml:space="preserve"><value>Nome da Extensão</value></data>
+  <data name="ISExtensionNameNotUnique" xml:space="preserve"><value>Este nome de extensão já está em uso.</value></data>
+  <data name="FailedToLoadISExtensions" xml:space="preserve"><value>Falha ao carregar as extensões.</value></data>
+  <data name="FailedToSaveISExtension" xml:space="preserve"><value>Falha ao salvar a extensão.</value></data>
+  <data name="FailedToDeleteISExtension" xml:space="preserve"><value>Falha ao excluir a extensão.</value></data>
 </root>

@@ -1446,4 +1446,22 @@
   <data name="FailedToDeleteInstructionSet" xml:space="preserve">
     <value>Error al eliminar el juego de instrucciones.</value>
   </data>
+  <data name="ISExtensionManagementButton" xml:space="preserve"><value>Gestión de Extensiones ISA</value></data>
+  <data name="ISExtensionManagementTitle" xml:space="preserve"><value>Gestión de Extensiones de Juegos de Instrucciones</value></data>
+  <data name="ISExtensionManagementSubtitle" xml:space="preserve"><value>Administrar extensiones de juegos de instrucciones</value></data>
+  <data name="ISExtensionMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso Denegado</value></data>
+  <data name="ISExtensionMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser un Administrador para acceder a la gestión de extensiones ISA.</value></data>
+  <data name="AddISExtensionButton" xml:space="preserve"><value>Añadir Extensión</value></data>
+  <data name="RefreshISExtensionsButton" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="ISExtensionSearchPlaceholder" xml:space="preserve"><value>Filtrar extensiones...</value></data>
+  <data name="ISExtensionNameColumn" xml:space="preserve"><value>Extensión</value></data>
+  <data name="EditISExtensionButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteISExtensionButton" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="AddISExtensionDialog_Title" xml:space="preserve"><value>Añadir Extensión</value></data>
+  <data name="EditISExtensionDialog_Title" xml:space="preserve"><value>Editar Extensión</value></data>
+  <data name="ISExtensionNameLabel" xml:space="preserve"><value>Nombre de Extensión</value></data>
+  <data name="ISExtensionNameNotUnique" xml:space="preserve"><value>Este nombre de extensión ya está en uso.</value></data>
+  <data name="FailedToLoadISExtensions" xml:space="preserve"><value>Error al cargar las extensiones.</value></data>
+  <data name="FailedToSaveISExtension" xml:space="preserve"><value>Error al guardar la extensión.</value></data>
+  <data name="FailedToDeleteISExtension" xml:space="preserve"><value>Error al eliminar la extensión.</value></data>
 </root>

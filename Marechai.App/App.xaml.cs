@@ -189,6 +189,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminGpusViewModel>();
         containerRegistry.Register<AdminProcessorsViewModel>();
         containerRegistry.Register<AdminInstructionSetsViewModel>();
+        containerRegistry.Register<AdminInstructionSetExtensionsViewModel>();
 
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
@@ -214,6 +215,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminGpusPage, AdminGpusViewModel>();
         containerRegistry.RegisterForNavigation<AdminProcessorsPage, AdminProcessorsViewModel>();
         containerRegistry.RegisterForNavigation<AdminInstructionSetsPage, AdminInstructionSetsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminInstructionSetExtensionsPage, AdminInstructionSetExtensionsViewModel>();
     }
 
     protected override async void OnInitialized()

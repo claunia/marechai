@@ -1446,4 +1446,58 @@
   <data name="FailedToDeleteInstructionSet" xml:space="preserve">
     <value>Failed to delete instruction set.</value>
   </data>
+  <data name="ISExtensionManagementButton" xml:space="preserve">
+    <value>ISA Extension Management</value>
+  </data>
+  <data name="ISExtensionManagementTitle" xml:space="preserve">
+    <value>Instruction Set Extension Management</value>
+  </data>
+  <data name="ISExtensionManagementSubtitle" xml:space="preserve">
+    <value>Manage instruction set extensions</value>
+  </data>
+  <data name="ISExtensionMgmtAccessDeniedTitle" xml:space="preserve">
+    <value>Access Denied</value>
+  </data>
+  <data name="ISExtensionMgmtAccessDeniedMessage" xml:space="preserve">
+    <value>You must be an Administrator to access ISA extension management.</value>
+  </data>
+  <data name="AddISExtensionButton" xml:space="preserve">
+    <value>Add Extension</value>
+  </data>
+  <data name="RefreshISExtensionsButton" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ISExtensionSearchPlaceholder" xml:space="preserve">
+    <value>Filter extensions...</value>
+  </data>
+  <data name="ISExtensionNameColumn" xml:space="preserve">
+    <value>Extension</value>
+  </data>
+  <data name="EditISExtensionButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DeleteISExtensionButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AddISExtensionDialog_Title" xml:space="preserve">
+    <value>Add Extension</value>
+  </data>
+  <data name="EditISExtensionDialog_Title" xml:space="preserve">
+    <value>Edit Extension</value>
+  </data>
+  <data name="ISExtensionNameLabel" xml:space="preserve">
+    <value>Extension Name</value>
+  </data>
+  <data name="ISExtensionNameNotUnique" xml:space="preserve">
+    <value>This extension name is already in use.</value>
+  </data>
+  <data name="FailedToLoadISExtensions" xml:space="preserve">
+    <value>Failed to load extensions.</value>
+  </data>
+  <data name="FailedToSaveISExtension" xml:space="preserve">
+    <value>Failed to save extension.</value>
+  </data>
+  <data name="FailedToDeleteISExtension" xml:space="preserve">
+    <value>Failed to delete extension.</value>
+  </data>
 </root>

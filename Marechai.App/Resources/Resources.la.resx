@@ -1312,4 +1312,22 @@
   <data name="FailedToLoadInstructionSets" xml:space="preserve"><value>Corpora instructionum onerare non potuit.</value></data>
   <data name="FailedToSaveInstructionSet" xml:space="preserve"><value>Corpus instructionum servare non potuit.</value></data>
   <data name="FailedToDeleteInstructionSet" xml:space="preserve"><value>Corpus instructionum delere non potuit.</value></data>
+  <data name="ISExtensionManagementButton" xml:space="preserve"><value>Administratio Extensionum ISA</value></data>
+  <data name="ISExtensionManagementTitle" xml:space="preserve"><value>Administratio Extensionum Corporum Instructionum</value></data>
+  <data name="ISExtensionManagementSubtitle" xml:space="preserve"><value>Extensiones corporum instructionum administrare</value></data>
+  <data name="ISExtensionMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus Negatus</value></data>
+  <data name="ISExtensionMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ad extensionum ISA administrationem.</value></data>
+  <data name="AddISExtensionButton" xml:space="preserve"><value>Extensionem Addere</value></data>
+  <data name="RefreshISExtensionsButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="ISExtensionSearchPlaceholder" xml:space="preserve"><value>Extensiones filtrare...</value></data>
+  <data name="ISExtensionNameColumn" xml:space="preserve"><value>Extensio</value></data>
+  <data name="EditISExtensionButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="DeleteISExtensionButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="AddISExtensionDialog_Title" xml:space="preserve"><value>Extensionem Addere</value></data>
+  <data name="EditISExtensionDialog_Title" xml:space="preserve"><value>Extensionem Mutare</value></data>
+  <data name="ISExtensionNameLabel" xml:space="preserve"><value>Nomen Extensionis</value></data>
+  <data name="ISExtensionNameNotUnique" xml:space="preserve"><value>Hoc nomen extensionis iam adhibetur.</value></data>
+  <data name="FailedToLoadISExtensions" xml:space="preserve"><value>Extensiones onerare non potuit.</value></data>
+  <data name="FailedToSaveISExtension" xml:space="preserve"><value>Extensionem servare non potuit.</value></data>
+  <data name="FailedToDeleteISExtension" xml:space="preserve"><value>Extensionem delere non potuit.</value></data>
 </root>

@@ -1312,4 +1312,22 @@
   <data name="FailedToLoadInstructionSets" xml:space="preserve"><value>Fehler beim Laden der Befehlssätze.</value></data>
   <data name="FailedToSaveInstructionSet" xml:space="preserve"><value>Fehler beim Speichern des Befehlssatzes.</value></data>
   <data name="FailedToDeleteInstructionSet" xml:space="preserve"><value>Fehler beim Löschen des Befehlssatzes.</value></data>
+  <data name="ISExtensionManagementButton" xml:space="preserve"><value>ISA-Erweiterungsverwaltung</value></data>
+  <data name="ISExtensionManagementTitle" xml:space="preserve"><value>Befehlssatz-Erweiterungsverwaltung</value></data>
+  <data name="ISExtensionManagementSubtitle" xml:space="preserve"><value>Befehlssatz-Erweiterungen verwalten</value></data>
+  <data name="ISExtensionMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="ISExtensionMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen ein Administrator sein, um die ISA-Erweiterungsverwaltung zu nutzen.</value></data>
+  <data name="AddISExtensionButton" xml:space="preserve"><value>Erweiterung hinzufügen</value></data>
+  <data name="RefreshISExtensionsButton" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="ISExtensionSearchPlaceholder" xml:space="preserve"><value>Erweiterungen filtern...</value></data>
+  <data name="ISExtensionNameColumn" xml:space="preserve"><value>Erweiterung</value></data>
+  <data name="EditISExtensionButton" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="DeleteISExtensionButton" xml:space="preserve"><value>Löschen</value></data>
+  <data name="AddISExtensionDialog_Title" xml:space="preserve"><value>Erweiterung hinzufügen</value></data>
+  <data name="EditISExtensionDialog_Title" xml:space="preserve"><value>Erweiterung bearbeiten</value></data>
+  <data name="ISExtensionNameLabel" xml:space="preserve"><value>Erweiterungsname</value></data>
+  <data name="ISExtensionNameNotUnique" xml:space="preserve"><value>Dieser Erweiterungsname wird bereits verwendet.</value></data>
+  <data name="FailedToLoadISExtensions" xml:space="preserve"><value>Fehler beim Laden der Erweiterungen.</value></data>
+  <data name="FailedToSaveISExtension" xml:space="preserve"><value>Fehler beim Speichern der Erweiterung.</value></data>
+  <data name="FailedToDeleteISExtension" xml:space="preserve"><value>Fehler beim Löschen der Erweiterung.</value></data>
 </root>

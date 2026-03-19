@@ -1410,4 +1410,22 @@
   <data name="FailedToLoadInstructionSets" xml:space="preserve"><value>Échec du chargement des jeux d'instructions.</value></data>
   <data name="FailedToSaveInstructionSet" xml:space="preserve"><value>Échec de la sauvegarde du jeu d'instructions.</value></data>
   <data name="FailedToDeleteInstructionSet" xml:space="preserve"><value>Échec de la suppression du jeu d'instructions.</value></data>
+  <data name="ISExtensionManagementButton" xml:space="preserve"><value>Gestion des Extensions ISA</value></data>
+  <data name="ISExtensionManagementTitle" xml:space="preserve"><value>Gestion des Extensions de Jeux d'Instructions</value></data>
+  <data name="ISExtensionManagementSubtitle" xml:space="preserve"><value>Gérer les extensions de jeux d'instructions</value></data>
+  <data name="ISExtensionMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès Refusé</value></data>
+  <data name="ISExtensionMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour accéder à la gestion des extensions ISA.</value></data>
+  <data name="AddISExtensionButton" xml:space="preserve"><value>Ajouter une Extension</value></data>
+  <data name="RefreshISExtensionsButton" xml:space="preserve"><value>Actualiser</value></data>
+  <data name="ISExtensionSearchPlaceholder" xml:space="preserve"><value>Filtrer les extensions...</value></data>
+  <data name="ISExtensionNameColumn" xml:space="preserve"><value>Extension</value></data>
+  <data name="EditISExtensionButton" xml:space="preserve"><value>Modifier</value></data>
+  <data name="DeleteISExtensionButton" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="AddISExtensionDialog_Title" xml:space="preserve"><value>Ajouter une Extension</value></data>
+  <data name="EditISExtensionDialog_Title" xml:space="preserve"><value>Modifier l'Extension</value></data>
+  <data name="ISExtensionNameLabel" xml:space="preserve"><value>Nom de l'Extension</value></data>
+  <data name="ISExtensionNameNotUnique" xml:space="preserve"><value>Ce nom d'extension est déjà utilisé.</value></data>
+  <data name="FailedToLoadISExtensions" xml:space="preserve"><value>Échec du chargement des extensions.</value></data>
+  <data name="FailedToSaveISExtension" xml:space="preserve"><value>Échec de la sauvegarde de l'extension.</value></data>
+  <data name="FailedToDeleteISExtension" xml:space="preserve"><value>Échec de la suppression de l'extension.</value></data>
 </root>
