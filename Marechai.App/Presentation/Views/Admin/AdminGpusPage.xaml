@@ -271,6 +271,63 @@
                                                    Minimum="1"
                                                    SmallChange="1"
                                                    HorizontalAlignment="Stretch" />
+
+                                        <!-- Resolutions -->
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=GpuResolutionsHeader}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,8,0,0" />
+
+                                        <!-- Add resolution -->
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <ComboBox Grid.Column="0"
+                                                      ItemsSource="{Binding AvailableResolutions}"
+                                                      SelectedItem="{Binding SelectedAvailableResolution, Mode=TwoWay}"
+                                                      PlaceholderText="{Binding Source={StaticResource Strings}, Path=GpuAddResolutionPlaceholder}"
+                                                      HorizontalAlignment="Stretch">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock>
+                                                            <Run Text="{Binding Width}" /><Run Text="x" /><Run Text="{Binding Height}" />
+                                                            <Run Text=" " /><Run Text="{Binding Colors}" />
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                            <Button Grid.Column="1"
+                                                    Content="+"
+                                                    Command="{Binding AddResolutionCommand}"
+                                                    VerticalAlignment="Bottom"
+                                                    Padding="10,6" />
+                                        </Grid>
+
+                                        <!-- Current resolutions list -->
+                                        <ItemsRepeater ItemsSource="{Binding GpuResolutionDisplays}">
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="0,2" ColumnSpacing="8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="{Binding}" />
+                                                        <Button Grid.Column="1"
+                                                                Content="{Binding Source={StaticResource Strings}, Path=DeleteGpuButton}"
+                                                                Command="{Binding DataContext.RemoveResolutionByIndexCommand, ElementName=PageRoot}"
+                                                                CommandParameter="{Binding}"
+                                                                Foreground="{ThemeResource SystemErrorTextColor}"
+                                                                Style="{ThemeResource TextBlockButtonStyle}"
+                                                                Padding="8,4" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
                                     </StackPanel>
                                 </ScrollViewer>
 

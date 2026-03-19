@@ -219,6 +219,8 @@ public class LocalizedStrings
     public string GpuProcessNmLabel => _l["GpuProcessNmLabel"];
     public string GpuDieSizeLabel => _l["GpuDieSizeLabel"];
     public string GpuTransistorsLabel => _l["GpuTransistorsLabel"];
+    public string GpuResolutionsHeader => _l["GpuResolutionsHeader"];
+    public string GpuAddResolutionPlaceholder => _l["GpuAddResolutionPlaceholder"];
 
     // Processor management
     public string ProcessorManagementTitle => _l["ProcessorManagementTitle"];

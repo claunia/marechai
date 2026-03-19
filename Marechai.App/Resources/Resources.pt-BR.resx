@@ -1236,6 +1236,12 @@
   <data name="GpuTransistorsLabel" xml:space="preserve">
     <value>Transistores</value>
   </data>
+  <data name="GpuResolutionsHeader" xml:space="preserve">
+    <value>Resoluções Suportadas</value>
+  </data>
+  <data name="GpuAddResolutionPlaceholder" xml:space="preserve">
+    <value>Selecionar resolução para adicionar...</value>
+  </data>
   <data name="FailedToLoadGpus" xml:space="preserve">
     <value>Falha ao carregar as GPUs.</value>
   </data>

@@ -93,6 +93,21 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
 
     private List<CompanyDto>? _allCompanies;
 
+    // --- Resolutions by GPU ---
+    [ObservableProperty]
+    private ObservableCollection<ResolutionByGpuDto> _gpuResolutions = [];
+
+    [ObservableProperty]
+    private ObservableCollection<string> _gpuResolutionDisplays = [];
+
+    [ObservableProperty]
+    private ObservableCollection<ResolutionDto> _availableResolutions = [];
+
+    [ObservableProperty]
+    private ResolutionDto? _selectedAvailableResolution;
+
+    private List<ResolutionDto>? _allResolutions;
+
     public AdminGpusViewModel(ApiClient                    apiClient,
                               IJwtService                  jwtService,
                               ITokenService                tokenService,
@@ -111,6 +126,9 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         DeleteGpuCommand      = new AsyncRelayCommand<GpuDto>(DeleteGpuAsync);
         SaveGpuCommand        = new AsyncRelayCommand(SaveGpuAsync);
         CancelEditCommand     = new RelayCommand(CancelEdit);
+        AddResolutionCommand  = new AsyncRelayCommand(AddResolutionAsync);
+        RemoveResolutionCommand = new AsyncRelayCommand<ResolutionByGpuDto>(RemoveResolutionAsync);
+        RemoveResolutionByIndexCommand = new AsyncRelayCommand<string>(RemoveResolutionByDisplayAsync);
 
         CheckAdminRole();
     }
@@ -122,6 +140,9 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<GpuDto>  DeleteGpuCommand   { get; }
     public IAsyncRelayCommand          SaveGpuCommand     { get; }
     public IRelayCommand               CancelEditCommand  { get; }
+    public IAsyncRelayCommand          AddResolutionCommand    { get; }
+    public IAsyncRelayCommand<ResolutionByGpuDto> RemoveResolutionCommand { get; }
+    public IAsyncRelayCommand<string>  RemoveResolutionByIndexCommand { get; }
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -214,9 +235,13 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
 
             if(full == null) return;
 
-            _editingGpuId  = full.Id;
+            _editingGpuId  = gpu.Id;
             EditPanelTitle = _localizer["EditGpuDialog_Title"];
             PopulateForm(full);
+
+            if(gpu.Id.HasValue)
+                await LoadGpuResolutionsAsync(gpu.Id.Value);
+
             IsEditing = true;
         }
         catch(Exception ex)
@@ -351,6 +376,136 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
                 _logger.LogError(ex, "Error loading companies for picker");
             }
         }
+
+        if(_allResolutions == null)
+        {
+            try
+            {
+                _allResolutions = await _apiClient.Resolutions.GetAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error loading resolutions for picker");
+            }
+        }
+    }
+
+    // --- Resolution management ---
+    private async Task LoadGpuResolutionsAsync(int gpuId)
+    {
+        GpuResolutions.Clear();
+        GpuResolutionDisplays.Clear();
+
+        try
+        {
+            List<ResolutionByGpuDto>? rels =
+                await _apiClient.ResolutionsByGpu.Gpus[gpuId].Resolutions.GetAsync();
+
+            if(rels != null)
+                foreach(ResolutionByGpuDto rel in rels)
+                {
+                    GpuResolutions.Add(rel);
+                    GpuResolutionDisplays.Add(FormatResolutionDisplay(rel));
+                }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading resolutions for GPU {Id}", gpuId);
+        }
+
+        RefreshAvailableResolutions();
+    }
+
+    private string FormatResolutionDisplay(ResolutionByGpuDto rel)
+    {
+        // Try to get resolution details from the nested object
+        var res = rel.Resolution?.ResolutionDto;
+
+        if(res != null)
+            return $"{res.Width}x{res.Height}" +
+                   (res.Colors.HasValue ? $" {res.Colors} colors" : "") +
+                   (res.Chars == true ? " (chars)" : "") +
+                   (res.Grayscale == true ? " (gray)" : "");
+
+        // Fallback: look up from _allResolutions
+        if(rel.ResolutionId.HasValue && _allResolutions != null)
+        {
+            ResolutionDto? lookup = _allResolutions.FirstOrDefault(r => r.Id == rel.ResolutionId.Value);
+
+            if(lookup != null)
+                return $"{lookup.Width}x{lookup.Height}" +
+                       (lookup.Colors.HasValue ? $" {lookup.Colors} colors" : "") +
+                       (lookup.Chars == true ? " (chars)" : "") +
+                       (lookup.Grayscale == true ? " (gray)" : "");
+        }
+
+        return $"Resolution #{rel.ResolutionId}";
+    }
+
+    private void RefreshAvailableResolutions()
+    {
+        AvailableResolutions.Clear();
+
+        if(_allResolutions == null) return;
+
+        HashSet<int> assignedIds = new(GpuResolutions
+                                     .Where(r => r.ResolutionId.HasValue)
+                                     .Select(r => r.ResolutionId!.Value));
+
+        foreach(ResolutionDto res in _allResolutions)
+            if(res.Id.HasValue && !assignedIds.Contains(res.Id.Value))
+                AvailableResolutions.Add(res);
+    }
+
+    private async Task AddResolutionAsync()
+    {
+        if(_editingGpuId == null || SelectedAvailableResolution?.Id == null) return;
+
+        try
+        {
+            var dto = new ResolutionByGpuDto
+            {
+                GpuId        = _editingGpuId.Value,
+                ResolutionId = SelectedAvailableResolution.Id.Value
+            };
+
+            await _apiClient.ResolutionsByGpu.PostAsync(dto);
+            SelectedAvailableResolution = null;
+            await LoadGpuResolutionsAsync(_editingGpuId.Value);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding resolution to GPU");
+            ErrorMessage = _localizer["FailedToSaveGpu"];
+            HasError     = true;
+        }
+    }
+
+    private async Task RemoveResolutionAsync(ResolutionByGpuDto? rel)
+    {
+        if(rel?.Id == null || _editingGpuId == null) return;
+
+        try
+        {
+            await _apiClient.ResolutionsByGpu[rel.Id.Value].DeleteAsync();
+            await LoadGpuResolutionsAsync(_editingGpuId.Value);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing resolution from GPU");
+            ErrorMessage = _localizer["FailedToSaveGpu"];
+            HasError     = true;
+        }
+    }
+
+    private async Task RemoveResolutionByDisplayAsync(string? display)
+    {
+        if(display == null || _editingGpuId == null) return;
+
+        int index = GpuResolutionDisplays.IndexOf(display);
+
+        if(index >= 0 && index < GpuResolutions.Count)
+            await RemoveResolutionAsync(GpuResolutions[index]);
     }
 
     // --- Helpers ---
@@ -366,6 +521,10 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         Transistors        = null;
         SelectedCompany    = null;
         CompanySearchText  = string.Empty;
+        GpuResolutions.Clear();
+        GpuResolutionDisplays.Clear();
+        AvailableResolutions.Clear();
+        SelectedAvailableResolution = null;
         HasError           = false;
         ErrorMessage       = string.Empty;
     }
