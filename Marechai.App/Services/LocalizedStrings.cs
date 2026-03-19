@@ -390,4 +390,19 @@ public class LocalizedStrings
     public string MachineScreensHeader => _l["MachineScreensHeader"];
     public string MachineMemoryHeader => _l["MachineMemoryHeader"];
     public string MachineStorageHeader => _l["MachineStorageHeader"];
+
+    // Machine family management
+    public string MachineFamilyManagementTitle => _l["MachineFamilyManagementTitle"];
+    public string MachineFamilyManagementSubtitle => _l["MachineFamilyManagementSubtitle"];
+    public string MachineFamilyMgmtAccessDeniedTitle => _l["MachineFamilyMgmtAccessDeniedTitle"];
+    public string MachineFamilyMgmtAccessDeniedMessage => _l["MachineFamilyMgmtAccessDeniedMessage"];
+    public string AddMachineFamilyButton => _l["AddMachineFamilyButton"];
+    public string RefreshMachineFamiliesButton => _l["RefreshMachineFamiliesButton"];
+    public string MachineFamilySearchPlaceholder => _l["MachineFamilySearchPlaceholder"];
+    public string MachineFamilyNameColumn => _l["MachineFamilyNameColumn"];
+    public string MachineFamilyCompanyColumn => _l["MachineFamilyCompanyColumn"];
+    public string EditMachineFamilyButton => _l["EditMachineFamilyButton"];
+    public string DeleteMachineFamilyButton => _l["DeleteMachineFamilyButton"];
+    public string MachineFamilyNameLabel => _l["MachineFamilyNameLabel"];
+    public string MachineFamilyCompanyLabel => _l["MachineFamilyCompanyLabel"];
 }

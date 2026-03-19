@@ -1455,4 +1455,23 @@
   <data name="FailedToLoadMachines" xml:space="preserve"><value>Fehler beim Laden der Maschinen.</value></data>
   <data name="FailedToSaveMachine" xml:space="preserve"><value>Fehler beim Speichern der Maschine.</value></data>
   <data name="FailedToDeleteMachine" xml:space="preserve"><value>Fehler beim Löschen der Maschine.</value></data>
+  <data name="MachineFamilyManagementButton" xml:space="preserve"><value>Familienverwaltung</value></data>
+  <data name="MachineFamilyManagementTitle" xml:space="preserve"><value>Maschinenfamilien-Verwaltung</value></data>
+  <data name="MachineFamilyManagementSubtitle" xml:space="preserve"><value>Produktfamilien verwalten</value></data>
+  <data name="MachineFamilyMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="MachineFamilyMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen ein Administrator sein, um die Familienverwaltung zu nutzen.</value></data>
+  <data name="AddMachineFamilyButton" xml:space="preserve"><value>Familie hinzufügen</value></data>
+  <data name="RefreshMachineFamiliesButton" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="MachineFamilySearchPlaceholder" xml:space="preserve"><value>Familien filtern...</value></data>
+  <data name="MachineFamilyNameColumn" xml:space="preserve"><value>Name</value></data>
+  <data name="MachineFamilyCompanyColumn" xml:space="preserve"><value>Unternehmen</value></data>
+  <data name="EditMachineFamilyButton" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="DeleteMachineFamilyButton" xml:space="preserve"><value>Löschen</value></data>
+  <data name="AddMachineFamilyDialog_Title" xml:space="preserve"><value>Familie hinzufügen</value></data>
+  <data name="EditMachineFamilyDialog_Title" xml:space="preserve"><value>Familie bearbeiten</value></data>
+  <data name="MachineFamilyNameLabel" xml:space="preserve"><value>Name</value></data>
+  <data name="MachineFamilyCompanyLabel" xml:space="preserve"><value>Unternehmen</value></data>
+  <data name="FailedToLoadMachineFamilies" xml:space="preserve"><value>Fehler beim Laden der Familien.</value></data>
+  <data name="FailedToSaveMachineFamily" xml:space="preserve"><value>Fehler beim Speichern der Familie.</value></data>
+  <data name="FailedToDeleteMachineFamily" xml:space="preserve"><value>Fehler beim Löschen der Familie.</value></data>
 </root>

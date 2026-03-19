@@ -1455,4 +1455,23 @@
   <data name="FailedToLoadMachines" xml:space="preserve"><value>Machinas onerare non potuit.</value></data>
   <data name="FailedToSaveMachine" xml:space="preserve"><value>Machinam servare non potuit.</value></data>
   <data name="FailedToDeleteMachine" xml:space="preserve"><value>Machinam delere non potuit.</value></data>
+  <data name="MachineFamilyManagementButton" xml:space="preserve"><value>Administratio Familiarum</value></data>
+  <data name="MachineFamilyManagementTitle" xml:space="preserve"><value>Administratio Familiarum Machinarum</value></data>
+  <data name="MachineFamilyManagementSubtitle" xml:space="preserve"><value>Familias productorum administrare</value></data>
+  <data name="MachineFamilyMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus Negatus</value></data>
+  <data name="MachineFamilyMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ad familiarum administrationem.</value></data>
+  <data name="AddMachineFamilyButton" xml:space="preserve"><value>Familiam Addere</value></data>
+  <data name="RefreshMachineFamiliesButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="MachineFamilySearchPlaceholder" xml:space="preserve"><value>Familias filtrare...</value></data>
+  <data name="MachineFamilyNameColumn" xml:space="preserve"><value>Nomen</value></data>
+  <data name="MachineFamilyCompanyColumn" xml:space="preserve"><value>Societas</value></data>
+  <data name="EditMachineFamilyButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="DeleteMachineFamilyButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="AddMachineFamilyDialog_Title" xml:space="preserve"><value>Familiam Addere</value></data>
+  <data name="EditMachineFamilyDialog_Title" xml:space="preserve"><value>Familiam Mutare</value></data>
+  <data name="MachineFamilyNameLabel" xml:space="preserve"><value>Nomen</value></data>
+  <data name="MachineFamilyCompanyLabel" xml:space="preserve"><value>Societas</value></data>
+  <data name="FailedToLoadMachineFamilies" xml:space="preserve"><value>Familias onerare non potuit.</value></data>
+  <data name="FailedToSaveMachineFamily" xml:space="preserve"><value>Familiam servare non potuit.</value></data>
+  <data name="FailedToDeleteMachineFamily" xml:space="preserve"><value>Familiam delere non potuit.</value></data>
 </root>
