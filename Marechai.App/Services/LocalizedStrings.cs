@@ -264,4 +264,17 @@ public class LocalizedStrings
     public string ProcessorManufacturingHeader => _l["ProcessorManufacturingHeader"];
     public string ProcessorRegistersHeader => _l["ProcessorRegistersHeader"];
     public string ProcessorCacheHeader => _l["ProcessorCacheHeader"];
+
+    // Instruction set management
+    public string InstructionSetManagementTitle => _l["InstructionSetManagementTitle"];
+    public string InstructionSetManagementSubtitle => _l["InstructionSetManagementSubtitle"];
+    public string InstructionSetMgmtAccessDeniedTitle => _l["InstructionSetMgmtAccessDeniedTitle"];
+    public string InstructionSetMgmtAccessDeniedMessage => _l["InstructionSetMgmtAccessDeniedMessage"];
+    public string AddInstructionSetButton => _l["AddInstructionSetButton"];
+    public string RefreshInstructionSetsButton => _l["RefreshInstructionSetsButton"];
+    public string InstructionSetSearchPlaceholder => _l["InstructionSetSearchPlaceholder"];
+    public string InstructionSetNameColumn => _l["InstructionSetNameColumn"];
+    public string EditInstructionSetButton => _l["EditInstructionSetButton"];
+    public string DeleteInstructionSetButton => _l["DeleteInstructionSetButton"];
+    public string InstructionSetNameLabel => _l["InstructionSetNameLabel"];
 }

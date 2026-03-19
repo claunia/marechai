@@ -1294,4 +1294,22 @@
   <data name="FailedToLoadProcessors" xml:space="preserve"><value>Processores onerare non potuit.</value></data>
   <data name="FailedToSaveProcessor" xml:space="preserve"><value>Processorem servare non potuit.</value></data>
   <data name="FailedToDeleteProcessor" xml:space="preserve"><value>Processorem delere non potuit.</value></data>
+  <data name="InstructionSetManagementButton" xml:space="preserve"><value>Administratio Corporum Instructionum</value></data>
+  <data name="InstructionSetManagementTitle" xml:space="preserve"><value>Administratio Corporum Instructionum</value></data>
+  <data name="InstructionSetManagementSubtitle" xml:space="preserve"><value>Corpora instructionum processorum administrare</value></data>
+  <data name="InstructionSetMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus Negatus</value></data>
+  <data name="InstructionSetMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ad corporum instructionum administrationem.</value></data>
+  <data name="AddInstructionSetButton" xml:space="preserve"><value>Corpus Instructionum Addere</value></data>
+  <data name="RefreshInstructionSetsButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="InstructionSetSearchPlaceholder" xml:space="preserve"><value>Corpora instructionum filtrare...</value></data>
+  <data name="InstructionSetNameColumn" xml:space="preserve"><value>Nomen</value></data>
+  <data name="EditInstructionSetButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="DeleteInstructionSetButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="AddInstructionSetDialog_Title" xml:space="preserve"><value>Corpus Instructionum Addere</value></data>
+  <data name="EditInstructionSetDialog_Title" xml:space="preserve"><value>Corpus Instructionum Mutare</value></data>
+  <data name="InstructionSetNameLabel" xml:space="preserve"><value>Nomen</value></data>
+  <data name="InstructionSetNameNotUnique" xml:space="preserve"><value>Hoc nomen iam ab alio corpore instructionum adhibetur.</value></data>
+  <data name="FailedToLoadInstructionSets" xml:space="preserve"><value>Corpora instructionum onerare non potuit.</value></data>
+  <data name="FailedToSaveInstructionSet" xml:space="preserve"><value>Corpus instructionum servare non potuit.</value></data>
+  <data name="FailedToDeleteInstructionSet" xml:space="preserve"><value>Corpus instructionum delere non potuit.</value></data>
 </root>

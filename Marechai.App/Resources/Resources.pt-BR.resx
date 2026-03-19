@@ -1294,4 +1294,22 @@
   <data name="FailedToLoadProcessors" xml:space="preserve"><value>Falha ao carregar os processadores.</value></data>
   <data name="FailedToSaveProcessor" xml:space="preserve"><value>Falha ao salvar o processador.</value></data>
   <data name="FailedToDeleteProcessor" xml:space="preserve"><value>Falha ao excluir o processador.</value></data>
+  <data name="InstructionSetManagementButton" xml:space="preserve"><value>Gestão de Conjuntos de Instruções</value></data>
+  <data name="InstructionSetManagementTitle" xml:space="preserve"><value>Gestão de Conjuntos de Instruções</value></data>
+  <data name="InstructionSetManagementSubtitle" xml:space="preserve"><value>Gerenciar conjuntos de instruções de processadores</value></data>
+  <data name="InstructionSetMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso Negado</value></data>
+  <data name="InstructionSetMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa ser Administrador para acessar a gestão de conjuntos de instruções.</value></data>
+  <data name="AddInstructionSetButton" xml:space="preserve"><value>Adicionar Conjunto de Instruções</value></data>
+  <data name="RefreshInstructionSetsButton" xml:space="preserve"><value>Atualizar</value></data>
+  <data name="InstructionSetSearchPlaceholder" xml:space="preserve"><value>Filtrar conjuntos de instruções...</value></data>
+  <data name="InstructionSetNameColumn" xml:space="preserve"><value>Nome</value></data>
+  <data name="EditInstructionSetButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteInstructionSetButton" xml:space="preserve"><value>Excluir</value></data>
+  <data name="AddInstructionSetDialog_Title" xml:space="preserve"><value>Adicionar Conjunto de Instruções</value></data>
+  <data name="EditInstructionSetDialog_Title" xml:space="preserve"><value>Editar Conjunto de Instruções</value></data>
+  <data name="InstructionSetNameLabel" xml:space="preserve"><value>Nome</value></data>
+  <data name="InstructionSetNameNotUnique" xml:space="preserve"><value>Este nome já está em uso por outro conjunto de instruções.</value></data>
+  <data name="FailedToLoadInstructionSets" xml:space="preserve"><value>Falha ao carregar os conjuntos de instruções.</value></data>
+  <data name="FailedToSaveInstructionSet" xml:space="preserve"><value>Falha ao salvar o conjunto de instruções.</value></data>
+  <data name="FailedToDeleteInstructionSet" xml:space="preserve"><value>Falha ao excluir o conjunto de instruções.</value></data>
 </root>
