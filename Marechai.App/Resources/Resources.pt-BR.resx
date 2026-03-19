@@ -1245,4 +1245,53 @@
   <data name="FailedToDeleteGpu" xml:space="preserve">
     <value>Falha ao excluir a GPU.</value>
   </data>
+  <data name="ProcessorManagementButton" xml:space="preserve"><value>Gestão de Processadores</value></data>
+  <data name="ProcessorManagementTitle" xml:space="preserve"><value>Gestão de Processadores</value></data>
+  <data name="ProcessorManagementSubtitle" xml:space="preserve"><value>Gerenciar processadores e suas especificações</value></data>
+  <data name="ProcessorMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso Negado</value></data>
+  <data name="ProcessorMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa ser Administrador para acessar a gestão de processadores.</value></data>
+  <data name="AddProcessorButton" xml:space="preserve"><value>Adicionar Processador</value></data>
+  <data name="RefreshProcessorsButton" xml:space="preserve"><value>Atualizar</value></data>
+  <data name="ProcessorSearchPlaceholder" xml:space="preserve"><value>Filtrar processadores...</value></data>
+  <data name="ProcessorNameColumn" xml:space="preserve"><value>Nome</value></data>
+  <data name="ProcessorCompanyColumn" xml:space="preserve"><value>Empresa</value></data>
+  <data name="ProcessorModelCodeColumn" xml:space="preserve"><value>Código do Modelo</value></data>
+  <data name="EditProcessorButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteProcessorButton" xml:space="preserve"><value>Excluir</value></data>
+  <data name="AddProcessorDialog_Title" xml:space="preserve"><value>Adicionar Processador</value></data>
+  <data name="EditProcessorDialog_Title" xml:space="preserve"><value>Editar Processador</value></data>
+  <data name="ProcessorNameLabel" xml:space="preserve"><value>Nome</value></data>
+  <data name="ProcessorCompanyLabel" xml:space="preserve"><value>Empresa</value></data>
+  <data name="ProcessorModelCodeLabel" xml:space="preserve"><value>Código do Modelo</value></data>
+  <data name="ProcessorInstructionSetLabel" xml:space="preserve"><value>Conjunto de Instruções</value></data>
+  <data name="ProcessorIntroducedLabel" xml:space="preserve"><value>Introduzido</value></data>
+  <data name="ProcessorSpeedLabel" xml:space="preserve"><value>Velocidade (MHz)</value></data>
+  <data name="ProcessorCoresLabel" xml:space="preserve"><value>Núcleos</value></data>
+  <data name="ProcessorThreadsPerCoreLabel" xml:space="preserve"><value>Threads por Núcleo</value></data>
+  <data name="ProcessorDataBusLabel" xml:space="preserve"><value>Barramento de Dados (bits)</value></data>
+  <data name="ProcessorAddressBusLabel" xml:space="preserve"><value>Barramento de Endereços (bits)</value></data>
+  <data name="ProcessorPackageLabel" xml:space="preserve"><value>Encapsulamento</value></data>
+  <data name="ProcessorProcessLabel" xml:space="preserve"><value>Processo</value></data>
+  <data name="ProcessorProcessNmLabel" xml:space="preserve"><value>Processo (nm)</value></data>
+  <data name="ProcessorDieSizeLabel" xml:space="preserve"><value>Tamanho do Die (mm²)</value></data>
+  <data name="ProcessorTransistorsLabel" xml:space="preserve"><value>Transistores</value></data>
+  <data name="ProcessorGprsLabel" xml:space="preserve"><value>Registradores de Propósito Geral</value></data>
+  <data name="ProcessorGprSizeLabel" xml:space="preserve"><value>Tamanho GPR (bits)</value></data>
+  <data name="ProcessorFprsLabel" xml:space="preserve"><value>Registradores de Ponto Flutuante</value></data>
+  <data name="ProcessorFprSizeLabel" xml:space="preserve"><value>Tamanho FPR (bits)</value></data>
+  <data name="ProcessorSimdRegistersLabel" xml:space="preserve"><value>Registradores SIMD</value></data>
+  <data name="ProcessorSimdSizeLabel" xml:space="preserve"><value>Tamanho SIMD (bits)</value></data>
+  <data name="ProcessorL1InstructionLabel" xml:space="preserve"><value>Cache L1 Instruções (KiB)</value></data>
+  <data name="ProcessorL1DataLabel" xml:space="preserve"><value>Cache L1 Dados (KiB)</value></data>
+  <data name="ProcessorL2Label" xml:space="preserve"><value>Cache L2 (KiB)</value></data>
+  <data name="ProcessorL3Label" xml:space="preserve"><value>Cache L3 (KiB)</value></data>
+  <data name="ProcessorBasicInfoHeader" xml:space="preserve"><value>Informações Básicas</value></data>
+  <data name="ProcessorPerformanceHeader" xml:space="preserve"><value>Desempenho</value></data>
+  <data name="ProcessorBusHeader" xml:space="preserve"><value>Barramento</value></data>
+  <data name="ProcessorManufacturingHeader" xml:space="preserve"><value>Fabricação</value></data>
+  <data name="ProcessorRegistersHeader" xml:space="preserve"><value>Registradores</value></data>
+  <data name="ProcessorCacheHeader" xml:space="preserve"><value>Cache</value></data>
+  <data name="FailedToLoadProcessors" xml:space="preserve"><value>Falha ao carregar os processadores.</value></data>
+  <data name="FailedToSaveProcessor" xml:space="preserve"><value>Falha ao salvar o processador.</value></data>
+  <data name="FailedToDeleteProcessor" xml:space="preserve"><value>Falha ao excluir o processador.</value></data>
 </root>

@@ -1245,4 +1245,151 @@
   <data name="FailedToDeleteGpu" xml:space="preserve">
     <value>Failed to delete GPU.</value>
   </data>
+  <data name="ProcessorManagementButton" xml:space="preserve">
+    <value>Processor Management</value>
+  </data>
+  <data name="ProcessorManagementTitle" xml:space="preserve">
+    <value>Processor Management</value>
+  </data>
+  <data name="ProcessorManagementSubtitle" xml:space="preserve">
+    <value>Manage processors and their specifications</value>
+  </data>
+  <data name="ProcessorMgmtAccessDeniedTitle" xml:space="preserve">
+    <value>Access Denied</value>
+  </data>
+  <data name="ProcessorMgmtAccessDeniedMessage" xml:space="preserve">
+    <value>You must be an Administrator to access processor management.</value>
+  </data>
+  <data name="AddProcessorButton" xml:space="preserve">
+    <value>Add Processor</value>
+  </data>
+  <data name="RefreshProcessorsButton" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ProcessorSearchPlaceholder" xml:space="preserve">
+    <value>Filter processors...</value>
+  </data>
+  <data name="ProcessorNameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ProcessorCompanyColumn" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="ProcessorModelCodeColumn" xml:space="preserve">
+    <value>Model Code</value>
+  </data>
+  <data name="EditProcessorButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DeleteProcessorButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AddProcessorDialog_Title" xml:space="preserve">
+    <value>Add Processor</value>
+  </data>
+  <data name="EditProcessorDialog_Title" xml:space="preserve">
+    <value>Edit Processor</value>
+  </data>
+  <data name="ProcessorNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ProcessorCompanyLabel" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="ProcessorModelCodeLabel" xml:space="preserve">
+    <value>Model Code</value>
+  </data>
+  <data name="ProcessorInstructionSetLabel" xml:space="preserve">
+    <value>Instruction Set</value>
+  </data>
+  <data name="ProcessorIntroducedLabel" xml:space="preserve">
+    <value>Introduced</value>
+  </data>
+  <data name="ProcessorSpeedLabel" xml:space="preserve">
+    <value>Speed (MHz)</value>
+  </data>
+  <data name="ProcessorCoresLabel" xml:space="preserve">
+    <value>Cores</value>
+  </data>
+  <data name="ProcessorThreadsPerCoreLabel" xml:space="preserve">
+    <value>Threads per Core</value>
+  </data>
+  <data name="ProcessorDataBusLabel" xml:space="preserve">
+    <value>Data Bus (bits)</value>
+  </data>
+  <data name="ProcessorAddressBusLabel" xml:space="preserve">
+    <value>Address Bus (bits)</value>
+  </data>
+  <data name="ProcessorPackageLabel" xml:space="preserve">
+    <value>Package</value>
+  </data>
+  <data name="ProcessorProcessLabel" xml:space="preserve">
+    <value>Process</value>
+  </data>
+  <data name="ProcessorProcessNmLabel" xml:space="preserve">
+    <value>Process (nm)</value>
+  </data>
+  <data name="ProcessorDieSizeLabel" xml:space="preserve">
+    <value>Die Size (mm²)</value>
+  </data>
+  <data name="ProcessorTransistorsLabel" xml:space="preserve">
+    <value>Transistors</value>
+  </data>
+  <data name="ProcessorGprsLabel" xml:space="preserve">
+    <value>General Purpose Registers</value>
+  </data>
+  <data name="ProcessorGprSizeLabel" xml:space="preserve">
+    <value>GPR Size (bits)</value>
+  </data>
+  <data name="ProcessorFprsLabel" xml:space="preserve">
+    <value>Floating Point Registers</value>
+  </data>
+  <data name="ProcessorFprSizeLabel" xml:space="preserve">
+    <value>FPR Size (bits)</value>
+  </data>
+  <data name="ProcessorSimdRegistersLabel" xml:space="preserve">
+    <value>SIMD Registers</value>
+  </data>
+  <data name="ProcessorSimdSizeLabel" xml:space="preserve">
+    <value>SIMD Size (bits)</value>
+  </data>
+  <data name="ProcessorL1InstructionLabel" xml:space="preserve">
+    <value>L1 Instruction Cache (KiB)</value>
+  </data>
+  <data name="ProcessorL1DataLabel" xml:space="preserve">
+    <value>L1 Data Cache (KiB)</value>
+  </data>
+  <data name="ProcessorL2Label" xml:space="preserve">
+    <value>L2 Cache (KiB)</value>
+  </data>
+  <data name="ProcessorL3Label" xml:space="preserve">
+    <value>L3 Cache (KiB)</value>
+  </data>
+  <data name="ProcessorBasicInfoHeader" xml:space="preserve">
+    <value>Basic Information</value>
+  </data>
+  <data name="ProcessorPerformanceHeader" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="ProcessorBusHeader" xml:space="preserve">
+    <value>Bus</value>
+  </data>
+  <data name="ProcessorManufacturingHeader" xml:space="preserve">
+    <value>Manufacturing</value>
+  </data>
+  <data name="ProcessorRegistersHeader" xml:space="preserve">
+    <value>Registers</value>
+  </data>
+  <data name="ProcessorCacheHeader" xml:space="preserve">
+    <value>Cache</value>
+  </data>
+  <data name="FailedToLoadProcessors" xml:space="preserve">
+    <value>Failed to load processors.</value>
+  </data>
+  <data name="FailedToSaveProcessor" xml:space="preserve">
+    <value>Failed to save processor.</value>
+  </data>
+  <data name="FailedToDeleteProcessor" xml:space="preserve">
+    <value>Failed to delete processor.</value>
+  </data>
 </root>
