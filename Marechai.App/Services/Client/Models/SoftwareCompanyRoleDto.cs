@@ -9,20 +9,28 @@ namespace Marechai.App.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class SoftwareVariantDto : IAdditionalDataHolder, IParsable
+    public partial class SoftwareCompanyRoleDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The id property</summary>
-        public int? Id { get; set; }
-        /// <summary>The name property</summary>
+        /// <summary>The company property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Name { get; set; }
+        public string? Company { get; set; }
 #nullable restore
 #else
-        public string Name { get; set; }
+        public string Company { get; set; }
+#endif
+        /// <summary>The company_id property</summary>
+        public int? CompanyId { get; set; }
+        /// <summary>The role property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Role { get; set; }
+#nullable restore
+#else
+        public string Role { get; set; }
 #endif
         /// <summary>The software property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -35,21 +43,21 @@ namespace Marechai.App.Models
         /// <summary>The software_id property</summary>
         public int? SoftwareId { get; set; }
         /// <summary>
-        /// Instantiates a new <see cref="global::Marechai.App.Models.SoftwareVariantDto"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Marechai.App.Models.SoftwareCompanyRoleDto"/> and sets the default values.
         /// </summary>
-        public SoftwareVariantDto()
+        public SoftwareCompanyRoleDto()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Marechai.App.Models.SoftwareVariantDto"/></returns>
+        /// <returns>A <see cref="global::Marechai.App.Models.SoftwareCompanyRoleDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Marechai.App.Models.SoftwareVariantDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Marechai.App.Models.SoftwareCompanyRoleDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::Marechai.App.Models.SoftwareVariantDto();
+            return new global::Marechai.App.Models.SoftwareCompanyRoleDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -59,8 +67,9 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "id", n => { Id = n.GetIntValue(); } },
-                { "name", n => { Name = n.GetStringValue(); } },
+                { "company", n => { Company = n.GetStringValue(); } },
+                { "company_id", n => { CompanyId = n.GetIntValue(); } },
+                { "role", n => { Role = n.GetStringValue(); } },
                 { "software", n => { Software = n.GetStringValue(); } },
                 { "software_id", n => { SoftwareId = n.GetIntValue(); } },
             };
@@ -72,8 +81,9 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteIntValue("id", Id);
-            writer.WriteStringValue("name", Name);
+            writer.WriteStringValue("company", Company);
+            writer.WriteIntValue("company_id", CompanyId);
+            writer.WriteStringValue("role", Role);
             writer.WriteStringValue("software", Software);
             writer.WriteIntValue("software_id", SoftwareId);
             writer.WriteAdditionalData(AdditionalData);

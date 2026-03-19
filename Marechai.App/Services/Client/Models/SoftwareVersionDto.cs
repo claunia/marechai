@@ -22,20 +22,8 @@ namespace Marechai.App.Models
 #else
         public string Codename { get; set; }
 #endif
-        /// <summary>The family property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Family { get; set; }
-#nullable restore
-#else
-        public string Family { get; set; }
-#endif
-        /// <summary>The family_id property</summary>
-        public int? FamilyId { get; set; }
         /// <summary>The id property</summary>
         public int? Id { get; set; }
-        /// <summary>The introduced property</summary>
-        public DateTimeOffset? Introduced { get; set; }
         /// <summary>The license property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -46,31 +34,41 @@ namespace Marechai.App.Models
 #endif
         /// <summary>The license_id property</summary>
         public int? LicenseId { get; set; }
-        /// <summary>The name property</summary>
+        /// <summary>The parent_version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Name { get; set; }
+        public string? ParentVersion { get; set; }
 #nullable restore
 #else
-        public string Name { get; set; }
+        public string ParentVersion { get; set; }
 #endif
-        /// <summary>The previous property</summary>
+        /// <summary>The parent_version_id property</summary>
+        public int? ParentVersionId { get; set; }
+        /// <summary>The public_version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Previous { get; set; }
+        public string? PublicVersion { get; set; }
 #nullable restore
 #else
-        public string Previous { get; set; }
+        public string PublicVersion { get; set; }
 #endif
-        /// <summary>The previous_id property</summary>
-        public int? PreviousId { get; set; }
-        /// <summary>The version property</summary>
+        /// <summary>The software property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Version { get; set; }
+        public string? Software { get; set; }
 #nullable restore
 #else
-        public string Version { get; set; }
+        public string Software { get; set; }
+#endif
+        /// <summary>The software_id property</summary>
+        public int? SoftwareId { get; set; }
+        /// <summary>The version_string property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? VersionString { get; set; }
+#nullable restore
+#else
+        public string VersionString { get; set; }
 #endif
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Models.SoftwareVersionDto"/> and sets the default values.
@@ -98,16 +96,15 @@ namespace Marechai.App.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "codename", n => { Codename = n.GetStringValue(); } },
-                { "family", n => { Family = n.GetStringValue(); } },
-                { "family_id", n => { FamilyId = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
-                { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
                 { "license", n => { License = n.GetStringValue(); } },
                 { "license_id", n => { LicenseId = n.GetIntValue(); } },
-                { "name", n => { Name = n.GetStringValue(); } },
-                { "previous", n => { Previous = n.GetStringValue(); } },
-                { "previous_id", n => { PreviousId = n.GetIntValue(); } },
-                { "version", n => { Version = n.GetStringValue(); } },
+                { "parent_version", n => { ParentVersion = n.GetStringValue(); } },
+                { "parent_version_id", n => { ParentVersionId = n.GetIntValue(); } },
+                { "public_version", n => { PublicVersion = n.GetStringValue(); } },
+                { "software", n => { Software = n.GetStringValue(); } },
+                { "software_id", n => { SoftwareId = n.GetIntValue(); } },
+                { "version_string", n => { VersionString = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -118,16 +115,15 @@ namespace Marechai.App.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("codename", Codename);
-            writer.WriteStringValue("family", Family);
-            writer.WriteIntValue("family_id", FamilyId);
             writer.WriteIntValue("id", Id);
-            writer.WriteDateTimeOffsetValue("introduced", Introduced);
             writer.WriteStringValue("license", License);
             writer.WriteIntValue("license_id", LicenseId);
-            writer.WriteStringValue("name", Name);
-            writer.WriteStringValue("previous", Previous);
-            writer.WriteIntValue("previous_id", PreviousId);
-            writer.WriteStringValue("version", Version);
+            writer.WriteStringValue("parent_version", ParentVersion);
+            writer.WriteIntValue("parent_version_id", ParentVersionId);
+            writer.WriteStringValue("public_version", PublicVersion);
+            writer.WriteStringValue("software", Software);
+            writer.WriteIntValue("software_id", SoftwareId);
+            writer.WriteStringValue("version_string", VersionString);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
