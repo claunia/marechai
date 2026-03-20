@@ -405,4 +405,19 @@ public class LocalizedStrings
     public string DeleteMachineFamilyButton => _l["DeleteMachineFamilyButton"];
     public string MachineFamilyNameLabel => _l["MachineFamilyNameLabel"];
     public string MachineFamilyCompanyLabel => _l["MachineFamilyCompanyLabel"];
+
+    // Company logos management
+    public string CompanyLogosTitle => _l["CompanyLogosTitle"];
+    public string CompanyLogosSubtitle => _l["CompanyLogosSubtitle"];
+    public string CompanyLogosMgmtAccessDeniedTitle => _l["CompanyLogosMgmtAccessDeniedTitle"];
+    public string CompanyLogosMgmtAccessDeniedMessage => _l["CompanyLogosMgmtAccessDeniedMessage"];
+    public string UploadLogoButton => _l["UploadLogoButton"];
+    public string RefreshLogosButton => _l["RefreshLogosButton"];
+    public string ChangeYearButton => _l["ChangeYearButton"];
+    public string DeleteLogoButton => _l["DeleteLogoButton"];
+    public string ChangeYearDialogTitle => _l["ChangeYearDialogTitle"];
+    public string YearLabel => _l["YearLabel"];
+    public string YearUnknownLabel => _l["YearUnknownLabel"];
+    public string UploadingLogoText => _l["UploadingLogoText"];
+    public string LogosButton => _l["LogosButton"];
 }

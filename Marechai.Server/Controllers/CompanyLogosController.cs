@@ -23,18 +23,22 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Marechai.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Svg.Skia;
 
 namespace Marechai.Server.Controllers;
 
@@ -167,5 +171,112 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
         await context.SaveChangesWithUserAsync(userId);
 
         return logo.Id;
+    }
+
+    [HttpPost("upload")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [RequestSizeLimit(5 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<CompanyLogoDto>> UploadAsync(IFormFile file, [FromForm] int companyId,
+                                                                [FromForm] int? year)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 5 * 1024 * 1024)
+            return BadRequest("File exceeds 5 MB limit.");
+
+        // Read the file into memory for validation
+        using var ms = new MemoryStream();
+        await file.CopyToAsync(ms);
+        ms.Position = 0;
+
+        // Validate SVG header
+        var headerBuffer = new byte[6];
+        int headerRead = await ms.ReadAsync(headerBuffer);
+
+        if(headerRead < 5)
+            return BadRequest("File is too small to be a valid SVG.");
+
+        string header = Encoding.UTF8.GetString(headerBuffer, 0, headerRead);
+
+        if(!header.StartsWith("<?xml", StringComparison.OrdinalIgnoreCase) &&
+           !header.StartsWith("<svg", StringComparison.OrdinalIgnoreCase))
+            return BadRequest("File does not appear to be a valid SVG.");
+
+        // Validate SVG footer
+        ms.Seek(-7, SeekOrigin.End);
+        var footerBuffer = new byte[7];
+        int footerRead = await ms.ReadAsync(footerBuffer);
+        string footer = Encoding.UTF8.GetString(footerBuffer, 0, footerRead).TrimEnd();
+
+        if(!footer.EndsWith("</svg>", StringComparison.OrdinalIgnoreCase))
+            return BadRequest("File does not appear to be a valid SVG.");
+
+        // Validate by loading with SkiaSharp
+        ms.Position = 0;
+
+        try
+        {
+            using var svg = new SKSvg();
+            svg.Load(ms);
+
+            if(svg.Picture is null)
+                return BadRequest("SVG could not be parsed.");
+        }
+        catch(Exception)
+        {
+            return BadRequest("SVG could not be parsed.");
+        }
+
+        // Generate GUID and render all variants
+        var guid = Guid.NewGuid();
+        ms.Position = 0;
+
+        try
+        {
+            SvgRender.RenderCompanyLogo(guid, ms, _webRootPath);
+        }
+        catch(Exception)
+        {
+            return BadRequest("SVG rendering failed.");
+        }
+
+        // Save original SVG to disk
+        string svgDir = Path.Combine(_webRootPath, "assets/logos");
+
+        if(!Directory.Exists(svgDir))
+            Directory.CreateDirectory(svgDir);
+
+        string svgPath = Path.Combine(svgDir, $"{guid}.svg");
+
+        ms.Position = 0;
+        await using var svgFs = new FileStream(svgPath, FileMode.CreateNew, FileAccess.Write);
+        await ms.CopyToAsync(svgFs);
+
+        // Create database record
+        var logo = new CompanyLogo
+        {
+            Guid      = guid,
+            Year      = year,
+            CompanyId = companyId
+        };
+
+        await context.CompanyLogos.AddAsync(logo);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok(new CompanyLogoDto
+        {
+            Id        = logo.Id,
+            CompanyId = logo.CompanyId,
+            Year      = logo.Year,
+            Guid      = logo.Guid
+        });
     }
 }

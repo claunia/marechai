@@ -1474,4 +1474,21 @@
   <data name="FailedToLoadMachineFamilies" xml:space="preserve"><value>Familias onerare non potuit.</value></data>
   <data name="FailedToSaveMachineFamily" xml:space="preserve"><value>Familiam servare non potuit.</value></data>
   <data name="FailedToDeleteMachineFamily" xml:space="preserve"><value>Familiam delere non potuit.</value></data>
+  <data name="CompanyLogosTitle" xml:space="preserve"><value>Insignia societatis</value></data>
+  <data name="CompanyLogosSubtitle" xml:space="preserve"><value>Insignia societatis videre, imponere et administrare</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus negatus</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ut insignia societatis administres.</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Insigne imponere</value></data>
+  <data name="RefreshLogosButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="ChangeYearButton" xml:space="preserve"><value>Annum mutare</value></data>
+  <data name="DeleteLogoButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="ChangeYearDialogTitle" xml:space="preserve"><value>Annum insignis mutare</value></data>
+  <data name="YearLabel" xml:space="preserve"><value>Annus</value></data>
+  <data name="YearUnknownLabel" xml:space="preserve"><value>Annus ignotus</value></data>
+  <data name="UploadingLogoText" xml:space="preserve"><value>Insigne imponitur...</value></data>
+  <data name="FailedToLoadLogos" xml:space="preserve"><value>Insignia onerare non potuit.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Insigne imponere non potuit.</value></data>
+  <data name="FailedToDeleteLogo" xml:space="preserve"><value>Insigne delere non potuit.</value></data>
+  <data name="FailedToSaveYear" xml:space="preserve"><value>Annum servare non potuit.</value></data>
+  <data name="LogosButton" xml:space="preserve"><value>Insignia</value></data>
 </root>

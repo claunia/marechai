@@ -1818,4 +1818,21 @@
   <data name="FailedToLoadMachineFamilies" xml:space="preserve"><value>Failed to load machine families.</value></data>
   <data name="FailedToSaveMachineFamily" xml:space="preserve"><value>Failed to save machine family.</value></data>
   <data name="FailedToDeleteMachineFamily" xml:space="preserve"><value>Failed to delete machine family.</value></data>
+  <data name="CompanyLogosTitle" xml:space="preserve"><value>Company Logos</value></data>
+  <data name="CompanyLogosSubtitle" xml:space="preserve"><value>View, upload, and manage company logos</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an Administrator to manage company logos.</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Upload Logo</value></data>
+  <data name="RefreshLogosButton" xml:space="preserve"><value>Refresh</value></data>
+  <data name="ChangeYearButton" xml:space="preserve"><value>Change Year</value></data>
+  <data name="DeleteLogoButton" xml:space="preserve"><value>Delete</value></data>
+  <data name="ChangeYearDialogTitle" xml:space="preserve"><value>Change Logo Year</value></data>
+  <data name="YearLabel" xml:space="preserve"><value>Year</value></data>
+  <data name="YearUnknownLabel" xml:space="preserve"><value>Year is unknown</value></data>
+  <data name="UploadingLogoText" xml:space="preserve"><value>Uploading logo...</value></data>
+  <data name="FailedToLoadLogos" xml:space="preserve"><value>Failed to load logos.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Failed to upload logo.</value></data>
+  <data name="FailedToDeleteLogo" xml:space="preserve"><value>Failed to delete logo.</value></data>
+  <data name="FailedToSaveYear" xml:space="preserve"><value>Failed to save year.</value></data>
+  <data name="LogosButton" xml:space="preserve"><value>Logos</value></data>
 </root>

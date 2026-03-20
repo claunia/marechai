@@ -1614,4 +1614,21 @@
   <data name="FailedToLoadMachineFamilies" xml:space="preserve"><value>Error al cargar las familias.</value></data>
   <data name="FailedToSaveMachineFamily" xml:space="preserve"><value>Error al guardar la familia.</value></data>
   <data name="FailedToDeleteMachineFamily" xml:space="preserve"><value>Error al eliminar la familia.</value></data>
+  <data name="CompanyLogosTitle" xml:space="preserve"><value>Logotipos de empresa</value></data>
+  <data name="CompanyLogosSubtitle" xml:space="preserve"><value>Ver, subir y gestionar logotipos de empresa</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar los logotipos de empresa.</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Subir logotipo</value></data>
+  <data name="RefreshLogosButton" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="ChangeYearButton" xml:space="preserve"><value>Cambiar año</value></data>
+  <data name="DeleteLogoButton" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="ChangeYearDialogTitle" xml:space="preserve"><value>Cambiar año del logotipo</value></data>
+  <data name="YearLabel" xml:space="preserve"><value>Año</value></data>
+  <data name="YearUnknownLabel" xml:space="preserve"><value>Año desconocido</value></data>
+  <data name="UploadingLogoText" xml:space="preserve"><value>Subiendo logotipo...</value></data>
+  <data name="FailedToLoadLogos" xml:space="preserve"><value>Error al cargar los logotipos.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Error al subir el logotipo.</value></data>
+  <data name="FailedToDeleteLogo" xml:space="preserve"><value>Error al eliminar el logotipo.</value></data>
+  <data name="FailedToSaveYear" xml:space="preserve"><value>Error al guardar el año.</value></data>
+  <data name="LogosButton" xml:space="preserve"><value>Logotipos</value></data>
 </root>

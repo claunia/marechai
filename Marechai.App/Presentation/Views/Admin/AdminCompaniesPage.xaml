@@ -179,6 +179,11 @@
                                                             CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}"
                                                             Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=LogosButton}"
+                                                            Command="{Binding DataContext.OpenLogosCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Style="{ThemeResource TextBlockButtonStyle}"
+                                                            Padding="8,4" />
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteCompanyButton}"
                                                             Command="{Binding DataContext.DeleteCompanyCommand, ElementName=PageRoot}"
                                                             CommandParameter="{Binding}"

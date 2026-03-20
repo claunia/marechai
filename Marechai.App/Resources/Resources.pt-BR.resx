@@ -1474,4 +1474,21 @@
   <data name="FailedToLoadMachineFamilies" xml:space="preserve"><value>Falha ao carregar as famílias.</value></data>
   <data name="FailedToSaveMachineFamily" xml:space="preserve"><value>Falha ao salvar a família.</value></data>
   <data name="FailedToDeleteMachineFamily" xml:space="preserve"><value>Falha ao excluir a família.</value></data>
+  <data name="CompanyLogosTitle" xml:space="preserve"><value>Logotipos da empresa</value></data>
+  <data name="CompanyLogosSubtitle" xml:space="preserve"><value>Visualizar, enviar e gerenciar logotipos da empresa</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso negado</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa ser Administrador para gerenciar os logotipos da empresa.</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Enviar logotipo</value></data>
+  <data name="RefreshLogosButton" xml:space="preserve"><value>Atualizar</value></data>
+  <data name="ChangeYearButton" xml:space="preserve"><value>Alterar ano</value></data>
+  <data name="DeleteLogoButton" xml:space="preserve"><value>Excluir</value></data>
+  <data name="ChangeYearDialogTitle" xml:space="preserve"><value>Alterar ano do logotipo</value></data>
+  <data name="YearLabel" xml:space="preserve"><value>Ano</value></data>
+  <data name="YearUnknownLabel" xml:space="preserve"><value>Ano desconhecido</value></data>
+  <data name="UploadingLogoText" xml:space="preserve"><value>Enviando logotipo...</value></data>
+  <data name="FailedToLoadLogos" xml:space="preserve"><value>Falha ao carregar os logotipos.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Falha ao enviar o logotipo.</value></data>
+  <data name="FailedToDeleteLogo" xml:space="preserve"><value>Falha ao excluir o logotipo.</value></data>
+  <data name="FailedToSaveYear" xml:space="preserve"><value>Falha ao salvar o ano.</value></data>
+  <data name="LogosButton" xml:space="preserve"><value>Logotipos</value></data>
 </root>

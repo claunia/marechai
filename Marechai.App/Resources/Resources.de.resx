@@ -1474,4 +1474,21 @@
   <data name="FailedToLoadMachineFamilies" xml:space="preserve"><value>Fehler beim Laden der Familien.</value></data>
   <data name="FailedToSaveMachineFamily" xml:space="preserve"><value>Fehler beim Speichern der Familie.</value></data>
   <data name="FailedToDeleteMachineFamily" xml:space="preserve"><value>Fehler beim Löschen der Familie.</value></data>
+  <data name="CompanyLogosTitle" xml:space="preserve"><value>Firmenlogos</value></data>
+  <data name="CompanyLogosSubtitle" xml:space="preserve"><value>Firmenlogos anzeigen, hochladen und verwalten</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="CompanyLogosMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie müssen Administrator sein, um Firmenlogos zu verwalten.</value></data>
+  <data name="UploadLogoButton" xml:space="preserve"><value>Logo hochladen</value></data>
+  <data name="RefreshLogosButton" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="ChangeYearButton" xml:space="preserve"><value>Jahr ändern</value></data>
+  <data name="DeleteLogoButton" xml:space="preserve"><value>Löschen</value></data>
+  <data name="ChangeYearDialogTitle" xml:space="preserve"><value>Logo-Jahr ändern</value></data>
+  <data name="YearLabel" xml:space="preserve"><value>Jahr</value></data>
+  <data name="YearUnknownLabel" xml:space="preserve"><value>Jahr unbekannt</value></data>
+  <data name="UploadingLogoText" xml:space="preserve"><value>Logo wird hochgeladen...</value></data>
+  <data name="FailedToLoadLogos" xml:space="preserve"><value>Fehler beim Laden der Logos.</value></data>
+  <data name="FailedToUploadLogo" xml:space="preserve"><value>Fehler beim Hochladen des Logos.</value></data>
+  <data name="FailedToDeleteLogo" xml:space="preserve"><value>Fehler beim Löschen des Logos.</value></data>
+  <data name="FailedToSaveYear" xml:space="preserve"><value>Fehler beim Speichern des Jahres.</value></data>
+  <data name="LogosButton" xml:space="preserve"><value>Logos</value></data>
 </root>

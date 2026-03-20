@@ -46,6 +46,14 @@ public sealed class CompanyLogoCache
         return retStream;
     }
 
+    public async Task InvalidateCacheAsync(Guid companyLogoId)
+    {
+        var filename = $"{companyLogoId}.svg";
+
+        if(await _logosFolder.TryGetItemAsync(filename) is StorageFile file)
+            await file.DeleteAsync();
+    }
+
     async Task CacheLogoAsync(Guid companyLogoId)
     {
         var                       filename   = $"{companyLogoId}.svg";

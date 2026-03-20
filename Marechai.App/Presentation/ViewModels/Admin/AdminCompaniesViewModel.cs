@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -15,6 +17,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     private readonly IJwtService                      _jwtService;
     private readonly IStringLocalizer                 _localizer;
     private readonly ILogger<AdminCompaniesViewModel> _logger;
+    private readonly IRegionManager                   _regionManager;
     private readonly ITokenService                    _tokenService;
 
     // --- List state ---
@@ -141,13 +144,15 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
                                    IJwtService                      jwtService,
                                    ITokenService                    tokenService,
                                    ILogger<AdminCompaniesViewModel> logger,
-                                   IStringLocalizer                 localizer)
+                                   IStringLocalizer                 localizer,
+                                   IRegionManager                   regionManager)
     {
         _apiClient    = apiClient;
         _jwtService   = jwtService;
         _tokenService = tokenService;
         _logger       = logger;
         _localizer    = localizer;
+        _regionManager = regionManager;
 
         StatusItems =
         [
@@ -169,6 +174,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         OpenDescriptionCommand     = new AsyncRelayCommand<CompanyDto>(OpenDescriptionAsync);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
         CancelDescriptionCommand   = new RelayCommand(CancelDescription);
+        OpenLogosCommand           = new RelayCommand<CompanyDto>(OpenLogos);
 
         CheckAdminRole();
     }
@@ -183,6 +189,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<CompanyDto> OpenDescriptionCommand   { get; }
     public IAsyncRelayCommand             SaveDescriptionCommand   { get; }
     public IRelayCommand                  CancelDescriptionCommand { get; }
+    public IRelayCommand<CompanyDto>      OpenLogosCommand         { get; }
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -427,6 +434,20 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         IsEditingDescription = false;
         DescriptionCompanyId = null;
         DescriptionMarkdown  = string.Empty;
+    }
+
+    // --- Logos navigation ---
+    private void OpenLogos(CompanyDto? company)
+    {
+        if(company?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.CompanyId, company.Id.Value },
+            { NavParamKeys.CompanyName, company.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminCompanyLogosPage), parameters);
     }
 
     // --- Filtering ---

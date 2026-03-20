@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Marechai.App.Companies.Logos.ChangeYear;
 using Marechai.App.Companies.Logos.Item;
+using Marechai.App.Companies.Logos.Upload;
 using Marechai.App.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -23,6 +24,11 @@ namespace Marechai.App.Companies.Logos
         public global::Marechai.App.Companies.Logos.ChangeYear.ChangeYearRequestBuilder ChangeYear
         {
             get => new global::Marechai.App.Companies.Logos.ChangeYear.ChangeYearRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The upload property</summary>
+        public global::Marechai.App.Companies.Logos.Upload.UploadRequestBuilder Upload
+        {
+            get => new global::Marechai.App.Companies.Logos.Upload.UploadRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Marechai.App.companies.logos.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
