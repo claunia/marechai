@@ -34,19 +34,19 @@ using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Svg.Skia;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/companies/logos")]
 [ApiController]
-public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment host) : ControllerBase
+public class CompanyLogosController(MarechaiContext context, IConfiguration configuration) : ControllerBase
 {
-    private readonly string _webRootPath = host.WebRootPath;
+    private readonly string _assetRootPath = configuration["AssetRootPath"]!;
 
     [HttpGet("/companies/{companyId:int}/logos")]
     [AllowAnonymous]
@@ -85,44 +85,44 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
         context.CompanyLogos.Remove(logo);
         await context.SaveChangesWithUserAsync(userId);
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos", logo.Guid + ".svg")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos", logo.Guid + ".svg"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/webp/1x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/webp/1x", logo.Guid + ".webp"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/webp/2x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/webp/2x", logo.Guid + ".webp"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/webp/3x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/webp/3x", logo.Guid + ".webp"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/png/1x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/png/1x", logo.Guid + ".png"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/png/2x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/png/2x", logo.Guid + ".png"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/png/3x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/png/3x", logo.Guid + ".png"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/thumbs/webp/1x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/thumbs/webp/1x", logo.Guid + ".webp"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/thumbs/webp/2x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/thumbs/webp/2x", logo.Guid + ".webp"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/thumbs/webp/3x", logo.Guid + ".webp")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/thumbs/webp/3x", logo.Guid + ".webp"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/thumbs/png/1x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/thumbs/png/1x", logo.Guid + ".png"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/thumbs/png/2x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/thumbs/png/2x", logo.Guid + ".png"));
 
-        if (System.IO.File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png")))
-            System.IO.File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png"));
+        if (System.IO.File.Exists(Path.Combine(_assetRootPath, "logos/thumbs/png/3x", logo.Guid + ".png")))
+            System.IO.File.Delete(Path.Combine(_assetRootPath, "logos/thumbs/png/3x", logo.Guid + ".png"));
 
         return Ok();
     }
@@ -241,7 +241,9 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
 
         try
         {
-            SvgRender.RenderCompanyLogo(guid, ms, _webRootPath);
+            // RenderCompanyLogo expects a root path and prepends "assets/logos/" internally,
+            // so pass the parent of assetRootPath (which IS the assets directory)
+            SvgRender.RenderCompanyLogo(guid, ms, Path.GetDirectoryName(_assetRootPath)!);
         }
         catch(Exception)
         {
@@ -249,7 +251,7 @@ public class CompanyLogosController(MarechaiContext context, IWebHostEnvironment
         }
 
         // Save original SVG to disk
-        string svgDir = Path.Combine(_webRootPath, "assets/logos");
+        string svgDir = Path.Combine(_assetRootPath, "logos");
 
         if(!Directory.Exists(svgDir))
             Directory.CreateDirectory(svgDir);
