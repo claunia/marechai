@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
@@ -15,6 +17,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     private readonly IJwtService                        _jwtService;
     private readonly IStringLocalizer                   _localizer;
     private readonly ILogger<AdminMachinesViewModel>    _logger;
+    private readonly IRegionManager                     _regionManager;
     private readonly ITokenService                      _tokenService;
 
     // --- List state ---
@@ -105,13 +108,15 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
                                   IJwtService                        jwtService,
                                   ITokenService                      tokenService,
                                   ILogger<AdminMachinesViewModel>    logger,
-                                  IStringLocalizer                   localizer)
+                                  IStringLocalizer                   localizer,
+                                  IRegionManager                     regionManager)
     {
-        _apiClient    = apiClient;
-        _jwtService   = jwtService;
-        _tokenService = tokenService;
-        _logger       = logger;
-        _localizer    = localizer;
+        _apiClient      = apiClient;
+        _jwtService     = jwtService;
+        _tokenService   = tokenService;
+        _logger         = logger;
+        _localizer      = localizer;
+        _regionManager  = regionManager;
 
         MachineTypeItems  = [localizer["MachineTypeUnknown"], localizer["MachineTypeComputer"], localizer["MachineTypeConsole"]];
 
@@ -141,6 +146,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         RemoveMemoryCommand    = new AsyncRelayCommand<string>(RemoveMemoryByDisplayAsync);
         AddStorageCommand      = new AsyncRelayCommand(AddStorageAsync);
         RemoveStorageCommand   = new AsyncRelayCommand<string>(RemoveStorageByDisplayAsync);
+        OpenPhotosCommand      = new RelayCommand<MachineDto>(OpenPhotos);
 
         CheckAdminRole();
     }
@@ -165,6 +171,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<string> RemoveMemoryCommand { get; }
     public IAsyncRelayCommand AddStorageCommand { get; }
     public IAsyncRelayCommand<string> RemoveStorageCommand { get; }
+    public IRelayCommand<MachineDto> OpenPhotosCommand { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -697,5 +704,18 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         else { CompanySearchText = string.Empty; SelectedCompany = null; }
 
         SelectedFamily = machine.FamilyId.HasValue ? Families.FirstOrDefault(f => f.Id == machine.FamilyId.Value) : null;
+    }
+
+    private void OpenPhotos(MachineDto? machine)
+    {
+        if(machine?.Id == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.MachineId, machine.Id.Value },
+            { NavParamKeys.MachineName, machine.Name ?? string.Empty }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminMachinePhotosPage), parameters);
     }
 }

@@ -1631,4 +1631,21 @@
   <data name="FailedToDeleteLogo" xml:space="preserve"><value>Error al eliminar el logotipo.</value></data>
   <data name="FailedToSaveYear" xml:space="preserve"><value>Error al guardar el año.</value></data>
   <data name="LogosButton" xml:space="preserve"><value>Logotipos</value></data>
+  <data name="MachinePhotosTitle" xml:space="preserve"><value>Fotos de máquina</value></data>
+  <data name="MachinePhotosSubtitle" xml:space="preserve"><value>Ver, subir y gestionar fotos de máquinas</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Debe ser Administrador para gestionar fotos de máquinas.</value></data>
+  <data name="UploadPhotoLabel" xml:space="preserve"><value>Subir foto</value></data>
+  <data name="SelectLicenseLabel" xml:space="preserve"><value>Seleccione una licencia...</value></data>
+  <data name="SelectLicenseRequired" xml:space="preserve"><value>Seleccione una licencia antes de subir.</value></data>
+  <data name="PhotoSourceLabel" xml:space="preserve"><value>URL de origen (opcional)</value></data>
+  <data name="UploadPhotoButton" xml:space="preserve"><value>Subir foto</value></data>
+  <data name="UploadingPhotoText" xml:space="preserve"><value>Subiendo foto...</value></data>
+  <data name="FailedToLoadPhotos" xml:space="preserve"><value>Error al cargar las fotos.</value></data>
+  <data name="FailedToUploadPhoto" xml:space="preserve"><value>Error al subir la foto.</value></data>
+  <data name="FailedToDeletePhoto" xml:space="preserve"><value>Error al eliminar la foto.</value></data>
+  <data name="ViewDetailsButton" xml:space="preserve"><value>Ver detalles</value></data>
+  <data name="DeleteButton" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="PhotosButton" xml:space="preserve"><value>Fotos</value></data>
+  <data name="RefreshButton" xml:space="preserve"><value>Actualizar</value></data>
 </root>

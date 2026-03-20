@@ -159,6 +159,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<CompaniesService>();
         containerRegistry.RegisterSingleton<CompanyDetailService>();
         containerRegistry.RegisterSingleton<CompanyLogosService>();
+        containerRegistry.RegisterSingleton<MachinePhotosService>();
+        containerRegistry.RegisterSingleton<LicensesService>();
         containerRegistry.RegisterSingleton<GpusService>();
         containerRegistry.RegisterSingleton<ProcessorsService>();
         containerRegistry.RegisterSingleton<SoundSynthsService>();
@@ -197,6 +199,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminMachinesViewModel>();
         containerRegistry.Register<AdminMachineFamiliesViewModel>();
         containerRegistry.Register<AdminCompanyLogosViewModel>();
+        containerRegistry.Register<AdminMachinePhotosViewModel>();
 
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
@@ -229,6 +232,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminMachinesPage, AdminMachinesViewModel>();
         containerRegistry.RegisterForNavigation<AdminMachineFamiliesPage, AdminMachineFamiliesViewModel>();
         containerRegistry.RegisterForNavigation<AdminCompanyLogosPage, AdminCompanyLogosViewModel>();
+        containerRegistry.RegisterForNavigation<AdminMachinePhotosPage, AdminMachinePhotosViewModel>();
     }
 
     protected override async void OnInitialized()

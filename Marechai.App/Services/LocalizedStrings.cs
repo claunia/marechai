@@ -420,4 +420,18 @@ public class LocalizedStrings
     public string YearUnknownLabel => _l["YearUnknownLabel"];
     public string UploadingLogoText => _l["UploadingLogoText"];
     public string LogosButton => _l["LogosButton"];
+
+    // Machine photos management
+    public string MachinePhotosTitle => _l["MachinePhotosTitle"];
+    public string MachinePhotosSubtitle => _l["MachinePhotosSubtitle"];
+    public string MachinePhotosMgmtAccessDeniedTitle => _l["MachinePhotosMgmtAccessDeniedTitle"];
+    public string MachinePhotosMgmtAccessDeniedMessage => _l["MachinePhotosMgmtAccessDeniedMessage"];
+    public string UploadPhotoLabel => _l["UploadPhotoLabel"];
+    public string SelectLicenseLabel => _l["SelectLicenseLabel"];
+    public string UploadPhotoButton => _l["UploadPhotoButton"];
+    public string UploadingPhotoText => _l["UploadingPhotoText"];
+    public string ViewDetailsButton => _l["ViewDetailsButton"];
+    public string DeleteButton => _l["DeleteButton"];
+    public string PhotosButton => _l["PhotosButton"];
+    public string RefreshButton => _l["RefreshButton"];
 }

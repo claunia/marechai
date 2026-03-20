@@ -1595,4 +1595,21 @@
   <data name="FailedToDeleteLogo" xml:space="preserve"><value>Échec de la suppression du logo.</value></data>
   <data name="FailedToSaveYear" xml:space="preserve"><value>Échec de la sauvegarde de l'année.</value></data>
   <data name="LogosButton" xml:space="preserve"><value>Logos</value></data>
+  <data name="MachinePhotosTitle" xml:space="preserve"><value>Photos de machine</value></data>
+  <data name="MachinePhotosSubtitle" xml:space="preserve"><value>Voir, télécharger et gérer les photos de machines</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous devez être Administrateur pour gérer les photos de machines.</value></data>
+  <data name="UploadPhotoLabel" xml:space="preserve"><value>Télécharger une photo</value></data>
+  <data name="SelectLicenseLabel" xml:space="preserve"><value>Sélectionner une licence...</value></data>
+  <data name="SelectLicenseRequired" xml:space="preserve"><value>Veuillez sélectionner une licence avant de télécharger.</value></data>
+  <data name="PhotoSourceLabel" xml:space="preserve"><value>URL source (optionnel)</value></data>
+  <data name="UploadPhotoButton" xml:space="preserve"><value>Télécharger la photo</value></data>
+  <data name="UploadingPhotoText" xml:space="preserve"><value>Téléchargement de la photo...</value></data>
+  <data name="FailedToLoadPhotos" xml:space="preserve"><value>Échec du chargement des photos.</value></data>
+  <data name="FailedToUploadPhoto" xml:space="preserve"><value>Échec du téléchargement de la photo.</value></data>
+  <data name="FailedToDeletePhoto" xml:space="preserve"><value>Échec de la suppression de la photo.</value></data>
+  <data name="ViewDetailsButton" xml:space="preserve"><value>Voir les détails</value></data>
+  <data name="DeleteButton" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="PhotosButton" xml:space="preserve"><value>Photos</value></data>
+  <data name="RefreshButton" xml:space="preserve"><value>Actualiser</value></data>
 </root>

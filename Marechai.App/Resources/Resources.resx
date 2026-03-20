@@ -1835,4 +1835,21 @@
   <data name="FailedToDeleteLogo" xml:space="preserve"><value>Failed to delete logo.</value></data>
   <data name="FailedToSaveYear" xml:space="preserve"><value>Failed to save year.</value></data>
   <data name="LogosButton" xml:space="preserve"><value>Logos</value></data>
+  <data name="MachinePhotosTitle" xml:space="preserve"><value>Machine Photos</value></data>
+  <data name="MachinePhotosSubtitle" xml:space="preserve"><value>View, upload, and manage machine photos</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>You must be an Administrator to manage machine photos.</value></data>
+  <data name="UploadPhotoLabel" xml:space="preserve"><value>Upload Photo</value></data>
+  <data name="SelectLicenseLabel" xml:space="preserve"><value>Select a license...</value></data>
+  <data name="SelectLicenseRequired" xml:space="preserve"><value>Please select a license before uploading.</value></data>
+  <data name="PhotoSourceLabel" xml:space="preserve"><value>Source URL (optional)</value></data>
+  <data name="UploadPhotoButton" xml:space="preserve"><value>Upload Photo</value></data>
+  <data name="UploadingPhotoText" xml:space="preserve"><value>Uploading photo...</value></data>
+  <data name="FailedToLoadPhotos" xml:space="preserve"><value>Failed to load photos.</value></data>
+  <data name="FailedToUploadPhoto" xml:space="preserve"><value>Failed to upload photo.</value></data>
+  <data name="FailedToDeletePhoto" xml:space="preserve"><value>Failed to delete photo.</value></data>
+  <data name="ViewDetailsButton" xml:space="preserve"><value>View Details</value></data>
+  <data name="DeleteButton" xml:space="preserve"><value>Delete</value></data>
+  <data name="PhotosButton" xml:space="preserve"><value>Photos</value></data>
+  <data name="RefreshButton" xml:space="preserve"><value>Refresh</value></data>
 </root>

@@ -1491,4 +1491,21 @@
   <data name="FailedToDeleteLogo" xml:space="preserve"><value>Insigne delere non potuit.</value></data>
   <data name="FailedToSaveYear" xml:space="preserve"><value>Annum servare non potuit.</value></data>
   <data name="LogosButton" xml:space="preserve"><value>Insignia</value></data>
+  <data name="MachinePhotosTitle" xml:space="preserve"><value>Imagines machinae</value></data>
+  <data name="MachinePhotosSubtitle" xml:space="preserve"><value>Videre, imponere et administrare imagines machinarum</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Accessus negatus</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Administrator esse debes ut imagines machinarum administres.</value></data>
+  <data name="UploadPhotoLabel" xml:space="preserve"><value>Imaginem imponere</value></data>
+  <data name="SelectLicenseLabel" xml:space="preserve"><value>Licentiam elige...</value></data>
+  <data name="SelectLicenseRequired" xml:space="preserve"><value>Licentiam elige antequam imponas.</value></data>
+  <data name="PhotoSourceLabel" xml:space="preserve"><value>Fons URL (optionalis)</value></data>
+  <data name="UploadPhotoButton" xml:space="preserve"><value>Imaginem imponere</value></data>
+  <data name="UploadingPhotoText" xml:space="preserve"><value>Imago imponitur...</value></data>
+  <data name="FailedToLoadPhotos" xml:space="preserve"><value>Imagines onerare non potuit.</value></data>
+  <data name="FailedToUploadPhoto" xml:space="preserve"><value>Imaginem imponere non potuit.</value></data>
+  <data name="FailedToDeletePhoto" xml:space="preserve"><value>Imaginem delere non potuit.</value></data>
+  <data name="ViewDetailsButton" xml:space="preserve"><value>Singula videre</value></data>
+  <data name="DeleteButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="PhotosButton" xml:space="preserve"><value>Imagines</value></data>
+  <data name="RefreshButton" xml:space="preserve"><value>Renovare</value></data>
 </root>

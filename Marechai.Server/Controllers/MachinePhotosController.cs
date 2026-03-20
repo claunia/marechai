@@ -25,23 +25,37 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Marechai.Helpers;
+using MetadataExtractor;
+using MetadataExtractor.Formats.Exif;
+using MetadataExtractor.Formats.Exif.Makernotes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/machines/photos")]
 [ApiController]
-public class MachinePhotosController(MarechaiContext context) : ControllerBase
+public class MachinePhotosController(MarechaiContext context, IConfiguration configuration) : ControllerBase
 {
+    static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
+
+    static readonly HashSet<string> _allowedContentTypes =
+    [
+        "image/jpeg", "image/png", "image/webp", "image/tiff", "image/bmp"
+    ];
+
+    readonly string _assetRootPath = configuration["AssetRootPath"]!;
     [HttpGet("/machines/{machineId:int}/photos")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -223,5 +237,290 @@ public class MachinePhotosController(MarechaiContext context) : ControllerBase
         await context.SaveChangesWithUserAsync(userId);
 
         return model.Id;
+    }
+
+    [HttpPost("upload")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<MachinePhotoDto>> UploadAsync(IFormFile            file,
+                                                                 [FromForm] int       machineId,
+                                                                 [FromForm] int       licenseId,
+                                                                 [FromForm] string?   source)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_allowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) && !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        // Read the file into memory
+        using var ms = new MemoryStream();
+        await file.CopyToAsync(ms);
+        ms.Position = 0;
+
+        // Extract EXIF metadata
+        var model = new MachinePhoto
+        {
+            Id                = Guid.NewGuid(),
+            MachineId         = machineId,
+            LicenseId         = licenseId,
+            Source            = source,
+            UserId            = userId,
+            UploadDate        = DateTime.UtcNow,
+            OriginalExtension = extension.TrimStart('.')
+        };
+
+        try
+        {
+            IReadOnlyList<MetadataExtractor.Directory> directories = ImageMetadataReader.ReadMetadata(ms);
+
+            var exifIfd0 = directories.OfType<ExifIfd0Directory>().FirstOrDefault();
+            var exifSub  = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
+
+            if(exifIfd0 is not null)
+            {
+                if(exifIfd0.TryGetUInt16(ExifDirectoryBase.TagOrientation, out ushort orientation))
+                    model.Orientation = (Orientation)orientation;
+
+                model.CameraManufacturer = exifIfd0.GetDescription(ExifDirectoryBase.TagMake);
+                model.CameraModel        = exifIfd0.GetDescription(ExifDirectoryBase.TagModel);
+                model.SoftwareUsed       = exifIfd0.GetDescription(ExifDirectoryBase.TagSoftware);
+                model.Author             = exifIfd0.GetDescription(ExifDirectoryBase.TagArtist);
+
+                if(exifIfd0.TryGetDouble(ExifDirectoryBase.TagXResolution, out double xRes))
+                    model.HorizontalResolution = xRes;
+
+                if(exifIfd0.TryGetDouble(ExifDirectoryBase.TagYResolution, out double yRes))
+                    model.VerticalResolution = yRes;
+
+                if(exifIfd0.TryGetUInt16(ExifDirectoryBase.TagResolutionUnit, out ushort resUnit))
+                    model.ResolutionUnit = (ResolutionUnit)resUnit;
+            }
+
+            if(exifSub is not null)
+            {
+                if(exifSub.TryGetDouble(ExifDirectoryBase.TagFNumber, out double fNumber))
+                    model.Focal = fNumber;
+
+                if(exifSub.TryGetDouble(ExifDirectoryBase.TagAperture, out double aperture))
+                    model.Aperture = aperture;
+
+                if(exifSub.TryGetDouble(ExifDirectoryBase.TagExposureTime, out double exposureTime))
+                    model.ExposureTime = exposureTime;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagExposureProgram, out ushort exposureProgram))
+                    model.ExposureProgram = (ExposureProgram)exposureProgram;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagIsoEquivalent, out ushort isoRating))
+                    model.IsoRating = isoRating;
+
+                model.ExifVersion = exifSub.GetDescription(ExifDirectoryBase.TagExifVersion);
+
+                if(exifSub.TryGetDateTime(ExifDirectoryBase.TagDateTimeOriginal, out DateTime creationDate))
+                    model.CreationDate = creationDate;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagMeteringMode, out ushort meteringMode))
+                    model.MeteringMode = (MeteringMode)meteringMode;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagFlash, out ushort flash))
+                    model.Flash = (Flash)flash;
+
+                if(exifSub.TryGetDouble(ExifDirectoryBase.TagFocalLength, out double focalLength))
+                    model.FocalLength = focalLength;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagColorSpace, out ushort colorSpace))
+                    model.ColorSpace = (ColorSpace)colorSpace;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagExposureMode, out ushort exposureMode))
+                    model.ExposureMethod = (ExposureMode)exposureMode;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagWhiteBalance, out ushort whiteBalance))
+                    model.WhiteBalance = (WhiteBalance)whiteBalance;
+
+                if(exifSub.TryGetDouble(ExifDirectoryBase.TagDigitalZoomRatio, out double digitalZoom))
+                    model.DigitalZoomRatio = digitalZoom;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.Tag35MMFilmEquivFocalLength, out ushort focalLengthEquiv))
+                    model.FocalLengthEquivalent = focalLengthEquiv;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSceneCaptureType, out ushort sceneCaptureType))
+                    model.SceneCaptureType = (SceneCaptureType)sceneCaptureType;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagContrast, out ushort contrast))
+                    model.Contrast = (Contrast)contrast;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSaturation, out ushort saturation))
+                    model.Saturation = (Saturation)saturation;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSharpness, out ushort sharpness))
+                    model.Sharpness = (Sharpness)sharpness;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSubjectDistanceRange, out ushort subjectDistRange))
+                    model.SubjectDistanceRange = (SubjectDistanceRange)subjectDistRange;
+
+                if(exifSub.TryGetUInt16(ExifDirectoryBase.TagSensingMethod, out ushort sensingMethod))
+                    model.SensingMethod = (SensingMethod)sensingMethod;
+
+                if(exifSub.TryGetUInt16(0x9208, out ushort lightSource))
+                    model.LightSource = (LightSource)lightSource;
+
+                model.Lens = exifSub.GetDescription(ExifDirectoryBase.TagLensModel);
+
+                model.Comments = exifSub.GetDescription(ExifDirectoryBase.TagUserComment);
+            }
+        }
+        catch
+        {
+            // EXIF extraction failed — continue without metadata
+        }
+
+        // Save original file to disk
+        Photos.EnsureCreated(_assetRootPath, false, "machines");
+
+        string originalsDir = Path.Combine(_assetRootPath, "photos", "machines", "originals");
+        string originalPath = Path.Combine(originalsDir, $"{model.Id}{extension}");
+
+        ms.Position = 0;
+        await using(var fs = new FileStream(originalPath, FileMode.CreateNew, FileAccess.Write))
+        {
+            await ms.CopyToAsync(fs);
+        }
+
+        // Fire conversion worker (generates all format/resolution variants)
+        string sourceFormat = extension.TrimStart('.');
+
+        _ = Task.Run(() =>
+        {
+            var photos = new Photos();
+            photos.ConversionWorker(_assetRootPath, model.Id, originalPath, sourceFormat, false, "machines");
+        });
+
+        // Save to database
+        await context.MachinePhotos.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok(new MachinePhotoDto
+        {
+            Id                    = model.Id,
+            Aperture              = model.Aperture,
+            Author                = model.Author,
+            CameraManufacturer    = model.CameraManufacturer,
+            CameraModel           = model.CameraModel,
+            ColorSpace            = (ushort?)model.ColorSpace,
+            Comments              = model.Comments,
+            Contrast              = (ushort?)model.Contrast,
+            CreationDate          = model.CreationDate,
+            DigitalZoomRatio      = model.DigitalZoomRatio,
+            ExifVersion           = model.ExifVersion,
+            ExposureTime          = model.ExposureTime,
+            ExposureMethod        = (ushort?)model.ExposureMethod,
+            ExposureProgram       = (ushort?)model.ExposureProgram,
+            Flash                 = (ushort?)model.Flash,
+            Focal                 = model.Focal,
+            FocalLength           = model.FocalLength,
+            FocalLengthEquivalent = model.FocalLengthEquivalent,
+            HorizontalResolution  = model.HorizontalResolution,
+            IsoRating             = model.IsoRating,
+            Lens                  = model.Lens,
+            LicenseId             = model.LicenseId,
+            LightSource           = (ushort?)model.LightSource,
+            MachineId             = model.MachineId,
+            MeteringMode          = (ushort?)model.MeteringMode,
+            ResolutionUnit        = (ushort?)model.ResolutionUnit,
+            Orientation           = (ushort?)model.Orientation,
+            Saturation            = (ushort?)model.Saturation,
+            SceneCaptureType      = (ushort?)model.SceneCaptureType,
+            SensingMethod         = (ushort?)model.SensingMethod,
+            Sharpness             = (ushort?)model.Sharpness,
+            SoftwareUsed          = model.SoftwareUsed,
+            Source                = model.Source,
+            SubjectDistanceRange  = (byte?)model.SubjectDistanceRange,
+            UploadDate            = model.UploadDate,
+            UserId                = model.UserId,
+            VerticalResolution    = model.VerticalResolution,
+            WhiteBalance          = (ushort?)model.WhiteBalance,
+            OriginalExtension     = model.OriginalExtension
+        });
+    }
+
+    [HttpDelete("{id:Guid}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteAsync(Guid id)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        MachinePhoto model = await context.MachinePhotos.FindAsync(id);
+
+        if(model is null) return NotFound();
+
+        context.MachinePhotos.Remove(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        // Delete all generated files from disk
+        string photosRoot = Path.Combine(_assetRootPath, "photos", "machines");
+        string guidStr    = id.ToString();
+
+        // Delete original
+        DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
+
+        // Delete all format/resolution variants (full + thumbnails)
+        string[] formats     = ["jpeg", "jp2k", "webp", "heif", "avif"];
+        string[] resolutions = ["hd", "1440p", "4k"];
+
+        foreach(string format in formats)
+        {
+            string ext = format switch
+            {
+                "jpeg" => ".jpg",
+                "jp2k" => ".jp2",
+                "webp" => ".webp",
+                "heif" => ".heic",
+                "avif" => ".avif",
+                _      => $".{format}"
+            };
+
+            foreach(string res in resolutions)
+            {
+                string fullPath  = Path.Combine(photosRoot, format, res, $"{guidStr}{ext}");
+                string thumbPath = Path.Combine(photosRoot, "thumbs", format, res, $"{guidStr}{ext}");
+
+                if(System.IO.File.Exists(fullPath))
+                    System.IO.File.Delete(fullPath);
+
+                if(System.IO.File.Exists(thumbPath))
+                    System.IO.File.Delete(thumbPath);
+            }
+        }
+
+        return Ok();
+    }
+
+    static void DeleteFilesByPattern(string directory, string pattern)
+    {
+        if(!System.IO.Directory.Exists(directory)) return;
+
+        foreach(string file in System.IO.Directory.GetFiles(directory, pattern))
+            System.IO.File.Delete(file);
     }
 }

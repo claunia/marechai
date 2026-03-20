@@ -1491,4 +1491,21 @@
   <data name="FailedToDeleteLogo" xml:space="preserve"><value>Falha ao excluir o logotipo.</value></data>
   <data name="FailedToSaveYear" xml:space="preserve"><value>Falha ao salvar o ano.</value></data>
   <data name="LogosButton" xml:space="preserve"><value>Logotipos</value></data>
+  <data name="MachinePhotosTitle" xml:space="preserve"><value>Fotos da m&#xe1;quina</value></data>
+  <data name="MachinePhotosSubtitle" xml:space="preserve"><value>Visualizar, enviar e gerenciar fotos de m&#xe1;quinas</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso negado</value></data>
+  <data name="MachinePhotosMgmtAccessDeniedMessage" xml:space="preserve"><value>Voc&#xea; deve ser Administrador para gerenciar fotos de m&#xe1;quinas.</value></data>
+  <data name="UploadPhotoLabel" xml:space="preserve"><value>Enviar foto</value></data>
+  <data name="SelectLicenseLabel" xml:space="preserve"><value>Selecione uma licen&#xe7;a...</value></data>
+  <data name="SelectLicenseRequired" xml:space="preserve"><value>Selecione uma licen&#xe7;a antes de enviar.</value></data>
+  <data name="PhotoSourceLabel" xml:space="preserve"><value>URL de origem (opcional)</value></data>
+  <data name="UploadPhotoButton" xml:space="preserve"><value>Enviar foto</value></data>
+  <data name="UploadingPhotoText" xml:space="preserve"><value>Enviando foto...</value></data>
+  <data name="FailedToLoadPhotos" xml:space="preserve"><value>Falha ao carregar as fotos.</value></data>
+  <data name="FailedToUploadPhoto" xml:space="preserve"><value>Falha ao enviar a foto.</value></data>
+  <data name="FailedToDeletePhoto" xml:space="preserve"><value>Falha ao excluir a foto.</value></data>
+  <data name="ViewDetailsButton" xml:space="preserve"><value>Ver detalhes</value></data>
+  <data name="DeleteButton" xml:space="preserve"><value>Excluir</value></data>
+  <data name="PhotosButton" xml:space="preserve"><value>Fotos</value></data>
+  <data name="RefreshButton" xml:space="preserve"><value>Atualizar</value></data>
 </root>
