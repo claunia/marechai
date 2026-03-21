@@ -1579,4 +1579,11 @@
   <data name="FailedToSaveBook" xml:space="preserve"><value>Falha ao salvar o livro.</value></data>
   <data name="BookTitleRequired" xml:space="preserve"><value>O título é obrigatório.</value></data>
   <data name="BookManagementButton" xml:space="preserve"><value>Gerenciamento de livros</value></data>
+  <data name="BookCoverSectionHeader" xml:space="preserve"><value>Capa</value></data>
+  <data name="UploadCoverButton" xml:space="preserve"><value>Enviar capa</value></data>
+  <data name="DeleteCoverButton" xml:space="preserve"><value>Excluir capa</value></data>
+  <data name="NoCoverLabel" xml:space="preserve"><value>Nenhuma imagem de capa enviada.</value></data>
+  <data name="UploadingCoverLabel" xml:space="preserve"><value>Enviando capa...</value></data>
+  <data name="FailedToUploadCover" xml:space="preserve"><value>Falha ao enviar a capa.</value></data>
+  <data name="FailedToDeleteCover" xml:space="preserve"><value>Falha ao excluir a capa.</value></data>
 </root>

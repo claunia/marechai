@@ -24,6 +24,8 @@ namespace Marechai.App.Models
 #endif
         /// <summary>The country_id property</summary>
         public int? CountryId { get; set; }
+        /// <summary>The cover_guid property</summary>
+        public Guid? CoverGuid { get; set; }
         /// <summary>The edition property</summary>
         public int? Edition { get; set; }
         /// <summary>The id property</summary>
@@ -43,6 +45,14 @@ namespace Marechai.App.Models
 #nullable restore
 #else
         public string NativeTitle { get; set; }
+#endif
+        /// <summary>The original_cover_extension property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? OriginalCoverExtension { get; set; }
+#nullable restore
+#else
+        public string OriginalCoverExtension { get; set; }
 #endif
         /// <summary>The pages property</summary>
         public int? Pages { get; set; }
@@ -87,10 +97,12 @@ namespace Marechai.App.Models
             {
                 { "country", n => { Country = n.GetStringValue(); } },
                 { "country_id", n => { CountryId = n.GetIntValue(); } },
+                { "cover_guid", n => { CoverGuid = n.GetGuidValue(); } },
                 { "edition", n => { Edition = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "isbn", n => { Isbn = n.GetStringValue(); } },
                 { "native_title", n => { NativeTitle = n.GetStringValue(); } },
+                { "original_cover_extension", n => { OriginalCoverExtension = n.GetStringValue(); } },
                 { "pages", n => { Pages = n.GetIntValue(); } },
                 { "previous_id", n => { PreviousId = n.GetLongValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
@@ -107,10 +119,12 @@ namespace Marechai.App.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("country", Country);
             writer.WriteIntValue("country_id", CountryId);
+            writer.WriteGuidValue("cover_guid", CoverGuid);
             writer.WriteIntValue("edition", Edition);
             writer.WriteLongValue("id", Id);
             writer.WriteStringValue("isbn", Isbn);
             writer.WriteStringValue("native_title", NativeTitle);
+            writer.WriteStringValue("original_cover_extension", OriginalCoverExtension);
             writer.WriteIntValue("pages", Pages);
             writer.WriteLongValue("previous_id", PreviousId);
             writer.WriteDateTimeOffsetValue("published", Published);

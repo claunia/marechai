@@ -23,23 +23,35 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
+using Marechai.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Marechai.Server.Controllers;
 
 [Route("/books")]
 [ApiController]
-public class BooksController(MarechaiContext context) : ControllerBase
+public class BooksController(MarechaiContext context, IConfiguration configuration) : ControllerBase
 {
+    static readonly HashSet<string> _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif", ".bmp"];
+
+    static readonly HashSet<string> _allowedContentTypes =
+    [
+        "image/jpeg", "image/png", "image/webp", "image/tiff", "image/bmp"
+    ];
+
+    readonly string _assetRootPath = configuration["AssetRootPath"]!;
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -49,17 +61,19 @@ public class BooksController(MarechaiContext context) : ControllerBase
                                                     .ThenBy(b => b.Title)
                                                     .Select(b => new BookDto
                                                      {
-                                                         Id          = b.Id,
-                                                         Title       = b.Title,
-                                                         NativeTitle = b.NativeTitle,
-                                                         Published   = b.Published,
-                                                         Isbn        = b.Isbn,
-                                                         CountryId   = b.CountryId,
-                                                         Pages       = b.Pages,
-                                                         Edition     = b.Edition,
-                                                         PreviousId  = b.PreviousId,
-                                                         SourceId    = b.SourceId,
-                                                         Country     = b.Country.Name
+                                                         Id                     = b.Id,
+                                                         Title                  = b.Title,
+                                                         NativeTitle            = b.NativeTitle,
+                                                         Published              = b.Published,
+                                                         Isbn                   = b.Isbn,
+                                                         CountryId              = b.CountryId,
+                                                         Pages                  = b.Pages,
+                                                         Edition                = b.Edition,
+                                                         PreviousId             = b.PreviousId,
+                                                         SourceId               = b.SourceId,
+                                                         Country                = b.Country.Name,
+                                                         CoverGuid              = b.CoverGuid,
+                                                         OriginalCoverExtension = b.OriginalCoverExtension
                                                      })
                                                     .ToListAsync();
 
@@ -70,17 +84,19 @@ public class BooksController(MarechaiContext context) : ControllerBase
     public Task<BookDto> GetAsync(long id) => context.Books.Where(b => b.Id == id)
                                                      .Select(b => new BookDto
                                                       {
-                                                          Id          = b.Id,
-                                                          Title       = b.Title,
-                                                          NativeTitle = b.NativeTitle,
-                                                          Published   = b.Published,
-                                                          Isbn        = b.Isbn,
-                                                          CountryId   = b.CountryId,
-                                                          Pages       = b.Pages,
-                                                          Edition     = b.Edition,
-                                                          PreviousId  = b.PreviousId,
-                                                          SourceId    = b.SourceId,
-                                                          Country     = b.Country.Name
+                                                          Id                     = b.Id,
+                                                          Title                  = b.Title,
+                                                          NativeTitle            = b.NativeTitle,
+                                                          Published              = b.Published,
+                                                          Isbn                   = b.Isbn,
+                                                          CountryId              = b.CountryId,
+                                                          Pages                  = b.Pages,
+                                                          Edition                = b.Edition,
+                                                          PreviousId             = b.PreviousId,
+                                                          SourceId               = b.SourceId,
+                                                          Country                = b.Country.Name,
+                                                          CoverGuid              = b.CoverGuid,
+                                                          OriginalCoverExtension = b.OriginalCoverExtension
                                                       })
                                                      .FirstOrDefaultAsync();
 
@@ -274,5 +290,158 @@ public class BooksController(MarechaiContext context) : ControllerBase
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
+    }
+
+    [HttpPost("{id:long}/cover/upload")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<BookDto>> UploadCoverAsync(long id, IFormFile file)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        if(file is null || file.Length == 0)
+            return BadRequest("No file provided.");
+
+        if(file.Length > 50 * 1024 * 1024)
+            return BadRequest("File exceeds 50 MB limit.");
+
+        string extension = Path.GetExtension(file.FileName)?.ToLowerInvariant() ?? string.Empty;
+
+        if(!_allowedExtensions.Contains(extension))
+            return BadRequest("Unsupported file format. Accepted: JPEG, PNG, WebP, TIFF, BMP.");
+
+        if(!string.IsNullOrEmpty(file.ContentType) &&
+           !_allowedContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest("Unsupported content type.");
+
+        Book book = await context.Books.FindAsync(id);
+
+        if(book is null) return NotFound();
+
+        // If cover already exists, delete old files
+        if(book.CoverGuid.HasValue)
+            DeleteCoverFiles(book.CoverGuid.Value);
+
+        Guid coverGuid = Guid.NewGuid();
+
+        // Save original file to disk
+        Photos.EnsureCreated(_assetRootPath, false, "book-covers");
+
+        string originalsDir = Path.Combine(_assetRootPath, "photos", "book-covers", "originals");
+        string originalPath = Path.Combine(originalsDir, $"{coverGuid}{extension}");
+
+        await using(var fs = new FileStream(originalPath, FileMode.CreateNew, FileAccess.Write))
+        {
+            await file.CopyToAsync(fs);
+        }
+
+        // Fire conversion worker (generates all format/resolution variants)
+        string sourceFormat = extension.TrimStart('.');
+
+        _ = Task.Run(() =>
+        {
+            var photos = new Photos();
+            photos.ConversionWorker(_assetRootPath, coverGuid, originalPath, sourceFormat, false, "book-covers");
+        });
+
+        // Update book record
+        book.CoverGuid              = coverGuid;
+        book.OriginalCoverExtension = extension.TrimStart('.');
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok(new BookDto
+        {
+            Id                     = book.Id,
+            Title                  = book.Title,
+            NativeTitle            = book.NativeTitle,
+            Published              = book.Published,
+            Isbn                   = book.Isbn,
+            CountryId              = book.CountryId,
+            Pages                  = book.Pages,
+            Edition                = book.Edition,
+            PreviousId             = book.PreviousId,
+            SourceId               = book.SourceId,
+            CoverGuid              = book.CoverGuid,
+            OriginalCoverExtension = book.OriginalCoverExtension
+        });
+    }
+
+    [HttpDelete("{id:long}/cover")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteCoverAsync(long id)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        Book book = await context.Books.FindAsync(id);
+
+        if(book is null) return NotFound();
+
+        if(!book.CoverGuid.HasValue) return NoContent();
+
+        DeleteCoverFiles(book.CoverGuid.Value);
+
+        book.CoverGuid              = null;
+        book.OriginalCoverExtension = null;
+        await context.SaveChangesWithUserAsync(userId);
+
+        return NoContent();
+    }
+
+    void DeleteCoverFiles(Guid coverGuid)
+    {
+        string photosRoot = Path.Combine(_assetRootPath, "photos", "book-covers");
+        string guidStr    = coverGuid.ToString();
+
+        // Delete original
+        DeleteFilesByPattern(Path.Combine(photosRoot, "originals"), $"{guidStr}.*");
+
+        // Delete all format/resolution variants (full + thumbnails)
+        string[] formats     = ["jpeg", "jp2k", "webp", "heif", "avif"];
+        string[] resolutions = ["hd", "1440p", "4k"];
+
+        foreach(string format in formats)
+        {
+            string ext = format switch
+            {
+                "jpeg" => ".jpg",
+                "jp2k" => ".jp2",
+                "webp" => ".webp",
+                "heif" => ".heic",
+                "avif" => ".avif",
+                _      => $".{format}"
+            };
+
+            foreach(string res in resolutions)
+            {
+                string fullPath  = Path.Combine(photosRoot, format, res, $"{guidStr}{ext}");
+                string thumbPath = Path.Combine(photosRoot, "thumbs", format, res, $"{guidStr}{ext}");
+
+                if(System.IO.File.Exists(fullPath))
+                    System.IO.File.Delete(fullPath);
+
+                if(System.IO.File.Exists(thumbPath))
+                    System.IO.File.Delete(thumbPath);
+            }
+        }
+    }
+
+    static void DeleteFilesByPattern(string directory, string pattern)
+    {
+        if(!System.IO.Directory.Exists(directory)) return;
+
+        foreach(string file in System.IO.Directory.GetFiles(directory, pattern))
+            System.IO.File.Delete(file);
     }
 }

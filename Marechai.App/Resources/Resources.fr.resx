@@ -1683,4 +1683,11 @@
   <data name="FailedToSaveBook" xml:space="preserve"><value>Échec de l'enregistrement du livre.</value></data>
   <data name="BookTitleRequired" xml:space="preserve"><value>Le titre est obligatoire.</value></data>
   <data name="BookManagementButton" xml:space="preserve"><value>Gestion des livres</value></data>
+  <data name="BookCoverSectionHeader" xml:space="preserve"><value>Couverture</value></data>
+  <data name="UploadCoverButton" xml:space="preserve"><value>Télécharger la couverture</value></data>
+  <data name="DeleteCoverButton" xml:space="preserve"><value>Supprimer la couverture</value></data>
+  <data name="NoCoverLabel" xml:space="preserve"><value>Aucune image de couverture téléchargée.</value></data>
+  <data name="UploadingCoverLabel" xml:space="preserve"><value>Téléchargement de la couverture...</value></data>
+  <data name="FailedToUploadCover" xml:space="preserve"><value>Échec du téléchargement de la couverture.</value></data>
+  <data name="FailedToDeleteCover" xml:space="preserve"><value>Échec de la suppression de la couverture.</value></data>
 </root>

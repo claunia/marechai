@@ -152,6 +152,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<FlagCache>();
         containerRegistry.RegisterSingleton<CompanyLogoCache>();
         containerRegistry.RegisterSingleton<MachinePhotoCache>();
+        containerRegistry.RegisterSingleton<BookCoverCache>();
         containerRegistry.RegisterSingleton<ImageSourceFactory>(
             () => new ImageSourceFactory(DispatcherQueue.GetForCurrentThread()));
         containerRegistry.RegisterSingleton<NewsService>();

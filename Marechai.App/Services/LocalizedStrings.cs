@@ -494,4 +494,11 @@ public class LocalizedStrings
     public string BookMachinesSectionHeader => _l["BookMachinesSectionHeader"];
     public string BookMachineFamiliesSectionHeader => _l["BookMachineFamiliesSectionHeader"];
     public string SynopsisSectionHeader => _l["SynopsisSectionHeader"];
+
+    // Book covers
+    public string BookCoverSectionHeader => _l["BookCoverSectionHeader"];
+    public string UploadCoverButton => _l["UploadCoverButton"];
+    public string DeleteCoverButton => _l["DeleteCoverButton"];
+    public string NoCoverLabel => _l["NoCoverLabel"];
+    public string UploadingCoverLabel => _l["UploadingCoverLabel"];
 }

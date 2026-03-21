@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Text.Json.Serialization;
 
 namespace Marechai.Data.Dtos;
@@ -39,4 +40,8 @@ public class BookDto : DocumentBaseDto
     public long? PreviousId { get; set; }
     [JsonPropertyName("source_id")]
     public long? SourceId { get; set; }
+    [JsonPropertyName("cover_guid")]
+    public Guid? CoverGuid { get; set; }
+    [JsonPropertyName("original_cover_extension")]
+    public string? OriginalCoverExtension { get; set; }
 }

@@ -1579,4 +1579,11 @@
   <data name="FailedToSaveBook" xml:space="preserve"><value>Librum servare non potuit.</value></data>
   <data name="BookTitleRequired" xml:space="preserve"><value>Titulus necessarius est.</value></data>
   <data name="BookManagementButton" xml:space="preserve"><value>Administratio librorum</value></data>
+  <data name="BookCoverSectionHeader" xml:space="preserve"><value>Tegumentum</value></data>
+  <data name="UploadCoverButton" xml:space="preserve"><value>Tegumentum imponere</value></data>
+  <data name="DeleteCoverButton" xml:space="preserve"><value>Tegumentum delere</value></data>
+  <data name="NoCoverLabel" xml:space="preserve"><value>Nulla imago tegumenti imposita.</value></data>
+  <data name="UploadingCoverLabel" xml:space="preserve"><value>Tegumentum imponitur...</value></data>
+  <data name="FailedToUploadCover" xml:space="preserve"><value>Tegumentum imponere non potuit.</value></data>
+  <data name="FailedToDeleteCover" xml:space="preserve"><value>Tegumentum delere non potuit.</value></data>
 </root>

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.App.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
@@ -344,6 +345,47 @@ public class BooksService
             _logger.LogError(ex, "Error fetching document roles");
 
             return [];
+        }
+    }
+
+    // --- Cover ---
+    public async Task<BookDto?> UploadCoverAsync(long bookId, byte[] fileBytes, string fileName)
+    {
+        try
+        {
+            _logger.LogInformation("Uploading cover for book {BookId}", bookId);
+
+            var body = new MultipartBody();
+            body.AddOrReplacePart("file", "application/octet-stream", new global::System.IO.MemoryStream(fileBytes));
+
+            BookDto? result = await _apiClient.Books[bookId].Cover.Upload.PostAsync(body);
+
+            _logger.LogInformation("Successfully uploaded cover for book {BookId}", bookId);
+
+            return result;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading cover for book {BookId}", bookId);
+
+            return null;
+        }
+    }
+
+    public async Task<bool> DeleteCoverAsync(long bookId)
+    {
+        try
+        {
+            _logger.LogInformation("Deleting cover for book {BookId}", bookId);
+            await _apiClient.Books[bookId].Cover.DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting cover for book {BookId}", bookId);
+
+            return false;
         }
     }
 }

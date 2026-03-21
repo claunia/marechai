@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -36,6 +37,8 @@ public class Book : DocumentBase
     public int?   Edition    { get; set; }
     public long?  PreviousId { get; set; }
     public long?  SourceId   { get; set; }
+    public Guid?  CoverGuid              { get; set; }
+    public string OriginalCoverExtension { get; set; }
 
     public virtual Book                              Previous        { get; set; }
     public virtual Book                              Source          { get; set; }

@@ -3,12 +3,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
+using Marechai.App.Services.Caching;
+using Microsoft.UI.Xaml.Media;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -16,6 +19,8 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
 {
     private readonly ApiClient                      _apiClient;
     private readonly BooksService                   _booksService;
+    private readonly BookCoverCache                 _coverCache;
+    private readonly ImageSourceFactory             _imageSourceFactory;
     private readonly IJwtService                    _jwtService;
     private readonly IStringLocalizer               _localizer;
     private readonly ILogger<AdminBooksViewModel>   _logger;
@@ -103,19 +108,28 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     // --- Document roles ---
     private List<DocumentRoleDto>? _allRolesList;
 
+    // --- Cover state ---
+    [ObservableProperty] private ImageSource? _coverThumbnailSource;
+    [ObservableProperty] private bool _hasCover;
+    [ObservableProperty] private bool _isUploadingCover;
+
     public AdminBooksViewModel(ApiClient                      apiClient,
                                BooksService                   booksService,
+                               BookCoverCache                 coverCache,
+                               ImageSourceFactory             imageSourceFactory,
                                IJwtService                    jwtService,
                                ITokenService                  tokenService,
                                ILogger<AdminBooksViewModel>   logger,
                                IStringLocalizer               localizer)
     {
-        _apiClient    = apiClient;
-        _booksService = booksService;
-        _jwtService   = jwtService;
-        _tokenService = tokenService;
-        _logger       = logger;
-        _localizer    = localizer;
+        _apiClient          = apiClient;
+        _booksService       = booksService;
+        _coverCache         = coverCache;
+        _imageSourceFactory = imageSourceFactory;
+        _jwtService         = jwtService;
+        _tokenService       = tokenService;
+        _logger             = logger;
+        _localizer          = localizer;
 
         LoadBooksCommand         = new AsyncRelayCommand(LoadBooksAsync);
         OpenAddBookCommand       = new RelayCommand(OpenAddBook);
@@ -140,6 +154,10 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         RemoveMachineCommand         = new AsyncRelayCommand<string>(RemoveMachineByDisplayAsync);
         AddMachineFamilyCommand      = new AsyncRelayCommand(AddMachineFamilyAsync);
         RemoveMachineFamilyCommand   = new AsyncRelayCommand<string>(RemoveMachineFamilyByDisplayAsync);
+
+        // Cover commands
+        UploadCoverCommand           = new AsyncRelayCommand(UploadCoverAsync);
+        DeleteCoverCommand           = new AsyncRelayCommand(DeleteCoverAsync);
 
         InitializeLanguages();
         CheckAdminRole();
@@ -167,6 +185,9 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<string> RemoveMachineCommand       { get; }
     public IAsyncRelayCommand         AddMachineFamilyCommand    { get; }
     public IAsyncRelayCommand<string> RemoveMachineFamilyCommand { get; }
+
+    public IAsyncRelayCommand UploadCoverCommand { get; }
+    public IAsyncRelayCommand DeleteCoverCommand { get; }
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -239,6 +260,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             EditPanelTitle = _localizer["EditBookDialog_Title"];
             PopulateForm(full);
             await LoadAllJunctionsAsync(book.Id.Value);
+            await LoadCoverAsync(book);
             IsEditingExisting  = true;
             IsEditingSynopsis  = false;
             IsEditing          = true;
@@ -877,6 +899,10 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         SelectedPersonRole         = null;
         SelectedCompanyRole        = null;
 
+        CoverThumbnailSource = null;
+        HasCover             = false;
+        IsUploadingCover     = false;
+
         HasError     = false;
         ErrorMessage = string.Empty;
     }
@@ -919,5 +945,113 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             else { SourceBookSearchText = string.Empty; SelectedSourceBook = null; }
         }
         else { SourceBookSearchText = string.Empty; SelectedSourceBook = null; }
+    }
+
+    // ======================== COVER ========================
+
+    private async Task LoadCoverAsync(BookDto book)
+    {
+        CoverThumbnailSource = null;
+        HasCover             = false;
+
+        if(book.CoverGuid == null) return;
+
+        HasCover = true;
+
+        try
+        {
+            Stream stream = await _coverCache.GetThumbnailAsync(book.CoverGuid.Value);
+            CoverThumbnailSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading cover thumbnail for book {Id}", book.Id);
+        }
+    }
+
+    private async Task UploadCoverAsync()
+    {
+        if(_editingBookId == null) return;
+
+        try
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".webp");
+            picker.FileTypeFilter.Add(".tiff");
+            picker.FileTypeFilter.Add(".tif");
+            picker.FileTypeFilter.Add(".bmp");
+
+#if !HAS_UNO
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+#endif
+
+            Windows.Storage.StorageFile? file = await picker.PickSingleFileAsync();
+
+            if(file == null) return;
+
+            IsUploadingCover = true;
+            HasError         = false;
+
+            using Stream stream = await file.OpenStreamForReadAsync();
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            byte[] fileBytes = ms.ToArray();
+
+            BookDto? result = await _booksService.UploadCoverAsync(_editingBookId.Value, fileBytes, file.Name);
+
+            if(result == null)
+            {
+                ErrorMessage = _localizer["FailedToUploadCover"];
+                HasError     = true;
+
+                return;
+            }
+
+            // Invalidate cache for old cover if it existed
+            if(result.CoverGuid.HasValue)
+                await _coverCache.InvalidateCacheAsync(result.CoverGuid.Value);
+
+            // Reload cover thumbnail
+            await LoadCoverAsync(result);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading cover");
+            ErrorMessage = _localizer["FailedToUploadCover"];
+            HasError     = true;
+        }
+        finally
+        {
+            IsUploadingCover = false;
+        }
+    }
+
+    private async Task DeleteCoverAsync()
+    {
+        if(_editingBookId == null) return;
+
+        try
+        {
+            // Get current cover guid before deleting
+            BookDto? current = await _booksService.GetBookAsync(_editingBookId.Value);
+
+            if(current?.CoverGuid != null)
+                await _coverCache.InvalidateCacheAsync(current.CoverGuid.Value);
+
+            await _booksService.DeleteCoverAsync(_editingBookId.Value);
+
+            CoverThumbnailSource = null;
+            HasCover             = false;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting cover");
+            ErrorMessage = _localizer["FailedToDeleteCover"];
+            HasError     = true;
+        }
     }
 }
