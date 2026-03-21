@@ -13,4 +13,6 @@ public static class NavParamKeys
     public const string NavigationSource = "NavigationSource";
     public const string FilterType       = "FilterType";
     public const string FilterValue      = "FilterValue";
+    public const string BookId           = "BookId";
+    public const string BookTitle        = "BookTitle";
 }

@@ -1543,4 +1543,40 @@
   <data name="ExistingTranslationsLabel" xml:space="preserve"><value>Vorhandene Übersetzungen</value></data>
   <data name="FailedToDeleteTranslation" xml:space="preserve"><value>Übersetzung konnte nicht gelöscht werden.</value></data>
   <data name="DescriptionSectionTitle" xml:space="preserve"><value>Beschreibung</value></data>
+  <data name="BookManagementTitle" xml:space="preserve"><value>Bücherverwaltung</value></data>
+  <data name="BookManagementSubtitle" xml:space="preserve"><value>Bücher in der Datenbank verwalten</value></data>
+  <data name="BookMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="BookMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie haben keine Berechtigung, Bücher zu verwalten.</value></data>
+  <data name="AddBookButton" xml:space="preserve"><value>Buch hinzufügen</value></data>
+  <data name="RefreshBooksButton" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="BooksSearchPlaceholder" xml:space="preserve"><value>Bücher suchen...</value></data>
+  <data name="BookTitleColumn" xml:space="preserve"><value>Titel</value></data>
+  <data name="BookNativeTitleColumn" xml:space="preserve"><value>Originaltitel</value></data>
+  <data name="BookIsbnColumn" xml:space="preserve"><value>ISBN</value></data>
+  <data name="BookPagesColumn" xml:space="preserve"><value>Seiten</value></data>
+  <data name="BookCountryColumn" xml:space="preserve"><value>Land</value></data>
+  <data name="EditBookButton" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="DeleteBookButton" xml:space="preserve"><value>Löschen</value></data>
+  <data name="SynopsisButton" xml:space="preserve"><value>Zusammenfassung</value></data>
+  <data name="BookTitleLabel" xml:space="preserve"><value>Titel</value></data>
+  <data name="BookNativeTitleLabel" xml:space="preserve"><value>Originaltitel</value></data>
+  <data name="BookIsbnLabel" xml:space="preserve"><value>ISBN</value></data>
+  <data name="BookPagesLabel" xml:space="preserve"><value>Seiten</value></data>
+  <data name="BookEditionLabel" xml:space="preserve"><value>Ausgabe</value></data>
+  <data name="BookPublishedLabel" xml:space="preserve"><value>Veröffentlicht</value></data>
+  <data name="BookCountryLabel" xml:space="preserve"><value>Land</value></data>
+  <data name="BookPreviousLabel" xml:space="preserve"><value>Vorherige Ausgabe</value></data>
+  <data name="BookSourceLabel" xml:space="preserve"><value>Quellbuch</value></data>
+  <data name="BookPeopleSectionHeader" xml:space="preserve"><value>Personen</value></data>
+  <data name="BookCompaniesSectionHeader" xml:space="preserve"><value>Unternehmen</value></data>
+  <data name="BookMachinesSectionHeader" xml:space="preserve"><value>Maschinen</value></data>
+  <data name="BookMachineFamiliesSectionHeader" xml:space="preserve"><value>Maschinenfamilien</value></data>
+  <data name="SynopsisSectionHeader" xml:space="preserve"><value>Zusammenfassung</value></data>
+  <data name="AddBookDialog_Title" xml:space="preserve"><value>Buch hinzufügen</value></data>
+  <data name="EditBookDialog_Title" xml:space="preserve"><value>Buch bearbeiten</value></data>
+  <data name="FailedToLoadBooks" xml:space="preserve"><value>Fehler beim Laden der Bücher.</value></data>
+  <data name="FailedToDeleteBook" xml:space="preserve"><value>Fehler beim Löschen des Buches.</value></data>
+  <data name="FailedToSaveBook" xml:space="preserve"><value>Fehler beim Speichern des Buches.</value></data>
+  <data name="BookTitleRequired" xml:space="preserve"><value>Titel ist erforderlich.</value></data>
+  <data name="BookManagementButton" xml:space="preserve"><value>Bücherverwaltung</value></data>
 </root>

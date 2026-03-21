@@ -463,4 +463,35 @@ public class LocalizedStrings
     public string PersonWebpageLabel => _l["PersonWebpageLabel"];
     public string PersonTwitterLabel => _l["PersonTwitterLabel"];
     public string PersonFacebookLabel => _l["PersonFacebookLabel"];
+
+    // Book management
+    public string BookManagementTitle => _l["BookManagementTitle"];
+    public string BookManagementSubtitle => _l["BookManagementSubtitle"];
+    public string BookMgmtAccessDeniedTitle => _l["BookMgmtAccessDeniedTitle"];
+    public string BookMgmtAccessDeniedMessage => _l["BookMgmtAccessDeniedMessage"];
+    public string AddBookButton => _l["AddBookButton"];
+    public string RefreshBooksButton => _l["RefreshBooksButton"];
+    public string BooksSearchPlaceholder => _l["BooksSearchPlaceholder"];
+    public string BookTitleColumn => _l["BookTitleColumn"];
+    public string BookNativeTitleColumn => _l["BookNativeTitleColumn"];
+    public string BookIsbnColumn => _l["BookIsbnColumn"];
+    public string BookPagesColumn => _l["BookPagesColumn"];
+    public string BookCountryColumn => _l["BookCountryColumn"];
+    public string EditBookButton => _l["EditBookButton"];
+    public string DeleteBookButton => _l["DeleteBookButton"];
+    public string SynopsisButton => _l["SynopsisButton"];
+    public string BookTitleLabel => _l["BookTitleLabel"];
+    public string BookNativeTitleLabel => _l["BookNativeTitleLabel"];
+    public string BookIsbnLabel => _l["BookIsbnLabel"];
+    public string BookPagesLabel => _l["BookPagesLabel"];
+    public string BookEditionLabel => _l["BookEditionLabel"];
+    public string BookPublishedLabel => _l["BookPublishedLabel"];
+    public string BookCountryLabel => _l["BookCountryLabel"];
+    public string BookPreviousLabel => _l["BookPreviousLabel"];
+    public string BookSourceLabel => _l["BookSourceLabel"];
+    public string BookPeopleSectionHeader => _l["BookPeopleSectionHeader"];
+    public string BookCompaniesSectionHeader => _l["BookCompaniesSectionHeader"];
+    public string BookMachinesSectionHeader => _l["BookMachinesSectionHeader"];
+    public string BookMachineFamiliesSectionHeader => _l["BookMachineFamiliesSectionHeader"];
+    public string SynopsisSectionHeader => _l["SynopsisSectionHeader"];
 }

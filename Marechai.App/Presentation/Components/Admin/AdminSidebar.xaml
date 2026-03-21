@@ -213,6 +213,18 @@
                         Foreground="{StaticResource AdminSidebarForeground}"
                         BorderThickness="0"
                         CornerRadius="0" />
+
+                <!-- Book Management -->
+                <Button Content="{Binding BookManagementButtonText}"
+                        Command="{Binding NavigateToAdminBooksCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
             </StackPanel>
         </ScrollViewer>
 
