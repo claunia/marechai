@@ -56,10 +56,11 @@
                         HorizontalAlignment="Center"
                         Padding="32"
                         Spacing="16">
-                <ProgressRing IsActive="True"
+                <ProgressRing IsActive="{Binding IsLoading}"
                               IsIndeterminate="True"
                               Height="64"
-                              Width="64" />
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
                 <TextBlock
                            Text="{Binding Source={StaticResource Strings}, Path=LoadingPhotoText}"
                            FontSize="14"
@@ -90,25 +91,53 @@
                                       HorizontalScrollBarVisibility="Disabled">
                             <StackPanel Padding="16" Spacing="24">
 
-                                <!-- Photo -->
-                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Padding="8"
-                                        MaxHeight="400"
-                                        MinHeight="250">
-                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                                  VerticalScrollBarVisibility="Auto"
-                                                  ZoomMode="Enabled"
-                                                  MinZoomFactor="1.0"
-                                                  MaxZoomFactor="5.0">
-                                        <Image Source="{Binding PhotoImageSource}"
-                                               Stretch="Uniform"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
-                                    </ScrollViewer>
-                                </Border>
+                                <!-- Photo with Zoom Controls -->
+                                <Grid>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="8"
+                                            MaxHeight="400"
+                                            MinHeight="250">
+                                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                      VerticalScrollBarVisibility="Auto">
+                                            <Image Source="{Binding PhotoImageSource}"
+                                                   Stretch="Uniform"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                        </ScrollViewer>
+                                    </Border>
+
+                                    <!-- Zoom Controls -->
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Margin="0,0,16,16"
+                                                Spacing="4"
+                                                Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                                                CornerRadius="4"
+                                                Padding="4">
+                                        <Button Click="ZoomIn_Click"
+                                                ToolTipService.ToolTip="Zoom In"
+                                                Style="{ThemeResource AlternateButtonStyle}"
+                                                Padding="6" MinWidth="36" MinHeight="36">
+                                            <FontIcon Glyph="&#xE8A3;" FontSize="14" />
+                                        </Button>
+                                        <Button Click="ZoomOut_Click"
+                                                ToolTipService.ToolTip="Zoom Out"
+                                                Style="{ThemeResource AlternateButtonStyle}"
+                                                Padding="6" MinWidth="36" MinHeight="36">
+                                            <FontIcon Glyph="&#xE71F;" FontSize="14" />
+                                        </Button>
+                                        <Button Click="ZoomReset_Click"
+                                                ToolTipService.ToolTip="Reset Zoom"
+                                                Style="{ThemeResource AlternateButtonStyle}"
+                                                Padding="6" MinWidth="36" MinHeight="36">
+                                            <FontIcon Glyph="&#xE9A6;" FontSize="14" />
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
 
                                 <!-- Metadata Sections -->
                                 <StackPanel Spacing="16">
@@ -322,26 +351,53 @@
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- Photo on left -->
-                            <Border Grid.Column="0"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8"
-                                    Padding="8"
-                                    VerticalAlignment="Top"
-                                    MaxHeight="500">
-                                <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                              VerticalScrollBarVisibility="Auto"
-                                              ZoomMode="Enabled"
-                                              MinZoomFactor="1.0"
-                                              MaxZoomFactor="5.0">
-                                    <Image Source="{Binding PhotoImageSource}"
-                                           Stretch="Uniform"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                                </ScrollViewer>
-                            </Border>
+                            <!-- Photo on left with Zoom Controls -->
+                            <Grid Grid.Column="0">
+                                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="8"
+                                        VerticalAlignment="Top"
+                                        MaxHeight="500">
+                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <Image Source="{Binding PhotoImageSource}"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                    </ScrollViewer>
+                                </Border>
+
+                                <!-- Zoom Controls -->
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            Margin="0,0,16,16"
+                                            Spacing="4"
+                                            Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="4"
+                                            Padding="4">
+                                    <Button Click="ZoomIn_Click"
+                                            ToolTipService.ToolTip="Zoom In"
+                                            Style="{ThemeResource AlternateButtonStyle}"
+                                            Padding="6" MinWidth="36" MinHeight="36">
+                                        <FontIcon Glyph="&#xE8A3;" FontSize="14" />
+                                    </Button>
+                                    <Button Click="ZoomOut_Click"
+                                            ToolTipService.ToolTip="Zoom Out"
+                                            Style="{ThemeResource AlternateButtonStyle}"
+                                            Padding="6" MinWidth="36" MinHeight="36">
+                                        <FontIcon Glyph="&#xE71F;" FontSize="14" />
+                                    </Button>
+                                    <Button Click="ZoomReset_Click"
+                                            ToolTipService.ToolTip="Reset Zoom"
+                                            Style="{ThemeResource AlternateButtonStyle}"
+                                            Padding="6" MinWidth="36" MinHeight="36">
+                                        <FontIcon Glyph="&#xE9A6;" FontSize="14" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
 
                             <!-- Info on right -->
                             <ScrollViewer Grid.Column="1"
