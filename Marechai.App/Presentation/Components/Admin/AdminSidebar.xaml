@@ -201,6 +201,18 @@
                         Foreground="{StaticResource AdminSidebarForeground}"
                         BorderThickness="0"
                         CornerRadius="0" />
+
+                <!-- People Management -->
+                <Button Content="{Binding PeopleManagementButtonText}"
+                        Command="{Binding NavigateToAdminPeopleCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
             </StackPanel>
         </ScrollViewer>
 

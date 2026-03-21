@@ -1508,4 +1508,35 @@
   <data name="DeleteButton" xml:space="preserve"><value>Löschen</value></data>
   <data name="PhotosButton" xml:space="preserve"><value>Fotos</value></data>
   <data name="RefreshButton" xml:space="preserve"><value>Aktualisieren</value></data>
+  <data name="PeopleManagementButton" xml:space="preserve"><value>Personenverwaltung</value></data>
+  <data name="PeopleManagementTitle" xml:space="preserve"><value>Personenverwaltung</value></data>
+  <data name="PeopleManagementSubtitle" xml:space="preserve"><value>Personen hinzufügen, bearbeiten und entfernen</value></data>
+  <data name="PeopleMgmtAccessDeniedTitle" xml:space="preserve"><value>Zugriff verweigert</value></data>
+  <data name="PeopleMgmtAccessDeniedMessage" xml:space="preserve"><value>Sie benötigen Administratorrechte, um Personen zu verwalten.</value></data>
+  <data name="AddPersonButton" xml:space="preserve"><value>Person hinzufügen</value></data>
+  <data name="RefreshPeopleButton" xml:space="preserve"><value>Personen aktualisieren</value></data>
+  <data name="PeopleSearchPlaceholder" xml:space="preserve"><value>Personen suchen...</value></data>
+  <data name="PersonNameColumn" xml:space="preserve"><value>Vorname</value></data>
+  <data name="PersonSurnameColumn" xml:space="preserve"><value>Nachname</value></data>
+  <data name="PersonCountryColumn" xml:space="preserve"><value>Geburtsland</value></data>
+  <data name="PersonBirthDateColumn" xml:space="preserve"><value>Geburtsdatum</value></data>
+  <data name="PersonDeathDateColumn" xml:space="preserve"><value>Todesdatum</value></data>
+  <data name="EditPersonButton" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="DeletePersonButton" xml:space="preserve"><value>Löschen</value></data>
+  <data name="PersonNameLabel" xml:space="preserve"><value>Vorname</value></data>
+  <data name="PersonSurnameLabel" xml:space="preserve"><value>Nachname</value></data>
+  <data name="PersonAliasLabel" xml:space="preserve"><value>Alias</value></data>
+  <data name="PersonDisplayNameLabel" xml:space="preserve"><value>Anzeigename</value></data>
+  <data name="PersonCountryLabel" xml:space="preserve"><value>Geburtsland</value></data>
+  <data name="PersonBirthDateLabel" xml:space="preserve"><value>Geburtsdatum</value></data>
+  <data name="PersonDeathDateLabel" xml:space="preserve"><value>Todesdatum</value></data>
+  <data name="PersonWebpageLabel" xml:space="preserve"><value>Webseite</value></data>
+  <data name="PersonTwitterLabel" xml:space="preserve"><value>Twitter</value></data>
+  <data name="PersonFacebookLabel" xml:space="preserve"><value>Facebook</value></data>
+  <data name="AddPersonDialog_Title" xml:space="preserve"><value>Person hinzufügen</value></data>
+  <data name="EditPersonDialog_Title" xml:space="preserve"><value>Person bearbeiten</value></data>
+  <data name="FailedToLoadPeople" xml:space="preserve"><value>Fehler beim Laden der Personen.</value></data>
+  <data name="FailedToDeletePerson" xml:space="preserve"><value>Fehler beim Löschen der Person.</value></data>
+  <data name="FailedToSavePerson" xml:space="preserve"><value>Fehler beim Speichern der Person.</value></data>
+  <data name="PersonNameRequired" xml:space="preserve"><value>Name ist erforderlich.</value></data>
 </root>

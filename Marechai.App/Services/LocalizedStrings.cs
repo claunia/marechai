@@ -434,4 +434,30 @@ public class LocalizedStrings
     public string DeleteButton => _l["DeleteButton"];
     public string PhotosButton => _l["PhotosButton"];
     public string RefreshButton => _l["RefreshButton"];
+
+    // People management
+    public string PeopleManagementTitle => _l["PeopleManagementTitle"];
+    public string PeopleManagementSubtitle => _l["PeopleManagementSubtitle"];
+    public string PeopleMgmtAccessDeniedTitle => _l["PeopleMgmtAccessDeniedTitle"];
+    public string PeopleMgmtAccessDeniedMessage => _l["PeopleMgmtAccessDeniedMessage"];
+    public string AddPersonButton => _l["AddPersonButton"];
+    public string RefreshPeopleButton => _l["RefreshPeopleButton"];
+    public string PeopleSearchPlaceholder => _l["PeopleSearchPlaceholder"];
+    public string PersonNameColumn => _l["PersonNameColumn"];
+    public string PersonSurnameColumn => _l["PersonSurnameColumn"];
+    public string PersonCountryColumn => _l["PersonCountryColumn"];
+    public string PersonBirthDateColumn => _l["PersonBirthDateColumn"];
+    public string PersonDeathDateColumn => _l["PersonDeathDateColumn"];
+    public string EditPersonButton => _l["EditPersonButton"];
+    public string DeletePersonButton => _l["DeletePersonButton"];
+    public string PersonNameLabel => _l["PersonNameLabel"];
+    public string PersonSurnameLabel => _l["PersonSurnameLabel"];
+    public string PersonAliasLabel => _l["PersonAliasLabel"];
+    public string PersonDisplayNameLabel => _l["PersonDisplayNameLabel"];
+    public string PersonCountryLabel => _l["PersonCountryLabel"];
+    public string PersonBirthDateLabel => _l["PersonBirthDateLabel"];
+    public string PersonDeathDateLabel => _l["PersonDeathDateLabel"];
+    public string PersonWebpageLabel => _l["PersonWebpageLabel"];
+    public string PersonTwitterLabel => _l["PersonTwitterLabel"];
+    public string PersonFacebookLabel => _l["PersonFacebookLabel"];
 }

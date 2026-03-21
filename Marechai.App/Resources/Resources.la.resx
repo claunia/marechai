@@ -1508,4 +1508,35 @@
   <data name="DeleteButton" xml:space="preserve"><value>Delere</value></data>
   <data name="PhotosButton" xml:space="preserve"><value>Imagines</value></data>
   <data name="RefreshButton" xml:space="preserve"><value>Renovare</value></data>
+  <data name="PeopleManagementButton" xml:space="preserve"><value>Administratio personarum</value></data>
+  <data name="PeopleManagementTitle" xml:space="preserve"><value>Administratio personarum</value></data>
+  <data name="PeopleManagementSubtitle" xml:space="preserve"><value>Personas addere, mutare et delere</value></data>
+  <data name="PeopleMgmtAccessDeniedTitle" xml:space="preserve"><value>Accessus negatus</value></data>
+  <data name="PeopleMgmtAccessDeniedMessage" xml:space="preserve"><value>Privilegia administratoris ad personas administrandas necessaria sunt.</value></data>
+  <data name="AddPersonButton" xml:space="preserve"><value>Personam addere</value></data>
+  <data name="RefreshPeopleButton" xml:space="preserve"><value>Personas renovare</value></data>
+  <data name="PeopleSearchPlaceholder" xml:space="preserve"><value>Personas quaerere...</value></data>
+  <data name="PersonNameColumn" xml:space="preserve"><value>Nomen</value></data>
+  <data name="PersonSurnameColumn" xml:space="preserve"><value>Cognomen</value></data>
+  <data name="PersonCountryColumn" xml:space="preserve"><value>Patria natalis</value></data>
+  <data name="PersonBirthDateColumn" xml:space="preserve"><value>Dies natalis</value></data>
+  <data name="PersonDeathDateColumn" xml:space="preserve"><value>Dies mortis</value></data>
+  <data name="EditPersonButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="DeletePersonButton" xml:space="preserve"><value>Delere</value></data>
+  <data name="PersonNameLabel" xml:space="preserve"><value>Nomen</value></data>
+  <data name="PersonSurnameLabel" xml:space="preserve"><value>Cognomen</value></data>
+  <data name="PersonAliasLabel" xml:space="preserve"><value>Cognomen fictum</value></data>
+  <data name="PersonDisplayNameLabel" xml:space="preserve"><value>Nomen ostendendum</value></data>
+  <data name="PersonCountryLabel" xml:space="preserve"><value>Patria natalis</value></data>
+  <data name="PersonBirthDateLabel" xml:space="preserve"><value>Dies natalis</value></data>
+  <data name="PersonDeathDateLabel" xml:space="preserve"><value>Dies mortis</value></data>
+  <data name="PersonWebpageLabel" xml:space="preserve"><value>Pagina interretialis</value></data>
+  <data name="PersonTwitterLabel" xml:space="preserve"><value>Twitter</value></data>
+  <data name="PersonFacebookLabel" xml:space="preserve"><value>Facebook</value></data>
+  <data name="AddPersonDialog_Title" xml:space="preserve"><value>Personam addere</value></data>
+  <data name="EditPersonDialog_Title" xml:space="preserve"><value>Personam mutare</value></data>
+  <data name="FailedToLoadPeople" xml:space="preserve"><value>Personas onerare non potuit.</value></data>
+  <data name="FailedToDeletePerson" xml:space="preserve"><value>Personam delere non potuit.</value></data>
+  <data name="FailedToSavePerson" xml:space="preserve"><value>Personam servare non potuit.</value></data>
+  <data name="PersonNameRequired" xml:space="preserve"><value>Nomen necessarium est.</value></data>
 </root>
