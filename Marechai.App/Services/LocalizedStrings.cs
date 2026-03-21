@@ -501,4 +501,27 @@ public class LocalizedStrings
     public string DeleteCoverButton => _l["DeleteCoverButton"];
     public string NoCoverLabel => _l["NoCoverLabel"];
     public string UploadingCoverLabel => _l["UploadingCoverLabel"];
+
+    // Document management
+    public string DocumentManagementTitle => _l["DocumentManagementTitle"];
+    public string DocumentManagementSubtitle => _l["DocumentManagementSubtitle"];
+    public string DocumentMgmtAccessDeniedTitle => _l["DocumentMgmtAccessDeniedTitle"];
+    public string DocumentMgmtAccessDeniedMessage => _l["DocumentMgmtAccessDeniedMessage"];
+    public string AddDocumentButton => _l["AddDocumentButton"];
+    public string RefreshDocumentsButton => _l["RefreshDocumentsButton"];
+    public string DocumentsSearchPlaceholder => _l["DocumentsSearchPlaceholder"];
+    public string DocumentTitleColumn => _l["DocumentTitleColumn"];
+    public string DocumentNativeTitleColumn => _l["DocumentNativeTitleColumn"];
+    public string DocumentCountryColumn => _l["DocumentCountryColumn"];
+    public string EditDocumentButton => _l["EditDocumentButton"];
+    public string DeleteDocumentButton => _l["DeleteDocumentButton"];
+    public string DocumentTitleLabel => _l["DocumentTitleLabel"];
+    public string DocumentNativeTitleLabel => _l["DocumentNativeTitleLabel"];
+    public string DocumentPublishedLabel => _l["DocumentPublishedLabel"];
+    public string DocumentCountryLabel => _l["DocumentCountryLabel"];
+    public string DocumentPeopleSectionHeader => _l["DocumentPeopleSectionHeader"];
+    public string DocumentCompaniesSectionHeader => _l["DocumentCompaniesSectionHeader"];
+    public string DocumentMachinesSectionHeader => _l["DocumentMachinesSectionHeader"];
+    public string DocumentMachineFamiliesSectionHeader => _l["DocumentMachineFamiliesSectionHeader"];
+    public string DocumentManagementButton => _l["DocumentManagementButton"];
 }

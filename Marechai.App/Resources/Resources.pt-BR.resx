@@ -1586,4 +1586,31 @@
   <data name="UploadingCoverLabel" xml:space="preserve"><value>Enviando capa...</value></data>
   <data name="FailedToUploadCover" xml:space="preserve"><value>Falha ao enviar a capa.</value></data>
   <data name="FailedToDeleteCover" xml:space="preserve"><value>Falha ao excluir a capa.</value></data>
+  <data name="DocumentManagementTitle" xml:space="preserve"><value>Gerenciamento de Documentos</value></data>
+  <data name="DocumentManagementSubtitle" xml:space="preserve"><value>Gerenciar documentos no banco de dados</value></data>
+  <data name="DocumentMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso Negado</value></data>
+  <data name="DocumentMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa de privilégios de administrador para gerenciar documentos.</value></data>
+  <data name="AddDocumentButton" xml:space="preserve"><value>Adicionar Documento</value></data>
+  <data name="RefreshDocumentsButton" xml:space="preserve"><value>Atualizar</value></data>
+  <data name="DocumentsSearchPlaceholder" xml:space="preserve"><value>Pesquisar documentos...</value></data>
+  <data name="DocumentTitleColumn" xml:space="preserve"><value>Título</value></data>
+  <data name="DocumentNativeTitleColumn" xml:space="preserve"><value>Título Original</value></data>
+  <data name="DocumentCountryColumn" xml:space="preserve"><value>País</value></data>
+  <data name="EditDocumentButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteDocumentButton" xml:space="preserve"><value>Excluir</value></data>
+  <data name="DocumentTitleLabel" xml:space="preserve"><value>Título</value></data>
+  <data name="DocumentNativeTitleLabel" xml:space="preserve"><value>Título Original</value></data>
+  <data name="DocumentPublishedLabel" xml:space="preserve"><value>Publicado</value></data>
+  <data name="DocumentCountryLabel" xml:space="preserve"><value>País</value></data>
+  <data name="DocumentPeopleSectionHeader" xml:space="preserve"><value>Pessoas</value></data>
+  <data name="DocumentCompaniesSectionHeader" xml:space="preserve"><value>Empresas</value></data>
+  <data name="DocumentMachinesSectionHeader" xml:space="preserve"><value>Máquinas</value></data>
+  <data name="DocumentMachineFamiliesSectionHeader" xml:space="preserve"><value>Famílias de Máquinas</value></data>
+  <data name="DocumentManagementButton" xml:space="preserve"><value>Gerenciamento de Documentos</value></data>
+  <data name="AddDocumentDialog_Title" xml:space="preserve"><value>Adicionar Documento</value></data>
+  <data name="EditDocumentDialog_Title" xml:space="preserve"><value>Editar Documento</value></data>
+  <data name="FailedToLoadDocuments" xml:space="preserve"><value>Falha ao carregar documentos.</value></data>
+  <data name="FailedToSaveDocument" xml:space="preserve"><value>Falha ao salvar documento.</value></data>
+  <data name="FailedToDeleteDocument" xml:space="preserve"><value>Falha ao excluir documento.</value></data>
+  <data name="DocumentTitleRequired" xml:space="preserve"><value>O título é obrigatório.</value></data>
 </root>

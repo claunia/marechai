@@ -1930,4 +1930,31 @@
   <data name="UploadingCoverLabel" xml:space="preserve"><value>Uploading cover...</value></data>
   <data name="FailedToUploadCover" xml:space="preserve"><value>Failed to upload cover.</value></data>
   <data name="FailedToDeleteCover" xml:space="preserve"><value>Failed to delete cover.</value></data>
+  <data name="DocumentManagementTitle" xml:space="preserve"><value>Document Management</value></data>
+  <data name="DocumentManagementSubtitle" xml:space="preserve"><value>Manage documents in the database</value></data>
+  <data name="DocumentMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="DocumentMgmtAccessDeniedMessage" xml:space="preserve"><value>You need administrator privileges to manage documents.</value></data>
+  <data name="AddDocumentButton" xml:space="preserve"><value>Add Document</value></data>
+  <data name="RefreshDocumentsButton" xml:space="preserve"><value>Refresh</value></data>
+  <data name="DocumentsSearchPlaceholder" xml:space="preserve"><value>Search documents...</value></data>
+  <data name="DocumentTitleColumn" xml:space="preserve"><value>Title</value></data>
+  <data name="DocumentNativeTitleColumn" xml:space="preserve"><value>Native Title</value></data>
+  <data name="DocumentCountryColumn" xml:space="preserve"><value>Country</value></data>
+  <data name="EditDocumentButton" xml:space="preserve"><value>Edit</value></data>
+  <data name="DeleteDocumentButton" xml:space="preserve"><value>Delete</value></data>
+  <data name="DocumentTitleLabel" xml:space="preserve"><value>Title</value></data>
+  <data name="DocumentNativeTitleLabel" xml:space="preserve"><value>Native Title</value></data>
+  <data name="DocumentPublishedLabel" xml:space="preserve"><value>Published</value></data>
+  <data name="DocumentCountryLabel" xml:space="preserve"><value>Country</value></data>
+  <data name="DocumentPeopleSectionHeader" xml:space="preserve"><value>People</value></data>
+  <data name="DocumentCompaniesSectionHeader" xml:space="preserve"><value>Companies</value></data>
+  <data name="DocumentMachinesSectionHeader" xml:space="preserve"><value>Machines</value></data>
+  <data name="DocumentMachineFamiliesSectionHeader" xml:space="preserve"><value>Machine Families</value></data>
+  <data name="DocumentManagementButton" xml:space="preserve"><value>Document Management</value></data>
+  <data name="AddDocumentDialog_Title" xml:space="preserve"><value>Add Document</value></data>
+  <data name="EditDocumentDialog_Title" xml:space="preserve"><value>Edit Document</value></data>
+  <data name="FailedToLoadDocuments" xml:space="preserve"><value>Failed to load documents.</value></data>
+  <data name="FailedToSaveDocument" xml:space="preserve"><value>Failed to save document.</value></data>
+  <data name="FailedToDeleteDocument" xml:space="preserve"><value>Failed to delete document.</value></data>
+  <data name="DocumentTitleRequired" xml:space="preserve"><value>Title is required.</value></data>
 </root>
