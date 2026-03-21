@@ -42,7 +42,7 @@ public partial class Magazine
     int?                             _addingCompanyId;
     string                           _addingCompanyRoleId;
     AuthenticationState              _authState;
-    List<DocumentCompanyDto>   _companies;
+    List<CompanyDto>           _companies;
     List<Iso31661Numeric>            _countries;
     bool                             _creating;
     CompanyByMagazineDto       _currentCompanyByMagazine;

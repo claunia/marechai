@@ -73,7 +73,7 @@ public class Company : BaseModel<int>
     public short? CountryId { get;  set; }
     [Required]
     public CompanyStatus Status { get;   set; }
-    public int? DocumentCompanyId { get; set; }
+
     [DefaultValue(false)]
     public bool FoundedMonthIsUnknown { get; set; }
     [DefaultValue(false)]
@@ -97,7 +97,9 @@ public class Company : BaseModel<int>
     public virtual ICollection<SoundSynth>          SoundSynths { get; set; }
     public virtual ICollection<PeopleByCompany>     People { get; set; }
     public virtual CompanyLogo                      LastLogo => Logos?.OrderByDescending(l => l.Year).FirstOrDefault();
-    public virtual DocumentCompany                  DocumentCompany { get; set; }
+    public virtual ICollection<CompaniesByDocument> Documents { get; set; }
+    public virtual ICollection<CompaniesByBook>     Books { get; set; }
+    public virtual ICollection<CompaniesByMagazine> Magazines { get; set; }
     public virtual ICollection<SoftwareCompanyRole> SoftwareRoles { get; set; }
     public virtual ICollection<SoftwareRelease>     SoftwareReleases { get; set; }
 }

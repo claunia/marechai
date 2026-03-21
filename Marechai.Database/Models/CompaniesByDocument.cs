@@ -36,7 +36,7 @@ public class CompaniesByDocument : BaseModel<long>
     [Required]
     public string RoleId { get; set; }
 
-    public virtual DocumentCompany Company  { get; set; }
+    public virtual Company         Company  { get; set; }
     public virtual Document        Document { get; set; }
     public virtual DocumentRole    Role     { get; set; }
 }

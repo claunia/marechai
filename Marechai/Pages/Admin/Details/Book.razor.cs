@@ -64,7 +64,7 @@ public partial class Book
     List<BookByMachineFamilyDto> _bookMachineFamilies;
     List<BookByMachineDto>       _bookMachines;
     List<PersonByBookDto>        _bookPeople;
-    List<DocumentCompanyDto>     _companies;
+    List<CompanyDto>             _companies;
     bool?                        _convertAvif1440;
     bool?                        _convertAvif1440Th;
     bool?                        _convertAvif4K;

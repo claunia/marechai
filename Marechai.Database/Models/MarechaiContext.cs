@@ -61,7 +61,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<CurrencyPegging>                     CurrenciesPegging                   { get; set; }
     public virtual DbSet<DbFile>                              Files                               { get; set; }
     public virtual DbSet<Document>                            Documents                           { get; set; }
-    public virtual DbSet<DocumentCompany>                     DocumentCompanies                   { get; set; }
     public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
     public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
     public virtual DbSet<DocumentsByMachineFamily>            DocumentsByMachineFamilies          { get; set; }
@@ -479,10 +478,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasForeignKey(d => d.SoldToId)
                   .HasConstraintName("fk_companies_sold_to");
 
-            entity.HasOne(d => d.DocumentCompany)
-                  .WithOne(p => p.Company)
-                  .HasForeignKey<DocumentCompany>(d => d.CompanyId)
-                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<CompanyDescription>().HasIndex(e => e.Text).IsFullText();
@@ -532,13 +527,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.Synopsis).IsFullText();
 
             entity.HasOne(d => d.Country).WithMany(p => p.Documents).HasForeignKey(d => d.CountryId);
-        });
-
-        modelBuilder.Entity<DocumentCompany>(entity =>
-        {
-            entity.HasIndex(e => e.Name);
-
-            entity.HasIndex(e => e.CompanyId).IsUnique();
         });
 
         modelBuilder.Entity<DocumentRole>(entity =>

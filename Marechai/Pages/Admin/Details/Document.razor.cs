@@ -60,7 +60,7 @@ public partial class Document
     bool?                            _addToDatabase;
     bool                             _allFinished;
     AuthenticationState              _authState;
-    List<DocumentCompanyDto>         _companies;
+    List<CompanyDto>                 _companies;
     bool?                            _convertAvif1440;
     bool?                            _convertAvif1440Th;
     bool?                            _convertAvif4k;

@@ -34,7 +34,7 @@
 @inherits OwningComponentBase<DocumentsService>
 @inject IStringLocalizer<DocumentsService> L
 @inject Iso31661NumericService             CountriesService
-@inject DocumentCompaniesService           CompaniesService
+@inject CompaniesService                   CompaniesService
 @inject DocumentRolesService               DocumentRolesService
 @inject CompaniesByDocumentService         CompaniesByDocumentService
 @inject MachineFamiliesService             MachineFamiliesService
@@ -156,7 +156,7 @@
             <Field>
                 <FieldLabel>@L["Company"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingCompanyId" Disabled="_savingCompany" @TValue="int?">
-                    @foreach(DocumentCompanyDto company in _companies)
+                    @foreach(CompanyDto company in _companies)
                     {
                         <SelectItem @TValue="int?" Value="@company.Id">@company.Name</SelectItem>
                     }

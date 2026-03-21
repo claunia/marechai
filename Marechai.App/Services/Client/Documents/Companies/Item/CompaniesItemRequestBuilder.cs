@@ -57,52 +57,6 @@ namespace Marechai.App.Documents.Companies.Item
             };
             return await RequestAdapter.SendPrimitiveAsync<string>(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
         }
-        /// <returns>A <see cref="global::Marechai.App.Models.DocumentCompanyDto"/></returns>
-        /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
-        /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::Marechai.App.Models.ProblemDetails">When receiving a 400 status code</exception>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public async Task<global::Marechai.App.Models.DocumentCompanyDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
-        {
-#nullable restore
-#else
-        public async Task<global::Marechai.App.Models.DocumentCompanyDto> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
-        {
-#endif
-            var requestInfo = ToGetRequestInformation(requestConfiguration);
-            var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
-            {
-                { "400", global::Marechai.App.Models.ProblemDetails.CreateFromDiscriminatorValue },
-            };
-            return await RequestAdapter.SendAsync<global::Marechai.App.Models.DocumentCompanyDto>(requestInfo, global::Marechai.App.Models.DocumentCompanyDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
-        }
-        /// <returns>A <see cref="string"/></returns>
-        /// <param name="body">The request body</param>
-        /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
-        /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::Marechai.App.Models.ProblemDetails">When receiving a 400 status code</exception>
-        /// <exception cref="global::Marechai.App.Models.ProblemDetails">When receiving a 401 status code</exception>
-        /// <exception cref="global::Marechai.App.Models.ProblemDetails">When receiving a 404 status code</exception>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public async Task<string?> PutAsync(global::Marechai.App.Models.DocumentCompanyDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
-        {
-#nullable restore
-#else
-        public async Task<string> PutAsync(global::Marechai.App.Models.DocumentCompanyDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
-        {
-#endif
-            if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
-            var requestInfo = ToPutRequestInformation(body, requestConfiguration);
-            var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
-            {
-                { "400", global::Marechai.App.Models.ProblemDetails.CreateFromDiscriminatorValue },
-                { "401", global::Marechai.App.Models.ProblemDetails.CreateFromDiscriminatorValue },
-                { "404", global::Marechai.App.Models.ProblemDetails.CreateFromDiscriminatorValue },
-            };
-            return await RequestAdapter.SendPrimitiveAsync<string>(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
-        }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -117,41 +71,6 @@ namespace Marechai.App.Documents.Companies.Item
             var requestInfo = new RequestInformation(Method.DELETE, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
             requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
-            return requestInfo;
-        }
-        /// <returns>A <see cref="RequestInformation"/></returns>
-        /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
-        {
-#nullable restore
-#else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
-        {
-#endif
-            var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
-            requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
-            return requestInfo;
-        }
-        /// <returns>A <see cref="RequestInformation"/></returns>
-        /// <param name="body">The request body</param>
-        /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public RequestInformation ToPutRequestInformation(global::Marechai.App.Models.DocumentCompanyDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
-        {
-#nullable restore
-#else
-        public RequestInformation ToPutRequestInformation(global::Marechai.App.Models.DocumentCompanyDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
-        {
-#endif
-            if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
-            var requestInfo = new RequestInformation(Method.PUT, UrlTemplate, PathParameters);
-            requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
-            requestInfo.SetContentFromParsable(RequestAdapter, "application/json", body);
             return requestInfo;
         }
         /// <summary>
@@ -169,22 +88,6 @@ namespace Marechai.App.Documents.Companies.Item
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         public partial class CompaniesItemRequestBuilderDeleteRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
-        {
-        }
-        /// <summary>
-        /// Configuration for the request such as headers, query parameters, and middleware options.
-        /// </summary>
-        [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class CompaniesItemRequestBuilderGetRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
-        {
-        }
-        /// <summary>
-        /// Configuration for the request such as headers, query parameters, and middleware options.
-        /// </summary>
-        [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class CompaniesItemRequestBuilderPutRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
         {
         }
     }
