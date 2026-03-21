@@ -2,7 +2,6 @@
 #pragma warning disable CS0618
 using Marechai.App.Documents.Companies;
 using Marechai.App.Documents.Item;
-using Marechai.App.Documents.People;
 using Marechai.App.Documents.Roles;
 using Marechai.App.Documents.Scans;
 using Marechai.App.Models;
@@ -26,11 +25,6 @@ namespace Marechai.App.Documents
         public global::Marechai.App.Documents.Companies.CompaniesRequestBuilder Companies
         {
             get => new global::Marechai.App.Documents.Companies.CompaniesRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The people property</summary>
-        public global::Marechai.App.Documents.People.PeopleRequestBuilder People
-        {
-            get => new global::Marechai.App.Documents.People.PeopleRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The roles property</summary>
         public global::Marechai.App.Documents.Roles.RolesRequestBuilder Roles

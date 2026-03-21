@@ -41,7 +41,7 @@
 @inject BooksByMachineFamilyService    BooksByMachineFamilyService
 @inject MachinesService                MachinesService
 @inject BooksByMachineService          BooksByMachineService
-@inject DocumentPeopleService          PeopleService
+@inject PeopleService                  PeopleService
 @inject PeopleByBookService            PeopleByBookService
 @inject IFileReaderService             FileReaderService
 @inject BookScansService               BookScansService
@@ -293,7 +293,7 @@
             <Field>
                 <FieldLabel>@L["Person"]</FieldLabel>
                 <Select @bind-SelectedValue="@_addingPersonId" Disabled="_savingPerson" @TValue="int?">
-                    @foreach(DocumentPersonDto person in _people)
+                    @foreach(PersonDto person in _people)
                     {
                         <SelectItem @TValue="int?" Value="@person.Id">@person.FullName</SelectItem>
                     }

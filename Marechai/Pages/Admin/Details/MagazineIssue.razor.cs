@@ -113,7 +113,7 @@ public partial class MagazineIssue
     List<MagazineDto>                _magazines;
     MagazineIssueDto                 _model;
     bool?                            _moveFile;
-    List<DocumentPersonDto>          _people;
+    List<PersonDto>                  _people;
     double                           _progressValue;
     List<DocumentRoleDto>            _roles;
     bool                             _savingMachine;

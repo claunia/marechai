@@ -36,7 +36,7 @@ public class PeopleByMagazine : BaseModel<long>
     [Required]
     public string RoleId { get; set; }
 
-    public virtual DocumentPerson Person   { get; set; }
-    public virtual MagazineIssue  Magazine { get; set; }
-    public virtual DocumentRole   Role     { get; set; }
+    public virtual Person       Person   { get; set; }
+    public virtual MagazineIssue Magazine { get; set; }
+    public virtual DocumentRole  Role     { get; set; }
 }

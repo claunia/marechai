@@ -44,7 +44,6 @@ public static class Register
         services.AddScoped<AdminService>();
         services.AddScoped<BrowserTestsService>();
         services.AddScoped<DocumentCompaniesService>();
-        services.AddScoped<DocumentPeopleService>();
         services.AddScoped<GpusService>();
         services.AddScoped<InstructionSetExtensionsService>();
         services.AddScoped<InstructionSetsService>();

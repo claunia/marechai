@@ -120,7 +120,7 @@ public partial class Book
     List<MachineDto>             _machines;
     BookDto                      _model;
     bool?                        _moveFile;
-    List<DocumentPersonDto>      _people;
+    List<PersonDto>              _people;
     double                       _progressValue;
     List<DocumentRoleDto>        _roles;
     bool                         _savingCompany;

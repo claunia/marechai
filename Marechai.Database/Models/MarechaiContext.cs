@@ -62,7 +62,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<DbFile>                              Files                               { get; set; }
     public virtual DbSet<Document>                            Documents                           { get; set; }
     public virtual DbSet<DocumentCompany>                     DocumentCompanies                   { get; set; }
-    public virtual DbSet<DocumentPerson>                      DocumentPeople                      { get; set; }
     public virtual DbSet<DocumentRole>                        DocumentRoles                       { get; set; }
     public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
     public virtual DbSet<DocumentsByMachineFamily>            DocumentsByMachineFamilies          { get; set; }
@@ -540,24 +539,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.Name);
 
             entity.HasIndex(e => e.CompanyId).IsUnique();
-        });
-
-        modelBuilder.Entity<DocumentPerson>(entity =>
-        {
-            entity.HasIndex(e => e.Name);
-
-            entity.HasIndex(e => e.Surname);
-
-            entity.HasIndex(e => e.PersonId).IsUnique();
-
-            entity.HasIndex(e => e.Alias);
-
-            entity.HasIndex(e => e.DisplayName);
-
-            entity.HasOne(d => d.Person)
-                  .WithOne(p => p.DocumentPerson)
-                  .HasForeignKey<Person>(d => d.DocumentPersonId)
-                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<DocumentRole>(entity =>
@@ -1317,11 +1298,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(e => e.DisplayName);
 
             entity.HasOne(d => d.CountryOfBirth).WithMany(p => p.People).HasForeignKey(d => d.CountryOfBirthId);
-
-            entity.HasOne(d => d.DocumentPerson)
-                  .WithOne(p => p.Person)
-                  .HasForeignKey<DocumentPerson>(d => d.PersonId)
-                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Processor>(entity =>
