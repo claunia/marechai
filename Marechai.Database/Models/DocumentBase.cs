@@ -37,6 +37,4 @@ public abstract class DocumentBase : BaseModel<long>
     [DataType(DataType.Date)]
     public DateTime? Published { get; set; }
     public short? CountryId { get;    set; }
-    [MaxLength(262144, ErrorMessage = "Synopsis is too long")]
-    public string Synopsis { get; set; }
 }

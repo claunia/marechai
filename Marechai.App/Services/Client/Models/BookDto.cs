@@ -52,14 +52,6 @@ namespace Marechai.App.Models
         public DateTimeOffset? Published { get; set; }
         /// <summary>The source_id property</summary>
         public long? SourceId { get; set; }
-        /// <summary>The synopsis property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Synopsis { get; set; }
-#nullable restore
-#else
-        public string Synopsis { get; set; }
-#endif
         /// <summary>The title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -103,7 +95,6 @@ namespace Marechai.App.Models
                 { "previous_id", n => { PreviousId = n.GetLongValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
                 { "source_id", n => { SourceId = n.GetLongValue(); } },
-                { "synopsis", n => { Synopsis = n.GetStringValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
             };
         }
@@ -124,7 +115,6 @@ namespace Marechai.App.Models
             writer.WriteLongValue("previous_id", PreviousId);
             writer.WriteDateTimeOffsetValue("published", Published);
             writer.WriteLongValue("source_id", SourceId);
-            writer.WriteStringValue("synopsis", Synopsis);
             writer.WriteStringValue("title", Title);
             writer.WriteAdditionalData(AdditionalData);
         }

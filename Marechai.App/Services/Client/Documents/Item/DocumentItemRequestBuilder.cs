@@ -5,6 +5,7 @@ using Marechai.App.Documents.Item.MachineFamilies;
 using Marechai.App.Documents.Item.Machines;
 using Marechai.App.Documents.Item.People;
 using Marechai.App.Documents.Item.Scans;
+using Marechai.App.Documents.Item.Synopses;
 using Marechai.App.Documents.Item.Synopsis;
 using Marechai.App.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
@@ -47,6 +48,11 @@ namespace Marechai.App.Documents.Item
         public global::Marechai.App.Documents.Item.Scans.ScansRequestBuilder Scans
         {
             get => new global::Marechai.App.Documents.Item.Scans.ScansRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The synopses property</summary>
+        public global::Marechai.App.Documents.Item.Synopses.SynopsesRequestBuilder Synopses
+        {
+            get => new global::Marechai.App.Documents.Item.Synopses.SynopsesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The synopsis property</summary>
         public global::Marechai.App.Documents.Item.Synopsis.SynopsisRequestBuilder Synopsis

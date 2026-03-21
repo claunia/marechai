@@ -23,29 +23,11 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
 namespace Marechai.Database.Models;
 
-public class Book : DocumentBase
+public class MagazineSynopsis : DocumentBaseSynopsis
 {
-    [StringLength(13, MinimumLength = 10)]
-    public string Isbn { get;       set; }
-    public short? Pages      { get; set; }
-    public int?   Edition    { get; set; }
-    public long?  PreviousId { get; set; }
-    public long?  SourceId   { get; set; }
+    public long MagazineId { get; set; }
 
-    public virtual Book                              Previous        { get; set; }
-    public virtual Book                              Source          { get; set; }
-    public virtual Book                              Next            { get; set; }
-    public virtual Iso31661Numeric                   Country         { get; set; }
-    public virtual ICollection<Book>                 Derivates       { get; set; }
-    public virtual ICollection<CompaniesByBook>      Companies       { get; set; }
-    public virtual ICollection<PeopleByBook>         People          { get; set; }
-    public virtual ICollection<BooksByMachine>       Machines        { get; set; }
-    public virtual ICollection<BooksByMachineFamily> MachineFamilies { get; set; }
-    public virtual ICollection<BookScan>             Scans           { get; set; }
-    public virtual ICollection<BookSynopsis>          Synopses        { get; set; }
+    public virtual Magazine Magazine { get; set; }
 }

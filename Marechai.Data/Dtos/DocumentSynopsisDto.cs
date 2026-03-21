@@ -23,29 +23,19 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
-namespace Marechai.Database.Models;
+namespace Marechai.Data.Dtos;
 
-public class Book : DocumentBase
+public class DocumentSynopsisDto : BaseDto<long>
 {
-    [StringLength(13, MinimumLength = 10)]
-    public string Isbn { get;       set; }
-    public short? Pages      { get; set; }
-    public int?   Edition    { get; set; }
-    public long?  PreviousId { get; set; }
-    public long?  SourceId   { get; set; }
-
-    public virtual Book                              Previous        { get; set; }
-    public virtual Book                              Source          { get; set; }
-    public virtual Book                              Next            { get; set; }
-    public virtual Iso31661Numeric                   Country         { get; set; }
-    public virtual ICollection<Book>                 Derivates       { get; set; }
-    public virtual ICollection<CompaniesByBook>      Companies       { get; set; }
-    public virtual ICollection<PeopleByBook>         People          { get; set; }
-    public virtual ICollection<BooksByMachine>       Machines        { get; set; }
-    public virtual ICollection<BooksByMachineFamily> MachineFamilies { get; set; }
-    public virtual ICollection<BookScan>             Scans           { get; set; }
-    public virtual ICollection<BookSynopsis>          Synopses        { get; set; }
+    [JsonPropertyName("text")]
+    [Required]
+    public required string Text { get; set; }
+    [JsonPropertyName("language_code")]
+    [Required]
+    public required string LanguageCode { get; set; }
+    [JsonPropertyName("language")]
+    public string? Language { get; set; }
 }

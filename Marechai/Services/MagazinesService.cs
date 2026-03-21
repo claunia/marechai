@@ -43,7 +43,6 @@ public class MagazinesService(MarechaiContext context)
                                                                                Title            = b.Title,
                                                                                NativeTitle      = b.NativeTitle,
                                                                                FirstPublication = b.FirstPublication,
-                                                                               Synopsis         = b.Synopsis,
                                                                                Issn             = b.Issn,
                                                                                CountryId        = b.CountryId,
                                                                                Country          = b.Country.Name
@@ -66,7 +65,6 @@ public class MagazinesService(MarechaiContext context)
                                                                                  Title            = b.Title,
                                                                                  NativeTitle      = b.NativeTitle,
                                                                                  FirstPublication = b.FirstPublication,
-                                                                                 Synopsis         = b.Synopsis,
                                                                                  Issn             = b.Issn,
                                                                                  CountryId        = b.CountryId,
                                                                                  Country          = b.Country.Name
@@ -82,7 +80,6 @@ public class MagazinesService(MarechaiContext context)
         model.Title            = dto.Title;
         model.NativeTitle      = dto.NativeTitle;
         model.FirstPublication = dto.FirstPublication;
-        model.Synopsis         = dto.Synopsis;
         model.CountryId        = dto.CountryId;
         model.Issn             = dto.Issn;
         await context.SaveChangesWithUserAsync(userId);
@@ -95,7 +92,6 @@ public class MagazinesService(MarechaiContext context)
             Title            = dto.Title,
             NativeTitle      = dto.NativeTitle,
             FirstPublication = dto.FirstPublication,
-            Synopsis         = dto.Synopsis,
             CountryId        = dto.CountryId,
             Issn             = dto.Issn
         };
@@ -105,9 +101,6 @@ public class MagazinesService(MarechaiContext context)
 
         return model.Id;
     }
-
-    public async Task<string> GetSynopsisTextAsync(int id) =>
-        (await context.Magazines.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
 
     public async Task DeleteAsync(long id, string userId)
     {

@@ -41,6 +41,4 @@ public abstract class DocumentBaseDto : BaseDto<long>
     public short? CountryId { get; set; }
     [JsonPropertyName("country")]
     public string? Country { get; set; }
-    [JsonPropertyName("synopsis")]
-    public string? Synopsis { get; set; }
 }

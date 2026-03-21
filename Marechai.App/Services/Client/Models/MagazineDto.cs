@@ -46,14 +46,6 @@ namespace Marechai.App.Models
 #endif
         /// <summary>The published property</summary>
         public DateTimeOffset? Published { get; set; }
-        /// <summary>The synopsis property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Synopsis { get; set; }
-#nullable restore
-#else
-        public string Synopsis { get; set; }
-#endif
         /// <summary>The title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -94,7 +86,6 @@ namespace Marechai.App.Models
                 { "issn", n => { Issn = n.GetStringValue(); } },
                 { "native_title", n => { NativeTitle = n.GetStringValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
-                { "synopsis", n => { Synopsis = n.GetStringValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
             };
         }
@@ -112,7 +103,6 @@ namespace Marechai.App.Models
             writer.WriteStringValue("issn", Issn);
             writer.WriteStringValue("native_title", NativeTitle);
             writer.WriteDateTimeOffsetValue("published", Published);
-            writer.WriteStringValue("synopsis", Synopsis);
             writer.WriteStringValue("title", Title);
             writer.WriteAdditionalData(AdditionalData);
         }

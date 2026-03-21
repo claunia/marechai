@@ -50,6 +50,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<BooksByMachine>                      BooksByMachines                     { get; set; }
     public virtual DbSet<BooksByMachineFamily>                BooksByMachineFamilies              { get; set; }
     public virtual DbSet<BookScan>                            BookScans                           { get; set; }
+    public virtual DbSet<BookSynopsis>                        BookSynopses                        { get; set; }
     public virtual DbSet<BrowserTest>                         BrowserTests                        { get; set; }
     public virtual DbSet<CompaniesByBook>                     CompaniesByBooks                    { get; set; }
     public virtual DbSet<CompaniesByDocument>                 CompaniesByDocuments                { get; set; }
@@ -65,6 +66,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<DocumentsByMachine>                  DocumentsByMachines                 { get; set; }
     public virtual DbSet<DocumentsByMachineFamily>            DocumentsByMachineFamilies          { get; set; }
     public virtual DbSet<DocumentScan>                        DocumentScans                       { get; set; }
+    public virtual DbSet<DocumentSynopsis>                    DocumentSynopses                    { get; set; }
     public virtual DbSet<Dump>                                Dumps                               { get; set; }
     public virtual DbSet<DumpHardware>                        DumpHardwares                       { get; set; }
     public virtual DbSet<FileDataStream>                      FileDataStreams                     { get; set; }
@@ -91,6 +93,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MagazinesByMachine>                  MagazinesByMachines                 { get; set; }
     public virtual DbSet<MagazinesByMachineFamily>            MagazinesByMachinesFamilies         { get; set; }
     public virtual DbSet<MagazineScan>                        MagazineScans                       { get; set; }
+    public virtual DbSet<MagazineSynopsis>                    MagazineSynopses                    { get; set; }
     public virtual DbSet<MarechaiDb>                          MarechaiDb                          { get; set; }
     public virtual DbSet<MasteringText>                       MasteringTexts                      { get; set; }
     public virtual DbSet<Media>                               Media                               { get; set; }
@@ -241,8 +244,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.CountryId);
 
-            entity.HasIndex(e => e.Synopsis).IsFullText();
-
             entity.HasIndex(e => e.Isbn);
 
             entity.HasIndex(e => e.Pages);
@@ -282,6 +283,24 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(d => d.Book).WithMany(p => p.MachineFamilies).HasForeignKey(d => d.BookId);
 
             entity.HasOne(d => d.MachineFamily).WithMany(p => p.Books).HasForeignKey(d => d.MachineFamilyId);
+        });
+
+        modelBuilder.Entity<BookSynopsis>(entity =>
+        {
+            entity.HasIndex(e => e.Text).IsFullText();
+
+            entity.HasIndex(e => new { e.BookId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_book_synopses_book_language");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_book_synopses_language");
+
+            entity.HasOne(e => e.Book)
+                  .WithMany(b => b.Synopses)
+                  .HasForeignKey(e => e.BookId);
         });
 
         modelBuilder.Entity<BrowserTest>(entity =>
@@ -536,9 +555,25 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.CountryId);
 
-            entity.HasIndex(e => e.Synopsis).IsFullText();
-
             entity.HasOne(d => d.Country).WithMany(p => p.Documents).HasForeignKey(d => d.CountryId);
+        });
+
+        modelBuilder.Entity<DocumentSynopsis>(entity =>
+        {
+            entity.HasIndex(e => e.Text).IsFullText();
+
+            entity.HasIndex(e => new { e.DocumentId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_document_synopses_document_language");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_document_synopses_language");
+
+            entity.HasOne(e => e.Document)
+                  .WithMany(d => d.Synopses)
+                  .HasForeignKey(e => e.DocumentId);
         });
 
         modelBuilder.Entity<DocumentRole>(entity =>
@@ -1077,13 +1112,29 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.HasIndex(e => e.CountryId);
 
-            entity.HasIndex(e => e.Synopsis).IsFullText();
-
             entity.HasIndex(e => e.Issn);
 
             entity.HasIndex(e => e.FirstPublication);
 
             entity.HasOne(d => d.Country).WithMany(p => p.Magazines).HasForeignKey(d => d.CountryId);
+        });
+
+        modelBuilder.Entity<MagazineSynopsis>(entity =>
+        {
+            entity.HasIndex(e => e.Text).IsFullText();
+
+            entity.HasIndex(e => new { e.MagazineId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_magazine_synopses_magazine_language");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_magazine_synopses_language");
+
+            entity.HasOne(e => e.Magazine)
+                  .WithMany(m => m.Synopses)
+                  .HasForeignKey(e => e.MagazineId);
         });
 
         modelBuilder.Entity<MagazineIssue>(entity =>

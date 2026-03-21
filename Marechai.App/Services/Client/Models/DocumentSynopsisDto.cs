@@ -9,57 +9,53 @@ namespace Marechai.App.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class DocumentDto : IAdditionalDataHolder, IParsable
+    public partial class DocumentSynopsisDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The country property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Country { get; set; }
-#nullable restore
-#else
-        public string Country { get; set; }
-#endif
-        /// <summary>The country_id property</summary>
-        public int? CountryId { get; set; }
         /// <summary>The id property</summary>
         public long? Id { get; set; }
-        /// <summary>The native_title property</summary>
+        /// <summary>The language property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? NativeTitle { get; set; }
+        public string? Language { get; set; }
 #nullable restore
 #else
-        public string NativeTitle { get; set; }
+        public string Language { get; set; }
 #endif
-        /// <summary>The published property</summary>
-        public DateTimeOffset? Published { get; set; }
-        /// <summary>The title property</summary>
+        /// <summary>The language_code property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Title { get; set; }
+        public string? LanguageCode { get; set; }
 #nullable restore
 #else
-        public string Title { get; set; }
+        public string LanguageCode { get; set; }
+#endif
+        /// <summary>The text property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Text { get; set; }
+#nullable restore
+#else
+        public string Text { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::Marechai.App.Models.DocumentDto"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Marechai.App.Models.DocumentSynopsisDto"/> and sets the default values.
         /// </summary>
-        public DocumentDto()
+        public DocumentSynopsisDto()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Marechai.App.Models.DocumentDto"/></returns>
+        /// <returns>A <see cref="global::Marechai.App.Models.DocumentSynopsisDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Marechai.App.Models.DocumentDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Marechai.App.Models.DocumentSynopsisDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::Marechai.App.Models.DocumentDto();
+            return new global::Marechai.App.Models.DocumentSynopsisDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -69,12 +65,10 @@ namespace Marechai.App.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "country", n => { Country = n.GetStringValue(); } },
-                { "country_id", n => { CountryId = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
-                { "native_title", n => { NativeTitle = n.GetStringValue(); } },
-                { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
-                { "title", n => { Title = n.GetStringValue(); } },
+                { "language", n => { Language = n.GetStringValue(); } },
+                { "language_code", n => { LanguageCode = n.GetStringValue(); } },
+                { "text", n => { Text = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -84,12 +78,10 @@ namespace Marechai.App.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("country", Country);
-            writer.WriteIntValue("country_id", CountryId);
             writer.WriteLongValue("id", Id);
-            writer.WriteStringValue("native_title", NativeTitle);
-            writer.WriteDateTimeOffsetValue("published", Published);
-            writer.WriteStringValue("title", Title);
+            writer.WriteStringValue("language", Language);
+            writer.WriteStringValue("language_code", LanguageCode);
+            writer.WriteStringValue("text", Text);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -43,7 +43,6 @@ public class BooksService(MarechaiContext context)
                                                                            Title       = b.Title,
                                                                            NativeTitle = b.NativeTitle,
                                                                            Published   = b.Published,
-                                                                           Synopsis    = b.Synopsis,
                                                                            Isbn        = b.Isbn,
                                                                            CountryId   = b.CountryId,
                                                                            Pages       = b.Pages,
@@ -61,7 +60,6 @@ public class BooksService(MarechaiContext context)
                                                                              Title       = b.Title,
                                                                              NativeTitle = b.NativeTitle,
                                                                              Published   = b.Published,
-                                                                             Synopsis    = b.Synopsis,
                                                                              Isbn        = b.Isbn,
                                                                              CountryId   = b.CountryId,
                                                                              Pages       = b.Pages,
@@ -81,7 +79,6 @@ public class BooksService(MarechaiContext context)
         model.Title       = dto.Title;
         model.NativeTitle = dto.NativeTitle;
         model.Published   = dto.Published;
-        model.Synopsis    = dto.Synopsis;
         model.CountryId   = dto.CountryId;
         model.Isbn        = dto.Isbn;
         model.Pages       = dto.Pages;
@@ -98,7 +95,6 @@ public class BooksService(MarechaiContext context)
             Title       = dto.Title,
             NativeTitle = dto.NativeTitle,
             Published   = dto.Published,
-            Synopsis    = dto.Synopsis,
             CountryId   = dto.CountryId,
             Isbn        = dto.Isbn,
             Pages       = dto.Pages,
@@ -112,9 +108,6 @@ public class BooksService(MarechaiContext context)
 
         return model.Id;
     }
-
-    public async Task<string> GetSynopsisTextAsync(int id) =>
-        (await context.Books.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
 
     public async Task DeleteAsync(long id, string userId)
     {

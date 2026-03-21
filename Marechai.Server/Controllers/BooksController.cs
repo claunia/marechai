@@ -53,7 +53,6 @@ public class BooksController(MarechaiContext context) : ControllerBase
                                                          Title       = b.Title,
                                                          NativeTitle = b.NativeTitle,
                                                          Published   = b.Published,
-                                                         Synopsis    = b.Synopsis,
                                                          Isbn        = b.Isbn,
                                                          CountryId   = b.CountryId,
                                                          Pages       = b.Pages,
@@ -75,7 +74,6 @@ public class BooksController(MarechaiContext context) : ControllerBase
                                                           Title       = b.Title,
                                                           NativeTitle = b.NativeTitle,
                                                           Published   = b.Published,
-                                                          Synopsis    = b.Synopsis,
                                                           Isbn        = b.Isbn,
                                                           CountryId   = b.CountryId,
                                                           Pages       = b.Pages,
@@ -105,7 +103,6 @@ public class BooksController(MarechaiContext context) : ControllerBase
         model.Title       = dto.Title;
         model.NativeTitle = dto.NativeTitle;
         model.Published   = dto.Published;
-        model.Synopsis    = dto.Synopsis;
         model.CountryId   = dto.CountryId;
         model.Isbn        = dto.Isbn;
         model.Pages       = dto.Pages;
@@ -133,7 +130,6 @@ public class BooksController(MarechaiContext context) : ControllerBase
             Title       = dto.Title,
             NativeTitle = dto.NativeTitle,
             Published   = dto.Published,
-            Synopsis    = dto.Synopsis,
             CountryId   = dto.CountryId,
             Isbn        = dto.Isbn,
             Pages       = dto.Pages,
@@ -148,12 +144,114 @@ public class BooksController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
+    [HttpGet("{id:long}/synopses")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<DocumentSynopsisDto>> GetSynopsesAsync(long id) => context.BookSynopses
+       .Where(s => s.BookId == id)
+       .Select(s => new DocumentSynopsisDto
+        {
+            Id           = s.Id,
+            Text         = s.Text,
+            LanguageCode = s.LanguageCode,
+            Language     = s.Language.ReferenceName
+        })
+       .ToListAsync();
+
     [HttpGet("{id:long}/synopsis")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<string> GetSynopsisTextAsync(long id) =>
-        (await context.Books.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
+    public async Task<DocumentSynopsisDto> GetSynopsisAsync(long id, [FromQuery] string lang = "eng")
+    {
+        DocumentSynopsisDto synopsis = await context.BookSynopses
+                                                    .Where(s => s.BookId == id && s.LanguageCode == lang)
+                                                    .Select(s => new DocumentSynopsisDto
+                                                     {
+                                                         Id           = s.Id,
+                                                         Text         = s.Text,
+                                                         LanguageCode = s.LanguageCode,
+                                                         Language     = s.Language.ReferenceName
+                                                     })
+                                                    .FirstOrDefaultAsync();
+
+        if(synopsis is null && lang != "eng")
+            synopsis = await context.BookSynopses
+                                    .Where(s => s.BookId == id && s.LanguageCode == "eng")
+                                    .Select(s => new DocumentSynopsisDto
+                                     {
+                                         Id           = s.Id,
+                                         Text         = s.Text,
+                                         LanguageCode = s.LanguageCode,
+                                         Language     = s.Language.ReferenceName
+                                     })
+                                    .FirstOrDefaultAsync();
+
+        return synopsis;
+    }
+
+    [HttpPost("{id:long}/synopsis")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<long>> CreateOrUpdateSynopsisAsync(
+        long id, [FromBody] DocumentSynopsisDto synopsis)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        BookSynopsis current = await context.BookSynopses
+                                            .FirstOrDefaultAsync(s => s.BookId       == id &&
+                                                                      s.LanguageCode == synopsis.LanguageCode);
+
+        if(current is null)
+        {
+            current = new BookSynopsis
+            {
+                BookId       = id,
+                LanguageCode = synopsis.LanguageCode,
+                Text         = synopsis.Text
+            };
+
+            await context.BookSynopses.AddAsync(current);
+        }
+        else
+        {
+            current.Text = synopsis.Text;
+        }
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return current.Id;
+    }
+
+    [HttpDelete("{id:long}/synopsis/{languageCode}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteSynopsisAsync(long id, string languageCode)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        BookSynopsis synopsis = await context.BookSynopses
+                                             .FirstOrDefaultAsync(s => s.BookId       == id &&
+                                                                       s.LanguageCode == languageCode);
+
+        if(synopsis is null) return NotFound();
+
+        context.BookSynopses.Remove(synopsis);
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]

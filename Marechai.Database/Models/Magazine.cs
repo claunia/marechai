@@ -40,4 +40,5 @@ public class Magazine : DocumentBase
     public virtual Iso31661Numeric                  Country   { get; set; }
     public virtual ICollection<MagazineIssue>       Issues    { get; set; }
     public virtual ICollection<CompaniesByMagazine> Companies { get; set; }
+    public virtual ICollection<MagazineSynopsis>     Synopses  { get; set; }
 }

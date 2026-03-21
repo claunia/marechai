@@ -53,7 +53,6 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                              Title            = b.Title,
                                                              NativeTitle      = b.NativeTitle,
                                                              FirstPublication = b.FirstPublication,
-                                                             Synopsis         = b.Synopsis,
                                                              Issn             = b.Issn,
                                                              CountryId        = b.CountryId,
                                                              Country          = b.Country.Name
@@ -84,7 +83,6 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                               Title            = b.Title,
                                                               NativeTitle      = b.NativeTitle,
                                                               FirstPublication = b.FirstPublication,
-                                                              Synopsis         = b.Synopsis,
                                                               Issn             = b.Issn,
                                                               CountryId        = b.CountryId,
                                                               Country          = b.Country.Name
@@ -109,7 +107,6 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
         model.Title            = dto.Title;
         model.NativeTitle      = dto.NativeTitle;
         model.FirstPublication = dto.FirstPublication;
-        model.Synopsis         = dto.Synopsis;
         model.CountryId        = dto.CountryId;
         model.Issn             = dto.Issn;
         await context.SaveChangesWithUserAsync(userId);
@@ -133,7 +130,6 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
             Title            = dto.Title,
             NativeTitle      = dto.NativeTitle,
             FirstPublication = dto.FirstPublication,
-            Synopsis         = dto.Synopsis,
             CountryId        = dto.CountryId,
             Issn             = dto.Issn
         };
@@ -144,12 +140,114 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
         return model.Id;
     }
 
-    [HttpGet("{id:int}/synopsis")]
+    [HttpGet("{id:long}/synopses")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<string> GetSynopsisTextAsync(int id) =>
-        (await context.Magazines.FirstOrDefaultAsync(d => d.Id == id))?.Synopsis;
+    public Task<List<DocumentSynopsisDto>> GetSynopsesAsync(long id) => context.MagazineSynopses
+       .Where(s => s.MagazineId == id)
+       .Select(s => new DocumentSynopsisDto
+        {
+            Id           = s.Id,
+            Text         = s.Text,
+            LanguageCode = s.LanguageCode,
+            Language     = s.Language.ReferenceName
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:long}/synopsis")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<DocumentSynopsisDto> GetSynopsisAsync(long id, [FromQuery] string lang = "eng")
+    {
+        DocumentSynopsisDto synopsis = await context.MagazineSynopses
+                                                    .Where(s => s.MagazineId == id && s.LanguageCode == lang)
+                                                    .Select(s => new DocumentSynopsisDto
+                                                     {
+                                                         Id           = s.Id,
+                                                         Text         = s.Text,
+                                                         LanguageCode = s.LanguageCode,
+                                                         Language     = s.Language.ReferenceName
+                                                     })
+                                                    .FirstOrDefaultAsync();
+
+        if(synopsis is null && lang != "eng")
+            synopsis = await context.MagazineSynopses
+                                    .Where(s => s.MagazineId == id && s.LanguageCode == "eng")
+                                    .Select(s => new DocumentSynopsisDto
+                                     {
+                                         Id           = s.Id,
+                                         Text         = s.Text,
+                                         LanguageCode = s.LanguageCode,
+                                         Language     = s.Language.ReferenceName
+                                     })
+                                    .FirstOrDefaultAsync();
+
+        return synopsis;
+    }
+
+    [HttpPost("{id:long}/synopsis")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<long>> CreateOrUpdateSynopsisAsync(
+        long id, [FromBody] DocumentSynopsisDto synopsis)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        MagazineSynopsis current = await context.MagazineSynopses
+                                                .FirstOrDefaultAsync(s => s.MagazineId   == id &&
+                                                                          s.LanguageCode == synopsis.LanguageCode);
+
+        if(current is null)
+        {
+            current = new MagazineSynopsis
+            {
+                MagazineId   = id,
+                LanguageCode = synopsis.LanguageCode,
+                Text         = synopsis.Text
+            };
+
+            await context.MagazineSynopses.AddAsync(current);
+        }
+        else
+        {
+            current.Text = synopsis.Text;
+        }
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return current.Id;
+    }
+
+    [HttpDelete("{id:long}/synopsis/{languageCode}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteSynopsisAsync(long id, string languageCode)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        MagazineSynopsis synopsis = await context.MagazineSynopses
+                                                 .FirstOrDefaultAsync(s => s.MagazineId   == id &&
+                                                                           s.LanguageCode == languageCode);
+
+        if(synopsis is null) return NotFound();
+
+        context.MagazineSynopses.Remove(synopsis);
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
 
     [HttpDelete("{id:long}")]
     [Authorize(Roles = "Admin,UberAdmin")]
