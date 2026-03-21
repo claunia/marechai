@@ -136,6 +136,13 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoftwareRequirement>                 SoftwareRequirements                { get; set; }
     public virtual DbSet<SoftwareOSCompatibility>             SoftwareOSCompatibility             { get; set; }
     public virtual DbSet<SoftwareCompanyRole>                 SoftwareCompanyRoles                { get; set; }
+    public virtual DbSet<SoftwareRole>                        SoftwareRoles                       { get; set; }
+    public virtual DbSet<CompanyBySoftwareVersion>            CompaniesBySoftwareVersions         { get; set; }
+    public virtual DbSet<CompanyBySoftwareVariant>            CompaniesBySoftwareVariants         { get; set; }
+    public virtual DbSet<CompanyBySoftwareFamily>             CompaniesBySoftwareFamilies         { get; set; }
+    public virtual DbSet<MinimumGpuBySoftwareRelease>        MinimumGpuBySoftwareRelease         { get; set; }
+    public virtual DbSet<RecommendedGpuBySoftwareRelease>    RecommendedGpuBySoftwareRelease     { get; set; }
+    public virtual DbSet<SoundSynthBySoftwareRelease>        SoundSynthBySoftwareRelease         { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
@@ -2317,18 +2324,57 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .OnDelete(DeleteBehavior.Restrict);
         });
 
+        modelBuilder.Entity<SoftwareRole>(entity =>
+        {
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => e.Enabled);
+            entity.Property(p => p.Enabled).HasDefaultValue(true);
+        });
+
         modelBuilder.Entity<SoftwareCompanyRole>(entity =>
         {
             entity.HasKey(x => new
             {
                 x.SoftwareId,
                 x.CompanyId,
-                x.Role
+                x.RoleId
             });
 
             entity.HasOne(x => x.Software).WithMany(x => x.CompanyRoles).HasForeignKey(x => x.SoftwareId);
 
             entity.HasOne(x => x.Company).WithMany(x => x.SoftwareRoles).HasForeignKey(x => x.CompanyId);
+
+            entity.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleId);
+        });
+
+        modelBuilder.Entity<CompanyBySoftwareVersion>(entity =>
+        {
+            entity.HasIndex(e => e.SoftwareVersionId);
+            entity.HasIndex(e => e.CompanyId);
+            entity.HasIndex(e => e.RoleId);
+            entity.HasOne(d => d.SoftwareVersion).WithMany(p => p.Companies).HasForeignKey(d => d.SoftwareVersionId);
+            entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVersions).HasForeignKey(d => d.CompanyId);
+            entity.HasOne(d => d.Role).WithMany().HasForeignKey(d => d.RoleId);
+        });
+
+        modelBuilder.Entity<CompanyBySoftwareVariant>(entity =>
+        {
+            entity.HasIndex(e => e.SoftwareVariantId);
+            entity.HasIndex(e => e.CompanyId);
+            entity.HasIndex(e => e.RoleId);
+            entity.HasOne(d => d.SoftwareVariant).WithMany(p => p.Companies).HasForeignKey(d => d.SoftwareVariantId);
+            entity.HasOne(d => d.Company).WithMany(p => p.SoftwareVariants).HasForeignKey(d => d.CompanyId);
+            entity.HasOne(d => d.Role).WithMany().HasForeignKey(d => d.RoleId);
+        });
+
+        modelBuilder.Entity<CompanyBySoftwareFamily>(entity =>
+        {
+            entity.HasIndex(e => e.SoftwareFamilyId);
+            entity.HasIndex(e => e.CompanyId);
+            entity.HasIndex(e => e.RoleId);
+            entity.HasOne(d => d.SoftwareFamily).WithMany(p => p.Companies).HasForeignKey(d => d.SoftwareFamilyId);
+            entity.HasOne(d => d.Company).WithMany(p => p.SoftwareFamilies2).HasForeignKey(d => d.CompanyId);
+            entity.HasOne(d => d.Role).WithMany().HasForeignKey(d => d.RoleId);
         });
 
         modelBuilder.Entity<MinimumGpuBySoftwareRelease>(entity =>

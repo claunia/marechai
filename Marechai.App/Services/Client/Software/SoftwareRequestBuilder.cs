@@ -10,6 +10,7 @@ using Marechai.App.Software.Platforms;
 using Marechai.App.Software.ProductCodes;
 using Marechai.App.Software.Releases;
 using Marechai.App.Software.Requirements;
+using Marechai.App.Software.Roles;
 using Marechai.App.Software.SubvariantLanguages;
 using Marechai.App.Software.Subvariants;
 using Marechai.App.Software.VariantLanguages;
@@ -70,6 +71,11 @@ namespace Marechai.App.Software
         public global::Marechai.App.Software.Requirements.RequirementsRequestBuilder Requirements
         {
             get => new global::Marechai.App.Software.Requirements.RequirementsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The roles property</summary>
+        public global::Marechai.App.Software.Roles.RolesRequestBuilder Roles
+        {
+            get => new global::Marechai.App.Software.Roles.RolesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The subvariantLanguages property</summary>
         public global::Marechai.App.Software.SubvariantLanguages.SubvariantLanguagesRequestBuilder SubvariantLanguages

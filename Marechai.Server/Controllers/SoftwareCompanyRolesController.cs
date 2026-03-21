@@ -53,7 +53,8 @@ public class SoftwareCompanyRolesController(MarechaiContext context) : Controlle
             Software   = r.Software.Name,
             CompanyId  = r.CompanyId,
             Company    = r.Company.Name,
-            Role       = r.Role
+            RoleId     = r.RoleId,
+            Role       = r.Role.Name
         })
        .ToListAsync();
 
@@ -72,7 +73,7 @@ public class SoftwareCompanyRolesController(MarechaiContext context) : Controlle
         {
             SoftwareId = dto.SoftwareId,
             CompanyId  = dto.CompanyId,
-            Role       = dto.Role
+            RoleId     = dto.RoleId
         };
 
         await context.SoftwareCompanyRoles.AddAsync(model);
@@ -81,20 +82,20 @@ public class SoftwareCompanyRolesController(MarechaiContext context) : Controlle
         return Ok();
     }
 
-    [HttpDelete("{softwareId:ulong}/{companyId:int}/{role}")]
+    [HttpDelete("{softwareId:ulong}/{companyId:int}/{roleId}")]
     [Authorize(Roles = "Admin,UberAdmin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> DeleteAsync(ulong softwareId, int companyId, string role)
+    public async Task<ActionResult> DeleteAsync(ulong softwareId, int companyId, string roleId)
     {
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
 
         SoftwareCompanyRole item =
-            await context.SoftwareCompanyRoles.FindAsync(softwareId, companyId, role);
+            await context.SoftwareCompanyRoles.FindAsync(softwareId, companyId, roleId);
 
         if(item is null) return NotFound();
 

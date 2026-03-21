@@ -249,6 +249,54 @@
                         Foreground="{StaticResource AdminSidebarForeground}"
                         BorderThickness="0"
                         CornerRadius="0" />
+
+                <!-- Software Management -->
+                <Button Content="{Binding SoftwareAdminManagementButtonText}"
+                        Command="{Binding NavigateToAdminSoftwareCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Software Release Management -->
+                <Button Content="{Binding SoftwareReleaseManagementButtonText}"
+                        Command="{Binding NavigateToAdminSoftwareReleasesCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Software Platform Management -->
+                <Button Content="{Binding SoftwarePlatformManagementButtonText}"
+                        Command="{Binding NavigateToAdminSoftwarePlatformsCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
+
+                <!-- Software Family Management -->
+                <Button Content="{Binding SoftwareFamilyManagementButtonText}"
+                        Command="{Binding NavigateToAdminSoftwareFamiliesCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="16,10,16,10"
+                        FontSize="13"
+                        Background="Transparent"
+                        Foreground="{StaticResource AdminSidebarForeground}"
+                        BorderThickness="0"
+                        CornerRadius="0" />
             </StackPanel>
         </ScrollViewer>
 

@@ -23,7 +23,7 @@ namespace Marechai.App.Software.CompanyRoles.Item.Item
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("role", position);
+                urlTplParams.Add("roleId", position);
                 return new global::Marechai.App.Software.CompanyRoles.Item.Item.Item.WithRoleItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }

@@ -1643,4 +1643,107 @@
   <data name="FailedToSaveMagazine" xml:space="preserve"><value>Ephemeridem servare non potuit.</value></data>
   <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Ephemeridem delere non potuit.</value></data>
   <data name="MagazineTitleRequired" xml:space="preserve"><value>Titulus necessarius est.</value></data>
+  <!-- Software Admin - Shared -->
+  <data name="AccessDeniedTitle" xml:space="preserve"><value>Aditus denegatus</value></data>
+  <data name="AccessDeniedMessage" xml:space="preserve"><value>Privilegia administratoris necessaria sunt ad hanc paginam adiendum.</value></data>
+  <data name="AddButton" xml:space="preserve"><value>Addere</value></data>
+  <data name="EditButton" xml:space="preserve"><value>Mutare</value></data>
+  <data name="NameColumn_Header" xml:space="preserve"><value>Nomen</value></data>
+  <data name="NameLabel" xml:space="preserve"><value>Nomen</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Quaerere...</value></data>
+  <data name="ErrorTitle" xml:space="preserve"><value>Error</value></data>
+  <data name="CompanyLabel" xml:space="preserve"><value>Societas</value></data>
+  <data name="RoleLabel" xml:space="preserve"><value>Munus</value></data>
+  <data name="ParentLabel" xml:space="preserve"><value>Parens</value></data>
+  <data name="IntroducedLabel" xml:space="preserve"><value>Introductum</value></data>
+  <data name="CompaniesHeader" xml:space="preserve"><value>Societates</value></data>
+  <data name="CompanyRolesHeader" xml:space="preserve"><value>Munera societatum</value></data>
+  <data name="VersionsButton" xml:space="preserve"><value>Versiones</value></data>
+  <data name="VariantsButton" xml:space="preserve"><value>Variantes</value></data>
+  <data name="SubvariantsButton" xml:space="preserve"><value>Subvariantes</value></data>
+  <data name="IsOperatingSystemLabel" xml:space="preserve"><value>Systema operans</value></data>
+  <data name="IsGameLabel" xml:space="preserve"><value>Ludus</value></data>
+  <data name="VersionStringIsRequired" xml:space="preserve"><value>Series versionis necessaria est.</value></data>
+  <data name="VersionIsRequired" xml:space="preserve"><value>Versio programmatis necessaria est.</value></data>
+  <!-- Software Admin - Columns -->
+  <data name="ParentColumn_Header" xml:space="preserve"><value>Parens</value></data>
+  <data name="IntroducedColumn_Header" xml:space="preserve"><value>Introductum</value></data>
+  <data name="FamilyColumn_Header" xml:space="preserve"><value>Familia</value></data>
+  <data name="VersionStringColumn_Header" xml:space="preserve"><value>Versio</value></data>
+  <data name="PublicVersionColumn_Header" xml:space="preserve"><value>Versio publica</value></data>
+  <data name="CodenameColumn_Header" xml:space="preserve"><value>Nomen secretum</value></data>
+  <data name="SoftwareVersionColumn_Header" xml:space="preserve"><value>Versio programmatis</value></data>
+  <data name="PlatformColumn_Header" xml:space="preserve"><value>Suggestus</value></data>
+  <data name="RegionColumn_Header" xml:space="preserve"><value>Regio</value></data>
+  <data name="PublisherColumn_Header" xml:space="preserve"><value>Editor</value></data>
+  <data name="ReleaseDateColumn_Header" xml:space="preserve"><value>Dies editionis</value></data>
+  <!-- Software Admin - Form Labels -->
+  <data name="VersionStringLabel" xml:space="preserve"><value>Series versionis</value></data>
+  <data name="PublicVersionLabel" xml:space="preserve"><value>Versio publica</value></data>
+  <data name="CodenameLabel" xml:space="preserve"><value>Nomen secretum</value></data>
+  <data name="ParentVersionLabel" xml:space="preserve"><value>Versio parentis</value></data>
+  <data name="SoftwareVersionLabel" xml:space="preserve"><value>Versio programmatis</value></data>
+  <data name="PlatformLabel" xml:space="preserve"><value>Suggestus</value></data>
+  <data name="RegionLabel" xml:space="preserve"><value>Regio</value></data>
+  <data name="PublisherLabel" xml:space="preserve"><value>Editor</value></data>
+  <data name="ReleaseDateLabel" xml:space="preserve"><value>Dies editionis</value></data>
+  <!-- Software Admin - Page Titles -->
+  <data name="SoftwarePlatformManagementTitle" xml:space="preserve"><value>Administratio suggestuum programmaticiorum</value></data>
+  <data name="SoftwarePlatformManagementSubtitle" xml:space="preserve"><value>Administrare suggestus programmaticos (e.g., x86, ARM, PowerPC)</value></data>
+  <data name="SoftwarePlatformMgmtAccessDeniedTitle" xml:space="preserve"><value>Aditus denegatus</value></data>
+  <data name="SoftwarePlatformMgmtAccessDeniedMessage" xml:space="preserve"><value>Privilegia administratoris necessaria sunt ad suggestus programmaticos administrandos.</value></data>
+  <data name="SoftwarePlatformSearchPlaceholder" xml:space="preserve"><value>Suggestus quaerere...</value></data>
+  <data name="AddSoftwarePlatformButton" xml:space="preserve"><value>Addere suggestum</value></data>
+  <data name="SoftwareFamilyManagementTitle" xml:space="preserve"><value>Administratio familiarum programmaticiorum</value></data>
+  <data name="SoftwareFamilyManagementSubtitle" xml:space="preserve"><value>Administrare familias programmaticas (e.g., Windows, macOS, Linux)</value></data>
+  <data name="SoftwareManagementTitle" xml:space="preserve"><value>Administratio programmatum</value></data>
+  <data name="SoftwareManagementSubtitle" xml:space="preserve"><value>Administrare programmata</value></data>
+  <data name="SoftwareReleaseManagementTitle" xml:space="preserve"><value>Administratio editionum programmatum</value></data>
+  <data name="SoftwareReleaseManagementSubtitle" xml:space="preserve"><value>Administrare editiones programmatum per suggestus et regiones</value></data>
+  <!-- Software Admin - Sidebar Buttons -->
+  <data name="SoftwareAdminManagementButton" xml:space="preserve"><value>Programmata</value></data>
+  <data name="SoftwareReleaseManagementButton" xml:space="preserve"><value>Editiones programmatum</value></data>
+  <data name="SoftwarePlatformManagementButton" xml:space="preserve"><value>Suggestus programmatici</value></data>
+  <data name="SoftwareFamilyManagementButton" xml:space="preserve"><value>Familiae programmaticae</value></data>
+  <!-- Software Admin - Dialog Titles -->
+  <data name="AddSoftwarePlatformDialog_Title" xml:space="preserve"><value>Addere suggestum programmaticum</value></data>
+  <data name="EditSoftwarePlatformDialog_Title" xml:space="preserve"><value>Mutare suggestum programmaticum</value></data>
+  <data name="AddSoftwareFamilyDialog_Title" xml:space="preserve"><value>Addere familiam programmaticam</value></data>
+  <data name="EditSoftwareFamilyDialog_Title" xml:space="preserve"><value>Mutare familiam programmaticam</value></data>
+  <data name="AddSoftwareDialog_Title" xml:space="preserve"><value>Addere programma</value></data>
+  <data name="EditSoftwareDialog_Title" xml:space="preserve"><value>Mutare programma</value></data>
+  <data name="AddSoftwareVersionDialog_Title" xml:space="preserve"><value>Addere versionem</value></data>
+  <data name="EditSoftwareVersionDialog_Title" xml:space="preserve"><value>Mutare versionem</value></data>
+  <data name="AddSoftwareVariantDialog_Title" xml:space="preserve"><value>Addere variantem</value></data>
+  <data name="EditSoftwareVariantDialog_Title" xml:space="preserve"><value>Mutare variantem</value></data>
+  <data name="AddSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Addere subvariantem</value></data>
+  <data name="EditSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Mutare subvariantem</value></data>
+  <data name="AddSoftwareReleaseDialog_Title" xml:space="preserve"><value>Addere editionem programmatis</value></data>
+  <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Mutare editionem programmatis</value></data>
+  <!-- Software Admin - Child Page Titles -->
+  <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versiones pro: {0}</value></data>
+  <data name="SoftwareVariantsForTitle" xml:space="preserve"><value>Variantes pro: {0}</value></data>
+  <data name="SoftwareSubvariantsForTitle" xml:space="preserve"><value>Subvariantes pro: {0}</value></data>
+  <!-- Software Admin - Error Messages -->
+  <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Suggestus programmaticos onerare non potuit.</value></data>
+  <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Suggestum programmaticum delere non potuit.</value></data>
+  <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Suggestum programmaticum servare non potuit.</value></data>
+  <data name="FailedToLoadSoftwareFamilies" xml:space="preserve"><value>Familias programmaticas onerare non potuit.</value></data>
+  <data name="FailedToDeleteSoftwareFamily" xml:space="preserve"><value>Familiam programmaticam delere non potuit.</value></data>
+  <data name="FailedToSaveSoftwareFamily" xml:space="preserve"><value>Familiam programmaticam servare non potuit.</value></data>
+  <data name="FailedToLoadSoftware" xml:space="preserve"><value>Programmata onerare non potuit.</value></data>
+  <data name="FailedToDeleteSoftware" xml:space="preserve"><value>Programma delere non potuit.</value></data>
+  <data name="FailedToSaveSoftware" xml:space="preserve"><value>Programma servare non potuit.</value></data>
+  <data name="FailedToLoadSoftwareVersions" xml:space="preserve"><value>Versiones programmatum onerare non potuit.</value></data>
+  <data name="FailedToDeleteSoftwareVersion" xml:space="preserve"><value>Versionem programmatis delere non potuit.</value></data>
+  <data name="FailedToSaveSoftwareVersion" xml:space="preserve"><value>Versionem programmatis servare non potuit.</value></data>
+  <data name="FailedToLoadSoftwareVariants" xml:space="preserve"><value>Variantes programmatum onerare non potuit.</value></data>
+  <data name="FailedToDeleteSoftwareVariant" xml:space="preserve"><value>Variantem programmatis delere non potuit.</value></data>
+  <data name="FailedToSaveSoftwareVariant" xml:space="preserve"><value>Variantem programmatis servare non potuit.</value></data>
+  <data name="FailedToLoadSoftwareSubvariants" xml:space="preserve"><value>Subvariantes programmatum onerare non potuit.</value></data>
+  <data name="FailedToDeleteSoftwareSubvariant" xml:space="preserve"><value>Subvariantem programmatis delere non potuit.</value></data>
+  <data name="FailedToSaveSoftwareSubvariant" xml:space="preserve"><value>Subvariantem programmatis servare non potuit.</value></data>
+  <data name="FailedToLoadSoftwareReleases" xml:space="preserve"><value>Editiones programmatum onerare non potuit.</value></data>
+  <data name="FailedToDeleteSoftwareRelease" xml:space="preserve"><value>Editionem programmatis delere non potuit.</value></data>
+  <data name="FailedToSaveSoftwareRelease" xml:space="preserve"><value>Editionem programmatis servare non potuit.</value></data>
 </root>

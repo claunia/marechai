@@ -1783,4 +1783,107 @@
   <data name="FailedToSaveMagazine" xml:space="preserve"><value>Error al guardar revista.</value></data>
   <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Error al eliminar revista.</value></data>
   <data name="MagazineTitleRequired" xml:space="preserve"><value>El título es obligatorio.</value></data>
+  <!-- Software Admin - Shared -->
+  <data name="AccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="AccessDeniedMessage" xml:space="preserve"><value>Necesita privilegios de administrador para acceder a esta página.</value></data>
+  <data name="AddButton" xml:space="preserve"><value>Añadir</value></data>
+  <data name="EditButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="NameColumn_Header" xml:space="preserve"><value>Nombre</value></data>
+  <data name="NameLabel" xml:space="preserve"><value>Nombre</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Buscar...</value></data>
+  <data name="ErrorTitle" xml:space="preserve"><value>Error</value></data>
+  <data name="CompanyLabel" xml:space="preserve"><value>Empresa</value></data>
+  <data name="RoleLabel" xml:space="preserve"><value>Rol</value></data>
+  <data name="ParentLabel" xml:space="preserve"><value>Padre</value></data>
+  <data name="IntroducedLabel" xml:space="preserve"><value>Introducido</value></data>
+  <data name="CompaniesHeader" xml:space="preserve"><value>Empresas</value></data>
+  <data name="CompanyRolesHeader" xml:space="preserve"><value>Roles de empresas</value></data>
+  <data name="VersionsButton" xml:space="preserve"><value>Versiones</value></data>
+  <data name="VariantsButton" xml:space="preserve"><value>Variantes</value></data>
+  <data name="SubvariantsButton" xml:space="preserve"><value>Subvariantes</value></data>
+  <data name="IsOperatingSystemLabel" xml:space="preserve"><value>Sistema operativo</value></data>
+  <data name="IsGameLabel" xml:space="preserve"><value>Juego</value></data>
+  <data name="VersionStringIsRequired" xml:space="preserve"><value>La cadena de versión es obligatoria.</value></data>
+  <data name="VersionIsRequired" xml:space="preserve"><value>La versión del software es obligatoria.</value></data>
+  <!-- Software Admin - Columns -->
+  <data name="ParentColumn_Header" xml:space="preserve"><value>Padre</value></data>
+  <data name="IntroducedColumn_Header" xml:space="preserve"><value>Introducido</value></data>
+  <data name="FamilyColumn_Header" xml:space="preserve"><value>Familia</value></data>
+  <data name="VersionStringColumn_Header" xml:space="preserve"><value>Versión</value></data>
+  <data name="PublicVersionColumn_Header" xml:space="preserve"><value>Versión pública</value></data>
+  <data name="CodenameColumn_Header" xml:space="preserve"><value>Nombre en clave</value></data>
+  <data name="SoftwareVersionColumn_Header" xml:space="preserve"><value>Versión del software</value></data>
+  <data name="PlatformColumn_Header" xml:space="preserve"><value>Plataforma</value></data>
+  <data name="RegionColumn_Header" xml:space="preserve"><value>Región</value></data>
+  <data name="PublisherColumn_Header" xml:space="preserve"><value>Editor</value></data>
+  <data name="ReleaseDateColumn_Header" xml:space="preserve"><value>Fecha de lanzamiento</value></data>
+  <!-- Software Admin - Form Labels -->
+  <data name="VersionStringLabel" xml:space="preserve"><value>Cadena de versión</value></data>
+  <data name="PublicVersionLabel" xml:space="preserve"><value>Versión pública</value></data>
+  <data name="CodenameLabel" xml:space="preserve"><value>Nombre en clave</value></data>
+  <data name="ParentVersionLabel" xml:space="preserve"><value>Versión padre</value></data>
+  <data name="SoftwareVersionLabel" xml:space="preserve"><value>Versión del software</value></data>
+  <data name="PlatformLabel" xml:space="preserve"><value>Plataforma</value></data>
+  <data name="RegionLabel" xml:space="preserve"><value>Región</value></data>
+  <data name="PublisherLabel" xml:space="preserve"><value>Editor</value></data>
+  <data name="ReleaseDateLabel" xml:space="preserve"><value>Fecha de lanzamiento</value></data>
+  <!-- Software Admin - Page Titles -->
+  <data name="SoftwarePlatformManagementTitle" xml:space="preserve"><value>Gestión de plataformas de software</value></data>
+  <data name="SoftwarePlatformManagementSubtitle" xml:space="preserve"><value>Gestionar plataformas de software (ej. x86, ARM, PowerPC)</value></data>
+  <data name="SoftwarePlatformMgmtAccessDeniedTitle" xml:space="preserve"><value>Acceso denegado</value></data>
+  <data name="SoftwarePlatformMgmtAccessDeniedMessage" xml:space="preserve"><value>Necesita privilegios de administrador para gestionar plataformas de software.</value></data>
+  <data name="SoftwarePlatformSearchPlaceholder" xml:space="preserve"><value>Buscar plataformas...</value></data>
+  <data name="AddSoftwarePlatformButton" xml:space="preserve"><value>Añadir plataforma</value></data>
+  <data name="SoftwareFamilyManagementTitle" xml:space="preserve"><value>Gestión de familias de software</value></data>
+  <data name="SoftwareFamilyManagementSubtitle" xml:space="preserve"><value>Gestionar familias de software (ej. Windows, macOS, Linux)</value></data>
+  <data name="SoftwareManagementTitle" xml:space="preserve"><value>Gestión de software</value></data>
+  <data name="SoftwareManagementSubtitle" xml:space="preserve"><value>Gestionar entradas de software</value></data>
+  <data name="SoftwareReleaseManagementTitle" xml:space="preserve"><value>Gestión de lanzamientos de software</value></data>
+  <data name="SoftwareReleaseManagementSubtitle" xml:space="preserve"><value>Gestionar lanzamientos de software por plataformas y regiones</value></data>
+  <!-- Software Admin - Sidebar Buttons -->
+  <data name="SoftwareAdminManagementButton" xml:space="preserve"><value>Software</value></data>
+  <data name="SoftwareReleaseManagementButton" xml:space="preserve"><value>Lanzamientos de software</value></data>
+  <data name="SoftwarePlatformManagementButton" xml:space="preserve"><value>Plataformas de software</value></data>
+  <data name="SoftwareFamilyManagementButton" xml:space="preserve"><value>Familias de software</value></data>
+  <!-- Software Admin - Dialog Titles -->
+  <data name="AddSoftwarePlatformDialog_Title" xml:space="preserve"><value>Añadir plataforma de software</value></data>
+  <data name="EditSoftwarePlatformDialog_Title" xml:space="preserve"><value>Editar plataforma de software</value></data>
+  <data name="AddSoftwareFamilyDialog_Title" xml:space="preserve"><value>Añadir familia de software</value></data>
+  <data name="EditSoftwareFamilyDialog_Title" xml:space="preserve"><value>Editar familia de software</value></data>
+  <data name="AddSoftwareDialog_Title" xml:space="preserve"><value>Añadir software</value></data>
+  <data name="EditSoftwareDialog_Title" xml:space="preserve"><value>Editar software</value></data>
+  <data name="AddSoftwareVersionDialog_Title" xml:space="preserve"><value>Añadir versión</value></data>
+  <data name="EditSoftwareVersionDialog_Title" xml:space="preserve"><value>Editar versión</value></data>
+  <data name="AddSoftwareVariantDialog_Title" xml:space="preserve"><value>Añadir variante</value></data>
+  <data name="EditSoftwareVariantDialog_Title" xml:space="preserve"><value>Editar variante</value></data>
+  <data name="AddSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Añadir subvariante</value></data>
+  <data name="EditSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Editar subvariante</value></data>
+  <data name="AddSoftwareReleaseDialog_Title" xml:space="preserve"><value>Añadir lanzamiento de software</value></data>
+  <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Editar lanzamiento de software</value></data>
+  <!-- Software Admin - Child Page Titles -->
+  <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versiones de: {0}</value></data>
+  <data name="SoftwareVariantsForTitle" xml:space="preserve"><value>Variantes de: {0}</value></data>
+  <data name="SoftwareSubvariantsForTitle" xml:space="preserve"><value>Subvariantes de: {0}</value></data>
+  <!-- Software Admin - Error Messages -->
+  <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Error al cargar plataformas de software.</value></data>
+  <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Error al eliminar plataforma de software.</value></data>
+  <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Error al guardar plataforma de software.</value></data>
+  <data name="FailedToLoadSoftwareFamilies" xml:space="preserve"><value>Error al cargar familias de software.</value></data>
+  <data name="FailedToDeleteSoftwareFamily" xml:space="preserve"><value>Error al eliminar familia de software.</value></data>
+  <data name="FailedToSaveSoftwareFamily" xml:space="preserve"><value>Error al guardar familia de software.</value></data>
+  <data name="FailedToLoadSoftware" xml:space="preserve"><value>Error al cargar software.</value></data>
+  <data name="FailedToDeleteSoftware" xml:space="preserve"><value>Error al eliminar software.</value></data>
+  <data name="FailedToSaveSoftware" xml:space="preserve"><value>Error al guardar software.</value></data>
+  <data name="FailedToLoadSoftwareVersions" xml:space="preserve"><value>Error al cargar versiones de software.</value></data>
+  <data name="FailedToDeleteSoftwareVersion" xml:space="preserve"><value>Error al eliminar versión de software.</value></data>
+  <data name="FailedToSaveSoftwareVersion" xml:space="preserve"><value>Error al guardar versión de software.</value></data>
+  <data name="FailedToLoadSoftwareVariants" xml:space="preserve"><value>Error al cargar variantes de software.</value></data>
+  <data name="FailedToDeleteSoftwareVariant" xml:space="preserve"><value>Error al eliminar variante de software.</value></data>
+  <data name="FailedToSaveSoftwareVariant" xml:space="preserve"><value>Error al guardar variante de software.</value></data>
+  <data name="FailedToLoadSoftwareSubvariants" xml:space="preserve"><value>Error al cargar subvariantes de software.</value></data>
+  <data name="FailedToDeleteSoftwareSubvariant" xml:space="preserve"><value>Error al eliminar subvariante de software.</value></data>
+  <data name="FailedToSaveSoftwareSubvariant" xml:space="preserve"><value>Error al guardar subvariante de software.</value></data>
+  <data name="FailedToLoadSoftwareReleases" xml:space="preserve"><value>Error al cargar lanzamientos de software.</value></data>
+  <data name="FailedToDeleteSoftwareRelease" xml:space="preserve"><value>Error al eliminar lanzamiento de software.</value></data>
+  <data name="FailedToSaveSoftwareRelease" xml:space="preserve"><value>Error al guardar lanzamiento de software.</value></data>
 </root>

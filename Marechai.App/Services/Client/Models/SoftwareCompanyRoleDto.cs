@@ -32,6 +32,14 @@ namespace Marechai.App.Models
 #else
         public string Role { get; set; }
 #endif
+        /// <summary>The role_id property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? RoleId { get; set; }
+#nullable restore
+#else
+        public string RoleId { get; set; }
+#endif
         /// <summary>The software property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -70,6 +78,7 @@ namespace Marechai.App.Models
                 { "company", n => { Company = n.GetStringValue(); } },
                 { "company_id", n => { CompanyId = n.GetIntValue(); } },
                 { "role", n => { Role = n.GetStringValue(); } },
+                { "role_id", n => { RoleId = n.GetStringValue(); } },
                 { "software", n => { Software = n.GetStringValue(); } },
                 { "software_id", n => { SoftwareId = n.GetIntValue(); } },
             };
@@ -84,6 +93,7 @@ namespace Marechai.App.Models
             writer.WriteStringValue("company", Company);
             writer.WriteIntValue("company_id", CompanyId);
             writer.WriteStringValue("role", Role);
+            writer.WriteStringValue("role_id", RoleId);
             writer.WriteStringValue("software", Software);
             writer.WriteIntValue("software_id", SoftwareId);
             writer.WriteAdditionalData(AdditionalData);

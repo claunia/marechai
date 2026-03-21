@@ -890,6 +890,129 @@ namespace Marechai.Database.Migrations
                     b.ToTable("companies", (string)null);
                 });
 
+            modelBuilder.Entity("Marechai.Database.Models.CompanyBySoftwareFamily", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int(11)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("char(3)");
+
+                    b.Property<ulong>("SoftwareFamilyId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("SoftwareFamilyId");
+
+                    b.ToTable("CompaniesBySoftwareFamilies");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CompanyBySoftwareVariant", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int(11)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("char(3)");
+
+                    b.Property<ulong>("SoftwareVariantId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("SoftwareVariantId");
+
+                    b.ToTable("CompaniesBySoftwareVariants");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CompanyBySoftwareVersion", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<ulong>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int(11)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedOn"));
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("char(3)");
+
+                    b.Property<ulong>("SoftwareVersionId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedOn"));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("SoftwareVersionId");
+
+                    b.ToTable("CompaniesBySoftwareVersions");
+                });
+
             modelBuilder.Entity("Marechai.Database.Models.CompanyDescription", b =>
                 {
                     b.Property<int>("Id")
@@ -5348,12 +5471,14 @@ namespace Marechai.Database.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("int(11)");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("varchar(255)");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("char(3)");
 
-                    b.HasKey("SoftwareId", "CompanyId", "Role");
+                    b.HasKey("SoftwareId", "CompanyId", "RoleId");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("SoftwareCompanyRoles");
                 });
@@ -5560,6 +5685,28 @@ namespace Marechai.Database.Migrations
                     b.HasIndex("RequiredSoftwareVersionId");
 
                     b.ToTable("SoftwareRequirements");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.SoftwareRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("char(3)");
+
+                    b.Property<bool>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit(1)")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Enabled");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("SoftwareRoles");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareSubvariant", b =>
@@ -6438,6 +6585,87 @@ namespace Marechai.Database.Migrations
                     b.Navigation("Country");
 
                     b.Navigation("SoldTo");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CompanyBySoftwareFamily", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Company", "Company")
+                        .WithMany("SoftwareFamilies2")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.SoftwareRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.SoftwareFamily", "SoftwareFamily")
+                        .WithMany("Companies")
+                        .HasForeignKey("SoftwareFamilyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("SoftwareFamily");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CompanyBySoftwareVariant", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Company", "Company")
+                        .WithMany("SoftwareVariants")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.SoftwareRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.SoftwareVariant", "SoftwareVariant")
+                        .WithMany("Companies")
+                        .HasForeignKey("SoftwareVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("SoftwareVariant");
+                });
+
+            modelBuilder.Entity("Marechai.Database.Models.CompanyBySoftwareVersion", b =>
+                {
+                    b.HasOne("Marechai.Database.Models.Company", "Company")
+                        .WithMany("SoftwareVersions")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.SoftwareRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Marechai.Database.Models.SoftwareVersion", "SoftwareVersion")
+                        .WithMany("Companies")
+                        .HasForeignKey("SoftwareVersionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("SoftwareVersion");
                 });
 
             modelBuilder.Entity("Marechai.Database.Models.CompanyDescription", b =>
@@ -7439,6 +7667,12 @@ namespace Marechai.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Marechai.Database.Models.SoftwareRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Marechai.Database.Models.Software", "Software")
                         .WithMany("CompanyRoles")
                         .HasForeignKey("SoftwareId")
@@ -7446,6 +7680,8 @@ namespace Marechai.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+
+                    b.Navigation("Role");
 
                     b.Navigation("Software");
                 });
@@ -7855,9 +8091,15 @@ namespace Marechai.Database.Migrations
 
                     b.Navigation("Processors");
 
+                    b.Navigation("SoftwareFamilies2");
+
                     b.Navigation("SoftwareReleases");
 
                     b.Navigation("SoftwareRoles");
+
+                    b.Navigation("SoftwareVariants");
+
+                    b.Navigation("SoftwareVersions");
 
                     b.Navigation("SoundSynths");
                 });
@@ -8100,6 +8342,8 @@ namespace Marechai.Database.Migrations
                 {
                     b.Navigation("Children");
 
+                    b.Navigation("Companies");
+
                     b.Navigation("Softwares");
                 });
 
@@ -8128,6 +8372,8 @@ namespace Marechai.Database.Migrations
 
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVariant", b =>
                 {
+                    b.Navigation("Companies");
+
                     b.Navigation("Languages");
 
                     b.Navigation("Subvariants");
@@ -8136,6 +8382,8 @@ namespace Marechai.Database.Migrations
             modelBuilder.Entity("Marechai.Database.Models.SoftwareVersion", b =>
                 {
                     b.Navigation("Children");
+
+                    b.Navigation("Companies");
 
                     b.Navigation("OSCompatibility");
 

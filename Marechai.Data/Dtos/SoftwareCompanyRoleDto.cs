@@ -40,7 +40,9 @@ public class SoftwareCompanyRoleDto
     public int CompanyId { get; set; }
     [JsonPropertyName("company")]
     public string? Company { get; set; }
-    [JsonPropertyName("role")]
+    [JsonPropertyName("role_id")]
     [Required]
-    public required string Role { get; set; }
+    public required string RoleId { get; set; }
+    [JsonPropertyName("role")]
+    public string? Role { get; set; }
 }

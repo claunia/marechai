@@ -2,6 +2,9 @@
 #pragma warning disable CS0618
 using Marechai.App.Models;
 using Marechai.App.Software.Releases.Item;
+using Marechai.App.Software.Releases.MinimumGpus;
+using Marechai.App.Software.Releases.RecommendedGpus;
+using Marechai.App.Software.Releases.SoundSynths;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -18,6 +21,21 @@ namespace Marechai.App.Software.Releases
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class ReleasesRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The minimumGpus property</summary>
+        public global::Marechai.App.Software.Releases.MinimumGpus.MinimumGpusRequestBuilder MinimumGpus
+        {
+            get => new global::Marechai.App.Software.Releases.MinimumGpus.MinimumGpusRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The recommendedGpus property</summary>
+        public global::Marechai.App.Software.Releases.RecommendedGpus.RecommendedGpusRequestBuilder RecommendedGpus
+        {
+            get => new global::Marechai.App.Software.Releases.RecommendedGpus.RecommendedGpusRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The soundSynths property</summary>
+        public global::Marechai.App.Software.Releases.SoundSynths.SoundSynthsRequestBuilder SoundSynths
+        {
+            get => new global::Marechai.App.Software.Releases.SoundSynths.SoundSynthsRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>Gets an item from the Marechai.App.software.releases.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::Marechai.App.Software.Releases.Item.ItemRequestBuilder"/></returns>

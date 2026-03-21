@@ -36,6 +36,7 @@ public class SoftwareFamily : BaseModel<ulong>
     public         ulong?                      ParentId   { get; set; }
     public         DateTime?                   Introduced { get; set; }
     public virtual SoftwareFamily              Parent     { get; set; }
-    public virtual ICollection<SoftwareFamily> Children   { get; set; }
-    public virtual ICollection<Software>       Softwares  { get; set; }
+    public virtual ICollection<SoftwareFamily>          Children   { get; set; }
+    public virtual ICollection<Software>                Softwares  { get; set; }
+    public virtual ICollection<CompanyBySoftwareFamily>  Companies  { get; set; }
 }

@@ -44,6 +44,7 @@ public class SoftwareVersion : BaseModel<ulong>
     public virtual ICollection<SoftwareVersion>         Children        { get; set; }
     public virtual ICollection<SoftwareVariant>         Variants        { get; set; }
     public virtual ICollection<SoftwareRequirement>     Requirements    { get; set; }
-    public virtual ICollection<SoftwareOSCompatibility> OSCompatibility { get; set; }
-    public virtual ICollection<SoftwareRelease>         Releases        { get; set; }
+    public virtual ICollection<SoftwareOSCompatibility>   OSCompatibility { get; set; }
+    public virtual ICollection<SoftwareRelease>           Releases        { get; set; }
+    public virtual ICollection<CompanyBySoftwareVersion>  Companies       { get; set; }
 }

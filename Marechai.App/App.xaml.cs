@@ -170,6 +170,13 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<BooksService>();
         containerRegistry.RegisterSingleton<DocumentsService>();
         containerRegistry.RegisterSingleton<MagazinesService>();
+        containerRegistry.RegisterSingleton<SoftwareService>();
+        containerRegistry.RegisterSingleton<SoftwareFamiliesService>();
+        containerRegistry.RegisterSingleton<SoftwarePlatformsService>();
+        containerRegistry.RegisterSingleton<SoftwareVersionsService>();
+        containerRegistry.RegisterSingleton<SoftwareVariantsService>();
+        containerRegistry.RegisterSingleton<SoftwareSubvariantsService>();
+        containerRegistry.RegisterSingleton<SoftwareReleasesService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
 
@@ -210,6 +217,13 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminBooksViewModel>();
         containerRegistry.Register<AdminDocumentsViewModel>();
         containerRegistry.Register<AdminMagazinesViewModel>();
+        containerRegistry.Register<AdminSoftwareViewModel>();
+        containerRegistry.Register<AdminSoftwareFamiliesViewModel>();
+        containerRegistry.Register<AdminSoftwarePlatformsViewModel>();
+        containerRegistry.Register<AdminSoftwareVersionsViewModel>();
+        containerRegistry.Register<AdminSoftwareVariantsViewModel>();
+        containerRegistry.Register<AdminSoftwareSubvariantsViewModel>();
+        containerRegistry.Register<AdminSoftwareReleasesViewModel>();
 
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
@@ -247,6 +261,13 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminBooksPage, AdminBooksViewModel>();
         containerRegistry.RegisterForNavigation<AdminDocumentsPage, AdminDocumentsViewModel>();
         containerRegistry.RegisterForNavigation<AdminMagazinesPage, AdminMagazinesViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwarePage, AdminSoftwareViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareFamiliesPage, AdminSoftwareFamiliesViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwarePlatformsPage, AdminSoftwarePlatformsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareVersionsPage, AdminSoftwareVersionsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareVariantsPage, AdminSoftwareVariantsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareSubvariantsPage, AdminSoftwareSubvariantsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareReleasesPage, AdminSoftwareReleasesViewModel>();
     }
 
     protected override async void OnInitialized()

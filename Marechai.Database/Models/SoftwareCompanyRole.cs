@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Marechai.Database.Models;
 
@@ -8,6 +9,9 @@ public class SoftwareCompanyRole
     public virtual Software Software   { get; set; }
     public         int      CompanyId  { get; set; }
     public virtual Company  Company    { get; set; }
+    [Column(TypeName = "char(3)")]
     [Required]
-    public string Role { get; set; } // developer, distributor, publisher
+    public string RoleId { get; set; }
+
+    public virtual SoftwareRole Role { get; set; }
 }

@@ -34,6 +34,7 @@ public class SoftwareVariant : BaseModel<ulong>
     public virtual Software Software   { get; set; }
     [Required]
     public string Name { get;                                              set; } // Retail, OEM, Upgrade
-    public virtual ICollection<SoftwareSubvariant>      Subvariants { get; set; }
-    public virtual ICollection<SoftwareVariantLanguage> Languages   { get; set; }
+    public virtual ICollection<SoftwareSubvariant>       Subvariants { get; set; }
+    public virtual ICollection<SoftwareVariantLanguage>  Languages   { get; set; }
+    public virtual ICollection<CompanyBySoftwareVariant>  Companies   { get; set; }
 }

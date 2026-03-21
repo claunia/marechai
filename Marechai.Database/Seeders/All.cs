@@ -84,6 +84,14 @@ public static class All
                           (end - start).TotalSeconds);
 
         start = DateTime.Now;
+        Console.WriteLine("\u001b[31;1mSeeding software roles...\u001b[0m");
+        SoftwareRoles.Seed(context);
+        end = DateTime.Now;
+
+        Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                          (end - start).TotalSeconds);
+
+        start = DateTime.Now;
         Console.WriteLine("\u001b[31;1mSeeding licenses...\u001b[0m");
         License.Seed(context);
         end = DateTime.Now;

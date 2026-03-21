@@ -2,7 +2,10 @@
 #pragma warning disable CS0618
 using Marechai.App.Models;
 using Marechai.App.Software.Releases.Item.Barcodes;
+using Marechai.App.Software.Releases.Item.MinimumGpus;
 using Marechai.App.Software.Releases.Item.ProductCodes;
+using Marechai.App.Software.Releases.Item.RecommendedGpus;
+using Marechai.App.Software.Releases.Item.SoundSynths;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -24,10 +27,25 @@ namespace Marechai.App.Software.Releases.Item
         {
             get => new global::Marechai.App.Software.Releases.Item.Barcodes.BarcodesRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The minimumGpus property</summary>
+        public global::Marechai.App.Software.Releases.Item.MinimumGpus.MinimumGpusRequestBuilder MinimumGpus
+        {
+            get => new global::Marechai.App.Software.Releases.Item.MinimumGpus.MinimumGpusRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The productCodes property</summary>
         public global::Marechai.App.Software.Releases.Item.ProductCodes.ProductCodesRequestBuilder ProductCodes
         {
             get => new global::Marechai.App.Software.Releases.Item.ProductCodes.ProductCodesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The recommendedGpus property</summary>
+        public global::Marechai.App.Software.Releases.Item.RecommendedGpus.RecommendedGpusRequestBuilder RecommendedGpus
+        {
+            get => new global::Marechai.App.Software.Releases.Item.RecommendedGpus.RecommendedGpusRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The soundSynths property</summary>
+        public global::Marechai.App.Software.Releases.Item.SoundSynths.SoundSynthsRequestBuilder SoundSynths
+        {
+            get => new global::Marechai.App.Software.Releases.Item.SoundSynths.SoundSynthsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.App.Software.Releases.Item.ItemRequestBuilder"/> and sets the default values.
