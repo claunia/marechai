@@ -126,4 +126,29 @@ public class CompanyDetailService
             return [];
         }
     }
+
+    /// <summary>
+    ///     Gets the localized description for a company. Falls back to English on the server if the
+    ///     requested language is not available.
+    /// </summary>
+    public async Task<CompanyDescriptionDto?> GetDescriptionAsync(int companyId, string languageCode)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching description for company {CompanyId} in language {Lang}",
+                                   companyId,
+                                   languageCode);
+
+            CompanyDescriptionDto? desc = await _apiClient.Companies[companyId].Description.GetAsync(
+                                              config => config.QueryParameters.Lang = languageCode);
+
+            return desc;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching description for company {CompanyId}", companyId);
+
+            return null;
+        }
+    }
 }

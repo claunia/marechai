@@ -230,9 +230,15 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<string> GetDescriptionTextAsync(int id)
+    public async Task<string> GetDescriptionTextAsync(int id, [FromQuery] string lang = "eng")
     {
-        CompanyDescription description = await context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id);
+        CompanyDescription description =
+            await context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id && d.LanguageCode == lang);
+
+        // Fallback to English if requested language not found
+        if(description is null && lang != "eng")
+            description = await context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id &&
+                              d.LanguageCode == "eng");
 
         return description?.Html ?? description?.Text;
     }
@@ -307,20 +313,59 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         return Ok();
     }
 
+    [HttpGet("{id:int}/descriptions")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<CompanyDescriptionDto>> GetDescriptionsAsync(int id) => context.CompanyDescriptions
+       .Where(d => d.CompanyId == id)
+       .Select(d => new CompanyDescriptionDto
+        {
+            Id           = d.Id,
+            CompanyId    = d.CompanyId,
+            Html         = d.Html,
+            Markdown     = d.Text,
+            LanguageCode = d.LanguageCode,
+            Language     = d.Language.ReferenceName
+        })
+       .ToListAsync();
+
     [HttpGet("{id:int}/description")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<CompanyDescriptionDto> GetDescriptionAsync(int id) => context.CompanyDescriptions
-                                                                             .Where(d => d.CompanyId == id)
-                                                                             .Select(d => new CompanyDescriptionDto
-                                                                              {
-                                                                                  Id        = d.Id,
-                                                                                  CompanyId = d.CompanyId,
-                                                                                  Html      = d.Html,
-                                                                                  Markdown  = d.Text
-                                                                              })
-                                                                             .FirstOrDefaultAsync();
+    public async Task<CompanyDescriptionDto> GetDescriptionAsync(int id, [FromQuery] string lang = "eng")
+    {
+        CompanyDescriptionDto description = await context.CompanyDescriptions
+                                                         .Where(d => d.CompanyId == id && d.LanguageCode == lang)
+                                                         .Select(d => new CompanyDescriptionDto
+                                                          {
+                                                              Id           = d.Id,
+                                                              CompanyId    = d.CompanyId,
+                                                              Html         = d.Html,
+                                                              Markdown     = d.Text,
+                                                              LanguageCode = d.LanguageCode,
+                                                              Language     = d.Language.ReferenceName
+                                                          })
+                                                         .FirstOrDefaultAsync();
+
+        // Fallback to English if requested language not found
+        if(description is null && lang != "eng")
+            description = await context.CompanyDescriptions
+                                       .Where(d => d.CompanyId == id && d.LanguageCode == "eng")
+                                       .Select(d => new CompanyDescriptionDto
+                                        {
+                                            Id           = d.Id,
+                                            CompanyId    = d.CompanyId,
+                                            Html         = d.Html,
+                                            Markdown     = d.Text,
+                                            LanguageCode = d.LanguageCode,
+                                            Language     = d.Language.ReferenceName
+                                        })
+                                       .FirstOrDefaultAsync();
+
+        return description;
+    }
 
     [HttpPost("{id:int}/description")]
     [Authorize(Roles = "Admin,UberAdmin")]
@@ -333,15 +378,19 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         string userId = User.FindFirstValue(ClaimTypes.Sid);
 
         if(userId is null) return Unauthorized();
-        CompanyDescription current = await context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id);
+
+        CompanyDescription current = await context.CompanyDescriptions
+                                                  .FirstOrDefaultAsync(d => d.CompanyId    == id &&
+                                                                            d.LanguageCode == description.LanguageCode);
 
         if(current is null)
         {
             current = new CompanyDescription
             {
-                CompanyId = id,
-                Html      = description.Html,
-                Text      = description.Markdown
+                CompanyId    = id,
+                LanguageCode = description.LanguageCode,
+                Html         = description.Html,
+                Text         = description.Markdown
             };
 
             await context.CompanyDescriptions.AddAsync(current);
@@ -355,5 +404,30 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         await context.SaveChangesWithUserAsync(userId);
 
         return current.Id;
+    }
+
+    [HttpDelete("{id:int}/description/{languageCode}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteDescriptionAsync(int id, string languageCode)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        CompanyDescription description = await context.CompanyDescriptions
+                                                      .FirstOrDefaultAsync(d => d.CompanyId    == id &&
+                                                                                d.LanguageCode == languageCode);
+
+        if(description is null) return NotFound();
+
+        context.CompanyDescriptions.Remove(description);
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

@@ -1539,4 +1539,8 @@
   <data name="FailedToDeletePerson" xml:space="preserve"><value>Fehler beim Löschen der Person.</value></data>
   <data name="FailedToSavePerson" xml:space="preserve"><value>Fehler beim Speichern der Person.</value></data>
   <data name="PersonNameRequired" xml:space="preserve"><value>Name ist erforderlich.</value></data>
+  <data name="LanguageLabel" xml:space="preserve"><value>Sprache</value></data>
+  <data name="ExistingTranslationsLabel" xml:space="preserve"><value>Vorhandene Übersetzungen</value></data>
+  <data name="FailedToDeleteTranslation" xml:space="preserve"><value>Übersetzung konnte nicht gelöscht werden.</value></data>
+  <data name="DescriptionSectionTitle" xml:space="preserve"><value>Beschreibung</value></data>
 </root>

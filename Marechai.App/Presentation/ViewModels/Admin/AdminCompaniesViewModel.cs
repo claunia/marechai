@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
@@ -127,6 +128,15 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private int? _descriptionCompanyId;
 
+    [ObservableProperty]
+    private ObservableCollection<LanguageItem> _availableLanguages = [];
+
+    [ObservableProperty]
+    private LanguageItem? _selectedLanguage;
+
+    [ObservableProperty]
+    private ObservableCollection<CompanyDescriptionDto> _existingTranslations = [];
+
     // --- Picker data ---
     [ObservableProperty]
     private ObservableCollection<Iso31661NumericDto> _countries = [];
@@ -174,7 +184,11 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         OpenDescriptionCommand     = new AsyncRelayCommand<CompanyDto>(OpenDescriptionAsync);
         SaveDescriptionCommand     = new AsyncRelayCommand(SaveDescriptionAsync);
         CancelDescriptionCommand   = new RelayCommand(CancelDescription);
+        DeleteTranslationCommand   = new AsyncRelayCommand<CompanyDescriptionDto>(DeleteTranslationAsync);
+        EditTranslationCommand     = new RelayCommand<CompanyDescriptionDto>(EditTranslation);
         OpenLogosCommand           = new RelayCommand<CompanyDto>(OpenLogos);
+
+        InitializeLanguages();
 
         CheckAdminRole();
     }
@@ -186,10 +200,12 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<CompanyDto> DeleteCompanyCommand     { get; }
     public IAsyncRelayCommand             SaveCompanyCommand       { get; }
     public IRelayCommand                  CancelEditCommand        { get; }
-    public IAsyncRelayCommand<CompanyDto> OpenDescriptionCommand   { get; }
-    public IAsyncRelayCommand             SaveDescriptionCommand   { get; }
-    public IRelayCommand                  CancelDescriptionCommand { get; }
-    public IRelayCommand<CompanyDto>      OpenLogosCommand         { get; }
+    public IAsyncRelayCommand<CompanyDto>             OpenDescriptionCommand   { get; }
+    public IAsyncRelayCommand                        SaveDescriptionCommand   { get; }
+    public IRelayCommand                             CancelDescriptionCommand { get; }
+    public IAsyncRelayCommand<CompanyDescriptionDto> DeleteTranslationCommand { get; }
+    public IRelayCommand<CompanyDescriptionDto>      EditTranslationCommand   { get; }
+    public IRelayCommand<CompanyDto>                 OpenLogosCommand         { get; }
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -378,6 +394,21 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     }
 
     // --- Description ---
+    private void InitializeLanguages()
+    {
+        AvailableLanguages =
+        [
+            new LanguageItem { Code = "eng", DisplayName = "English" },
+            new LanguageItem { Code = "spa", DisplayName = "Español" },
+            new LanguageItem { Code = "deu", DisplayName = "Deutsch" },
+            new LanguageItem { Code = "fra", DisplayName = "Français" },
+            new LanguageItem { Code = "lat", DisplayName = "Latina" },
+            new LanguageItem { Code = "por", DisplayName = "Português (Brasil)" }
+        ];
+
+        SelectedLanguage = AvailableLanguages[0]; // Default to English
+    }
+
     private async Task OpenDescriptionAsync(CompanyDto? company)
     {
         if(company?.Id == null) return;
@@ -387,11 +418,27 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
             DescriptionCompanyId = company.Id;
             DescriptionMarkdown  = string.Empty;
             IsEditing            = false;
+            ExistingTranslations.Clear();
 
-            CompanyDescriptionDto? desc = await _apiClient.Companies[company.Id.Value].Description.GetAsync();
+            // Load all existing translations
+            List<CompanyDescriptionDto>? translations =
+                await _apiClient.Companies[company.Id.Value].Descriptions.GetAsync();
 
-            if(desc != null)
-                DescriptionMarkdown = desc.Markdown ?? string.Empty;
+            if(translations != null)
+                foreach(CompanyDescriptionDto t in translations)
+                    ExistingTranslations.Add(t);
+
+            // Default to English or first untranslated language
+            SelectedLanguage = AvailableLanguages.FirstOrDefault(l =>
+                                   ExistingTranslations.All(t => t.LanguageCode != l.Code)) ??
+                               AvailableLanguages[0];
+
+            // If selected language already has content, load it
+            CompanyDescriptionDto? existing =
+                ExistingTranslations.FirstOrDefault(t => t.LanguageCode == SelectedLanguage.Code);
+
+            if(existing != null)
+                DescriptionMarkdown = existing.Markdown ?? string.Empty;
 
             IsEditingDescription = true;
         }
@@ -403,23 +450,43 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         }
     }
 
+    partial void OnSelectedLanguageChanged(LanguageItem? value)
+    {
+        if(value == null || ExistingTranslations.Count == 0)
+        {
+            DescriptionMarkdown = string.Empty;
+
+            return;
+        }
+
+        CompanyDescriptionDto? existing = ExistingTranslations.FirstOrDefault(t => t.LanguageCode == value.Code);
+        DescriptionMarkdown = existing?.Markdown ?? string.Empty;
+    }
+
     private async Task SaveDescriptionAsync()
     {
-        if(DescriptionCompanyId == null) return;
+        if(DescriptionCompanyId == null || SelectedLanguage == null) return;
 
         try
         {
             var dto = new CompanyDescriptionDto
             {
-                CompanyId = DescriptionCompanyId.Value,
-                Markdown  = DescriptionMarkdown
+                CompanyId    = DescriptionCompanyId.Value,
+                Markdown     = DescriptionMarkdown,
+                LanguageCode = SelectedLanguage.Code
             };
 
             await _apiClient.Companies[DescriptionCompanyId.Value].Description.PostAsync(dto);
 
-            IsEditingDescription = false;
-            DescriptionCompanyId = null;
-            DescriptionMarkdown  = string.Empty;
+            // Refresh translations list
+            ExistingTranslations.Clear();
+
+            List<CompanyDescriptionDto>? translations =
+                await _apiClient.Companies[DescriptionCompanyId.Value].Descriptions.GetAsync();
+
+            if(translations != null)
+                foreach(CompanyDescriptionDto t in translations)
+                    ExistingTranslations.Add(t);
         }
         catch(Exception ex)
         {
@@ -429,11 +496,39 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         }
     }
 
+    private void EditTranslation(CompanyDescriptionDto? translation)
+    {
+        if(translation?.LanguageCode == null) return;
+
+        SelectedLanguage    = AvailableLanguages.FirstOrDefault(l => l.Code == translation.LanguageCode);
+        DescriptionMarkdown = translation.Markdown ?? string.Empty;
+    }
+
+    private async Task DeleteTranslationAsync(CompanyDescriptionDto? translation)
+    {
+        if(DescriptionCompanyId == null || translation?.LanguageCode == null) return;
+
+        try
+        {
+            await _apiClient.Companies[DescriptionCompanyId.Value].Description[translation.LanguageCode].DeleteAsync();
+
+            ExistingTranslations.Remove(translation);
+            DescriptionMarkdown = string.Empty;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting translation");
+            ErrorMessage = _localizer["FailedToDeleteTranslation"];
+            HasError     = true;
+        }
+    }
+
     private void CancelDescription()
     {
         IsEditingDescription = false;
         DescriptionCompanyId = null;
         DescriptionMarkdown  = string.Empty;
+        ExistingTranslations.Clear();
     }
 
     // --- Logos navigation ---

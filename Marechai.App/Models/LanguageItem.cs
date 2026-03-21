@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -23,24 +23,16 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+namespace Marechai.App.Models;
 
-namespace Marechai.Database.Models;
-
-public class CompanyDescription : BaseModel<int>
+/// <summary>Represents a language for description localization.</summary>
+public class LanguageItem
 {
-    public int CompanyId { get; set; }
-    [StringLength(3)]
-    [Required]
-    public string LanguageCode { get; set; }
-    [MaxLength(262144, ErrorMessage = "Description is too long")]
-    [Required]
-    public string Text { get; set; }
-    [MaxLength(262144, ErrorMessage = "Description is too long")]
-    [DisplayName("HTML")]
-    public string Html { get; set; }
+    /// <summary>ISO-639-3 language code (e.g., "eng", "spa", "deu").</summary>
+    public required string Code { get; init; }
 
-    public virtual Company   Company  { get; set; }
-    public virtual Iso639    Language { get; set; }
+    /// <summary>Display name (e.g., "English", "Español", "Deutsch").</summary>
+    public required string DisplayName { get; init; }
+
+    public override string ToString() => DisplayName;
 }

@@ -38,4 +38,9 @@ public class CompanyDescriptionDto : BaseDto<int>
     [JsonPropertyName("company_id")]
     [Required]
     public int CompanyId { get; set; }
+    [JsonPropertyName("language_code")]
+    [Required]
+    public required string LanguageCode { get; set; }
+    [JsonPropertyName("language")]
+    public string? Language { get; set; }
 }

@@ -480,7 +480,19 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
         });
 
-        modelBuilder.Entity<CompanyDescription>().HasIndex(e => e.Text).IsFullText();
+        modelBuilder.Entity<CompanyDescription>(entity =>
+        {
+            entity.HasIndex(e => e.Text).IsFullText();
+
+            entity.HasIndex(e => new { e.CompanyId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_company_descriptions_company_language");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_company_descriptions_language");
+        });
 
         modelBuilder.Entity<CompanyLogo>(entity =>
         {

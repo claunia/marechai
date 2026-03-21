@@ -327,12 +327,14 @@
                         <!-- Description Panel -->
                         <Border Grid.Column="1"
                                 Visibility="{Binding IsEditingDescription, Converter={StaticResource BoolToVisibilityConverter}}"
-                                Width="420"
+                                Width="500"
                                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                                 BorderThickness="1,0,0,0">
                             <Grid RowSpacing="0">
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
@@ -348,8 +350,63 @@
                                                FontWeight="SemiBold" />
                                 </Grid>
 
+                                <!-- Language selector -->
+                                <StackPanel Grid.Row="1"
+                                            Padding="16,8"
+                                            Spacing="4"
+                                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                            BorderThickness="0,0,0,1">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LanguageLabel}"
+                                               FontWeight="SemiBold" />
+                                    <ComboBox ItemsSource="{Binding AvailableLanguages}"
+                                              SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                                              HorizontalAlignment="Stretch"
+                                              DisplayMemberPath="DisplayName" />
+                                </StackPanel>
+
+                                <!-- Existing translations list -->
+                                <StackPanel Grid.Row="2"
+                                            Padding="16,8"
+                                            Spacing="4"
+                                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                            BorderThickness="0,0,0,1">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ExistingTranslationsLabel}"
+                                               FontWeight="SemiBold" />
+                                    <ItemsRepeater ItemsSource="{Binding ExistingTranslations}">
+                                        <ItemsRepeater.Layout>
+                                            <StackLayout Spacing="4" />
+                                        </ItemsRepeater.Layout>
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid ColumnSpacing="8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{Binding Language}"
+                                                               VerticalAlignment="Center" />
+                                                    <Button Grid.Column="1"
+                                                            Content="✏️"
+                                                            Command="{Binding DataContext.EditTranslationCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="4,2"
+                                                            Style="{ThemeResource TextBlockButtonStyle}" />
+                                                    <Button Grid.Column="2"
+                                                            Content="🗑️"
+                                                            Command="{Binding DataContext.DeleteTranslationCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="4,2"
+                                                            Style="{ThemeResource TextBlockButtonStyle}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
+                                </StackPanel>
+
                                 <!-- Description editor -->
-                                <TextBox Grid.Row="1"
+                                <TextBox Grid.Row="3"
                                          Margin="16"
                                          Text="{Binding DescriptionMarkdown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          AcceptsReturn="True"
@@ -359,7 +416,7 @@
                                          ScrollViewer.VerticalScrollBarVisibility="Auto" />
 
                                 <!-- Description footer -->
-                                <Grid Grid.Row="2"
+                                <Grid Grid.Row="4"
                                       Padding="16,12"
                                       BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                                       BorderThickness="0,1,0,0"

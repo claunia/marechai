@@ -179,6 +179,9 @@ public class LocalizedStrings
     public string AddCompanyDialog_Title => _l["AddCompanyDialog_Title"];
     public string EditCompanyDialog_Title => _l["EditCompanyDialog_Title"];
     public string DescriptionDialogTitle => _l["DescriptionDialogTitle"];
+    public string LanguageLabel => _l["LanguageLabel"];
+    public string ExistingTranslationsLabel => _l["ExistingTranslationsLabel"];
+    public string DescriptionSectionTitle => _l["DescriptionSectionTitle"];
     public string CompanyNameLabel => _l["CompanyNameLabel"];
     public string CompanyLegalNameLabel => _l["CompanyLegalNameLabel"];
     public string CompanyStatusLabel => _l["CompanyStatusLabel"];

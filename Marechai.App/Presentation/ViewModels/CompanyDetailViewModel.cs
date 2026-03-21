@@ -75,6 +75,9 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private CompanyDto? _soldToCompany;
 
+    [ObservableProperty]
+    private string _descriptionHtml = string.Empty;
+
     public CompanyDetailViewModel(CompanyDetailService            companyDetailService, FlagCache          flagCache,
                                   CompanyLogoCache                logoCache,            IStringLocalizer   localizer,
                                   ILogger<CompanyDetailViewModel> logger,               IRegionManager     regionManager,
@@ -114,6 +117,11 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     public bool HasLogoContent => LogoImageSource != null;
 
     /// <summary>
+    ///     Gets whether a description is available
+    /// </summary>
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+
+    /// <summary>
     ///     Gets whether company has multiple logos
     /// </summary>
     public bool HasMultipleLogos => CompanyLogos.Count > 1;
@@ -140,6 +148,11 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     {
         // Notify that HasLogoContent has changed
         OnPropertyChanged(nameof(HasLogoContent));
+    }
+
+    partial void OnDescriptionHtmlChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasDescription));
     }
 
     partial void OnCompanyLogosChanged(ObservableCollection<CompanyLogoItem>? oldValue,
@@ -495,6 +508,19 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
             FilteredComputers = new ObservableCollection<CompanyDetailMachine>(Computers);
             FilteredConsoles  = new ObservableCollection<CompanyDetailMachine>(Consoles);
 
+            // Load localized description
+            try
+            {
+                string langCode = GetIso639CodeFromCulture();
+                CompanyDescriptionDto? desc = await _companyDetailService.GetDescriptionAsync(CompanyId, langCode);
+
+                DescriptionHtml = desc?.Html ?? desc?.Markdown ?? string.Empty;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load company description: {Exception}", ex.Message);
+            }
+
             IsDataLoaded = true;
         }
         catch(Exception ex)
@@ -530,5 +556,21 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
             CompanyId = companyId;
             _ = LoadData.ExecuteAsync(null);
         }
+    }
+
+    private static string GetIso639CodeFromCulture()
+    {
+        string twoLetter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+        return twoLetter switch
+        {
+            "en" => "eng",
+            "es" => "spa",
+            "de" => "deu",
+            "fr" => "fra",
+            "la" => "lat",
+            "pt" => "por",
+            _    => "eng"
+        };
     }
 }

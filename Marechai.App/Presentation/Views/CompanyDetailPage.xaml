@@ -348,6 +348,18 @@
                         </ScrollViewer>
                     </StackPanel>
 
+                    <!-- Description Section -->
+                    <StackPanel Visibility="{Binding HasDescription, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Spacing="8"
+                                Margin="0,16,0,0">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DescriptionSectionTitle}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding DescriptionHtml}"
+                                   TextWrapping="Wrap"
+                                   IsTextSelectionEnabled="True" />
+                    </StackPanel>
+
                 </StackPanel>
 
             </StackPanel>

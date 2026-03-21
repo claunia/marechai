@@ -1539,4 +1539,8 @@
   <data name="FailedToDeletePerson" xml:space="preserve"><value>Personam delere non potuit.</value></data>
   <data name="FailedToSavePerson" xml:space="preserve"><value>Personam servare non potuit.</value></data>
   <data name="PersonNameRequired" xml:space="preserve"><value>Nomen necessarium est.</value></data>
+  <data name="LanguageLabel" xml:space="preserve"><value>Lingua</value></data>
+  <data name="ExistingTranslationsLabel" xml:space="preserve"><value>Translationes exsistentes</value></data>
+  <data name="FailedToDeleteTranslation" xml:space="preserve"><value>Translationem delere non potuit.</value></data>
+  <data name="DescriptionSectionTitle" xml:space="preserve"><value>Descriptio</value></data>
 </root>

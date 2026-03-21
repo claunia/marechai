@@ -26,6 +26,22 @@ namespace Marechai.App.Models
 #endif
         /// <summary>The id property</summary>
         public int? Id { get; set; }
+        /// <summary>The language property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Language { get; set; }
+#nullable restore
+#else
+        public string Language { get; set; }
+#endif
+        /// <summary>The language_code property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? LanguageCode { get; set; }
+#nullable restore
+#else
+        public string LanguageCode { get; set; }
+#endif
         /// <summary>The markdown property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -62,6 +78,8 @@ namespace Marechai.App.Models
                 { "company_id", n => { CompanyId = n.GetIntValue(); } },
                 { "html", n => { Html = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
+                { "language", n => { Language = n.GetStringValue(); } },
+                { "language_code", n => { LanguageCode = n.GetStringValue(); } },
                 { "markdown", n => { Markdown = n.GetStringValue(); } },
             };
         }
@@ -75,6 +93,8 @@ namespace Marechai.App.Models
             writer.WriteIntValue("company_id", CompanyId);
             writer.WriteStringValue("html", Html);
             writer.WriteIntValue("id", Id);
+            writer.WriteStringValue("language", Language);
+            writer.WriteStringValue("language_code", LanguageCode);
             writer.WriteStringValue("markdown", Markdown);
             writer.WriteAdditionalData(AdditionalData);
         }

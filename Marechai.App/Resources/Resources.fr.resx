@@ -1643,4 +1643,8 @@
   <data name="FailedToDeletePerson" xml:space="preserve"><value>Échec de la suppression de la personne.</value></data>
   <data name="FailedToSavePerson" xml:space="preserve"><value>Échec de l'enregistrement de la personne.</value></data>
   <data name="PersonNameRequired" xml:space="preserve"><value>Le nom est obligatoire.</value></data>
+  <data name="LanguageLabel" xml:space="preserve"><value>Langue</value></data>
+  <data name="ExistingTranslationsLabel" xml:space="preserve"><value>Traductions existantes</value></data>
+  <data name="FailedToDeleteTranslation" xml:space="preserve"><value>Échec de la suppression de la traduction.</value></data>
+  <data name="DescriptionSectionTitle" xml:space="preserve"><value>Description</value></data>
 </root>

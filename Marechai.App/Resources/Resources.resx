@@ -1883,4 +1883,8 @@
   <data name="FailedToDeletePerson" xml:space="preserve"><value>Failed to delete person.</value></data>
   <data name="FailedToSavePerson" xml:space="preserve"><value>Failed to save person.</value></data>
   <data name="PersonNameRequired" xml:space="preserve"><value>Name is required.</value></data>
+  <data name="LanguageLabel" xml:space="preserve"><value>Language</value></data>
+  <data name="ExistingTranslationsLabel" xml:space="preserve"><value>Existing translations</value></data>
+  <data name="FailedToDeleteTranslation" xml:space="preserve"><value>Failed to delete translation.</value></data>
+  <data name="DescriptionSectionTitle" xml:space="preserve"><value>Description</value></data>
 </root>
