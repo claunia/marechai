@@ -524,4 +524,30 @@ public class LocalizedStrings
     public string DocumentMachinesSectionHeader => _l["DocumentMachinesSectionHeader"];
     public string DocumentMachineFamiliesSectionHeader => _l["DocumentMachineFamiliesSectionHeader"];
     public string DocumentManagementButton => _l["DocumentManagementButton"];
+
+    // Magazine management
+    public string MagazineManagementTitle => _l["MagazineManagementTitle"];
+    public string MagazineManagementSubtitle => _l["MagazineManagementSubtitle"];
+    public string MagazineMgmtAccessDeniedTitle => _l["MagazineMgmtAccessDeniedTitle"];
+    public string MagazineMgmtAccessDeniedMessage => _l["MagazineMgmtAccessDeniedMessage"];
+    public string AddMagazineButton => _l["AddMagazineButton"];
+    public string RefreshMagazinesButton => _l["RefreshMagazinesButton"];
+    public string MagazinesSearchPlaceholder => _l["MagazinesSearchPlaceholder"];
+    public string MagazineTitleColumn => _l["MagazineTitleColumn"];
+    public string MagazineNativeTitleColumn => _l["MagazineNativeTitleColumn"];
+    public string MagazineIssnColumn => _l["MagazineIssnColumn"];
+    public string MagazineCountryColumn => _l["MagazineCountryColumn"];
+    public string EditMagazineButton => _l["EditMagazineButton"];
+    public string DeleteMagazineButton => _l["DeleteMagazineButton"];
+    public string MagazineTitleLabel => _l["MagazineTitleLabel"];
+    public string MagazineNativeTitleLabel => _l["MagazineNativeTitleLabel"];
+    public string MagazineIssnLabel => _l["MagazineIssnLabel"];
+    public string MagazinePublishedLabel => _l["MagazinePublishedLabel"];
+    public string MagazineFirstPublicationLabel => _l["MagazineFirstPublicationLabel"];
+    public string MagazineCountryLabel => _l["MagazineCountryLabel"];
+    public string MagazinePeopleSectionHeader => _l["MagazinePeopleSectionHeader"];
+    public string MagazineCompaniesSectionHeader => _l["MagazineCompaniesSectionHeader"];
+    public string MagazineMachinesSectionHeader => _l["MagazineMachinesSectionHeader"];
+    public string MagazineMachineFamiliesSectionHeader => _l["MagazineMachineFamiliesSectionHeader"];
+    public string MagazineManagementButton => _l["MagazineManagementButton"];
 }

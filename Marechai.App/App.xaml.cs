@@ -169,6 +169,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<PeopleService>();
         containerRegistry.RegisterSingleton<BooksService>();
         containerRegistry.RegisterSingleton<DocumentsService>();
+        containerRegistry.RegisterSingleton<MagazinesService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
 
@@ -208,6 +209,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminPeopleViewModel>();
         containerRegistry.Register<AdminBooksViewModel>();
         containerRegistry.Register<AdminDocumentsViewModel>();
+        containerRegistry.Register<AdminMagazinesViewModel>();
 
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
@@ -244,6 +246,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminPeoplePage, AdminPeopleViewModel>();
         containerRegistry.RegisterForNavigation<AdminBooksPage, AdminBooksViewModel>();
         containerRegistry.RegisterForNavigation<AdminDocumentsPage, AdminDocumentsViewModel>();
+        containerRegistry.RegisterForNavigation<AdminMagazinesPage, AdminMagazinesViewModel>();
     }
 
     protected override async void OnInitialized()

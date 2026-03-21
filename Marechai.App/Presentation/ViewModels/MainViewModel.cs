@@ -58,6 +58,7 @@ public partial class MainViewModel : ObservableObject
     public string PeopleManagementButtonText       => _localizer["PeopleManagementButton"];
     public string BookManagementButtonText          => _localizer["BookManagementButton"];
     public string DocumentManagementButtonText      => _localizer["DocumentManagementButton"];
+    public string MagazineManagementButtonText      => _localizer["MagazineManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
     public string AdminSidebarTitleText          => _localizer["AdminSidebarTitle"];
     public string AdminSwitchButtonText          => _localizer["AdminSwitchButton"];
@@ -111,6 +112,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminPeopleCommand                        = new RelayCommand(() => NavigateTo(nameof(AdminPeoplePage)));
         NavigateToAdminBooksCommand                         = new RelayCommand(() => NavigateTo(nameof(AdminBooksPage)));
         NavigateToAdminDocumentsCommand                     = new RelayCommand(() => NavigateTo(nameof(AdminDocumentsPage)));
+        NavigateToAdminMagazinesCommand                     = new RelayCommand(() => NavigateTo(nameof(AdminMagazinesPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
         LoginLogoutCommand                        = new RelayCommand(HandleLoginLogout);
         ToggleSidebarCommand                      = new RelayCommand(() => IsSidebarOpen = !IsSidebarOpen);
@@ -156,6 +158,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminPeopleCommand              { get; }
     public ICommand NavigateToAdminBooksCommand               { get; }
     public ICommand NavigateToAdminDocumentsCommand           { get; }
+    public ICommand NavigateToAdminMagazinesCommand           { get; }
     public ICommand NavigateToSettingsCommand                 { get; }
     public ICommand LoginLogoutCommand                        { get; }
     public ICommand ToggleSidebarCommand                      { get; }

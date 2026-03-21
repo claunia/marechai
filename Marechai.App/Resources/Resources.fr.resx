@@ -1717,4 +1717,34 @@
   <data name="FailedToSaveDocument" xml:space="preserve"><value>Échec de l'enregistrement du document.</value></data>
   <data name="FailedToDeleteDocument" xml:space="preserve"><value>Échec de la suppression du document.</value></data>
   <data name="DocumentTitleRequired" xml:space="preserve"><value>Le titre est obligatoire.</value></data>
+  <data name="MagazineManagementTitle" xml:space="preserve"><value>Gestion des magazines</value></data>
+  <data name="MagazineManagementSubtitle" xml:space="preserve"><value>Gérer les magazines</value></data>
+  <data name="MagazineMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="MagazineMgmtAccessDeniedMessage" xml:space="preserve"><value>Vous avez besoin d'un accès administrateur pour gérer les magazines.</value></data>
+  <data name="AddMagazineButton" xml:space="preserve"><value>Ajouter un magazine</value></data>
+  <data name="RefreshMagazinesButton" xml:space="preserve"><value>Actualiser</value></data>
+  <data name="MagazinesSearchPlaceholder" xml:space="preserve"><value>Rechercher des magazines...</value></data>
+  <data name="MagazineTitleColumn" xml:space="preserve"><value>Titre</value></data>
+  <data name="MagazineNativeTitleColumn" xml:space="preserve"><value>Titre original</value></data>
+  <data name="MagazineIssnColumn" xml:space="preserve"><value>ISSN</value></data>
+  <data name="MagazineCountryColumn" xml:space="preserve"><value>Pays</value></data>
+  <data name="EditMagazineButton" xml:space="preserve"><value>Modifier</value></data>
+  <data name="DeleteMagazineButton" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="MagazineTitleLabel" xml:space="preserve"><value>Titre</value></data>
+  <data name="MagazineNativeTitleLabel" xml:space="preserve"><value>Titre original</value></data>
+  <data name="MagazineIssnLabel" xml:space="preserve"><value>ISSN</value></data>
+  <data name="MagazinePublishedLabel" xml:space="preserve"><value>Publié</value></data>
+  <data name="MagazineFirstPublicationLabel" xml:space="preserve"><value>Première publication</value></data>
+  <data name="MagazineCountryLabel" xml:space="preserve"><value>Pays</value></data>
+  <data name="MagazinePeopleSectionHeader" xml:space="preserve"><value>Personnes</value></data>
+  <data name="MagazineCompaniesSectionHeader" xml:space="preserve"><value>Entreprises</value></data>
+  <data name="MagazineMachinesSectionHeader" xml:space="preserve"><value>Machines</value></data>
+  <data name="MagazineMachineFamiliesSectionHeader" xml:space="preserve"><value>Familles de machines</value></data>
+  <data name="MagazineManagementButton" xml:space="preserve"><value>Gestion des magazines</value></data>
+  <data name="AddMagazineDialog_Title" xml:space="preserve"><value>Ajouter un magazine</value></data>
+  <data name="EditMagazineDialog_Title" xml:space="preserve"><value>Modifier le magazine</value></data>
+  <data name="FailedToLoadMagazines" xml:space="preserve"><value>Échec du chargement des magazines.</value></data>
+  <data name="FailedToSaveMagazine" xml:space="preserve"><value>Échec de l'enregistrement du magazine.</value></data>
+  <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Échec de la suppression du magazine.</value></data>
+  <data name="MagazineTitleRequired" xml:space="preserve"><value>Le titre est obligatoire.</value></data>
 </root>

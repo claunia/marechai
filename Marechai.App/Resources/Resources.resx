@@ -1957,4 +1957,34 @@
   <data name="FailedToSaveDocument" xml:space="preserve"><value>Failed to save document.</value></data>
   <data name="FailedToDeleteDocument" xml:space="preserve"><value>Failed to delete document.</value></data>
   <data name="DocumentTitleRequired" xml:space="preserve"><value>Title is required.</value></data>
+  <data name="MagazineManagementTitle" xml:space="preserve"><value>Magazine Management</value></data>
+  <data name="MagazineManagementSubtitle" xml:space="preserve"><value>Manage magazines</value></data>
+  <data name="MagazineMgmtAccessDeniedTitle" xml:space="preserve"><value>Access Denied</value></data>
+  <data name="MagazineMgmtAccessDeniedMessage" xml:space="preserve"><value>You need administrator access to manage magazines.</value></data>
+  <data name="AddMagazineButton" xml:space="preserve"><value>Add Magazine</value></data>
+  <data name="RefreshMagazinesButton" xml:space="preserve"><value>Refresh</value></data>
+  <data name="MagazinesSearchPlaceholder" xml:space="preserve"><value>Search magazines...</value></data>
+  <data name="MagazineTitleColumn" xml:space="preserve"><value>Title</value></data>
+  <data name="MagazineNativeTitleColumn" xml:space="preserve"><value>Native Title</value></data>
+  <data name="MagazineIssnColumn" xml:space="preserve"><value>ISSN</value></data>
+  <data name="MagazineCountryColumn" xml:space="preserve"><value>Country</value></data>
+  <data name="EditMagazineButton" xml:space="preserve"><value>Edit</value></data>
+  <data name="DeleteMagazineButton" xml:space="preserve"><value>Delete</value></data>
+  <data name="MagazineTitleLabel" xml:space="preserve"><value>Title</value></data>
+  <data name="MagazineNativeTitleLabel" xml:space="preserve"><value>Native Title</value></data>
+  <data name="MagazineIssnLabel" xml:space="preserve"><value>ISSN</value></data>
+  <data name="MagazinePublishedLabel" xml:space="preserve"><value>Published</value></data>
+  <data name="MagazineFirstPublicationLabel" xml:space="preserve"><value>First Publication</value></data>
+  <data name="MagazineCountryLabel" xml:space="preserve"><value>Country</value></data>
+  <data name="MagazinePeopleSectionHeader" xml:space="preserve"><value>People</value></data>
+  <data name="MagazineCompaniesSectionHeader" xml:space="preserve"><value>Companies</value></data>
+  <data name="MagazineMachinesSectionHeader" xml:space="preserve"><value>Machines</value></data>
+  <data name="MagazineMachineFamiliesSectionHeader" xml:space="preserve"><value>Machine Families</value></data>
+  <data name="MagazineManagementButton" xml:space="preserve"><value>Magazine Management</value></data>
+  <data name="AddMagazineDialog_Title" xml:space="preserve"><value>Add Magazine</value></data>
+  <data name="EditMagazineDialog_Title" xml:space="preserve"><value>Edit Magazine</value></data>
+  <data name="FailedToLoadMagazines" xml:space="preserve"><value>Failed to load magazines.</value></data>
+  <data name="FailedToSaveMagazine" xml:space="preserve"><value>Failed to save magazine.</value></data>
+  <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Failed to delete magazine.</value></data>
+  <data name="MagazineTitleRequired" xml:space="preserve"><value>Title is required.</value></data>
 </root>

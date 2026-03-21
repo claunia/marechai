@@ -1613,4 +1613,34 @@
   <data name="FailedToSaveDocument" xml:space="preserve"><value>Falha ao salvar documento.</value></data>
   <data name="FailedToDeleteDocument" xml:space="preserve"><value>Falha ao excluir documento.</value></data>
   <data name="DocumentTitleRequired" xml:space="preserve"><value>O título é obrigatório.</value></data>
+  <data name="MagazineManagementTitle" xml:space="preserve"><value>Gerenciamento de revistas</value></data>
+  <data name="MagazineManagementSubtitle" xml:space="preserve"><value>Gerenciar revistas</value></data>
+  <data name="MagazineMgmtAccessDeniedTitle" xml:space="preserve"><value>Acesso negado</value></data>
+  <data name="MagazineMgmtAccessDeniedMessage" xml:space="preserve"><value>Você precisa de acesso de administrador para gerenciar revistas.</value></data>
+  <data name="AddMagazineButton" xml:space="preserve"><value>Adicionar revista</value></data>
+  <data name="RefreshMagazinesButton" xml:space="preserve"><value>Atualizar</value></data>
+  <data name="MagazinesSearchPlaceholder" xml:space="preserve"><value>Pesquisar revistas...</value></data>
+  <data name="MagazineTitleColumn" xml:space="preserve"><value>Título</value></data>
+  <data name="MagazineNativeTitleColumn" xml:space="preserve"><value>Título original</value></data>
+  <data name="MagazineIssnColumn" xml:space="preserve"><value>ISSN</value></data>
+  <data name="MagazineCountryColumn" xml:space="preserve"><value>País</value></data>
+  <data name="EditMagazineButton" xml:space="preserve"><value>Editar</value></data>
+  <data name="DeleteMagazineButton" xml:space="preserve"><value>Excluir</value></data>
+  <data name="MagazineTitleLabel" xml:space="preserve"><value>Título</value></data>
+  <data name="MagazineNativeTitleLabel" xml:space="preserve"><value>Título original</value></data>
+  <data name="MagazineIssnLabel" xml:space="preserve"><value>ISSN</value></data>
+  <data name="MagazinePublishedLabel" xml:space="preserve"><value>Publicado</value></data>
+  <data name="MagazineFirstPublicationLabel" xml:space="preserve"><value>Primeira publicação</value></data>
+  <data name="MagazineCountryLabel" xml:space="preserve"><value>País</value></data>
+  <data name="MagazinePeopleSectionHeader" xml:space="preserve"><value>Pessoas</value></data>
+  <data name="MagazineCompaniesSectionHeader" xml:space="preserve"><value>Empresas</value></data>
+  <data name="MagazineMachinesSectionHeader" xml:space="preserve"><value>Máquinas</value></data>
+  <data name="MagazineMachineFamiliesSectionHeader" xml:space="preserve"><value>Famílias de máquinas</value></data>
+  <data name="MagazineManagementButton" xml:space="preserve"><value>Gerenciamento de revistas</value></data>
+  <data name="AddMagazineDialog_Title" xml:space="preserve"><value>Adicionar revista</value></data>
+  <data name="EditMagazineDialog_Title" xml:space="preserve"><value>Editar revista</value></data>
+  <data name="FailedToLoadMagazines" xml:space="preserve"><value>Falha ao carregar revistas.</value></data>
+  <data name="FailedToSaveMagazine" xml:space="preserve"><value>Falha ao salvar revista.</value></data>
+  <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Falha ao excluir revista.</value></data>
+  <data name="MagazineTitleRequired" xml:space="preserve"><value>O título é obrigatório.</value></data>
 </root>
