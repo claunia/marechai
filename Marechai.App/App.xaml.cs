@@ -33,6 +33,7 @@ public partial class App : PrismApplication
 
     public App()
     {
+        InitializeComponent();
     }
 
     protected override UIElement CreateShell() => Container.Resolve<MainPage>();
