@@ -355,9 +355,8 @@
                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DescriptionSectionTitle}"
                                    FontSize="20"
                                    FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding DescriptionHtml}"
-                                   TextWrapping="Wrap"
-                                   IsTextSelectionEnabled="True" />
+                        <WebView2 x:Name="DescriptionWebView"
+                                  MinHeight="200" />
                     </StackPanel>
 
                 </StackPanel>
