@@ -355,8 +355,18 @@ public class BooksService
         {
             _logger.LogInformation("Uploading cover for book {BookId}", bookId);
 
+            string contentType = System.IO.Path.GetExtension(fileName)?.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png"            => "image/png",
+                ".webp"           => "image/webp",
+                ".tiff" or ".tif" => "image/tiff",
+                ".bmp"            => "image/bmp",
+                _                 => "application/octet-stream"
+            };
+
             var body = new MultipartBody();
-            body.AddOrReplacePart("file", "application/octet-stream", new global::System.IO.MemoryStream(fileBytes));
+            body.AddOrReplacePart("file", contentType, new global::System.IO.MemoryStream(fileBytes), fileName);
 
             BookDto? result = await _apiClient.Books[bookId].Cover.Upload.PostAsync(body);
 
