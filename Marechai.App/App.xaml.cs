@@ -46,6 +46,12 @@ public partial class App : PrismApplication
     protected override void ConfigureHost(IHostBuilder builder)
     {
         builder
+           .ConfigureAppConfiguration((context, config) =>
+            {
+                config.SetBasePath(AppContext.BaseDirectory)
+                      .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                      .AddJsonFile("appsettings.development.json", optional: true, reloadOnChange: false);
+            })
            .UseSerilog((context, config) =>
             {
                 config.MinimumLevel.Is(LogEventLevel.Information)
@@ -75,12 +81,16 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton(typeof(ILogger<>), typeof(Logger<>));
 
         // Configuration — build from appsettings files so services can resolve IConfiguration
+        System.Diagnostics.Debug.WriteLine($"[App] AppContext.BaseDirectory={AppContext.BaseDirectory}");
+        System.Diagnostics.Debug.WriteLine($"[App] appsettings.json exists={System.IO.File.Exists(System.IO.Path.Combine(AppContext.BaseDirectory, "appsettings.json"))}");
         var configuration = new ConfigurationBuilder()
-                           .AddJsonStream(typeof(App).Assembly
-                                                     .GetManifestResourceStream("Marechai.App.appsettings.json"))
-                           .AddJsonStream(typeof(App).Assembly
-                                                     .GetManifestResourceStream("Marechai.App.appsettings.development.json"))
+                           .SetBasePath(AppContext.BaseDirectory)
+                           .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                           .AddJsonFile("appsettings.development.json", optional: true, reloadOnChange: false)
                            .Build();
+
+        foreach(var kvp in configuration.AsEnumerable())
+            System.Diagnostics.Debug.WriteLine($"[App] Config: {kvp.Key} = {kvp.Value}");
 
         containerRegistry.RegisterInstance<IConfiguration>(configuration);
 
