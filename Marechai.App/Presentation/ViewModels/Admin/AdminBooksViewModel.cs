@@ -260,7 +260,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             EditPanelTitle = _localizer["EditBookDialog_Title"];
             PopulateForm(full);
             await LoadAllJunctionsAsync(book.Id.Value);
-            await LoadCoverAsync(book);
+            await LoadCoverAsync(full);
             IsEditingExisting  = true;
             IsEditingSynopsis  = false;
             IsEditing          = true;
@@ -500,6 +500,8 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             }
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading people for book"); }
+
+        RefreshAvailablePeople();
     }
 
     private async Task AddPersonAsync()
@@ -559,6 +561,8 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             }
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading companies for book"); }
+
+        RefreshAvailableCompanies();
     }
 
     private async Task AddCompanyAsync()
@@ -724,6 +728,32 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
 
     // ======================== HELPERS ========================
 
+    private void RefreshAvailablePeople()
+    {
+        AvailablePeople.Clear();
+
+        if(_allPeopleList == null) return;
+
+        HashSet<int> assigned = new(BookPeople.Where(p => p.PersonId.HasValue).Select(p => p.PersonId!.Value));
+
+        foreach(PersonDto p in _allPeopleList)
+            if(p.Id.HasValue && !assigned.Contains(p.Id.Value))
+                AvailablePeople.Add(p);
+    }
+
+    private void RefreshAvailableCompanies()
+    {
+        AvailableCompanies.Clear();
+
+        if(_allCompaniesList == null) return;
+
+        HashSet<int> assigned = new(BookCompanies.Where(c => c.CompanyId.HasValue).Select(c => c.CompanyId!.Value));
+
+        foreach(CompanyDto c in _allCompaniesList)
+            if(c.Id.HasValue && !assigned.Contains(c.Id.Value))
+                AvailableCompanies.Add(c);
+    }
+
     private void RefreshAvailableMachines()
     {
         AvailableMachines.Clear();
@@ -849,7 +879,9 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         AvailablePeople.Clear();
         if(_allPeopleList == null) return;
 
-        IEnumerable<PersonDto> source = _allPeopleList;
+        HashSet<int> assigned = new(BookPeople.Where(p => p.PersonId.HasValue).Select(p => p.PersonId!.Value));
+
+        IEnumerable<PersonDto> source = _allPeopleList.Where(p => p.Id.HasValue && !assigned.Contains(p.Id.Value));
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(p =>
                 (p.Name != null && p.Name.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
@@ -865,7 +897,9 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         AvailableCompanies.Clear();
         if(_allCompaniesList == null) return;
 
-        IEnumerable<CompanyDto> source = _allCompaniesList;
+        HashSet<int> assigned = new(BookCompanies.Where(c => c.CompanyId.HasValue).Select(c => c.CompanyId!.Value));
+
+        IEnumerable<CompanyDto> source = _allCompaniesList.Where(c => c.Id.HasValue && !assigned.Contains(c.Id.Value));
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(c => c.Name != null && c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
@@ -891,6 +925,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         BookCompanies.Clear();       BookCompanyDisplays.Clear();
         BookMachines.Clear();        BookMachineDisplays.Clear();
         BookMachineFamilies.Clear(); BookMachineFamilyDisplays.Clear();
+        AvailablePeople.Clear();     AvailableCompanies.Clear();
         AvailableMachines.Clear();   AvailableMachineFamilies.Clear();
         SelectedAvailablePerson    = null;
         SelectedAvailableCompany   = null;
