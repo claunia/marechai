@@ -60,6 +60,14 @@ namespace Marechai.App.Models
         public long? PreviousId { get; set; }
         /// <summary>The published property</summary>
         public DateTimeOffset? Published { get; set; }
+        /// <summary>The sort_title property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? SortTitle { get; set; }
+#nullable restore
+#else
+        public string SortTitle { get; set; }
+#endif
         /// <summary>The source_id property</summary>
         public long? SourceId { get; set; }
         /// <summary>The title property</summary>
@@ -106,6 +114,7 @@ namespace Marechai.App.Models
                 { "pages", n => { Pages = n.GetIntValue(); } },
                 { "previous_id", n => { PreviousId = n.GetLongValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
+                { "sort_title", n => { SortTitle = n.GetStringValue(); } },
                 { "source_id", n => { SourceId = n.GetLongValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
             };
@@ -128,6 +137,7 @@ namespace Marechai.App.Models
             writer.WriteIntValue("pages", Pages);
             writer.WriteLongValue("previous_id", PreviousId);
             writer.WriteDateTimeOffsetValue("published", Published);
+            writer.WriteStringValue("sort_title", SortTitle);
             writer.WriteLongValue("source_id", SourceId);
             writer.WriteStringValue("title", Title);
             writer.WriteAdditionalData(AdditionalData);

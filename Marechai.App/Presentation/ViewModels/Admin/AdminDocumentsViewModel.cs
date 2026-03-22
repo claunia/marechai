@@ -42,6 +42,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
     // --- Form fields ---
     [ObservableProperty] private string _documentTitle = string.Empty;
     [ObservableProperty] private string _nativeTitle = string.Empty;
+    [ObservableProperty] private string _sortTitle = string.Empty;
     [ObservableProperty] private DateTimeOffset? _published;
     [ObservableProperty] private Iso31661NumericDto? _selectedCountry;
 
@@ -272,6 +273,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
             {
                 Title       = DocumentTitle,
                 NativeTitle = string.IsNullOrWhiteSpace(NativeTitle) ? null : NativeTitle,
+                SortTitle   = string.IsNullOrWhiteSpace(SortTitle) ? null : SortTitle,
                 Published   = Published,
                 CountryId   = SelectedCountry?.Id
             };
@@ -730,7 +732,8 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
         if(!string.IsNullOrWhiteSpace(FilterText))
             source = source.Where(d =>
                 (d.Title != null      && d.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (d.NativeTitle != null && d.NativeTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
+                (d.NativeTitle != null && d.NativeTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
+                (d.SortTitle != null  && d.SortTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
 
         foreach(DocumentDto d in source) FilteredDocuments.Add(d);
     }
@@ -819,6 +822,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
     {
         DocumentTitle    = string.Empty;
         NativeTitle      = string.Empty;
+        SortTitle        = string.Empty;
         Published        = null;
         SelectedCountry  = null;
 
@@ -842,6 +846,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
     {
         DocumentTitle = document.Title      ?? string.Empty;
         NativeTitle   = document.NativeTitle ?? string.Empty;
+        SortTitle     = document.SortTitle   ?? string.Empty;
         Published     = document.Published;
 
         SelectedCountry = document.CountryId.HasValue

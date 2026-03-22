@@ -56,7 +56,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<BookDto>> GetAsync() => context.Books.OrderBy(b => b.NativeTitle)
+    public Task<List<BookDto>> GetAsync() => context.Books.OrderBy(b => b.SortTitle)
                                                     .ThenBy(b => b.Published)
                                                     .ThenBy(b => b.Title)
                                                     .Select(b => new BookDto
@@ -64,6 +64,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                          Id                     = b.Id,
                                                          Title                  = b.Title,
                                                          NativeTitle            = b.NativeTitle,
+                                                         SortTitle              = b.SortTitle,
                                                          Published              = b.Published,
                                                          Isbn                   = b.Isbn,
                                                          CountryId              = b.CountryId,
@@ -87,6 +88,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                           Id                     = b.Id,
                                                           Title                  = b.Title,
                                                           NativeTitle            = b.NativeTitle,
+                                                          SortTitle              = b.SortTitle,
                                                           Published              = b.Published,
                                                           Isbn                   = b.Isbn,
                                                           CountryId              = b.CountryId,
@@ -118,6 +120,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
 
         model.Title       = dto.Title;
         model.NativeTitle = dto.NativeTitle;
+        model.SortTitle   = dto.SortTitle;
         model.Published   = dto.Published;
         model.CountryId   = dto.CountryId;
         model.Isbn        = dto.Isbn;
@@ -145,6 +148,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
         {
             Title       = dto.Title,
             NativeTitle = dto.NativeTitle,
+            SortTitle   = dto.SortTitle,
             Published   = dto.Published,
             CountryId   = dto.CountryId,
             Isbn        = dto.Isbn,

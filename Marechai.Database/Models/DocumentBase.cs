@@ -33,6 +33,7 @@ public abstract class DocumentBase : BaseModel<long>
     [Required]
     public string Title { get;       set; }
     public string NativeTitle { get; set; }
+    public string SortTitle { get;   set; }
     [DisplayFormat(DataFormatString = "{0:d}")]
     [DataType(DataType.Date)]
     public DateTime? Published { get; set; }

@@ -474,6 +474,7 @@ public class LocalizedStrings
     public string BooksSearchPlaceholder => _l["BooksSearchPlaceholder"];
     public string BookTitleColumn => _l["BookTitleColumn"];
     public string BookNativeTitleColumn => _l["BookNativeTitleColumn"];
+    public string BookSortTitleColumn => _l["BookSortTitleColumn"];
     public string BookIsbnColumn => _l["BookIsbnColumn"];
     public string BookPagesColumn => _l["BookPagesColumn"];
     public string BookCountryColumn => _l["BookCountryColumn"];
@@ -482,6 +483,7 @@ public class LocalizedStrings
     public string SynopsisButton => _l["SynopsisButton"];
     public string BookTitleLabel => _l["BookTitleLabel"];
     public string BookNativeTitleLabel => _l["BookNativeTitleLabel"];
+    public string BookSortTitleLabel => _l["BookSortTitleLabel"];
     public string BookIsbnLabel => _l["BookIsbnLabel"];
     public string BookPagesLabel => _l["BookPagesLabel"];
     public string BookEditionLabel => _l["BookEditionLabel"];
@@ -512,11 +514,13 @@ public class LocalizedStrings
     public string DocumentsSearchPlaceholder => _l["DocumentsSearchPlaceholder"];
     public string DocumentTitleColumn => _l["DocumentTitleColumn"];
     public string DocumentNativeTitleColumn => _l["DocumentNativeTitleColumn"];
+    public string DocumentSortTitleColumn => _l["DocumentSortTitleColumn"];
     public string DocumentCountryColumn => _l["DocumentCountryColumn"];
     public string EditDocumentButton => _l["EditDocumentButton"];
     public string DeleteDocumentButton => _l["DeleteDocumentButton"];
     public string DocumentTitleLabel => _l["DocumentTitleLabel"];
     public string DocumentNativeTitleLabel => _l["DocumentNativeTitleLabel"];
+    public string DocumentSortTitleLabel => _l["DocumentSortTitleLabel"];
     public string DocumentPublishedLabel => _l["DocumentPublishedLabel"];
     public string DocumentCountryLabel => _l["DocumentCountryLabel"];
     public string DocumentPeopleSectionHeader => _l["DocumentPeopleSectionHeader"];
@@ -535,12 +539,14 @@ public class LocalizedStrings
     public string MagazinesSearchPlaceholder => _l["MagazinesSearchPlaceholder"];
     public string MagazineTitleColumn => _l["MagazineTitleColumn"];
     public string MagazineNativeTitleColumn => _l["MagazineNativeTitleColumn"];
+    public string MagazineSortTitleColumn => _l["MagazineSortTitleColumn"];
     public string MagazineIssnColumn => _l["MagazineIssnColumn"];
     public string MagazineCountryColumn => _l["MagazineCountryColumn"];
     public string EditMagazineButton => _l["EditMagazineButton"];
     public string DeleteMagazineButton => _l["DeleteMagazineButton"];
     public string MagazineTitleLabel => _l["MagazineTitleLabel"];
     public string MagazineNativeTitleLabel => _l["MagazineNativeTitleLabel"];
+    public string MagazineSortTitleLabel => _l["MagazineSortTitleLabel"];
     public string MagazineIssnLabel => _l["MagazineIssnLabel"];
     public string MagazinePublishedLabel => _l["MagazinePublishedLabel"];
     public string MagazineFirstPublicationLabel => _l["MagazineFirstPublicationLabel"];

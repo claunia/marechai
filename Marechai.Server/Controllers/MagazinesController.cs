@@ -44,7 +44,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<MagazineDto>> GetAsync() => context.Magazines.OrderBy(b => b.NativeTitle)
+    public Task<List<MagazineDto>> GetAsync() => context.Magazines.OrderBy(b => b.SortTitle)
                                                         .ThenBy(b => b.FirstPublication)
                                                         .ThenBy(b => b.Title)
                                                         .Select(b => new MagazineDto
@@ -52,6 +52,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                              Id               = b.Id,
                                                              Title            = b.Title,
                                                              NativeTitle      = b.NativeTitle,
+                                                             SortTitle        = b.SortTitle,
                                                              FirstPublication = b.FirstPublication,
                                                              Issn             = b.Issn,
                                                              CountryId        = b.CountryId,
@@ -82,6 +83,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
                                                               Id               = b.Id,
                                                               Title            = b.Title,
                                                               NativeTitle      = b.NativeTitle,
+                                                              SortTitle        = b.SortTitle,
                                                               FirstPublication = b.FirstPublication,
                                                               Issn             = b.Issn,
                                                               CountryId        = b.CountryId,
@@ -106,6 +108,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
 
         model.Title            = dto.Title;
         model.NativeTitle      = dto.NativeTitle;
+        model.SortTitle        = dto.SortTitle;
         model.FirstPublication = dto.FirstPublication;
         model.CountryId        = dto.CountryId;
         model.Issn             = dto.Issn;
@@ -129,6 +132,7 @@ public class MagazinesController(MarechaiContext context) : ControllerBase
         {
             Title            = dto.Title,
             NativeTitle      = dto.NativeTitle,
+            SortTitle        = dto.SortTitle,
             FirstPublication = dto.FirstPublication,
             CountryId        = dto.CountryId,
             Issn             = dto.Issn

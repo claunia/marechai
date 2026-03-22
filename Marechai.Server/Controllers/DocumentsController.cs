@@ -44,7 +44,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<List<DocumentDto>> GetAsync() => context.Documents.OrderBy(b => b.NativeTitle)
+    public Task<List<DocumentDto>> GetAsync() => context.Documents.OrderBy(b => b.SortTitle)
                                                         .ThenBy(b => b.Published)
                                                         .ThenBy(b => b.Title)
                                                         .Select(b => new DocumentDto
@@ -52,6 +52,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                                                              Id          = b.Id,
                                                              Title       = b.Title,
                                                              NativeTitle = b.NativeTitle,
+                                                             SortTitle   = b.SortTitle,
                                                              Published   = b.Published,
                                                              CountryId   = b.CountryId,
                                                              Country     = b.Country.Name
@@ -68,6 +69,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                                                               Id          = b.Id,
                                                               Title       = b.Title,
                                                               NativeTitle = b.NativeTitle,
+                                                              SortTitle   = b.SortTitle,
                                                               Published   = b.Published,
                                                               CountryId   = b.CountryId,
                                                               Country     = b.Country.Name
@@ -91,6 +93,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
 
         model.Title       = dto.Title;
         model.NativeTitle = dto.NativeTitle;
+        model.SortTitle   = dto.SortTitle;
         model.Published   = dto.Published;
         model.CountryId   = dto.CountryId;
         await context.SaveChangesWithUserAsync(userId);
@@ -113,6 +116,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
         {
             Title       = dto.Title,
             NativeTitle = dto.NativeTitle,
+            SortTitle   = dto.SortTitle,
             Published   = dto.Published,
             CountryId   = dto.CountryId
         };

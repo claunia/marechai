@@ -48,6 +48,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     // --- Form fields ---
     [ObservableProperty] private string _bookTitle = string.Empty;
     [ObservableProperty] private string _nativeTitle = string.Empty;
+    [ObservableProperty] private string _sortTitle = string.Empty;
     [ObservableProperty] private DateTimeOffset? _published;
     [ObservableProperty] private Iso31661NumericDto? _selectedCountry;
     [ObservableProperty] private string _isbn = string.Empty;
@@ -307,6 +308,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             {
                 Title      = BookTitle,
                 NativeTitle = string.IsNullOrWhiteSpace(NativeTitle) ? null : NativeTitle,
+                SortTitle  = string.IsNullOrWhiteSpace(SortTitle) ? null : SortTitle,
                 Published  = Published,
                 CountryId  = SelectedCountry?.Id,
                 Isbn       = string.IsNullOrWhiteSpace(Isbn) ? null : Isbn,
@@ -790,6 +792,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
             source = source.Where(b =>
                 (b.Title != null      && b.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (b.NativeTitle != null && b.NativeTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
+                (b.SortTitle != null  && b.SortTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (b.Isbn != null       && b.Isbn.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
 
         foreach(BookDto b in source) FilteredBooks.Add(b);
@@ -911,6 +914,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     {
         BookTitle        = string.Empty;
         NativeTitle      = string.Empty;
+        SortTitle        = string.Empty;
         Published        = null;
         SelectedCountry  = null;
         Isbn             = string.Empty;
@@ -946,6 +950,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     {
         BookTitle   = book.Title      ?? string.Empty;
         NativeTitle = book.NativeTitle ?? string.Empty;
+        SortTitle   = book.SortTitle   ?? string.Empty;
         Published   = book.Published;
         Isbn        = book.Isbn       ?? string.Empty;
         Pages       = book.Pages;

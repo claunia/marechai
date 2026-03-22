@@ -35,6 +35,8 @@ public abstract class DocumentBaseDto : BaseDto<long>
     public required string Title { get; set; }
     [JsonPropertyName("native_title")]
     public string? NativeTitle { get; set; }
+    [JsonPropertyName("sort_title")]
+    public string? SortTitle { get; set; }
     [JsonPropertyName("published")]
     public DateTime? Published { get; set; }
     [JsonPropertyName("country_id")]

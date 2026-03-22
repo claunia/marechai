@@ -155,6 +155,10 @@
                                         Binding="{Binding NativeTitle}"
                                         Width="*" />
                                     <controls:DataGridTextColumn
+                                        Header="{Binding Source={StaticResource Strings}, Path=BookSortTitleColumn}"
+                                        Binding="{Binding SortTitle}"
+                                        Width="*" />
+                                    <controls:DataGridTextColumn
                                         Header="{Binding Source={StaticResource Strings}, Path=BookIsbnColumn}"
                                         Binding="{Binding Isbn}"
                                         Width="*" />
@@ -235,6 +239,10 @@
                                         <!-- Native Title -->
                                         <TextBox Header="{Binding Source={StaticResource Strings}, Path=BookNativeTitleLabel}"
                                                  Text="{Binding NativeTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <!-- Sort Title -->
+                                        <TextBox Header="{Binding Source={StaticResource Strings}, Path=BookSortTitleLabel}"
+                                                 Text="{Binding SortTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                         <!-- ISBN -->
                                         <TextBox Header="{Binding Source={StaticResource Strings}, Path=BookIsbnLabel}"

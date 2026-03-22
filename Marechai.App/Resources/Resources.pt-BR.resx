@@ -1552,6 +1552,7 @@
   <data name="BooksSearchPlaceholder" xml:space="preserve"><value>Pesquisar livros...</value></data>
   <data name="BookTitleColumn" xml:space="preserve"><value>Título</value></data>
   <data name="BookNativeTitleColumn" xml:space="preserve"><value>Título original</value></data>
+  <data name="BookSortTitleColumn" xml:space="preserve"><value>Título de ordenação</value></data>
   <data name="BookIsbnColumn" xml:space="preserve"><value>ISBN</value></data>
   <data name="BookPagesColumn" xml:space="preserve"><value>Páginas</value></data>
   <data name="BookCountryColumn" xml:space="preserve"><value>País</value></data>
@@ -1560,6 +1561,7 @@
   <data name="SynopsisButton" xml:space="preserve"><value>Sinopse</value></data>
   <data name="BookTitleLabel" xml:space="preserve"><value>Título</value></data>
   <data name="BookNativeTitleLabel" xml:space="preserve"><value>Título original</value></data>
+  <data name="BookSortTitleLabel" xml:space="preserve"><value>Título de ordenação</value></data>
   <data name="BookIsbnLabel" xml:space="preserve"><value>ISBN</value></data>
   <data name="BookPagesLabel" xml:space="preserve"><value>Páginas</value></data>
   <data name="BookEditionLabel" xml:space="preserve"><value>Edição</value></data>
@@ -1595,11 +1597,13 @@
   <data name="DocumentsSearchPlaceholder" xml:space="preserve"><value>Pesquisar documentos...</value></data>
   <data name="DocumentTitleColumn" xml:space="preserve"><value>Título</value></data>
   <data name="DocumentNativeTitleColumn" xml:space="preserve"><value>Título Original</value></data>
+  <data name="DocumentSortTitleColumn" xml:space="preserve"><value>Título de ordenação</value></data>
   <data name="DocumentCountryColumn" xml:space="preserve"><value>País</value></data>
   <data name="EditDocumentButton" xml:space="preserve"><value>Editar</value></data>
   <data name="DeleteDocumentButton" xml:space="preserve"><value>Excluir</value></data>
   <data name="DocumentTitleLabel" xml:space="preserve"><value>Título</value></data>
   <data name="DocumentNativeTitleLabel" xml:space="preserve"><value>Título Original</value></data>
+  <data name="DocumentSortTitleLabel" xml:space="preserve"><value>Título de ordenação</value></data>
   <data name="DocumentPublishedLabel" xml:space="preserve"><value>Publicado</value></data>
   <data name="DocumentCountryLabel" xml:space="preserve"><value>País</value></data>
   <data name="DocumentPeopleSectionHeader" xml:space="preserve"><value>Pessoas</value></data>
@@ -1622,12 +1626,14 @@
   <data name="MagazinesSearchPlaceholder" xml:space="preserve"><value>Pesquisar revistas...</value></data>
   <data name="MagazineTitleColumn" xml:space="preserve"><value>Título</value></data>
   <data name="MagazineNativeTitleColumn" xml:space="preserve"><value>Título original</value></data>
+  <data name="MagazineSortTitleColumn" xml:space="preserve"><value>Título de ordenação</value></data>
   <data name="MagazineIssnColumn" xml:space="preserve"><value>ISSN</value></data>
   <data name="MagazineCountryColumn" xml:space="preserve"><value>País</value></data>
   <data name="EditMagazineButton" xml:space="preserve"><value>Editar</value></data>
   <data name="DeleteMagazineButton" xml:space="preserve"><value>Excluir</value></data>
   <data name="MagazineTitleLabel" xml:space="preserve"><value>Título</value></data>
   <data name="MagazineNativeTitleLabel" xml:space="preserve"><value>Título original</value></data>
+  <data name="MagazineSortTitleLabel" xml:space="preserve"><value>Título de ordenação</value></data>
   <data name="MagazineIssnLabel" xml:space="preserve"><value>ISSN</value></data>
   <data name="MagazinePublishedLabel" xml:space="preserve"><value>Publicado</value></data>
   <data name="MagazineFirstPublicationLabel" xml:space="preserve"><value>Primeira publicação</value></data>

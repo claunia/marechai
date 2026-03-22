@@ -42,6 +42,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     // --- Form fields ---
     [ObservableProperty] private string _magazineTitle = string.Empty;
     [ObservableProperty] private string _nativeTitle = string.Empty;
+    [ObservableProperty] private string _sortTitle = string.Empty;
     [ObservableProperty] private string _issn = string.Empty;
     [ObservableProperty] private DateTimeOffset? _published;
     [ObservableProperty] private DateTimeOffset? _firstPublication;
@@ -274,6 +275,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
             {
                 Title            = MagazineTitle,
                 NativeTitle      = string.IsNullOrWhiteSpace(NativeTitle) ? null : NativeTitle,
+                SortTitle        = string.IsNullOrWhiteSpace(SortTitle) ? null : SortTitle,
                 Issn             = string.IsNullOrWhiteSpace(Issn) ? null : Issn,
                 Published        = Published,
                 FirstPublication = FirstPublication,
@@ -735,6 +737,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
             source = source.Where(m =>
                 (m.Title != null      && m.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (m.NativeTitle != null && m.NativeTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
+                (m.SortTitle != null  && m.SortTitle.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (m.Issn != null       && m.Issn.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
 
         foreach(MagazineDto m in source) FilteredMagazines.Add(m);
@@ -824,6 +827,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     {
         MagazineTitle    = string.Empty;
         NativeTitle      = string.Empty;
+        SortTitle        = string.Empty;
         Issn             = string.Empty;
         Published        = null;
         FirstPublication = null;
@@ -849,6 +853,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     {
         MagazineTitle    = magazine.Title       ?? string.Empty;
         NativeTitle      = magazine.NativeTitle  ?? string.Empty;
+        SortTitle        = magazine.SortTitle    ?? string.Empty;
         Issn             = magazine.Issn         ?? string.Empty;
         Published        = magazine.Published;
         FirstPublication = magazine.FirstPublication;
