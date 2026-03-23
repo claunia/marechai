@@ -75,7 +75,11 @@ public partial class AdminMachineFamiliesViewModel : ObservableObject, IRegionAw
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
-        if(IsAdmin) _ = LoadItemsCommand.ExecuteAsync(null);
+        if(IsAdmin)
+        {
+            _ = LoadItemsCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     private void CheckAdminRole()
@@ -243,9 +247,8 @@ public partial class AdminMachineFamiliesViewModel : ObservableObject, IRegionAw
 
     public async Task LoadPickerDataAsync()
     {
-        if(_allCompanies == null)
-            try { _allCompanies = await _apiClient.Companies.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading companies"); }
+        try { _allCompanies = await _apiClient.Companies.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading companies"); }
     }
 
     private void ClearForm()

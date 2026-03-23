@@ -86,7 +86,10 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         CheckAdminRole();
 
         if(IsAdmin)
+        {
             _ = LoadItemsCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     private void CheckAdminRole()
@@ -273,11 +276,8 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
 
     public async Task LoadPickerDataAsync()
     {
-        if(_allCompanies == null)
-        {
-            try { _allCompanies = await _apiClient.Companies.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
-        }
+        try { _allCompanies = await _apiClient.Companies.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
     }
 
     private void ClearForm()

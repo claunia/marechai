@@ -263,7 +263,10 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         CheckAdminRole();
 
         if(IsAdmin)
+        {
             _ = LoadCompaniesCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     // --- Role check ---
@@ -635,44 +638,36 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     // --- Load picker data ---
     public async Task LoadPickerDataAsync()
     {
-        if(Countries.Count == 0)
+        try
         {
-            try
-            {
-                List<Iso31661NumericDto>? countriesResponse = await _apiClient.Iso31661Numeric.GetAsync();
+            List<Iso31661NumericDto>? countriesResponse = await _apiClient.Iso31661Numeric.GetAsync();
+            Countries.Clear();
 
-                if(countriesResponse != null)
-                    foreach(Iso31661NumericDto c in countriesResponse)
-                        Countries.Add(c);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading countries");
-            }
+            if(countriesResponse != null)
+                foreach(Iso31661NumericDto c in countriesResponse)
+                    Countries.Add(c);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading countries");
         }
 
-        if(_allCompaniesForSearch == null)
+        try
         {
-            try
-            {
-                _allCompaniesForSearch = await _apiClient.Companies.GetAsync();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading companies for search");
-            }
+            _allCompaniesForSearch = await _apiClient.Companies.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading companies for search");
         }
 
-        if(_allPeopleList == null)
+        try
         {
-            try
-            {
-                _allPeopleList = await _apiClient.People.GetAsync();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading people");
-            }
+            _allPeopleList = await _apiClient.People.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading people");
         }
     }
 

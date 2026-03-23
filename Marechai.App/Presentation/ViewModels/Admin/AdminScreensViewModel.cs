@@ -92,7 +92,11 @@ public partial class AdminScreensViewModel : ObservableObject, IRegionAware
     {
         CheckAdminRole();
 
-        if(IsAdmin) _ = LoadItemsCommand.ExecuteAsync(null);
+        if(IsAdmin)
+        {
+            _ = LoadItemsCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     private void CheckAdminRole()
@@ -381,16 +385,13 @@ public partial class AdminScreensViewModel : ObservableObject, IRegionAware
 
     public async Task LoadPickerDataAsync()
     {
-        if(_allResolutions == null)
+        try
         {
-            try
-            {
-                _allResolutions = await _apiClient.Resolutions.GetAsync();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading resolutions for picker");
-            }
+            _allResolutions = await _apiClient.Resolutions.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading resolutions for picker");
         }
     }
 

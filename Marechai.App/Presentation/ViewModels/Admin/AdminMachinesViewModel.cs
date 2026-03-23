@@ -179,7 +179,11 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
-        if(IsAdmin) _ = LoadItemsCommand.ExecuteAsync(null);
+        if(IsAdmin)
+        {
+            _ = LoadItemsCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     private void CheckAdminRole()
@@ -341,33 +345,28 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
 
     public async Task LoadPickerDataAsync()
     {
-        if(_allCompanies == null)
-            try { _allCompanies = await _apiClient.Companies.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading companies"); }
+        try { _allCompanies = await _apiClient.Companies.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading companies"); }
 
-        if(Families.Count == 0)
-            try
-            {
-                List<MachineFamilyDto>? fams = await _apiClient.MachineFamilies.GetAsync();
-                if(fams != null) foreach(MachineFamilyDto f in fams) Families.Add(f);
-            }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading families"); }
+        try
+        {
+            List<MachineFamilyDto>? fams = await _apiClient.MachineFamilies.GetAsync();
+            Families.Clear();
+            if(fams != null) foreach(MachineFamilyDto f in fams) Families.Add(f);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading families"); }
 
-        if(_allGpusList == null)
-            try { _allGpusList = await _apiClient.Gpus.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading GPUs"); }
+        try { _allGpusList = await _apiClient.Gpus.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading GPUs"); }
 
-        if(_allProcessorsList == null)
-            try { _allProcessorsList = await _apiClient.Processors.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading processors"); }
+        try { _allProcessorsList = await _apiClient.Processors.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading processors"); }
 
-        if(_allSoundsList == null)
-            try { _allSoundsList = await _apiClient.SoundSynths.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading sound synths"); }
+        try { _allSoundsList = await _apiClient.SoundSynths.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading sound synths"); }
 
-        if(_allScreensList == null)
-            try { _allScreensList = await _apiClient.Screens.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading screens"); }
+        try { _allScreensList = await _apiClient.Screens.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading screens"); }
     }
 
     // ======================== JUNCTION MANAGEMENT ========================

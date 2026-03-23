@@ -14,6 +14,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionAware
 {
     private readonly SoftwareFamiliesService                    _service;
+    private readonly ApiClient                                  _apiClient;
     private readonly IJwtService                               _jwtService;
     private readonly IStringLocalizer                          _localizer;
     private readonly ILogger<AdminSoftwareFamiliesViewModel>   _logger;
@@ -53,12 +54,14 @@ public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionA
     private List<CompanyDto>?           _allCompanies;
 
     public AdminSoftwareFamiliesViewModel(SoftwareFamiliesService                  service,
+                                          ApiClient                                apiClient,
                                           IJwtService                              jwtService,
                                           ITokenService                            tokenService,
                                           ILogger<AdminSoftwareFamiliesViewModel>  logger,
                                           IStringLocalizer                         localizer)
     {
         _service      = service;
+        _apiClient    = apiClient;
         _jwtService   = jwtService;
         _tokenService = tokenService;
         _logger       = logger;
@@ -91,7 +94,11 @@ public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionA
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
-        if(IsAdmin) _ = LoadCommand.ExecuteAsync(null);
+        if(IsAdmin)
+        {
+            _ = LoadCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     private void CheckAdminRole()
@@ -130,26 +137,16 @@ public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionA
 
     public async Task LoadPickerDataAsync()
     {
-        if(_allCompanies == null)
-        {
-            try
-            {
-                // Load companies via a quick API call
-                _allCompanies = await _service.GetAllAsync() is not null ? [] : [];
-                // Use the ApiClient directly? No — we need CompanyDto. Use a separate call.
-            }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading picker data"); }
-        }
+        try { _allCompanies = await _apiClient.Companies.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
 
-        if(Roles.Count == 0)
+        try
         {
-            try
-            {
-                List<SoftwareRoleDto> rolesResponse = await _service.GetRolesAsync();
-                foreach(SoftwareRoleDto r in rolesResponse) Roles.Add(r);
-            }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading software roles"); }
+            List<SoftwareRoleDto> rolesResponse = await _service.GetRolesAsync();
+            Roles.Clear();
+            foreach(SoftwareRoleDto r in rolesResponse) Roles.Add(r);
         }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading software roles"); }
     }
 
     private void OpenAdd()

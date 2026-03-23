@@ -105,7 +105,11 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
-        if(IsAdmin) _ = LoadCommand.ExecuteAsync(null);
+        if(IsAdmin)
+        {
+            _ = LoadCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     private void CheckAdminRole()
@@ -144,24 +148,19 @@ public partial class AdminSoftwareViewModel : ObservableObject, IRegionAware
 
     public async Task LoadPickerDataAsync()
     {
-        if(_allFamilies == null)
+        try
         {
-            try
-            {
-                _allFamilies = await _familiesService.GetAllAsync();
-            }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading families for picker"); }
+            _allFamilies = await _familiesService.GetAllAsync();
         }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading families for picker"); }
 
-        if(Roles.Count == 0)
+        try
         {
-            try
-            {
-                List<SoftwareRoleDto> rolesResponse = await _service.GetRolesAsync();
-                foreach(SoftwareRoleDto r in rolesResponse) Roles.Add(r);
-            }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading software roles"); }
+            List<SoftwareRoleDto> rolesResponse = await _service.GetRolesAsync();
+            Roles.Clear();
+            foreach(SoftwareRoleDto r in rolesResponse) Roles.Add(r);
         }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading software roles"); }
     }
 
     private void OpenAdd()

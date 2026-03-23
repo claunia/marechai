@@ -197,7 +197,11 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
-        if(IsAdmin) _ = LoadBooksCommand.ExecuteAsync(null);
+        if(IsAdmin)
+        {
+            _ = LoadBooksCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     // --- Role check ---
@@ -830,50 +834,34 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     // --- Load picker data ---
     public async Task LoadPickerDataAsync()
     {
-        if(Countries.Count == 0)
+        try
         {
-            try
-            {
-                List<Iso31661NumericDto>? countriesResponse = await _apiClient.Iso31661Numeric.GetAsync();
-                if(countriesResponse != null)
-                    foreach(Iso31661NumericDto c in countriesResponse) Countries.Add(c);
-            }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading countries"); }
+            List<Iso31661NumericDto>? countriesResponse = await _apiClient.Iso31661Numeric.GetAsync();
+            Countries.Clear();
+            if(countriesResponse != null)
+                foreach(Iso31661NumericDto c in countriesResponse) Countries.Add(c);
         }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading countries"); }
 
-        if(_allRolesList == null)
+        try
         {
-            try
-            {
-                _allRolesList = await _booksService.GetDocumentRolesAsync();
-                foreach(DocumentRoleDto r in _allRolesList) AvailableRoles.Add(r);
-            }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading document roles"); }
+            _allRolesList = await _booksService.GetDocumentRolesAsync();
+            AvailableRoles.Clear();
+            foreach(DocumentRoleDto r in _allRolesList) AvailableRoles.Add(r);
         }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading document roles"); }
 
-        if(_allPeopleList == null)
-        {
-            try { _allPeopleList = await _apiClient.People.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading people"); }
-        }
+        try { _allPeopleList = await _apiClient.People.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading people"); }
 
-        if(_allCompaniesList == null)
-        {
-            try { _allCompaniesList = await _apiClient.Companies.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading companies"); }
-        }
+        try { _allCompaniesList = await _apiClient.Companies.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading companies"); }
 
-        if(_allMachinesList == null)
-        {
-            try { _allMachinesList = await _apiClient.Machines.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading machines"); }
-        }
+        try { _allMachinesList = await _apiClient.Machines.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading machines"); }
 
-        if(_allMachineFamiliesList == null)
-        {
-            try { _allMachineFamiliesList = await _apiClient.MachineFamilies.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading machine families"); }
-        }
+        try { _allMachineFamiliesList = await _apiClient.MachineFamilies.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading machine families"); }
     }
 
     // --- People search ---

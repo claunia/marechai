@@ -201,7 +201,10 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         CheckAdminRole();
 
         if(IsAdmin)
+        {
             _ = LoadProcessorsCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     // --- Role check ---
@@ -428,44 +431,36 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     // --- Load picker data ---
     public async Task LoadPickerDataAsync()
     {
-        if(_allCompanies == null)
+        try
         {
-            try
-            {
-                _allCompanies = await _apiClient.Companies.GetAsync();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading companies for picker");
-            }
+            _allCompanies = await _apiClient.Companies.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading companies for picker");
         }
 
-        if(InstructionSets.Count == 0)
+        try
         {
-            try
-            {
-                List<InstructionSetDto>? sets = await _apiClient.InstructionSets.GetAsync();
+            List<InstructionSetDto>? sets = await _apiClient.InstructionSets.GetAsync();
+            InstructionSets.Clear();
 
-                if(sets != null)
-                    foreach(InstructionSetDto s in sets)
-                        InstructionSets.Add(s);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading instruction sets");
-            }
+            if(sets != null)
+                foreach(InstructionSetDto s in sets)
+                    InstructionSets.Add(s);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading instruction sets");
         }
 
-        if(_allAvailableExtensions == null)
+        try
         {
-            try
-            {
-                _allAvailableExtensions = await _apiClient.InstructionSetExtensions.GetAsync();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading instruction set extensions");
-            }
+            _allAvailableExtensions = await _apiClient.InstructionSetExtensions.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading instruction set extensions");
         }
     }
 

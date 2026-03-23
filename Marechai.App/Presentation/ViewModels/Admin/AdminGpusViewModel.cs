@@ -154,7 +154,10 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         CheckAdminRole();
 
         if(IsAdmin)
+        {
             _ = LoadGpusCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     // --- Role check ---
@@ -365,28 +368,22 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     // --- Load picker data ---
     public async Task LoadPickerDataAsync()
     {
-        if(_allCompanies == null)
+        try
         {
-            try
-            {
-                _allCompanies = await _apiClient.Companies.GetAsync();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading companies for picker");
-            }
+            _allCompanies = await _apiClient.Companies.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading companies for picker");
         }
 
-        if(_allResolutions == null)
+        try
         {
-            try
-            {
-                _allResolutions = await _apiClient.Resolutions.GetAsync();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading resolutions for picker");
-            }
+            _allResolutions = await _apiClient.Resolutions.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading resolutions for picker");
         }
     }
 

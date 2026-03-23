@@ -101,7 +101,11 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
-        if(IsAdmin) _ = LoadCommand.ExecuteAsync(null);
+        if(IsAdmin)
+        {
+            _ = LoadCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     private void CheckAdminRole()
@@ -140,34 +144,22 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
 
     public async Task LoadPickerDataAsync()
     {
-        if(_allVersions == null)
-        {
-            try { _allVersions = await _versionsService.GetAllAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading versions for picker"); }
-        }
+        try { _allVersions = await _versionsService.GetAllAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading versions for picker"); }
 
-        if(_allPlatforms == null)
+        try
         {
-            try
-            {
-                _allPlatforms = await _platformsService.GetAllAsync();
-                Platforms.Clear();
-                foreach(SoftwarePlatformDto p in _allPlatforms) Platforms.Add(p);
-            }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading platforms for picker"); }
+            _allPlatforms = await _platformsService.GetAllAsync();
+            Platforms.Clear();
+            foreach(SoftwarePlatformDto p in _allPlatforms) Platforms.Add(p);
         }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading platforms for picker"); }
 
-        if(_allRegions == null)
-        {
-            try { _allRegions = await _apiClient.Iso31661Numeric.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading regions for picker"); }
-        }
+        try { _allRegions = await _apiClient.Iso31661Numeric.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading regions for picker"); }
 
-        if(_allCompanies == null)
-        {
-            try { _allCompanies = await _apiClient.Companies.GetAsync(); }
-            catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
-        }
+        try { _allCompanies = await _apiClient.Companies.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
     }
 
     private void OpenAdd()

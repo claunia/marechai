@@ -126,7 +126,10 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
         CheckAdminRole();
 
         if(IsAdmin)
+        {
             _ = LoadPeopleCommand.ExecuteAsync(null);
+            _ = LoadPickerDataAsync();
+        }
     }
 
     private void CheckAdminRole()
@@ -314,20 +317,18 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
 
     public async Task LoadPickerDataAsync()
     {
-        if(Countries.Count == 0)
+        try
         {
-            try
-            {
-                List<Iso31661NumericDto>? countriesResponse = await _apiClient.Iso31661Numeric.GetAsync();
+            List<Iso31661NumericDto>? countriesResponse = await _apiClient.Iso31661Numeric.GetAsync();
+            Countries.Clear();
 
-                if(countriesResponse != null)
-                    foreach(Iso31661NumericDto c in countriesResponse)
-                        Countries.Add(c);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error loading countries");
-            }
+            if(countriesResponse != null)
+                foreach(Iso31661NumericDto c in countriesResponse)
+                    Countries.Add(c);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading countries");
         }
     }
 
