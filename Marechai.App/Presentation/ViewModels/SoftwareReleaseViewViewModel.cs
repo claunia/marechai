@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Humanizer;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.Data;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
@@ -182,13 +184,13 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             List<SoftwareBarcodeDto> barcodes = await _browsingService.GetBarcodesAsync(releaseId);
 
             foreach(SoftwareBarcodeDto barcode in barcodes)
-                Barcodes.Add($"{barcode.Code} ({barcode.Type})");
+                Barcodes.Add($"{barcode.Code} ({((BarcodeType)(barcode.Type ?? 0)).Humanize()})");
 
             // Load product codes
             List<SoftwareProductCodeDto> productCodes = await _browsingService.GetProductCodesAsync(releaseId);
 
             foreach(SoftwareProductCodeDto pc in productCodes)
-                ProductCodes.Add($"{pc.Code} ({pc.Issuer})");
+                ProductCodes.Add($"{pc.Code} ({((ProductCodeIssuer)(pc.Issuer ?? 0)).Humanize()})");
 
             UpdateVisibilities();
             IsDataLoaded = true;

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Humanizer;
 using Marechai.App.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -437,7 +438,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             foreach(SoftwareBarcodeDto item in items)
             {
                 Barcodes.Add(item);
-                BarcodeDisplays.Add($"{item.Code} ({(BarcodeType)(item.Type ?? 0)})");
+                BarcodeDisplays.Add($"{item.Code} ({((BarcodeType)(item.Type ?? 0)).Humanize()})");
             }
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading barcodes for release {Id}", releaseId); }
@@ -455,7 +456,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             foreach(SoftwareProductCodeDto item in items)
             {
                 ProductCodes.Add(item);
-                ProductCodeDisplays.Add($"{item.Code} ({(ProductCodeIssuer)(item.Issuer ?? 0)})");
+                ProductCodeDisplays.Add($"{item.Code} ({((ProductCodeIssuer)(item.Issuer ?? 0)).Humanize()})");
             }
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading product codes for release {Id}", releaseId); }
