@@ -50,7 +50,7 @@
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=PlatformColumn_Header}" Binding="{Binding Platform}" Width="*" />
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=RegionColumn_Header}" Binding="{Binding Region}" Width="*" />
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=PublisherColumn_Header}" Binding="{Binding Publisher}" Width="*" />
-                                    <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=ReleaseDateColumn_Header}" Binding="{Binding ReleaseDate}" Width="Auto" />
+                                    <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=ReleaseDateColumn_Header}" Binding="{Binding ReleaseDate, Converter={StaticResource DateOnlyConverter}}" Width="Auto" />
                                     <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=ActionsColumn_Header}" Width="Auto">
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
