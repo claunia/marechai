@@ -134,6 +134,7 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
         _editingId = null;
         EditPanelTitle = _localizer["AddSoftwareVersionDialog_Title"];
         ClearForm();
+        UpdateParentVersionSuggestions(string.Empty);
         IsEditing = true;
     }
 
@@ -156,7 +157,7 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
                 SelectedParentVersion = ParentVersionSuggestions.FirstOrDefault(v => v.Id == parent.Id);
             }
         }
-        else { ParentVersionSearchText = string.Empty; SelectedParentVersion = null; }
+        else { ParentVersionSearchText = string.Empty; SelectedParentVersion = null; UpdateParentVersionSuggestions(string.Empty); }
 
         HasError = false; ErrorMessage = string.Empty;
         IsEditing = true;
