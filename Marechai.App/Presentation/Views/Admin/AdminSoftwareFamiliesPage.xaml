@@ -86,7 +86,7 @@
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=ParentColumn_Header}"
                                                                  Binding="{Binding Parent}" Width="*" />
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=IntroducedColumn_Header}"
-                                                                 Binding="{Binding Introduced}" Width="Auto" />
+                                                                 Binding="{Binding Introduced, Converter={StaticResource DateOnlyConverter}}" Width="Auto" />
                                     <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=ActionsColumn_Header}" Width="Auto">
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>

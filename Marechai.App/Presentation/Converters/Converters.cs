@@ -91,3 +91,20 @@ public class NullToVisibilityConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         throw new NotImplementedException();
 }
+
+/// <summary>
+///     Converts DateTime/DateTimeOffset to short date string (date only, no time)
+/// </summary>
+public class DateOnlyConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value switch
+        {
+            DateTime dt       => dt.ToString("d"),
+            DateTimeOffset dto => dto.DateTime.ToString("d"),
+            _                 => string.Empty
+        };
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotImplementedException();
+}

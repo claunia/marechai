@@ -12,5 +12,6 @@
     <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     <local:RolesListConverter x:Key="RolesListConverter" />
     <local:LocalizeConverter x:Key="Localize" />
+    <local:DateOnlyConverter x:Key="DateOnlyConverter" />
 
 </ResourceDictionary>
