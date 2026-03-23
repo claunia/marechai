@@ -151,4 +151,86 @@ public class CompanyDetailService
             return null;
         }
     }
+
+    /// <summary>
+    ///     Gets people associated with a company
+    /// </summary>
+    public async Task<List<PersonByCompanyDto>> GetPeopleByCompanyAsync(int companyId)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching people for company {CompanyId}", companyId);
+
+            List<PersonByCompanyDto>? people = await _apiClient.Companies[companyId].People.GetAsync();
+
+            if(people == null) return [];
+
+            _logger.LogInformation("Successfully fetched {Count} people for company {CompanyId}",
+                                   people.Count,
+                                   companyId);
+
+            return people;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching people for company {CompanyId}", companyId);
+
+            return [];
+        }
+    }
+
+    /// <summary>
+    ///     Adds a person to a company
+    /// </summary>
+    public async Task<long?> AddPersonToCompanyAsync(PersonByCompanyDto dto)
+    {
+        try
+        {
+            return await _apiClient.PeopleByCompany.PostAsync(dto);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding person to company");
+
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Updates a person-company association
+    /// </summary>
+    public async Task<bool> UpdatePersonInCompanyAsync(long id, PersonByCompanyDto dto)
+    {
+        try
+        {
+            await _apiClient.PeopleByCompany[id].PutAsync(dto);
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error updating person-company association {Id}", id);
+
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     Removes a person from a company
+    /// </summary>
+    public async Task<bool> RemovePersonFromCompanyAsync(long id)
+    {
+        try
+        {
+            await _apiClient.PeopleByCompany[id].DeleteAsync();
+
+            return true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing person from company {Id}", id);
+
+            return false;
+        }
+    }
 }

@@ -2165,4 +2165,11 @@
   <data name="No magazines found for this filter" xml:space="preserve"><value>No magazines found for this filter</value></data>
   <data name="Failed to load magazines. Please try again later." xml:space="preserve"><value>Failed to load magazines. Please try again later.</value></data>
   <data name="Magazine not found" xml:space="preserve"><value>Magazine not found</value></data>
+  <data name="CompanyPeopleSection" xml:space="preserve"><value>People</value></data>
+  <data name="CompanyPersonPositionLabel" xml:space="preserve"><value>Position</value></data>
+  <data name="CompanyPersonStartLabel" xml:space="preserve"><value>Start</value></data>
+  <data name="CompanyPersonEndLabel" xml:space="preserve"><value>End</value></data>
+  <data name="CompanyPersonOngoingLabel" xml:space="preserve"><value>Ongoing</value></data>
+  <data name="CompanyPeopleLabel" xml:space="preserve"><value>People</value></data>
+  <data name="OngoingText" xml:space="preserve"><value>Ongoing</value></data>
 </root>

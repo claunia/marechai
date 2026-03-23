@@ -1819,4 +1819,11 @@
   <data name="No magazines found for this filter" xml:space="preserve"><value>Nenhuma revista encontrada para este filtro</value></data>
   <data name="Failed to load magazines. Please try again later." xml:space="preserve"><value>Erro ao carregar as revistas. Por favor, tente novamente mais tarde.</value></data>
   <data name="Magazine not found" xml:space="preserve"><value>Revista não encontrada</value></data>
+  <data name="CompanyPeopleSection" xml:space="preserve"><value>Pessoas</value></data>
+  <data name="CompanyPersonPositionLabel" xml:space="preserve"><value>Cargo</value></data>
+  <data name="CompanyPersonStartLabel" xml:space="preserve"><value>Início</value></data>
+  <data name="CompanyPersonEndLabel" xml:space="preserve"><value>Fim</value></data>
+  <data name="CompanyPersonOngoingLabel" xml:space="preserve"><value>Em andamento</value></data>
+  <data name="CompanyPeopleLabel" xml:space="preserve"><value>Pessoas</value></data>
+  <data name="OngoingText" xml:space="preserve"><value>Em andamento</value></data>
 </root>

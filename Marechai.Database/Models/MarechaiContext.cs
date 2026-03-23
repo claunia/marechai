@@ -111,6 +111,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<OwnedMachine>                        OwnedMachines                       { get; set; }
     public virtual DbSet<OwnedMachinePhoto>                   OwnedMachinePhotos                  { get; set; }
     public virtual DbSet<PeopleByBook>                        PeopleByBooks                       { get; set; }
+    public virtual DbSet<PeopleByCompany>                     PeopleByCompanies                   { get; set; }
     public virtual DbSet<PeopleByDocument>                    PeopleByDocuments                   { get; set; }
     public virtual DbSet<PeopleByMagazine>                    PeopleByMagazines                   { get; set; }
     public virtual DbSet<Person>                              People                              { get; set; }
@@ -1294,6 +1295,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
         modelBuilder.Entity<PeopleByCompany>(entity =>
         {
+            entity.ToTable("PeopleByCompany");
+
             entity.HasIndex(e => e.PersonId);
 
             entity.HasIndex(e => e.CompanyId);

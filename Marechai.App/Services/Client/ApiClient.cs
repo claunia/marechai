@@ -27,6 +27,7 @@ using Marechai.App.MemoriesByMachine;
 using Marechai.App.News;
 using Marechai.App.People;
 using Marechai.App.PeopleByBook;
+using Marechai.App.PeopleByCompany;
 using Marechai.App.PeopleByDocument;
 using Marechai.App.PeopleByMagazine;
 using Marechai.App.Processor;
@@ -195,6 +196,11 @@ namespace Marechai.App
         {
             get => new global::Marechai.App.PeopleByBook.PeopleByBookRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The peopleByCompany property</summary>
+        public global::Marechai.App.PeopleByCompany.PeopleByCompanyRequestBuilder PeopleByCompany
+        {
+            get => new global::Marechai.App.PeopleByCompany.PeopleByCompanyRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The peopleByDocument property</summary>
         public global::Marechai.App.PeopleByDocument.PeopleByDocumentRequestBuilder PeopleByDocument
         {
@@ -285,7 +291,7 @@ namespace Marechai.App
             ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
             if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
             {
-                RequestAdapter.BaseUrl = "http://localhost:5023";
+                RequestAdapter.BaseUrl = "http://localhost:5099";
             }
             PathParameters.TryAdd("baseurl", RequestAdapter.BaseUrl);
         }

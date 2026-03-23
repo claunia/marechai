@@ -78,6 +78,11 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private string _descriptionHtml = string.Empty;
 
+    [ObservableProperty]
+    private ObservableCollection<string> _people = [];
+
+    public bool ShowPeople => People.Count > 0;
+
     public CompanyDetailViewModel(CompanyDetailService            companyDetailService, FlagCache          flagCache,
                                   CompanyLogoCache                logoCache,            IStringLocalizer   localizer,
                                   ILogger<CompanyDetailViewModel> logger,               IRegionManager     regionManager,
@@ -507,6 +512,42 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
             // Initialize filtered lists
             FilteredComputers = new ObservableCollection<CompanyDetailMachine>(Computers);
             FilteredConsoles  = new ObservableCollection<CompanyDetailMachine>(Consoles);
+
+            // Load people associated with this company
+            try
+            {
+                People.Clear();
+
+                List<PersonByCompanyDto> people = await _companyDetailService.GetPeopleByCompanyAsync(CompanyId);
+
+                foreach(PersonByCompanyDto person in people)
+                {
+                    string name = person.DisplayName ?? person.Alias ??
+                                  $"{person.Name} {person.Surname}".Trim();
+
+                    string display = name;
+
+                    if(!string.IsNullOrWhiteSpace(person.Position))
+                        display += $" — {person.Position}";
+
+                    if(person.Ongoing == true)
+                        display += $" ({_localizer["OngoingText"].Value})";
+                    else if(person.Start != null || person.End != null)
+                    {
+                        string start = person.Start?.ToString("yyyy") ?? "?";
+                        string end   = person.End?.ToString("yyyy")   ?? "?";
+                        display += $" ({start}–{end})";
+                    }
+
+                    People.Add(display);
+                }
+
+                OnPropertyChanged(nameof(ShowPeople));
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load people for company: {Exception}", ex.Message);
+            }
 
             // Load localized description
             try

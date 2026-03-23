@@ -150,6 +150,42 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private List<string> _statusItems = [];
 
+    // --- People junction state ---
+    [ObservableProperty]
+    private ObservableCollection<PersonByCompanyDto> _companyPeople = [];
+
+    [ObservableProperty]
+    private ObservableCollection<string> _companyPeopleDisplays = [];
+
+    [ObservableProperty]
+    private ObservableCollection<PersonDto> _availablePeople = [];
+
+    [ObservableProperty]
+    private PersonDto? _selectedAvailablePerson;
+
+    [ObservableProperty]
+    private string _personSearchText = string.Empty;
+
+    [ObservableProperty]
+    private string _newPersonPosition = string.Empty;
+
+    [ObservableProperty]
+    private DateTimeOffset? _newPersonStart;
+
+    [ObservableProperty]
+    private DateTimeOffset? _newPersonEnd;
+
+    [ObservableProperty]
+    private bool _newPersonOngoing;
+
+    [ObservableProperty]
+    private bool _isEditingExisting;
+
+    // When non-null, we are editing an existing person-company record
+    private long? _editingPersonCompanyId;
+
+    private List<PersonDto>? _allPeopleList;
+
     public AdminCompaniesViewModel(ApiClient                        apiClient,
                                    IJwtService                      jwtService,
                                    ITokenService                    tokenService,
@@ -187,6 +223,11 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         DeleteTranslationCommand   = new AsyncRelayCommand<CompanyDescriptionDto>(DeleteTranslationAsync);
         EditTranslationCommand     = new RelayCommand<CompanyDescriptionDto>(EditTranslation);
         OpenLogosCommand           = new RelayCommand<CompanyDto>(OpenLogos);
+        AddPersonCommand           = new AsyncRelayCommand(AddPersonAsync);
+        RemovePersonCommand        = new AsyncRelayCommand<string>(RemovePersonByDisplayAsync);
+        EditPersonCommand          = new RelayCommand<string>(EditPerson);
+        SavePersonEditCommand      = new AsyncRelayCommand(SavePersonEditAsync);
+        CancelPersonEditCommand    = new RelayCommand(CancelPersonEdit);
 
         InitializeLanguages();
 
@@ -206,6 +247,11 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     public IAsyncRelayCommand<CompanyDescriptionDto> DeleteTranslationCommand { get; }
     public IRelayCommand<CompanyDescriptionDto>      EditTranslationCommand   { get; }
     public IRelayCommand<CompanyDto>                 OpenLogosCommand         { get; }
+    public IAsyncRelayCommand                        AddPersonCommand         { get; }
+    public IAsyncRelayCommand<string>                RemovePersonCommand      { get; }
+    public IRelayCommand<string>                     EditPersonCommand        { get; }
+    public IAsyncRelayCommand                        SavePersonEditCommand    { get; }
+    public IRelayCommand                             CancelPersonEditCommand  { get; }
 
     // --- IRegionAware ---
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
@@ -294,6 +340,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         _editingCompanyId = null;
         EditPanelTitle    = _localizer["AddCompanyDialog_Title"];
         ClearForm();
+        IsEditingExisting    = false;
         IsEditingDescription = false;
         IsEditing            = true;
     }
@@ -306,8 +353,12 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         _editingCompanyId = company.Id;
         EditPanelTitle    = _localizer["EditCompanyDialog_Title"];
         PopulateForm(company);
+        IsEditingExisting    = true;
         IsEditingDescription = false;
         IsEditing            = true;
+
+        if(company.Id != null)
+            _ = LoadCompanyPeopleAsync(company.Id.Value);
     }
 
     // --- Delete company ---
@@ -611,6 +662,18 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
                 _logger.LogError(ex, "Error loading companies for search");
             }
         }
+
+        if(_allPeopleList == null)
+        {
+            try
+            {
+                _allPeopleList = await _apiClient.People.GetAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error loading people");
+            }
+        }
     }
 
     // --- Helpers ---
@@ -637,6 +700,9 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         SoldToSearchText      = string.Empty;
         HasError              = false;
         ErrorMessage          = string.Empty;
+        CompanyPeople.Clear();
+        CompanyPeopleDisplays.Clear();
+        ClearPersonForm();
     }
 
     private void PopulateForm(CompanyDto company)
@@ -699,5 +765,193 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
             6 => _localizer["StatusRenamed"],
             _ => _localizer["StatusUnknown"]
         };
+    }
+
+    // --- People junction methods ---
+
+    private async Task LoadCompanyPeopleAsync(int companyId)
+    {
+        CompanyPeople.Clear();
+        CompanyPeopleDisplays.Clear();
+
+        try
+        {
+            List<PersonByCompanyDto>? items = await _apiClient.Companies[companyId].People.GetAsync();
+
+            if(items != null)
+            {
+                foreach(PersonByCompanyDto p in items)
+                {
+                    CompanyPeople.Add(p);
+                    CompanyPeopleDisplays.Add(FormatPersonDisplay(p));
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading people for company {Id}", companyId);
+        }
+    }
+
+    private static string FormatPersonDisplay(PersonByCompanyDto p)
+    {
+        string name = p.DisplayName ?? p.Alias ?? $"{p.Name} {p.Surname}".Trim();
+        string display = name;
+
+        if(!string.IsNullOrWhiteSpace(p.Position))
+            display += $" — {p.Position}";
+
+        if(p.Ongoing == true)
+            display += " (Ongoing)";
+        else if(p.Start != null || p.End != null)
+        {
+            string start = p.Start?.ToString("yyyy") ?? "?";
+            string end   = p.End?.ToString("yyyy")   ?? "?";
+            display += $" ({start}–{end})";
+        }
+
+        return display;
+    }
+
+    private async Task AddPersonAsync()
+    {
+        if(_editingCompanyId == null || SelectedAvailablePerson?.Id == null) return;
+
+        try
+        {
+            var dto = new PersonByCompanyDto
+            {
+                PersonId  = SelectedAvailablePerson.Id,
+                CompanyId = _editingCompanyId,
+                Position  = string.IsNullOrWhiteSpace(NewPersonPosition) ? null : NewPersonPosition,
+                Start     = NewPersonStart,
+                End       = NewPersonEnd,
+                Ongoing   = NewPersonOngoing
+            };
+
+            await _apiClient.PeopleByCompany.PostAsync(dto);
+
+            ClearPersonForm();
+            await LoadCompanyPeopleAsync(_editingCompanyId.Value);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding person to company");
+        }
+    }
+
+    private void EditPerson(string? display)
+    {
+        if(display == null) return;
+
+        int idx = CompanyPeopleDisplays.IndexOf(display);
+
+        if(idx < 0 || idx >= CompanyPeople.Count) return;
+
+        PersonByCompanyDto p = CompanyPeople[idx];
+
+        _editingPersonCompanyId = p.Id;
+
+        // Find and select the person in available people
+        if(p.PersonId != null && _allPeopleList != null)
+        {
+            PersonDto? person = _allPeopleList.FirstOrDefault(pp => pp.Id == p.PersonId);
+
+            if(person != null)
+            {
+                PersonSearchText = person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim();
+                UpdatePeopleSuggestions(PersonSearchText);
+                SelectedAvailablePerson = AvailablePeople.FirstOrDefault(pp => pp.Id == person.Id);
+            }
+        }
+
+        NewPersonPosition = p.Position ?? string.Empty;
+        NewPersonStart    = p.Start;
+        NewPersonEnd      = p.End;
+        NewPersonOngoing  = p.Ongoing ?? false;
+    }
+
+    private async Task SavePersonEditAsync()
+    {
+        if(_editingPersonCompanyId == null || _editingCompanyId == null) return;
+
+        try
+        {
+            var dto = new PersonByCompanyDto
+            {
+                Position = string.IsNullOrWhiteSpace(NewPersonPosition) ? null : NewPersonPosition,
+                Start    = NewPersonStart,
+                End      = NewPersonEnd,
+                Ongoing  = NewPersonOngoing
+            };
+
+            await _apiClient.PeopleByCompany[_editingPersonCompanyId.Value].PutAsync(dto);
+
+            CancelPersonEdit();
+            await LoadCompanyPeopleAsync(_editingCompanyId.Value);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error updating person-company association");
+        }
+    }
+
+    private void CancelPersonEdit()
+    {
+        _editingPersonCompanyId = null;
+        ClearPersonForm();
+    }
+
+    private async Task RemovePersonByDisplayAsync(string? display)
+    {
+        if(display == null || _editingCompanyId == null) return;
+
+        int idx = CompanyPeopleDisplays.IndexOf(display);
+
+        if(idx < 0 || idx >= CompanyPeople.Count || CompanyPeople[idx].Id == null) return;
+
+        try
+        {
+            await _apiClient.PeopleByCompany[CompanyPeople[idx].Id!.Value].DeleteAsync();
+            await LoadCompanyPeopleAsync(_editingCompanyId.Value);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing person from company");
+        }
+    }
+
+    public void UpdatePeopleSuggestions(string query)
+    {
+        AvailablePeople.Clear();
+
+        if(_allPeopleList == null) return;
+
+        IEnumerable<PersonDto> source = _allPeopleList;
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(p =>
+                                      (p.Name != null &&
+                                       p.Name.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (p.Surname != null &&
+                                       p.Surname.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (p.DisplayName != null &&
+                                       p.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (p.Alias != null &&
+                                       p.Alias.Contains(query, StringComparison.OrdinalIgnoreCase)));
+
+        foreach(PersonDto match in source.Take(50))
+            AvailablePeople.Add(match);
+    }
+
+    private void ClearPersonForm()
+    {
+        SelectedAvailablePerson = null;
+        PersonSearchText        = string.Empty;
+        NewPersonPosition       = string.Empty;
+        NewPersonStart          = null;
+        NewPersonEnd            = null;
+        NewPersonOngoing        = false;
+        _editingPersonCompanyId = null;
     }
 }

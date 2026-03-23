@@ -197,6 +197,13 @@ public class LocalizedStrings
     public string FoundedDayUnknownLabel => _l["FoundedDayUnknownLabel"];
     public string SoldMonthUnknownLabel => _l["SoldMonthUnknownLabel"];
     public string SoldDayUnknownLabel => _l["SoldDayUnknownLabel"];
+    public string CompanyPeopleSection => _l["CompanyPeopleSection"];
+    public string CompanyPersonPositionLabel => _l["CompanyPersonPositionLabel"];
+    public string CompanyPersonStartLabel => _l["CompanyPersonStartLabel"];
+    public string CompanyPersonEndLabel => _l["CompanyPersonEndLabel"];
+    public string CompanyPersonOngoingLabel => _l["CompanyPersonOngoingLabel"];
+    public string CompanyPeopleLabel => _l["CompanyPeopleLabel"];
+    public string OngoingText => _l["OngoingText"];
     public string SaveButton => _l["SaveButton"];
     public string CancelButton => _l["CancelButton"];
 

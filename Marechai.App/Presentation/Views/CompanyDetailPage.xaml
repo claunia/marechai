@@ -348,6 +348,35 @@
                         </ScrollViewer>
                     </StackPanel>
 
+                    <!-- People Section -->
+                    <StackPanel Visibility="{Binding ShowPeople, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Spacing="8"
+                                Margin="0,16,0,0">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold" />
+                        <ItemsControl ItemsSource="{Binding People}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="4"
+                                            Padding="12,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   TextWrapping="Wrap" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- Description Section -->
                     <StackPanel Visibility="{Binding HasDescription, Converter={StaticResource BoolToVisibilityConverter}}"
                                 Spacing="8"

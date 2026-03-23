@@ -298,6 +298,101 @@
                                                  Text="{Binding Twitter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                         <TextBox Header="{Binding Source={StaticResource Strings}, Path=FacebookText}"
                                                  Text="{Binding Facebook, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <!-- People Section (only when editing existing company) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="8"
+                                                    Margin="0,16,0,0">
+
+                                            <!-- Section header -->
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=CompanyPeopleSection}"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold" />
+
+                                            <!-- Current people list -->
+                                            <ItemsRepeater ItemsSource="{Binding CompanyPeopleDisplays}">
+                                                <ItemsRepeater.Layout>
+                                                    <StackLayout Spacing="4" />
+                                                </ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnSpacing="4">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0"
+                                                                       Text="{Binding}"
+                                                                       VerticalAlignment="Center"
+                                                                       TextWrapping="Wrap" />
+                                                            <Button Grid.Column="1"
+                                                                    Content="✏️"
+                                                                    Command="{Binding DataContext.EditPersonCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Padding="4,2"
+                                                                    Style="{ThemeResource TextBlockButtonStyle}" />
+                                                            <Button Grid.Column="2"
+                                                                    Content="🗑️"
+                                                                    Command="{Binding DataContext.RemovePersonCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Padding="4,2"
+                                                                    Style="{ThemeResource TextBlockButtonStyle}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+
+                                            <!-- Add/Edit person form -->
+                                            <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}"
+                                                            PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}"
+                                                            Text="{Binding PersonSearchText, Mode=TwoWay}"
+                                                            QueryIcon="Find"
+                                                            x:Name="PersonSearchBox"
+                                                            TextChanged="PersonSearchBox_TextChanged" />
+                                            <ComboBox ItemsSource="{Binding AvailablePeople}"
+                                                      SelectedItem="{Binding SelectedAvailablePerson, Mode=TwoWay}"
+                                                      HorizontalAlignment="Stretch"
+                                                      PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyPeopleLabel}">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock>
+                                                            <Run Text="{Binding Name}" />
+                                                            <Run Text=" " />
+                                                            <Run Text="{Binding Surname}" />
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+
+                                            <TextBox Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonPositionLabel}"
+                                                     Text="{Binding NewPersonPosition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                            <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonStartLabel}"
+                                                                Date="{Binding NewPersonStart, Mode=TwoWay}"
+                                                                HorizontalAlignment="Stretch" />
+
+                                            <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyPersonEndLabel}"
+                                                                Date="{Binding NewPersonEnd, Mode=TwoWay}"
+                                                                HorizontalAlignment="Stretch" />
+
+                                            <CheckBox Content="{Binding Source={StaticResource Strings}, Path=CompanyPersonOngoingLabel}"
+                                                      IsChecked="{Binding NewPersonOngoing, Mode=TwoWay}" />
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        Spacing="8">
+                                                <Button Content="+"
+                                                        Command="{Binding AddPersonCommand}"
+                                                        Style="{ThemeResource AccentButtonStyle}"
+                                                        Padding="8,4" />
+                                                <Button Content="{Binding Source={StaticResource Strings}, Path=SaveButton}"
+                                                        Command="{Binding SavePersonEditCommand}"
+                                                        Padding="8,4" />
+                                                <Button Content="{Binding Source={StaticResource Strings}, Path=CancelButton}"
+                                                        Command="{Binding CancelPersonEditCommand}"
+                                                        Padding="8,4" />
+                                            </StackPanel>
+                                        </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
 

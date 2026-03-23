@@ -31,4 +31,11 @@ public sealed partial class AdminCompaniesPage : Page
             vm.ApplyFilter();
     }
 
+    private void PersonSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput &&
+           DataContext is AdminCompaniesViewModel vm)
+            vm.UpdatePeopleSuggestions(sender.Text);
+    }
+
 }

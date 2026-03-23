@@ -1819,4 +1819,11 @@
   <data name="No magazines found for this filter" xml:space="preserve"><value>Nullae ephemerides inventae pro hoc filtro</value></data>
   <data name="Failed to load magazines. Please try again later." xml:space="preserve"><value>Error in ephemeridibus onerandis. Quaeso, iterum posterius tempta.</value></data>
   <data name="Magazine not found" xml:space="preserve"><value>Ephemeris non inventa</value></data>
+  <data name="CompanyPeopleSection" xml:space="preserve"><value>Personae</value></data>
+  <data name="CompanyPersonPositionLabel" xml:space="preserve"><value>Munus</value></data>
+  <data name="CompanyPersonStartLabel" xml:space="preserve"><value>Initium</value></data>
+  <data name="CompanyPersonEndLabel" xml:space="preserve"><value>Finis</value></data>
+  <data name="CompanyPersonOngoingLabel" xml:space="preserve"><value>In cursu</value></data>
+  <data name="CompanyPeopleLabel" xml:space="preserve"><value>Personae</value></data>
+  <data name="OngoingText" xml:space="preserve"><value>In cursu</value></data>
 </root>
