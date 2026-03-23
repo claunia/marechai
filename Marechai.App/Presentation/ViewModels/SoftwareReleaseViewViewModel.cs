@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Humanizer;
@@ -88,6 +89,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     [ObservableProperty]
     private Visibility _showProductCodes = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showCompanies = Visibility.Collapsed;
+
     public SoftwareReleaseViewViewModel(ILogger<SoftwareReleaseViewViewModel> logger,
                                         IRegionManager                        regionManager,
                                         SoftwareBrowsingService               browsingService,
@@ -101,6 +105,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
 
     public ObservableCollection<string> Barcodes     { get; } = [];
     public ObservableCollection<string> ProductCodes { get; } = [];
+    public ObservableCollection<string> Companies    { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
@@ -148,6 +153,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             ErrorMessage = string.Empty;
             Barcodes.Clear();
             ProductCodes.Clear();
+            Companies.Clear();
 
             SoftwareReleaseDto? release = await _browsingService.GetReleaseByIdAsync(releaseId);
 
@@ -192,6 +198,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             foreach(SoftwareProductCodeDto pc in productCodes)
                 ProductCodes.Add($"{pc.Code} ({((ProductCodeIssuer)(pc.Issuer ?? 0)).Humanize()})");
 
+            // Load all companies from all junction levels
+            await LoadAllCompaniesAsync(release);
+
             UpdateVisibilities();
             IsDataLoaded = true;
             IsLoading    = false;
@@ -215,5 +224,87 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         ShowReleaseDate = !string.IsNullOrEmpty(ReleaseDateDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowBarcodes    = Barcodes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowProductCodes = ProductCodes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowCompanies   = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private async Task LoadAllCompaniesAsync(SoftwareReleaseDto release)
+    {
+        var companySet = new HashSet<(int companyId, string roleId)>();
+        var companyDisplays = new List<(string company, string? role)>();
+
+        // 1. Companies from the software version
+        if(release.SoftwareVersionId.HasValue)
+        {
+            int versionId = release.SoftwareVersionId.Value;
+
+            List<CompanyBySoftwareVersionDto> versionCompanies =
+                await _browsingService.GetCompaniesByVersionAsync(versionId);
+
+            foreach(CompanyBySoftwareVersionDto c in versionCompanies)
+            {
+                var key = (c.CompanyId ?? 0, c.RoleId ?? string.Empty);
+
+                if(companySet.Add(key))
+                    companyDisplays.Add((c.Company ?? string.Empty, c.Role));
+            }
+
+            // 2. Companies from the software itself
+            SoftwareVersionDto? version = await _browsingService.GetVersionByIdAsync(versionId);
+
+            if(version?.SoftwareId is > 0)
+            {
+                int softwareId = version.SoftwareId.Value;
+
+                List<SoftwareCompanyRoleDto> softwareCompanies =
+                    await _browsingService.GetCompaniesAsync(softwareId);
+
+                foreach(SoftwareCompanyRoleDto c in softwareCompanies)
+                {
+                    var key = (c.CompanyId ?? 0, c.RoleId ?? string.Empty);
+
+                    if(companySet.Add(key))
+                        companyDisplays.Add((c.Company ?? string.Empty, c.Role));
+                }
+
+                // 3. Companies from the software family
+                SoftwareDto? software = await _browsingService.GetSoftwareByIdAsync(softwareId);
+
+                if(software?.FamilyId is > 0)
+                {
+                    List<CompanyBySoftwareFamilyDto> familyCompanies =
+                        await _browsingService.GetCompaniesByFamilyAsync(software.FamilyId.Value);
+
+                    foreach(CompanyBySoftwareFamilyDto c in familyCompanies)
+                    {
+                        var key = (c.CompanyId ?? 0, c.RoleId ?? string.Empty);
+
+                        if(companySet.Add(key))
+                            companyDisplays.Add((c.Company ?? string.Empty, c.Role));
+                    }
+                }
+            }
+        }
+
+        // 4. Companies from the variant
+        if(release.VariantId is > 0)
+        {
+            List<CompanyBySoftwareVariantDto> variantCompanies =
+                await _browsingService.GetCompaniesByVariantAsync(release.VariantId.Value);
+
+            foreach(CompanyBySoftwareVariantDto c in variantCompanies)
+            {
+                var key = (c.CompanyId ?? 0, c.RoleId ?? string.Empty);
+
+                if(companySet.Add(key))
+                    companyDisplays.Add((c.Company ?? string.Empty, c.Role));
+            }
+        }
+
+        // Sort by company name and add to collection
+        foreach((string company, string? role) in companyDisplays.OrderBy(c => c.company))
+        {
+            string display = !string.IsNullOrEmpty(role) ? $"{company} ({role})" : company;
+            Companies.Add(display);
+        }
     }
 }

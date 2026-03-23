@@ -364,4 +364,69 @@ public class SoftwareBrowsingService
             return [];
         }
     }
+
+    public async Task<List<CompanyBySoftwareVersionDto>> GetCompaniesByVersionAsync(int versionId)
+    {
+        try
+        {
+            List<CompanyBySoftwareVersionDto> items =
+                await _apiClient.Software.Versions[versionId].Companies.GetAsync();
+
+            return items ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching companies for version {VersionId}", versionId);
+
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyBySoftwareFamilyDto>> GetCompaniesByFamilyAsync(int familyId)
+    {
+        try
+        {
+            List<CompanyBySoftwareFamilyDto> items =
+                await _apiClient.Software.Families[familyId].Companies.GetAsync();
+
+            return items ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching companies for family {FamilyId}", familyId);
+
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyBySoftwareVariantDto>> GetCompaniesByVariantAsync(int variantId)
+    {
+        try
+        {
+            List<CompanyBySoftwareVariantDto> items =
+                await _apiClient.Software.Variants[variantId].Companies.GetAsync();
+
+            return items ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching companies for variant {VariantId}", variantId);
+
+            return [];
+        }
+    }
+
+    public async Task<SoftwareVersionDto?> GetVersionByIdAsync(int versionId)
+    {
+        try
+        {
+            return await _apiClient.Software.Versions[versionId].GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching version {VersionId}", versionId);
+
+            return null;
+        }
+    }
 }
