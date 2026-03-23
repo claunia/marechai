@@ -212,7 +212,7 @@ public class Photos
                 ArgumentList =
                 {
                     "-resize",
-                    $"{width}x{height}",
+                    $"{width}x{height}>",
                     "-strip",
                     originalPath,
                     outputPath

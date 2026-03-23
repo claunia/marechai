@@ -14,4 +14,5 @@ public class Software : BaseModel<ulong>
     public virtual ICollection<SoftwareVersion>     Versions          { get; set; }
     public virtual ICollection<SoftwareVariant>     Variants          { get; set; }
     public virtual ICollection<SoftwareCompanyRole> CompanyRoles      { get; set; }
+    public virtual ICollection<SoftwareScreenshot>  Screenshots       { get; set; }
 }

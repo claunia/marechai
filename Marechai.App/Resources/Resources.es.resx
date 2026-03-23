@@ -2030,4 +2030,25 @@
   <data name="RecommendedGpusLabel" xml:space="preserve"><value>GPUs recomendadas</value></data>
   <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Sintetizadores de sonido compatibles</value></data>
   <data name="SoundSynthLabel" xml:space="preserve"><value>Sintetizador de sonido</value></data>
+  <!-- Software Screenshots -->
+  <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Capturas de pantalla</value></data>
+  <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Capturas de pantalla de software</value></data>
+  <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Gestionar capturas de pantalla de software</value></data>
+  <data name="UploadScreenshotLabel" xml:space="preserve"><value>Subir captura de pantalla</value></data>
+  <data name="UploadScreenshotButton" xml:space="preserve"><value>Subir captura</value></data>
+  <data name="UploadingScreenshotText" xml:space="preserve"><value>Subiendo captura de pantalla...</value></data>
+  <data name="EditScreenshotLabel" xml:space="preserve"><value>Editar captura de pantalla</value></data>
+  <data name="CaptionLabel" xml:space="preserve"><value>Descripción</value></data>
+  <data name="VersionLabel" xml:space="preserve"><value>Versión</value></data>
+  <data name="ScreenshotsLabel" xml:space="preserve"><value>Capturas de pantalla</value></data>
+  <data name="LoadingScreenshotText" xml:space="preserve"><value>Cargando captura de pantalla...</value></data>
+  <data name="ZoomInLabel" xml:space="preserve"><value>Acercar</value></data>
+  <data name="ZoomOutLabel" xml:space="preserve"><value>Alejar</value></data>
+  <data name="ZoomResetLabel" xml:space="preserve"><value>Restablecer zoom</value></data>
+  <data name="General" xml:space="preserve"><value>General</value></data>
+  <data name="SelectSoftwareRequired" xml:space="preserve"><value>Por favor seleccione un software primero</value></data>
+  <data name="FailedToLoadScreenshots" xml:space="preserve"><value>Error al cargar capturas de pantalla</value></data>
+  <data name="FailedToUploadScreenshot" xml:space="preserve"><value>Error al subir captura de pantalla</value></data>
+  <data name="FailedToDeleteScreenshot" xml:space="preserve"><value>Error al eliminar captura de pantalla</value></data>
+  <data name="FailedToSaveScreenshot" xml:space="preserve"><value>Error al guardar captura de pantalla</value></data>
 </root>

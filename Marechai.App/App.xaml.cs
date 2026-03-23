@@ -163,6 +163,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<CompanyLogoCache>();
         containerRegistry.RegisterSingleton<MachinePhotoCache>();
         containerRegistry.RegisterSingleton<BookCoverCache>();
+        containerRegistry.RegisterSingleton<SoftwareScreenshotCache>();
         containerRegistry.RegisterSingleton<ImageSourceFactory>(
             () => new ImageSourceFactory(DispatcherQueue.GetForCurrentThread()));
         containerRegistry.RegisterSingleton<NewsService>();
@@ -256,6 +257,8 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminSoftwareVariantsViewModel>();
         containerRegistry.Register<AdminSoftwareSubvariantsViewModel>();
         containerRegistry.Register<AdminSoftwareReleasesViewModel>();
+        containerRegistry.Register<AdminSoftwareScreenshotsViewModel>();
+        containerRegistry.Register<ScreenshotDetailViewModel>();
 
         // Register views for navigation
         containerRegistry.RegisterForNavigation<MainPage, MainViewModel>();
@@ -316,6 +319,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminSoftwareVariantsPage, AdminSoftwareVariantsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareSubvariantsPage, AdminSoftwareSubvariantsViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareReleasesPage, AdminSoftwareReleasesViewModel>();
+        containerRegistry.RegisterForNavigation<AdminSoftwareScreenshotsPage, AdminSoftwareScreenshotsViewModel>();
+        containerRegistry.RegisterForNavigation<ScreenshotDetailPage, ScreenshotDetailViewModel>();
     }
 
     protected override async void OnInitialized()

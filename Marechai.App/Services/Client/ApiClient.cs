@@ -291,7 +291,7 @@ namespace Marechai.App
             ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
             if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
             {
-                RequestAdapter.BaseUrl = "http://localhost:5097";
+                RequestAdapter.BaseUrl = "http://localhost:5099";
             }
             PathParameters.TryAdd("baseurl", RequestAdapter.BaseUrl);
         }

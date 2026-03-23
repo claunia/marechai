@@ -3,11 +3,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Marechai.App.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.App.Services.Caching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
@@ -17,6 +21,8 @@ namespace Marechai.App.Presentation.ViewModels;
 public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 {
     private readonly SoftwareBrowsingService        _browsingService;
+    private readonly SoftwareScreenshotCache         _screenshotCache;
+    private readonly ImageSourceFactory              _imageSourceFactory;
     private readonly IStringLocalizer               _localizer;
     private readonly ILogger<SoftwareViewViewModel> _logger;
     private readonly IRegionManager                 _regionManager;
@@ -63,17 +69,24 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showGameBadge = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showScreenshots = Visibility.Collapsed;
+
     public SoftwareViewViewModel(ILogger<SoftwareViewViewModel> logger,          IRegionManager regionManager,
-                                 SoftwareBrowsingService        browsingService, IStringLocalizer localizer)
+                                 SoftwareBrowsingService        browsingService, IStringLocalizer localizer,
+                                 SoftwareScreenshotCache        screenshotCache, ImageSourceFactory imageSourceFactory)
     {
-        _logger          = logger;
-        _regionManager   = regionManager;
-        _browsingService = browsingService;
-        _localizer       = localizer;
+        _logger             = logger;
+        _regionManager      = regionManager;
+        _browsingService    = browsingService;
+        _localizer          = localizer;
+        _screenshotCache    = screenshotCache;
+        _imageSourceFactory = imageSourceFactory;
     }
 
-    public ObservableCollection<string>             Companies { get; } = [];
-    public ObservableCollection<VersionDisplayItem> Versions  { get; } = [];
+    public ObservableCollection<string>                   Companies           { get; } = [];
+    public ObservableCollection<VersionDisplayItem>       Versions            { get; } = [];
+    public ObservableCollection<ScreenshotPlatformGroup>  ScreenshotGroups    { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
@@ -204,6 +217,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 Versions.Add(versionItem);
             }
 
+            // Load screenshots
+            await LoadScreenshotsAsync(softwareId);
+
             UpdateVisibilities();
             IsDataLoaded = true;
             IsLoading    = false;
@@ -217,14 +233,102 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         }
     }
 
+    [RelayCommand]
+    public Task ViewScreenshot(ScreenshotDisplayItem? item)
+    {
+        if(item is null) return Task.CompletedTask;
+
+        var parameters = new NavigationParameters
+        {
+            { NavParamKeys.ScreenshotId, item.Id }
+        };
+
+        _regionManager.RequestNavigate(RegionNames.Content, nameof(ScreenshotDetailPage), parameters);
+
+        return Task.CompletedTask;
+    }
+
+    private async Task LoadScreenshotsAsync(int softwareId)
+    {
+        try
+        {
+            ScreenshotGroups.Clear();
+
+            List<Guid> screenshotIds = await _browsingService.GetScreenshotIdsAsync(softwareId);
+
+            if(screenshotIds.Count == 0) return;
+
+            // Fetch metadata for each screenshot and group by platform
+            var byPlatform = new Dictionary<string, List<ScreenshotDisplayItem>>();
+
+            foreach(Guid id in screenshotIds)
+            {
+                SoftwareScreenshotDto? dto = await _browsingService.GetScreenshotDetailsAsync(id);
+
+                if(dto is null) continue;
+
+                string platformKey = dto.PlatformName ?? _localizer["General"];
+
+                if(!byPlatform.ContainsKey(platformKey))
+                    byPlatform[platformKey] = [];
+
+                var item = new ScreenshotDisplayItem
+                {
+                    Id           = dto.Id ?? Guid.Empty,
+                    Caption      = dto.Caption,
+                    PlatformName = dto.PlatformName
+                };
+
+                byPlatform[platformKey].Add(item);
+                _ = LoadScreenshotThumbnailAsync(item);
+            }
+
+            foreach(KeyValuePair<string, List<ScreenshotDisplayItem>> kvp in byPlatform.OrderBy(k => k.Key))
+            {
+                var group = new ScreenshotPlatformGroup
+                {
+                    PlatformName = kvp.Key,
+                    Screenshots  = new ObservableCollection<ScreenshotDisplayItem>(kvp.Value)
+                };
+
+                ScreenshotGroups.Add(group);
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading screenshots for software {SoftwareId}", softwareId);
+        }
+    }
+
+    private async Task LoadScreenshotThumbnailAsync(ScreenshotDisplayItem item)
+    {
+        try
+        {
+            Stream stream = await _screenshotCache.GetThumbnailAsync(item.Id);
+            item.ThumbnailSource = await _imageSourceFactory.CreateBitmapImageSourceAsync(stream);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading screenshot thumbnail {Id}", item.Id);
+        }
+    }
+
     private void UpdateVisibilities()
     {
-        ShowFamily    = !string.IsNullOrEmpty(Family) ? Visibility.Visible : Visibility.Collapsed;
-        ShowCompanies = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        ShowVersions  = Versions.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        ShowOsBadge   = IsOperatingSystem ? Visibility.Visible : Visibility.Collapsed;
-        ShowGameBadge = IsGame ? Visibility.Visible : Visibility.Collapsed;
+        ShowFamily      = !string.IsNullOrEmpty(Family) ? Visibility.Visible : Visibility.Collapsed;
+        ShowCompanies   = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowVersions    = Versions.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowOsBadge     = IsOperatingSystem ? Visibility.Visible : Visibility.Collapsed;
+        ShowGameBadge   = IsGame ? Visibility.Visible : Visibility.Collapsed;
+        ShowScreenshots = ScreenshotGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
+}
+
+[Bindable]
+public class ScreenshotPlatformGroup
+{
+    public string                                           PlatformName { get; set; } = string.Empty;
+    public ObservableCollection<ScreenshotDisplayItem> Screenshots  { get; set; } = [];
 }
 
 [Bindable]

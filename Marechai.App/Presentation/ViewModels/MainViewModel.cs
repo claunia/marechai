@@ -60,7 +60,8 @@ public partial class MainViewModel : ObservableObject
     public string DocumentManagementButtonText      => _localizer["DocumentManagementButton"];
     public string MagazineManagementButtonText      => _localizer["MagazineManagementButton"];
     public string SoftwareAdminManagementButtonText   => _localizer["SoftwareAdminManagementButton"];
-    public string SoftwareReleaseManagementButtonText => _localizer["SoftwareReleaseManagementButton"];
+    public string SoftwareReleaseManagementButtonText    => _localizer["SoftwareReleaseManagementButton"];
+    public string SoftwareScreenshotManagementButtonText => _localizer["SoftwareScreenshotManagementButton"];
     public string SoftwarePlatformManagementButtonText => _localizer["SoftwarePlatformManagementButton"];
     public string SoftwareFamilyManagementButtonText  => _localizer["SoftwareFamilyManagementButton"];
     public string SettingsButtonText             => _localizer["SettingsButton"];
@@ -119,6 +120,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToAdminMagazinesCommand                     = new RelayCommand(() => NavigateTo(nameof(AdminMagazinesPage)));
         NavigateToAdminSoftwareCommand                      = new RelayCommand(() => NavigateTo(nameof(AdminSoftwarePage)));
         NavigateToAdminSoftwareReleasesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareReleasesPage)));
+        NavigateToAdminSoftwareScreenshotsCommand             = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareScreenshotsPage)));
         NavigateToAdminSoftwarePlatformsCommand             = new RelayCommand(() => NavigateTo(nameof(AdminSoftwarePlatformsPage)));
         NavigateToAdminSoftwareFamiliesCommand              = new RelayCommand(() => NavigateTo(nameof(AdminSoftwareFamiliesPage)));
         NavigateToSettingsCommand                 = new RelayCommand(() => NavigateTo(nameof(SettingsPage)));
@@ -169,6 +171,7 @@ public partial class MainViewModel : ObservableObject
     public ICommand NavigateToAdminMagazinesCommand           { get; }
     public ICommand NavigateToAdminSoftwareCommand            { get; }
     public ICommand NavigateToAdminSoftwareReleasesCommand    { get; }
+    public ICommand NavigateToAdminSoftwareScreenshotsCommand { get; }
     public ICommand NavigateToAdminSoftwarePlatformsCommand   { get; }
     public ICommand NavigateToAdminSoftwareFamiliesCommand    { get; }
     public ICommand NavigateToSettingsCommand                 { get; }

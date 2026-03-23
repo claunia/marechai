@@ -1890,4 +1890,25 @@
   <data name="RecommendedGpusLabel" xml:space="preserve"><value>GPUs recomendadas</value></data>
   <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Sintetizadores de som suportados</value></data>
   <data name="SoundSynthLabel" xml:space="preserve"><value>Sintetizador de som</value></data>
+  <!-- Software Screenshots -->
+  <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Software Screenshots</value></data>
+  <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Software Screenshots</value></data>
+  <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Manage screenshots for software</value></data>
+  <data name="UploadScreenshotLabel" xml:space="preserve"><value>Upload Screenshot</value></data>
+  <data name="UploadScreenshotButton" xml:space="preserve"><value>Upload Screenshot</value></data>
+  <data name="UploadingScreenshotText" xml:space="preserve"><value>Uploading screenshot...</value></data>
+  <data name="EditScreenshotLabel" xml:space="preserve"><value>Edit Screenshot</value></data>
+  <data name="CaptionLabel" xml:space="preserve"><value>Caption</value></data>
+  <data name="VersionLabel" xml:space="preserve"><value>Version</value></data>
+  <data name="ScreenshotsLabel" xml:space="preserve"><value>Screenshots</value></data>
+  <data name="LoadingScreenshotText" xml:space="preserve"><value>Loading screenshot...</value></data>
+  <data name="ZoomInLabel" xml:space="preserve"><value>Zoom In</value></data>
+  <data name="ZoomOutLabel" xml:space="preserve"><value>Zoom Out</value></data>
+  <data name="ZoomResetLabel" xml:space="preserve"><value>Reset Zoom</value></data>
+  <data name="General" xml:space="preserve"><value>General</value></data>
+  <data name="SelectSoftwareRequired" xml:space="preserve"><value>Please select a software first</value></data>
+  <data name="FailedToLoadScreenshots" xml:space="preserve"><value>Failed to load screenshots</value></data>
+  <data name="FailedToUploadScreenshot" xml:space="preserve"><value>Failed to upload screenshot</value></data>
+  <data name="FailedToDeleteScreenshot" xml:space="preserve"><value>Failed to delete screenshot</value></data>
+  <data name="FailedToSaveScreenshot" xml:space="preserve"><value>Failed to save screenshot</value></data>
 </root>

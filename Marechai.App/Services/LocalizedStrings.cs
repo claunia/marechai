@@ -681,4 +681,19 @@ public class LocalizedStrings
     public string RecommendedGpusLabel => _l["RecommendedGpusLabel"];
     public string SupportedSoundSynthsLabel => _l["SupportedSoundSynthsLabel"];
     public string SoundSynthLabel => _l["SoundSynthLabel"];
+
+    // Software Screenshots
+    public string SoftwareScreenshotsTitle => _l["SoftwareScreenshotsTitle"];
+    public string SoftwareScreenshotsSubtitle => _l["SoftwareScreenshotsSubtitle"];
+    public string UploadScreenshotLabel => _l["UploadScreenshotLabel"];
+    public string UploadScreenshotButton => _l["UploadScreenshotButton"];
+    public string UploadingScreenshotText => _l["UploadingScreenshotText"];
+    public string EditScreenshotLabel => _l["EditScreenshotLabel"];
+    public string CaptionLabel => _l["CaptionLabel"];
+    public string VersionLabel => _l["VersionLabel"];
+    public string ScreenshotsLabel => _l["ScreenshotsLabel"];
+    public string LoadingScreenshotText => _l["LoadingScreenshotText"];
+    public string ZoomInLabel => _l["ZoomInLabel"];
+    public string ZoomOutLabel => _l["ZoomOutLabel"];
+    public string ZoomResetLabel => _l["ZoomResetLabel"];
 }

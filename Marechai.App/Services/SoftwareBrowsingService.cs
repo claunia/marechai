@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Models;
 
@@ -425,6 +426,36 @@ public class SoftwareBrowsingService
         catch(Exception ex)
         {
             _logger.LogError(ex, "Error fetching version {VersionId}", versionId);
+
+            return null;
+        }
+    }
+
+    public async Task<List<Guid>> GetScreenshotIdsAsync(int softwareId)
+    {
+        try
+        {
+            List<Guid?> result = await _apiClient.Software[softwareId].Screenshots.GetAsync();
+
+            return result?.Where(g => g.HasValue).Select(g => g!.Value).ToList() ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching screenshot IDs for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
+    public async Task<SoftwareScreenshotDto?> GetScreenshotDetailsAsync(Guid screenshotId)
+    {
+        try
+        {
+            return await _apiClient.Software.Screenshots[screenshotId.ToString()].GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching screenshot {ScreenshotId}", screenshotId);
 
             return null;
         }

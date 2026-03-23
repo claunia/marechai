@@ -144,6 +144,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<MinimumGpuBySoftwareRelease>        MinimumGpuBySoftwareRelease         { get; set; }
     public virtual DbSet<RecommendedGpuBySoftwareRelease>    RecommendedGpuBySoftwareRelease     { get; set; }
     public virtual DbSet<SoundSynthBySoftwareRelease>        SoundSynthBySoftwareRelease         { get; set; }
+    public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }

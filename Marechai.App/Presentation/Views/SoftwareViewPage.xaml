@@ -275,6 +275,79 @@
                         </ItemsControl>
                     </StackPanel>
 
+                    <!-- Screenshots -->
+                    <StackPanel Visibility="{Binding ShowScreenshots}"
+                                Spacing="12">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ScreenshotsLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+
+                        <ItemsControl ItemsSource="{Binding ScreenshotGroups}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="16" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Spacing="8">
+                                        <!-- Platform group header -->
+                                        <TextBlock Text="{Binding PlatformName}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+
+                                        <!-- Screenshot thumbnails grid -->
+                                        <ItemsRepeater ItemsSource="{Binding Screenshots}">
+                                            <ItemsRepeater.Layout>
+                                                <UniformGridLayout MinItemWidth="200"
+                                                                   MinItemHeight="180"
+                                                                   MinColumnSpacing="12"
+                                                                   MinRowSpacing="12"
+                                                                   ItemsStretch="Fill" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Padding="0"
+                                                            Margin="0"
+                                                            HorizontalContentAlignment="Stretch"
+                                                            VerticalContentAlignment="Stretch"
+                                                            HorizontalAlignment="Stretch"
+                                                            Command="{Binding DataContext.ViewScreenshotCommand, ElementName=PageRoot}"
+                                                            CommandParameter="{Binding}"
+                                                            Background="Transparent"
+                                                            BorderThickness="0">
+                                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                                BorderThickness="1"
+                                                                CornerRadius="8"
+                                                                Padding="8">
+                                                            <StackPanel Spacing="4">
+                                                                <Image Source="{Binding ThumbnailSource}"
+                                                                       Stretch="Uniform"
+                                                                       MaxHeight="140"
+                                                                       HorizontalAlignment="Center" />
+                                                                <TextBlock Text="{Binding Caption}"
+                                                                           FontSize="11"
+                                                                           Foreground="{ThemeResource SystemBaseMediumColor}"
+                                                                           HorizontalAlignment="Center"
+                                                                           TextTrimming="CharacterEllipsis"
+                                                                           Visibility="{Binding Caption, Converter={StaticResource NullToVisibilityConverter}}" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                 </StackPanel>
             </ScrollViewer>
 
