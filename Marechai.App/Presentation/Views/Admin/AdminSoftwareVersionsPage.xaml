@@ -93,6 +93,36 @@
                                                         x:Name="ParentVersionFilterBox" TextChanged="ParentVersionFilterBox_TextChanged" />
                                         <ComboBox ItemsSource="{Binding ParentVersionSuggestions}" SelectedItem="{Binding SelectedParentVersion, Mode=TwoWay}"
                                                   DisplayMemberPath="VersionString" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=ParentVersionLabel}" />
+
+                                        <!-- Companies Section (edit only) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="8" Margin="0,16,0,0">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareCompaniesLabel}" FontSize="16" FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding VersionCompanyDisplays}">
+                                                <ItemsRepeater.Layout><StackLayout Spacing="4" /></ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnSpacing="4">
+                                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                                            <Button Grid.Column="1" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                                    Command="{Binding DataContext.RemoveCompanyCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}" Padding="4,2" Style="{ThemeResource TextBlockButtonStyle}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                            <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=CompanyLabel}"
+                                                            PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                            Text="{Binding CompanySearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                            x:Name="CompanySearchBox" TextChanged="CompanySearchBox_TextChanged" />
+                                            <ComboBox ItemsSource="{Binding CompanySuggestions}" SelectedItem="{Binding SelectedCompany, Mode=TwoWay}"
+                                                      DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=CompanyLabel}" />
+                                            <ComboBox Header="{Binding Source={StaticResource Strings}, Path=RoleLabel}"
+                                                      ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole, Mode=TwoWay}"
+                                                      DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=RoleLabel}" />
+                                            <Button Content="+" Command="{Binding AddCompanyCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
+                                        </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
                                 <Grid Grid.Row="2" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" ColumnSpacing="8">

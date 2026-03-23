@@ -16,6 +16,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionAware
 {
     private readonly SoftwareVersionsService                     _service;
+    private readonly ApiClient                                   _apiClient;
     private readonly IJwtService                                 _jwtService;
     private readonly IStringLocalizer                            _localizer;
     private readonly ILogger<AdminSoftwareVersionsViewModel>     _logger;
@@ -32,6 +33,7 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
     [ObservableProperty] private string _errorMessage = string.Empty;
     [ObservableProperty] private bool _isAdmin;
     [ObservableProperty] private bool _isEditing;
+    [ObservableProperty] private bool _isEditingExisting;
     [ObservableProperty] private string _editPanelTitle = string.Empty;
     [ObservableProperty] private string _pageTitle = string.Empty;
 
@@ -43,11 +45,23 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
     [ObservableProperty] private string _parentVersionSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<SoftwareVersionDto> _parentVersionSuggestions = [];
 
+    // Companies junction
+    [ObservableProperty] private ObservableCollection<CompanyBySoftwareVersionDto> _versionCompanies = [];
+    [ObservableProperty] private ObservableCollection<string> _versionCompanyDisplays = [];
+    [ObservableProperty] private CompanyDto? _selectedCompany;
+    [ObservableProperty] private string _companySearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<CompanyDto> _companySuggestions = [];
+    [ObservableProperty] private SoftwareRoleDto? _selectedRole;
+    [ObservableProperty] private ObservableCollection<SoftwareRoleDto> _roles = [];
+
     private int? _editingId;
     private int  _parentSoftwareId;
     private List<SoftwareVersionDto>? _allVersions;
+    private List<CompanyDto>? _allCompanies;
+    private List<SoftwareRoleDto>? _allRoles;
 
     public AdminSoftwareVersionsViewModel(SoftwareVersionsService                  service,
+                                          ApiClient                                apiClient,
                                           IJwtService                              jwtService,
                                           ITokenService                            tokenService,
                                           ILogger<AdminSoftwareVersionsViewModel>  logger,
@@ -55,30 +69,35 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
                                           IRegionManager                           regionManager)
     {
         _service       = service;
+        _apiClient     = apiClient;
         _jwtService    = jwtService;
         _tokenService  = tokenService;
         _logger        = logger;
         _localizer     = localizer;
         _regionManager = regionManager;
 
-        LoadCommand       = new AsyncRelayCommand(LoadAsync);
-        OpenAddCommand    = new RelayCommand(OpenAdd);
-        OpenEditCommand   = new RelayCommand<SoftwareVersionDto>(OpenEdit);
-        DeleteCommand     = new AsyncRelayCommand<SoftwareVersionDto>(DeleteAsync);
-        SaveCommand       = new AsyncRelayCommand(SaveAsync);
-        CancelEditCommand = new RelayCommand(CancelEdit);
-        GoBackCommand     = new RelayCommand(GoBack);
+        LoadCommand            = new AsyncRelayCommand(LoadAsync);
+        OpenAddCommand         = new RelayCommand(OpenAdd);
+        OpenEditCommand        = new RelayCommand<SoftwareVersionDto>(OpenEdit);
+        DeleteCommand          = new AsyncRelayCommand<SoftwareVersionDto>(DeleteAsync);
+        SaveCommand            = new AsyncRelayCommand(SaveAsync);
+        CancelEditCommand      = new RelayCommand(CancelEdit);
+        GoBackCommand          = new RelayCommand(GoBack);
+        AddCompanyCommand      = new AsyncRelayCommand(AddCompanyAsync);
+        RemoveCompanyCommand   = new AsyncRelayCommand<string>(RemoveCompanyByDisplayAsync);
 
         CheckAdminRole();
     }
 
-    public IAsyncRelayCommand                        LoadCommand       { get; }
-    public IRelayCommand                             OpenAddCommand    { get; }
-    public IRelayCommand<SoftwareVersionDto>         OpenEditCommand   { get; }
-    public IAsyncRelayCommand<SoftwareVersionDto>    DeleteCommand     { get; }
-    public IAsyncRelayCommand                        SaveCommand       { get; }
-    public IRelayCommand                             CancelEditCommand { get; }
-    public IRelayCommand                             GoBackCommand     { get; }
+    public IAsyncRelayCommand                        LoadCommand            { get; }
+    public IRelayCommand                             OpenAddCommand         { get; }
+    public IRelayCommand<SoftwareVersionDto>         OpenEditCommand        { get; }
+    public IAsyncRelayCommand<SoftwareVersionDto>    DeleteCommand          { get; }
+    public IAsyncRelayCommand                        SaveCommand            { get; }
+    public IRelayCommand                             CancelEditCommand      { get; }
+    public IRelayCommand                             GoBackCommand          { get; }
+    public IAsyncRelayCommand                        AddCompanyCommand      { get; }
+    public IAsyncRelayCommand<string>                RemoveCompanyCommand   { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -92,7 +111,27 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
             _parentSoftwareId = softwareId;
         if(navigationContext.Parameters.TryGetValue<string>(NavParamKeys.SoftwareName, out string? name))
             PageTitle = string.Format(_localizer["SoftwareVersionsForTitle"], name);
-        if(IsAdmin) _ = LoadCommand.ExecuteAsync(null);
+
+        if(IsAdmin)
+        {
+            _ = LoadPickerDataAsync();
+            _ = LoadCommand.ExecuteAsync(null);
+        }
+    }
+
+    public async Task LoadPickerDataAsync()
+    {
+        try { _allCompanies = await _apiClient.Companies.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
+
+        try
+        {
+            _allRoles = await _apiClient.Software.Roles.Enabled.GetAsync();
+            Roles.Clear();
+            if(_allRoles != null)
+                foreach(SoftwareRoleDto r in _allRoles) Roles.Add(r);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading software roles for picker"); }
     }
 
     private void CheckAdminRole()
@@ -133,16 +172,19 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
     {
         _editingId = null;
         EditPanelTitle = _localizer["AddSoftwareVersionDialog_Title"];
+        IsEditingExisting = false;
         ClearForm();
         UpdateParentVersionSuggestions(string.Empty);
+        UpdateCompanySuggestions(string.Empty);
         IsEditing = true;
     }
 
-    private void OpenEdit(SoftwareVersionDto? item)
+    private async void OpenEdit(SoftwareVersionDto? item)
     {
         if(item == null) return;
         _editingId      = item.Id;
         EditPanelTitle  = _localizer["EditSoftwareVersionDialog_Title"];
+        IsEditingExisting = true;
         Codename        = item.Codename ?? string.Empty;
         VersionString   = item.VersionString ?? string.Empty;
         PublicVersion   = item.PublicVersion ?? string.Empty;
@@ -159,8 +201,12 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
         }
         else { ParentVersionSearchText = string.Empty; SelectedParentVersion = null; UpdateParentVersionSuggestions(string.Empty); }
 
+        UpdateCompanySuggestions(string.Empty);
         HasError = false; ErrorMessage = string.Empty;
         IsEditing = true;
+
+        if(item.Id.HasValue)
+            await LoadVersionCompaniesAsync(item.Id.Value);
     }
 
     private async Task DeleteAsync(SoftwareVersionDto? item)
@@ -249,6 +295,75 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
         foreach(SoftwareVersionDto match in source) ParentVersionSuggestions.Add(match);
     }
 
+    public void UpdateCompanySuggestions(string query)
+    {
+        CompanySuggestions.Clear();
+        if(_allCompanies == null) return;
+        IEnumerable<CompanyDto> source = _allCompanies;
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(c => c.Name != null && c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+        foreach(CompanyDto match in source) CompanySuggestions.Add(match);
+    }
+
+    private async Task LoadVersionCompaniesAsync(int versionId)
+    {
+        VersionCompanies.Clear();
+        VersionCompanyDisplays.Clear();
+
+        try
+        {
+            List<CompanyBySoftwareVersionDto> items = await _service.GetCompaniesAsync(versionId);
+
+            foreach(CompanyBySoftwareVersionDto item in items)
+            {
+                VersionCompanies.Add(item);
+                string name    = item.Company ?? string.Empty;
+                string? role   = item.Role;
+                string display = !string.IsNullOrEmpty(role) ? $"{name} ({role})" : name;
+                VersionCompanyDisplays.Add(display);
+            }
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading companies for version {Id}", versionId); }
+    }
+
+    private async Task AddCompanyAsync()
+    {
+        if(_editingId == null || SelectedCompany?.Id == null || SelectedRole?.Id == null) return;
+
+        try
+        {
+            var dto = new CompanyBySoftwareVersionDto
+            {
+                SoftwareVersionId = _editingId,
+                CompanyId         = SelectedCompany.Id,
+                RoleId            = SelectedRole.Id
+            };
+
+            await _service.AddCompanyAsync(dto);
+            SelectedCompany   = null;
+            CompanySearchText = string.Empty;
+            SelectedRole      = null;
+            await LoadVersionCompaniesAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding company to version"); }
+    }
+
+    private async Task RemoveCompanyByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+
+        int idx = VersionCompanyDisplays.IndexOf(display);
+
+        if(idx < 0 || idx >= VersionCompanies.Count || VersionCompanies[idx].Id == null) return;
+
+        try
+        {
+            await _service.RemoveCompanyAsync(VersionCompanies[idx].Id!.Value);
+            await LoadVersionCompaniesAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error removing company from version"); }
+    }
+
     private void ClearForm()
     {
         Codename = string.Empty;
@@ -256,6 +371,11 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
         PublicVersion = string.Empty;
         SelectedParentVersion = null;
         ParentVersionSearchText = string.Empty;
+        VersionCompanies.Clear();
+        VersionCompanyDisplays.Clear();
+        SelectedCompany   = null;
+        CompanySearchText = string.Empty;
+        SelectedRole      = null;
         HasError = false; ErrorMessage = string.Empty;
     }
 }
