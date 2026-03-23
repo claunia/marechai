@@ -246,7 +246,7 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
             source = source.Where(v =>
                 (v.VersionString != null && v.VersionString.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
                 (v.PublicVersion != null && v.PublicVersion.Contains(query, StringComparison.OrdinalIgnoreCase)));
-        foreach(SoftwareVersionDto match in source.Take(50)) ParentVersionSuggestions.Add(match);
+        foreach(SoftwareVersionDto match in source) ParentVersionSuggestions.Add(match);
     }
 
     private void ClearForm()

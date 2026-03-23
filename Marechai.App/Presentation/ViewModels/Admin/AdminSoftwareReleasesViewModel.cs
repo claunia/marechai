@@ -16,6 +16,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private readonly SoftwareReleasesService                     _service;
     private readonly SoftwareVersionsService                     _versionsService;
     private readonly SoftwarePlatformsService                    _platformsService;
+    private readonly ApiClient                                   _apiClient;
     private readonly IJwtService                                 _jwtService;
     private readonly IStringLocalizer                            _localizer;
     private readonly ILogger<AdminSoftwareReleasesViewModel>     _logger;
@@ -62,6 +63,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public AdminSoftwareReleasesViewModel(SoftwareReleasesService                  service,
                                           SoftwareVersionsService                  versionsService,
                                           SoftwarePlatformsService                 platformsService,
+                                          ApiClient                                apiClient,
                                           IJwtService                              jwtService,
                                           ITokenService                            tokenService,
                                           ILogger<AdminSoftwareReleasesViewModel>  logger,
@@ -70,6 +72,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         _service          = service;
         _versionsService  = versionsService;
         _platformsService = platformsService;
+        _apiClient        = apiClient;
         _jwtService       = jwtService;
         _tokenService     = tokenService;
         _logger           = logger;
@@ -153,6 +156,18 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             }
             catch(Exception ex) { _logger.LogError(ex, "Error loading platforms for picker"); }
         }
+
+        if(_allRegions == null)
+        {
+            try { _allRegions = await _apiClient.Iso31661Numeric.GetAsync(); }
+            catch(Exception ex) { _logger.LogError(ex, "Error loading regions for picker"); }
+        }
+
+        if(_allCompanies == null)
+        {
+            try { _allCompanies = await _apiClient.Companies.GetAsync(); }
+            catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
+        }
     }
 
     private void OpenAdd()
@@ -161,6 +176,9 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         EditPanelTitle = _localizer["AddSoftwareReleaseDialog_Title"];
         IsEditingExisting = false;
         ClearForm();
+        UpdateVersionSuggestions(string.Empty);
+        UpdateRegionSuggestions(string.Empty);
+        UpdatePublisherSuggestions(string.Empty);
         IsEditing = true;
     }
 
@@ -183,6 +201,34 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                 UpdateVersionSuggestions(VersionSearchText);
                 SelectedVersion = VersionSuggestions.FirstOrDefault(v => v.Id == ver.Id);
             }
+        }
+        else
+        {
+            UpdateVersionSuggestions(string.Empty);
+        }
+
+        // Region picker
+        if(item.RegionId.HasValue && _allRegions != null)
+        {
+            UpdateRegionSuggestions(string.Empty);
+            SelectedRegion = RegionSuggestions.FirstOrDefault(r => r.Id == item.RegionId.Value);
+            if(SelectedRegion != null) RegionSearchText = SelectedRegion.Name ?? string.Empty;
+        }
+        else
+        {
+            UpdateRegionSuggestions(string.Empty);
+        }
+
+        // Publisher picker
+        if(item.PublisherId.HasValue && _allCompanies != null)
+        {
+            UpdatePublisherSuggestions(string.Empty);
+            SelectedPublisher = PublisherSuggestions.FirstOrDefault(c => c.Id == item.PublisherId.Value);
+            if(SelectedPublisher != null) PublisherSearchText = SelectedPublisher.Name ?? string.Empty;
+        }
+        else
+        {
+            UpdatePublisherSuggestions(string.Empty);
         }
 
         // Platform
@@ -282,7 +328,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                 (v.VersionString != null && v.VersionString.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
                 (v.PublicVersion != null && v.PublicVersion.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
                 (v.Software != null && v.Software.Contains(query, StringComparison.OrdinalIgnoreCase)));
-        foreach(SoftwareVersionDto match in source.Take(50)) VersionSuggestions.Add(match);
+        foreach(SoftwareVersionDto match in source) VersionSuggestions.Add(match);
     }
 
     public void UpdateRegionSuggestions(string query)
@@ -292,7 +338,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         IEnumerable<Iso31661NumericDto> source = _allRegions;
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(r => r.Name != null && r.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-        foreach(Iso31661NumericDto match in source.Take(50)) RegionSuggestions.Add(match);
+        foreach(Iso31661NumericDto match in source) RegionSuggestions.Add(match);
     }
 
     public void UpdatePublisherSuggestions(string query)
@@ -302,7 +348,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         IEnumerable<CompanyDto> source = _allCompanies;
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(c => c.Name != null && c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-        foreach(CompanyDto match in source.Take(50)) PublisherSuggestions.Add(match);
+        foreach(CompanyDto match in source) PublisherSuggestions.Add(match);
     }
 
     private async Task LoadBarcodesAsync(int releaseId)
