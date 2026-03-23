@@ -18,6 +18,104 @@ public class DocumentsService
         _logger    = logger;
     }
 
+    // --- User-facing browsing methods ---
+
+    public async Task<int> GetDocumentsCountAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Documents.Count.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching documents count");
+
+            return 0;
+        }
+    }
+
+    public async Task<int> GetMinimumYearAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Documents.MinimumYear.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching minimum year");
+
+            return 0;
+        }
+    }
+
+    public async Task<int> GetMaximumYearAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Documents.MaximumYear.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching maximum year");
+
+            return 0;
+        }
+    }
+
+    public async Task<List<DocumentDto>> GetDocumentsByLetterAsync(char letter)
+    {
+        try
+        {
+            List<DocumentDto>? docs = await _apiClient.Documents.ByLetter[letter.ToString()].GetAsync();
+
+            return docs ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching documents by letter '{Letter}'", letter);
+
+            return [];
+        }
+    }
+
+    public async Task<List<DocumentDto>> GetDocumentsByYearAsync(int year)
+    {
+        try
+        {
+            List<DocumentDto>? docs = await _apiClient.Documents.ByYear[year].GetAsync();
+
+            return docs ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching documents by year {Year}", year);
+
+            return [];
+        }
+    }
+
+    public async Task<DocumentSynopsisDto?> GetDocumentSynopsisAsync(long documentId)
+    {
+        try
+        {
+            return await _apiClient.Documents[documentId].Synopsis.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching synopsis for document {Id}", documentId);
+
+            return null;
+        }
+    }
+
+    // --- CRUD ---
+
     public async Task<List<DocumentDto>> GetAllDocumentsAsync()
     {
         try

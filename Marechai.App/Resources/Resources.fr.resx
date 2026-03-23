@@ -1879,4 +1879,26 @@
   <data name="No books found for this filter" xml:space="preserve"><value>Aucun livre trouvé pour ce filtre</value></data>
   <data name="Failed to load books. Please try again later." xml:space="preserve"><value>Erreur de chargement des livres. Veuillez réessayer plus tard.</value></data>
   <data name="Book not found" xml:space="preserve"><value>Livre non trouvé</value></data>
+  <data name="AllDocumentsButton" xml:space="preserve"><value>Tous les documents</value></data>
+  <data name="DocumentsSearchBox_Placeholder" xml:space="preserve"><value>Rechercher des documents...</value></data>
+  <data name="DocumentsErrorInfoBar_Title" xml:space="preserve"><value>Erreur de chargement des documents</value></data>
+  <data name="DocumentsLabel" xml:space="preserve"><value>documents</value></data>
+  <data name="DocumentSynopsisLabel" xml:space="preserve"><value>Synopsis</value></data>
+  <data name="DocumentAuthorsLabel" xml:space="preserve"><value>Auteurs et contributeurs</value></data>
+  <data name="DocumentCompaniesLabel" xml:space="preserve"><value>Éditeurs et entreprises</value></data>
+  <data name="DocumentMachinesLabel" xml:space="preserve"><value>Machines associées</value></data>
+  <data name="DocumentMachineFamiliesLabel" xml:space="preserve"><value>Familles de machines associées</value></data>
+  <data name="Documents" xml:space="preserve"><value>Documents</value></data>
+  <data name="Documents in the database" xml:space="preserve"><value>Documents dans la base de données</value></data>
+  <data name="No documents found" xml:space="preserve"><value>Aucun document trouvé</value></data>
+  <data name="Failed to load documents data. Please try again later." xml:space="preserve"><value>Erreur de chargement des données des documents. Veuillez réessayer plus tard.</value></data>
+  <data name="All Documents" xml:space="preserve"><value>Tous les documents</value></data>
+  <data name="Browsing all documents in the database" xml:space="preserve"><value>Parcourir tous les documents dans la base de données</value></data>
+  <data name="Documents Starting with" xml:space="preserve"><value>Documents commençant par</value></data>
+  <data name="Showing documents that start with" xml:space="preserve"><value>Affichage des documents commençant par</value></data>
+  <data name="Documents from" xml:space="preserve"><value>Documents de</value></data>
+  <data name="Showing documents published in" xml:space="preserve"><value>Affichage des documents publiés en</value></data>
+  <data name="No documents found for this filter" xml:space="preserve"><value>Aucun document trouvé pour ce filtre</value></data>
+  <data name="Failed to load documents. Please try again later." xml:space="preserve"><value>Erreur de chargement des documents. Veuillez réessayer plus tard.</value></data>
+  <data name="Document not found" xml:space="preserve"><value>Document non trouvé</value></data>
 </root>

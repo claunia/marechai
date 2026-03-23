@@ -40,6 +40,74 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class DocumentsController(MarechaiContext context) : ControllerBase
 {
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetDocumentsCountAsync() => context.Documents.CountAsync();
+
+    [HttpGet("minimum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMinimumYearAsync() => context.Documents
+                                                     .Where(d => d.Published.HasValue &&
+                                                                 d.Published.Value.Year > 1000)
+                                                     .MinAsync(d => d.Published.Value.Year);
+
+    [HttpGet("maximum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMaximumYearAsync() => context.Documents
+                                                     .Where(d => d.Published.HasValue &&
+                                                                 d.Published.Value.Year > 1000)
+                                                     .MaxAsync(d => d.Published.Value.Year);
+
+    [HttpGet("by-letter/{c}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<DocumentDto>> GetDocumentsByLetterAsync(char c) => context.Documents
+       .Where(d =>
+            (d.SortTitle != null && EF.Functions.Like(d.SortTitle, $"{c}%")) ||
+            (d.SortTitle == null && EF.Functions.Like(d.Title, $"{c}%")))
+       .OrderBy(d => d.SortTitle)
+       .ThenBy(d => d.Title)
+       .ThenBy(d => d.Published)
+       .Select(d => new DocumentDto
+        {
+            Id          = d.Id,
+            Title       = d.Title,
+            NativeTitle = d.NativeTitle,
+            SortTitle   = d.SortTitle,
+            Published   = d.Published,
+            CountryId   = d.CountryId,
+            Country     = d.Country.Name
+        })
+       .ToListAsync();
+
+    [HttpGet("by-year/{year:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<DocumentDto>> GetDocumentsByYearAsync(int year) => context.Documents
+       .Where(d => d.Published != null && d.Published.Value.Year == year)
+       .OrderBy(d => d.SortTitle)
+       .ThenBy(d => d.Title)
+       .ThenBy(d => d.Published)
+       .Select(d => new DocumentDto
+        {
+            Id          = d.Id,
+            Title       = d.Title,
+            NativeTitle = d.NativeTitle,
+            SortTitle   = d.SortTitle,
+            Published   = d.Published,
+            CountryId   = d.CountryId,
+            Country     = d.Country.Name
+        })
+       .ToListAsync();
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

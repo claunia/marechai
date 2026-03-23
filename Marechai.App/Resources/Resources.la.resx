@@ -1775,4 +1775,26 @@
   <data name="No books found for this filter" xml:space="preserve"><value>Nulli libri inventi pro hoc filtro</value></data>
   <data name="Failed to load books. Please try again later." xml:space="preserve"><value>Error in libris onerandis. Quaeso, iterum posterius tempta.</value></data>
   <data name="Book not found" xml:space="preserve"><value>Liber non inventus</value></data>
+  <data name="AllDocumentsButton" xml:space="preserve"><value>Omnia documenta</value></data>
+  <data name="DocumentsSearchBox_Placeholder" xml:space="preserve"><value>Documenta quaerere...</value></data>
+  <data name="DocumentsErrorInfoBar_Title" xml:space="preserve"><value>Error in documentis onerandis</value></data>
+  <data name="DocumentsLabel" xml:space="preserve"><value>documenta</value></data>
+  <data name="DocumentSynopsisLabel" xml:space="preserve"><value>Synopsis</value></data>
+  <data name="DocumentAuthorsLabel" xml:space="preserve"><value>Auctores et contributores</value></data>
+  <data name="DocumentCompaniesLabel" xml:space="preserve"><value>Editores et societates</value></data>
+  <data name="DocumentMachinesLabel" xml:space="preserve"><value>Machinae pertinentes</value></data>
+  <data name="DocumentMachineFamiliesLabel" xml:space="preserve"><value>Familiae machinarum pertinentes</value></data>
+  <data name="Documents" xml:space="preserve"><value>Documenta</value></data>
+  <data name="Documents in the database" xml:space="preserve"><value>Documenta in basi datorum</value></data>
+  <data name="No documents found" xml:space="preserve"><value>Nulla documenta inventa</value></data>
+  <data name="Failed to load documents data. Please try again later." xml:space="preserve"><value>Error in datis documentorum onerandis. Quaeso, iterum posterius tempta.</value></data>
+  <data name="All Documents" xml:space="preserve"><value>Omnia documenta</value></data>
+  <data name="Browsing all documents in the database" xml:space="preserve"><value>Omnia documenta in basi datorum perlustrare</value></data>
+  <data name="Documents Starting with" xml:space="preserve"><value>Documenta incipientia ab</value></data>
+  <data name="Showing documents that start with" xml:space="preserve"><value>Documenta ostenduntur quae incipiunt ab</value></data>
+  <data name="Documents from" xml:space="preserve"><value>Documenta ab anno</value></data>
+  <data name="Showing documents published in" xml:space="preserve"><value>Documenta ostenduntur edita anno</value></data>
+  <data name="No documents found for this filter" xml:space="preserve"><value>Nulla documenta inventa pro hoc filtro</value></data>
+  <data name="Failed to load documents. Please try again later." xml:space="preserve"><value>Error in documentis onerandis. Quaeso, iterum posterius tempta.</value></data>
+  <data name="Document not found" xml:space="preserve"><value>Documentum non inventum</value></data>
 </root>

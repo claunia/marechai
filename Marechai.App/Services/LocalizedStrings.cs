@@ -618,4 +618,13 @@ public class LocalizedStrings
     public string BookMachinesLabel => _l["BookMachinesLabel"];
     public string BookMachineFamiliesLabel => _l["BookMachineFamiliesLabel"];
     public string BookPreviousEditionLabel => _l["BookPreviousEditionLabel"];
+    public string AllDocumentsButton => _l["AllDocumentsButton"];
+    public string DocumentsSearchBox_Placeholder => _l["DocumentsSearchBox_Placeholder"];
+    public string DocumentsErrorInfoBar_Title => _l["DocumentsErrorInfoBar_Title"];
+    public string DocumentsLabel => _l["DocumentsLabel"];
+    public string DocumentSynopsisLabel => _l["DocumentSynopsisLabel"];
+    public string DocumentAuthorsLabel => _l["DocumentAuthorsLabel"];
+    public string DocumentCompaniesLabel => _l["DocumentCompaniesLabel"];
+    public string DocumentMachinesLabel => _l["DocumentMachinesLabel"];
+    public string DocumentMachineFamiliesLabel => _l["DocumentMachineFamiliesLabel"];
 }
