@@ -1882,4 +1882,12 @@
   <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Subvariante</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Códigos de barras</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Códigos de produto</value></data>
+  <data name="BarcodeCodeLabel" xml:space="preserve"><value>Código de barras</value></data>
+  <data name="BarcodeTypeLabel" xml:space="preserve"><value>Tipo de código de barras</value></data>
+  <data name="ProductCodeCodeLabel" xml:space="preserve"><value>Código de produto</value></data>
+  <data name="ProductCodeIssuerLabel" xml:space="preserve"><value>Emissor</value></data>
+  <data name="MinimumGpusLabel" xml:space="preserve"><value>GPUs mínimas</value></data>
+  <data name="RecommendedGpusLabel" xml:space="preserve"><value>GPUs recomendadas</value></data>
+  <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Sintetizadores de som suportados</value></data>
+  <data name="SoundSynthLabel" xml:space="preserve"><value>Sintetizador de som</value></data>
 </root>

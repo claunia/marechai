@@ -2022,4 +2022,12 @@
   <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Subvariante</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Códigos de barras</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Códigos de producto</value></data>
+  <data name="BarcodeCodeLabel" xml:space="preserve"><value>Código de barras</value></data>
+  <data name="BarcodeTypeLabel" xml:space="preserve"><value>Tipo de código de barras</value></data>
+  <data name="ProductCodeCodeLabel" xml:space="preserve"><value>Código de producto</value></data>
+  <data name="ProductCodeIssuerLabel" xml:space="preserve"><value>Emisor</value></data>
+  <data name="MinimumGpusLabel" xml:space="preserve"><value>GPUs mínimas</value></data>
+  <data name="RecommendedGpusLabel" xml:space="preserve"><value>GPUs recomendadas</value></data>
+  <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Sintetizadores de sonido compatibles</value></data>
+  <data name="SoundSynthLabel" xml:space="preserve"><value>Sintetizador de sonido</value></data>
 </root>

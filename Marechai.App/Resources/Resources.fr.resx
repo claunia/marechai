@@ -1986,4 +1986,12 @@
   <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Sous-variante</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Codes-barres</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Codes produit</value></data>
+  <data name="BarcodeCodeLabel" xml:space="preserve"><value>Code-barres</value></data>
+  <data name="BarcodeTypeLabel" xml:space="preserve"><value>Type de code-barres</value></data>
+  <data name="ProductCodeCodeLabel" xml:space="preserve"><value>Code produit</value></data>
+  <data name="ProductCodeIssuerLabel" xml:space="preserve"><value>Émetteur</value></data>
+  <data name="MinimumGpusLabel" xml:space="preserve"><value>GPUs minimaux</value></data>
+  <data name="RecommendedGpusLabel" xml:space="preserve"><value>GPUs recommandés</value></data>
+  <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Synthétiseurs sonores pris en charge</value></data>
+  <data name="SoundSynthLabel" xml:space="preserve"><value>Synthétiseur sonore</value></data>
 </root>

@@ -671,4 +671,14 @@ public class LocalizedStrings
     public string SoftwareSubvariantLabel => _l["SoftwareSubvariantLabel"];
     public string SoftwareBarcodesLabel => _l["SoftwareBarcodesLabel"];
     public string SoftwareProductCodesLabel => _l["SoftwareProductCodesLabel"];
+
+    // Software Release Junction Labels
+    public string BarcodeCodeLabel => _l["BarcodeCodeLabel"];
+    public string BarcodeTypeLabel => _l["BarcodeTypeLabel"];
+    public string ProductCodeCodeLabel => _l["ProductCodeCodeLabel"];
+    public string ProductCodeIssuerLabel => _l["ProductCodeIssuerLabel"];
+    public string MinimumGpusLabel => _l["MinimumGpusLabel"];
+    public string RecommendedGpusLabel => _l["RecommendedGpusLabel"];
+    public string SupportedSoundSynthsLabel => _l["SupportedSoundSynthsLabel"];
+    public string SoundSynthLabel => _l["SoundSynthLabel"];
 }

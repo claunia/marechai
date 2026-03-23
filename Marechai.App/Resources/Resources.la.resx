@@ -1882,4 +1882,12 @@
   <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Subvariatio</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Codices striati</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Codices productorum</value></data>
+  <data name="BarcodeCodeLabel" xml:space="preserve"><value>Codex striatus</value></data>
+  <data name="BarcodeTypeLabel" xml:space="preserve"><value>Genus codicis striati</value></data>
+  <data name="ProductCodeCodeLabel" xml:space="preserve"><value>Codex producti</value></data>
+  <data name="ProductCodeIssuerLabel" xml:space="preserve"><value>Editor</value></data>
+  <data name="MinimumGpusLabel" xml:space="preserve"><value>GPU minima</value></data>
+  <data name="RecommendedGpusLabel" xml:space="preserve"><value>GPU commendatae</value></data>
+  <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Synthesizatores soni sustentati</value></data>
+  <data name="SoundSynthLabel" xml:space="preserve"><value>Synthesizator soni</value></data>
 </root>

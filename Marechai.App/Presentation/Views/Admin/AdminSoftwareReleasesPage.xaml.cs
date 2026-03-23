@@ -40,4 +40,22 @@ public sealed partial class AdminSoftwareReleasesPage : Page
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)
             vm.UpdatePublisherSuggestions(sender.Text);
     }
+
+    private void MinGpuSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)
+            vm.UpdateMinimumGpuSuggestions(sender.Text);
+    }
+
+    private void RecGpuSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)
+            vm.UpdateRecommendedGpuSuggestions(sender.Text);
+    }
+
+    private void SoundSynthSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)
+            vm.UpdateSoundSynthSuggestions(sender.Text);
+    }
 }

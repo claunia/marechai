@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Marechai.App.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
+using Marechai.Data;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -49,9 +50,38 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private ObservableCollection<CompanyDto> _publisherSuggestions = [];
     [ObservableProperty] private DateTimeOffset? _releaseDate;
 
-    // Barcode/ProductCode inline
+    // Barcodes
     [ObservableProperty] private ObservableCollection<SoftwareBarcodeDto> _barcodes = [];
+    [ObservableProperty] private ObservableCollection<string> _barcodeDisplays = [];
+    [ObservableProperty] private string _newBarcodeCode = string.Empty;
+    [ObservableProperty] private int _newBarcodeType;
+
+    // Product Codes
     [ObservableProperty] private ObservableCollection<SoftwareProductCodeDto> _productCodes = [];
+    [ObservableProperty] private ObservableCollection<string> _productCodeDisplays = [];
+    [ObservableProperty] private string _newProductCodeCode = string.Empty;
+    [ObservableProperty] private int _newProductCodeIssuer;
+
+    // Minimum GPUs
+    [ObservableProperty] private ObservableCollection<GpuBySoftwareReleaseDto> _minimumGpus = [];
+    [ObservableProperty] private ObservableCollection<string> _minimumGpuDisplays = [];
+    [ObservableProperty] private GpuDto? _selectedMinimumGpu;
+    [ObservableProperty] private string _minimumGpuSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<GpuDto> _minimumGpuSuggestions = [];
+
+    // Recommended GPUs
+    [ObservableProperty] private ObservableCollection<GpuBySoftwareReleaseDto> _recommendedGpus = [];
+    [ObservableProperty] private ObservableCollection<string> _recommendedGpuDisplays = [];
+    [ObservableProperty] private GpuDto? _selectedRecommendedGpu;
+    [ObservableProperty] private string _recommendedGpuSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<GpuDto> _recommendedGpuSuggestions = [];
+
+    // Sound Synths
+    [ObservableProperty] private ObservableCollection<SoundSynthBySoftwareReleaseDto> _soundSynths = [];
+    [ObservableProperty] private ObservableCollection<string> _soundSynthDisplays = [];
+    [ObservableProperty] private SoundSynthDto? _selectedSoundSynth;
+    [ObservableProperty] private string _soundSynthSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<SoundSynthDto> _soundSynthSuggestions = [];
 
     private int? _editingId;
     private List<SoftwareReleaseDto>? _allReleases;
@@ -59,6 +89,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private List<SoftwarePlatformDto>? _allPlatforms;
     private List<Iso31661NumericDto>? _allRegions;
     private List<CompanyDto>? _allCompanies;
+    private List<GpuDto>? _allGpus;
+    private List<SoundSynthDto>? _allSoundSynths;
 
     public AdminSoftwareReleasesViewModel(SoftwareReleasesService                  service,
                                           SoftwareVersionsService                  versionsService,
@@ -85,6 +117,17 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         SaveCommand       = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand = new RelayCommand(CancelEdit);
 
+        AddBarcodeCommand          = new AsyncRelayCommand(AddBarcodeAsync);
+        RemoveBarcodeCommand       = new AsyncRelayCommand<string>(RemoveBarcodeByDisplayAsync);
+        AddProductCodeCommand      = new AsyncRelayCommand(AddProductCodeAsync);
+        RemoveProductCodeCommand   = new AsyncRelayCommand<string>(RemoveProductCodeByDisplayAsync);
+        AddMinimumGpuCommand       = new AsyncRelayCommand(AddMinimumGpuAsync);
+        RemoveMinimumGpuCommand    = new AsyncRelayCommand<string>(RemoveMinimumGpuByDisplayAsync);
+        AddRecommendedGpuCommand   = new AsyncRelayCommand(AddRecommendedGpuAsync);
+        RemoveRecommendedGpuCommand = new AsyncRelayCommand<string>(RemoveRecommendedGpuByDisplayAsync);
+        AddSoundSynthCommand       = new AsyncRelayCommand(AddSoundSynthAsync);
+        RemoveSoundSynthCommand    = new AsyncRelayCommand<string>(RemoveSoundSynthByDisplayAsync);
+
         CheckAdminRole();
     }
 
@@ -94,6 +137,17 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand<SoftwareReleaseDto>    DeleteCommand     { get; }
     public IAsyncRelayCommand                        SaveCommand       { get; }
     public IRelayCommand                             CancelEditCommand { get; }
+
+    public IAsyncRelayCommand         AddBarcodeCommand           { get; }
+    public IAsyncRelayCommand<string> RemoveBarcodeCommand        { get; }
+    public IAsyncRelayCommand         AddProductCodeCommand       { get; }
+    public IAsyncRelayCommand<string> RemoveProductCodeCommand    { get; }
+    public IAsyncRelayCommand         AddMinimumGpuCommand        { get; }
+    public IAsyncRelayCommand<string> RemoveMinimumGpuCommand     { get; }
+    public IAsyncRelayCommand         AddRecommendedGpuCommand    { get; }
+    public IAsyncRelayCommand<string> RemoveRecommendedGpuCommand { get; }
+    public IAsyncRelayCommand         AddSoundSynthCommand        { get; }
+    public IAsyncRelayCommand<string> RemoveSoundSynthCommand     { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -171,6 +225,12 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
 
         try { _allCompanies = await _apiClient.Companies.GetAsync(); }
         catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
+
+        try { _allGpus = await _apiClient.Gpus.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading GPUs for picker"); }
+
+        try { _allSoundSynths = await _apiClient.SoundSynths.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading sound synths for picker"); }
     }
 
     private void OpenAdd()
@@ -182,6 +242,9 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         UpdateVersionSuggestions(string.Empty);
         UpdateRegionSuggestions(string.Empty);
         UpdatePublisherSuggestions(string.Empty);
+        UpdateMinimumGpuSuggestions(string.Empty);
+        UpdateRecommendedGpuSuggestions(string.Empty);
+        UpdateSoundSynthSuggestions(string.Empty);
         IsEditing = true;
     }
 
@@ -238,14 +301,22 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         if(item.PlatformId.HasValue && _allPlatforms != null)
             SelectedPlatform = Platforms.FirstOrDefault(p => p.Id == item.PlatformId.Value);
 
+        // Pre-fill GPU and SoundSynth pickers
+        UpdateMinimumGpuSuggestions(string.Empty);
+        UpdateRecommendedGpuSuggestions(string.Empty);
+        UpdateSoundSynthSuggestions(string.Empty);
+
         HasError = false; ErrorMessage = string.Empty;
         IsEditing = true;
 
-        // Load barcodes and product codes
+        // Load junctions
         if(item.Id.HasValue)
         {
             await LoadBarcodesAsync(item.Id.Value);
             await LoadProductCodesAsync(item.Id.Value);
+            await LoadMinimumGpusAsync(item.Id.Value);
+            await LoadRecommendedGpusAsync(item.Id.Value);
+            await LoadSoundSynthsAsync(item.Id.Value);
         }
     }
 
@@ -357,10 +428,17 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private async Task LoadBarcodesAsync(int releaseId)
     {
         Barcodes.Clear();
+        BarcodeDisplays.Clear();
+
         try
         {
             List<SoftwareBarcodeDto> items = await _service.GetBarcodesAsync(releaseId);
-            foreach(SoftwareBarcodeDto item in items) Barcodes.Add(item);
+
+            foreach(SoftwareBarcodeDto item in items)
+            {
+                Barcodes.Add(item);
+                BarcodeDisplays.Add($"{item.Code} ({(BarcodeType)(item.Type ?? 0)})");
+            }
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading barcodes for release {Id}", releaseId); }
     }
@@ -368,12 +446,341 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private async Task LoadProductCodesAsync(int releaseId)
     {
         ProductCodes.Clear();
+        ProductCodeDisplays.Clear();
+
         try
         {
             List<SoftwareProductCodeDto> items = await _service.GetProductCodesAsync(releaseId);
-            foreach(SoftwareProductCodeDto item in items) ProductCodes.Add(item);
+
+            foreach(SoftwareProductCodeDto item in items)
+            {
+                ProductCodes.Add(item);
+                ProductCodeDisplays.Add($"{item.Code} ({(ProductCodeIssuer)(item.Issuer ?? 0)})");
+            }
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading product codes for release {Id}", releaseId); }
+    }
+
+    private async Task LoadMinimumGpusAsync(int releaseId)
+    {
+        MinimumGpus.Clear();
+        MinimumGpuDisplays.Clear();
+
+        try
+        {
+            List<GpuBySoftwareReleaseDto> items = await _service.GetMinimumGpusAsync(releaseId);
+
+            foreach(GpuBySoftwareReleaseDto item in items)
+            {
+                MinimumGpus.Add(item);
+                MinimumGpuDisplays.Add(item.Gpu ?? $"GPU #{item.GpuId}");
+            }
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading minimum GPUs for release {Id}", releaseId); }
+    }
+
+    private async Task LoadRecommendedGpusAsync(int releaseId)
+    {
+        RecommendedGpus.Clear();
+        RecommendedGpuDisplays.Clear();
+
+        try
+        {
+            List<GpuBySoftwareReleaseDto> items = await _service.GetRecommendedGpusAsync(releaseId);
+
+            foreach(GpuBySoftwareReleaseDto item in items)
+            {
+                RecommendedGpus.Add(item);
+                RecommendedGpuDisplays.Add(item.Gpu ?? $"GPU #{item.GpuId}");
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading recommended GPUs for release {Id}", releaseId);
+        }
+    }
+
+    private async Task LoadSoundSynthsAsync(int releaseId)
+    {
+        SoundSynths.Clear();
+        SoundSynthDisplays.Clear();
+
+        try
+        {
+            List<SoundSynthBySoftwareReleaseDto> items = await _service.GetSoundSynthsAsync(releaseId);
+
+            foreach(SoundSynthBySoftwareReleaseDto item in items)
+            {
+                SoundSynths.Add(item);
+                SoundSynthDisplays.Add(item.SoundSynth ?? $"SoundSynth #{item.SoundSynthId}");
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading sound synths for release {Id}", releaseId);
+        }
+    }
+
+    // --- Barcode add/remove ---
+
+    private async Task AddBarcodeAsync()
+    {
+        if(_editingId == null || string.IsNullOrWhiteSpace(NewBarcodeCode)) return;
+
+        try
+        {
+            var dto = new SoftwareBarcodeDto
+            {
+                ReleaseId = _editingId,
+                Code      = NewBarcodeCode,
+                Type      = NewBarcodeType
+            };
+
+            await _service.AddBarcodeAsync(dto);
+            NewBarcodeCode = string.Empty;
+            NewBarcodeType = 0;
+            await LoadBarcodesAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding barcode"); }
+    }
+
+    private async Task RemoveBarcodeByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+
+        int idx = BarcodeDisplays.IndexOf(display);
+
+        if(idx < 0 || idx >= Barcodes.Count || Barcodes[idx].Id == null) return;
+
+        try
+        {
+            await _service.RemoveBarcodeAsync(Barcodes[idx].Id!.Value);
+            await LoadBarcodesAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error removing barcode"); }
+    }
+
+    // --- Product Code add/remove ---
+
+    private async Task AddProductCodeAsync()
+    {
+        if(_editingId == null || string.IsNullOrWhiteSpace(NewProductCodeCode)) return;
+
+        try
+        {
+            var dto = new SoftwareProductCodeDto
+            {
+                ReleaseId = _editingId,
+                Code      = NewProductCodeCode,
+                Issuer    = NewProductCodeIssuer
+            };
+
+            await _service.AddProductCodeAsync(dto);
+            NewProductCodeCode   = string.Empty;
+            NewProductCodeIssuer = 0;
+            await LoadProductCodesAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding product code"); }
+    }
+
+    private async Task RemoveProductCodeByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+
+        int idx = ProductCodeDisplays.IndexOf(display);
+
+        if(idx < 0 || idx >= ProductCodes.Count || ProductCodes[idx].Id == null) return;
+
+        try
+        {
+            await _service.RemoveProductCodeAsync(ProductCodes[idx].Id!.Value);
+            await LoadProductCodesAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error removing product code"); }
+    }
+
+    // --- Minimum GPU add/remove ---
+
+    private async Task AddMinimumGpuAsync()
+    {
+        if(_editingId == null || SelectedMinimumGpu?.Id == null) return;
+
+        try
+        {
+            var dto = new GpuBySoftwareReleaseDto
+            {
+                ReleaseId = _editingId,
+                GpuId     = SelectedMinimumGpu.Id
+            };
+
+            await _service.AddMinimumGpuAsync(dto);
+            SelectedMinimumGpu   = null;
+            MinimumGpuSearchText = string.Empty;
+            await LoadMinimumGpusAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding minimum GPU"); }
+    }
+
+    private async Task RemoveMinimumGpuByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+
+        int idx = MinimumGpuDisplays.IndexOf(display);
+
+        if(idx < 0 || idx >= MinimumGpus.Count) return;
+
+        GpuBySoftwareReleaseDto item = MinimumGpus[idx];
+
+        try
+        {
+            await _service.RemoveMinimumGpuAsync(_editingId.Value.ToString(), item.GpuId?.ToString() ?? "0");
+            await LoadMinimumGpusAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error removing minimum GPU"); }
+    }
+
+    // --- Recommended GPU add/remove ---
+
+    private async Task AddRecommendedGpuAsync()
+    {
+        if(_editingId == null || SelectedRecommendedGpu?.Id == null) return;
+
+        try
+        {
+            var dto = new GpuBySoftwareReleaseDto
+            {
+                ReleaseId = _editingId,
+                GpuId     = SelectedRecommendedGpu.Id
+            };
+
+            await _service.AddRecommendedGpuAsync(dto);
+            SelectedRecommendedGpu   = null;
+            RecommendedGpuSearchText = string.Empty;
+            await LoadRecommendedGpusAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding recommended GPU"); }
+    }
+
+    private async Task RemoveRecommendedGpuByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+
+        int idx = RecommendedGpuDisplays.IndexOf(display);
+
+        if(idx < 0 || idx >= RecommendedGpus.Count) return;
+
+        GpuBySoftwareReleaseDto item = RecommendedGpus[idx];
+
+        try
+        {
+            await _service.RemoveRecommendedGpuAsync(_editingId.Value.ToString(), item.GpuId?.ToString() ?? "0");
+            await LoadRecommendedGpusAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error removing recommended GPU"); }
+    }
+
+    // --- Sound Synth add/remove ---
+
+    private async Task AddSoundSynthAsync()
+    {
+        if(_editingId == null || SelectedSoundSynth?.Id == null) return;
+
+        try
+        {
+            var dto = new SoundSynthBySoftwareReleaseDto
+            {
+                ReleaseId    = _editingId,
+                SoundSynthId = SelectedSoundSynth.Id
+            };
+
+            await _service.AddSoundSynthAsync(dto);
+            SelectedSoundSynth   = null;
+            SoundSynthSearchText = string.Empty;
+            await LoadSoundSynthsAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding sound synth"); }
+    }
+
+    private async Task RemoveSoundSynthByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+
+        int idx = SoundSynthDisplays.IndexOf(display);
+
+        if(idx < 0 || idx >= SoundSynths.Count) return;
+
+        SoundSynthBySoftwareReleaseDto item = SoundSynths[idx];
+
+        try
+        {
+            await _service.RemoveSoundSynthAsync(_editingId.Value.ToString(),
+                                                 item.SoundSynthId?.ToString() ?? "0");
+
+            await LoadSoundSynthsAsync(_editingId.Value);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error removing sound synth"); }
+    }
+
+    // --- Suggestion methods for GPU/Sound Synth pickers ---
+
+    public void UpdateMinimumGpuSuggestions(string query)
+    {
+        MinimumGpuSuggestions.Clear();
+
+        if(_allGpus == null) return;
+
+        IEnumerable<GpuDto> source = _allGpus;
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(g =>
+                                      (g.Name != null &&
+                                       g.Name.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (g.Company != null &&
+                                       g.Company.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (g.ModelCode != null &&
+                                       g.ModelCode.Contains(query, StringComparison.OrdinalIgnoreCase)));
+
+        foreach(GpuDto match in source) MinimumGpuSuggestions.Add(match);
+    }
+
+    public void UpdateRecommendedGpuSuggestions(string query)
+    {
+        RecommendedGpuSuggestions.Clear();
+
+        if(_allGpus == null) return;
+
+        IEnumerable<GpuDto> source = _allGpus;
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(g =>
+                                      (g.Name != null &&
+                                       g.Name.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (g.Company != null &&
+                                       g.Company.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (g.ModelCode != null &&
+                                       g.ModelCode.Contains(query, StringComparison.OrdinalIgnoreCase)));
+
+        foreach(GpuDto match in source) RecommendedGpuSuggestions.Add(match);
+    }
+
+    public void UpdateSoundSynthSuggestions(string query)
+    {
+        SoundSynthSuggestions.Clear();
+
+        if(_allSoundSynths == null) return;
+
+        IEnumerable<SoundSynthDto> source = _allSoundSynths;
+
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(s =>
+                                      (s.Name != null &&
+                                       s.Name.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (s.Company != null &&
+                                       s.Company.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                                      (s.ModelCode != null &&
+                                       s.ModelCode.Contains(query, StringComparison.OrdinalIgnoreCase)));
+
+        foreach(SoundSynthDto match in source) SoundSynthSuggestions.Add(match);
     }
 
     private void ClearForm()
@@ -387,7 +794,25 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         PublisherSearchText = string.Empty;
         ReleaseDate        = null;
         Barcodes.Clear();
+        BarcodeDisplays.Clear();
+        NewBarcodeCode = string.Empty;
+        NewBarcodeType = 0;
         ProductCodes.Clear();
+        ProductCodeDisplays.Clear();
+        NewProductCodeCode   = string.Empty;
+        NewProductCodeIssuer = 0;
+        MinimumGpus.Clear();
+        MinimumGpuDisplays.Clear();
+        SelectedMinimumGpu   = null;
+        MinimumGpuSearchText = string.Empty;
+        RecommendedGpus.Clear();
+        RecommendedGpuDisplays.Clear();
+        SelectedRecommendedGpu   = null;
+        RecommendedGpuSearchText = string.Empty;
+        SoundSynths.Clear();
+        SoundSynthDisplays.Clear();
+        SelectedSoundSynth   = null;
+        SoundSynthSearchText = string.Empty;
         HasError = false; ErrorMessage = string.Empty;
     }
 }

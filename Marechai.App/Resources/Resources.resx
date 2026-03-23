@@ -2228,4 +2228,13 @@
   <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Subvariant</value></data>
   <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Barcodes</value></data>
   <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Product Codes</value></data>
+  <!-- Software Release Junction Labels -->
+  <data name="BarcodeCodeLabel" xml:space="preserve"><value>Barcode</value></data>
+  <data name="BarcodeTypeLabel" xml:space="preserve"><value>Barcode Type</value></data>
+  <data name="ProductCodeCodeLabel" xml:space="preserve"><value>Product Code</value></data>
+  <data name="ProductCodeIssuerLabel" xml:space="preserve"><value>Issuer</value></data>
+  <data name="MinimumGpusLabel" xml:space="preserve"><value>Minimum GPUs</value></data>
+  <data name="RecommendedGpusLabel" xml:space="preserve"><value>Recommended GPUs</value></data>
+  <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Supported Sound Synthesizers</value></data>
+  <data name="SoundSynthLabel" xml:space="preserve"><value>Sound Synthesizer</value></data>
 </root>

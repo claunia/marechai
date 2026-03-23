@@ -105,6 +105,158 @@
                                                   DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=PublisherLabel}" />
                                         <DatePicker Header="{Binding Source={StaticResource Strings}, Path=ReleaseDateLabel}"
                                                     SelectedDate="{Binding ReleaseDate, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+
+                                        <!-- Barcodes Section (edit only) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="8" Margin="0,16,0,0">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareBarcodesLabel}" FontSize="16" FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding BarcodeDisplays}">
+                                                <ItemsRepeater.Layout><StackLayout Spacing="4" /></ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnSpacing="4">
+                                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                                            <Button Grid.Column="1" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                                    Command="{Binding DataContext.RemoveBarcodeCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}" Padding="4,2" Style="{ThemeResource TextBlockButtonStyle}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                            <TextBox Header="{Binding Source={StaticResource Strings}, Path=BarcodeCodeLabel}"
+                                                     Text="{Binding NewBarcodeCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <ComboBox Header="{Binding Source={StaticResource Strings}, Path=BarcodeTypeLabel}"
+                                                      SelectedIndex="{Binding NewBarcodeType, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                                                <ComboBoxItem Content="Unknown" />
+                                                <ComboBoxItem Content="UPC-A" />
+                                                <ComboBoxItem Content="UPC-E" />
+                                                <ComboBoxItem Content="EAN-13" />
+                                                <ComboBoxItem Content="EAN-8" />
+                                                <ComboBoxItem Content="ISBN-10" />
+                                                <ComboBoxItem Content="ISBN-13" />
+                                                <ComboBoxItem Content="ISSN" />
+                                                <ComboBoxItem Content="Code 39" />
+                                                <ComboBoxItem Content="Code 128" />
+                                                <ComboBoxItem Content="QR Code" />
+                                            </ComboBox>
+                                            <Button Content="+" Command="{Binding AddBarcodeCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
+                                        </StackPanel>
+
+                                        <!-- Product Codes Section (edit only) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="8" Margin="0,16,0,0">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SoftwareProductCodesLabel}" FontSize="16" FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding ProductCodeDisplays}">
+                                                <ItemsRepeater.Layout><StackLayout Spacing="4" /></ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnSpacing="4">
+                                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                                            <Button Grid.Column="1" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                                    Command="{Binding DataContext.RemoveProductCodeCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}" Padding="4,2" Style="{ThemeResource TextBlockButtonStyle}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                            <TextBox Header="{Binding Source={StaticResource Strings}, Path=ProductCodeCodeLabel}"
+                                                     Text="{Binding NewProductCodeCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <ComboBox Header="{Binding Source={StaticResource Strings}, Path=ProductCodeIssuerLabel}"
+                                                      SelectedIndex="{Binding NewProductCodeIssuer, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                                                <ComboBoxItem Content="Microsoft" />
+                                                <ComboBoxItem Content="Nintendo" />
+                                                <ComboBoxItem Content="Sony" />
+                                                <ComboBoxItem Content="Activision" />
+                                                <ComboBoxItem Content="Electronic Arts" />
+                                                <ComboBoxItem Content="Ubisoft" />
+                                                <ComboBoxItem Content="Bethesda" />
+                                                <ComboBoxItem Content="Sega" />
+                                            </ComboBox>
+                                            <Button Content="+" Command="{Binding AddProductCodeCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
+                                        </StackPanel>
+
+                                        <!-- Minimum GPUs Section (edit only) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="8" Margin="0,16,0,0">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=MinimumGpusLabel}" FontSize="16" FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding MinimumGpuDisplays}">
+                                                <ItemsRepeater.Layout><StackLayout Spacing="4" /></ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnSpacing="4">
+                                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                                            <Button Grid.Column="1" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                                    Command="{Binding DataContext.RemoveMinimumGpuCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}" Padding="4,2" Style="{ThemeResource TextBlockButtonStyle}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                            <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=GpuLabel}"
+                                                            PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                            Text="{Binding MinimumGpuSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                            x:Name="MinGpuSearchBox" TextChanged="MinGpuSearchBox_TextChanged" />
+                                            <ComboBox ItemsSource="{Binding MinimumGpuSuggestions}" SelectedItem="{Binding SelectedMinimumGpu, Mode=TwoWay}"
+                                                      DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=GpuLabel}" />
+                                            <Button Content="+" Command="{Binding AddMinimumGpuCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
+                                        </StackPanel>
+
+                                        <!-- Recommended GPUs Section (edit only) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="8" Margin="0,16,0,0">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=RecommendedGpusLabel}" FontSize="16" FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding RecommendedGpuDisplays}">
+                                                <ItemsRepeater.Layout><StackLayout Spacing="4" /></ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnSpacing="4">
+                                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                                            <Button Grid.Column="1" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                                    Command="{Binding DataContext.RemoveRecommendedGpuCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}" Padding="4,2" Style="{ThemeResource TextBlockButtonStyle}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                            <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=GpuLabel}"
+                                                            PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                            Text="{Binding RecommendedGpuSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                            x:Name="RecGpuSearchBox" TextChanged="RecGpuSearchBox_TextChanged" />
+                                            <ComboBox ItemsSource="{Binding RecommendedGpuSuggestions}" SelectedItem="{Binding SelectedRecommendedGpu, Mode=TwoWay}"
+                                                      DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=GpuLabel}" />
+                                            <Button Content="+" Command="{Binding AddRecommendedGpuCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
+                                        </StackPanel>
+
+                                        <!-- Sound Synths Section (edit only) -->
+                                        <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="8" Margin="0,16,0,0">
+                                            <TextBlock Text="{Binding Source={StaticResource Strings}, Path=SupportedSoundSynthsLabel}" FontSize="16" FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding SoundSynthDisplays}">
+                                                <ItemsRepeater.Layout><StackLayout Spacing="4" /></ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnSpacing="4">
+                                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                                            <Button Grid.Column="1" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                                    Command="{Binding DataContext.RemoveSoundSynthCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}" Padding="4,2" Style="{ThemeResource TextBlockButtonStyle}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                            <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=SoundSynthLabel}"
+                                                            PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                            Text="{Binding SoundSynthSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                            x:Name="SoundSynthSearchBox" TextChanged="SoundSynthSearchBox_TextChanged" />
+                                            <ComboBox ItemsSource="{Binding SoundSynthSuggestions}" SelectedItem="{Binding SelectedSoundSynth, Mode=TwoWay}"
+                                                      DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoundSynthLabel}" />
+                                            <Button Content="+" Command="{Binding AddSoundSynthCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
+                                        </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
                                 <Grid Grid.Row="2" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" ColumnSpacing="8">
