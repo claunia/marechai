@@ -103,8 +103,8 @@
                                                         x:Name="PublisherFilterBox" TextChanged="PublisherFilterBox_TextChanged" />
                                         <ComboBox ItemsSource="{Binding PublisherSuggestions}" SelectedItem="{Binding SelectedPublisher, Mode=TwoWay}"
                                                   DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=PublisherLabel}" />
-                                        <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=ReleaseDateLabel}"
-                                                            Date="{Binding ReleaseDate, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+                                        <DatePicker Header="{Binding Source={StaticResource Strings}, Path=ReleaseDateLabel}"
+                                                    SelectedDate="{Binding ReleaseDate, Mode=TwoWay}" HorizontalAlignment="Stretch" />
                                     </StackPanel>
                                 </ScrollViewer>
                                 <Grid Grid.Row="2" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" ColumnSpacing="8">
