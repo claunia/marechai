@@ -1826,4 +1826,25 @@
   <data name="CompanyPersonOngoingLabel" xml:space="preserve"><value>Laufend</value></data>
   <data name="CompanyPeopleLabel" xml:space="preserve"><value>Personen</value></data>
   <data name="OngoingText" xml:space="preserve"><value>Laufend</value></data>
+  <data name="People" xml:space="preserve"><value>Personen</value></data>
+  <data name="People in the database" xml:space="preserve"><value>Personen in der Datenbank</value></data>
+  <data name="No people found" xml:space="preserve"><value>Keine Personen gefunden</value></data>
+  <data name="Failed to load people data. Please try again later." xml:space="preserve"><value>Fehler beim Laden der Personendaten. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="All People" xml:space="preserve"><value>Alle Personen</value></data>
+  <data name="Browsing all people in the database" xml:space="preserve"><value>Alle Personen in der Datenbank durchsuchen</value></data>
+  <data name="People Starting with" xml:space="preserve"><value>Personen beginnend mit</value></data>
+  <data name="Showing people that start with" xml:space="preserve"><value>Personen anzeigen, die beginnen mit</value></data>
+  <data name="People born in" xml:space="preserve"><value>Personen geboren in</value></data>
+  <data name="Showing people born in" xml:space="preserve"><value>Personen anzeigen, geboren in</value></data>
+  <data name="No people found for this filter" xml:space="preserve"><value>Keine Personen für diesen Filter gefunden</value></data>
+  <data name="Failed to load people. Please try again later." xml:space="preserve"><value>Fehler beim Laden der Personen. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="Person not found" xml:space="preserve"><value>Person nicht gefunden</value></data>
+  <data name="AllPeopleButton" xml:space="preserve"><value>Alle Personen</value></data>
+  <data name="PeopleSearchBox_Placeholder" xml:space="preserve"><value>Personen suchen...</value></data>
+  <data name="PeopleErrorInfoBar_Title" xml:space="preserve"><value>Fehler beim Laden der Personen</value></data>
+  <data name="PeopleLabel" xml:space="preserve"><value>Personen</value></data>
+  <data name="PersonCompaniesLabel" xml:space="preserve"><value>Unternehmen</value></data>
+  <data name="PersonBooksLabel" xml:space="preserve"><value>Bücher</value></data>
+  <data name="PersonDocumentsLabel" xml:space="preserve"><value>Dokumente</value></data>
+  <data name="PersonMagazinesLabel" xml:space="preserve"><value>Zeitschriften</value></data>
 </root>

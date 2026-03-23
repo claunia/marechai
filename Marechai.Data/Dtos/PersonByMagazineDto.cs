@@ -49,6 +49,8 @@ public class PersonByMagazineDto : BaseDto<long>
     public string? Surname { get; set; }
     [JsonPropertyName("display_name")]
     public string? DisplayName { get; set; }
+    [JsonPropertyName("magazine_title")]
+    public string? MagazineTitle { get; set; }
     [JsonIgnore]
     public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 }

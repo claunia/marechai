@@ -98,7 +98,7 @@ public partial class MainViewModel : ObservableObject
         NavigateToDumpsCommand                    = new RelayCommand(() => NavigateTo("dumps"));
         NavigateToGraphicalProcessingUnitsCommand = new RelayCommand(() => NavigateTo(nameof(GpuListPage)));
         NavigateToMagazinesCommand                = new RelayCommand(() => NavigateTo(nameof(MagazinesPage)));
-        NavigateToPeopleCommand                   = new RelayCommand(() => NavigateTo("people"));
+        NavigateToPeopleCommand                   = new RelayCommand(() => NavigateTo(nameof(PeoplePage)));
         NavigateToProcessorsCommand               = new RelayCommand(() => NavigateTo(nameof(ProcessorListPage)));
         NavigateToSoftwareCommand                 = new RelayCommand(() => NavigateTo("software"));
         NavigateToSoundSynthesizersCommand        = new RelayCommand(() => NavigateTo(nameof(SoundSynthListPage)));

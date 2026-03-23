@@ -192,6 +192,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IBooksListFilterContext, BooksListFilterContext>();
         containerRegistry.RegisterSingleton<IDocumentsListFilterContext, DocumentsListFilterContext>();
         containerRegistry.RegisterSingleton<IMagazinesListFilterContext, MagazinesListFilterContext>();
+        containerRegistry.RegisterSingleton<IPeopleListFilterContext, PeopleListFilterContext>();
 
         // Register ViewModels explicitly — RegisterForNavigation creates conditional
         // (keyed) registrations that the ViewModelLocator can't resolve by type alone
@@ -213,6 +214,9 @@ public partial class App : PrismApplication
         containerRegistry.Register<MagazinesViewModel>();
         containerRegistry.Register<MagazinesListViewModel>();
         containerRegistry.Register<MagazineViewViewModel>();
+        containerRegistry.Register<PeopleViewModel>();
+        containerRegistry.Register<PeopleListViewModel>();
+        containerRegistry.Register<PersonViewViewModel>();
         containerRegistry.Register<MachineViewViewModel>();
         containerRegistry.Register<PhotoDetailViewModel>();
         containerRegistry.Register<GpusListViewModel>();
@@ -266,6 +270,9 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<MagazinesPage, MagazinesViewModel>();
         containerRegistry.RegisterForNavigation<MagazinesListPage, MagazinesListViewModel>();
         containerRegistry.RegisterForNavigation<MagazineViewPage, MagazineViewViewModel>();
+        containerRegistry.RegisterForNavigation<PeoplePage, PeopleViewModel>();
+        containerRegistry.RegisterForNavigation<PeopleListPage, PeopleListViewModel>();
+        containerRegistry.RegisterForNavigation<PersonViewPage, PersonViewViewModel>();
         containerRegistry.RegisterForNavigation<MachineViewPage, MachineViewViewModel>();
         containerRegistry.RegisterForNavigation<PhotoDetailPage, PhotoDetailViewModel>();
         containerRegistry.RegisterForNavigation<GpuListPage, GpusListViewModel>();

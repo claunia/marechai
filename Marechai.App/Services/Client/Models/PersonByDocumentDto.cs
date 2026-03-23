@@ -32,6 +32,14 @@ namespace Marechai.App.Models
 #endif
         /// <summary>The document_id property</summary>
         public long? DocumentId { get; set; }
+        /// <summary>The document_title property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? DocumentTitle { get; set; }
+#nullable restore
+#else
+        public string DocumentTitle { get; set; }
+#endif
         /// <summary>The id property</summary>
         public long? Id { get; set; }
         /// <summary>The name property</summary>
@@ -96,6 +104,7 @@ namespace Marechai.App.Models
                 { "alias", n => { Alias = n.GetStringValue(); } },
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
                 { "document_id", n => { DocumentId = n.GetLongValue(); } },
+                { "document_title", n => { DocumentTitle = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "person_id", n => { PersonId = n.GetIntValue(); } },
@@ -114,6 +123,7 @@ namespace Marechai.App.Models
             writer.WriteStringValue("alias", Alias);
             writer.WriteStringValue("display_name", DisplayName);
             writer.WriteLongValue("document_id", DocumentId);
+            writer.WriteStringValue("document_title", DocumentTitle);
             writer.WriteLongValue("id", Id);
             writer.WriteStringValue("name", Name);
             writer.WriteIntValue("person_id", PersonId);

@@ -1826,4 +1826,25 @@
   <data name="CompanyPersonOngoingLabel" xml:space="preserve"><value>In cursu</value></data>
   <data name="CompanyPeopleLabel" xml:space="preserve"><value>Personae</value></data>
   <data name="OngoingText" xml:space="preserve"><value>In cursu</value></data>
+  <data name="People" xml:space="preserve"><value>Personae</value></data>
+  <data name="People in the database" xml:space="preserve"><value>Personae in datorum basi</value></data>
+  <data name="No people found" xml:space="preserve"><value>Nullae personae inventae</value></data>
+  <data name="Failed to load people data. Please try again later." xml:space="preserve"><value>Error in personarum datis onerandis. Iterum postea temptes.</value></data>
+  <data name="All People" xml:space="preserve"><value>Omnes personae</value></data>
+  <data name="Browsing all people in the database" xml:space="preserve"><value>Omnes personae in datorum basi perscrutandae</value></data>
+  <data name="People Starting with" xml:space="preserve"><value>Personae incipientes cum</value></data>
+  <data name="Showing people that start with" xml:space="preserve"><value>Personae ostenduntur incipientes cum</value></data>
+  <data name="People born in" xml:space="preserve"><value>Personae natae anno</value></data>
+  <data name="Showing people born in" xml:space="preserve"><value>Personae ostenduntur natae anno</value></data>
+  <data name="No people found for this filter" xml:space="preserve"><value>Nullae personae inventae pro hoc filtro</value></data>
+  <data name="Failed to load people. Please try again later." xml:space="preserve"><value>Error in personis onerandis. Iterum postea temptes.</value></data>
+  <data name="Person not found" xml:space="preserve"><value>Persona non inventa</value></data>
+  <data name="AllPeopleButton" xml:space="preserve"><value>Omnes personae</value></data>
+  <data name="PeopleSearchBox_Placeholder" xml:space="preserve"><value>Quaerere personas...</value></data>
+  <data name="PeopleErrorInfoBar_Title" xml:space="preserve"><value>Error in personis onerandis</value></data>
+  <data name="PeopleLabel" xml:space="preserve"><value>personae</value></data>
+  <data name="PersonCompaniesLabel" xml:space="preserve"><value>Societates</value></data>
+  <data name="PersonBooksLabel" xml:space="preserve"><value>Libri</value></data>
+  <data name="PersonDocumentsLabel" xml:space="preserve"><value>Documenta</value></data>
+  <data name="PersonMagazinesLabel" xml:space="preserve"><value>Ephemerides</value></data>
 </root>

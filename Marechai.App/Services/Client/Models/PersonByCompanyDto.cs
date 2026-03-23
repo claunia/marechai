@@ -24,6 +24,14 @@ namespace Marechai.App.Models
 #endif
         /// <summary>The company_id property</summary>
         public int? CompanyId { get; set; }
+        /// <summary>The company_name property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? CompanyName { get; set; }
+#nullable restore
+#else
+        public string CompanyName { get; set; }
+#endif
         /// <summary>The display_name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -93,6 +101,7 @@ namespace Marechai.App.Models
             {
                 { "alias", n => { Alias = n.GetStringValue(); } },
                 { "company_id", n => { CompanyId = n.GetIntValue(); } },
+                { "company_name", n => { CompanyName = n.GetStringValue(); } },
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
                 { "end", n => { End = n.GetDateTimeOffsetValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
@@ -113,6 +122,7 @@ namespace Marechai.App.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("alias", Alias);
             writer.WriteIntValue("company_id", CompanyId);
+            writer.WriteStringValue("company_name", CompanyName);
             writer.WriteStringValue("display_name", DisplayName);
             writer.WriteDateTimeOffsetValue("end", End);
             writer.WriteLongValue("id", Id);

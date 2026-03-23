@@ -2172,4 +2172,25 @@
   <data name="CompanyPersonOngoingLabel" xml:space="preserve"><value>Ongoing</value></data>
   <data name="CompanyPeopleLabel" xml:space="preserve"><value>People</value></data>
   <data name="OngoingText" xml:space="preserve"><value>Ongoing</value></data>
+  <data name="People" xml:space="preserve"><value>People</value></data>
+  <data name="People in the database" xml:space="preserve"><value>People in the database</value></data>
+  <data name="No people found" xml:space="preserve"><value>No people found</value></data>
+  <data name="Failed to load people data. Please try again later." xml:space="preserve"><value>Failed to load people data. Please try again later.</value></data>
+  <data name="All People" xml:space="preserve"><value>All People</value></data>
+  <data name="Browsing all people in the database" xml:space="preserve"><value>Browsing all people in the database</value></data>
+  <data name="People Starting with" xml:space="preserve"><value>People Starting with</value></data>
+  <data name="Showing people that start with" xml:space="preserve"><value>Showing people that start with</value></data>
+  <data name="People born in" xml:space="preserve"><value>People born in</value></data>
+  <data name="Showing people born in" xml:space="preserve"><value>Showing people born in</value></data>
+  <data name="No people found for this filter" xml:space="preserve"><value>No people found for this filter</value></data>
+  <data name="Failed to load people. Please try again later." xml:space="preserve"><value>Failed to load people. Please try again later.</value></data>
+  <data name="Person not found" xml:space="preserve"><value>Person not found</value></data>
+  <data name="AllPeopleButton" xml:space="preserve"><value>All People</value></data>
+  <data name="PeopleSearchBox_Placeholder" xml:space="preserve"><value>Search people...</value></data>
+  <data name="PeopleErrorInfoBar_Title" xml:space="preserve"><value>Error loading people</value></data>
+  <data name="PeopleLabel" xml:space="preserve"><value>people</value></data>
+  <data name="PersonCompaniesLabel" xml:space="preserve"><value>Companies</value></data>
+  <data name="PersonBooksLabel" xml:space="preserve"><value>Books</value></data>
+  <data name="PersonDocumentsLabel" xml:space="preserve"><value>Documents</value></data>
+  <data name="PersonMagazinesLabel" xml:space="preserve"><value>Magazines</value></data>
 </root>

@@ -50,6 +50,8 @@ public class PersonByCompanyDto : BaseDto<long>
     public string? Surname { get; set; }
     [JsonPropertyName("display_name")]
     public string? DisplayName { get; set; }
+    [JsonPropertyName("company_name")]
+    public string? CompanyName { get; set; }
     [JsonIgnore]
     public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 }

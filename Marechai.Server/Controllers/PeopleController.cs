@@ -41,6 +41,182 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class PeopleController(MarechaiContext context) : ControllerBase
 {
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetPeopleCountAsync() => context.People.CountAsync();
+
+    [HttpGet("minimum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMinimumYearAsync() => context.People
+                                                     .Where(p => p.BirthDate > DateTime.MinValue &&
+                                                                 p.BirthDate.Year > 1000)
+                                                     .MinAsync(p => p.BirthDate.Year);
+
+    [HttpGet("maximum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMaximumYearAsync() => context.People
+                                                     .Where(p => p.BirthDate > DateTime.MinValue &&
+                                                                 p.BirthDate.Year > 1000)
+                                                     .MaxAsync(p => p.BirthDate.Year);
+
+    [HttpGet("by-letter/{c}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<PersonDto>> GetPeopleByLetterAsync(char c) => context.People
+        .Where(p =>
+            (p.DisplayName != null &&
+             EF.Functions.Like(p.DisplayName, $"{c}%")) ||
+            (p.DisplayName == null && p.Alias != null &&
+             EF.Functions.Like(p.Alias, $"{c}%")) ||
+            (p.DisplayName == null && p.Alias == null &&
+             EF.Functions.Like(p.Surname, $"{c}%")))
+        .OrderBy(p => p.DisplayName)
+        .ThenBy(p => p.Alias)
+        .ThenBy(p => p.Name)
+        .ThenBy(p => p.Surname)
+        .Select(p => new PersonDto
+        {
+            Id               = p.Id,
+            Name             = p.Name,
+            Surname          = p.Surname,
+            CountryOfBirth   = p.CountryOfBirth.Name,
+            CountryOfBirthId = p.CountryOfBirthId,
+            BirthDate        = p.BirthDate,
+            DeathDate        = p.DeathDate,
+            Photo            = p.Photo,
+            Alias            = p.Alias,
+            DisplayName      = p.DisplayName
+        })
+        .ToListAsync();
+
+    [HttpGet("by-year/{year:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<PersonDto>> GetPeopleByYearAsync(int year) => context.People
+        .Where(p => p.BirthDate > DateTime.MinValue && p.BirthDate.Year == year)
+        .OrderBy(p => p.DisplayName)
+        .ThenBy(p => p.Alias)
+        .ThenBy(p => p.Name)
+        .ThenBy(p => p.Surname)
+        .Select(p => new PersonDto
+        {
+            Id               = p.Id,
+            Name             = p.Name,
+            Surname          = p.Surname,
+            CountryOfBirth   = p.CountryOfBirth.Name,
+            CountryOfBirthId = p.CountryOfBirthId,
+            BirthDate        = p.BirthDate,
+            DeathDate        = p.DeathDate,
+            Photo            = p.Photo,
+            Alias            = p.Alias,
+            DisplayName      = p.DisplayName
+        })
+        .ToListAsync();
+
+    [HttpGet("{personId:int}/books")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<PersonByBookDto>> GetBooksByPersonAsync(int personId) =>
+        (await context.PeopleByBooks
+                      .Where(p => p.PersonId == personId)
+                      .Select(p => new PersonByBookDto
+                       {
+                           Id          = p.Id,
+                           PersonId    = p.PersonId,
+                           BookId      = p.BookId,
+                           RoleId      = p.RoleId,
+                           Role        = p.Role.Name,
+                           BookTitle   = p.Book.Title,
+                           Name        = p.Person.Name,
+                           Surname     = p.Person.Surname,
+                           Alias       = p.Person.Alias,
+                           DisplayName = p.Person.DisplayName
+                       })
+                      .ToListAsync()).OrderBy(p => p.Role)
+           .ToList();
+
+    [HttpGet("{personId:int}/documents")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<PersonByDocumentDto>> GetDocumentsByPersonAsync(int personId) =>
+        (await context.PeopleByDocuments
+                      .Where(p => p.PersonId == personId)
+                      .Select(p => new PersonByDocumentDto
+                       {
+                           Id            = p.Id,
+                           PersonId      = p.PersonId,
+                           DocumentId    = p.DocumentId,
+                           RoleId        = p.RoleId,
+                           Role          = p.Role.Name,
+                           DocumentTitle = p.Document.Title,
+                           Name          = p.Person.Name,
+                           Surname       = p.Person.Surname,
+                           Alias         = p.Person.Alias,
+                           DisplayName   = p.Person.DisplayName
+                       })
+                      .ToListAsync()).OrderBy(p => p.Role)
+           .ToList();
+
+    [HttpGet("{personId:int}/magazines")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<PersonByMagazineDto>> GetMagazinesByPersonAsync(int personId) =>
+        (await context.PeopleByMagazines
+                      .Where(p => p.PersonId == personId)
+                      .Select(p => new PersonByMagazineDto
+                       {
+                           Id            = p.Id,
+                           PersonId      = p.PersonId,
+                           MagazineId    = p.MagazineId,
+                           RoleId        = p.RoleId,
+                           Role          = p.Role.Name,
+                           MagazineTitle = p.Magazine.Magazine.Title,
+                           Name          = p.Person.Name,
+                           Surname       = p.Person.Surname,
+                           Alias         = p.Person.Alias,
+                           DisplayName   = p.Person.DisplayName
+                       })
+                      .ToListAsync()).OrderBy(p => p.Role)
+           .ToList();
+
+    [HttpGet("{personId:int}/companies")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<List<PersonByCompanyDto>> GetCompaniesByPersonAsync(int personId) =>
+        (await context.PeopleByCompanies
+                      .Where(p => p.PersonId == personId)
+                      .Select(p => new PersonByCompanyDto
+                       {
+                           Id          = p.Id,
+                           PersonId    = p.PersonId,
+                           CompanyId   = p.CompanyId,
+                           CompanyName = p.Company.Name,
+                           Position    = p.Position,
+                           Start       = p.Start,
+                           End         = p.End,
+                           Ongoing     = p.Ongoing,
+                           Name        = p.Person.Name,
+                           Surname     = p.Person.Surname,
+                           Alias       = p.Person.Alias,
+                           DisplayName = p.Person.DisplayName
+                       })
+                      .ToListAsync()).OrderBy(p => p.CompanyName)
+           .ThenBy(p => p.Position)
+           .ThenBy(p => p.Start)
+           .ToList();
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

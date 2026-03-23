@@ -1,0 +1,387 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.PersonViewPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      NavigationCacheMode="Disabled"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="12,12,16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource AlternateButtonStyle}"
+                    ToolTipService.ToolTip="Go back"
+                    Padding="8"
+                    MinWidth="44"
+                    MinHeight="44"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE72B;"
+                          FontSize="16" />
+            </Button>
+
+            <StackPanel Grid.Column="1"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding PersonName}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           FontSize="14"
+                           TextAlignment="Center"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Error"
+                         Title="{Binding Source={StaticResource Strings}, Path=PeopleErrorInfoBar_Title}"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+                <Button
+                        Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                        Command="{Binding LoadDataCommand}"
+                        HorizontalAlignment="Center"
+                        Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+
+            <!-- Person Details -->
+            <ScrollViewer Visibility="{Binding IsDataLoaded}"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Padding="16"
+                            Spacing="24">
+
+                    <!-- Person Icon -->
+                    <Grid HorizontalAlignment="Center"
+                          Width="128"
+                          Height="128">
+                        <FontIcon Glyph="&#xE77B;"
+                                  FontFamily="Segoe MDL2 Assets"
+                                  FontSize="72"
+                                  Foreground="{ThemeResource SystemBaseMediumColor}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                    </Grid>
+
+                    <!-- Alias -->
+                    <StackPanel Visibility="{Binding ShowAlias}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonAliasLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding Alias}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Display Name -->
+                    <StackPanel Visibility="{Binding ShowDisplayName}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonDisplayNameLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding DisplayName}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Birth Date -->
+                    <StackPanel Visibility="{Binding ShowBirthDate}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonBirthDateLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding BirthDateDisplay}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Death Date -->
+                    <StackPanel Visibility="{Binding ShowDeathDate}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonDeathDateLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding DeathDateDisplay}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Country of Birth -->
+                    <StackPanel Visibility="{Binding ShowCountry}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonCountryLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding CountryOfBirth}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Webpage -->
+                    <StackPanel Visibility="{Binding ShowWebpage}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonWebpageLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <HyperlinkButton Content="{Binding Webpage}"
+                                         NavigateUri="{Binding Webpage}"
+                                         Padding="16,12" />
+                    </StackPanel>
+
+                    <!-- Twitter -->
+                    <StackPanel Visibility="{Binding ShowTwitter}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonTwitterLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding Twitter}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Facebook -->
+                    <StackPanel Visibility="{Binding ShowFacebook}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonFacebookLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding Facebook}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Companies Section -->
+                    <StackPanel Visibility="{Binding ShowCompanies}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonCompaniesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Companies}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Books Section -->
+                    <StackPanel Visibility="{Binding ShowBooks}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonBooksLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Books}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Documents Section -->
+                    <StackPanel Visibility="{Binding ShowDocuments}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonDocumentsLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Documents}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Magazines Section -->
+                    <StackPanel Visibility="{Binding ShowMagazines}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=PersonMagazinesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Magazines}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+
+</Page>

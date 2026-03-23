@@ -49,6 +49,8 @@ public class PersonByDocumentDto : BaseDto<long>
     public string? Surname { get; set; }
     [JsonPropertyName("display_name")]
     public string? DisplayName { get; set; }
+    [JsonPropertyName("document_title")]
+    public string? DocumentTitle { get; set; }
     [JsonIgnore]
     public string FullName => DisplayName ?? Alias ?? $"{Name} {Surname}";
 }

@@ -643,4 +643,14 @@ public class LocalizedStrings
     public string MagazineCompaniesLabel => _l["MagazineCompaniesLabel"];
     public string MagazineMachinesLabel => _l["MagazineMachinesLabel"];
     public string MagazineMachineFamiliesLabel => _l["MagazineMachineFamiliesLabel"];
+
+    // People user-facing pages
+    public string AllPeopleButton => _l["AllPeopleButton"];
+    public string PeopleSearchBox_Placeholder => _l["PeopleSearchBox_Placeholder"];
+    public string PeopleErrorInfoBar_Title => _l["PeopleErrorInfoBar_Title"];
+    public string PeopleLabel => _l["PeopleLabel"];
+    public string PersonCompaniesLabel => _l["PersonCompaniesLabel"];
+    public string PersonBooksLabel => _l["PersonBooksLabel"];
+    public string PersonDocumentsLabel => _l["PersonDocumentsLabel"];
+    public string PersonMagazinesLabel => _l["PersonMagazinesLabel"];
 }
