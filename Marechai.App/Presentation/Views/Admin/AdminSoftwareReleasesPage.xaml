@@ -79,7 +79,15 @@
                                                         Text="{Binding VersionSearchText, Mode=TwoWay}" QueryIcon="Find"
                                                         x:Name="VersionFilterBox" TextChanged="VersionFilterBox_TextChanged" />
                                         <ComboBox ItemsSource="{Binding VersionSuggestions}" SelectedItem="{Binding SelectedVersion, Mode=TwoWay}"
-                                                  DisplayMemberPath="VersionString" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwareVersionLabel}" />
+                                                  HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoftwareVersionLabel}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock>
+                                                        <Run Text="{Binding Software}" /><Run Text=" - " /><Run Text="{Binding VersionString}" />
+                                                    </TextBlock>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
                                         <ComboBox Header="{Binding Source={StaticResource Strings}, Path=PlatformLabel}"
                                                   ItemsSource="{Binding Platforms}" SelectedItem="{Binding SelectedPlatform, Mode=TwoWay}"
                                                   DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=PlatformLabel}" />
