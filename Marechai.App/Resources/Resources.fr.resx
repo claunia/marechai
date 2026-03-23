@@ -1951,4 +1951,39 @@
   <data name="PersonBooksLabel" xml:space="preserve"><value>Livres</value></data>
   <data name="PersonDocumentsLabel" xml:space="preserve"><value>Documents</value></data>
   <data name="PersonMagazinesLabel" xml:space="preserve"><value>Magazines</value></data>
+  <!-- Software Browsing -->
+  <data name="Software in the database" xml:space="preserve"><value>Logiciels dans la base de données</value></data>
+  <data name="No software found" xml:space="preserve"><value>Aucun logiciel trouvé</value></data>
+  <data name="Failed to load software data. Please try again later." xml:space="preserve"><value>Échec du chargement des données logicielles. Veuillez réessayer plus tard.</value></data>
+  <data name="Failed to navigate. Please try again." xml:space="preserve"><value>Échec de la navigation. Veuillez réessayer.</value></data>
+  <data name="AllSoftwareButton" xml:space="preserve"><value>Tous les logiciels</value></data>
+  <data name="Browse by Platform" xml:space="preserve"><value>Parcourir par plateforme</value></data>
+  <data name="All Software" xml:space="preserve"><value>Tous les logiciels</value></data>
+  <data name="Browsing all software in the database" xml:space="preserve"><value>Parcourir tous les logiciels dans la base de données</value></data>
+  <data name="Software Starting with" xml:space="preserve"><value>Logiciels commençant par</value></data>
+  <data name="Showing software that start with" xml:space="preserve"><value>Affichage des logiciels commençant par</value></data>
+  <data name="Software from" xml:space="preserve"><value>Logiciels de</value></data>
+  <data name="Showing software released in" xml:space="preserve"><value>Affichage des logiciels publiés en</value></data>
+  <data name="Software by Platform" xml:space="preserve"><value>Logiciels par plateforme</value></data>
+  <data name="Showing software for the selected platform" xml:space="preserve"><value>Affichage des logiciels pour la plateforme sélectionnée</value></data>
+  <data name="No software found for this filter" xml:space="preserve"><value>Aucun logiciel trouvé pour ce filtre</value></data>
+  <data name="Failed to load software. Please try again later." xml:space="preserve"><value>Échec du chargement des logiciels. Veuillez réessayer plus tard.</value></data>
+  <data name="SoftwareLabel" xml:space="preserve"><value>logiciels</value></data>
+  <data name="SoftwareErrorInfoBar_Title" xml:space="preserve"><value>Erreur de chargement des logiciels</value></data>
+  <data name="Software not found" xml:space="preserve"><value>Logiciel non trouvé</value></data>
+  <data name="SoftwareFamilyLabel" xml:space="preserve"><value>Famille</value></data>
+  <data name="SoftwareCompaniesLabel" xml:space="preserve"><value>Entreprises</value></data>
+  <data name="SoftwareVersionsLabel" xml:space="preserve"><value>Versions</value></data>
+  <data name="SoftwareIsOSLabel" xml:space="preserve"><value>Système d'exploitation</value></data>
+  <data name="SoftwareIsGameLabel" xml:space="preserve"><value>Jeu</value></data>
+  <data name="Release not found" xml:space="preserve"><value>Publication non trouvée</value></data>
+  <data name="Software Release" xml:space="preserve"><value>Publication logicielle</value></data>
+  <data name="SoftwarePlatformLabel" xml:space="preserve"><value>Plateforme</value></data>
+  <data name="SoftwareRegionLabel" xml:space="preserve"><value>Région</value></data>
+  <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Éditeur</value></data>
+  <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Date de publication</value></data>
+  <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variante</value></data>
+  <data name="SoftwareSubvariantLabel" xml:space="preserve"><value>Sous-variante</value></data>
+  <data name="SoftwareBarcodesLabel" xml:space="preserve"><value>Codes-barres</value></data>
+  <data name="SoftwareProductCodesLabel" xml:space="preserve"><value>Codes produit</value></data>
 </root>

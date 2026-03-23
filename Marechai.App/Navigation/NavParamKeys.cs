@@ -23,5 +23,6 @@ public static class NavParamKeys
     public const string SoftwareVersionName = "SoftwareVersionName";
     public const string SoftwareVariantId   = "SoftwareVariantId";
     public const string SoftwareVariantName = "SoftwareVariantName";
+    public const string SoftwareReleaseId   = "SoftwareReleaseId";
     public const string PersonId            = "PersonId";
 }

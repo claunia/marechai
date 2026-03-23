@@ -653,4 +653,22 @@ public class LocalizedStrings
     public string PersonBooksLabel => _l["PersonBooksLabel"];
     public string PersonDocumentsLabel => _l["PersonDocumentsLabel"];
     public string PersonMagazinesLabel => _l["PersonMagazinesLabel"];
+
+    // Software user-facing pages
+    public string AllSoftwareButton => _l["AllSoftwareButton"];
+    public string SoftwareLabel => _l["SoftwareLabel"];
+    public string SoftwareErrorInfoBar_Title => _l["SoftwareErrorInfoBar_Title"];
+    public string SoftwareFamilyLabel => _l["SoftwareFamilyLabel"];
+    public string SoftwareCompaniesLabel => _l["SoftwareCompaniesLabel"];
+    public string SoftwareVersionsLabel => _l["SoftwareVersionsLabel"];
+    public string SoftwareIsOSLabel => _l["SoftwareIsOSLabel"];
+    public string SoftwareIsGameLabel => _l["SoftwareIsGameLabel"];
+    public string SoftwarePlatformLabel => _l["SoftwarePlatformLabel"];
+    public string SoftwareRegionLabel => _l["SoftwareRegionLabel"];
+    public string SoftwarePublisherLabel => _l["SoftwarePublisherLabel"];
+    public string SoftwareReleaseDateLabel => _l["SoftwareReleaseDateLabel"];
+    public string SoftwareVariantLabel => _l["SoftwareVariantLabel"];
+    public string SoftwareSubvariantLabel => _l["SoftwareSubvariantLabel"];
+    public string SoftwareBarcodesLabel => _l["SoftwareBarcodesLabel"];
+    public string SoftwareProductCodesLabel => _l["SoftwareProductCodesLabel"];
 }

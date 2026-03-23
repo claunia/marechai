@@ -187,12 +187,14 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareVariantsService>();
         containerRegistry.RegisterSingleton<SoftwareSubvariantsService>();
         containerRegistry.RegisterSingleton<SoftwareReleasesService>();
+        containerRegistry.RegisterSingleton<SoftwareBrowsingService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
         containerRegistry.RegisterSingleton<IBooksListFilterContext, BooksListFilterContext>();
         containerRegistry.RegisterSingleton<IDocumentsListFilterContext, DocumentsListFilterContext>();
         containerRegistry.RegisterSingleton<IMagazinesListFilterContext, MagazinesListFilterContext>();
         containerRegistry.RegisterSingleton<IPeopleListFilterContext, PeopleListFilterContext>();
+        containerRegistry.RegisterSingleton<ISoftwareListFilterContext, SoftwareListFilterContext>();
 
         // Register ViewModels explicitly — RegisterForNavigation creates conditional
         // (keyed) registrations that the ViewModelLocator can't resolve by type alone
@@ -243,6 +245,10 @@ public partial class App : PrismApplication
         containerRegistry.Register<AdminBooksViewModel>();
         containerRegistry.Register<AdminDocumentsViewModel>();
         containerRegistry.Register<AdminMagazinesViewModel>();
+        containerRegistry.Register<SoftwareViewModel>();
+        containerRegistry.Register<SoftwareListViewModel>();
+        containerRegistry.Register<SoftwareViewViewModel>();
+        containerRegistry.Register<SoftwareReleaseViewViewModel>();
         containerRegistry.Register<AdminSoftwareViewModel>();
         containerRegistry.Register<AdminSoftwareFamiliesViewModel>();
         containerRegistry.Register<AdminSoftwarePlatformsViewModel>();
@@ -299,6 +305,10 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AdminBooksPage, AdminBooksViewModel>();
         containerRegistry.RegisterForNavigation<AdminDocumentsPage, AdminDocumentsViewModel>();
         containerRegistry.RegisterForNavigation<AdminMagazinesPage, AdminMagazinesViewModel>();
+        containerRegistry.RegisterForNavigation<SoftwarePage, SoftwareViewModel>();
+        containerRegistry.RegisterForNavigation<SoftwareListPage, SoftwareListViewModel>();
+        containerRegistry.RegisterForNavigation<SoftwareViewPage, SoftwareViewViewModel>();
+        containerRegistry.RegisterForNavigation<SoftwareReleaseViewPage, SoftwareReleaseViewViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePage, AdminSoftwareViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwareFamiliesPage, AdminSoftwareFamiliesViewModel>();
         containerRegistry.RegisterForNavigation<AdminSoftwarePlatformsPage, AdminSoftwarePlatformsViewModel>();

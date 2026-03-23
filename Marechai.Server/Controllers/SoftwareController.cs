@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -40,6 +41,102 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class SoftwareController(MarechaiContext context) : ControllerBase
 {
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetSoftwareCountAsync() => context.Softwares.CountAsync();
+
+    [HttpGet("minimum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMinimumYearAsync() => context.SoftwareReleases
+                                                     .Where(r => r.ReleaseDate.HasValue &&
+                                                                 r.ReleaseDate.Value.Year > 1000)
+                                                     .MinAsync(r => r.ReleaseDate.Value.Year);
+
+    [HttpGet("maximum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMaximumYearAsync() => context.SoftwareReleases
+                                                     .Where(r => r.ReleaseDate.HasValue &&
+                                                                 r.ReleaseDate.Value.Year > 1000)
+                                                     .MaxAsync(r => r.ReleaseDate.Value.Year);
+
+    [HttpGet("by-letter/{c}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetSoftwareByLetterAsync(char c) => context.Softwares
+       .Where(s => EF.Functions.Like(s.Name, $"{c}%"))
+       .OrderBy(s => s.Name)
+       .Select(s => new SoftwareDto
+        {
+            Id                = s.Id,
+            Name              = s.Name,
+            FamilyId          = s.FamilyId,
+            Family            = s.Family.Name,
+            IsOperatingSystem = s.IsOperatingSystem,
+            IsGame            = s.IsGame
+        })
+       .ToListAsync();
+
+    [HttpGet("by-year/{year:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year) => context.Softwares
+       .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.ReleaseDate != null &&
+                                                           r.ReleaseDate.Value.Year == year)))
+       .OrderBy(s => s.Name)
+       .Select(s => new SoftwareDto
+        {
+            Id                = s.Id,
+            Name              = s.Name,
+            FamilyId          = s.FamilyId,
+            Family            = s.Family.Name,
+            IsOperatingSystem = s.IsOperatingSystem,
+            IsGame            = s.IsGame
+        })
+       .ToListAsync();
+
+    [HttpGet("by-platform/{platformId:ulong}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(ulong platformId) => context.Softwares
+       .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId == platformId)))
+       .OrderBy(s => s.Name)
+       .Select(s => new SoftwareDto
+        {
+            Id                = s.Id,
+            Name              = s.Name,
+            FamilyId          = s.FamilyId,
+            Family            = s.Family.Name,
+            IsOperatingSystem = s.IsOperatingSystem,
+            IsGame            = s.IsGame
+        })
+       .ToListAsync();
+
+    [HttpGet("/software/{softwareId:ulong}/companies")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareCompanyRoleDto>> GetCompaniesAsync(ulong softwareId) => context.SoftwareCompanyRoles
+       .Where(cr => cr.SoftwareId == softwareId)
+       .Select(cr => new SoftwareCompanyRoleDto
+        {
+            SoftwareId = cr.SoftwareId,
+            Software   = cr.Software.Name,
+            CompanyId  = cr.CompanyId,
+            Company    = cr.Company.Name,
+            RoleId     = cr.RoleId,
+            Role       = cr.Role.Name
+        })
+       .ToListAsync();
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

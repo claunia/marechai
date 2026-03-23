@@ -2,9 +2,15 @@
 #pragma warning disable CS0618
 using Marechai.App.Models;
 using Marechai.App.Software.Barcodes;
+using Marechai.App.Software.ByLetter;
+using Marechai.App.Software.ByPlatform;
+using Marechai.App.Software.ByYear;
 using Marechai.App.Software.CompanyRoles;
+using Marechai.App.Software.Count;
 using Marechai.App.Software.Families;
 using Marechai.App.Software.Item;
+using Marechai.App.Software.MaximumYear;
+using Marechai.App.Software.MinimumYear;
 using Marechai.App.Software.OsCompatibility;
 using Marechai.App.Software.Platforms;
 using Marechai.App.Software.ProductCodes;
@@ -37,15 +43,45 @@ namespace Marechai.App.Software
         {
             get => new global::Marechai.App.Software.Barcodes.BarcodesRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The byLetter property</summary>
+        public global::Marechai.App.Software.ByLetter.ByLetterRequestBuilder ByLetter
+        {
+            get => new global::Marechai.App.Software.ByLetter.ByLetterRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The byPlatform property</summary>
+        public global::Marechai.App.Software.ByPlatform.ByPlatformRequestBuilder ByPlatform
+        {
+            get => new global::Marechai.App.Software.ByPlatform.ByPlatformRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The byYear property</summary>
+        public global::Marechai.App.Software.ByYear.ByYearRequestBuilder ByYear
+        {
+            get => new global::Marechai.App.Software.ByYear.ByYearRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The companyRoles property</summary>
         public global::Marechai.App.Software.CompanyRoles.CompanyRolesRequestBuilder CompanyRoles
         {
             get => new global::Marechai.App.Software.CompanyRoles.CompanyRolesRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The count property</summary>
+        public global::Marechai.App.Software.Count.CountRequestBuilder Count
+        {
+            get => new global::Marechai.App.Software.Count.CountRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The families property</summary>
         public global::Marechai.App.Software.Families.FamiliesRequestBuilder Families
         {
             get => new global::Marechai.App.Software.Families.FamiliesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The maximumYear property</summary>
+        public global::Marechai.App.Software.MaximumYear.MaximumYearRequestBuilder MaximumYear
+        {
+            get => new global::Marechai.App.Software.MaximumYear.MaximumYearRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The minimumYear property</summary>
+        public global::Marechai.App.Software.MinimumYear.MinimumYearRequestBuilder MinimumYear
+        {
+            get => new global::Marechai.App.Software.MinimumYear.MinimumYearRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The osCompatibility property</summary>
         public global::Marechai.App.Software.OsCompatibility.OsCompatibilityRequestBuilder OsCompatibility
