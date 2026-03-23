@@ -98,13 +98,13 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 
-    public void OnNavigatedTo(NavigationContext navigationContext)
+    public async void OnNavigatedTo(NavigationContext navigationContext)
     {
         CheckAdminRole();
         if(IsAdmin)
         {
+            await LoadPickerDataAsync();
             _ = LoadCommand.ExecuteAsync(null);
-            _ = LoadPickerDataAsync();
         }
     }
 
@@ -129,6 +129,17 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             Releases.Clear();
             List<SoftwareReleaseDto> response = await _service.GetAllAsync();
             _allReleases = response;
+
+            // Enrich SoftwareVersion display with software name
+            if(_allVersions != null)
+                foreach(SoftwareReleaseDto r in response)
+                    if(r.SoftwareVersionId.HasValue)
+                    {
+                        SoftwareVersionDto? ver = _allVersions.FirstOrDefault(v => v.Id == r.SoftwareVersionId.Value);
+                        if(ver?.Software != null)
+                            r.SoftwareVersion = $"{ver.Software} - {r.SoftwareVersion}";
+                    }
+
             foreach(SoftwareReleaseDto item in response) Releases.Add(item);
             ApplyFilter();
             IsDataLoaded = true;
