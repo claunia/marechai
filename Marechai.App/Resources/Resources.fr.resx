@@ -1901,4 +1901,26 @@
   <data name="No documents found for this filter" xml:space="preserve"><value>Aucun document trouvé pour ce filtre</value></data>
   <data name="Failed to load documents. Please try again later." xml:space="preserve"><value>Erreur de chargement des documents. Veuillez réessayer plus tard.</value></data>
   <data name="Document not found" xml:space="preserve"><value>Document non trouvé</value></data>
+  <data name="AllMagazinesButton" xml:space="preserve"><value>Tous les magazines</value></data>
+  <data name="MagazinesSearchBox_Placeholder" xml:space="preserve"><value>Rechercher des magazines...</value></data>
+  <data name="MagazinesErrorInfoBar_Title" xml:space="preserve"><value>Erreur de chargement des magazines</value></data>
+  <data name="MagazinesLabel" xml:space="preserve"><value>magazines</value></data>
+  <data name="MagazineSynopsisLabel" xml:space="preserve"><value>Synopsis</value></data>
+  <data name="MagazineAuthorsLabel" xml:space="preserve"><value>Auteurs et contributeurs</value></data>
+  <data name="MagazineCompaniesLabel" xml:space="preserve"><value>Éditeurs et entreprises</value></data>
+  <data name="MagazineMachinesLabel" xml:space="preserve"><value>Machines associées</value></data>
+  <data name="MagazineMachineFamiliesLabel" xml:space="preserve"><value>Familles de machines associées</value></data>
+  <data name="Magazines" xml:space="preserve"><value>Magazines</value></data>
+  <data name="Magazines in the database" xml:space="preserve"><value>Magazines dans la base de données</value></data>
+  <data name="No magazines found" xml:space="preserve"><value>Aucun magazine trouvé</value></data>
+  <data name="Failed to load magazines data. Please try again later." xml:space="preserve"><value>Erreur de chargement des données des magazines. Veuillez réessayer plus tard.</value></data>
+  <data name="All Magazines" xml:space="preserve"><value>Tous les magazines</value></data>
+  <data name="Browsing all magazines in the database" xml:space="preserve"><value>Parcourir tous les magazines dans la base de données</value></data>
+  <data name="Magazines Starting with" xml:space="preserve"><value>Magazines commençant par</value></data>
+  <data name="Showing magazines that start with" xml:space="preserve"><value>Affichage des magazines commençant par</value></data>
+  <data name="Magazines from" xml:space="preserve"><value>Magazines de</value></data>
+  <data name="Showing magazines first published in" xml:space="preserve"><value>Affichage des magazines publiés pour la première fois en</value></data>
+  <data name="No magazines found for this filter" xml:space="preserve"><value>Aucun magazine trouvé pour ce filtre</value></data>
+  <data name="Failed to load magazines. Please try again later." xml:space="preserve"><value>Erreur de chargement des magazines. Veuillez réessayer plus tard.</value></data>
+  <data name="Magazine not found" xml:space="preserve"><value>Magazine non trouvé</value></data>
 </root>

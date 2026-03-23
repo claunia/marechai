@@ -1797,4 +1797,26 @@
   <data name="No documents found for this filter" xml:space="preserve"><value>Nulla documenta inventa pro hoc filtro</value></data>
   <data name="Failed to load documents. Please try again later." xml:space="preserve"><value>Error in documentis onerandis. Quaeso, iterum posterius tempta.</value></data>
   <data name="Document not found" xml:space="preserve"><value>Documentum non inventum</value></data>
+  <data name="AllMagazinesButton" xml:space="preserve"><value>Omnes ephemerides</value></data>
+  <data name="MagazinesSearchBox_Placeholder" xml:space="preserve"><value>Ephemerides quaerere...</value></data>
+  <data name="MagazinesErrorInfoBar_Title" xml:space="preserve"><value>Error in ephemeridibus onerandis</value></data>
+  <data name="MagazinesLabel" xml:space="preserve"><value>ephemerides</value></data>
+  <data name="MagazineSynopsisLabel" xml:space="preserve"><value>Synopsis</value></data>
+  <data name="MagazineAuthorsLabel" xml:space="preserve"><value>Auctores et contributores</value></data>
+  <data name="MagazineCompaniesLabel" xml:space="preserve"><value>Editores et societates</value></data>
+  <data name="MagazineMachinesLabel" xml:space="preserve"><value>Machinae pertinentes</value></data>
+  <data name="MagazineMachineFamiliesLabel" xml:space="preserve"><value>Familiae machinarum pertinentes</value></data>
+  <data name="Magazines" xml:space="preserve"><value>Ephemerides</value></data>
+  <data name="Magazines in the database" xml:space="preserve"><value>Ephemerides in basi datorum</value></data>
+  <data name="No magazines found" xml:space="preserve"><value>Nullae ephemerides inventae</value></data>
+  <data name="Failed to load magazines data. Please try again later." xml:space="preserve"><value>Error in datis ephemeridum onerandis. Quaeso, iterum posterius tempta.</value></data>
+  <data name="All Magazines" xml:space="preserve"><value>Omnes ephemerides</value></data>
+  <data name="Browsing all magazines in the database" xml:space="preserve"><value>Omnes ephemerides in basi datorum perlustrare</value></data>
+  <data name="Magazines Starting with" xml:space="preserve"><value>Ephemerides incipientes ab</value></data>
+  <data name="Showing magazines that start with" xml:space="preserve"><value>Ephemerides ostenduntur quae incipiunt ab</value></data>
+  <data name="Magazines from" xml:space="preserve"><value>Ephemerides ab anno</value></data>
+  <data name="Showing magazines first published in" xml:space="preserve"><value>Ephemerides ostenduntur primum editae anno</value></data>
+  <data name="No magazines found for this filter" xml:space="preserve"><value>Nullae ephemerides inventae pro hoc filtro</value></data>
+  <data name="Failed to load magazines. Please try again later." xml:space="preserve"><value>Error in ephemeridibus onerandis. Quaeso, iterum posterius tempta.</value></data>
+  <data name="Magazine not found" xml:space="preserve"><value>Ephemeris non inventa</value></data>
 </root>

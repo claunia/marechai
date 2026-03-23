@@ -16,6 +16,7 @@ public static class NavParamKeys
     public const string BookId           = "BookId";
     public const string BookTitle        = "BookTitle";
     public const string DocumentId       = "DocumentId";
+    public const string MagazineId       = "MagazineId";
     public const string SoftwareId       = "SoftwareId";
     public const string SoftwareName     = "SoftwareName";
     public const string SoftwareVersionId   = "SoftwareVersionId";

@@ -18,6 +18,104 @@ public class MagazinesService
         _logger    = logger;
     }
 
+    // --- User-facing browsing methods ---
+
+    public async Task<int> GetMagazinesCountAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Magazines.Count.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching magazines count");
+
+            return 0;
+        }
+    }
+
+    public async Task<int> GetMinimumYearAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Magazines.MinimumYear.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching minimum year");
+
+            return 0;
+        }
+    }
+
+    public async Task<int> GetMaximumYearAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Magazines.MaximumYear.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching maximum year");
+
+            return 0;
+        }
+    }
+
+    public async Task<List<MagazineDto>> GetMagazinesByLetterAsync(char letter)
+    {
+        try
+        {
+            List<MagazineDto>? mags = await _apiClient.Magazines.ByLetter[letter.ToString()].GetAsync();
+
+            return mags ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching magazines by letter '{Letter}'", letter);
+
+            return [];
+        }
+    }
+
+    public async Task<List<MagazineDto>> GetMagazinesByYearAsync(int year)
+    {
+        try
+        {
+            List<MagazineDto>? mags = await _apiClient.Magazines.ByYear[year].GetAsync();
+
+            return mags ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching magazines by year {Year}", year);
+
+            return [];
+        }
+    }
+
+    public async Task<DocumentSynopsisDto?> GetMagazineSynopsisAsync(long magazineId)
+    {
+        try
+        {
+            return await _apiClient.Magazines[magazineId].Synopsis.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching synopsis for magazine {Id}", magazineId);
+
+            return null;
+        }
+    }
+
+    // --- CRUD ---
+
     public async Task<List<MagazineDto>> GetAllMagazinesAsync()
     {
         try

@@ -627,4 +627,13 @@ public class LocalizedStrings
     public string DocumentCompaniesLabel => _l["DocumentCompaniesLabel"];
     public string DocumentMachinesLabel => _l["DocumentMachinesLabel"];
     public string DocumentMachineFamiliesLabel => _l["DocumentMachineFamiliesLabel"];
+    public string AllMagazinesButton => _l["AllMagazinesButton"];
+    public string MagazinesSearchBox_Placeholder => _l["MagazinesSearchBox_Placeholder"];
+    public string MagazinesErrorInfoBar_Title => _l["MagazinesErrorInfoBar_Title"];
+    public string MagazinesLabel => _l["MagazinesLabel"];
+    public string MagazineSynopsisLabel => _l["MagazineSynopsisLabel"];
+    public string MagazineAuthorsLabel => _l["MagazineAuthorsLabel"];
+    public string MagazineCompaniesLabel => _l["MagazineCompaniesLabel"];
+    public string MagazineMachinesLabel => _l["MagazineMachinesLabel"];
+    public string MagazineMachineFamiliesLabel => _l["MagazineMachineFamiliesLabel"];
 }

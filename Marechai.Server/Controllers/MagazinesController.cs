@@ -40,6 +40,76 @@ namespace Marechai.Server.Controllers;
 [ApiController]
 public class MagazinesController(MarechaiContext context) : ControllerBase
 {
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMagazinesCountAsync() => context.Magazines.CountAsync();
+
+    [HttpGet("minimum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMinimumYearAsync() => context.Magazines
+                                                     .Where(m => m.FirstPublication.HasValue &&
+                                                                 m.FirstPublication.Value.Year > 1000)
+                                                     .MinAsync(m => m.FirstPublication.Value.Year);
+
+    [HttpGet("maximum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMaximumYearAsync() => context.Magazines
+                                                     .Where(m => m.FirstPublication.HasValue &&
+                                                                 m.FirstPublication.Value.Year > 1000)
+                                                     .MaxAsync(m => m.FirstPublication.Value.Year);
+
+    [HttpGet("by-letter/{c}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MagazineDto>> GetMagazinesByLetterAsync(char c) => context.Magazines
+       .Where(m =>
+            (m.SortTitle != null && EF.Functions.Like(m.SortTitle, $"{c}%")) ||
+            (m.SortTitle == null && EF.Functions.Like(m.Title, $"{c}%")))
+       .OrderBy(m => m.SortTitle)
+       .ThenBy(m => m.Title)
+       .ThenBy(m => m.FirstPublication)
+       .Select(m => new MagazineDto
+        {
+            Id               = m.Id,
+            Title            = m.Title,
+            NativeTitle      = m.NativeTitle,
+            SortTitle        = m.SortTitle,
+            FirstPublication = m.FirstPublication,
+            Issn             = m.Issn,
+            CountryId        = m.CountryId,
+            Country          = m.Country.Name
+        })
+       .ToListAsync();
+
+    [HttpGet("by-year/{year:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<MagazineDto>> GetMagazinesByYearAsync(int year) => context.Magazines
+       .Where(m => m.FirstPublication != null && m.FirstPublication.Value.Year == year)
+       .OrderBy(m => m.SortTitle)
+       .ThenBy(m => m.Title)
+       .ThenBy(m => m.FirstPublication)
+       .Select(m => new MagazineDto
+        {
+            Id               = m.Id,
+            Title            = m.Title,
+            NativeTitle      = m.NativeTitle,
+            SortTitle        = m.SortTitle,
+            FirstPublication = m.FirstPublication,
+            Issn             = m.Issn,
+            CountryId        = m.CountryId,
+            Country          = m.Country.Name
+        })
+       .ToListAsync();
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]

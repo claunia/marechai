@@ -1797,4 +1797,26 @@
   <data name="No documents found for this filter" xml:space="preserve"><value>Keine Dokumente für diesen Filter gefunden</value></data>
   <data name="Failed to load documents. Please try again later." xml:space="preserve"><value>Fehler beim Laden der Dokumente. Bitte versuchen Sie es später erneut.</value></data>
   <data name="Document not found" xml:space="preserve"><value>Dokument nicht gefunden</value></data>
+  <data name="AllMagazinesButton" xml:space="preserve"><value>Alle Zeitschriften</value></data>
+  <data name="MagazinesSearchBox_Placeholder" xml:space="preserve"><value>Zeitschriften suchen...</value></data>
+  <data name="MagazinesErrorInfoBar_Title" xml:space="preserve"><value>Fehler beim Laden der Zeitschriften</value></data>
+  <data name="MagazinesLabel" xml:space="preserve"><value>Zeitschriften</value></data>
+  <data name="MagazineSynopsisLabel" xml:space="preserve"><value>Zusammenfassung</value></data>
+  <data name="MagazineAuthorsLabel" xml:space="preserve"><value>Autoren und Mitwirkende</value></data>
+  <data name="MagazineCompaniesLabel" xml:space="preserve"><value>Verlage und Unternehmen</value></data>
+  <data name="MagazineMachinesLabel" xml:space="preserve"><value>Zugehörige Maschinen</value></data>
+  <data name="MagazineMachineFamiliesLabel" xml:space="preserve"><value>Zugehörige Maschinenfamilien</value></data>
+  <data name="Magazines" xml:space="preserve"><value>Zeitschriften</value></data>
+  <data name="Magazines in the database" xml:space="preserve"><value>Zeitschriften in der Datenbank</value></data>
+  <data name="No magazines found" xml:space="preserve"><value>Keine Zeitschriften gefunden</value></data>
+  <data name="Failed to load magazines data. Please try again later." xml:space="preserve"><value>Fehler beim Laden der Zeitschriftendaten. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="All Magazines" xml:space="preserve"><value>Alle Zeitschriften</value></data>
+  <data name="Browsing all magazines in the database" xml:space="preserve"><value>Alle Zeitschriften in der Datenbank durchsuchen</value></data>
+  <data name="Magazines Starting with" xml:space="preserve"><value>Zeitschriften beginnend mit</value></data>
+  <data name="Showing magazines that start with" xml:space="preserve"><value>Zeitschriften anzeigen, die beginnen mit</value></data>
+  <data name="Magazines from" xml:space="preserve"><value>Zeitschriften aus</value></data>
+  <data name="Showing magazines first published in" xml:space="preserve"><value>Zeitschriften anzeigen, erstmals veröffentlicht in</value></data>
+  <data name="No magazines found for this filter" xml:space="preserve"><value>Keine Zeitschriften für diesen Filter gefunden</value></data>
+  <data name="Failed to load magazines. Please try again later." xml:space="preserve"><value>Fehler beim Laden der Zeitschriften. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="Magazine not found" xml:space="preserve"><value>Zeitschrift nicht gefunden</value></data>
 </root>
