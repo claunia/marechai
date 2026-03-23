@@ -267,7 +267,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
             source = source.Where(c => c.Name != null &&
                                        c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
-        foreach(CompanyDto match in source.Take(50))
+        foreach(CompanyDto match in source)
             CompanySuggestions.Add(match);
     }
 

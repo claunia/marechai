@@ -276,7 +276,7 @@ public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionA
             source = source.Where(f => f.Id != _editingId);
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(f => f.Name != null && f.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-        foreach(SoftwareFamilyDto match in source.Take(50)) ParentSuggestions.Add(match);
+        foreach(SoftwareFamilyDto match in source) ParentSuggestions.Add(match);
     }
 
     public void UpdateCompanySuggestions(string query)
@@ -286,7 +286,7 @@ public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionA
         IEnumerable<CompanyDto> source = _allCompanies;
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(c => c.Name != null && c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-        foreach(CompanyDto match in source.Take(50)) CompanySuggestions.Add(match);
+        foreach(CompanyDto match in source) CompanySuggestions.Add(match);
     }
 
     // --- Company junction ---

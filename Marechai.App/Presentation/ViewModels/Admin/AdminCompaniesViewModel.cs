@@ -628,7 +628,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
             source = source.Where(c => c.Name != null &&
                                        c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
-        foreach(CompanyDto match in source.Take(50))
+        foreach(CompanyDto match in source)
             SoldToSuggestions.Add(match);
     }
 
@@ -940,7 +940,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
                                       (p.Alias != null &&
                                        p.Alias.Contains(query, StringComparison.OrdinalIgnoreCase)));
 
-        foreach(PersonDto match in source.Take(50))
+        foreach(PersonDto match in source)
             AvailablePeople.Add(match);
     }
 

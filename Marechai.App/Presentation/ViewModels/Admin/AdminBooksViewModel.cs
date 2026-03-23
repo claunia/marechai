@@ -810,7 +810,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(b => b.Title != null && b.Title.Contains(query, StringComparison.OrdinalIgnoreCase));
 
-        foreach(BookDto b in source.Take(50)) PreviousBookSuggestions.Add(b);
+        foreach(BookDto b in source) PreviousBookSuggestions.Add(b);
     }
 
     public void UpdateSourceBookSuggestions(string query)
@@ -824,7 +824,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(b => b.Title != null && b.Title.Contains(query, StringComparison.OrdinalIgnoreCase));
 
-        foreach(BookDto b in source.Take(50)) SourceBookSuggestions.Add(b);
+        foreach(BookDto b in source) SourceBookSuggestions.Add(b);
     }
 
     // --- Load picker data ---
@@ -891,7 +891,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
                 (p.Surname != null && p.Surname.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
                 (p.DisplayName != null && p.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase)));
 
-        foreach(PersonDto p in source.Take(50)) AvailablePeople.Add(p);
+        foreach(PersonDto p in source) AvailablePeople.Add(p);
     }
 
     // --- Company search ---
@@ -906,7 +906,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(c => c.Name != null && c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
-        foreach(CompanyDto c in source.Take(50)) AvailableCompanies.Add(c);
+        foreach(CompanyDto c in source) AvailableCompanies.Add(c);
     }
 
     // --- Form helpers ---

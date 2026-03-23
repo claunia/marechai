@@ -375,7 +375,7 @@ public partial class AdminScreensViewModel : ObservableObject, IRegionAware
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(r => $"{r.Width}x{r.Height}".Contains(query, StringComparison.OrdinalIgnoreCase));
 
-        foreach(ResolutionDto res in source.Take(50))
+        foreach(ResolutionDto res in source)
             FilteredResolutions.Add(res);
     }
 

@@ -800,7 +800,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
                 (p.Surname != null && p.Surname.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
                 (p.DisplayName != null && p.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase)));
 
-        foreach(PersonDto p in source.Take(50)) AvailablePeople.Add(p);
+        foreach(PersonDto p in source) AvailablePeople.Add(p);
     }
 
     // --- Company search ---
@@ -814,7 +814,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
             source = source.Where(c =>
                 c.Name != null && c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
-        foreach(CompanyDto c in source.Take(50)) AvailableCompanies.Add(c);
+        foreach(CompanyDto c in source) AvailableCompanies.Add(c);
     }
 
     // --- Form helpers ---

@@ -336,7 +336,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         IEnumerable<CompanyDto> source = _allCompanies;
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(c => c.Name != null && c.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-        foreach(CompanyDto match in source.Take(50)) CompanySuggestions.Add(match);
+        foreach(CompanyDto match in source) CompanySuggestions.Add(match);
     }
 
     public async Task LoadPickerDataAsync()
