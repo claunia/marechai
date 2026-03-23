@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marechai.App.Models;
 using Marechai.App.Navigation;
+using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
@@ -19,6 +20,7 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
     private readonly IStringLocalizer                            _localizer;
     private readonly ILogger<AdminSoftwareVersionsViewModel>     _logger;
     private readonly ITokenService                               _tokenService;
+    private readonly IRegionManager                              _regionManager;
 
     [ObservableProperty] private ObservableCollection<SoftwareVersionDto> _versions = [];
     [ObservableProperty] private ObservableCollection<SoftwareVersionDto> _filteredVersions = [];
@@ -49,13 +51,15 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
                                           IJwtService                              jwtService,
                                           ITokenService                            tokenService,
                                           ILogger<AdminSoftwareVersionsViewModel>  logger,
-                                          IStringLocalizer                         localizer)
+                                          IStringLocalizer                         localizer,
+                                          IRegionManager                           regionManager)
     {
-        _service      = service;
-        _jwtService   = jwtService;
-        _tokenService = tokenService;
-        _logger       = logger;
-        _localizer    = localizer;
+        _service       = service;
+        _jwtService    = jwtService;
+        _tokenService  = tokenService;
+        _logger        = logger;
+        _localizer     = localizer;
+        _regionManager = regionManager;
 
         LoadCommand       = new AsyncRelayCommand(LoadAsync);
         OpenAddCommand    = new RelayCommand(OpenAdd);
@@ -63,6 +67,7 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
         DeleteCommand     = new AsyncRelayCommand<SoftwareVersionDto>(DeleteAsync);
         SaveCommand       = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand = new RelayCommand(CancelEdit);
+        GoBackCommand     = new RelayCommand(GoBack);
 
         CheckAdminRole();
     }
@@ -73,9 +78,12 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand<SoftwareVersionDto>    DeleteCommand     { get; }
     public IAsyncRelayCommand                        SaveCommand       { get; }
     public IRelayCommand                             CancelEditCommand { get; }
+    public IRelayCommand                             GoBackCommand     { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    void GoBack() => _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwarePage));
 
     public void OnNavigatedTo(NavigationContext navigationContext)
     {

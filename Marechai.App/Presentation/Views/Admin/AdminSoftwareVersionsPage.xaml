@@ -8,7 +8,19 @@
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
               BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Padding="16,12">
-            <TextBlock Text="{Binding PageTitle}" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Content="&#xE72B;"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource TextBlockButtonStyle}"
+                    Padding="8,4"
+                    VerticalAlignment="Center"
+                    Margin="0,0,12,0" />
+            <TextBlock Grid.Column="1" Text="{Binding PageTitle}" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextControlForeground}" VerticalAlignment="Center" />
         </Grid>
         <Grid Grid.Row="1">
             <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource InvertBoolToVisibilityConverter}}"

@@ -61,20 +61,24 @@ public partial class AdminSoftwareVariantsViewModel : ObservableObject, IRegionA
         SaveCommand           = new AsyncRelayCommand(SaveAsync);
         CancelEditCommand     = new RelayCommand(CancelEdit);
         OpenSubvariantsCommand = new RelayCommand<SoftwareVariantDto>(OpenSubvariants);
+        GoBackCommand          = new RelayCommand(GoBack);
 
         CheckAdminRole();
     }
 
-    public IAsyncRelayCommand                        LoadCommand       { get; }
-    public IRelayCommand                             OpenAddCommand    { get; }
-    public IRelayCommand<SoftwareVariantDto>         OpenEditCommand   { get; }
-    public IAsyncRelayCommand<SoftwareVariantDto>    DeleteCommand     { get; }
-    public IAsyncRelayCommand                        SaveCommand       { get; }
-    public IRelayCommand                             CancelEditCommand { get; }
+    public IAsyncRelayCommand                        LoadCommand            { get; }
+    public IRelayCommand                             OpenAddCommand         { get; }
+    public IRelayCommand<SoftwareVariantDto>         OpenEditCommand        { get; }
+    public IAsyncRelayCommand<SoftwareVariantDto>    DeleteCommand          { get; }
+    public IAsyncRelayCommand                        SaveCommand            { get; }
+    public IRelayCommand                             CancelEditCommand      { get; }
     public IRelayCommand<SoftwareVariantDto>         OpenSubvariantsCommand { get; }
+    public IRelayCommand                             GoBackCommand          { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
+
+    void GoBack() => _regionManager.RequestNavigate(RegionNames.Content, nameof(AdminSoftwarePage));
 
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
