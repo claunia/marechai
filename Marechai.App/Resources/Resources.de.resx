@@ -1752,4 +1752,27 @@
   <data name="FailedToLoadSoftwareReleases" xml:space="preserve"><value>Software-Veröffentlichungen konnten nicht geladen werden.</value></data>
   <data name="FailedToDeleteSoftwareRelease" xml:space="preserve"><value>Software-Veröffentlichung konnte nicht gelöscht werden.</value></data>
   <data name="FailedToSaveSoftwareRelease" xml:space="preserve"><value>Software-Veröffentlichung konnte nicht gespeichert werden.</value></data>
+  <data name="AllBooksButton" xml:space="preserve"><value>Alle Bücher</value></data>
+  <data name="BooksSearchBox_Placeholder" xml:space="preserve"><value>Bücher suchen...</value></data>
+  <data name="BooksErrorInfoBar_Title" xml:space="preserve"><value>Fehler beim Laden der Bücher</value></data>
+  <data name="BooksLabel" xml:space="preserve"><value>Bücher</value></data>
+  <data name="BookSynopsisLabel" xml:space="preserve"><value>Zusammenfassung</value></data>
+  <data name="BookAuthorsLabel" xml:space="preserve"><value>Autoren und Mitwirkende</value></data>
+  <data name="BookCompaniesLabel" xml:space="preserve"><value>Verlage und Unternehmen</value></data>
+  <data name="BookMachinesLabel" xml:space="preserve"><value>Zugehörige Maschinen</value></data>
+  <data name="BookMachineFamiliesLabel" xml:space="preserve"><value>Zugehörige Maschinenfamilien</value></data>
+  <data name="BookPreviousEditionLabel" xml:space="preserve"><value>Vorherige Ausgabe</value></data>
+  <data name="Books" xml:space="preserve"><value>Bücher</value></data>
+  <data name="Books in the database" xml:space="preserve"><value>Bücher in der Datenbank</value></data>
+  <data name="No books found" xml:space="preserve"><value>Keine Bücher gefunden</value></data>
+  <data name="Failed to load books data. Please try again later." xml:space="preserve"><value>Fehler beim Laden der Bücherdaten. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="All Books" xml:space="preserve"><value>Alle Bücher</value></data>
+  <data name="Browsing all books in the database" xml:space="preserve"><value>Alle Bücher in der Datenbank durchsuchen</value></data>
+  <data name="Books Starting with" xml:space="preserve"><value>Bücher beginnend mit</value></data>
+  <data name="Showing books that start with" xml:space="preserve"><value>Bücher anzeigen, die beginnen mit</value></data>
+  <data name="Books from" xml:space="preserve"><value>Bücher aus</value></data>
+  <data name="Showing books published in" xml:space="preserve"><value>Bücher anzeigen, veröffentlicht in</value></data>
+  <data name="No books found for this filter" xml:space="preserve"><value>Keine Bücher für diesen Filter gefunden</value></data>
+  <data name="Failed to load books. Please try again later." xml:space="preserve"><value>Fehler beim Laden der Bücher. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="Book not found" xml:space="preserve"><value>Buch nicht gefunden</value></data>
 </root>

@@ -189,6 +189,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SoftwareReleasesService>();
         containerRegistry.RegisterSingleton<IComputersListFilterContext, ComputersListFilterContext>();
         containerRegistry.RegisterSingleton<IConsolesListFilterContext, ConsolesListFilterContext>();
+        containerRegistry.RegisterSingleton<IBooksListFilterContext, BooksListFilterContext>();
 
         // Register ViewModels explicitly — RegisterForNavigation creates conditional
         // (keyed) registrations that the ViewModelLocator can't resolve by type alone
@@ -201,6 +202,9 @@ public partial class App : PrismApplication
         containerRegistry.Register<ConsolesListViewModel>();
         containerRegistry.Register<CompaniesViewModel>();
         containerRegistry.Register<CompanyDetailViewModel>();
+        containerRegistry.Register<BooksViewModel>();
+        containerRegistry.Register<BooksListViewModel>();
+        containerRegistry.Register<BookViewViewModel>();
         containerRegistry.Register<MachineViewViewModel>();
         containerRegistry.Register<PhotoDetailViewModel>();
         containerRegistry.Register<GpusListViewModel>();
@@ -245,6 +249,9 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<ConsolesListPage, ConsolesListViewModel>();
         containerRegistry.RegisterForNavigation<CompaniesPage, CompaniesViewModel>();
         containerRegistry.RegisterForNavigation<CompanyDetailPage, CompanyDetailViewModel>();
+        containerRegistry.RegisterForNavigation<BooksPage, BooksViewModel>();
+        containerRegistry.RegisterForNavigation<BooksListPage, BooksListViewModel>();
+        containerRegistry.RegisterForNavigation<BookViewPage, BookViewViewModel>();
         containerRegistry.RegisterForNavigation<MachineViewPage, MachineViewViewModel>();
         containerRegistry.RegisterForNavigation<PhotoDetailPage, PhotoDetailViewModel>();
         containerRegistry.RegisterForNavigation<GpuListPage, GpusListViewModel>();

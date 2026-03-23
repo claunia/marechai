@@ -608,4 +608,14 @@ public class LocalizedStrings
     public string RegionLabel => _l["RegionLabel"];
     public string PublisherLabel => _l["PublisherLabel"];
     public string ReleaseDateLabel => _l["ReleaseDateLabel"];
+    public string AllBooksButton => _l["AllBooksButton"];
+    public string BooksSearchBox_Placeholder => _l["BooksSearchBox_Placeholder"];
+    public string BooksErrorInfoBar_Title => _l["BooksErrorInfoBar_Title"];
+    public string BooksLabel => _l["BooksLabel"];
+    public string BookSynopsisLabel => _l["BookSynopsisLabel"];
+    public string BookAuthorsLabel => _l["BookAuthorsLabel"];
+    public string BookCompaniesLabel => _l["BookCompaniesLabel"];
+    public string BookMachinesLabel => _l["BookMachinesLabel"];
+    public string BookMachineFamiliesLabel => _l["BookMachineFamiliesLabel"];
+    public string BookPreviousEditionLabel => _l["BookPreviousEditionLabel"];
 }

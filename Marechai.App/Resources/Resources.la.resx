@@ -1752,4 +1752,27 @@
   <data name="FailedToLoadSoftwareReleases" xml:space="preserve"><value>Editiones programmatum onerare non potuit.</value></data>
   <data name="FailedToDeleteSoftwareRelease" xml:space="preserve"><value>Editionem programmatis delere non potuit.</value></data>
   <data name="FailedToSaveSoftwareRelease" xml:space="preserve"><value>Editionem programmatis servare non potuit.</value></data>
+  <data name="AllBooksButton" xml:space="preserve"><value>Omnes libri</value></data>
+  <data name="BooksSearchBox_Placeholder" xml:space="preserve"><value>Libros quaerere...</value></data>
+  <data name="BooksErrorInfoBar_Title" xml:space="preserve"><value>Error in libris onerandis</value></data>
+  <data name="BooksLabel" xml:space="preserve"><value>libri</value></data>
+  <data name="BookSynopsisLabel" xml:space="preserve"><value>Synopsis</value></data>
+  <data name="BookAuthorsLabel" xml:space="preserve"><value>Auctores et contributores</value></data>
+  <data name="BookCompaniesLabel" xml:space="preserve"><value>Editores et societates</value></data>
+  <data name="BookMachinesLabel" xml:space="preserve"><value>Machinae pertinentes</value></data>
+  <data name="BookMachineFamiliesLabel" xml:space="preserve"><value>Familiae machinarum pertinentes</value></data>
+  <data name="BookPreviousEditionLabel" xml:space="preserve"><value>Editio prior</value></data>
+  <data name="Books" xml:space="preserve"><value>Libri</value></data>
+  <data name="Books in the database" xml:space="preserve"><value>Libri in basi datorum</value></data>
+  <data name="No books found" xml:space="preserve"><value>Nulli libri inventi</value></data>
+  <data name="Failed to load books data. Please try again later." xml:space="preserve"><value>Error in datis librorum onerandis. Quaeso, iterum posterius tempta.</value></data>
+  <data name="All Books" xml:space="preserve"><value>Omnes libri</value></data>
+  <data name="Browsing all books in the database" xml:space="preserve"><value>Omnes libros in basi datorum perlustrare</value></data>
+  <data name="Books Starting with" xml:space="preserve"><value>Libri incipientes ab</value></data>
+  <data name="Showing books that start with" xml:space="preserve"><value>Libri ostenduntur qui incipiunt ab</value></data>
+  <data name="Books from" xml:space="preserve"><value>Libri ab anno</value></data>
+  <data name="Showing books published in" xml:space="preserve"><value>Libri ostenduntur editi anno</value></data>
+  <data name="No books found for this filter" xml:space="preserve"><value>Nulli libri inventi pro hoc filtro</value></data>
+  <data name="Failed to load books. Please try again later." xml:space="preserve"><value>Error in libris onerandis. Quaeso, iterum posterius tempta.</value></data>
+  <data name="Book not found" xml:space="preserve"><value>Liber non inventus</value></data>
 </root>

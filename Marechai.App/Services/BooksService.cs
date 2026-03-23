@@ -19,6 +19,104 @@ public class BooksService
         _logger    = logger;
     }
 
+    // --- User-facing browsing methods ---
+
+    public async Task<int> GetBooksCountAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Books.Count.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching books count");
+
+            return 0;
+        }
+    }
+
+    public async Task<int> GetMinimumYearAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Books.MinimumYear.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching minimum year");
+
+            return 0;
+        }
+    }
+
+    public async Task<int> GetMaximumYearAsync()
+    {
+        try
+        {
+            int? result = await _apiClient.Books.MaximumYear.GetAsync();
+
+            return result ?? 0;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching maximum year");
+
+            return 0;
+        }
+    }
+
+    public async Task<List<BookDto>> GetBooksByLetterAsync(char letter)
+    {
+        try
+        {
+            List<BookDto>? books = await _apiClient.Books.ByLetter[letter.ToString()].GetAsync();
+
+            return books ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching books by letter '{Letter}'", letter);
+
+            return [];
+        }
+    }
+
+    public async Task<List<BookDto>> GetBooksByYearAsync(int year)
+    {
+        try
+        {
+            List<BookDto>? books = await _apiClient.Books.ByYear[year].GetAsync();
+
+            return books ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching books by year {Year}", year);
+
+            return [];
+        }
+    }
+
+    public async Task<DocumentSynopsisDto?> GetBookSynopsisAsync(long bookId)
+    {
+        try
+        {
+            return await _apiClient.Books[bookId].Synopsis.GetAsync();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching synopsis for book {Id}", bookId);
+
+            return null;
+        }
+    }
+
+    // --- CRUD ---
+
     public async Task<List<BookDto>> GetAllBooksAsync()
     {
         try

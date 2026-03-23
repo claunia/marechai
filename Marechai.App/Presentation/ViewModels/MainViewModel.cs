@@ -90,7 +90,7 @@ public partial class MainViewModel : ObservableObject
 
         // Initialize commands
         NavigateToNewsCommand                     = new RelayCommand(() => NavigateTo(nameof(NewsPage)));
-        NavigateToBooksCommand                    = new RelayCommand(() => NavigateTo("books"));
+        NavigateToBooksCommand                    = new RelayCommand(() => NavigateTo(nameof(BooksPage)));
         NavigateToCompaniesCommand                = new RelayCommand(() => NavigateTo(nameof(CompaniesPage)));
         NavigateToComputersCommand                = new RelayCommand(() => NavigateTo(nameof(ComputersPage)));
         NavigateToConsolesCommand                 = new RelayCommand(() => NavigateTo(nameof(ConsolesPage)));

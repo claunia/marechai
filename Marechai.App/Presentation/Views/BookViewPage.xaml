@@ -1,0 +1,425 @@
+<?xml version="1.0"
+      encoding="utf-8"?>
+
+<Page x:Class="Marechai.App.Presentation.Views.BookViewPage"
+      x:Name="PageRoot"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:loc="using:Marechai.App.Presentation.Converters"
+      NavigationCacheMode="Disabled"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button -->
+        <Grid Grid.Row="0"
+              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="12,12,16,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Command="{Binding GoBackCommand}"
+                    Style="{ThemeResource AlternateButtonStyle}"
+                    ToolTipService.ToolTip="Go back"
+                    Padding="8"
+                    MinWidth="44"
+                    MinHeight="44"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE72B;"
+                          FontSize="16" />
+            </Button>
+
+            <StackPanel Grid.Column="1"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center">
+                <TextBlock Text="{Binding BookTitle}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="{ThemeResource TextControlForeground}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <!-- Loading State -->
+            <StackPanel Visibility="{Binding IsLoading}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="32"
+                        Spacing="16">
+                <ProgressRing IsActive="True"
+                              IsIndeterminate="True"
+                              Height="64"
+                              Width="64"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+                <TextBlock
+                           Text="{Binding Source={StaticResource Strings}, Path=LoadingText}"
+                           FontSize="14"
+                           TextAlignment="Center"
+                           Foreground="{ThemeResource SystemBaseMediumColor}" />
+            </StackPanel>
+
+            <!-- Error State -->
+            <StackPanel Visibility="{Binding HasError}"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Padding="24"
+                        Spacing="16"
+                        MaxWidth="400">
+                <InfoBar IsOpen="True"
+                         Severity="Error"
+                         Title="{Binding Source={StaticResource Strings}, Path=BooksErrorInfoBar_Title}"
+                         Message="{Binding ErrorMessage}"
+                         IsClosable="False" />
+                <Button
+                        Content="{Binding Source={StaticResource Strings}, Path=RetryButton}"
+                        Command="{Binding LoadDataCommand}"
+                        HorizontalAlignment="Center"
+                        Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+
+            <!-- Book Details -->
+            <ScrollViewer Visibility="{Binding IsDataLoaded}"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Padding="16"
+                            Spacing="24">
+
+                    <!-- Cover Image or Placeholder -->
+                    <Grid HorizontalAlignment="Center"
+                          MaxWidth="300"
+                          MaxHeight="400">
+                        <!-- Placeholder FontIcon (behind image) -->
+                        <FontIcon Glyph="&#xE736;"
+                                  FontFamily="Segoe MDL2 Assets"
+                                  FontSize="96"
+                                  Foreground="{ThemeResource SystemBaseMediumColor}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                        <!-- Cover image overlays when loaded -->
+                        <Image Source="{Binding CoverImageSource}"
+                               Stretch="Uniform"
+                               MaxWidth="300"
+                               MaxHeight="400" />
+                    </Grid>
+
+                    <!-- Native Title -->
+                    <StackPanel Visibility="{Binding ShowNativeTitle}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BookNativeTitleLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding NativeTitle}"
+                                       FontSize="16"
+                                       Foreground="{ThemeResource TextControlForeground}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Published Date and Country -->
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" /> <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0"
+                                    Visibility="{Binding ShowPublished}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=BookPublishedLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding PublishedDisplay}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1"
+                                    Visibility="{Binding ShowCountry}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=BookCountryLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding Country}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- ISBN, Pages, Edition -->
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" /> <ColumnDefinition Width="*" /> <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0"
+                                    Visibility="{Binding ShowIsbn}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=BookIsbnLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding Isbn}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1"
+                                    Visibility="{Binding ShowPages}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=BookPagesLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding Pages}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2"
+                                    Visibility="{Binding ShowEdition}"
+                                    Spacing="8">
+                            <TextBlock
+                                       Text="{Binding Source={StaticResource Strings}, Path=BookEditionLabel}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemBaseMediumColor}" />
+                            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,12">
+                                <TextBlock Text="{Binding Edition}"
+                                           FontSize="14"
+                                           Foreground="{ThemeResource TextControlForeground}" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Synopsis -->
+                    <StackPanel Visibility="{Binding ShowSynopsis}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BookSynopsisLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding SynopsisText}"
+                                       FontSize="14"
+                                       Foreground="{ThemeResource TextControlForeground}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+                    </StackPanel>
+
+                    <!-- People / Authors -->
+                    <StackPanel Visibility="{Binding ShowPeople}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BookAuthorsLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding People}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Companies / Publishers -->
+                    <StackPanel Visibility="{Binding ShowCompanies}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BookCompaniesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Companies}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Related Machines -->
+                    <StackPanel Visibility="{Binding ShowMachines}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BookMachinesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding Machines}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Related Machine Families -->
+                    <StackPanel Visibility="{Binding ShowMachineFamilies}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BookMachineFamiliesLabel}"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding MachineFamilies}"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Spacing="4" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="8"
+                                            Padding="16,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Previous Edition -->
+                    <StackPanel Visibility="{Binding ShowPreviousBook}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BookPreviousEditionLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <HyperlinkButton Content="{Binding PreviousBookTitle}"
+                                         Command="{Binding NavigateToPreviousBookCommand}"
+                                         FontSize="14" />
+                    </StackPanel>
+
+                    <!-- Source Book -->
+                    <StackPanel Visibility="{Binding ShowSourceBook}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=BookSourceLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <HyperlinkButton Content="{Binding SourceBookTitle}"
+                                         Command="{Binding NavigateToSourceBookCommand}"
+                                         FontSize="14" />
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+        </Grid>
+
+    </Grid>
+
+</Page>

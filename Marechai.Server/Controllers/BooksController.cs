@@ -52,6 +52,88 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
     ];
 
     readonly string _assetRootPath = configuration["AssetRootPath"]!;
+
+    [HttpGet("count")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetBooksCountAsync() => context.Books.CountAsync();
+
+    [HttpGet("minimum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMinimumYearAsync() => context.Books
+                                                     .Where(b => b.Published.HasValue &&
+                                                                 b.Published.Value.Year > 1000)
+                                                     .MinAsync(b => b.Published.Value.Year);
+
+    [HttpGet("maximum-year")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<int> GetMaximumYearAsync() => context.Books
+                                                     .Where(b => b.Published.HasValue &&
+                                                                 b.Published.Value.Year > 1000)
+                                                     .MaxAsync(b => b.Published.Value.Year);
+
+    [HttpGet("by-letter/{c}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<BookDto>> GetBooksByLetterAsync(char c) => context.Books
+                                                                       .Where(b =>
+                                                                            (b.SortTitle != null &&
+                                                                             EF.Functions.Like(b.SortTitle, $"{c}%")) ||
+                                                                            (b.SortTitle == null &&
+                                                                             EF.Functions.Like(b.Title, $"{c}%")))
+                                                                       .OrderBy(b => b.SortTitle)
+                                                                       .ThenBy(b => b.Title)
+                                                                       .ThenBy(b => b.Published)
+                                                                       .Select(b => new BookDto
+                                                                        {
+                                                                            Id        = b.Id,
+                                                                            Title     = b.Title,
+                                                                            NativeTitle = b.NativeTitle,
+                                                                            SortTitle = b.SortTitle,
+                                                                            Published = b.Published,
+                                                                            Isbn      = b.Isbn,
+                                                                            CountryId = b.CountryId,
+                                                                            Pages     = b.Pages,
+                                                                            Country   = b.Country.Name,
+                                                                            CoverGuid = b.CoverGuid,
+                                                                            OriginalCoverExtension =
+                                                                                b.OriginalCoverExtension
+                                                                        })
+                                                                       .ToListAsync();
+
+    [HttpGet("by-year/{year:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<BookDto>> GetBooksByYearAsync(int year) => context.Books
+                                                                       .Where(b => b.Published != null &&
+                                                                                   b.Published.Value.Year == year)
+                                                                       .OrderBy(b => b.SortTitle)
+                                                                       .ThenBy(b => b.Title)
+                                                                       .ThenBy(b => b.Published)
+                                                                       .Select(b => new BookDto
+                                                                        {
+                                                                            Id        = b.Id,
+                                                                            Title     = b.Title,
+                                                                            NativeTitle = b.NativeTitle,
+                                                                            SortTitle = b.SortTitle,
+                                                                            Published = b.Published,
+                                                                            Isbn      = b.Isbn,
+                                                                            CountryId = b.CountryId,
+                                                                            Pages     = b.Pages,
+                                                                            Country   = b.Country.Name,
+                                                                            CoverGuid = b.CoverGuid,
+                                                                            OriginalCoverExtension =
+                                                                                b.OriginalCoverExtension
+                                                                        })
+                                                                       .ToListAsync();
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
