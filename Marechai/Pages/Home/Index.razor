@@ -57,7 +57,7 @@
                 <MudText Typo="Typo.body1">@(((NewsType)(news.Type ?? 0)).Humanize())</MudText>
             </MudCardContent>
             <MudCardActions>
-                <MudButton Href="@($"/{news.Controller}/{news.AffectedId}")" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowForward">@news.ItemName</MudButton>
+                <MudButton Href="@($"/machine/{news.AffectedId}")" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowForward">@news.ItemName</MudButton>
             </MudCardActions>
         </MudCard>
     }
