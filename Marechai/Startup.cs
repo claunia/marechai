@@ -133,8 +133,6 @@ public class Startup(IConfiguration configuration)
         app.UseAuthentication();
         app.UseAuthorization();
 
-        All.Seed(context, userManager, roleManager, Configuration);
-
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
