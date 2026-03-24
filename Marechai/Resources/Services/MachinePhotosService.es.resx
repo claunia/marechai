@@ -715,4 +715,76 @@
     <value>Detalles</value>
         <comment>Details</comment>
   </data>
+    <data name="35mm equivalent" xml:space="preserve">
+        <value>Equivalente en 35mm</value>
+    </data>
+    <data name="Camera" xml:space="preserve">
+        <value>Cámara</value>
+    </data>
+    <data name="Comments" xml:space="preserve">
+        <value>Comentarios</value>
+    </data>
+    <data name="Digital zoom" xml:space="preserve">
+        <value>Zoom digital</value>
+    </data>
+    <data name="EXIF version" xml:space="preserve">
+        <value>Versión EXIF</value>
+    </data>
+    <data name="Exposure" xml:space="preserve">
+        <value>Exposición</value>
+    </data>
+    <data name="Flash &amp; Lighting" xml:space="preserve">
+        <value>Flash e iluminación</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="Horizontal" xml:space="preserve">
+        <value>Horizontal</value>
+    </data>
+    <data name="ISO" xml:space="preserve">
+        <value>ISO</value>
+    </data>
+    <data name="Image properties" xml:space="preserve">
+        <value>Propiedades de imagen</value>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabricante</value>
+    </data>
+    <data name="Model" xml:space="preserve">
+        <value>Modelo</value>
+    </data>
+    <data name="Original format" xml:space="preserve">
+        <value>Formato original</value>
+    </data>
+    <data name="Photo by" xml:space="preserve">
+        <value>Foto por</value>
+    </data>
+    <data name="Photo not found" xml:space="preserve">
+        <value>Foto no encontrada</value>
+    </data>
+    <data name="Resolution" xml:space="preserve">
+        <value>Resolución</value>
+    </data>
+    <data name="Scene capture" xml:space="preserve">
+        <value>Captura de escena</value>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
+    <data name="Source" xml:space="preserve">
+        <value>Fuente</value>
+    </data>
+    <data name="Subject distance" xml:space="preserve">
+        <value>Distancia al sujeto</value>
+    </data>
+    <data name="Unit" xml:space="preserve">
+        <value>Unidad</value>
+    </data>
+    <data name="Upload date" xml:space="preserve">
+        <value>Fecha de subida</value>
+    </data>
+    <data name="Vertical" xml:space="preserve">
+        <value>Vertical</value>
+    </data>
 </root>
