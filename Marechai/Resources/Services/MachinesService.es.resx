@@ -756,4 +756,10 @@
     <data name="Introduced (public release)" xml:space="preserve">
     <value>Introducida públicamente en</value>
   </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="Photos" xml:space="preserve">
+        <value>Fotos</value>
+    </data>
 </root>

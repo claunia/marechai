@@ -562,4 +562,22 @@
     <data name="Legal name" xml:space="preserve">
     <value>Nombre legal</value>
   </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Ordenadores</value>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Videoconsolas</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Descripción</value>
+    </data>
+    <data name="Filter companies..." xml:space="preserve">
+        <value>Filtrar empresas...</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="Logo history" xml:space="preserve">
+        <value>Historial de logotipos</value>
+    </data>
 </root>
