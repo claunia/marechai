@@ -36,16 +36,6 @@ namespace Marechai.Services;
 
 public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> localizer)
 {
-    public async Task<List<NewsDto>> GetAsync() => await context.News.OrderByDescending(n => n.Date)
-                                                                .Select(n => new NewsDto
-                                                                 {
-                                                                     Id         = n.Id,
-                                                                     Timestamp  = n.Date,
-                                                                     Type       = n.Type,
-                                                                     AffectedId = n.AddedId
-                                                                 })
-                                                                .ToListAsync();
-
     public List<NewsDto> GetNews()
     {
         List<NewsDto> news = new();
@@ -63,7 +53,8 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                          localizer["New computer in database"],
                                          @new.Date,
                                          "machine",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                                         $"{machine.Company.Name} {machine.Name}",
+                                         @new.Type));
 
                     break;
                 case NewsType.NewConsoleInDb:
@@ -71,7 +62,8 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                          localizer["New console in database"],
                                          @new.Date,
                                          "machine",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                                         $"{machine.Company.Name} {machine.Name}",
+                                         @new.Type));
 
                     break;
 
@@ -80,7 +72,8 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                          localizer["New computer in collection"],
                                          @new.Date,
                                          "machine",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                                         $"{machine.Company.Name} {machine.Name}",
+                                         @new.Type));
 
                     break;
 
@@ -89,7 +82,8 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                          localizer["New console in collection"],
                                          @new.Date,
                                          "machine",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                                         $"{machine.Company.Name} {machine.Name}",
+                                         @new.Type));
 
                     break;
 
@@ -98,7 +92,8 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                          localizer["Updated computer in database"],
                                          @new.Date,
                                          "machine",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                                         $"{machine.Company.Name} {machine.Name}",
+                                         @new.Type));
 
                     break;
 
@@ -107,7 +102,8 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                          localizer["Updated console in database"],
                                          @new.Date,
                                          "machine",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                                         $"{machine.Company.Name} {machine.Name}",
+                                         @new.Type));
 
                     break;
 
@@ -116,7 +112,8 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                          localizer["Updated computer in collection"],
                                          @new.Date,
                                          "machine",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                                         $"{machine.Company.Name} {machine.Name}",
+                                         @new.Type));
 
                     break;
 
@@ -125,7 +122,8 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
                                          localizer["Updated console in collection"],
                                          @new.Date,
                                          "machine",
-                                         $"{machine.Company.Name} {machine.Name}"));
+                                         $"{machine.Company.Name} {machine.Name}",
+                                         @new.Type));
 
                     break;
 
@@ -139,16 +137,5 @@ public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> 
         }
 
         return news;
-    }
-
-    public async Task DeleteAsync(int id, string userId)
-    {
-        News item = await context.News.FindAsync(id);
-
-        if(item is null) return;
-
-        context.News.Remove(item);
-
-        await context.SaveChangesWithUserAsync(userId);
     }
 }

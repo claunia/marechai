@@ -108,63 +108,6 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
                                                                            })
                                                                           .FirstOrDefaultAsync();
 
-    public async Task UpdateAsync(CompanyDto dto, string userId)
-    {
-        Company model = await context.Companies.FindAsync(dto.Id);
-
-        if(model is null) return;
-
-        model.Name                  = dto.Name;
-        model.Founded               = dto.Founded;
-        model.Sold                  = dto.Sold;
-        model.SoldToId              = dto.SoldToId;
-        model.CountryId             = dto.CountryId;
-        model.Status                = dto.Status;
-        model.Website               = dto.Website;
-        model.Twitter               = dto.Twitter;
-        model.Facebook              = dto.Facebook;
-        model.Address               = dto.Address;
-        model.City                  = dto.City;
-        model.Province              = dto.Province;
-        model.PostalCode            = dto.PostalCode;
-        model.FoundedDayIsUnknown   = dto.FoundedDayIsUnknown;
-        model.FoundedMonthIsUnknown = dto.FoundedMonthIsUnknown;
-        model.SoldDayIsUnknown      = dto.SoldDayIsUnknown;
-        model.SoldMonthIsUnknown    = dto.SoldMonthIsUnknown;
-        model.LegalName             = dto.LegalName;
-        await context.SaveChangesWithUserAsync(userId);
-    }
-
-    public async Task<int> CreateAsync(CompanyDto dto, string userId)
-    {
-        var model = new Company
-        {
-            Name                  = dto.Name,
-            Founded               = dto.Founded,
-            Sold                  = dto.Sold,
-            SoldToId              = dto.SoldToId,
-            CountryId             = dto.CountryId,
-            Status                = dto.Status,
-            Website               = dto.Website,
-            Twitter               = dto.Twitter,
-            Facebook              = dto.Facebook,
-            Address               = dto.Address,
-            City                  = dto.City,
-            Province              = dto.Province,
-            PostalCode            = dto.PostalCode,
-            FoundedDayIsUnknown   = dto.FoundedDayIsUnknown,
-            FoundedMonthIsUnknown = dto.FoundedMonthIsUnknown,
-            SoldDayIsUnknown      = dto.SoldDayIsUnknown,
-            SoldMonthIsUnknown    = dto.SoldMonthIsUnknown,
-            LegalName             = dto.LegalName
-        };
-
-        await context.Companies.AddAsync(model);
-        await context.SaveChangesWithUserAsync(userId);
-
-        return model.Id;
-    }
-
     public async Task<List<Machine>> GetMachinesAsync(int id) => await context.Machines.Where(m => m.CompanyId == id)
                                                                     .OrderBy(m => m.Name)
                                                                     .Select(m => new Machine
@@ -215,52 +158,4 @@ public class CompaniesService(MarechaiContext context, IStringLocalizer<Companie
         })
        .ToListAsync();
 
-    public async Task DeleteAsync(int id, string userId)
-    {
-        Company item = await context.Companies.FindAsync(id);
-
-        if(item is null) return;
-
-        context.Companies.Remove(item);
-
-        await context.SaveChangesWithUserAsync(userId);
-    }
-
-    public async Task<CompanyDescriptionDto> GetDescriptionAsync(int id) => await context.CompanyDescriptions
-       .Where(d => d.CompanyId == id)
-       .Select(d => new CompanyDescriptionDto
-        {
-            Id        = d.Id,
-            CompanyId = d.CompanyId,
-            Html      = d.Html,
-            Markdown  = d.Text
-        })
-       .FirstOrDefaultAsync();
-
-    public async Task<int> CreateOrUpdateDescriptionAsync(int    id, CompanyDescriptionDto description,
-                                                          string userId)
-    {
-        CompanyDescription current = await context.CompanyDescriptions.FirstOrDefaultAsync(d => d.CompanyId == id);
-
-        if(current is null)
-        {
-            current = new CompanyDescription
-            {
-                CompanyId = id,
-                Html      = description.Html,
-                Text      = description.Markdown
-            };
-
-            await context.CompanyDescriptions.AddAsync(current);
-        }
-        else
-        {
-            current.Html = description.Html;
-            current.Text = description.Markdown;
-        }
-
-        await context.SaveChangesWithUserAsync(userId);
-
-        return current.Id;
-    }
 }
