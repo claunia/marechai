@@ -26,7 +26,6 @@
 }
 @page "/"
 @using Marechai.ApiClient.Models
-@using Humanizer
 @using Marechai.Data
 @inherits OwningComponentBase<NewsService>
 @inject IStringLocalizer<NewsService> L
@@ -54,7 +53,7 @@
                     <MudIcon Icon="@Icons.Material.Filled.FiberNew" Color="Color.Secondary" Size="Size.Small"/>
                     <MudText Typo="Typo.caption" Color="Color.Primary">@news.Timestamp</MudText>
                 </MudStack>
-                <MudText Typo="Typo.body1">@(((NewsType)(news.Type ?? 0)).Humanize())</MudText>
+                <MudText Typo="Typo.body1">@GetNewsTypeText((NewsType)(news.Type ?? 0))</MudText>
             </MudCardContent>
             <MudCardActions>
                 <MudButton Href="@($"/machine/{news.AffectedId}")" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowForward">@news.ItemName</MudButton>
@@ -62,3 +61,18 @@
         </MudCard>
     }
 </MudStack>
+
+@code {
+    private string GetNewsTypeText(NewsType type) => type switch
+    {
+        NewsType.NewComputerInDb             => L["New computer in database"],
+        NewsType.NewConsoleInDb              => L["New console in database"],
+        NewsType.NewComputerInCollection     => L["New computer in collection"],
+        NewsType.NewConsoleInCollection      => L["New console in collection"],
+        NewsType.UpdatedComputerInDb         => L["Updated computer in database"],
+        NewsType.UpdatedConsoleInDb          => L["Updated console in database"],
+        NewsType.UpdatedComputerInCollection => L["Updated computer in collection"],
+        NewsType.UpdatedConsoleInCollection  => L["Updated console in collection"],
+        _                                    => string.Empty
+    };
+}
