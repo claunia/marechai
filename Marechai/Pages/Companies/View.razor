@@ -31,7 +31,7 @@
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
 @inject CompanyLogosService                CompanyLogosService
-@inject IWebHostEnvironment                Host
+@inject ApiAssetUrlProvider                Assets
 
 @if(!_loaded)
 {
@@ -52,17 +52,17 @@
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack AlignItems="AlignItems.Center" Spacing="3">
-        @if(_company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _company.LastLogo + ".svg")))
+        @if(_company.LastLogo != null)
         {
             <picture>
-                <source srcset="/assets/logos/@(_company.LastLogo).svg" type="image/svg+xml">
-                <source srcset="/assets/logos/webp/1x/@(_company.LastLogo).webp,
-/assets/logos/webp/2x/@(_company.LastLogo).webp 2x,
-/assets/logos/webp/3x/@(_company.LastLogo).webp 3x" type="image/webp">
-                <img alt="@_company.Name" height="auto" src="/assets/logos/png/1x/@(_company.LastLogo).png"
-                     srcset="/assets/logos/png/1x/@(_company.LastLogo).png,
-                         /assets/logos/png/2x/@(_company.LastLogo).png 2x,
-                         /assets/logos/png/3x/@(_company.LastLogo).png 3x" style="max-height: 128px; max-width: 200px; filter: brightness(0) invert(1);"
+                <source srcset="@(Assets.BaseUrl)/assets/logos/@(_company.LastLogo).svg" type="image/svg+xml">
+                <source srcset="@(Assets.BaseUrl)/assets/logos/webp/1x/@(_company.LastLogo).webp,
+@(Assets.BaseUrl)/assets/logos/webp/2x/@(_company.LastLogo).webp 2x,
+@(Assets.BaseUrl)/assets/logos/webp/3x/@(_company.LastLogo).webp 3x" type="image/webp">
+                <img alt="@_company.Name" height="auto" src="@(Assets.BaseUrl)/assets/logos/png/1x/@(_company.LastLogo).png"
+                     srcset="@(Assets.BaseUrl)/assets/logos/png/1x/@(_company.LastLogo).png,
+                         @(Assets.BaseUrl)/assets/logos/png/2x/@(_company.LastLogo).png 2x,
+                         @(Assets.BaseUrl)/assets/logos/png/3x/@(_company.LastLogo).png 3x" style="max-height: 128px; max-width: 200px; filter: brightness(0) invert(1);"
                      width="auto"/>
             </picture>
         }
@@ -110,19 +110,16 @@
                     @if(_company.Country != null)
                     {
                         <MudLink Href="@($"/companies/country/{_company.CountryId}")">
-                            @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{_company.CountryId:D3}.svg")))
-                            {
-                                <picture>
-                                    <source srcset="/assets/flags/countries/@($"{_company.CountryId:D3}").svg" type="image/svg+xml">
-                                    <source srcset="/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp,
-        /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 2x,
-        /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 3x" type="image/webp">
-                                    <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png"
-                                         srcset="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png,
-                                 /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png 2x,
-                                 /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").webp 3x"/>
-                                </picture>
-                            }
+                            <picture>
+                                    <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{_company.CountryId:D3}").svg" type="image/svg+xml">
+                                    <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp,
+        @(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 2x,
+        @(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 3x" type="image/webp">
+                                    <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png"
+                                         srcset="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png,
+                                 @(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png 2x,
+                                 @(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").webp 3x"/>
+                            </picture>
                             @L[_company.Country]
                         </MudLink>
                     }
@@ -257,22 +254,22 @@
             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
                 <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Primary"/>
                 <MudText Typo="Typo.h6">@L["Logo history"]</MudText>
-                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_logos.Count(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg")))</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_logos.Count(logo => true)</MudChip>
             </MudStack>
             <MudCarousel TData="object" @bind-SelectedIndex="@_selectedIndex" ShowArrows="true" ShowBullets="true" Style="height: 320px;">
-                @foreach(CompanyLogoDto logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
+                @foreach(CompanyLogoDto logo in _logos.Where(logo => true))
                 {
                     <MudCarouselItem>
                         <div class="d-flex flex-column align-center justify-center" style="height: 100%;">
                             <picture>
-                                <source srcset="/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
-                                <source srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
-    /assets/logos/webp/1x/@(logo.Guid).webp 2x,
-    /assets/logos/webp/1x/@(logo.Guid).webp 3x" type="image/webp">
-                                <img alt="" height="auto" src="/assets/logos/png/1x/@(logo.Guid).png"
-                                     srcset="/assets/logos/png/1x/@(logo.Guid).png,
-                             /assets/logos/png/1x/@(logo.Guid).png 2x,
-                             /assets/logos/png/1x/@(logo.Guid).webp 3x" style="max-height: 200px; max-width: 280px"
+                                <source srcset="@(Assets.BaseUrl)/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
+                                <source srcset="@(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp,
+    @(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp 2x,
+    @(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp 3x" type="image/webp">
+                                <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png"
+                                     srcset="@(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png,
+                             @(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png 2x,
+                             @(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).webp 3x" style="max-height: 200px; max-width: 280px"
                                      width="auto"/>
                             </picture>
                             @if(logo.Year.HasValue)

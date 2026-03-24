@@ -31,7 +31,7 @@
 @using Marechai.ApiClient.Models
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
-@inject IWebHostEnvironment                Host
+@inject ApiAssetUrlProvider                Assets
 
 @if(_companies is null)
 {
@@ -52,19 +52,16 @@
     {
         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
             <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Companies founded in {0}."], L[_countryName])</MudText>
-            @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{CountryId:D3}.svg")))
-            {
-                <picture>
-                    <source srcset="/assets/flags/countries/@($"{CountryId:D3}").svg" type="image/svg+xml">
-                    <source srcset="/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
-        /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 2x,
-        /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 3x" type="image/webp">
-                    <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png"
-                         srcset="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
-                                 /assets/flags/countries/png/1x/@($"{CountryId:D3}").png 2x,
-                                 /assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x"/>
+            <picture>
+                    <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{CountryId:D3}").svg" type="image/svg+xml">
+                    <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
+        @(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 2x,
+        @(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 3x" type="image/webp">
+                    <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{CountryId:D3}").png"
+                         srcset="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
+                                 @(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{CountryId:D3}").png 2x,
+                                 @(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x"/>
                 </picture>
-            }
         </MudStack>
     }
     else if(_character.HasValue)
@@ -88,17 +85,17 @@
                     <MudCardContent>
                         <div class="d-flex align-center justify-space-between">
                             <MudText Typo="Typo.body1" Style="font-weight: 500;">@company.Name</MudText>
-                            @if(company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
+                            @if(company.LastLogo != null)
                             {
                                 <picture>
-                                    <source srcset="/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
-                                    <source srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
-/assets/logos/thumbs/webp/2x/@(company.LastLogo).webp 2x,
-/assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x" type="image/webp">
-                                    <img alt="" height="auto" src="/assets/logos/thumbs/png/1x/@(company.LastLogo).png"
-                                         srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
-                     /assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
-                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 48px; max-width: 200px"
+                                    <source srcset="@(Assets.BaseUrl)/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
+                                    <source srcset="@(Assets.BaseUrl)/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
+@(Assets.BaseUrl)/assets/logos/thumbs/webp/2x/@(company.LastLogo).webp 2x,
+@(Assets.BaseUrl)/assets/logos/thumbs/webp/3x/@(company.LastLogo).webp 3x" type="image/webp">
+                                    <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/logos/thumbs/png/1x/@(company.LastLogo).png"
+                                         srcset="@(Assets.BaseUrl)/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
+                     @(Assets.BaseUrl)/assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
+                     @(Assets.BaseUrl)/assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 48px; max-width: 200px"
                                          width="auto"/>
                                 </picture>
                             }

@@ -32,7 +32,7 @@
 @using Marechai.Data
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
-@inject IWebHostEnvironment               Host
+@inject ApiAssetUrlProvider               Assets
 @inject MachinePhotosService              MachinePhotosService
 
 @if(!_loaded)
@@ -54,18 +54,18 @@
 @* ── Hero Header ── *@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack AlignItems="AlignItems.Center" Spacing="3">
-        @if(_machine.CompanyLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _machine.CompanyLogo + ".svg")))
+        @if(_machine.CompanyLogo != null)
         {
             <MudLink Href="@($"/company/{_machine.CompanyId}")">
                 <picture>
-                    <source srcset="/assets/logos/@(_machine.CompanyLogo).svg" type="image/svg+xml">
-                    <source srcset="/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
-    /assets/logos/webp/2x/@(_machine.CompanyLogo).webp 2x,
-    /assets/logos/webp/3x/@(_machine.CompanyLogo).webp 3x" type="image/webp">
-                    <img alt="@_machine.Company" height="auto" src="/assets/logos/png/1x/@(_machine.CompanyLogo).png"
-                         srcset="/assets/logos/png/1x/@(_machine.CompanyLogo).png,
-                             /assets/logos/png/2x/@(_machine.CompanyLogo).png 2x,
-                             /assets/logos/png/3x/@(_machine.CompanyLogo).png 3x"
+                    <source srcset="@(Assets.BaseUrl)/assets/logos/@(_machine.CompanyLogo).svg" type="image/svg+xml">
+                    <source srcset="@(Assets.BaseUrl)/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
+    @(Assets.BaseUrl)/assets/logos/webp/2x/@(_machine.CompanyLogo).webp 2x,
+    @(Assets.BaseUrl)/assets/logos/webp/3x/@(_machine.CompanyLogo).webp 3x" type="image/webp">
+                    <img alt="@_machine.Company" height="auto" src="@(Assets.BaseUrl)/assets/logos/png/1x/@(_machine.CompanyLogo).png"
+                         srcset="@(Assets.BaseUrl)/assets/logos/png/1x/@(_machine.CompanyLogo).png,
+                             @(Assets.BaseUrl)/assets/logos/png/2x/@(_machine.CompanyLogo).png 2x,
+                             @(Assets.BaseUrl)/assets/logos/png/3x/@(_machine.CompanyLogo).png 3x"
                          style="max-height: 128px; max-width: 200px; filter: brightness(0) invert(1);" width="auto"/>
                 </picture>
             </MudLink>
@@ -648,12 +648,12 @@
                         <MudCard Elevation="1" Class="rounded-lg">
                             <MudCardContent Class="pa-2 d-flex justify-center">
                                 <picture>
-                                    <source srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
-                                    <source srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
-                                    <source srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
-                                    <source srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x" type="image/jp2">
-                                    <img alt="" height="auto" src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
-                                         srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
+                                    <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/hd/@(photo).avif, @(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
+                                    <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/heif/hd/@(photo).heic, @(Assets.BaseUrl)/assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
+                                    <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/webp/hd/@(photo).webp, @(Assets.BaseUrl)/assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
+                                    <source srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x" type="image/jp2">
+                                    <img alt="" height="auto" src="@(Assets.BaseUrl)/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
+                                         srcset="@(Assets.BaseUrl)/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, @(Assets.BaseUrl)/assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
                                          style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto"/>
                                 </picture>
                             </MudCardContent>
@@ -668,7 +668,4 @@
     </MudCard>
 }
 
-@if(File.Exists(Path.Combine(Host.WebRootPath, "assets/photos/computers", _machine.Id + ".jpg")))
-{
-    <img alt="" src="@Path.Combine("/assets/photos/computers", _machine.Id + ".jpg")">
-}
+<img alt="" src="@($"{Assets.BaseUrl}/assets/photos/computers/{_machine.Id}.jpg")">

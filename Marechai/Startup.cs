@@ -60,9 +60,12 @@ public class Startup(IConfiguration configuration)
     {
         services.AddMudServices();
 
+        string apiUrl = Configuration.GetSection("ApiClient:Url").Value ?? "http://localhost:5023";
+
+        services.AddSingleton(new ApiAssetUrlProvider(apiUrl));
+
         services.AddSingleton(_ =>
         {
-            string apiUrl = Configuration.GetSection("ApiClient:Url").Value ?? "http://localhost:5023";
 
             var httpClient = new HttpClient
             {
