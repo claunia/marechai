@@ -66,6 +66,34 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "run-app-wasm",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "run",
+                "-c",
+                "Debug",
+                "-f",
+                "net10.0-browserwasm",
+                "--project",
+                "${workspaceFolder}/Marechai.App/Marechai.App.csproj"
+            ],
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Building...",
+                    "endsPattern": "Now listening on:"
+                }
+            }
+        },
+        {
             "label": "build-and-run-both",
             "dependsOn": [
                 "build-server",

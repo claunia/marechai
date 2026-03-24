@@ -30,19 +30,11 @@
         },
         {
             "name": "WebAssembly (Marechai.App - net10.0-browserwasm)",
-            "type": "coreclr",
+            "type": "chrome",
             "request": "launch",
-            "program": "${workspaceFolder}/Marechai.App/bin/Debug/net10.0-browserwasm/Marechai.App.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/Marechai.App",
-            "stopAtEntry": false,
-            "console": "internalConsole",
-            "serverReadyAction": {
-                "pattern": "Now listening on:\\s+(https?://\\S+)",
-                "uriFormat": "%s",
-                "action": "openExternally"
-            },
-            "preLaunchTask": "build-app-wasm"
+            "url": "http://localhost:5000",
+            "webRoot": "${workspaceFolder}/Marechai.App",
+            "preLaunchTask": "run-app-wasm"
         },
         {
             "name": "Server + Desktop App",
