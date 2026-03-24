@@ -28,6 +28,7 @@
 
 @page "/machine/{Id:int}"
 @using Marechai.ApiClient.Models
+@using Humanizer
 @using Marechai.Data
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
@@ -37,7 +38,7 @@
 @if(!_loaded)
 {
     <div class="d-flex justify-center pa-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
     </div>
 
     return;
@@ -49,795 +50,622 @@
 
     return;
 }
-<div class="d-flex justify-center mb-4">
-    @if(_machine.CompanyLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _machine.CompanyLogo + ".svg")))
-    {
-        <picture>
-            <source srcset="/assets/logos/@(_machine.CompanyLogo).svg" type="image/svg+xml">
-            <source srcset="/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        @if(_machine.CompanyLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _machine.CompanyLogo + ".svg")))
+        {
+            <MudLink Href="@($"/company/{_machine.CompanyId}")">
+                <picture>
+                    <source srcset="/assets/logos/@(_machine.CompanyLogo).svg" type="image/svg+xml">
+                    <source srcset="/assets/logos/webp/1x/@(_machine.CompanyLogo).webp,
     /assets/logos/webp/2x/@(_machine.CompanyLogo).webp 2x,
     /assets/logos/webp/3x/@(_machine.CompanyLogo).webp 3x" type="image/webp">
-            <img alt="" height="auto" src="/assets/logos/png/1x/@(_machine.CompanyLogo).png"
-                 srcset="/assets/logos/png/1x/@(_machine.CompanyLogo).png,
+                    <img alt="@_machine.Company" height="auto" src="/assets/logos/png/1x/@(_machine.CompanyLogo).png"
+                         srcset="/assets/logos/png/1x/@(_machine.CompanyLogo).png,
                              /assets/logos/png/2x/@(_machine.CompanyLogo).png 2x,
                              /assets/logos/png/3x/@(_machine.CompanyLogo).png 3x"
-                 style="max-height: 256px; max-width: 256px" width="auto"/>
-        </picture>
-    }
-</div>
+                         style="max-height: 128px; max-width: 200px; filter: brightness(0) invert(1);" width="auto"/>
+                </picture>
+            </MudLink>
+        }
+        else
+        {
+            <MudLink Href="@($"/company/{_machine.CompanyId}")" Style="color: white; text-decoration: none;">
+                <MudText Typo="Typo.h3" Style="color: white; font-weight: 700;">@_machine.Company</MudText>
+            </MudLink>
+        }
+        @if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year == 1000)
+        {
+            <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled">@L["PROTOTYPE"]</MudChip>
+        }
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white;">@_machine.Name</MudText>
+    </MudStack>
+</MudPaper>
 
-@if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year == 1000)
+@* ── General Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["General"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            @if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year != 1000)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Introduction date"]</strong></td>
+                    <td>
+                        @if(_machine.Type == (int)MachineType.Computer)
+                        {
+                            <MudLink Href="@($"/computers/year/{_machine.Introduced.Value.Year}")">@_machine.Introduced.Value.DateTime.ToLongDateString()</MudLink>
+                        }
+                        else if(_machine.Type == (int)MachineType.Console)
+                        {
+                            <MudLink Href="@($"/consoles/year/{_machine.Introduced.Value.Year}")">@_machine.Introduced.Value.DateTime.ToLongDateString()</MudLink>
+                        }
+                        else
+                        {
+                            @_machine.Introduced.Value.DateTime.ToLongDateString()
+                        }
+                    </td>
+                </tr>
+            }
+            @if(_machine.FamilyId != null)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Family"]</strong></td>
+                    <td><MudLink Href="@($"/machines/family/{_machine.FamilyId}")">@_machine.FamilyName</MudLink></td>
+                </tr>
+            }
+            @if(_machine.Model != null)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Model"]</strong></td>
+                    <td>@_machine.Model</td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Processors Card ── *@
+@if(_machine.Processors.Count > 0)
 {
-    <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Warning" Class="mb-2">@L["PROTOTYPE"]</MudText>
-}
-<MudText Typo="Typo.h5" Class="mb-4">
-    <MudLink Href="@($"/company/{_machine.CompanyId}")">
-        @_machine.Company
-    </MudLink> @_machine.Name
-</MudText>
-<MudSimpleTable Elevation="1" Dense="true">
-    <tbody>
-    @if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year != 1000)
-    {
-        <tr>
-            <td style="width: 33%; text-align: right;">
-                @L["Introduction date"]
-            </td>
-            <td style="width: 67%;">
-                @if(_machine.Type == (int)MachineType.Computer)
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Memory" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Processors"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_machine.Processors.Count</MudChip>
+            </MudStack>
+            <MudExpansionPanels MultiExpansion="true">
+                @foreach(ProcessorDto processor in _machine.Processors)
                 {
-                    <a href="/computers/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.DateTime.ToLongDateString()</a>
-                }
-                else if(_machine.Type == (int)MachineType.Console)
-                {
-                    <a href="/consoles/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.DateTime.ToLongDateString()</a>
-                }
-                else
-                {
-                    @_machine.Introduced.Value.DateTime.ToLongDateString()
-                }
-            </td>
-        </tr>
-    }
-    @if(_machine.FamilyId != null)
-    {
-        <tr>
-            <td style="width: 33%; text-align: right;">
-                @L["Family"]
-            </td>
-            <td style="width: 67%;">
-                <a href="/machines/family/@_machine.FamilyId">
-                    @_machine.FamilyName
-                </a>
-            </td>
-        </tr>
-    }
-    @if(_machine.Model != null)
-    {
-        <tr>
-            <td style="width: 33%; text-align: right;">
-                @L["Model"]
-            </td>
-            <td style="width: 67%;">
-                @_machine.Model
-            </td>
-        </tr>
-    }
-    @if(_machine.Processors.Count > 0)
-    {
-        <tr>
-            <td style="width: 33%; text-align: right;">
-                @L["Processors"]
-            </td>
-            <td style="width: 67%;">
-                <MudExpansionPanels MultiExpansion="true">
-                    @foreach(ProcessorDto processor in _machine.Processors)
-                    {
-                        <MudExpansionPanel>
-                            <TitleContent>
-                                @if(processor.Speed > 0)
-                                {
-                                    @(processor.GprSize > 0 ? string.Format(L["{0} @{1}MHz ({2} bits)"], processor.Name, processor.Speed, processor.GprSize) : string.Format(L["{0} @{1}MHz"], processor.Name, processor.Speed))
-                                }
-                                else
-                                {
-                                    @($"{processor.Name}")
-                                }
-                            </TitleContent>
-                            <ChildContent>
-                                        <table>
-                                            @if(processor.ModelCode != null && processor.ModelCode != processor.Name)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Model"]</td>
-                                                    <td style="width: 67%;">@processor.ModelCode</td>
-                                                </tr>
-                                            }
-                                            <tr>
-                                                <td style="width: 33%; text-align: right;">@L["Manufacturer"]</td>
-                                                <td style="width: 67%;">
-                                                    <a href="/processors/company/@processor.CompanyId">
-                                                        @processor.Company
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            @if(processor.Introduced != null)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Introduction date"]</td>
-                                                    <td style="width: 67%;">@($"{processor.Introduced:yyyy}")</td>
-                                                </tr>
-                                            }
-                                            @if(processor.InstructionSet != null)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Instruction set"]</td>
-                                                    <td style="width: 67%;">@processor.InstructionSet</td>
-                                                </tr>
-                                            }
-                                            @if(processor.Speed > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Nominal speed"]</td>
-                                                    <td style="width: 67%;">@string.Format(L["{0} MHz"], processor.Speed)</td>
-                                                </tr>
-                                            }
-                                            @if(processor.Gprs > 0 || processor.Fprs > 0 || processor.SimdRegisters > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Registers"]</td>
-                                                    <td style="width: 67%;">
-                                                        <table>
-                                                            @if(processor.Gprs > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @if(processor.FprSize > 0 && processor.Fprs == 0 && processor.SimdSize > 0 && processor.SimdRegisters == 0)
-                                                                        {
-                                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits."], processor.Gprs, processor.GprSize, processor.FprSize, processor.SimdSize))
-                                                                        }
-                                                                        else if(processor.FprSize > 0 && processor.Fprs == 0)
-                                                                        {
-                                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits."], processor.Gprs, processor.GprSize, processor.FprSize))
-                                                                        }
-                                                                        else if(processor.FprSize == 0 && processor.SimdSize > 0 && processor.SimdRegisters == 0)
-                                                                        {
-                                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits."], processor.Gprs, processor.GprSize, processor.SimdSize))
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @(string.Format(L["{0} general purpose registers of {1} bits."], processor.Gprs, processor.GprSize))
-                                                                        }
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                            @if(processor.Fprs > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @if(processor.SimdSize > 0 && processor.SimdRegisters == 0)
-                                                                        {
-                                                                            @(string.Format(L["{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits."], processor.Fprs, processor.FprSize, processor.SimdSize))
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @(string.Format(L["{0} floating point registers of {1} bits."], processor.Fprs, processor.FprSize))
-                                                                        }
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                            @if(processor.SimdRegisters > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        <abbr
-                                                                            title="@L["Single instruction, multiple data"]">
-                                                                            @string.Format(L["{0} SIMD registers of {1} bits."], processor.SimdRegisters, processor.SimdSize)
-                                                                        </abbr>
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(processor.Cores > 1)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Multi-core"]</td>
-                                                    <td style="width: 67%;">@string.Format(L["{0} cores."], processor.Cores)</td>
-                                                </tr>
-                                            }
-                                            @if(processor.ThreadsPerCore > 1)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">
-                                                        <abbr title="@L["Simultaneous multithreading"]">SMT</abbr>
-                                                    </td>
-                                                    <td style="width: 67%;">
-                                                        @string.Format(processor.Cores > 1 ? L["{0} threads per core."] : L["{0} threads."], processor.ThreadsPerCore)
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(processor.DataBus > 0 || processor.AddressBus > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Bus"]</td>
-                                                    <td style="width: 67%;">
-                                                        <table>
-                                                            @if(processor.DataBus > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @string.Format(L["{0}-bit data."], processor.DataBus)
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                            @if(processor.AddressBus > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @string.Format(L["{0}-bit address."], processor.AddressBus)
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            }
-
-                                            @if(processor.L1Instruction > 0 || processor.L1Data > 0 || processor.L2 > 0 || processor.L2 > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Cache"]</td>
-                                                    <td style="width: 67%;">
-                                                        <table>
-                                                            @if(processor.L1Instruction > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @string.Format(processor.L1Data < 0 ? L["{0}KiB combined instruction-data L1"] : L["{0}KiB instruction L1"], processor.L1Instruction)
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                            @if(processor.L1Data > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @string.Format(L["{0}KiB data L1"], processor.L1Data)
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                            @if(processor.L2 > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @string.Format(L["{0}KiB L2"], processor.L2)
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                            @if(processor.L3 > 0)
-                                                            {
-                                                                <tr>
-                                                                    <td>
-                                                                        @string.Format(L["{0}KiB L3"], processor.L3)
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(processor.Package != null)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Package"]</td>
-                                                    <td style="width: 67%;">@processor.Package</td>
-                                                </tr>
-                                            }
-                                            @if(processor.Process != null || processor.ProcessNm > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Manufacturing process"]</td>
-                                                    <td style="width: 67%;">
-                                                        @if(processor.Process != null && processor.ProcessNm > 0)
-                                                        {
-                                                            if(processor.ProcessNm > 100)
-                                                            {
-                                                                @(string.Format(L["{0} @{1}µm"], processor.Process, processor.ProcessNm / 100))
-                                                            }
-                                                            else
-                                                            {
-                                                                @(string.Format(L["{0} @{1}nm"], processor.Process, processor.ProcessNm))
-                                                            }
-                                                        }
-                                                        else if(processor.ProcessNm > 0)
-                                                        {
-                                                            if(processor.ProcessNm > 100)
-                                                            {
-                                                                @(string.Format(L["{0}µm"], processor.ProcessNm / 100))
-                                                            }
-                                                            else
-                                                            {
-                                                                @(string.Format(L["{0}nm"], processor.ProcessNm))
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            @processor.Process
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(processor.DieSize > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Die size"]</td>
-                                                    <td style="width: 67%;">@string.Format(L["{0} mm²"], processor.DieSize)</td>
-                                                </tr>
-                                            }
-                                            @if(processor.Transistors > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Transistors"]</td>
-                                                    <td style="width: 67%;">@processor.Transistors</td>
-                                                </tr>
-                                            }
-                                        </table>
-                            </ChildContent>
-                        </MudExpansionPanel>
-                    }
-                </MudExpansionPanels>
-            </td>
-        </tr>
-    }
-    @if(_machine.Memory != null && _machine.Memory.Count > 0)
-    {
-        <tr>
-            <td style="width: 33%; text-align: right;">
-                @L["Memory"]
-            </td>
-            <td style="width: 67%;">
-                <table>
-                    @foreach(MemoryDto memory in _machine.Memory)
-                    {
-                        string memValue;
-
-                        if(memory.Size > 1073741824)
-                        {
-                            memValue = string.Format(L["{0} GiB"], memory.Size / 1073741824);
-                        }
-                        else if(memory.Size > 1048576)
-                        {
-                            memValue = string.Format(L["{0} MiB"], memory.Size / 1048576);
-                        }
-                        else if(memory.Size > 1024)
-                        {
-                            memValue = string.Format(L["{0} KiB"], memory.Size / 1024);
-                        }
-                        else if(memory.Size > 0)
-                        {
-                            memValue = string.Format(L["{0} bytes"], memory.Size);
-                        }
-                        else
-                        {
-                            memValue = L["Unknown size"];
-                        }
-
-                        string speedValue;
-
-                        if(memory.Speed > 1000000000)
-                        {
-                            speedValue = string.Format(L["{0} GHz"], memory.Speed / 1000000000);
-                        }
-                        else if(memory.Speed > 1000000)
-                        {
-                            speedValue = string.Format(L["{0} MHz"], memory.Speed / 1000000);
-                        }
-                        else if(memory.Speed > 1000)
-                        {
-                            speedValue = string.Format(L["{0} KHz"], memory.Speed / 1000);
-                        }
-                        else if(memory.Speed > 0)
-                        {
-                            speedValue = string.Format(L["{0} Hz"], memory.Speed);
-                        }
-                        else
-                        {
-                            speedValue = L["unknown speed"];
-                        }
-
-                        <tr>
-                            <td>@string.Format(L["{0} of {1} memory ({2} at {3})"], memValue, memory.Usage, memory.Type, speedValue)</td>
-                        </tr>
-                    }
-                </table>
-            </td>
-        </tr>
-    }
-    @if(_machine.Gpus.Count > 0)
-    {
-        <tr>
-            <td style="width: 33%; text-align: right;">
-                @L["Graphics processing units"]
-            </td>
-            <td style="width: 67%;">
-                <MudExpansionPanels MultiExpansion="true">
-                    @foreach(GpuDto gpu in _machine.Gpus)
-                    {
-                        if(gpu.Id == -2)
-                        {
-                            <MudExpansionPanel>
-                                <TitleContent>
-                                    @L["Framebuffer"]
-                                </TitleContent>
-                                <ChildContent>
-                                    @L["This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit."]
-                                </ChildContent>
-                            </MudExpansionPanel>
-                        }
-                        else
-                        {
-                            <MudExpansionPanel>
-                                <TitleContent>
-                                    @($"{gpu.Name}")
-                                </TitleContent>
-                                <ChildContent>
-                                        <table>
-                                            @if(gpu.ModelCode != null && gpu.ModelCode != gpu.Name)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Model"]</td>
-                                                    <td style="width: 67%">@gpu.ModelCode</td>
-                                                </tr>
-                                            }
-                                            <tr>
-                                                <td style="width: 33%; text-align: right;">@L["Manufacturer"]</td>
-                                                <td style="width: 67%">
-                                                    <a href="/gpus/company/@gpu.CompanyId">
-                                                        @gpu.Company
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            @if(gpu.Introduced != null)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Introduction date"]</td>
-                                                    <td style="width: 67%">@($"{gpu.Introduced:yyyy}")</td>
-                                                </tr>
-                                            }
-                                            @if(gpu.Package != null)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Package"]</td>
-                                                    <td style="width: 67%">@gpu.Package</td>
-                                                </tr>
-                                            }
-                                            @if(gpu.Process != null || gpu.ProcessNm > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Manufacturing process"]</td>
-                                                    <td style="width: 67%">
-                                                        @if(gpu.Process != null && gpu.ProcessNm > 0)
-                                                        {
-                                                            if(gpu.ProcessNm > 100)
-                                                            {
-                                                                @(string.Format(L["{0} @{1}µm"], gpu.Process, gpu.ProcessNm / 100))
-                                                            }
-                                                            else
-                                                            {
-                                                                @(string.Format(L["{0} @{1}nm"], gpu.Process, gpu.ProcessNm))
-                                                            }
-                                                        }
-                                                        else if(gpu.ProcessNm > 0)
-                                                        {
-                                                            if(gpu.ProcessNm > 100)
-                                                            {
-                                                                @(string.Format(L["{0}µm"], gpu.ProcessNm / 100))
-                                                            }
-                                                            else
-                                                            {
-                                                                @(string.Format(L["{0}nm"], gpu.ProcessNm))
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            @gpu.Process
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            }
-                                            @if(gpu.DieSize > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Die size"]</td>
-                                                    <td style="width: 67%">@string.Format(L["{0} mm²"], gpu.DieSize)</td>
-                                                </tr>
-                                            }
-                                            @if(gpu.Transistors > 0)
-                                            {
-                                                <tr>
-                                                    <td style="width: 33%; text-align: right;">@L["Transistors"]</td>
-                                                    <td style="width: 67%">@gpu.Transistors</td>
-                                                </tr>
-                                            }
-                                        </table>
-                                </ChildContent>
-                            </MudExpansionPanel>
-                        }
-                    }
-                </MudExpansionPanels>
-            </td>
-        </tr>
-    }
-    @if(_machine.SoundSynthesizers.Count > 0)
-    {
-        <tr>
-            <td style="width: 33%; text-align: right;">
-                @L["Sound synthesizers"]
-            </td>
-            <td style="width: 67%;">
-                <MudExpansionPanels MultiExpansion="true">
-                    @foreach(SoundSynthDto sound in _machine.SoundSynthesizers)
-                    {
-                        <tr>
-                            @if(sound.Id == -2)
-                            {
-                                <td>
-                                    <MudExpansionPanel>
-                                        <TitleContent>
-                                            @L["Software"]
-                                        </TitleContent>
-                                        <ChildContent>
-                                            @L["This machine directly sends data to a DAC or similar connected to the audio output."]
-                                        </ChildContent>
-                                    </MudExpansionPanel>
-                                </td>
-                            }
-                            else
-                            {
-                                <td>
-                                    <MudExpansionPanel>
-                                        <TitleContent>
-                                            @($"{sound.Name}")
-                                        </TitleContent>
-                                        <ChildContent>
-                                            <table>
-                                                @if(sound.ModelCode != null && sound.ModelCode != sound.Name)
-                                                {
-                                                    <tr>
-                                                        <td style="width: 33%; text-align: right;">@L["Model"]</td>
-                                                        <td style="width: 67%">@sound.ModelCode</td>
-                                                    </tr>
-                                                }
-                                                @if(sound.CompanyId != null)
-                                                {
-                                                    <tr>
-                                                        <td style="width: 33%; text-align: right;">@L["Manufacturer"]</td>
-                                                        <td style="width: 67%">
-                                                            <a href="/soundsynths/company/@sound.CompanyId">
-                                                                @sound.Company
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                                @if(sound.Introduced != null)
-                                                {
-                                                    <tr>
-                                                        <td style="width: 33%; text-align: right;">@L["Introduction date"]</td>
-                                                        <td style="width: 67%">@($"{sound.Introduced:yyyy}")</td>
-                                                    </tr>
-                                                }
-                                                @if(sound.Voices != null || sound.SquareWave != null || sound.WhiteNoise != null)
-                                                {
-                                                    <tr>
-                                                        <td style="width: 33%; text-align: right;">@L["Generators"]</td>
-                                                        <td style="width: 67%">
-                                                            <table>
-                                                                @if(sound.Voices != null)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@string.Format(L["{0} voices"], sound.Voices)</td>
-                                                                    </tr>
-                                                                }
-                                                                @if(sound.SquareWave != null)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@string.Format(L["{0} square wave"], sound.SquareWave)</td>
-                                                                    </tr>
-                                                                }
-                                                                @if(sound.WhiteNoise != null)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@string.Format(L["{0} white noise"], sound.WhiteNoise)</td>
-                                                                    </tr>
-                                                                }
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                                @if(sound.Depth != null || sound.Frequency != null)
-                                                {
-                                                    <tr>
-                                                        <td style="width: 33%; text-align: right;">@L["Sample rate"]</td>
-                                                        <td style="width: 67%">
-                                                            <table>
-                                                                @if(sound.Depth != null && sound.Frequency != null)
-                                                                {
-                                                                    <tr>
-                                                                        <td>
-                                                                            @if(sound.Frequency > 1000)
-                                                                            {
-                                                                                @string.Format(L["{0} bits at {1} KHz"], sound.Depth, sound.Frequency / 1000)
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                @string.Format(L["{0} bits at {1} Hz"], sound.Depth, sound.Frequency)
-                                                                            }
-                                                                        </td>
-                                                                    </tr>
-                                                                }
-                                                                else if(sound.Depth != null)
-                                                                {
-                                                                    <tr>
-                                                                        <td>@string.Format(L["{0} bits"], sound.Depth)</td>
-                                                                    </tr>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <tr>
-                                                                        <td>
-                                                                            @if(sound.Frequency > 1000)
-                                                                            {
-                                                                                @string.Format(L["{0} KHz"], sound.Frequency / 1000)
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                @string.Format(L["{0} Hz"], sound.Frequency)
-                                                                            }
-                                                                        </td>
-                                                                    </tr>
-                                                                }
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                                @if(sound.Type != null)
-                                                {
-                                                    <tr>
-                                                        <td style="width: 33%; text-align: right;">@L["Synthesizer type"]</td>
-                                                        <td style="width: 67%">
-                                                            @sound.Type
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </table>
-                                        </ChildContent>
-                                    </MudExpansionPanel>
-                                </td>
-                            }
-                        </tr>
-                    }
-                </MudExpansionPanels>
-            </td>
-        </tr>
-    }
-    @if(_machine.Storage.Count > 0)
-    {
-        <tr>
-            <td style="width: 33%; text-align: right;">
-                @L["Storage"]
-            </td>
-            <td style="width: 67%;">
-                <table>
-                    @foreach(StorageDto storage in _machine.Storage)
-                    {
-                        string capString = null;
-
-                        if(storage.Capacity != null)
-                        {
-                            if(storage.Type == (int)StorageType.CompactCassette)
-                            {
-                                capString = string.Format(L["{0} bps"], storage.Capacity);
-                            }
-                            else
-                            {
-                                if(storage.Capacity > 1073741824)
-                                {
-                                    capString = string.Format(L["{0} GiB"], storage.Capacity / 1073741824);
-                                }
-                                else if(storage.Capacity > 1048576)
-                                {
-                                    capString = string.Format(L["{0} MiB"], storage.Capacity / 1048576);
-                                }
-                                else if(storage.Capacity > 1024)
-                                {
-                                    capString = string.Format(L["{0} KiB"], storage.Capacity / 1024);
-                                }
-                                else if(storage.Capacity > 0)
-                                {
-                                    capString = string.Format(L["{0} bytes"], storage.Capacity);
-                                }
-                                else
-                                {
-                                    capString = null;
-                                }
-                            }
-                        }
-
-                        <tr>
-                            @if(storage.Interface != (int)StorageInterface.Unknown)
-                            {
-                                if(storage.Type == (int)StorageType.Empty)
-                                {
-                                    <td>@string.Format(L["Available {0} interface."], storage.Interface)</td>
-                                }
-                                else
-                                {
-                                    if(capString != null)
+                    <MudExpansionPanel>
+                        <TitleContent>
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@Icons.Material.Filled.DeveloperBoard" Size="Size.Small" Color="Color.Secondary"/>
+                                <MudText Typo="Typo.body1">
+                                    @if(processor.Speed > 0)
                                     {
-                                        <td>@string.Format(L["{0} connected thru a {1} interface with a nominal capacity of {2}"], storage.Type, storage.Interface, capString)</td>
+                                        @(processor.GprSize > 0
+                                            ? string.Format(L["{0} @{1}MHz ({2} bits)"], processor.Name, processor.Speed, processor.GprSize)
+                                            : string.Format(L["{0} @{1}MHz"], processor.Name, processor.Speed))
                                     }
                                     else
                                     {
-                                        <td>@string.Format(L["{0} connected thru a {1} interface"], storage.Type, storage.Interface)</td>
+                                        @processor.Name
                                     }
+                                </MudText>
+                            </MudStack>
+                        </TitleContent>
+                        <ChildContent>
+                            <MudSimpleTable Elevation="0" Dense="true">
+                                <tbody>
+                                @if(processor.ModelCode != null && processor.ModelCode != processor.Name)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Model"]</td>
+                                        <td>@processor.ModelCode</td>
+                                    </tr>
                                 }
+                                <tr>
+                                    <td style="width: 33%; text-align: right;">@L["Manufacturer"]</td>
+                                    <td><MudLink Href="@($"/processors/company/{processor.CompanyId}")">@processor.Company</MudLink></td>
+                                </tr>
+                                @if(processor.Introduced != null)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Introduction date"]</td>
+                                        <td>@($"{processor.Introduced:yyyy}")</td>
+                                    </tr>
+                                }
+                                @if(processor.InstructionSet != null)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Instruction set"]</td>
+                                        <td>@processor.InstructionSet</td>
+                                    </tr>
+                                }
+                                @if(processor.Speed > 0)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Nominal speed"]</td>
+                                        <td>@string.Format(L["{0} MHz"], processor.Speed)</td>
+                                    </tr>
+                                }
+                                @if(processor.Gprs > 0 || processor.Fprs > 0 || processor.SimdRegisters > 0)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Registers"]</td>
+                                        <td>
+                                            <MudStack Spacing="1">
+                                                @if(processor.Gprs > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">
+                                                        @if(processor.FprSize > 0 && processor.Fprs == 0 && processor.SimdSize > 0 && processor.SimdRegisters == 0)
+                                                        {
+                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits."], processor.Gprs, processor.GprSize, processor.FprSize, processor.SimdSize))
+                                                        }
+                                                        else if(processor.FprSize > 0 && processor.Fprs == 0)
+                                                        {
+                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits."], processor.Gprs, processor.GprSize, processor.FprSize))
+                                                        }
+                                                        else if(processor.FprSize == 0 && processor.SimdSize > 0 && processor.SimdRegisters == 0)
+                                                        {
+                                                            @(string.Format(L["{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits."], processor.Gprs, processor.GprSize, processor.SimdSize))
+                                                        }
+                                                        else
+                                                        {
+                                                            @(string.Format(L["{0} general purpose registers of {1} bits."], processor.Gprs, processor.GprSize))
+                                                        }
+                                                    </MudText>
+                                                }
+                                                @if(processor.Fprs > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">
+                                                        @if(processor.SimdSize > 0 && processor.SimdRegisters == 0)
+                                                        {
+                                                            @(string.Format(L["{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits."], processor.Fprs, processor.FprSize, processor.SimdSize))
+                                                        }
+                                                        else
+                                                        {
+                                                            @(string.Format(L["{0} floating point registers of {1} bits."], processor.Fprs, processor.FprSize))
+                                                        }
+                                                    </MudText>
+                                                }
+                                                @if(processor.SimdRegisters > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">
+                                                        <MudTooltip Text="@L["Single instruction, multiple data"]">
+                                                            @string.Format(L["{0} SIMD registers of {1} bits."], processor.SimdRegisters, processor.SimdSize)
+                                                        </MudTooltip>
+                                                    </MudText>
+                                                }
+                                            </MudStack>
+                                        </td>
+                                    </tr>
+                                }
+                                @if(processor.Cores > 1)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Multi-core"]</td>
+                                        <td>@string.Format(L["{0} cores."], processor.Cores)</td>
+                                    </tr>
+                                }
+                                @if(processor.ThreadsPerCore > 1)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;"><MudTooltip Text="@L["Simultaneous multithreading"]">SMT</MudTooltip></td>
+                                        <td>@string.Format(processor.Cores > 1 ? L["{0} threads per core."] : L["{0} threads."], processor.ThreadsPerCore)</td>
+                                    </tr>
+                                }
+                                @if(processor.DataBus > 0 || processor.AddressBus > 0)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Bus"]</td>
+                                        <td>
+                                            <MudStack Spacing="0">
+                                                @if(processor.DataBus > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">@string.Format(L["{0}-bit data."], processor.DataBus)</MudText>
+                                                }
+                                                @if(processor.AddressBus > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">@string.Format(L["{0}-bit address."], processor.AddressBus)</MudText>
+                                                }
+                                            </MudStack>
+                                        </td>
+                                    </tr>
+                                }
+                                @if(processor.L1Instruction > 0 || processor.L1Data > 0 || processor.L2 > 0 || processor.L3 > 0)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Cache"]</td>
+                                        <td>
+                                            <MudStack Spacing="0">
+                                                @if(processor.L1Instruction > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">@string.Format(processor.L1Data < 0 ? L["{0}KiB combined instruction-data L1"] : L["{0}KiB instruction L1"], processor.L1Instruction)</MudText>
+                                                }
+                                                @if(processor.L1Data > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">@string.Format(L["{0}KiB data L1"], processor.L1Data)</MudText>
+                                                }
+                                                @if(processor.L2 > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">@string.Format(L["{0}KiB L2"], processor.L2)</MudText>
+                                                }
+                                                @if(processor.L3 > 0)
+                                                {
+                                                    <MudText Typo="Typo.body2">@string.Format(L["{0}KiB L3"], processor.L3)</MudText>
+                                                }
+                                            </MudStack>
+                                        </td>
+                                    </tr>
+                                }
+                                @if(processor.Package != null)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Package"]</td>
+                                        <td>@processor.Package</td>
+                                    </tr>
+                                }
+                                @if(processor.Process != null || processor.ProcessNm > 0)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Manufacturing process"]</td>
+                                        <td>
+                                            @if(processor.Process != null && processor.ProcessNm > 0)
+                                            {
+                                                @(processor.ProcessNm > 100
+                                                    ? string.Format(L["{0} @{1}µm"], processor.Process, processor.ProcessNm / 100)
+                                                    : string.Format(L["{0} @{1}nm"], processor.Process, processor.ProcessNm))
+                                            }
+                                            else if(processor.ProcessNm > 0)
+                                            {
+                                                @(processor.ProcessNm > 100
+                                                    ? string.Format(L["{0}µm"], processor.ProcessNm / 100)
+                                                    : string.Format(L["{0}nm"], processor.ProcessNm))
+                                            }
+                                            else
+                                            {
+                                                @processor.Process
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                @if(processor.DieSize > 0)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Die size"]</td>
+                                        <td>@string.Format(L["{0} mm²"], processor.DieSize)</td>
+                                    </tr>
+                                }
+                                @if(processor.Transistors > 0)
+                                {
+                                    <tr>
+                                        <td style="width: 33%; text-align: right;">@L["Transistors"]</td>
+                                        <td>@processor.Transistors</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </MudSimpleTable>
+                        </ChildContent>
+                    </MudExpansionPanel>
+                }
+            </MudExpansionPanels>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Memory Card ── *@
+@if(_machine.Memory != null && _machine.Memory.Count > 0)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Storage" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Memory"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_machine.Memory.Count</MudChip>
+            </MudStack>
+            <MudStack Spacing="2">
+                @foreach(MemoryDto memory in _machine.Memory)
+                {
+                    string memValue;
+                    if(memory.Size > 1073741824) { memValue = string.Format(L["{0} GiB"], memory.Size / 1073741824); }
+                    else if(memory.Size > 1048576) { memValue = string.Format(L["{0} MiB"], memory.Size / 1048576); }
+                    else if(memory.Size > 1024) { memValue = string.Format(L["{0} KiB"], memory.Size / 1024); }
+                    else if(memory.Size > 0) { memValue = string.Format(L["{0} bytes"], memory.Size); }
+                    else { memValue = L["Unknown size"]; }
+
+                    string speedValue;
+                    if(memory.Speed > 1000000000) { speedValue = string.Format(L["{0} GHz"], memory.Speed / 1000000000); }
+                    else if(memory.Speed > 1000000) { speedValue = string.Format(L["{0} MHz"], memory.Speed / 1000000); }
+                    else if(memory.Speed > 1000) { speedValue = string.Format(L["{0} KHz"], memory.Speed / 1000); }
+                    else if(memory.Speed > 0) { speedValue = string.Format(L["{0} Hz"], memory.Speed); }
+                    else { speedValue = L["unknown speed"]; }
+
+                    <MudPaper Elevation="0" Class="pa-3 rounded-lg" Style="border: 1px solid var(--mud-palette-lines-default);">
+                        <MudText Typo="Typo.body1">@string.Format(L["{0} of {1} memory ({2} at {3})"], memValue, ((MemoryUsage)(memory.Usage ?? 0)).Humanize(), ((MemoryType)(memory.Type ?? 0)).Humanize(), speedValue)</MudText>
+                    </MudPaper>
+                }
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── GPUs Card ── *@
+@if(_machine.Gpus.Count > 0)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Tv" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Graphics processing units"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_machine.Gpus.Count</MudChip>
+            </MudStack>
+            <MudExpansionPanels MultiExpansion="true">
+                @foreach(GpuDto gpu in _machine.Gpus)
+                {
+                    if(gpu.Id == -2)
+                    {
+                        <MudExpansionPanel>
+                            <TitleContent>
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                    <MudIcon Icon="@Icons.Material.Filled.ScreenshotMonitor" Size="Size.Small" Color="Color.Secondary"/>
+                                    <MudText>@L["Framebuffer"]</MudText>
+                                </MudStack>
+                            </TitleContent>
+                            <ChildContent>
+                                <MudText Typo="Typo.body2">@L["This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit."]</MudText>
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    }
+                    else
+                    {
+                        <MudExpansionPanel>
+                            <TitleContent>
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                    <MudIcon Icon="@Icons.Material.Filled.DeveloperBoard" Size="Size.Small" Color="Color.Secondary"/>
+                                    <MudText>@gpu.Name</MudText>
+                                </MudStack>
+                            </TitleContent>
+                            <ChildContent>
+                                <MudSimpleTable Elevation="0" Dense="true">
+                                    <tbody>
+                                    @if(gpu.ModelCode != null && gpu.ModelCode != gpu.Name)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Model"]</td><td>@gpu.ModelCode</td></tr>
+                                    }
+                                    <tr><td style="width: 33%; text-align: right;">@L["Manufacturer"]</td><td><MudLink Href="@($"/gpus/company/{gpu.CompanyId}")">@gpu.Company</MudLink></td></tr>
+                                    @if(gpu.Introduced != null)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Introduction date"]</td><td>@($"{gpu.Introduced:yyyy}")</td></tr>
+                                    }
+                                    @if(gpu.Package != null)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Package"]</td><td>@gpu.Package</td></tr>
+                                    }
+                                    @if(gpu.Process != null || gpu.ProcessNm > 0)
+                                    {
+                                        <tr>
+                                            <td style="width: 33%; text-align: right;">@L["Manufacturing process"]</td>
+                                            <td>
+                                                @if(gpu.Process != null && gpu.ProcessNm > 0)
+                                                { @(gpu.ProcessNm > 100 ? string.Format(L["{0} @{1}µm"], gpu.Process, gpu.ProcessNm / 100) : string.Format(L["{0} @{1}nm"], gpu.Process, gpu.ProcessNm)) }
+                                                else if(gpu.ProcessNm > 0)
+                                                { @(gpu.ProcessNm > 100 ? string.Format(L["{0}µm"], gpu.ProcessNm / 100) : string.Format(L["{0}nm"], gpu.ProcessNm)) }
+                                                else
+                                                { @gpu.Process }
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if(gpu.DieSize > 0)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Die size"]</td><td>@string.Format(L["{0} mm²"], gpu.DieSize)</td></tr>
+                                    }
+                                    @if(gpu.Transistors > 0)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Transistors"]</td><td>@gpu.Transistors</td></tr>
+                                    }
+                                    </tbody>
+                                </MudSimpleTable>
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    }
+                }
+            </MudExpansionPanels>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Sound Synthesizers Card ── *@
+@if(_machine.SoundSynthesizers.Count > 0)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.MusicNote" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Sound synthesizers"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_machine.SoundSynthesizers.Count</MudChip>
+            </MudStack>
+            <MudExpansionPanels MultiExpansion="true">
+                @foreach(SoundSynthDto sound in _machine.SoundSynthesizers)
+                {
+                    if(sound.Id == -2)
+                    {
+                        <MudExpansionPanel>
+                            <TitleContent>
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                    <MudIcon Icon="@Icons.Material.Filled.Code" Size="Size.Small" Color="Color.Secondary"/>
+                                    <MudText>@L["Software"]</MudText>
+                                </MudStack>
+                            </TitleContent>
+                            <ChildContent>
+                                <MudText Typo="Typo.body2">@L["This machine directly sends data to a DAC or similar connected to the audio output."]</MudText>
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    }
+                    else
+                    {
+                        <MudExpansionPanel>
+                            <TitleContent>
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                    <MudIcon Icon="@Icons.Material.Filled.Speaker" Size="Size.Small" Color="Color.Secondary"/>
+                                    <MudText>@sound.Name</MudText>
+                                </MudStack>
+                            </TitleContent>
+                            <ChildContent>
+                                <MudSimpleTable Elevation="0" Dense="true">
+                                    <tbody>
+                                    @if(sound.ModelCode != null && sound.ModelCode != sound.Name)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Model"]</td><td>@sound.ModelCode</td></tr>
+                                    }
+                                    @if(sound.CompanyId != null)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Manufacturer"]</td><td><MudLink Href="@($"/soundsynths/company/{sound.CompanyId}")">@sound.Company</MudLink></td></tr>
+                                    }
+                                    @if(sound.Introduced != null)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Introduction date"]</td><td>@($"{sound.Introduced:yyyy}")</td></tr>
+                                    }
+                                    @if(sound.Voices != null || sound.SquareWave != null || sound.WhiteNoise != null)
+                                    {
+                                        <tr>
+                                            <td style="width: 33%; text-align: right;">@L["Generators"]</td>
+                                            <td>
+                                                <MudStack Spacing="0">
+                                                    @if(sound.Voices != null) { <MudText Typo="Typo.body2">@string.Format(L["{0} voices"], sound.Voices)</MudText> }
+                                                    @if(sound.SquareWave != null) { <MudText Typo="Typo.body2">@string.Format(L["{0} square wave"], sound.SquareWave)</MudText> }
+                                                    @if(sound.WhiteNoise != null) { <MudText Typo="Typo.body2">@string.Format(L["{0} white noise"], sound.WhiteNoise)</MudText> }
+                                                </MudStack>
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if(sound.Depth != null || sound.Frequency != null)
+                                    {
+                                        <tr>
+                                            <td style="width: 33%; text-align: right;">@L["Sample rate"]</td>
+                                            <td>
+                                                @if(sound.Depth != null && sound.Frequency != null)
+                                                { @(sound.Frequency > 1000 ? string.Format(L["{0} bits at {1} KHz"], sound.Depth, sound.Frequency / 1000) : string.Format(L["{0} bits at {1} Hz"], sound.Depth, sound.Frequency)) }
+                                                else if(sound.Depth != null)
+                                                { @string.Format(L["{0} bits"], sound.Depth) }
+                                                else
+                                                { @(sound.Frequency > 1000 ? string.Format(L["{0} KHz"], sound.Frequency / 1000) : string.Format(L["{0} Hz"], sound.Frequency)) }
+                                            </td>
+                                        </tr>
+                                    }
+                                    @if(sound.Type != null)
+                                    {
+                                        <tr><td style="width: 33%; text-align: right;">@L["Synthesizer type"]</td><td>@sound.Type</td></tr>
+                                    }
+                                    </tbody>
+                                </MudSimpleTable>
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    }
+                }
+            </MudExpansionPanels>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Storage Card ── *@
+@if(_machine.Storage.Count > 0)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.SaveAlt" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Storage"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_machine.Storage.Count</MudChip>
+            </MudStack>
+            <MudStack Spacing="2">
+                @foreach(StorageDto storage in _machine.Storage)
+                {
+                    string capString = null;
+                    if(storage.Capacity != null)
+                    {
+                        if(storage.Type == (int)StorageType.CompactCassette)
+                        { capString = string.Format(L["{0} bps"], storage.Capacity); }
+                        else if(storage.Capacity > 1073741824)
+                        { capString = string.Format(L["{0} GiB"], storage.Capacity / 1073741824); }
+                        else if(storage.Capacity > 1048576)
+                        { capString = string.Format(L["{0} MiB"], storage.Capacity / 1048576); }
+                        else if(storage.Capacity > 1024)
+                        { capString = string.Format(L["{0} KiB"], storage.Capacity / 1024); }
+                        else if(storage.Capacity > 0)
+                        { capString = string.Format(L["{0} bytes"], storage.Capacity); }
+                    }
+
+                    <MudPaper Elevation="0" Class="pa-3 rounded-lg" Style="border: 1px solid var(--mud-palette-lines-default);">
+                        <MudText Typo="Typo.body1">
+                            @if(storage.Interface != (int)StorageInterface.Unknown)
+                            {
+                                if(storage.Type == (int)StorageType.Empty)
+                                { @string.Format(L["Available {0} interface."], ((StorageInterface)(storage.Interface ?? 0)).Humanize()) }
+                                else if(capString != null)
+                                { @string.Format(L["{0} connected thru a {1} interface with a nominal capacity of {2}"], ((StorageType)(storage.Type ?? 0)).Humanize(), ((StorageInterface)(storage.Interface ?? 0)).Humanize(), capString) }
+                                else
+                                { @string.Format(L["{0} connected thru a {1} interface"], ((StorageType)(storage.Type ?? 0)).Humanize(), ((StorageInterface)(storage.Interface ?? 0)).Humanize()) }
                             }
                             else
                             {
                                 if(capString != null)
-                                {
-                                    <td>@string.Format(L["{0} with a nominal capacity of {1}"], storage.Type, capString)</td>
-                                }
+                                { @string.Format(L["{0} with a nominal capacity of {1}"], ((StorageType)(storage.Type ?? 0)).Humanize(), capString) }
                                 else
-                                {
-                                    <td>@storage.Type</td>
-                                }
+                                { @(((StorageType)(storage.Type ?? 0)).Humanize()) }
                             }
-                        </tr>
-                    }
-                </table>
-            </td>
-        </tr>
-    }
-    </tbody>
-</MudSimpleTable>
+                        </MudText>
+                    </MudPaper>
+                }
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Photos Card ── *@
 @if(_photos.Count > 0)
 {
-    <MudText Typo="Typo.h6" Class="mt-4 mb-2">@L["Photos"]</MudText>
-    <MudGrid>
-        @foreach(Guid photo in _photos)
-        {
-            <MudItem xs="6" sm="4" md="2">
-                <MudCard Elevation="0">
-                    <MudCardContent Class="pa-1">
-                        <picture>
-                            <source
-                                srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x"
-                                type="image/avif">
-                            <source
-                                srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x"
-                                type="image/heic">
-                            <source
-                                srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x"
-                                type="image/webp">
-                            <source
-                                srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x"
-                                type="image/jp2">
-                            <img alt="" height="auto"
-                                 src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
-                                 srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
-                                 style="max-height: 256px; max-width: 256px; border-radius: 4px;" width="auto"/>
-                        </picture>
-                    </MudCardContent>
-                    <MudCardActions>
-                        <MudButton Href="@($"/machines/photo/{photo}")" Target="_blank" Variant="Variant.Text" Color="Color.Primary" Size="Size.Small">@L["Details"]</MudButton>
-                    </MudCardActions>
-                </MudCard>
-            </MudItem>
-        }
-    </MudGrid>
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.PhotoLibrary" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Photos"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_photos.Count</MudChip>
+            </MudStack>
+            <MudGrid>
+                @foreach(Guid photo in _photos)
+                {
+                    <MudItem xs="6" sm="4" md="3">
+                        <MudCard Elevation="1" Class="rounded-lg">
+                            <MudCardContent Class="pa-2 d-flex justify-center">
+                                <picture>
+                                    <source srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x" type="image/avif">
+                                    <source srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x" type="image/heic">
+                                    <source srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x" type="image/webp">
+                                    <source srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x" type="image/jp2">
+                                    <img alt="" height="auto" src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
+                                         srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
+                                         style="max-height: 256px; max-width: 100%; border-radius: 8px;" width="auto"/>
+                                </picture>
+                            </MudCardContent>
+                            <MudCardActions Class="justify-center">
+                                <MudButton Href="@($"/machines/photo/{photo}")" Target="_blank" Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.ZoomIn">@L["Details"]</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
 }
 
 @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/photos/computers", _machine.Id + ".jpg")))
