@@ -126,6 +126,26 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build-blazor",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "-c",
+                "Debug",
+                "${workspaceFolder}/Marechai/Marechai.csproj"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "clean",
             "command": "dotnet",
             "type": "shell",

@@ -37,6 +37,22 @@
             "preLaunchTask": "run-app-wasm"
         },
         {
+            "name": "Blazor App (Marechai)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Marechai/bin/Debug/net10.0/Marechai.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Marechai",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "serverReadyAction": {
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s",
+                "action": "openExternally"
+            },
+            "preLaunchTask": "build-blazor"
+        },
+        {
             "name": "Server + Desktop App",
             "type": "coreclr",
             "request": "launch",
