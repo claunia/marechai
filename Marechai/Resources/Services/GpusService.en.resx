@@ -123,40 +123,200 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
+    <data name="Graphics Processing Units" xml:space="preserve">
+        <value>Graphics Processing Units</value>
+        <comment>Graphics Processing Units</comment>
+    </data>
+    <data name="Graphics processing units" xml:space="preserve">
+        <value>Graphics processing units</value>
+        <comment>Graphics processing units section header</comment>
+    </data>
+    <data name="Graphical processing unit details" xml:space="preserve">
+        <value>Graphical processing unit details</value>
+        <comment>Graphical processing unit details</comment>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Company</value>
+        <comment>Company</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Model code" xml:space="preserve">
+        <value>Model code</value>
+        <comment>Model code</comment>
+    </data>
+    <data name="Model" xml:space="preserve">
+        <value>Model</value>
+        <comment>Model code of a GPU</comment>
+    </data>
+    <data name="Introduced" xml:space="preserve">
+        <value>Introduced</value>
+        <comment>Introduced</comment>
+    </data>
+    <data name="Introduction date" xml:space="preserve">
+        <value>Introduction date</value>
+        <comment>Date when the GPU was introduced</comment>
+    </data>
+    <data name="Details" xml:space="preserve">
+        <value>Details</value>
+        <comment>Details</comment>
+    </data>
+    <data name="Package" xml:space="preserve">
+        <value>Package</value>
+        <comment>Package</comment>
+    </data>
+    <data name="Process" xml:space="preserve">
+        <value>Process</value>
+        <comment>Process</comment>
+    </data>
+    <data name="Process (nm)" xml:space="preserve">
+        <value>Process (nm)</value>
+        <comment>Process size in nm</comment>
+    </data>
+    <data name="Die size (mm²)" xml:space="preserve">
+        <value>Die size (mm²)</value>
+        <comment>Die size in square millimeters</comment>
+    </data>
+    <data name="Die size" xml:space="preserve">
+        <value>Die size</value>
+        <comment>Die size of a GPU</comment>
+    </data>
+    <data name="Transistors" xml:space="preserve">
+        <value>Transistors</value>
+        <comment>Transistors</comment>
+    </data>
+    <data name="Resolutions" xml:space="preserve">
+        <value>Resolutions</value>
+        <comment>Resolutions</comment>
+    </data>
+    <data name="Supported resolutions" xml:space="preserve">
+        <value>Supported resolutions</value>
+        <comment>Resolutions supported by this GPU</comment>
+    </data>
+    <data name="Width" xml:space="preserve">
+        <value>Width</value>
+        <comment>Width</comment>
+    </data>
+    <data name="Height" xml:space="preserve">
+        <value>Height</value>
+        <comment>Height</comment>
+    </data>
+    <data name="Colors" xml:space="preserve">
+        <value>Colors</value>
+        <comment>Colors</comment>
+    </data>
+    <data name="Palette" xml:space="preserve">
+        <value>Palette</value>
+        <comment>Palette</comment>
+    </data>
+    <data name="Chars" xml:space="preserve">
+        <value>Chars</value>
+        <comment>Characters</comment>
+    </data>
+    <data name="Grayscale" xml:space="preserve">
+        <value>Grayscale</value>
+        <comment>Grayscale</comment>
+    </data>
+    <data name="Prototype" xml:space="preserve">
+        <value>Prototype</value>
+        <comment>Prototype</comment>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Manufacturer</value>
+        <comment>Manufacturer of a GPU</comment>
+    </data>
+    <data name="Manufacturing process" xml:space="preserve">
+        <value>Manufacturing process</value>
+        <comment>Manufacturing process of a GPU</comment>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Computers</value>
+        <comment>Computers that use this GPU</comment>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consoles</value>
+        <comment>Consoles that use this GPU</comment>
+    </data>
+    <data name="Framebuffer" xml:space="preserve">
+        <value>Framebuffer</value>
+        <comment>Framebuffer, a special GPU type</comment>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+        <comment>Software rendering, a special GPU type</comment>
+    </data>
+    <data name="None" xml:space="preserve">
+        <value>None</value>
+        <comment>No GPU, a special GPU type</comment>
+    </data>
+    <data name="No GPUs found" xml:space="preserve">
+        <value>No GPUs found</value>
+        <comment>Message when no GPUs exist in the database</comment>
+    </data>
+    <data name="Filter GPUs..." xml:space="preserve">
+        <value>Filter GPUs...</value>
+        <comment>Placeholder text for filtering GPUs</comment>
+    </data>
+    <data name="{0} GPUs found in the database." xml:space="preserve">
+        <value>{0} GPUs found in the database.</value>
+        <comment>Count of GPUs found in the database</comment>
+    </data>
+    <data name="{0} @{1}µm" xml:space="preserve">
+        <value>{0} @{1}µm</value>
+        <comment>Process name at size in micrometers</comment>
+    </data>
+    <data name="{0} @{1}nm" xml:space="preserve">
+        <value>{0} @{1}nm</value>
+        <comment>Process name at size in nanometers</comment>
+    </data>
+    <data name="{0}µm" xml:space="preserve">
+        <value>{0}µm</value>
+        <comment>Process size in micrometers</comment>
+    </data>
+    <data name="{0}nm" xml:space="preserve">
+        <value>{0}nm</value>
+        <comment>Process size in nanometers</comment>
+    </data>
+    <data name="{0} mm²" xml:space="preserve">
+        <value>{0} mm²</value>
+        <comment>Die size in square millimeters</comment>
+    </data>
+    <data name="This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit." xml:space="preserve">
+        <value>This machine directly draws pixels from software to a memory region that's converted to video output by a DAC or similar without using any specific graphics processing unit.</value>
+        <comment>Framebuffer description</comment>
+    </data>
     <data name="Unknown (company)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to a company</comment>
-  </data>
+    </data>
     <data name="Unknown (model code)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to a model code</comment>
-  </data>
+    </data>
     <data name="Unknown (introduction date)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to an introduction date</comment>
-  </data>
+    </data>
     <data name="Unknown (package)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to a chip package</comment>
-  </data>
+    </data>
     <data name="Unknown (process)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to the chip process</comment>
-  </data>
+    </data>
     <data name="Unknown (process size)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to the chip process size in nanometers</comment>
-  </data>
+    </data>
     <data name="Unknown (die size)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to the die size in square millimeters</comment>
-  </data>
+    </data>
     <data name="Unknown (transistors)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to the number of transistors</comment>
-  </data>
-    <data name="Add new (resolution by gpu)" xml:space="preserve">
-    <value>Add new</value>
-        <comment>Add new, referring to resolutions supported by this gpu</comment>
-  </data>
+    </data>
 </root>

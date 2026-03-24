@@ -432,7 +432,7 @@
                             <TitleContent>
                                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                                     <MudIcon Icon="@Icons.Material.Filled.DeveloperBoard" Size="Size.Small" Color="Color.Secondary"/>
-                                    <MudText>@gpu.Name</MudText>
+                                    <MudLink Href="@($"/gpu/{gpu.Id}")" Style="color: inherit;">@gpu.Name</MudLink>
                                 </MudStack>
                             </TitleContent>
                             <ChildContent>
@@ -442,7 +442,7 @@
                                     {
                                         <tr><td style="width: 33%; text-align: right;">@L["Model"]</td><td>@gpu.ModelCode</td></tr>
                                     }
-                                    <tr><td style="width: 33%; text-align: right;">@L["Manufacturer"]</td><td><MudLink Href="@($"/gpus/company/{gpu.CompanyId}")">@gpu.Company</MudLink></td></tr>
+                                    <tr><td style="width: 33%; text-align: right;">@L["Manufacturer"]</td><td><MudLink Href="@($"/company/{gpu.CompanyId}")">@gpu.Company</MudLink></td></tr>
                                     @if(gpu.Introduced != null)
                                     {
                                         <tr><td style="width: 33%; text-align: right;">@L["Introduction date"]</td><td>@($"{gpu.Introduced:yyyy}")</td></tr>

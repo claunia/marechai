@@ -1,0 +1,198 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/gpu/{Id:int}"
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@inherits OwningComponentBase<GpusService>
+@inject IStringLocalizer<GpusService> L
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_gpu is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["No GPUs found"]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.DeveloperBoard" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h3" Align="Align.Center" Style="color: white; font-weight: 700;">@_displayName</MudText>
+        @if(!string.IsNullOrEmpty(_gpu.Company))
+        {
+            <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="color: rgba(255,255,255,0.85);">@_gpu.Company</MudText>
+        }
+    </MudStack>
+</MudPaper>
+
+@* ── General Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["Details"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            @if(_gpu.ModelCode != null && _gpu.ModelCode != _gpu.Name)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Model"]</strong></td><td>@_gpu.ModelCode</td></tr>
+            }
+            @if(_gpu.CompanyId.HasValue)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Manufacturer"]</strong></td><td><MudLink Href="@($"/company/{_gpu.CompanyId}")">@_gpu.Company</MudLink></td></tr>
+            }
+            @if(_gpu.Introduced != null)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Introduction date"]</strong></td><td>@($"{_gpu.Introduced:yyyy}")</td></tr>
+            }
+            @if(_gpu.Package != null)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Package"]</strong></td><td>@_gpu.Package</td></tr>
+            }
+            @if(_gpu.Process != null || _gpu.ProcessNm > 0)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Manufacturing process"]</strong></td>
+                    <td>
+                        @if(_gpu.Process != null && _gpu.ProcessNm > 0)
+                        { @(_gpu.ProcessNm > 100 ? string.Format(L["{0} @{1}µm"], _gpu.Process, _gpu.ProcessNm / 100) : string.Format(L["{0} @{1}nm"], _gpu.Process, _gpu.ProcessNm)) }
+                        else if(_gpu.ProcessNm > 0)
+                        { @(_gpu.ProcessNm > 100 ? string.Format(L["{0}µm"], _gpu.ProcessNm / 100) : string.Format(L["{0}nm"], _gpu.ProcessNm)) }
+                        else
+                        { @_gpu.Process }
+                    </td>
+                </tr>
+            }
+            @if(_gpu.DieSize > 0)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Die size"]</strong></td><td>@string.Format(L["{0} mm²"], _gpu.DieSize)</td></tr>
+            }
+            @if(_gpu.Transistors > 0)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Transistors"]</strong></td><td>@_gpu.Transistors</td></tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Resolutions Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_resolutions.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.AspectRatio" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Supported resolutions"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_resolutions.Count > 0 ? Color.Success : Color.Error)">@_resolutions.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudSimpleTable Elevation="0" Dense="true">
+                <thead>
+                <tr>
+                    <th>@L["Width"]</th>
+                    <th>@L["Height"]</th>
+                    <th>@L["Colors"]</th>
+                    <th>@L["Palette"]</th>
+                    <th>@L["Chars"]</th>
+                    <th>@L["Grayscale"]</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach(ResolutionDto res in _resolutions)
+                {
+                    <tr>
+                        <td>@res.Width</td>
+                        <td>@res.Height</td>
+                        <td>@(res.Colors > 0 ? res.Colors : null)</td>
+                        <td>@(res.Palette > 0 ? res.Palette : null)</td>
+                        <td>@(res.Chars == true ? "✓" : null)</td>
+                        <td>@(res.Grayscale == true ? "✓" : null)</td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Computers Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_computers.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Computers"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_computers.Count > 0 ? Color.Success : Color.Error)">@_computers.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineDto" Dense="true">
+                @foreach(MachineDto computer in _computers)
+                {
+                    <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
+                        @computer.Company @computer.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Consoles Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_consoles.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.SportsEsports" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Consoles"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_consoles.Count > 0 ? Color.Success : Color.Error)">@_consoles.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineDto" Dense="true">
+                @foreach(MachineDto console in _consoles)
+                {
+                    <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
+                        @console.Company @console.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>

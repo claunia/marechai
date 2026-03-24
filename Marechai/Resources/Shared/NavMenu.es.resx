@@ -167,4 +167,8 @@
     <value>Administración</value>
         <comment>Administration area</comment>
   </data>
+    <data name="GPUs" xml:space="preserve">
+    <value>GPUs</value>
+        <comment>Graphics Processing Units navigation link</comment>
+  </data>
 </root>
