@@ -124,376 +124,315 @@
         </value>
     </resheader>
     <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
+        <value>Procesadores</value>
         <comment>Processors</comment>
-  </data>
-    <data name="Loading..." xml:space="preserve">
-    <value>Cargando...</value>
-        <comment>Message that appears while data is being loaded from database</comment>
-  </data>
-    <data name="Name" xml:space="preserve">
-    <value>Nombre</value>
-        <comment>Name</comment>
-  </data>
-    <data name="Company" xml:space="preserve">
-    <value>Compañía</value>
-        <comment>Company</comment>
-  </data>
-    <data name="Introduced" xml:space="preserve">
-    <value>Introducido el</value>
-        <comment>Introduced</comment>
-  </data>
-    <data name="Model code" xml:space="preserve">
-    <value>Modelo</value>
-        <comment>Model code</comment>
-  </data>
-    <data name="Instruction set" xml:space="preserve">
-    <value>Arquitectura</value>
-        <comment>Instruction set</comment>
-  </data>
-    <data name="Create new" xml:space="preserve">
-    <value>Crear nuevo</value>
-        <comment>Create new</comment>
-  </data>
-    <data name="Details" xml:space="preserve">
-    <value>Detalles</value>
-        <comment>Details</comment>
-  </data>
-    <data name="Edit" xml:space="preserve">
-    <value>Editar</value>
-        <comment>Edit</comment>
-  </data>
-    <data name="Delete" xml:space="preserve">
-    <value>Eliminar</value>
-        <comment>Delete</comment>
-  </data>
-    <data name="Delete processor" xml:space="preserve">
-    <value>Eliminar procesador</value>
-        <comment>Delete processor</comment>
-  </data>
-    <data name="Are you sure you want to delete {0}?" xml:space="preserve">
-    <value>¿Está seguro de que desea borrar {0}?</value>
-        <comment>{0} processor name</comment>
-  </data>
-    <data name="Cancel" xml:space="preserve">
-    <value>Cancelar</value>
-        <comment>Cancel</comment>
-  </data>
+    </data>
     <data name="Processor details" xml:space="preserve">
-    <value>Detalles de procesador</value>
+        <value>Detalles de procesador</value>
         <comment>Processor details</comment>
-  </data>
-    <data name="Back to list" xml:space="preserve">
-    <value>Volver a la lista</value>
-        <comment>Back to list</comment>
-  </data>
-    <data name="PROTOTYPE" xml:space="preserve">
-    <value>PROTOTIPO</value>
-        <comment>PROTOTYPE</comment>
-  </data>
-    <data name="Nominal speed (MHz)" xml:space="preserve">
-    <value>Velocidad nominal (MHz)</value>
-        <comment>Nominal speed (MHz)</comment>
-  </data>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Compañía</value>
+        <comment>Company</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Nombre</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Model code" xml:space="preserve">
+        <value>Modelo</value>
+        <comment>Model code</comment>
+    </data>
+    <data name="Model" xml:space="preserve">
+        <value>Modelo</value>
+        <comment>Model code of a processor</comment>
+    </data>
+    <data name="Introduced" xml:space="preserve">
+        <value>Introducido el</value>
+        <comment>Introduced</comment>
+    </data>
+    <data name="Introduction date" xml:space="preserve">
+        <value>Fecha de lanzamiento</value>
+        <comment>Date when the processor was introduced</comment>
+    </data>
+    <data name="Details" xml:space="preserve">
+        <value>Detalles</value>
+        <comment>Details</comment>
+    </data>
+    <data name="Instruction set" xml:space="preserve">
+        <value>Arquitectura</value>
+        <comment>Instruction set</comment>
+    </data>
+    <data name="Instruction set extensions" xml:space="preserve">
+        <value>Extensiones de arquitectura</value>
+        <comment>Instruction set extensions</comment>
+    </data>
+    <data name="Nominal speed" xml:space="preserve">
+        <value>Velocidad nominal</value>
+        <comment>Nominal speed</comment>
+    </data>
+    <data name="{0} MHz" xml:space="preserve">
+        <value>{0} MHz</value>
+        <comment>Speed in megahertz</comment>
+    </data>
     <data name="Package" xml:space="preserve">
-    <value>Empaquetado</value>
+        <value>Empaquetado</value>
         <comment>Package</comment>
-  </data>
-    <data name="General Purpose Registers" xml:space="preserve">
-    <value>Registros de propósito general</value>
-        <comment>General Purpose Registers</comment>
-  </data>
-    <data name="General Purpose Register size" xml:space="preserve">
-    <value>Tamaño de los registros de propósito general</value>
-        <comment>General Purpose Register size</comment>
-  </data>
-    <data name="Floating Point Registers" xml:space="preserve">
-    <value>Registros de coma flotante</value>
-        <comment>Floating Point Registers</comment>
-  </data>
-    <data name="Floating Point Register size" xml:space="preserve">
-    <value>Tamaño de los registros de coma flotante</value>
-        <comment>Floating Point Register size</comment>
-  </data>
-    <data name="SIMD Registers" xml:space="preserve">
-    <value>Registros SIMD</value>
-        <comment>SIMD Registers</comment>
-  </data>
-    <data name="SIMD Register size" xml:space="preserve">
-    <value>Tamaño de los registros SIMD</value>
-        <comment>SIMD Register size</comment>
-  </data>
-    <data name="Cores" xml:space="preserve">
-    <value>Núcleos</value>
-        <comment>Cores</comment>
-  </data>
-    <data name="Threads per core" xml:space="preserve">
-    <value>Hilos por núcleo</value>
-        <comment>Threads per core</comment>
-  </data>
+    </data>
+    <data name="Registers" xml:space="preserve">
+        <value>Registros</value>
+        <comment>Registers</comment>
+    </data>
+    <data name="{0} general purpose registers of {1} bits." xml:space="preserve">
+        <value>{0} registros de propósito general de {1} bits.</value>
+        <comment>{0} count, {1} size in bits</comment>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits." xml:space="preserve">
+        <value>{0} registros de propósito general de {1} bits que pueden ser usados como registros de coma flotante de {2} bits.</value>
+        <comment>{0} count, {1} GPR size, {2} FPR size</comment>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as SIMD registers of {2} bits." xml:space="preserve">
+        <value>{0} registros de propósito general de {1} bits que pueden ser usados como registros SIMD de {2} bits.</value>
+        <comment>{0} count, {1} GPR size, {2} SIMD size</comment>
+    </data>
+    <data name="{0} general purpose registers of {1} bits that can be used as floating point registers of {2} bits and SIMD registers of {3} bits." xml:space="preserve">
+        <value>{0} registros de propósito general de {1} bits que pueden ser usados como registros de coma flotante de {2} bits y registros SIMD de {3} bits.</value>
+        <comment>{0} count, {1} GPR size, {2} FPR size, {3} SIMD size</comment>
+    </data>
+    <data name="{0} floating point registers of {1} bits." xml:space="preserve">
+        <value>{0} registros de coma flotante de {1} bits.</value>
+        <comment>{0} count, {1} size in bits</comment>
+    </data>
+    <data name="{0} floating point registers of {1} bits that can be used as SIMD registers of {2} bits." xml:space="preserve">
+        <value>{0} registros de coma flotante de {1} bits que pueden ser usados como registros SIMD de {2} bits.</value>
+        <comment>{0} count, {1} FPR size, {2} SIMD size</comment>
+    </data>
+    <data name="{0} SIMD registers of {1} bits." xml:space="preserve">
+        <value>{0} registros SIMD de {1} bits.</value>
+        <comment>{0} count, {1} size in bits</comment>
+    </data>
+    <data name="Single instruction, multiple data" xml:space="preserve">
+        <value>Una instrucción, múltiples datos</value>
+        <comment>SIMD tooltip</comment>
+    </data>
+    <data name="Multi-core" xml:space="preserve">
+        <value>Multi-núcleo</value>
+        <comment>Multi-core</comment>
+    </data>
+    <data name="{0} cores." xml:space="preserve">
+        <value>{0} núcleos.</value>
+        <comment>{0} number of cores</comment>
+    </data>
+    <data name="Simultaneous multithreading" xml:space="preserve">
+        <value>Multihilo simultáneo</value>
+        <comment>SMT tooltip</comment>
+    </data>
+    <data name="{0} threads per core." xml:space="preserve">
+        <value>{0} hilos por núcleo.</value>
+        <comment>{0} threads per core</comment>
+    </data>
+    <data name="{0} threads." xml:space="preserve">
+        <value>{0} hilos.</value>
+        <comment>{0} threads (single core)</comment>
+    </data>
+    <data name="Bus" xml:space="preserve">
+        <value>Bus</value>
+        <comment>Bus</comment>
+    </data>
+    <data name="{0}-bit data." xml:space="preserve">
+        <value>{0} bits de datos.</value>
+        <comment>{0} data bus size in bits</comment>
+    </data>
+    <data name="{0}-bit address." xml:space="preserve">
+        <value>{0} bits de direcciones.</value>
+        <comment>{0} address bus size in bits</comment>
+    </data>
+    <data name="Cache" xml:space="preserve">
+        <value>Caché</value>
+        <comment>Cache</comment>
+    </data>
+    <data name="{0}KiB instruction L1" xml:space="preserve">
+        <value>{0}KiB de instrucciones L1</value>
+        <comment>{0} L1 instruction cache size</comment>
+    </data>
+    <data name="{0}KiB combined instruction-data L1" xml:space="preserve">
+        <value>{0}KiB de instrucciones y datos combinados L1</value>
+        <comment>{0} combined L1 cache size</comment>
+    </data>
+    <data name="{0}KiB data L1" xml:space="preserve">
+        <value>{0}KiB de datos L1</value>
+        <comment>{0} L1 data cache size</comment>
+    </data>
+    <data name="{0}KiB L2" xml:space="preserve">
+        <value>{0}KiB L2</value>
+        <comment>{0} L2 cache size</comment>
+    </data>
+    <data name="{0}KiB L3" xml:space="preserve">
+        <value>{0}KiB L3</value>
+        <comment>{0} L3 cache size</comment>
+    </data>
     <data name="Process" xml:space="preserve">
-    <value>Proceso</value>
+        <value>Proceso</value>
         <comment>Process</comment>
-  </data>
-    <data name="Process (nm)" xml:space="preserve">
-    <value>Tamaño del proceso en nm</value>
-        <comment>Process (nm)</comment>
-  </data>
-    <data name="Die size (mm²)" xml:space="preserve">
-    <value>Area del chip (mm²)</value>
-        <comment>Die size (mm²)</comment>
-  </data>
+    </data>
+    <data name="Manufacturing process" xml:space="preserve">
+        <value>Proceso de fabricación</value>
+        <comment>Manufacturing process</comment>
+    </data>
+    <data name="Die size" xml:space="preserve">
+        <value>Tamaño del chip</value>
+        <comment>Die size</comment>
+    </data>
     <data name="Transistors" xml:space="preserve">
-    <value>Transistores</value>
+        <value>Transistores</value>
         <comment>Transistors</comment>
-  </data>
-    <data name="Data bus size" xml:space="preserve">
-    <value>Tamaño del bus de datos</value>
-        <comment>Data bus size</comment>
-  </data>
-    <data name="Address bus size" xml:space="preserve">
-    <value>Tamaño del bus de direcciones</value>
-        <comment>Address bus size</comment>
-  </data>
-    <data name="L1 instruction cache (KiB)" xml:space="preserve">
-    <value>Caché L1 de instrucciones (KiB)</value>
-        <comment>L1 instruction cache (KiB)</comment>
-  </data>
-    <data name="L1 data cache (KiB)" xml:space="preserve">
-    <value>Caché L1 de datos (KiB)</value>
-        <comment>L1 data cache (KiB)</comment>
-  </data>
-    <data name="L2 cache (KiB)" xml:space="preserve">
-    <value>Caché L2 (KiB)</value>
-        <comment>L2 cache (KiB)</comment>
-  </data>
-    <data name="L3 cache (KiB)" xml:space="preserve">
-    <value>Caché L3 (KiB)</value>
-        <comment>L3 cache (KiB)</comment>
-  </data>
-    <data name="Save" xml:space="preserve">
-    <value>Guardar</value>
-        <comment>Save</comment>
-  </data>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Fabricante</value>
+        <comment>Manufacturer</comment>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Ordenadores</value>
+        <comment>Computers that use this processor</comment>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consolas</value>
+        <comment>Consoles that use this processor</comment>
+    </data>
+    <data name="No processors found" xml:space="preserve">
+        <value>No se encontraron procesadores</value>
+        <comment>Message when no processors exist</comment>
+    </data>
+    <data name="Filter processors..." xml:space="preserve">
+        <value>Filtrar procesadores...</value>
+        <comment>Placeholder text for filtering processors</comment>
+    </data>
+    <data name="{0} processors found in the database." xml:space="preserve">
+        <value>{0} procesadores encontrados en la base de datos.</value>
+        <comment>Count of processors</comment>
+    </data>
+    <data name="{0} @{1}MHz ({2} bits)" xml:space="preserve">
+        <value>{0} @{1}MHz ({2} bits)</value>
+        <comment>Processor name at speed with register size</comment>
+    </data>
+    <data name="{0} @{1}MHz" xml:space="preserve">
+        <value>{0} @{1}MHz</value>
+        <comment>Processor name at speed</comment>
+    </data>
+    <data name="{0} @{1}µm" xml:space="preserve">
+        <value>{0} @{1}µm</value>
+        <comment>Process name at size in micrometers</comment>
+    </data>
+    <data name="{0} @{1}nm" xml:space="preserve">
+        <value>{0} @{1}nm</value>
+        <comment>Process name at size in nanometers</comment>
+    </data>
+    <data name="{0}µm" xml:space="preserve">
+        <value>{0}µm</value>
+        <comment>Process size in micrometers</comment>
+    </data>
+    <data name="{0}nm" xml:space="preserve">
+        <value>{0}nm</value>
+        <comment>Process size in nanometers</comment>
+    </data>
+    <data name="{0} mm²" xml:space="preserve">
+        <value>{0} mm²</value>
+        <comment>Die size in square millimeters</comment>
+    </data>
     <data name="Unknown (company)" xml:space="preserve">
-    <value>Desconocida</value>
+        <value>Desconocida</value>
         <comment>Unknown, referring to a company</comment>
-  </data>
+    </data>
     <data name="Unknown (model code)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to a model code</comment>
-  </data>
+    </data>
     <data name="Unknown (introduction date)" xml:space="preserve">
-    <value>Desconocida</value>
+        <value>Desconocida</value>
         <comment>Unknown, referring to an introduction date</comment>
-  </data>
+    </data>
     <data name="Unknown (instruction set)" xml:space="preserve">
-    <value>Desconocida</value>
+        <value>Desconocida</value>
         <comment>Unknown, referring to an instruction set</comment>
-  </data>
+    </data>
     <data name="Unknown (nominal speed)" xml:space="preserve">
-    <value>Desconocida</value>
+        <value>Desconocida</value>
         <comment>Unknown, referring to a nominal speed</comment>
-  </data>
+    </data>
     <data name="Unknown (package)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to a chip package</comment>
-  </data>
+    </data>
     <data name="Unknown (general purpose registers)" xml:space="preserve">
-    <value>Desconocidos</value>
+        <value>Desconocidos</value>
         <comment>Unknown, referring to the number of general purpose registers</comment>
-  </data>
+    </data>
     <data name="Unknown (general purpose register size)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of a general purpose register</comment>
-  </data>
+    </data>
     <data name="Unknown (floating point registers)" xml:space="preserve">
-    <value>Desconocidos</value>
+        <value>Desconocidos</value>
         <comment>Unknown, referring to the number of floating point registers</comment>
-  </data>
+    </data>
     <data name="Unknown (floating point register size)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of a floating point register</comment>
-  </data>
+    </data>
     <data name="Unknown (simd registers)" xml:space="preserve">
-    <value>Desconocidos</value>
+        <value>Desconocidos</value>
         <comment>Unknown, referring to the number of SIMD registers</comment>
-  </data>
+    </data>
     <data name="Unknown (simd register size)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of a SIMD register</comment>
-  </data>
+    </data>
     <data name="Unknown (cores)" xml:space="preserve">
-    <value>Desconocidos</value>
+        <value>Desconocidos</value>
         <comment>Unknown, referring to the number of cores</comment>
-  </data>
+    </data>
     <data name="Unknown (threads per core)" xml:space="preserve">
-    <value>Desconocidos</value>
+        <value>Desconocidos</value>
         <comment>Unknown, referring to the number of threads per core</comment>
-  </data>
+    </data>
     <data name="Unknown (process)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the chip process</comment>
-  </data>
+    </data>
     <data name="Unknown (process size)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the chip process size in nanometers</comment>
-  </data>
+    </data>
     <data name="Unknown (die size)" xml:space="preserve">
-    <value>Desconocida</value>
+        <value>Desconocida</value>
         <comment>Unknown, referring to the die size in square millimeters</comment>
-  </data>
+    </data>
     <data name="Unknown (transistors)" xml:space="preserve">
-    <value>Desconocidos</value>
+        <value>Desconocidos</value>
         <comment>Unknown, referring to the number of transistors</comment>
-  </data>
+    </data>
     <data name="Unknown (data bus size)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of the data bus</comment>
-  </data>
+    </data>
     <data name="Unknown (address bus size)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of the address bus</comment>
-  </data>
+    </data>
     <data name="Unknown (L1 instruction cache)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of the L1 instruction cache</comment>
-  </data>
+    </data>
     <data name="Unknown (L1 data cache)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of the L1 data cache</comment>
-  </data>
+    </data>
     <data name="Unknown (L2 cache)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of the L2 data cache</comment>
-  </data>
+    </data>
     <data name="Unknown (L3)" xml:space="preserve">
-    <value>Desconocido</value>
+        <value>Desconocido</value>
         <comment>Unknown, referring to the size of the L3 data cache</comment>
-  </data>
-    <data name="Please enter a valid name." xml:space="preserve">
-    <value>Por favor introduce un nombre válido.</value>
-        <comment>Please enter a valid name.</comment>
-  </data>
-    <data name="Please enter a valid model code." xml:space="preserve">
-    <value>Por favor introduce un modelo válido.</value>
-        <comment>Please enter a valid model code.</comment>
-  </data>
-    <data name="Please enter an introduction date." xml:space="preserve">
-    <value>Por favor elige una fecha válida.</value>
-        <comment>Please enter an introduction date.</comment>
-  </data>
-    <data name="Please enter a valid nominal speed." xml:space="preserve">
-    <value>Por favor introduce una velocidad nominal válida.</value>
-        <comment>Please enter a valid nominal speed.</comment>
-  </data>
-    <data name="Please enter a valid package." xml:space="preserve">
-    <value>Por favor introduce un empaquetado válido.</value>
-        <comment>Please enter a valid package.</comment>
-  </data>
-    <data name="Please enter a valid number of general purpose registers." xml:space="preserve">
-    <value>Por favor introduce un número válido de registros de propósito general.</value>
-        <comment>Please enter a valid number of general purpose registers.</comment>
-  </data>
-    <data name="Please enter a valid general purpose register size." xml:space="preserve">
-    <value>Por favor introduce un tamaño de registro de propósito general válido.</value>
-        <comment>Please enter a valid general purpose register size.</comment>
-  </data>
-    <data name="Please enter a valid number of floating point registers." xml:space="preserve">
-    <value>Por favor introduce un número válido de registros de coma flotante.</value>
-        <comment>Please enter a valid number of floating point registers.</comment>
-  </data>
-    <data
-        name="If set to zero, but with a size, indicates floating point instructions use the general purpose registers."
-        xml:space="preserve">
-    <value>Si introduces cero, con un tamaño válido, indica que las instrucciones de coma flotante utilizan los registros de propósito general.</value>
-        <comment>If set to zero, but with a size, indicates floating point instructions use the general purpose registers.</comment>
-  </data>
-    <data name="Please enter a valid floating point register size." xml:space="preserve">
-    <value>Por favor introduce un tamaño de registro de coma flotante válido.</value>
-        <comment>Please enter a valid floating point register size.</comment>
-  </data>
-    <data name="Please enter a valid number of SIMD registers." xml:space="preserve">
-    <value>Por favor introduce un número válido de registros SIMD.</value>
-        <comment>Please enter a valid number of SIMD registers.</comment>
-  </data>
-    <data
-        name="If set to zero, but with a size, indicates SIMD instructions use the floating point registers. If they are also set to zero with a size, it means SIMD instructions use the general purpose registers."
-        xml:space="preserve">
-    <value>Si introduces cero, con un tamaño válido, indica que las instrucciones SIMD utilizan los registros de coma flotante. Si su número también es cero, indica que las instrucciones SIMD utilizan los registros de propósito general.</value>
-        <comment>If set to zero, but with a size, indicates SIMD instructions use the floating point registers. If they are also set to zero with a size, it means SIMD instructions use the general purpose registers.</comment>
-  </data>
-    <data name="Please enter a valid SIMD register size." xml:space="preserve">
-    <value>Por favor intrudoce un tamaño de registro SIMD válido.</value>
-        <comment>Please enter a valid SIMD register size.</comment>
-  </data>
-    <data name="Please enter a valid number of cores." xml:space="preserve">
-    <value>Por favor introduce un número válido de núcleos.</value>
-        <comment>Please enter a valid number of cores.</comment>
-  </data>
-    <data name="Please enter a valid number of threads per core." xml:space="preserve">
-    <value>Por favor introduce un número válido de hilos por núcleo.</value>
-        <comment>Please enter a valid number of threads per core.</comment>
-  </data>
-    <data name="Please enter a valid process." xml:space="preserve">
-    <value>Por favor introduce un proceso válido.</value>
-        <comment>Please enter a valid process.</comment>
-  </data>
-    <data name="Please enter a valid process size in nanometers." xml:space="preserve">
-    <value>Por favor introduce un tamaño de proceso en nanómetros válido.</value>
-        <comment>Please enter a valid process size in nanometers.</comment>
-  </data>
-    <data name="Please enter a valid die size in square millimeters." xml:space="preserve">
-    <value>Por favor introduce un área del chip en milímetros cuadrados válida.</value>
-        <comment>Please enter a valid die size in square millimeters.</comment>
-  </data>
-    <data name="Please enter a valid number of transistors." xml:space="preserve">
-    <value>Por favor introduce un número válido de transistores.</value>
-        <comment>Please enter a valid number of transistors.</comment>
-  </data>
-    <data name="Please enter a valid data bus size in bits." xml:space="preserve">
-    <value>Por favor introduce un tamaño válido del bus de datos en bits.</value>
-        <comment>Please enter a valid data bus size in bits.</comment>
-  </data>
-    <data name="Please enter a valid address bus size in bits." xml:space="preserve">
-    <value>Por favor introduce un tamaño válido del bus de direcciones en bits.</value>
-        <comment>Please enter a valid address bus size in bits.</comment>
-  </data>
-    <data name="Please enter a valid L1 instruction cache size in kibibytes." xml:space="preserve">
-    <value>Por favor introduce un tamaño válido de la caché L1 de instrucciones en kibibytes.</value>
-        <comment>Please enter a valid L1 instruction cache size in kibibytes.</comment>
-  </data>
-    <data name="Please enter a valid L1 data cache size in kibibytes." xml:space="preserve">
-    <value>Por favor introduce un tamaño válido de la caché L1 de datos en kibibytes.</value>
-        <comment>Please enter a valid L1 data cache size in kibibytes.</comment>
-  </data>
-    <data name="Please enter a valid L2 cache size in kibibytes." xml:space="preserve">
-    <value>Por favor introduce un tamaño válido de la caché L2 en kibibytes.</value>
-        <comment>Please enter a valid L2 cache size in kibibytes.</comment>
-  </data>
-    <data name="Please enter a valid L3 cache size in kibibytes." xml:space="preserve">
-    <value>Por favor introduce un tamaño válido de la caché L3 en kibibytes.</value>
-        <comment>Please enter a valid L3 cache size in kibibytes.</comment>
-  </data>
-    <data name="Add new (instruction set extension)" xml:space="preserve">
-    <value>Añadir nueva</value>
-        <comment>Add new, referring to an instruction set extension for a processor</comment>
-  </data>
-    <data name="Delete instruction set extension from this processor" xml:space="preserve">
-    <value>Eliminar extensión de arquitectura de este procesador</value>
-        <comment>Delete instruction set extension from this processor</comment>
-  </data>
-    <data name="Are you sure you want to delete the instruction set extension {0} from this processor?"
-          xml:space="preserve">
-    <value>¿Estás seguro de eliminar la extensión de arquitecture {0} de este procesador?</value>
-        <comment>Are you sure you want to delete the instruction set extension {0} from this processor?</comment>
-  </data>
-    <data name="Instruction set extensions implemented by this processor" xml:space="preserve">
-    <value>Extensiones de arquitectura implementadas por este procesador</value>
-        <comment>Instruction set extensions implemented by this processor</comment>
-  </data>
-    <data name="Add" xml:space="preserve">
-    <value>Añadir</value>
-        <comment>Add</comment>
-  </data>
+    </data>
 </root>

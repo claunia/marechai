@@ -127,10 +127,6 @@
         <value>Unidades de proceso de gráficos</value>
         <comment>Graphics Processing Units</comment>
     </data>
-    <data name="Graphics processing units" xml:space="preserve">
-        <value>Unidades de proceso de gráficos</value>
-        <comment>Graphics processing units section header</comment>
-    </data>
     <data name="Graphical processing unit details" xml:space="preserve">
         <value>Detalles de unidad de proceso gráfico</value>
         <comment>Graphical processing unit details</comment>

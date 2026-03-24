@@ -24,77 +24,61 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
+using Microsoft.AspNetCore.Components;
 
-namespace Marechai.Services;
+namespace Marechai.Pages.Processors;
 
-public class GpusService(Marechai.ApiClient.Client client)
+public partial class View
 {
-    public async Task<List<GpuDto>> GetAllAsync()
-    {
-        try
-        {
-            List<GpuDto>? gpus = await client.Gpus.GetAsync();
+    List<MachineDto> _computers = [];
+    List<MachineDto> _consoles  = [];
+    int              _id;
+    bool             _loaded;
+    ProcessorDto     _processor;
 
-            return gpus ?? [];
-        }
-        catch
+    [Parameter]
+    public int Id
+    {
+        get => _id;
+        set
         {
-            return [];
+            if(_id == value) return;
+
+            _id     = value;
+            _loaded = false;
         }
     }
 
-    public async Task<GpuDto?> GetByIdAsync(int id)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
-        {
-            return await client.Gpus[id].GetAsync();
-        }
-        catch
-        {
-            return null;
-        }
-    }
+        if(_loaded) return;
 
-    public async Task<List<ResolutionByGpuDto>> GetResolutionsByGpuAsync(int gpuId)
-    {
-        try
+        if(Id <= 0)
         {
-            List<ResolutionByGpuDto>? resolutions =
-                await client.ResolutionsByGpu.Gpus[gpuId].Resolutions.GetAsync();
+            _loaded = true;
 
-            return resolutions ?? [];
+            return;
         }
-        catch
-        {
-            return [];
-        }
-    }
 
-    public async Task<ResolutionDto?> GetResolutionByIdAsync(int resolutionId)
-    {
-        try
-        {
-            return await client.Resolutions[resolutionId].GetAsync();
-        }
-        catch
-        {
-            return null;
-        }
-    }
+        _processor = await Service.GetByIdAsync(Id);
 
-    public async Task<List<MachineDto>> GetMachinesByGpuAsync(int gpuId)
-    {
-        try
+        if(_processor is null)
         {
-            List<MachineDto>? machines = await client.Gpus[gpuId].Machines.GetAsync();
+            _loaded = true;
+            StateHasChanged();
 
-            return machines ?? [];
+            return;
         }
-        catch
-        {
-            return [];
-        }
+
+        List<MachineDto> machines = await Service.GetMachinesByProcessorAsync(Id);
+        _computers = machines.Where(m => m.Type != (int)MachineType.Console).ToList();
+        _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
+
+        _loaded = true;
+        StateHasChanged();
     }
 }

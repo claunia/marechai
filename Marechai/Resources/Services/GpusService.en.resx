@@ -127,10 +127,6 @@
         <value>Graphics Processing Units</value>
         <comment>Graphics Processing Units</comment>
     </data>
-    <data name="Graphics processing units" xml:space="preserve">
-        <value>Graphics processing units</value>
-        <comment>Graphics processing units section header</comment>
-    </data>
     <data name="Graphical processing unit details" xml:space="preserve">
         <value>Graphical processing unit details</value>
         <comment>Graphical processing unit details</comment>

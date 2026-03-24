@@ -29,15 +29,15 @@ using Marechai.ApiClient.Models;
 
 namespace Marechai.Services;
 
-public class GpusService(Marechai.ApiClient.Client client)
+public class ProcessorsService(Marechai.ApiClient.Client client)
 {
-    public async Task<List<GpuDto>> GetAllAsync()
+    public async Task<List<ProcessorDto>> GetAllAsync()
     {
         try
         {
-            List<GpuDto>? gpus = await client.Gpus.GetAsync();
+            List<ProcessorDto>? processors = await client.Processors.GetAsync();
 
-            return gpus ?? [];
+            return processors ?? [];
         }
         catch
         {
@@ -45,11 +45,11 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<GpuDto?> GetByIdAsync(int id)
+    public async Task<ProcessorDto?> GetByIdAsync(int id)
     {
         try
         {
-            return await client.Gpus[id].GetAsync();
+            return await client.Processors[id].GetAsync();
         }
         catch
         {
@@ -57,40 +57,34 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<ResolutionByGpuDto>> GetResolutionsByGpuAsync(int gpuId)
+    public async Task<List<MachineDto>> GetMachinesByProcessorAsync(int processorId)
     {
         try
         {
-            List<ResolutionByGpuDto>? resolutions =
-                await client.ResolutionsByGpu.Gpus[gpuId].Resolutions.GetAsync();
+            List<ProcessorByMachineDto>? junctions =
+                await client.ProcessorsByMachine.ByProcessor[processorId].GetAsync();
 
-            return resolutions ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
+            if(junctions is null || junctions.Count == 0) return [];
 
-    public async Task<ResolutionDto?> GetResolutionByIdAsync(int resolutionId)
-    {
-        try
-        {
-            return await client.Resolutions[resolutionId].GetAsync();
-        }
-        catch
-        {
-            return null;
-        }
-    }
+            var machines = new List<MachineDto>();
 
-    public async Task<List<MachineDto>> GetMachinesByGpuAsync(int gpuId)
-    {
-        try
-        {
-            List<MachineDto>? machines = await client.Gpus[gpuId].Machines.GetAsync();
+            foreach(ProcessorByMachineDto junction in junctions)
+            {
+                if(!junction.MachineId.HasValue) continue;
 
-            return machines ?? [];
+                try
+                {
+                    MachineDto? machine = await client.Machines[junction.MachineId.Value].Full.GetAsync();
+
+                    if(machine != null) machines.Add(machine);
+                }
+                catch
+                {
+                    // Skip machines that fail to load
+                }
+            }
+
+            return machines;
         }
         catch
         {

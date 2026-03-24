@@ -149,7 +149,7 @@
                         <TitleContent>
                             <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                                 <MudIcon Icon="@Icons.Material.Filled.DeveloperBoard" Size="Size.Small" Color="Color.Secondary"/>
-                                <MudText Typo="Typo.body1">
+                                <MudLink Href="@($"/processor/{processor.Id}")" Style="color: inherit;" Typo="Typo.body1">
                                     @if(processor.Speed > 0)
                                     {
                                         @(processor.GprSize > 0
@@ -160,7 +160,7 @@
                                     {
                                         @processor.Name
                                     }
-                                </MudText>
+                                </MudLink>
                             </MudStack>
                         </TitleContent>
                         <ChildContent>
@@ -175,7 +175,7 @@
                                 }
                                 <tr>
                                     <td style="width: 33%; text-align: right;">@L["Manufacturer"]</td>
-                                    <td><MudLink Href="@($"/processors/company/{processor.CompanyId}")">@processor.Company</MudLink></td>
+                                    <td><MudLink Href="@($"/company/{processor.CompanyId}")">@processor.Company</MudLink></td>
                                 </tr>
                                 @if(processor.Introduced != null)
                                 {

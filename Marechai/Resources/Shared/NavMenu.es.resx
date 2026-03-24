@@ -171,4 +171,8 @@
     <value>GPUs</value>
         <comment>Graphics Processing Units navigation link</comment>
   </data>
+    <data name="Processors" xml:space="preserve">
+    <value>Procesadores</value>
+        <comment>Processors navigation link</comment>
+  </data>
 </root>

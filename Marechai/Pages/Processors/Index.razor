@@ -1,0 +1,82 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/processors"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<ProcessorsService>
+@inject IStringLocalizer<ProcessorsService> L
+
+@if(_processors is null)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.Memory" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Processors"]</MudText>
+    </MudStack>
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white;">@string.Format(L["{0} processors found in the database."], _processors.Count)</MudChip>
+</MudPaper>
+
+@if(_processors.Any())
+{
+    <MudTextField T="string" @bind-Value="_searchText" @bind-Value:after="OnSearchChanged"
+                  Placeholder="@L["Filter processors..."]"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                  Variant="Variant.Outlined" Class="mb-4" Immediate="true"/>
+
+    <div style="height: 70vh; overflow-y: auto;">
+        <Virtualize Items="_filteredProcessors" Context="processor" ItemSize="88">
+            <a href="/processor/@processor.Id" style="text-decoration: none; color: inherit;">
+                <MudCard Elevation="1" Class="mb-2 rounded-lg" Style="cursor: pointer;">
+                    <MudCardContent>
+                        <div class="d-flex align-center gap-3">
+                            <MudIcon Icon="@Icons.Material.Filled.DeveloperBoard" Color="Color.Primary"/>
+                            <div>
+                                <MudText Typo="Typo.body1" Style="font-weight: 500;">@processor.DisplayName</MudText>
+                                @if(!string.IsNullOrEmpty(processor.Company))
+                                {
+                                    <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary);">@processor.Company</MudText>
+                                }
+                            </div>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </a>
+        </Virtualize>
+    </div>
+}
+else
+{
+    <MudAlert Severity="Severity.Info">@L["No processors found"]</MudAlert>
+}
