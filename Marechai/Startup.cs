@@ -36,6 +36,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using Microsoft.Kiota.Serialization.Form;
 using Microsoft.Kiota.Serialization.Json;
@@ -68,15 +69,18 @@ public class Startup(IConfiguration configuration)
                 BaseAddress = new Uri(apiUrl)
             };
 
-            var authProvider              = new AnonymousAuthenticationProvider();
-            var parseNodeFactory          = new JsonParseNodeFactory();
+            var authProvider    = new AnonymousAuthenticationProvider();
+            var parseNodeRegistry = new ParseNodeFactoryRegistry();
+            parseNodeRegistry.ContentTypeAssociatedFactories["application/json"] = new JsonParseNodeFactory();
+            parseNodeRegistry.ContentTypeAssociatedFactories["text/plain"] = new TextParseNodeFactory();
+            parseNodeRegistry.ContentTypeAssociatedFactories["application/x-www-form-urlencoded"] = new FormParseNodeFactory();
             var serializationWriterFactory = new Marechai.ApiClient.CompositeSerializationWriterFactory();
             serializationWriterFactory.AddFactory(new JsonSerializationWriterFactory());
             serializationWriterFactory.AddFactory(new MultipartSerializationWriterFactory());
             serializationWriterFactory.AddFactory(new TextSerializationWriterFactory());
             serializationWriterFactory.AddFactory(new FormSerializationWriterFactory());
 
-            var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory,
+            var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeRegistry,
                                                               serializationWriterFactory, httpClient);
 
             return new Marechai.ApiClient.Client(requestAdapter);

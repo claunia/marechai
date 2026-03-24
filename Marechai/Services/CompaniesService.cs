@@ -76,7 +76,9 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
     {
         try
         {
-            return await client.Companies[id].Description.Text.GetAsync();
+            var desc = await client.Companies[id].Description.GetAsync();
+
+            return desc?.Html ?? desc?.Markdown;
         }
         catch
         {

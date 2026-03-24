@@ -36,7 +36,7 @@
 @if(!_loaded)
 {
     <div class="d-flex justify-center pa-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
     </div>
 
     return;
@@ -48,8 +48,10 @@
 
     return;
 }
-<MudContainer MaxWidth="MaxWidth.Large">
-    <div class="d-flex justify-center mb-4">
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
         @if(_company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _company.LastLogo + ".svg")))
         {
             <picture>
@@ -57,286 +59,155 @@
                 <source srcset="/assets/logos/webp/1x/@(_company.LastLogo).webp,
 /assets/logos/webp/2x/@(_company.LastLogo).webp 2x,
 /assets/logos/webp/3x/@(_company.LastLogo).webp 3x" type="image/webp">
-                <img alt="" height="auto" src="/assets/logos/png/1x/@(_company.LastLogo).png"
+                <img alt="@_company.Name" height="auto" src="/assets/logos/png/1x/@(_company.LastLogo).png"
                      srcset="/assets/logos/png/1x/@(_company.LastLogo).png,
                          /assets/logos/png/2x/@(_company.LastLogo).png 2x,
-                         /assets/logos/png/3x/@(_company.LastLogo).png 3x" style="max-height: 256px; max-width: 256px"
+                         /assets/logos/png/3x/@(_company.LastLogo).png 3x" style="max-height: 128px; max-width: 200px; filter: brightness(0) invert(1);"
                      width="auto"/>
             </picture>
         }
-    </div>
-    <MudGrid>
-        @if(_logos != null && _logos.Count > 1)
-        {
-            <MudItem xs="12" md="4">
-                <MudCarousel TData="object" @bind-SelectedIndex="@_selectedIndex" ShowArrows="true" ShowBullets="true" Style="height: 320px;">
-                    @foreach(CompanyLogoDto logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
+        <MudText Typo="Typo.h3" Align="Align.Center" Style="color: white; font-weight: 700;">@_company.Name</MudText>
+    </MudStack>
+</MudPaper>
+
+@* ── Company Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["General"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            @if(_company.Founded.HasValue)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Founded"]</strong></td>
+                    @if(_company.FoundedMonthIsUnknown == true)
                     {
-                        <MudCarouselItem>
-                            <div style="width: 256px; height: 256px; margin: auto;">
-                                <picture>
-                                    <source srcset="/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
-                                    <source srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
-    /assets/logos/webp/1x/@(logo.Guid).webp 2x,
-    /assets/logos/webp/1x/@(logo.Guid).webp 3x" type="image/webp">
-                                    <img alt="" height="auto"
-                                         src="/assets/logos/png/1x/@(logo.Guid).png"
-                                         srcset="/assets/logos/png/1x/@(logo.Guid).png,
-                             /assets/logos/png/1x/@(logo.Guid).png 2x,
-                             /assets/logos/png/1x/@(logo.Guid).webp 3x" style="max-height: 256px; max-width: 256px"
-                                         width="auto"/>
-                                </picture>
-                            </div>
-                            @if(logo.Year.HasValue)
-                            {
-                                <MudText Align="Align.Center">@(string.Format(L["in use since {0}"], logo.Year))</MudText>
-                            }
-                        </MudCarouselItem>
+                        <td>@_company.Founded.Value.Year.</td>
                     }
-                </MudCarousel>
-            </MudItem>
-        }
-        <MudItem xs="12" md="8">
-            <MudSimpleTable Elevation="0" Dense="true">
-                <tbody>
-                <tr>
-                    <td colspan="2" style="text-align: center;">
-                        <MudText Typo="Typo.h6">@_company.Name</MudText>
-                    </td>
+                    else if(_company.FoundedDayIsUnknown == true)
+                    {
+                        <td>@($"{_company.Founded.Value:Y}").</td>
+                    }
+                    else
+                    {
+                        <td>@_company.Founded.Value.DateTime.ToLongDateString().</td>
+                    }
                 </tr>
-                @if(_company.Founded.HasValue)
-                {
-                    <tr>
-                        <td style="width: 33%; text-align: right;"><strong>@L["Founded"]</strong></td>
-                        @if(_company.FoundedMonthIsUnknown == true)
-                        {
-                            <td>@_company.Founded.Value.Year.</td>
-                        }
-                        else if(_company.FoundedDayIsUnknown == true)
-                        {
-                            <td>@($"{_company.Founded.Value:Y}").</td>
-                        }
-                        else
-                        {
-                            <td>@_company.Founded.Value.DateTime.ToLongDateString().</td>
-                        }
-                    </tr>
-                }
-                @if(!string.IsNullOrEmpty(_company.LegalName))
-                {
-                    <tr>
-                        <td style="width: 33%; text-align: right;"><strong>@L["Legal name"]</strong></td>
-                        <td>@_company.LegalName</td>
-                    </tr>
-                }
+            }
+            @if(!string.IsNullOrEmpty(_company.LegalName))
+            {
                 <tr>
-                    <td style="width: 33%; text-align: right;"><strong>@L["Country"]</strong></td>
-                    <td>
-                        @if(_company.Country != null)
-                        {
-                            <a href="/companies/country/@_company.CountryId">
-                                @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{_company.CountryId:D3}.svg")))
-                                {
-                                    <picture>
-                                        <source srcset="/assets/flags/countries/@($"{_company.CountryId:D3}").svg"
-                                                type="image/svg+xml">
-                                        <source srcset="/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp,
+                    <td style="width: 33%; text-align: right;"><strong>@L["Legal name"]</strong></td>
+                    <td>@_company.LegalName</td>
+                </tr>
+            }
+            <tr>
+                <td style="width: 33%; text-align: right;"><strong>@L["Country"]</strong></td>
+                <td>
+                    @if(_company.Country != null)
+                    {
+                        <MudLink Href="@($"/companies/country/{_company.CountryId}")">
+                            @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{_company.CountryId:D3}.svg")))
+                            {
+                                <picture>
+                                    <source srcset="/assets/flags/countries/@($"{_company.CountryId:D3}").svg" type="image/svg+xml">
+                                    <source srcset="/assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp,
         /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 2x,
         /assets/flags/countries/webp/1x/@($"{_company.CountryId:D3}").webp 3x" type="image/webp">
-                                        <img alt="" height="32"
-                                             src="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png"
-                                             srcset="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png,
+                                    <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png"
+                                         srcset="/assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png,
                                  /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").png 2x,
                                  /assets/flags/countries/png/1x/@($"{_company.CountryId:D3}").webp 3x"/>
-                                    </picture>
-                                }
-                                @L[_company.Country]
-                            </a>
+                                </picture>
+                            }
+                            @L[_company.Country]
+                        </MudLink>
+                    }
+                    else
+                    {
+                        @L["Unknown (country)"]
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 33%; text-align: right;"><strong>@L["Status"]</strong></td>
+                @switch(_company.Status)
+                {
+                    case (int)CompanyStatus.Unknown:
+                        <td>@L["Current company status is unknown."]</td>
+                        break;
+                    case (int)CompanyStatus.Active:
+                        <td>@L["Company is active."]</td>
+                        break;
+                    case (int)CompanyStatus.Sold:
+                        if(_company.Sold != null)
+                        {
+                            if(_soldTo != null)
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</MudLink></td> }
+                            else
+                            { <td>@string.Format(L["Company sold on {0} to an unknown company."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
                         }
                         else
                         {
-                            @L["Unknown (country)"]
+                            if(_soldTo != null)
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company sold to {0} on an unknown date."], _soldTo.Name)</MudLink></td> }
+                            else
+                            { <td>@L["Company was sold to an unknown company on an unknown date."]</td> }
                         }
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width: 33%; text-align: right;"><strong>@L["Status"]</strong></td>
-                    @switch(_company.Status)
-                    {
-                        case (int)CompanyStatus.Unknown:
-                            <td>@L["Current company status is unknown."]</td>
-
-                            break;
-                        case (int)CompanyStatus.Active:
-                            <td>@L["Company is active."]</td>
-
-                            break;
-                        case (int)CompanyStatus.Sold:
-                            if(_company.Sold != null)
-                            {
-                                if(_soldTo != null)
-                                {
-                                    <td>
-                                        <a href="/company/@_soldTo.Id">
-                                            @string.Format(L["Company sold to {0} on {1}."],
-                                                           _soldTo.Name,
-                                                           _company.SoldMonthIsUnknown == true
-                                                               ? $"{_company.Sold.Value.Year}"
-                                                               : _company.SoldDayIsUnknown == true
-                                                                   ? $"{_company.Sold.Value:Y}"
-                                                                   : _company.SoldMonthIsUnknown == true
-                                                                       ? $"{_company.Sold.Value.Year}"
-                                                                       : _company.SoldDayIsUnknown == true
-                                                                           ? $"{_company.Sold.Value:Y}"
-                                                                           : _company.Sold.Value.DateTime.ToLongDateString())
-                                        </a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>@string.Format(L["Company sold on {0} to an unknown company."],
-                                                       _company.SoldMonthIsUnknown == true
-                                                           ? $"{_company.Sold.Value.Year}"
-                                                           : _company.SoldDayIsUnknown == true
-                                                               ? $"{_company.Sold.Value:Y}"
-                                                               : _company.Sold.Value.DateTime.ToLongDateString())</td>
-                                }
-                            }
+                        break;
+                    case (int)CompanyStatus.Merged:
+                        if(_company.Sold != null)
+                        {
+                            if(_soldTo != null)
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company merged on {0} to form {1}."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString(), _soldTo.Name)</MudLink></td> }
                             else
-                            {
-                                if(_soldTo != null)
-                                {
-                                    <td>
-                                        <a href="/company/@_soldTo.Id">
-                                            @string.Format(L["Company sold to {0} on an unknown date."], _soldTo.Name)
-                                        </a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>@L["Company was sold to an unknown company on an unknown date."]</td>
-                                }
-                            }
-
-                            break;
-                        case (int)CompanyStatus.Merged:
-                            if(_company.Sold != null)
-                            {
-                                if(_soldTo != null)
-                                {
-                                    <td>
-                                        <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."],
-                                                                                      _company.SoldMonthIsUnknown == true
-                                                                                          ? $"{_company.Sold.Value.Year}"
-                                                                                          : _company.SoldDayIsUnknown == true
-                                                                                              ? $"{_company.Sold.Value:Y}"
-                                                                                              : _company.Sold.Value.DateTime.ToLongDateString(),
-                                                                                      _soldTo.Name)</a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>@string.Format(L["Company merged on {0} to form an unknown company."],
-                                                       _company.SoldMonthIsUnknown == true
-                                                           ? $"{_company.Sold.Value.Year}"
-                                                           : _company.SoldDayIsUnknown == true
-                                                               ? $"{_company.Sold.Value:Y}"
-                                                               : _company.Sold.Value.DateTime.ToLongDateString())</td>
-                                }
-                            }
+                            { <td>@string.Format(L["Company merged on {0} to form an unknown company."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                        }
+                        else
+                        {
+                            if(_soldTo != null)
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company merged on an unknown date to form {0}."], _soldTo.Name)</MudLink></td> }
                             else
-                            {
-                                if(_soldTo != null)
-                                {
-                                    <td>
-                                        <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on an unknown date to form {0}."], _soldTo.Name)</a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>@L["Company merged to form an unknown company on an unknown date."]</td>
-                                }
-                            }
-
-                            break;
-                        case (int)CompanyStatus.Bankrupt:
-                            if(_company.Sold != null)
-                            {
-                                <td>@string.Format(L["Company declared bankruptcy on {0}."],
-                                                   _company.SoldMonthIsUnknown == true
-                                                       ? $"{_company.Sold.Value.Year}"
-                                                       : _company.SoldDayIsUnknown == true
-                                                           ? $"{_company.Sold.Value:Y}"
-                                                           : _company.Sold.Value.DateTime.ToLongDateString())</td>
-                            }
+                            { <td>@L["Company merged to form an unknown company on an unknown date."]</td> }
+                        }
+                        break;
+                    case (int)CompanyStatus.Bankrupt:
+                        if(_company.Sold != null)
+                        { <td>@string.Format(L["Company declared bankruptcy on {0}."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                        else
+                        { <td>@L["Company declared bankruptcy on an unknown date."]</td> }
+                        break;
+                    case (int)CompanyStatus.Defunct:
+                        if(_company.Sold != null)
+                        { <td>@string.Format(L["Company ceased operations on {0}."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                        else
+                        { <td>@L["Company ceased operations on an unknown date."]</td> }
+                        break;
+                    case (int)CompanyStatus.Renamed:
+                        if(_company.Sold != null)
+                        {
+                            if(_soldTo != null)
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</MudLink></td> }
                             else
-                            {
-                                <td>@L["Company declared bankruptcy on an unknown date."]</td>
-                            }
-
-                            break;
-                        case (int)CompanyStatus.Defunct:
-                            if(_company.Sold != null)
-                            {
-                                <td>@string.Format(L["Company ceased operations on {0}."],
-                                                   _company.SoldMonthIsUnknown == true
-                                                       ? $"{_company.Sold.Value.Year}"
-                                                       : _company.SoldDayIsUnknown == true
-                                                           ? $"{_company.Sold.Value:Y}"
-                                                           : _company.Sold.Value.DateTime.ToLongDateString())</td>
-                            }
+                            { <td>@string.Format(L["Company was renamed on {0} to an unknown name."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                        }
+                        else
+                        {
+                            if(_soldTo != null)
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company renamed to {0} on an unknown date."], _soldTo.Name)</MudLink></td> }
                             else
-                            {
-                                <td>@L["Company ceased operations on an unknown date."]</td>
-                            }
-
-                            break;
-                        case (int)CompanyStatus.Renamed:
-                            if(_company.Sold != null)
-                            {
-                                if(_soldTo != null)
-                                {
-                                    <td>
-                                        <a href="/company/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."],
-                                                                                      _soldTo.Name,
-                                                                                      _company.SoldMonthIsUnknown == true
-                                                                                          ? $"{_company.Sold.Value.Year}"
-                                                                                          : _company.SoldDayIsUnknown == true
-                                                                                              ? $"{_company.Sold.Value:Y}"
-                                                                                              : _company.Sold.Value.DateTime.ToLongDateString())</a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>@string.Format(L["Company was renamed on {0} to an unknown name."],
-                                                       _company.SoldMonthIsUnknown == true
-                                                           ? $"{_company.Sold.Value.Year}"
-                                                           : _company.SoldDayIsUnknown == true
-                                                               ? $"{_company.Sold.Value:Y}"
-                                                               : _company.Sold.Value.DateTime.ToLongDateString())</td>
-                                }
-                            }
-                            else
-                            {
-                                if(_soldTo != null)
-                                {
-                                    <td>
-                                        <a href="/company/@_soldTo.Id">
-                                            @string.Format(L["Company renamed to {0} on an unknown date."], _soldTo.Name)
-                                        </a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>@L["Company renamed to an unknown name on an unknown date."]</td>
-                                }
-                            }
-
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                </tr>
+                            { <td>@L["Company renamed to an unknown name on an unknown date."]</td> }
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            </tr>
+            @if(!string.IsNullOrEmpty(_company.Address))
+            {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["Address"]</strong></td>
                     <td>
@@ -350,103 +221,145 @@
                         @_company.PostalCode @_company.Province
                     </td>
                 </tr>
-                @if(!string.IsNullOrEmpty(_company.Website) || !string.IsNullOrEmpty(_company.Twitter) || !string.IsNullOrEmpty(_company.Facebook))
-                {
-                    <tr>
-                        <td style="width: 33%; text-align: right;"><strong>@L["Links"]</strong></td>
-                        <td>
-                            <MudStack Spacing="1">
-                                @if(!string.IsNullOrEmpty(_company.Website))
-                                {
-                                    <MudLink Href="@_company.Website" Target="_blank">@L["Website"]</MudLink>
-                                }
-                                @if(!string.IsNullOrEmpty(_company.Twitter))
-                                {
-                                    <MudLink Href="@($"https://www.twitter.com/{_company.Twitter}")" Target="_blank">Twitter</MudLink>
-                                }
-                                @if(!string.IsNullOrEmpty(_company.Facebook))
-                                {
-                                    <MudLink Href="@($"https://www.facebook.com/{_company.Facebook}")" Target="_blank">Facebook</MudLink>
-                                }
-                            </MudStack>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </MudSimpleTable>
-        </MudItem>
-    </MudGrid>
-    <MudExpansionPanels Class="mt-4">
-        @if(_computers.Count > 0)
-        {
-            <MudExpansionPanel>
-                <TitleContent>
-                    <div class="d-flex align-center gap-2">
-                        <MudChip T="string" Color="Color.Success" Size="Size.Small">@_computers.Count</MudChip>
-                        <MudText>@L["computers known."]</MudText>
-                    </div>
-                </TitleContent>
-                <ChildContent>
-                    <MudList T="MachineDto" Dense="true">
-                        @foreach(MachineDto computer in _computers)
-                        {
-                            <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
-                                @computer.Name
-                            </MudListItem>
-                        }
-                    </MudList>
-                </ChildContent>
-                </MudExpansionPanel>
             }
-            else
+            @if(!string.IsNullOrEmpty(_company.Website) || !string.IsNullOrEmpty(_company.Twitter) || !string.IsNullOrEmpty(_company.Facebook))
             {
-                <MudExpansionPanel Disabled="true">
-                    <TitleContent>
-                        <div class="d-flex align-center gap-2">
-                            <MudChip T="string" Color="Color.Error" Size="Size.Small">0</MudChip>
-                            <MudText>@L["computers known."]</MudText>
-                        </div>
-                    </TitleContent>
-                </MudExpansionPanel>
-            }
-            @if(_consoles.Count > 0)
-            {
-                <MudExpansionPanel>
-                    <TitleContent>
-                        <div class="d-flex align-center gap-2">
-                            <MudChip T="string" Color="Color.Success" Size="Size.Small">@_consoles.Count</MudChip>
-                            <MudText>@L["videogame consoles known."]</MudText>
-                        </div>
-                    </TitleContent>
-                    <ChildContent>
-                        <MudList T="MachineDto" Dense="true">
-                            @foreach(MachineDto console in _consoles)
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Links"]</strong></td>
+                    <td>
+                        <MudStack Row="true" Spacing="2">
+                            @if(!string.IsNullOrEmpty(_company.Website))
                             {
-                                <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
-                                    @console.Name
-                                </MudListItem>
+                                <MudButton Href="@_company.Website" Target="_blank" Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.Language">@L["Website"]</MudButton>
                             }
-                        </MudList>
-                    </ChildContent>
-                </MudExpansionPanel>
+                            @if(!string.IsNullOrEmpty(_company.Twitter))
+                            {
+                                <MudButton Href="@($"https://www.twitter.com/{_company.Twitter}")" Target="_blank" Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">Twitter</MudButton>
+                            }
+                            @if(!string.IsNullOrEmpty(_company.Facebook))
+                            {
+                                <MudButton Href="@($"https://www.facebook.com/{_company.Facebook}")" Target="_blank" Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">Facebook</MudButton>
+                            }
+                        </MudStack>
+                    </td>
+                </tr>
             }
-            else
-            {
-                <MudExpansionPanel Disabled="true">
-                    <TitleContent>
-                        <div class="d-flex align-center gap-2">
-                            <MudChip T="string" Color="Color.Error" Size="Size.Small">0</MudChip>
-                            <MudText>@L["videogame consoles known."]</MudText>
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Logo History Card ── *@
+@if(_logos != null && _logos.Count > 1)
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Logo history"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary">@_logos.Count(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg")))</MudChip>
+            </MudStack>
+            <MudCarousel TData="object" @bind-SelectedIndex="@_selectedIndex" ShowArrows="true" ShowBullets="true" Style="height: 320px;">
+                @foreach(CompanyLogoDto logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
+                {
+                    <MudCarouselItem>
+                        <div class="d-flex flex-column align-center justify-center" style="height: 100%;">
+                            <picture>
+                                <source srcset="/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
+                                <source srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
+    /assets/logos/webp/1x/@(logo.Guid).webp 2x,
+    /assets/logos/webp/1x/@(logo.Guid).webp 3x" type="image/webp">
+                                <img alt="" height="auto" src="/assets/logos/png/1x/@(logo.Guid).png"
+                                     srcset="/assets/logos/png/1x/@(logo.Guid).png,
+                             /assets/logos/png/1x/@(logo.Guid).png 2x,
+                             /assets/logos/png/1x/@(logo.Guid).webp 3x" style="max-height: 200px; max-width: 280px"
+                                     width="auto"/>
+                            </picture>
+                            @if(logo.Year.HasValue)
+                            {
+                                <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-2">@(string.Format(L["in use since {0}"], logo.Year))</MudText>
+                            }
                         </div>
-                    </TitleContent>
-                </MudExpansionPanel>
-            }
-    </MudExpansionPanels>
-    @if(_description != null)
-    {
-        <MudDivider Class="my-4"/>
-        <MudPaper Elevation="0" Class="pa-4">
-            @((MarkupString)_description)
-        </MudPaper>
-    }
-</MudContainer>
+                    </MudCarouselItem>
+                }
+            </MudCarousel>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── Computers Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_computers.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Computers"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_computers.Count > 0 ? Color.Success : Color.Error)">@_computers.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineDto" Dense="true">
+                @foreach(MachineDto computer in _computers)
+                {
+                    <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
+                        @computer.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Consoles Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_consoles.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.SportsEsports" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Consoles"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_consoles.Count > 0 ? Color.Success : Color.Error)">@_consoles.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineDto" Dense="true">
+                @foreach(MachineDto console in _consoles)
+                {
+                    <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
+                        @console.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Description Card ── *@
+@if(!string.IsNullOrWhiteSpace(_description))
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Description"]</MudText>
+            </MudStack>
+            <div style="color: var(--mud-palette-text-primary); overflow-wrap: break-word; word-break: break-word;">
+                <style>
+                    .company-description, .company-description * {
+                        color: inherit !important;
+                    }
+                    .company-description img {
+                        max-width: 100%;
+                        height: auto;
+                    }
+                    .company-description pre {
+                        overflow-x: auto;
+                        max-width: 100%;
+                    }
+                </style>
+                <div class="company-description mud-typography mud-typography-body1" style="padding: 8px;">
+                    @((MarkupString)_description)
+                </div>
+            </div>
+        </MudCardContent>
+    </MudCard>
+}
