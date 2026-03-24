@@ -1,0 +1,84 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/magazines/all"
+@page "/magazines/year/{Year:int}"
+@page "/magazines/{StartingCharacter}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<MagazinesService>
+@inject IStringLocalizer<MagazinesService> L
+
+@if(_magazines is null)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+    </div>
+
+    return;
+}
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudText Typo="Typo.h5" Style="color: white;">@L["Search results:"]</MudText>
+    @if(_character.HasValue)
+    {
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Magazines starting with {0}"], _character)</MudText>
+    }
+    else if(Year.HasValue)
+    {
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Magazines published in {0}"], Year)</MudText>
+    }
+</MudPaper>
+
+@if(_magazines?.Count > 0)
+{
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} magazines found in the database."], _magazines.Count)</MudText>
+    <MudList T="MagazineDto" Dense="true">
+        @foreach(MagazineDto magazine in _magazines)
+        {
+            <MudListItem T="MagazineDto" Href="@($"/magazine/{magazine.Id}")" Icon="@Icons.Material.Filled.MenuBook">
+                <div>
+                    <MudText Typo="Typo.body1">@magazine.Title</MudText>
+                    @if(magazine.FirstPublication.HasValue)
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">@magazine.FirstPublication.Value.Year</MudText>
+                    }
+                </div>
+            </MudListItem>
+        }
+    </MudList>
+}
+else
+{
+    @if(_character.HasValue)
+    {
+        <MudAlert Severity="Severity.Info">@L["There are no magazines found in the database that start with this letter."]</MudAlert>
+    }
+    else if(Year.HasValue)
+    {
+        <MudAlert Severity="Severity.Info">@L["There are no magazines found published this year."]</MudAlert>
+    }
+}

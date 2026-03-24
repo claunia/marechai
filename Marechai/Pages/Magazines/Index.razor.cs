@@ -1,5 +1,4 @@
-﻿@{
-    /******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -23,18 +22,27 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
-}
-@inject StringLocalizer<NavMenu> L
 
-<MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper">@L["News"]</MudNavLink>
-    <MudNavLink Href="/companies" Icon="@Icons.Material.Filled.Business">@L["Companies"]</MudNavLink>
-    <MudNavLink Href="/computers" Icon="@Icons.Material.Filled.Computer">@L["Computers"]</MudNavLink>
-    <MudNavLink Href="/consoles" Icon="@Icons.Material.Filled.SportsEsports">@L["Consoles"]</MudNavLink>
-    <MudNavLink Href="/books" Icon="@Icons.Material.Filled.Book">@L["Books"]</MudNavLink>
-    <MudNavLink Href="/documents" Icon="@Icons.Material.Filled.Article">@L["Documents"]</MudNavLink>
-    <MudNavLink Href="/magazines" Icon="@Icons.Material.Filled.MenuBook">@L["Magazines"]</MudNavLink>
-    <MudNavLink Href="/gpus" Icon="@Icons.Material.Filled.Tv">@L["GPUs"]</MudNavLink>
-    <MudNavLink Href="/processors" Icon="@Icons.Material.Filled.Memory">@L["Processors"]</MudNavLink>
-    <MudNavLink Href="/soundsynths" Icon="@Icons.Material.Filled.MusicNote">@L["Sound synthesizers"]</MudNavLink>
-</MudNavMenu>
+using System.Threading.Tasks;
+
+namespace Marechai.Pages.Magazines;
+
+public partial class Index
+{
+    bool _loaded;
+    int  _magazines;
+    int  _maxYear;
+    int  _minYear;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(_loaded) return;
+
+        _magazines = await Service.GetMagazinesCountAsync();
+        _minYear   = await Service.GetMinimumYearAsync();
+        _maxYear   = await Service.GetMaximumYearAsync();
+
+        _loaded = true;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,233 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/magazine/{Id:long}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<MagazinesService>
+@inject IStringLocalizer<MagazinesService> L
+@inject ApiAssetUrlProvider                Assets
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_magazine is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["Magazine not found."]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.MenuBook" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@_magazine.Title</MudText>
+    </MudStack>
+</MudPaper>
+
+@* ── General Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["General"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            <tr>
+                <td style="width: 33%; text-align: right;"><strong>@L["Title"]</strong></td>
+                <td>@_magazine.Title</td>
+            </tr>
+            @if(!string.IsNullOrEmpty(_magazine.NativeTitle))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Native title"]</strong></td>
+                    <td>@_magazine.NativeTitle</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_magazine.Issn))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["ISSN"]</strong></td>
+                    <td>@_magazine.Issn</td>
+                </tr>
+            }
+            @if(_magazine.FirstPublication.HasValue)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["First publication"]</strong></td>
+                    <td>@_magazine.FirstPublication.Value.DateTime.ToLongDateString()</td>
+                </tr>
+            }
+            @if(_magazine.Published.HasValue)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Published"]</strong></td>
+                    <td>@_magazine.Published.Value.DateTime.ToLongDateString()</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_magazine.Country))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Country"]</strong></td>
+                    <td>
+                        @if(_magazine.CountryId.HasValue)
+                        {
+                            <picture>
+                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{_magazine.CountryId:D3}").svg" type="image/svg+xml">
+                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_magazine.CountryId:D3}").webp" type="image/webp">
+                                <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_magazine.CountryId:D3}").png"/>
+                            </picture>
+                        }
+                        @L[_magazine.Country]
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Synopsis Card ── *@
+@if(!string.IsNullOrWhiteSpace(_synopsis?.Text))
+{
+    <MudCard Elevation="2" Class="mb-4 rounded-lg">
+        <MudCardContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+                <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Synopsis"]</MudText>
+            </MudStack>
+            <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">@_synopsis.Text</MudText>
+        </MudCardContent>
+    </MudCard>
+}
+
+@* ── People Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_people.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["People"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_people.Count > 0 ? Color.Success : Color.Error)">@_people.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="PersonByMagazineDto" Dense="true">
+                @foreach(PersonByMagazineDto person in _people)
+                {
+                    <MudListItem T="PersonByMagazineDto" Icon="@Icons.Material.Filled.Person">
+                        @(person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}".Trim())
+                        @if(!string.IsNullOrEmpty(person.Role))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @person.Role</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Companies Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_companies.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Companies"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_companies.Count > 0 ? Color.Success : Color.Error)">@_companies.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="CompanyByMagazineDto" Dense="true">
+                @foreach(CompanyByMagazineDto company in _companies)
+                {
+                    <MudListItem T="CompanyByMagazineDto" Href="@($"/company/{company.CompanyId}")" Icon="@Icons.Material.Filled.Business">
+                        @company.Company
+                        @if(!string.IsNullOrEmpty(company.Role))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @company.Role</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Machines Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_machines.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Machines"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_machines.Count > 0 ? Color.Success : Color.Error)">@_machines.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MagazineByMachineDto" Dense="true">
+                @foreach(MagazineByMachineDto machine in _machines)
+                {
+                    <MudListItem T="MagazineByMachineDto" Href="@($"/machine/{machine.MachineId}")" Icon="@Icons.Material.Filled.Computer">
+                        @machine.Machine
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Machine Families Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_machineFamilies.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.DevicesOther" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Machine families"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_machineFamilies.Count > 0 ? Color.Success : Color.Error)">@_machineFamilies.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MagazineByMachineFamilyDto" Dense="true">
+                @foreach(MagazineByMachineFamilyDto family in _machineFamilies)
+                {
+                    <MudListItem T="MagazineByMachineFamilyDto" Icon="@Icons.Material.Filled.DevicesOther">
+                        @family.MachineFamily
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>

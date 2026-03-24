@@ -47,5 +47,6 @@ public static class Register
         services.AddScoped<SoundSynthsService>();
         services.AddScoped<BooksService>();
         services.AddScoped<DocumentsService>();
+        services.AddScoped<MagazinesService>();
     }
 }
