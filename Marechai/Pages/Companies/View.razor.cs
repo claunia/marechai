@@ -24,7 +24,6 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
@@ -42,7 +41,7 @@ public partial class View
     int                 _id;
     bool                _loaded;
     List<CompanyLogoDto> _logos;
-    string              _selectedSlide;
+    int                 _selectedIndex;
     CompanyDto          _soldTo;
 
     [Parameter]
@@ -57,9 +56,6 @@ public partial class View
             _loaded = false;
         }
     }
-
-    public bool ComputersCollapsed { get; set; } = true;
-    public bool ConsolesCollapsed  { get; set; } = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -82,27 +78,8 @@ public partial class View
         _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);
         _logos       = await CompanyLogosService.GetByCompany(Id);
 
-        _selectedSlide = _logos
-                        .FirstOrDefault(logo => File.Exists(Path.Combine(Host.WebRootPath,
-                                                                         "assets/logos",
-                                                                         logo.Guid + ".svg")))
-                       ?.Guid.ToString();
-
         _loaded = true;
         StateHasChanged();
     }
 
-    void CollapseComputers()
-    {
-        if(_computers.Count == 0) return;
-
-        ComputersCollapsed = !ComputersCollapsed;
-    }
-
-    void CollapseConsoles()
-    {
-        if(_consoles.Count == 0) return;
-
-        ConsolesCollapsed = !ConsolesCollapsed;
-    }
 }

@@ -12,8 +12,7 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap"/>
-    <PackageReference Include="Blazorise.Icons.FontAwesome"/>
+    <PackageReference Include="MudBlazor"/>
     <PackageReference Include="Markdig"/>
     <PackageReference Include="Microsoft.Kiota.Abstractions"/>
     <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary"/>

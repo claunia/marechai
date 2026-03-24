@@ -26,9 +26,7 @@
 using System;
 using System.Globalization;
 using System.Net.Http;
-using Blazorise;
-using Blazorise.Bootstrap;
-using Blazorise.Icons.FontAwesome;
+using MudBlazor.Services;
 using Marechai.Services;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Builder;
@@ -59,9 +57,7 @@ public class Startup(IConfiguration configuration)
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddBlazorise(options => options.ChangeTextOnKeyPress = true)
-                .AddBootstrapProviders()
-                .AddFontAwesomeIcons();
+        services.AddMudServices();
 
         services.AddSingleton(_ =>
         {
@@ -127,8 +123,6 @@ public class Startup(IConfiguration configuration)
         app.UseMiddleware<SecurityHeadersMiddleware>();
 
         app.UseRouting();
-
-        app.ApplicationServices.UseBootstrapProviders().UseFontAwesomeIcons();
 
         app.UseEndpoints(endpoints =>
         {

@@ -67,10 +67,10 @@
         @if(_logos != null && _logos.Count > 1)
         {
             <div class="col-3">
-                <Carousel @bind-SelectedSlide="@_selectedSlide" ShowControls="true" ShowIndicators="true">
+                <MudCarousel TData="object" @bind-SelectedIndex="@_selectedIndex" ShowArrows="true" ShowBullets="true" Style="height: 320px;">
                     @foreach(CompanyLogoDto logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
                     {
-                        <CarouselSlide Name="@logo.Guid.ToString()">
+                        <MudCarouselItem>
                             <div style="width: 256px; height: 256px; margin: auto;">
                                 <picture>
                                     <source srcset="/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
@@ -90,9 +90,9 @@
                                 <div
                                     style="text-align: center;">@(string.Format(L["in use since {0}"], logo.Year))</div>
                             }
-                        </CarouselSlide>
+                        </MudCarouselItem>
                     }
-                </Carousel>
+                </MudCarousel>
             </div>
         }
         <div class="col-6">
@@ -374,24 +374,15 @@
             </table>
         </div>
     </div>
-    @{
-        // TODO: Accordion
-    }
-    <div class="row" id="itemsAccordion">
-        <div class="card">
+    <div class="row">
+        <MudExpansionPanels>
             @if(_computers.Count > 0)
             {
-                <div class="card-header" id="headingComputers">
-                    <h5 class="mb-0">
-                        <button aria-controls="collapseComputers" aria-expanded="false" class="btn btn-info"
-                                data-target="#collapseComputers" data-toggle="collapse" @onclick="@CollapseComputers">
-                            @((MarkupString)string.Format(L["<ok>{0}</ok> computers known."], _computers.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>", "</span>"))
-                        </button>
-                    </h5>
-                </div>
-                <div aria-labelledby="headingComputers" class="@(ComputersCollapsed ? "collapse" : "")"
-                     data-parent="#itemsAccordion" id="collapseComputers">
-                    <div class="card-body">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        @((MarkupString)string.Format(L["<ok>{0}</ok> computers known."], _computers.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>", "</span>"))
+                    </TitleContent>
+                    <ChildContent>
                         @foreach(MachineDto computer in _computers)
                         {
                             <a href="/machine/@computer.Id">
@@ -399,32 +390,24 @@
                             </a>
                             <br/>
                         }
-                    </div>
-                </div>
+                    </ChildContent>
+                </MudExpansionPanel>
             }
             else
             {
-                <div class="card-header" id="headingComputers">
-                    <h5 class="mb-0">
-                        <button class="btn btn-info">
-                            @((MarkupString)L["<red>No</red> computers known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>", "</span>"))
-                        </button>
-                    </h5>
-                </div>
+                <MudExpansionPanel Disabled="true">
+                    <TitleContent>
+                        @((MarkupString)L["<red>No</red> computers known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>", "</span>"))
+                    </TitleContent>
+                </MudExpansionPanel>
             }
             @if(_consoles.Count > 0)
             {
-                <div class="card-header" id="headingConsoles">
-                    <h5 class="mb-0">
-                        <button aria-controls="collapseConsoles" aria-expanded="false" class="btn btn-info"
-                                data-target="#collapseConsoles" data-toggle="collapse" @onclick="@CollapseConsoles">
-                            @((MarkupString)string.Format(L["<ok>{0}</ok> videogame consoles known."], _consoles.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>", "</span>"))
-                        </button>
-                    </h5>
-                </div>
-                <div aria-labelledby="headingConsoles" class="@(ConsolesCollapsed ? "collapse" : "")"
-                     data-parent="#itemsAccordion" id="collapseConsoles">
-                    <div class="card-body">
+                <MudExpansionPanel>
+                    <TitleContent>
+                        @((MarkupString)string.Format(L["<ok>{0}</ok> videogame consoles known."], _consoles.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>", "</span>"))
+                    </TitleContent>
+                    <ChildContent>
                         @foreach(MachineDto console in _consoles)
                         {
                             <a href="/machine/@console.Id">
@@ -432,20 +415,18 @@
                             </a>
                             <br/>
                         }
-                    </div>
-                </div>
+                    </ChildContent>
+                </MudExpansionPanel>
             }
             else
             {
-                <div class="card-header" id="headingComputers">
-                    <h5 class="mb-0">
-                        <button class="btn btn-info">
-                            @((MarkupString)L["<red>No</red> videogame consoles known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>", "</span>"))
-                        </button>
-                    </h5>
-                </div>
+                <MudExpansionPanel Disabled="true">
+                    <TitleContent>
+                        @((MarkupString)L["<red>No</red> videogame consoles known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>", "</span>"))
+                    </TitleContent>
+                </MudExpansionPanel>
             }
-        </div>
+        </MudExpansionPanels>
     </div>
     @if(_description != null)
     {
@@ -455,18 +436,3 @@
         </div>
     }
 </div>
-<style>
-    .carousel-indicators {
-        position: absolute;
-        bottom: -50px;
-    }
-
-    .carousel-indicators li {
-        background-color: black;
-    }
-
-    .carousel-control-prev,
-    .carousel-control-next {
-        filter: sepia(100%) saturate(200%) brightness(0%) hue-rotate(330deg);
-    }
-</style>

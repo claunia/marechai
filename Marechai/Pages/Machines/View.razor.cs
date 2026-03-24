@@ -33,13 +33,10 @@ namespace Marechai.Pages.Machines;
 
 public partial class View
 {
-    bool[]           _gpuVisible;
     int              _id;
     bool             _loaded;
     MachineDto _machine;
     List<Guid>       _photos;
-    bool[]           _processorVisible;
-    bool[]           _soundVisible;
 
     [Parameter]
     public int Id
@@ -60,9 +57,6 @@ public partial class View
 
         _machine = await Service.GetMachine(Id);
 
-        _processorVisible = new bool[_machine.Processors.Count];
-        _gpuVisible       = new bool[_machine.Gpus.Count];
-        _soundVisible     = new bool[_machine.SoundSynthesizers.Count];
         _photos           = await MachinePhotosService.GetGuidsByMachineAsync(Id);
 
         _loaded = true;
