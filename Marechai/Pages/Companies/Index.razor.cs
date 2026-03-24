@@ -24,6 +24,7 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
@@ -34,9 +35,11 @@ public partial class Index
 {
     char?                  _character;
     List<CompanyDto> _companies;
+    List<CompanyDto> _filteredCompanies;
     int?                   _countryId;
     string                 _countryName;
     bool                   _loaded;
+    string                 _searchText;
     string                 _startingCharacter;
 
     [Parameter]
@@ -95,7 +98,15 @@ public partial class Index
         }
 
         _companies ??= await Service.GetAsync();
+        _filteredCompanies = _companies;
         _loaded    =   true;
         StateHasChanged();
+    }
+
+    private void OnSearchChanged()
+    {
+        _filteredCompanies = string.IsNullOrWhiteSpace(_searchText)
+            ? _companies
+            : _companies.Where(c => c.Name != null && c.Name.Contains(_searchText, System.StringComparison.OrdinalIgnoreCase)).ToList();
     }
 }

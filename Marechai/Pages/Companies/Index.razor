@@ -36,52 +36,60 @@
 @if(_companies is null)
 {
     <div class="d-flex justify-center pa-8">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
     </div>
 
     return;
 }
 
-@if(CountryId.HasValue)
-{
-    <div class="d-flex justify-center align-center gap-2 mb-4">
-        <MudText Typo="Typo.h6">@string.Format(L["Companies founded in {0}."], L[_countryName])</MudText>
-        @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{CountryId:D3}.svg")))
-        {
-            <picture>
-                <source srcset="/assets/flags/countries/@($"{CountryId:D3}").svg" type="image/svg+xml">
-                <source srcset="/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.Business" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Companies"]</MudText>
+    </MudStack>
+    @if(CountryId.HasValue)
+    {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Companies founded in {0}."], L[_countryName])</MudText>
+            @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{CountryId:D3}.svg")))
+            {
+                <picture>
+                    <source srcset="/assets/flags/countries/@($"{CountryId:D3}").svg" type="image/svg+xml">
+                    <source srcset="/assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp,
         /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 2x,
         /assets/flags/countries/webp/1x/@($"{CountryId:D3}").webp 3x" type="image/webp">
-                <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png"
-                     srcset="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
+                    <img alt="" height="32" src="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png"
+                         srcset="/assets/flags/countries/png/1x/@($"{CountryId:D3}").png,
                                  /assets/flags/countries/png/1x/@($"{CountryId:D3}").png 2x,
                                  /assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x"/>
-            </picture>
-        }
-    </div>
-}
-
-@if(_character.HasValue)
-{
-    <div class="d-flex justify-center mb-4">
-        <MudText Typo="Typo.h6">@string.Format(L["Companies which name starts with {0}."], _character)</MudText>
-    </div>
-}
+                </picture>
+            }
+        </MudStack>
+    }
+    else if(_character.HasValue)
+    {
+        <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Companies which name starts with {0}."], _character)</MudText>
+    }
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white;">@string.Format(L["{0} companies found in the database."], _companies.Count())</MudChip>
+</MudPaper>
 
 @if(_companies.Any())
 {
-    <MudText Typo="Typo.body1" Class="mb-2">@string.Format(L["{0} companies found in the database."], _companies.Count())</MudText>
-    <MudDivider Class="mb-4"/>
-    <MudList T="CompanyDto" Dense="true">
-        @foreach(CompanyDto company in _companies)
-        {
-            <MudListItem T="CompanyDto" Href="@($"/company/{company.Id}")">
-                <ChildContent>
-                    <div class="d-flex align-center gap-3">
-                        @if(company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
-                        {
-                            <MudAvatar Rounded="true" Size="Size.Medium" Style="background: transparent;">
+    <MudTextField T="string" @bind-Value="_searchText" @bind-Value:after="OnSearchChanged"
+                  Placeholder="@L["Filter companies..."]"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                  Variant="Variant.Outlined" Class="mb-4" Immediate="true"/>
+
+    <div style="height: 70vh; overflow-y: auto;">
+        <Virtualize Items="_filteredCompanies" Context="company" ItemSize="88">
+            <a href="/company/@company.Id" style="text-decoration: none; color: inherit;">
+                <MudCard Elevation="1" Class="mb-2 rounded-lg" Style="cursor: pointer;">
+                    <MudCardContent>
+                        <div class="d-flex align-center justify-space-between">
+                            <MudText Typo="Typo.body1" Style="font-weight: 500;">@company.Name</MudText>
+                            @if(company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
+                            {
                                 <picture>
                                     <source srcset="/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
                                     <source srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
@@ -90,17 +98,16 @@
                                     <img alt="" height="auto" src="/assets/logos/thumbs/png/1x/@(company.LastLogo).png"
                                          srcset="/assets/logos/thumbs/png/1x/@(company.LastLogo).png,
                      /assets/logos/thumbs/png/2x/@(company.LastLogo).png 2x,
-                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 32px; max-width: 128px"
+                     /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 48px; max-width: 200px"
                                          width="auto"/>
                                 </picture>
-                            </MudAvatar>
-                        }
-                        <MudText>@company.Name</MudText>
-                    </div>
-                </ChildContent>
-            </MudListItem>
-        }
-    </MudList>
+                            }
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </a>
+        </Virtualize>
+    </div>
 }
 else
 {
