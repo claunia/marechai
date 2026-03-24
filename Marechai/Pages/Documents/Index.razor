@@ -1,0 +1,101 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/documents"
+@inherits OwningComponentBase<DocumentsService>
+@inject IStringLocalizer<DocumentsService> L
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.Article" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Documents"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["Here you can consult our database."]</MudText>
+    <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["The database contains information about documents related to computing history."]</MudText>
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white;">@string.Format(L["There are {0} documents in the database at this moment."], _documents)</MudChip>
+</MudPaper>
+
+<MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Secondary" Size="Size.Small"/>
+        <MudText Typo="Typo.subtitle1">@L["Search by companies"]</MudText>
+    </MudStack>
+    <MudStack Spacing="1" AlignItems="AlignItems.Center">
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "QWERTYUIOP") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+        </div>
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "ASDFGHJKL") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+        </div>
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "ZXCVBNM") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+        </div>
+        <MudChip T="string" Href="/companies" Color="Color.Primary" Class="mt-1">@L["All companies"]</MudChip>
+    </MudStack>
+</MudPaper>
+
+<MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.SortByAlpha" Color="Color.Secondary" Size="Size.Small"/>
+        <MudText Typo="Typo.subtitle1">@L["Search documents alphabetically"]</MudText>
+    </MudStack>
+    <MudStack Spacing="1" AlignItems="AlignItems.Center">
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "QWERTYUIOP") { <MudChip T="string" Href="@($"/documents/{c}")">@c</MudChip> }
+        </div>
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "ASDFGHJKL") { <MudChip T="string" Href="@($"/documents/{c}")">@c</MudChip> }
+        </div>
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "ZXCVBNM") { <MudChip T="string" Href="@($"/documents/{c}")">@c</MudChip> }
+        </div>
+        <MudChip T="string" Href="/documents/all" Color="Color.Primary" Class="mt-1">@L["All documents"]</MudChip>
+    </MudStack>
+</MudPaper>
+
+<MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Color="Color.Secondary" Size="Size.Small"/>
+        <MudText Typo="Typo.subtitle1">@L["Search documents by year"]</MudText>
+    </MudStack>
+    <div class="d-flex flex-wrap gap-1">
+        @for(int i = _minYear; i <= _maxYear; i++)
+        {
+            var year = i;
+            <MudChip T="string" Href="@($"/documents/year/{year}")">@year</MudChip>
+        }
+    </div>
+</MudPaper>

@@ -123,68 +123,82 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-        <comment>News</comment>
-  </data>
-    <data name="Hello {0}!" xml:space="preserve">
-    <value>¡Hola {0}!</value>
-        <comment>Salutes logged-in user</comment>
-  </data>
-    <data name="Log out" xml:space="preserve">
-    <value>Cerrar sesión</value>
-        <comment>Log out</comment>
-  </data>
-    <data name="Register" xml:space="preserve">
-    <value>Registrarse</value>
-        <comment>Register</comment>
-  </data>
-    <data name="Log in" xml:space="preserve">
-    <value>Iniciar sesión</value>
-        <comment>Log in</comment>
-  </data>
-    <data name="About" xml:space="preserve">
-    <value>Acerca de</value>
-        <comment>About</comment>
-  </data>
-    <data name="Contact" xml:space="preserve">
-    <value>Contacto</value>
-        <comment>Contact</comment>
-  </data>
-    <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-        <comment>Companies</comment>
-  </data>
-    <data name="Computers" xml:space="preserve">
-    <value>Ordenadores</value>
-        <comment>Computers</comment>
-  </data>
-    <data name="Consoles" xml:space="preserve">
-    <value>Consolas</value>
-        <comment>Videogame consoles</comment>
-  </data>
-    <data name="Books" xml:space="preserve">
-    <value>Libros</value>
-        <comment>Books navigation link</comment>
-  </data>
     <data name="Documents" xml:space="preserve">
-    <value>Documentos</value>
-        <comment>Documents navigation link</comment>
-  </data>
-    <data name="Admin area" xml:space="preserve">
-    <value>Administración</value>
-        <comment>Administration area</comment>
-  </data>
-    <data name="GPUs" xml:space="preserve">
-    <value>GPUs</value>
-        <comment>Graphics Processing Units navigation link</comment>
-  </data>
-    <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-        <comment>Processors navigation link</comment>
-  </data>
-    <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-        <comment>Sound synthesizers navigation link</comment>
-  </data>
+        <value>Documentos</value>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Aquí puede consultar nuestra base de datos.</value>
+    </data>
+    <data name="The database contains information about documents related to computing history." xml:space="preserve">
+        <value>La base de datos contiene información sobre documentos relacionados con la historia de la informática.</value>
+    </data>
+    <data name="There are {0} documents in the database at this moment." xml:space="preserve">
+        <value>Hay {0} documentos en la base de datos en este momento.</value>
+    </data>
+    <data name="Search by companies" xml:space="preserve">
+        <value>Buscar por empresas</value>
+    </data>
+    <data name="All companies" xml:space="preserve">
+        <value>Todas las empresas</value>
+    </data>
+    <data name="Search documents alphabetically" xml:space="preserve">
+        <value>Buscar documentos alfabéticamente</value>
+    </data>
+    <data name="All documents" xml:space="preserve">
+        <value>Todos los documentos</value>
+    </data>
+    <data name="Search documents by year" xml:space="preserve">
+        <value>Buscar documentos por año</value>
+    </data>
+    <data name="Search results:" xml:space="preserve">
+        <value>Resultados de la búsqueda:</value>
+    </data>
+    <data name="Documents starting with {0}" xml:space="preserve">
+        <value>Documentos que empiezan con {0}</value>
+    </data>
+    <data name="Documents published in {0}" xml:space="preserve">
+        <value>Documentos publicados en {0}</value>
+    </data>
+    <data name="{0} documents found in the database." xml:space="preserve">
+        <value>{0} documentos encontrados en la base de datos.</value>
+    </data>
+    <data name="There are no documents found in the database that start with this letter." xml:space="preserve">
+        <value>No se han encontrado documentos en la base de datos que empiecen con esta letra.</value>
+    </data>
+    <data name="There are no documents found published this year." xml:space="preserve">
+        <value>No se han encontrado documentos publicados este año.</value>
+    </data>
+    <data name="Document not found." xml:space="preserve">
+        <value>Documento no encontrado.</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Título</value>
+    </data>
+    <data name="Native title" xml:space="preserve">
+        <value>Título original</value>
+    </data>
+    <data name="Published" xml:space="preserve">
+        <value>Publicado</value>
+    </data>
+    <data name="Country" xml:space="preserve">
+        <value>País</value>
+    </data>
+    <data name="Synopsis" xml:space="preserve">
+        <value>Sinopsis</value>
+    </data>
+    <data name="People" xml:space="preserve">
+        <value>Personas</value>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Empresas</value>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Máquinas</value>
+    </data>
+    <data name="Machine families" xml:space="preserve">
+        <value>Familias de máquinas</value>
+    </data>
 </root>
