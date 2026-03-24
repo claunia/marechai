@@ -3,8 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.App.Companies;
-using Marechai.App.Companies.Count;
+using Marechai.ApiClient.Companies;
+using Marechai.ApiClient.Companies.Count;
 
 namespace Marechai.App.Services;
 
@@ -13,10 +13,10 @@ namespace Marechai.App.Services;
 /// </summary>
 public class CompaniesService
 {
-    private readonly ApiClient                 _apiClient;
+    private readonly Client                 _apiClient;
     private readonly ILogger<CompaniesService> _logger;
 
-    public CompaniesService(ApiClient apiClient, ILogger<CompaniesService> logger)
+    public CompaniesService(Client apiClient, ILogger<CompaniesService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

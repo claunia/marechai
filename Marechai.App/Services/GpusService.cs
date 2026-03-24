@@ -9,10 +9,10 @@ namespace Marechai.App.Services;
 /// </summary>
 public class GpusService
 {
-    private readonly ApiClient            _apiClient;
+    private readonly Client            _apiClient;
     private readonly ILogger<GpusService> _logger;
 
-    public GpusService(ApiClient apiClient, ILogger<GpusService> logger)
+    public GpusService(Client apiClient, ILogger<GpusService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

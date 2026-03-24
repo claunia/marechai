@@ -11,7 +11,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminInstructionSetsViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                                _apiClient;
+    private readonly Client                                _apiClient;
     private readonly IJwtService                              _jwtService;
     private readonly IStringLocalizer                         _localizer;
     private readonly ILogger<AdminInstructionSetsViewModel>   _logger;
@@ -66,7 +66,7 @@ public partial class AdminInstructionSetsViewModel : ObservableObject, IRegionAw
     [ObservableProperty]
     private string _uniquenessMessage = string.Empty;
 
-    public AdminInstructionSetsViewModel(ApiClient                                apiClient,
+    public AdminInstructionSetsViewModel(Client                                apiClient,
                                          IJwtService                              jwtService,
                                          ITokenService                            tokenService,
                                          ILogger<AdminInstructionSetsViewModel>   logger,

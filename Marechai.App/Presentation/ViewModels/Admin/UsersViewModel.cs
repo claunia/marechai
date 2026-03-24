@@ -14,7 +14,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 /// </summary>
 public partial class UsersViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient               _apiClient;
+    private readonly Client               _apiClient;
     private readonly IJwtService             _jwtService;
     private readonly IStringLocalizer        _localizer;
     private readonly ILogger<UsersViewModel> _logger;
@@ -73,7 +73,7 @@ public partial class UsersViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private ObservableCollection<UserDto> _users = [];
 
-    public UsersViewModel(ApiClient               apiClient, IJwtService      jwtService, ITokenService tokenService,
+    public UsersViewModel(Client               apiClient, IJwtService      jwtService, ITokenService tokenService,
                           ILogger<UsersViewModel> logger,    IStringLocalizer localizer)
     {
         _apiClient    = apiClient;

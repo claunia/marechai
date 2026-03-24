@@ -10,10 +10,10 @@ namespace Marechai.App.Services;
 /// </summary>
 public class ComputersService
 {
-    private readonly ApiClient                 _apiClient;
+    private readonly Client                 _apiClient;
     private readonly ILogger<ComputersService> _logger;
 
-    public ComputersService(ApiClient apiClient, ILogger<ComputersService> logger)
+    public ComputersService(Client apiClient, ILogger<ComputersService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

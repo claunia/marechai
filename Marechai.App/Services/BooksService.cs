@@ -3,17 +3,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.App.Services;
 
 public class BooksService
 {
-    private readonly ApiClient              _apiClient;
+    private readonly Client              _apiClient;
     private readonly ILogger<BooksService>  _logger;
 
-    public BooksService(ApiClient apiClient, ILogger<BooksService> logger)
+    public BooksService(Client apiClient, ILogger<BooksService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

@@ -26,8 +26,8 @@
 }
 
 @page "/company/{Id:int}"
+@using Marechai.ApiClient.Models
 @using Marechai.Data
-@using Marechai.Database.Models
 @inherits OwningComponentBase<CompaniesService>
 @inject IStringLocalizer<CompaniesService> L
 @inject CompanyLogosService                CompanyLogosService
@@ -68,7 +68,7 @@
         {
             <div class="col-3">
                 <Carousel @bind-SelectedSlide="@_selectedSlide" ShowControls="true" ShowIndicators="true">
-                    @foreach(CompanyLogo logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
+                    @foreach(CompanyLogoDto logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
                     {
                         <CarouselSlide Name="@logo.Guid.ToString()">
                             <div style="width: 256px; height: 256px; margin: auto;">
@@ -106,17 +106,17 @@
                 {
                     <tr>
                         <th class="text-right">@L["Founded"]</th>
-                        @if(_company.FoundedMonthIsUnknown)
+                        @if(_company.FoundedMonthIsUnknown == true)
                         {
                             <td>@_company.Founded.Value.Year.</td>
                         }
-                        else if(_company.FoundedDayIsUnknown)
+                        else if(_company.FoundedDayIsUnknown == true)
                         {
                             <td>@($"{_company.Founded.Value:Y}").</td>
                         }
                         else
                         {
-                            <td>@_company.Founded.Value.ToLongDateString().</td>
+                            <td>@_company.Founded.Value.DateTime.ToLongDateString().</td>
                         }
                     </tr>
                 }
@@ -161,15 +161,15 @@
                     <th class="text-right">@L["Status"]</th>
                     @switch(_company.Status)
                     {
-                        case CompanyStatus.Unknown:
+                        case (int)CompanyStatus.Unknown:
                             <td>@L["Current company status is unknown."]</td>
 
                             break;
-                        case CompanyStatus.Active:
+                        case (int)CompanyStatus.Active:
                             <td>@L["Company is active."]</td>
 
                             break;
-                        case CompanyStatus.Sold:
+                        case (int)CompanyStatus.Sold:
                             if(_company.Sold != null)
                             {
                                 if(_soldTo != null)
@@ -178,26 +178,26 @@
                                         <a href="/company/@_soldTo.Id">
                                             @string.Format(L["Company sold to {0} on {1}."],
                                                            _soldTo.Name,
-                                                           _company.SoldMonthIsUnknown
+                                                           _company.SoldMonthIsUnknown == true
                                                                ? $"{_company.Sold.Value.Year}"
-                                                               : _company.SoldDayIsUnknown
+                                                               : _company.SoldDayIsUnknown == true
                                                                    ? $"{_company.Sold.Value:Y}"
-                                                                   : _company.SoldMonthIsUnknown
+                                                                   : _company.SoldMonthIsUnknown == true
                                                                        ? $"{_company.Sold.Value.Year}"
-                                                                       : _company.SoldDayIsUnknown
+                                                                       : _company.SoldDayIsUnknown == true
                                                                            ? $"{_company.Sold.Value:Y}"
-                                                                           : _company.Sold.Value.ToLongDateString())
+                                                                           : _company.Sold.Value.DateTime.ToLongDateString())
                                         </a>
                                     </td>
                                 }
                                 else
                                 {
                                     <td>@string.Format(L["Company sold on {0} to an unknown company."],
-                                                       _company.SoldMonthIsUnknown
+                                                       _company.SoldMonthIsUnknown == true
                                                            ? $"{_company.Sold.Value.Year}"
-                                                           : _company.SoldDayIsUnknown
+                                                           : _company.SoldDayIsUnknown == true
                                                                ? $"{_company.Sold.Value:Y}"
-                                                               : _company.Sold.Value.ToLongDateString())</td>
+                                                               : _company.Sold.Value.DateTime.ToLongDateString())</td>
                                 }
                             }
                             else
@@ -217,29 +217,29 @@
                             }
 
                             break;
-                        case CompanyStatus.Merged:
+                        case (int)CompanyStatus.Merged:
                             if(_company.Sold != null)
                             {
                                 if(_soldTo != null)
                                 {
                                     <td>
                                         <a href="/company/@_soldTo.Id">@string.Format(L["Company merged on {0} to form {1}."],
-                                                                                      _company.SoldMonthIsUnknown
+                                                                                      _company.SoldMonthIsUnknown == true
                                                                                           ? $"{_company.Sold.Value.Year}"
-                                                                                          : _company.SoldDayIsUnknown
+                                                                                          : _company.SoldDayIsUnknown == true
                                                                                               ? $"{_company.Sold.Value:Y}"
-                                                                                              : _company.Sold.Value.ToLongDateString(),
+                                                                                              : _company.Sold.Value.DateTime.ToLongDateString(),
                                                                                       _soldTo.Name)</a>
                                     </td>
                                 }
                                 else
                                 {
                                     <td>@string.Format(L["Company merged on {0} to form an unknown company."],
-                                                       _company.SoldMonthIsUnknown
+                                                       _company.SoldMonthIsUnknown == true
                                                            ? $"{_company.Sold.Value.Year}"
-                                                           : _company.SoldDayIsUnknown
+                                                           : _company.SoldDayIsUnknown == true
                                                                ? $"{_company.Sold.Value:Y}"
-                                                               : _company.Sold.Value.ToLongDateString())</td>
+                                                               : _company.Sold.Value.DateTime.ToLongDateString())</td>
                                 }
                             }
                             else
@@ -257,15 +257,15 @@
                             }
 
                             break;
-                        case CompanyStatus.Bankrupt:
+                        case (int)CompanyStatus.Bankrupt:
                             if(_company.Sold != null)
                             {
                                 <td>@string.Format(L["Company declared bankruptcy on {0}."],
-                                                   _company.SoldMonthIsUnknown
+                                                   _company.SoldMonthIsUnknown == true
                                                        ? $"{_company.Sold.Value.Year}"
-                                                       : _company.SoldDayIsUnknown
+                                                       : _company.SoldDayIsUnknown == true
                                                            ? $"{_company.Sold.Value:Y}"
-                                                           : _company.Sold.Value.ToLongDateString())</td>
+                                                           : _company.Sold.Value.DateTime.ToLongDateString())</td>
                             }
                             else
                             {
@@ -273,15 +273,15 @@
                             }
 
                             break;
-                        case CompanyStatus.Defunct:
+                        case (int)CompanyStatus.Defunct:
                             if(_company.Sold != null)
                             {
                                 <td>@string.Format(L["Company ceased operations on {0}."],
-                                                   _company.SoldMonthIsUnknown
+                                                   _company.SoldMonthIsUnknown == true
                                                        ? $"{_company.Sold.Value.Year}"
-                                                       : _company.SoldDayIsUnknown
+                                                       : _company.SoldDayIsUnknown == true
                                                            ? $"{_company.Sold.Value:Y}"
-                                                           : _company.Sold.Value.ToLongDateString())</td>
+                                                           : _company.Sold.Value.DateTime.ToLongDateString())</td>
                             }
                             else
                             {
@@ -289,7 +289,7 @@
                             }
 
                             break;
-                        case CompanyStatus.Renamed:
+                        case (int)CompanyStatus.Renamed:
                             if(_company.Sold != null)
                             {
                                 if(_soldTo != null)
@@ -297,21 +297,21 @@
                                     <td>
                                         <a href="/company/@_soldTo.Id">@string.Format(L["Company renamed to {0} on {1}."],
                                                                                       _soldTo.Name,
-                                                                                      _company.SoldMonthIsUnknown
+                                                                                      _company.SoldMonthIsUnknown == true
                                                                                           ? $"{_company.Sold.Value.Year}"
-                                                                                          : _company.SoldDayIsUnknown
+                                                                                          : _company.SoldDayIsUnknown == true
                                                                                               ? $"{_company.Sold.Value:Y}"
-                                                                                              : _company.Sold.Value.ToLongDateString())</a>
+                                                                                              : _company.Sold.Value.DateTime.ToLongDateString())</a>
                                     </td>
                                 }
                                 else
                                 {
                                     <td>@string.Format(L["Company was renamed on {0} to an unknown name."],
-                                                       _company.SoldMonthIsUnknown
+                                                       _company.SoldMonthIsUnknown == true
                                                            ? $"{_company.Sold.Value.Year}"
-                                                           : _company.SoldDayIsUnknown
+                                                           : _company.SoldDayIsUnknown == true
                                                                ? $"{_company.Sold.Value:Y}"
-                                                               : _company.Sold.Value.ToLongDateString())</td>
+                                                               : _company.Sold.Value.DateTime.ToLongDateString())</td>
                                 }
                             }
                             else
@@ -392,7 +392,7 @@
                 <div aria-labelledby="headingComputers" class="@(ComputersCollapsed ? "collapse" : "")"
                      data-parent="#itemsAccordion" id="collapseComputers">
                     <div class="card-body">
-                        @foreach(Machine computer in _computers)
+                        @foreach(MachineDto computer in _computers)
                         {
                             <a href="/machine/@computer.Id">
                                 @computer.Name
@@ -425,7 +425,7 @@
                 <div aria-labelledby="headingConsoles" class="@(ConsolesCollapsed ? "collapse" : "")"
                      data-parent="#itemsAccordion" id="collapseConsoles">
                     <div class="card-body">
-                        @foreach(Machine console in _consoles)
+                        @foreach(MachineDto console in _consoles)
                         {
                             <a href="/machine/@console.Id">
                                 @console.Name

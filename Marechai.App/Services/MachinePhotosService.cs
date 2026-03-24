@@ -4,17 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.App.Machines.Photos.Upload;
-using Marechai.App.Models;
+using Marechai.ApiClient.Machines.Photos.Upload;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.App.Services;
 
 public class MachinePhotosService
 {
-    private readonly ApiClient                        _apiClient;
+    private readonly Client                        _apiClient;
     private readonly ILogger<MachinePhotosService> _logger;
 
-    public MachinePhotosService(ApiClient apiClient, ILogger<MachinePhotosService> logger)
+    public MachinePhotosService(Client apiClient, ILogger<MachinePhotosService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

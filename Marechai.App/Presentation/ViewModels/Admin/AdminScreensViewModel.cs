@@ -11,7 +11,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminScreensViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                         _apiClient;
+    private readonly Client                         _apiClient;
     private readonly IJwtService                       _jwtService;
     private readonly IStringLocalizer                  _localizer;
     private readonly ILogger<AdminScreensViewModel>    _logger;
@@ -52,7 +52,7 @@ public partial class AdminScreensViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private ObservableCollection<ResolutionDto> _availableSupportedResolutions = [];
     [ObservableProperty] private ResolutionDto? _selectedSupportedResolution;
 
-    public AdminScreensViewModel(ApiClient                         apiClient,
+    public AdminScreensViewModel(Client                         apiClient,
                                  IJwtService                       jwtService,
                                  ITokenService                     tokenService,
                                  ILogger<AdminScreensViewModel>    logger,

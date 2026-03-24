@@ -11,7 +11,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminMachineFamiliesViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                                _apiClient;
+    private readonly Client                                _apiClient;
     private readonly IJwtService                              _jwtService;
     private readonly IStringLocalizer                         _localizer;
     private readonly ILogger<AdminMachineFamiliesViewModel>   _logger;
@@ -40,7 +40,7 @@ public partial class AdminMachineFamiliesViewModel : ObservableObject, IRegionAw
     [ObservableProperty] private ObservableCollection<CompanyDto> _companySuggestions = [];
     private List<CompanyDto>? _allCompanies;
 
-    public AdminMachineFamiliesViewModel(ApiClient                                apiClient,
+    public AdminMachineFamiliesViewModel(Client                                apiClient,
                                          IJwtService                              jwtService,
                                          ITokenService                            tokenService,
                                          ILogger<AdminMachineFamiliesViewModel>   logger,

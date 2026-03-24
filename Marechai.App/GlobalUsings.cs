@@ -4,6 +4,8 @@ global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Localization;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
+global using Marechai.ApiClient.Models;
+global using Client = Marechai.ApiClient.Client;
 global using Marechai.App.Models;
 global using Marechai.App.Navigation;
 global using Marechai.App.Presentation;

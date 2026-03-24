@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -23,217 +23,23 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Data;
-using Marechai.Data.Dtos;
-using Marechai.Database.Models;
-using Microsoft.EntityFrameworkCore;
+using Marechai.ApiClient.Models;
 using Microsoft.Extensions.Localization;
 
 namespace Marechai.Services;
 
-public class MachinesService
-(
-    MarechaiContext                   context,
-    IStringLocalizer<MachinesService> localizer,
-    GpusService                       gpusService,
-    ProcessorsService                 processorsService,
-    SoundSynthsService                soundSynthsService
-)
+public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<MachinesService> localizer)
 {
-    readonly IStringLocalizer<MachinesService> _l = localizer;
-
-    public async Task<List<MachineDto>> GetAsync() => await context.Machines.OrderBy(m => m.Company.Name)
-                                                                   .ThenBy(m => m.Name)
-                                                                   .ThenBy(m => m.Family.Name)
-                                                                   .Select(m => new MachineDto
-                                                                    {
-                                                                        Id         = m.Id,
-                                                                        Company    = m.Company.Name,
-                                                                        Name       = m.Name,
-                                                                        Model      = m.Model,
-                                                                        Introduced = m.Introduced,
-                                                                        Type       = m.Type,
-                                                                        Family     = m.Family.Name
-                                                                    })
-                                                                   .ToListAsync();
-
-    public async Task<MachineDto> GetAsync(int id) => await context.Machines.Where(m => m.Id == id)
-                                                                   .Select(m => new MachineDto
-                                                                    {
-                                                                        Id         = m.Id,
-                                                                        Company    = m.Company.Name,
-                                                                        CompanyId  = m.CompanyId,
-                                                                        Name       = m.Name,
-                                                                        Model      = m.Model,
-                                                                        Introduced = m.Introduced,
-                                                                        Type       = m.Type,
-                                                                        FamilyId   = m.FamilyId
-                                                                    })
-                                                                   .FirstOrDefaultAsync();
-
-    public async Task UpdateAsync(MachineDto dto, string userId)
+    public async Task<MachineDto?> GetMachine(int id)
     {
-        Machine model = await context.Machines.FindAsync(dto.Id);
-
-        if(model is null) return;
-
-        model.CompanyId  = dto.CompanyId;
-        model.Name       = dto.Name;
-        model.Model      = dto.Model;
-        model.Introduced = dto.Introduced;
-        model.Type       = dto.Type;
-        model.FamilyId   = dto.FamilyId;
-
-        var news = new News
+        try
         {
-            AddedId = model.Id,
-            Date    = DateTime.UtcNow
-        };
-
-        switch(model.Type)
-        {
-            case MachineType.Computer:
-                news.Type = NewsType.UpdatedComputerInDb;
-
-                break;
-            case MachineType.Console:
-                news.Type = NewsType.UpdatedConsoleInDb;
-
-                break;
-            default:
-                news = null;
-
-                break;
+            return await client.Machines[id].Full.GetAsync();
         }
-
-        if(news != null) await context.News.AddAsync(news);
-
-        await context.SaveChangesWithUserAsync(userId);
-    }
-
-    public async Task<int> CreateAsync(MachineDto dto, string userId)
-    {
-        var model = new Machine
+        catch
         {
-            CompanyId  = dto.CompanyId,
-            Name       = dto.Name,
-            Model      = dto.Model,
-            Introduced = dto.Introduced,
-            Type       = dto.Type,
-            FamilyId   = dto.FamilyId
-        };
-
-        await context.Machines.AddAsync(model);
-        await context.SaveChangesWithUserAsync(userId);
-
-        var news = new News
-        {
-            AddedId = model.Id,
-            Date    = DateTime.UtcNow
-        };
-
-        switch(model.Type)
-        {
-            case MachineType.Computer:
-                news.Type = NewsType.NewComputerInDb;
-
-                break;
-            case MachineType.Console:
-                news.Type = NewsType.NewConsoleInDb;
-
-                break;
-            default:
-                news = null;
-
-                break;
+            return null;
         }
-
-        if(news != null)
-        {
-            await context.News.AddAsync(news);
-            await context.SaveChangesWithUserAsync(userId);
-        }
-
-        return model.Id;
-    }
-
-    public async Task<MachineDto> GetMachine(int id)
-    {
-        Machine machine = await context.Machines.FindAsync(id);
-
-        if(machine is null) return null;
-
-        var model = new MachineDto
-        {
-            Introduced = machine.Introduced,
-            Name       = machine.Name,
-            CompanyId  = machine.CompanyId,
-            Model      = machine.Model,
-            Type       = machine.Type
-        };
-
-        Company company = await context.Companies.FindAsync(model.CompanyId);
-
-        if(company != null)
-        {
-            model.Company = company.Name;
-
-            IQueryable<CompanyLogo> logos = context.CompanyLogos.Where(l => l.CompanyId == company.Id);
-
-            if(model.Introduced.HasValue)
-                model.CompanyLogo = (await logos.FirstOrDefaultAsync(l => l.Year >= model.Introduced.Value.Year))?.Guid;
-
-            if(model.CompanyLogo is null && logos.Any()) model.CompanyLogo = (await logos.FirstAsync())?.Guid;
-        }
-
-        MachineFamily family = await context.MachineFamilies.FindAsync(machine.FamilyId);
-
-        if(family != null)
-        {
-            model.FamilyName = family.Name;
-            model.FamilyId   = family.Id;
-        }
-
-        model.Gpus = await gpusService.GetByMachineAsync(machine.Id);
-
-        model.Memory = await context.MemoryByMachine.Where(m => m.MachineId == machine.Id)
-                                    .Select(m => new MemoryDto
-                                     {
-                                         Type  = m.Type,
-                                         Usage = m.Usage,
-                                         Size  = m.Size,
-                                         Speed = m.Speed
-                                     })
-                                    .ToListAsync();
-
-        model.Processors = await processorsService.GetByMachineAsync(machine.Id);
-
-        model.SoundSynthesizers = await soundSynthsService.GetByMachineAsync(machine.Id);
-
-        model.Storage = await context.StorageByMachine.Where(s => s.MachineId == machine.Id)
-                                     .Select(s => new StorageDto
-                                      {
-                                          Type      = s.Type,
-                                          Interface = s.Interface,
-                                          Capacity  = s.Capacity
-                                      })
-                                     .ToListAsync();
-
-        return model;
-    }
-
-    public async Task DeleteAsync(int id, string userId)
-    {
-        Machine item = await context.Machines.FindAsync(id);
-
-        if(item is null) return;
-
-        context.Machines.Remove(item);
-
-        await context.SaveChangesWithUserAsync(userId);
     }
 }

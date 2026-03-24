@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
@@ -14,7 +14,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                        _apiClient;
+    private readonly Client                        _apiClient;
     private readonly IJwtService                      _jwtService;
     private readonly IStringLocalizer                 _localizer;
     private readonly ILogger<AdminCompaniesViewModel> _logger;
@@ -186,7 +186,7 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
 
     private List<PersonDto>? _allPeopleList;
 
-    public AdminCompaniesViewModel(ApiClient                        apiClient,
+    public AdminCompaniesViewModel(Client                        apiClient,
                                    IJwtService                      jwtService,
                                    ITokenService                    tokenService,
                                    ILogger<AdminCompaniesViewModel> logger,

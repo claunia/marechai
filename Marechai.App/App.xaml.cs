@@ -123,7 +123,7 @@ public partial class App : PrismApplication
 #if DEBUG
         containerRegistry.RegisterSingleton<DebugHttpHandler>();
 #endif
-        containerRegistry.RegisterSingleton<ApiClient>(() =>
+        containerRegistry.RegisterSingleton<Client>(() =>
         {
             var tokenService = Container.Resolve<ITokenService>();
 
@@ -151,7 +151,7 @@ public partial class App : PrismApplication
             var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory,
                                                               serializationWriterFactory, httpClient);
 
-            return new ApiClient(requestAdapter);
+            return new Client(requestAdapter);
         });
 
         // Application services

@@ -10,7 +10,7 @@ using Uno.Extensions.Authentication;
 namespace Marechai.App.Services.Authentication;
 
 public sealed class AuthService
-    (ApiClient client, ITokenService tokenService, IStringLocalizer stringLocalizer) : IAuthenticationService
+    (Client client, ITokenService tokenService, IStringLocalizer stringLocalizer) : IAuthenticationService
 {
     /// <inheritdoc />
     public async ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = null,

@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -24,118 +24,25 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Data;
-using Marechai.Data.Dtos;
-using Marechai.Database.Models;
-using Microsoft.EntityFrameworkCore;
+using Marechai.ApiClient.Models;
 using Microsoft.Extensions.Localization;
 
 namespace Marechai.Services;
 
-public class NewsService(MarechaiContext context, IStringLocalizer<NewsService> localizer)
+public class NewsService(Marechai.ApiClient.Client client, IStringLocalizer<NewsService> localizer)
 {
-    public List<NewsDto> GetNews()
+    public async Task<List<NewsDto>> GetNewsAsync()
     {
-        List<NewsDto> news = new();
-
-        foreach(News @new in context.News.OrderByDescending(t => t.Date).Take(10).ToList())
+        try
         {
-            Machine machine = context.Machines.Find(@new.AddedId);
+            List<NewsDto>? news = await client.News.Latest.GetAsync();
 
-            if(machine is null) continue;
-
-            switch(@new.Type)
-            {
-                case NewsType.NewComputerInDb:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["New computer in database"],
-                                         @new.Date,
-                                         "machine",
-                                         $"{machine.Company.Name} {machine.Name}",
-                                         @new.Type));
-
-                    break;
-                case NewsType.NewConsoleInDb:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["New console in database"],
-                                         @new.Date,
-                                         "machine",
-                                         $"{machine.Company.Name} {machine.Name}",
-                                         @new.Type));
-
-                    break;
-
-                case NewsType.NewComputerInCollection:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["New computer in collection"],
-                                         @new.Date,
-                                         "machine",
-                                         $"{machine.Company.Name} {machine.Name}",
-                                         @new.Type));
-
-                    break;
-
-                case NewsType.NewConsoleInCollection:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["New console in collection"],
-                                         @new.Date,
-                                         "machine",
-                                         $"{machine.Company.Name} {machine.Name}",
-                                         @new.Type));
-
-                    break;
-
-                case NewsType.UpdatedComputerInDb:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["Updated computer in database"],
-                                         @new.Date,
-                                         "machine",
-                                         $"{machine.Company.Name} {machine.Name}",
-                                         @new.Type));
-
-                    break;
-
-                case NewsType.UpdatedConsoleInDb:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["Updated console in database"],
-                                         @new.Date,
-                                         "machine",
-                                         $"{machine.Company.Name} {machine.Name}",
-                                         @new.Type));
-
-                    break;
-
-                case NewsType.UpdatedComputerInCollection:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["Updated computer in collection"],
-                                         @new.Date,
-                                         "machine",
-                                         $"{machine.Company.Name} {machine.Name}",
-                                         @new.Type));
-
-                    break;
-
-                case NewsType.UpdatedConsoleInCollection:
-                    news.Add(new NewsDto(@new.AddedId,
-                                         localizer["Updated console in collection"],
-                                         @new.Date,
-                                         "machine",
-                                         $"{machine.Company.Name} {machine.Name}",
-                                         @new.Type));
-
-                    break;
-
-                case NewsType.NewMoneyDonation:
-                    // TODO
-                    break;
-
-                default:
-                    continue;
-            }
+            return news ?? [];
         }
-
-        return news;
+        catch
+        {
+            return [];
+        }
     }
 }

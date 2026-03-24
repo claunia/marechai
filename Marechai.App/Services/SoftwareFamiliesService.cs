@@ -3,16 +3,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.App.Services;
 
 public class SoftwareFamiliesService
 {
-    private readonly ApiClient                          _apiClient;
+    private readonly Client                          _apiClient;
     private readonly ILogger<SoftwareFamiliesService>   _logger;
 
-    public SoftwareFamiliesService(ApiClient apiClient, ILogger<SoftwareFamiliesService> logger)
+    public SoftwareFamiliesService(Client apiClient, ILogger<SoftwareFamiliesService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

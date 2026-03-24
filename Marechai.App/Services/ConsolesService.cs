@@ -9,10 +9,10 @@ namespace Marechai.App.Services;
 /// </summary>
 public class ConsolesService
 {
-    private readonly ApiClient                _apiClient;
+    private readonly Client                _apiClient;
     private readonly ILogger<ConsolesService> _logger;
 
-    public ConsolesService(ApiClient apiClient, ILogger<ConsolesService> logger)
+    public ConsolesService(Client apiClient, ILogger<ConsolesService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

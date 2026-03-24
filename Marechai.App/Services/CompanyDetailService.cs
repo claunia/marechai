@@ -11,10 +11,10 @@ namespace Marechai.App.Services;
 /// </summary>
 public class CompanyDetailService
 {
-    private readonly ApiClient                     _apiClient;
+    private readonly Client                     _apiClient;
     private readonly ILogger<CompanyDetailService> _logger;
 
-    public CompanyDetailService(ApiClient apiClient, ILogger<CompanyDetailService> logger)
+    public CompanyDetailService(Client apiClient, ILogger<CompanyDetailService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

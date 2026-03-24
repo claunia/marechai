@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services;
@@ -16,7 +16,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionAware
 {
     private readonly SoftwareVersionsService                     _service;
-    private readonly ApiClient                                   _apiClient;
+    private readonly Client                                   _apiClient;
     private readonly IJwtService                                 _jwtService;
     private readonly IStringLocalizer                            _localizer;
     private readonly ILogger<AdminSoftwareVersionsViewModel>     _logger;
@@ -61,7 +61,7 @@ public partial class AdminSoftwareVersionsViewModel : ObservableObject, IRegionA
     private List<SoftwareRoleDto>? _allRoles;
 
     public AdminSoftwareVersionsViewModel(SoftwareVersionsService                  service,
-                                          ApiClient                                apiClient,
+                                          Client                                   apiClient,
                                           IJwtService                              jwtService,
                                           ITokenService                            tokenService,
                                           ILogger<AdminSoftwareVersionsViewModel>  logger,

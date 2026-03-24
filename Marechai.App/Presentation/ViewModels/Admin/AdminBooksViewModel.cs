@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 using Marechai.App.Navigation;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
@@ -17,7 +17,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminBooksViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                      _apiClient;
+    private readonly Client                      _apiClient;
     private readonly BooksService                   _booksService;
     private readonly BookCoverCache                 _coverCache;
     private readonly ImageSourceFactory             _imageSourceFactory;
@@ -114,7 +114,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private bool _hasCover;
     [ObservableProperty] private bool _isUploadingCover;
 
-    public AdminBooksViewModel(ApiClient                      apiClient,
+    public AdminBooksViewModel(Client                      apiClient,
                                BooksService                   booksService,
                                BookCoverCache                 coverCache,
                                ImageSourceFactory             imageSourceFactory,

@@ -25,25 +25,24 @@
 
 using System;
 using System.Globalization;
+using System.Net.Http;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
-using Marechai.Areas.Identity;
-using Marechai.Database.Models;
-using Marechai.Database.Seeders;
-using Marechai.Helpers;
 using Marechai.Services;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Tewr.Blazor.FileReader;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
+using Microsoft.Kiota.Serialization.Form;
+using Microsoft.Kiota.Serialization.Json;
+using Microsoft.Kiota.Serialization.Multipart;
+using Microsoft.Kiota.Serialization.Text;
 
 namespace Marechai;
 
@@ -64,42 +63,43 @@ public class Startup(IConfiguration configuration)
                 .AddBootstrapProviders()
                 .AddFontAwesomeIcons();
 
-        // Add credential encryption support using ASP.NET Core Data Protection API (DPAPI)
-        ConnectionStringManager.AddConnectionStringManagement(services);
+        services.AddSingleton(_ =>
+        {
+            string apiUrl = Configuration.GetSection("ApiClient:Url").Value ?? "http://localhost:5023";
 
-        services.AddDbContext<MarechaiContext>(options => options.UseLazyLoadingProxies()
-                                                                 .UseMySql(Configuration
-                                                                              .GetConnectionString("DefaultConnection"),
-                                                                           new MariaDbServerVersion(new Version(10,
-                                                                               5,
-                                                                               0)),
-                                                                           b => b.UseMicrosoftJson()));
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(apiUrl)
+            };
 
-        services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<ApplicationRole>()
-                .AddEntityFrameworkStores<MarechaiContext>();
+            var authProvider              = new AnonymousAuthenticationProvider();
+            var parseNodeFactory          = new JsonParseNodeFactory();
+            var serializationWriterFactory = new Marechai.ApiClient.CompositeSerializationWriterFactory();
+            serializationWriterFactory.AddFactory(new JsonSerializationWriterFactory());
+            serializationWriterFactory.AddFactory(new MultipartSerializationWriterFactory());
+            serializationWriterFactory.AddFactory(new TextSerializationWriterFactory());
+            serializationWriterFactory.AddFactory(new FormSerializationWriterFactory());
+
+            var requestAdapter = new HttpClientRequestAdapter(authProvider, parseNodeFactory,
+                                                              serializationWriterFactory, httpClient);
+
+            return new Marechai.ApiClient.Client(requestAdapter);
+        });
 
         services.AddRazorPages();
         services.AddServerSideBlazor();
 
-        services
-           .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
-
         services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-        services.AddFileReaderService();
 
         Register.RegisterServices(services);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder          app,         IWebHostEnvironment env, MarechaiContext context,
-                          UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if(env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseMigrationsEndPoint();
         }
         else
         {
@@ -130,12 +130,8 @@ public class Startup(IConfiguration configuration)
 
         app.ApplicationServices.UseBootstrapProviders().UseFontAwesomeIcons();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
-
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
         });

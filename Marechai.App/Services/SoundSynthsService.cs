@@ -11,10 +11,10 @@ namespace Marechai.App.Services;
 /// </summary>
 public class SoundSynthsService
 {
-    private readonly ApiClient                   _apiClient;
+    private readonly Client                   _apiClient;
     private readonly ILogger<SoundSynthsService> _logger;
 
-    public SoundSynthsService(ApiClient apiClient, ILogger<SoundSynthsService> logger)
+    public SoundSynthsService(Client apiClient, ILogger<SoundSynthsService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

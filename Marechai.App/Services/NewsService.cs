@@ -9,10 +9,10 @@ namespace Marechai.App.Services;
 /// </summary>
 public class NewsService
 {
-    private readonly ApiClient            _apiClient;
+    private readonly Client            _apiClient;
     private readonly ILogger<NewsService> _logger;
 
-    public NewsService(ApiClient apiClient, ILogger<NewsService> logger)
+    public NewsService(Client apiClient, ILogger<NewsService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

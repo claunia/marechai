@@ -3,18 +3,18 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.App.Companies.Logos.ChangeYear.Item;
-using Marechai.App.Companies.Logos.Upload;
-using Marechai.App.Models;
+using Marechai.ApiClient.Companies.Logos.ChangeYear.Item;
+using Marechai.ApiClient.Companies.Logos.Upload;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.App.Services;
 
 public class CompanyLogosService
 {
-    private readonly ApiClient                      _apiClient;
+    private readonly Client                      _apiClient;
     private readonly ILogger<CompanyLogosService> _logger;
 
-    public CompanyLogosService(ApiClient apiClient, ILogger<CompanyLogosService> logger)
+    public CompanyLogosService(Client apiClient, ILogger<CompanyLogosService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

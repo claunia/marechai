@@ -24,20 +24,21 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
-using Marechai.Data.Dtos;
+using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.Pages.Home;
 
 public partial class Index
 {
-    bool                _loaded;
-    List<NewsDto> _news;
+    bool           _loaded;
+    List<NewsDto>  _news;
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(_loaded) return;
 
-        _news   = Service.GetNews();
+        _news   = await Service.GetNewsAsync();
         _loaded = true;
         StateHasChanged();
     }

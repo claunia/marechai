@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 
@@ -13,7 +13,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                          _apiClient;
+    private readonly Client                          _apiClient;
     private readonly MagazinesService                   _magazinesService;
     private readonly IJwtService                        _jwtService;
     private readonly IStringLocalizer                   _localizer;
@@ -93,7 +93,7 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     // --- Document roles ---
     private List<DocumentRoleDto>? _allRolesList;
 
-    public AdminMagazinesViewModel(ApiClient                          apiClient,
+    public AdminMagazinesViewModel(Client                          apiClient,
                                    MagazinesService                   magazinesService,
                                    IJwtService                        jwtService,
                                    ITokenService                      tokenService,

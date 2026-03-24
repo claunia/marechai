@@ -8,10 +8,10 @@ namespace Marechai.App.Services;
 
 public class PeopleService
 {
-    private readonly ApiClient              _apiClient;
+    private readonly Client              _apiClient;
     private readonly ILogger<PeopleService> _logger;
 
-    public PeopleService(ApiClient apiClient, ILogger<PeopleService> logger)
+    public PeopleService(Client apiClient, ILogger<PeopleService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

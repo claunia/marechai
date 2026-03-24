@@ -11,7 +11,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminResolutionsViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                            _apiClient;
+    private readonly Client                            _apiClient;
     private readonly IJwtService                          _jwtService;
     private readonly IStringLocalizer                     _localizer;
     private readonly ILogger<AdminResolutionsViewModel>   _logger;
@@ -73,7 +73,7 @@ public partial class AdminResolutionsViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private bool _grayscale;
 
-    public AdminResolutionsViewModel(ApiClient                            apiClient,
+    public AdminResolutionsViewModel(Client                            apiClient,
                                      IJwtService                          jwtService,
                                      ITokenService                        tokenService,
                                      ILogger<AdminResolutionsViewModel>   logger,

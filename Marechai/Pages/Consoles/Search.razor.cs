@@ -25,7 +25,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.Data.Dtos;
+using Marechai.ApiClient.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Consoles;

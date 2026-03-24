@@ -3,16 +3,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.App.Services;
 
 public class SoftwareVersionsService
 {
-    private readonly ApiClient                          _apiClient;
+    private readonly Client                          _apiClient;
     private readonly ILogger<SoftwareVersionsService>   _logger;
 
-    public SoftwareVersionsService(ApiClient apiClient, ILogger<SoftwareVersionsService> logger)
+    public SoftwareVersionsService(Client apiClient, ILogger<SoftwareVersionsService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

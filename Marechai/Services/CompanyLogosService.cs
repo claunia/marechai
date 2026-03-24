@@ -23,96 +23,25 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Database.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.Services;
 
-public class CompanyLogosService(MarechaiContext context, IWebHostEnvironment host)
+public class CompanyLogosService(Marechai.ApiClient.Client client)
 {
-    readonly IWebHostEnvironment _host        = host;
-    readonly string              _webRootPath = host.WebRootPath;
-
-    public async Task<List<CompanyLogo>> GetByCompany(int companyId) =>
-        await context.CompanyLogos.Where(l => l.CompanyId == companyId).OrderBy(l => l.Year).ToListAsync();
-
-    public async Task DeleteAsync(int id, string userId)
+    public async Task<List<CompanyLogoDto>> GetByCompany(int companyId)
     {
-        CompanyLogo logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
-
-        if(logo is null) return;
-
-        context.CompanyLogos.Remove(logo);
-        await context.SaveChangesWithUserAsync(userId);
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos", logo.Guid + ".svg"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/1x", logo.Guid + ".webp"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/2x", logo.Guid + ".webp"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/webp/3x", logo.Guid + ".webp"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/png/1x", logo.Guid + ".png"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/png/2x", logo.Guid + ".png"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/png/3x", logo.Guid + ".png"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/1x", logo.Guid + ".webp"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/2x", logo.Guid + ".webp"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/webp/3x", logo.Guid + ".webp"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/1x", logo.Guid + ".png"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/2x", logo.Guid + ".png"));
-
-        if(File.Exists(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png")))
-            File.Delete(Path.Combine(_webRootPath, "assets/logos/thumbs/png/3x", logo.Guid + ".png"));
-    }
-
-    public async Task ChangeYearAsync(int id, int? year, string userId)
-    {
-        CompanyLogo logo = await context.CompanyLogos.Where(l => l.Id == id).FirstOrDefaultAsync();
-
-        if(logo is null) return;
-
-        logo.Year = year;
-        await context.SaveChangesWithUserAsync(userId);
-    }
-
-    public async Task<int> CreateAsync(int companyId, Guid guid, int? year, string userId)
-    {
-        var logo = new CompanyLogo
+        try
         {
-            Guid      = guid,
-            Year      = year,
-            CompanyId = companyId
-        };
+            List<CompanyLogoDto>? logos = await client.Companies[companyId].Logos.GetAsync();
 
-        await context.CompanyLogos.AddAsync(logo);
-        await context.SaveChangesWithUserAsync(userId);
-
-        return logo.Id;
+            return logos ?? [];
+        }
+        catch
+        {
+            return [];
+        }
     }
 }

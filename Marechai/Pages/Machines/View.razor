@@ -27,8 +27,8 @@
 }
 
 @page "/machine/{Id:int}"
+@using Marechai.ApiClient.Models
 @using Marechai.Data
-@using Marechai.Data.Dtos
 @inherits OwningComponentBase<MachinesService>
 @inject IStringLocalizer<MachinesService> L
 @inject IWebHostEnvironment               Host
@@ -85,17 +85,17 @@
                 @L["Introduction date"]
             </th>
             <td style="width: 67%;">
-                @if(_machine.Type == MachineType.Computer)
+                @if(_machine.Type == (int)MachineType.Computer)
                 {
-                    <a href="/computers/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.ToLongDateString()</a>
+                    <a href="/computers/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.DateTime.ToLongDateString()</a>
                 }
-                else if(_machine.Type == MachineType.Console)
+                else if(_machine.Type == (int)MachineType.Console)
                 {
-                    <a href="/consoles/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.ToLongDateString()</a>
+                    <a href="/consoles/year/@_machine.Introduced.Value.Year">@_machine.Introduced.Value.DateTime.ToLongDateString()</a>
                 }
                 else
                 {
-                    @_machine.Introduced.Value.ToLongDateString()
+                    @_machine.Introduced.Value.DateTime.ToLongDateString()
                 }
             </td>
         </tr>
@@ -167,7 +167,7 @@
                                                 <td class="text-right" style="width: 33%">@L["Manufacturer"]</td>
                                                 <td style="width: 67%;">
                                                     <a href="/processors/company/@processor.CompanyId">
-                                                        @processor.CompanyName
+                                                        @processor.Company
                                                     </a>
                                                 </td>
                                             </tr>
@@ -270,7 +270,7 @@
                                                     </td>
                                                 </tr>
                                             }
-                                            @if(processor.DataBus > 0 || processor.AddrBus > 0)
+                                            @if(processor.DataBus > 0 || processor.AddressBus > 0)
                                             {
                                                 <tr>
                                                     <td class="text-right" style="width: 33%">@L["Bus"]</td>
@@ -284,11 +284,11 @@
                                                                     </td>
                                                                 </tr>
                                                             }
-                                                            @if(processor.AddrBus > 0)
+                                                            @if(processor.AddressBus > 0)
                                                             {
                                                                 <tr>
                                                                     <td>
-                                                                        @string.Format(L["{0}-bit address."], processor.AddrBus)
+                                                                        @string.Format(L["{0}-bit address."], processor.AddressBus)
                                                                     </td>
                                                                 </tr>
                                                             }
@@ -663,7 +663,7 @@
                                                             style="width: 33%">@L["Manufacturer"]</td>
                                                         <td style="width: 67%">
                                                             <a href="/soundsynths/company/@sound.CompanyId">
-                                                                @sound.CompanyName
+                                                                @sound.Company
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -786,7 +786,7 @@
 
                         if(storage.Capacity != null)
                         {
-                            if(storage.Type == StorageType.CompactCassette)
+                            if(storage.Type == (int)StorageType.CompactCassette)
                             {
                                 capString = string.Format(L["{0} bps"], storage.Capacity);
                             }
@@ -816,9 +816,9 @@
                         }
 
                         <tr>
-                            @if(storage.Interface != StorageInterface.Unknown)
+                            @if(storage.Interface != (int)StorageInterface.Unknown)
                             {
-                                if(storage.Type == StorageType.Empty)
+                                if(storage.Type == (int)StorageType.Empty)
                                 {
                                     <td>@string.Format(L["Available {0} interface."], storage.Interface)</td>
                                 }

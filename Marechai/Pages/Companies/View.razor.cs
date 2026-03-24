@@ -27,24 +27,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
 using Marechai.Data;
-using Marechai.Data.Dtos;
-using Marechai.Database.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Companies;
 
 public partial class View
 {
-    CompanyDto        _company;
-    List<Machine>     _computers;
-    List<Machine>     _consoles;
-    string            _description;
-    int               _id;
-    bool              _loaded;
-    List<CompanyLogo> _logos;
-    string            _selectedSlide;
-    Company           _soldTo;
+    CompanyDto          _company;
+    List<MachineDto>    _computers;
+    List<MachineDto>    _consoles;
+    string              _description;
+    int                 _id;
+    bool                _loaded;
+    List<CompanyLogoDto> _logos;
+    string              _selectedSlide;
+    CompanyDto          _soldTo;
 
     [Parameter]
     public int Id
@@ -74,10 +73,10 @@ public partial class View
         }
 
         _company = await Service.GetAsync(Id);
-        List<Machine> machines = await Service.GetMachinesAsync(Id);
+        List<MachineDto> machines = await Service.GetMachinesAsync(Id);
 
-        _computers = machines.Where(m => m.Type == MachineType.Computer).ToList();
-        _consoles  = machines.Where(m => m.Type == MachineType.Console).ToList();
+        _computers = machines.Where(m => m.Type == (int)MachineType.Computer).ToList();
+        _consoles  = machines.Where(m => m.Type == (int)MachineType.Console).ToList();
 
         _description = await Service.GetDescriptionTextAsync(Id);
         _soldTo      = await Service.GetSoldToAsync(_company.SoldToId);

@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -24,76 +24,94 @@
 *******************************************************************************/
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Marechai.Data;
-using Marechai.Data.Dtos;
-using Marechai.Database.Models;
-using Microsoft.EntityFrameworkCore;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.Services;
 
-public class ConsolesService(MarechaiContext context)
+public class ConsolesService(Marechai.ApiClient.Client client)
 {
-    public async Task<int> GetConsolesCountAsync() =>
-        await context.Machines.CountAsync(c => c.Type == MachineType.Console);
+    public async Task<int> GetConsolesCountAsync()
+    {
+        try
+        {
+            int? count = await client.Consoles.Count.GetAsync();
 
-    public Task<int> GetMinimumYearAsync() => context.Machines
-                                                     .Where(t => t.Type == MachineType.Console &&
-                                                                 t.Introduced.HasValue         &&
-                                                                 t.Introduced.Value.Year > 1000)
-                                                     .MinAsync(t => t.Introduced.Value.Year);
+            return count ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
 
-    public Task<int> GetMaximumYearAsync() => context.Machines
-                                                     .Where(t => t.Type == MachineType.Console &&
-                                                                 t.Introduced.HasValue         &&
-                                                                 t.Introduced.Value.Year > 1000)
-                                                     .MaxAsync(t => t.Introduced.Value.Year);
+    public async Task<int> GetMinimumYearAsync()
+    {
+        try
+        {
+            int? year = await client.Consoles.MinimumYear.GetAsync();
 
-    public async Task<List<MachineDto>> GetConsolesByLetterAsync(char c) => await context.Machines
-                                                                               .Include(m => m.Company)
-                                                                               .Where(m =>
-                                                                                    m.Type ==
-                                                                                    MachineType.Console &&
-                                                                                    EF.Functions.Like(m.Name,
-                                                                                        $"{c}%"))
-                                                                               .OrderBy(m => m.Company.Name)
-                                                                               .ThenBy(m => m.Name)
-                                                                               .Select(m => new MachineDto
-                                                                                {
-                                                                                    Id      = m.Id,
-                                                                                    Name    = m.Name,
-                                                                                    Company = m.Company.Name
-                                                                                })
-                                                                               .ToListAsync();
+            return year ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
 
-    public async Task<List<MachineDto>> GetConsolesByYearAsync(int year) => await context.Machines
-                                                                               .Include(m => m.Company)
-                                                                               .Where(m =>
-                                                                                    m.Type ==
-                                                                                    MachineType.Console  &&
-                                                                                    m.Introduced != null &&
-                                                                                    m.Introduced.Value.Year ==
-                                                                                    year)
-                                                                               .OrderBy(m => m.Company.Name)
-                                                                               .ThenBy(m => m.Name)
-                                                                               .Select(m => new MachineDto
-                                                                                {
-                                                                                    Id      = m.Id,
-                                                                                    Name    = m.Name,
-                                                                                    Company = m.Company.Name
-                                                                                })
-                                                                               .ToListAsync();
+    public async Task<int> GetMaximumYearAsync()
+    {
+        try
+        {
+            int? year = await client.Consoles.MaximumYear.GetAsync();
 
-    public async Task<List<MachineDto>> GetConsolesAsync() => await context.Machines.Include(m => m.Company)
-                                                                           .Where(m => m.Type == MachineType.Console)
-                                                                           .OrderBy(m => m.Company.Name)
-                                                                           .ThenBy(m => m.Name)
-                                                                           .Select(m => new MachineDto
-                                                                            {
-                                                                                Id      = m.Id,
-                                                                                Name    = m.Name,
-                                                                                Company = m.Company.Name
-                                                                            })
-                                                                           .ToListAsync();
+            return year ?? 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public async Task<List<MachineDto>> GetConsolesByLetterAsync(char c)
+    {
+        try
+        {
+            List<MachineDto>? machines = await client.Consoles.ByLetter[c.ToString()].GetAsync();
+
+            return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MachineDto>> GetConsolesByYearAsync(int year)
+    {
+        try
+        {
+            List<MachineDto>? machines = await client.Consoles.ByYear[year].GetAsync();
+
+            return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MachineDto>> GetConsolesAsync()
+    {
+        try
+        {
+            List<MachineDto>? machines = await client.Consoles.GetAsync();
+
+            return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 }

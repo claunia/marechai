@@ -15,7 +15,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegionAware
 {
-    readonly ApiClient          _apiClient;
+    readonly Client          _apiClient;
     readonly SoftwareScreenshotCache _screenshotCache;
     readonly ImageSourceFactory      _imageSourceFactory;
     readonly IJwtService             _jwtService;
@@ -93,7 +93,7 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
     [ObservableProperty]
     private string _versionSearchText = string.Empty;
 
-    public AdminSoftwareScreenshotsViewModel(ApiClient                                    apiClient,
+    public AdminSoftwareScreenshotsViewModel(Client                                    apiClient,
                                               SoftwareScreenshotCache                      screenshotCache,
                                               ImageSourceFactory                           imageSourceFactory,
                                               IJwtService                                  jwtService,
@@ -282,7 +282,7 @@ public partial class AdminSoftwareScreenshotsViewModel : ObservableObject, IRegi
             await stream.CopyToAsync(ms);
             byte[] fileBytes = ms.ToArray();
 
-            var body = new Marechai.App.Software.Screenshots.Upload.UploadPostRequestBody
+            var body = new Marechai.ApiClient.Software.Screenshots.Upload.UploadPostRequestBody
             {
                 File       = fileBytes,
                 SoftwareId = (int?)(SelectedSoftware.Id ?? 0),

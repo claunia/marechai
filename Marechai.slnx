@@ -7,6 +7,7 @@
     <File Path="global.json" />
   </Folder>
   <Project Path="Marechai.App/Marechai.App.csproj" />
+  <Project Path="Marechai.ApiClient/Marechai.ApiClient.csproj" />
   <Project Path="Marechai.Data/Marechai.Data.csproj" />
   <Project Path="Marechai.Database/Marechai.Database.csproj" />
   <Project Path="Marechai.Server/Marechai.Server.csproj" />

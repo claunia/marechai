@@ -15,123 +15,25 @@
     <PackageReference Include="Blazorise.Bootstrap"/>
     <PackageReference Include="Blazorise.Icons.FontAwesome"/>
     <PackageReference Include="Markdig"/>
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore"/>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design"/>
-    <PackageReference Include="MySql.Data"/>
+    <PackageReference Include="Microsoft.Kiota.Abstractions"/>
+    <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary"/>
+    <PackageReference Include="Microsoft.Kiota.Serialization.Json"/>
+    <PackageReference Include="Microsoft.Kiota.Serialization.Text"/>
+    <PackageReference Include="Microsoft.Kiota.Serialization.Form"/>
+    <PackageReference Include="Microsoft.Kiota.Serialization.Multipart"/>
     <PackageReference Include="SkiaSharp"/>
     <PackageReference Include="SkiaSharp.NativeAssets.Linux"/>
     <PackageReference Include="Svg.Skia"/>
-    <PackageReference Include="Tewr.Blazor.FileReader"/>
     <PackageReference Include="Unclassified.NetRevisionTask"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Marechai.Database\Marechai.Database.csproj"/>
+    <ProjectReference Include="..\Marechai.ApiClient\Marechai.ApiClient.csproj"/>
     <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\**\*.es.resx"/>
   </ItemGroup>
   <ItemGroup>
-    <Content Update="Pages\Admin\Index.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\DocumentCompanies.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\DocumentPeople.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Gpus.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\InstructionSetExtensions.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\InstructionSets.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Licenses.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\MachineFamilies.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Machines.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\People.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\News.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Processors.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Screens.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\SoundSynths.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\Company.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\DocumentCompany.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\DocumentPerson.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\Gpu.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\InstructionSetExtension.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\InstructionSet.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\License.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\MachineFamily.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\Machine.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\Person.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\Processor.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\Screen.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\SoundSynth.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Resolutions.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\Resolution.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\MachinePhoto.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Admin\Details\CreateMachinePhoto.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
     <Content Update="appsettings.json">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

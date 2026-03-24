@@ -11,7 +11,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                        _apiClient;
+    private readonly Client                        _apiClient;
     private readonly IJwtService                      _jwtService;
     private readonly IStringLocalizer                 _localizer;
     private readonly ILogger<AdminPeopleViewModel>    _logger;
@@ -89,7 +89,7 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private ObservableCollection<Iso31661NumericDto> _countries = [];
 
-    public AdminPeopleViewModel(ApiClient                        apiClient,
+    public AdminPeopleViewModel(Client                        apiClient,
                                 IJwtService                      jwtService,
                                 ITokenService                    tokenService,
                                 ILogger<AdminPeopleViewModel>    logger,

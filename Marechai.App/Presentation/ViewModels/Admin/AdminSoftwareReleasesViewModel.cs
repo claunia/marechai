@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Humanizer;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 using Marechai.App.Services;
 using Marechai.App.Services.Authentication;
 using Marechai.Data;
@@ -18,7 +18,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private readonly SoftwareReleasesService                     _service;
     private readonly SoftwareVersionsService                     _versionsService;
     private readonly SoftwarePlatformsService                    _platformsService;
-    private readonly ApiClient                                   _apiClient;
+    private readonly Client                                   _apiClient;
     private readonly IJwtService                                 _jwtService;
     private readonly IStringLocalizer                            _localizer;
     private readonly ILogger<AdminSoftwareReleasesViewModel>     _logger;
@@ -96,7 +96,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public AdminSoftwareReleasesViewModel(SoftwareReleasesService                  service,
                                           SoftwareVersionsService                  versionsService,
                                           SoftwarePlatformsService                 platformsService,
-                                          ApiClient                                apiClient,
+                                          Client                                   apiClient,
                                           IJwtService                              jwtService,
                                           ITokenService                            tokenService,
                                           ILogger<AdminSoftwareReleasesViewModel>  logger,

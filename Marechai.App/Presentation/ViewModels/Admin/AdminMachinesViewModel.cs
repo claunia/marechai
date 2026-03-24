@@ -13,7 +13,7 @@ namespace Marechai.App.Presentation.ViewModels.Admin;
 
 public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
 {
-    private readonly ApiClient                          _apiClient;
+    private readonly Client                          _apiClient;
     private readonly IJwtService                        _jwtService;
     private readonly IStringLocalizer                   _localizer;
     private readonly ILogger<AdminMachinesViewModel>    _logger;
@@ -104,7 +104,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public List<string> StorageTypeItems { get; private set; } = [];
     public List<string> StorageInterfaceItems { get; private set; } = [];
 
-    public AdminMachinesViewModel(ApiClient                          apiClient,
+    public AdminMachinesViewModel(Client                          apiClient,
                                   IJwtService                        jwtService,
                                   ITokenService                      tokenService,
                                   ILogger<AdminMachinesViewModel>    logger,

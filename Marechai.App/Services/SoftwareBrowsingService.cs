@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Marechai.App.Models;
+using Marechai.ApiClient.Models;
 
 namespace Marechai.App.Services;
 
 public class SoftwareBrowsingService
 {
-    private readonly ApiClient                        _apiClient;
+    private readonly Client                        _apiClient;
     private readonly ILogger<SoftwareBrowsingService> _logger;
 
-    public SoftwareBrowsingService(ApiClient apiClient, ILogger<SoftwareBrowsingService> logger)
+    public SoftwareBrowsingService(Client apiClient, ILogger<SoftwareBrowsingService> logger)
     {
         _apiClient = apiClient;
         _logger    = logger;

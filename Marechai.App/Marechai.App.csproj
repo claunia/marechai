@@ -40,6 +40,7 @@
     </UnoFeatures>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Marechai.ApiClient\Marechai.ApiClient.csproj"/>
     <ProjectReference Include="..\Marechai.Data\Marechai.Data.csproj"/>
   </ItemGroup>
   <ItemGroup>

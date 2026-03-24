@@ -11,7 +11,7 @@ namespace Marechai.App.Presentation.ViewModels;
 
 public partial class ScreenshotDetailViewModel : ObservableObject, IRegionAware
 {
-    readonly ApiClient                                _apiClient;
+    readonly Client                                _apiClient;
     readonly SoftwareScreenshotCache                  _screenshotCache;
     readonly ImageSourceFactory                       _imageSourceFactory;
     readonly IStringLocalizer                         _localizer;
@@ -42,7 +42,7 @@ public partial class ScreenshotDetailViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
-    public ScreenshotDetailViewModel(ApiClient                           apiClient,
+    public ScreenshotDetailViewModel(Client                           apiClient,
                                       SoftwareScreenshotCache             screenshotCache,
                                       ImageSourceFactory                  imageSourceFactory,
                                       IStringLocalizer                    localizer,
