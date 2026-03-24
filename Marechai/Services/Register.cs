@@ -44,5 +44,6 @@ public static class Register
         services.AddScoped<MachinePhotosService>();
         services.AddScoped<GpusService>();
         services.AddScoped<ProcessorsService>();
+        services.AddScoped<SoundSynthsService>();
     }
 }

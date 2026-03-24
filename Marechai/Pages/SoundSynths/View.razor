@@ -1,0 +1,163 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/soundsynth/{Id:int}"
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@inherits OwningComponentBase<SoundSynthsService>
+@inject IStringLocalizer<SoundSynthsService> L
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_synth is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["No sound synthesizers found"]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h3" Align="Align.Center" Style="color: white; font-weight: 700;">@_displayName</MudText>
+        @if(!string.IsNullOrEmpty(_synth.Company))
+        {
+            <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="color: rgba(255,255,255,0.85);">@_synth.Company</MudText>
+        }
+    </MudStack>
+</MudPaper>
+
+@* ── General Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["Details"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            @if(_synth.ModelCode != null && _synth.ModelCode != _synth.Name)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Model"]</strong></td><td>@_synth.ModelCode</td></tr>
+            }
+            @if(_synth.CompanyId.HasValue)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Manufacturer"]</strong></td><td><MudLink Href="@($"/company/{_synth.CompanyId}")">@_synth.Company</MudLink></td></tr>
+            }
+            @if(_synth.Introduced != null)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Introduction date"]</strong></td><td>@($"{_synth.Introduced:yyyy}")</td></tr>
+            }
+            @if(_synth.Voices != null || _synth.SquareWave != null || _synth.WhiteNoise != null)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Generators"]</strong></td>
+                    <td>
+                        <MudStack Spacing="0">
+                            @if(_synth.Voices != null) { <MudText Typo="Typo.body2">@string.Format(L["{0} voices"], _synth.Voices)</MudText> }
+                            @if(_synth.SquareWave != null) { <MudText Typo="Typo.body2">@string.Format(L["{0} square wave"], _synth.SquareWave)</MudText> }
+                            @if(_synth.WhiteNoise != null) { <MudText Typo="Typo.body2">@string.Format(L["{0} white noise"], _synth.WhiteNoise)</MudText> }
+                        </MudStack>
+                    </td>
+                </tr>
+            }
+            @if(_synth.Depth != null || _synth.Frequency != null)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Sample rate"]</strong></td>
+                    <td>
+                        @if(_synth.Depth != null && _synth.Frequency != null)
+                        { @(_synth.Frequency > 1000 ? string.Format(L["{0} bits at {1} KHz"], _synth.Depth, _synth.Frequency / 1000) : string.Format(L["{0} bits at {1} Hz"], _synth.Depth, _synth.Frequency)) }
+                        else if(_synth.Depth != null)
+                        { @string.Format(L["{0} bits"], _synth.Depth) }
+                        else
+                        { @(_synth.Frequency > 1000 ? string.Format(L["{0} KHz"], _synth.Frequency / 1000) : string.Format(L["{0} Hz"], _synth.Frequency)) }
+                    </td>
+                </tr>
+            }
+            @if(_synth.Type != null)
+            {
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Synthesizer type"]</strong></td><td>@_synth.Type</td></tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Computers Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_computers.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Computer" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Computers"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_computers.Count > 0 ? Color.Success : Color.Error)">@_computers.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineDto" Dense="true">
+                @foreach(MachineDto computer in _computers)
+                {
+                    <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
+                        @computer.Company @computer.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Consoles Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_consoles.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.SportsEsports" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Consoles"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_consoles.Count > 0 ? Color.Success : Color.Error)">@_consoles.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="MachineDto" Dense="true">
+                @foreach(MachineDto console in _consoles)
+                {
+                    <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
+                        @console.Company @console.Name
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>

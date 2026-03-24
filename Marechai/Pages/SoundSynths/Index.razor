@@ -1,0 +1,89 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/soundsynths"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<SoundSynthsService>
+@inject IStringLocalizer<SoundSynthsService> L
+
+@if(_synths is null)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Sound synthesizers"]</MudText>
+    </MudStack>
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white;">@string.Format(L["{0} sound synthesizers found in the database."], _synths.Count)</MudChip>
+</MudPaper>
+
+@if(_synths.Any())
+{
+    <MudTextField T="string" @bind-Value="_searchText" @bind-Value:after="OnSearchChanged"
+                  Placeholder="@L["Filter sound synthesizers..."]"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                  Variant="Variant.Outlined" Class="mb-4" Immediate="true"/>
+
+    <div style="height: 70vh; overflow-y: auto;">
+        <Virtualize Items="_filteredSynths" Context="synth" ItemSize="88">
+            <a href="/soundsynth/@synth.Id" style="text-decoration: none; color: inherit;">
+                <MudCard Elevation="1" Class="mb-2 rounded-lg" Style="cursor: pointer;">
+                    <MudCardContent>
+                        <div class="d-flex align-center gap-3">
+                            @if(synth.IsSpecial)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.Code" Color="Color.Secondary"/>
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.Speaker" Color="Color.Primary"/>
+                            }
+                            <div>
+                                <MudText Typo="Typo.body1" Style="font-weight: 500;">@synth.DisplayName</MudText>
+                                @if(!string.IsNullOrEmpty(synth.Company))
+                                {
+                                    <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary);">@synth.Company</MudText>
+                                }
+                            </div>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </a>
+        </Virtualize>
+    </div>
+}
+else
+{
+    <MudAlert Severity="Severity.Info">@L["No sound synthesizers found"]</MudAlert>
+}

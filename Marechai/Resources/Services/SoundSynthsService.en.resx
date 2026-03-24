@@ -123,40 +123,144 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Sound synthesizers</value>
+        <comment>Sound synthesizers</comment>
+    </data>
+    <data name="Sound synthesizer details" xml:space="preserve">
+        <value>Sound synthesizer details</value>
+        <comment>Sound synthesizer details</comment>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Company</value>
+        <comment>Company</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Model" xml:space="preserve">
+        <value>Model</value>
+        <comment>Model code</comment>
+    </data>
+    <data name="Manufacturer" xml:space="preserve">
+        <value>Manufacturer</value>
+        <comment>Manufacturer</comment>
+    </data>
+    <data name="Introduction date" xml:space="preserve">
+        <value>Introduction date</value>
+        <comment>Date when the sound synth was introduced</comment>
+    </data>
+    <data name="Details" xml:space="preserve">
+        <value>Details</value>
+        <comment>Details</comment>
+    </data>
+    <data name="Synthesizer type" xml:space="preserve">
+        <value>Synthesizer type</value>
+        <comment>Synthesizer type</comment>
+    </data>
+    <data name="Generators" xml:space="preserve">
+        <value>Generators</value>
+        <comment>Generators</comment>
+    </data>
+    <data name="{0} voices" xml:space="preserve">
+        <value>{0} voices</value>
+        <comment>{0} digitized voice count</comment>
+    </data>
+    <data name="{0} square wave" xml:space="preserve">
+        <value>{0} square wave</value>
+        <comment>{0} square wave channel count</comment>
+    </data>
+    <data name="{0} white noise" xml:space="preserve">
+        <value>{0} white noise</value>
+        <comment>{0} white noise channel count</comment>
+    </data>
+    <data name="Sample rate" xml:space="preserve">
+        <value>Sample rate</value>
+        <comment>Sample rate</comment>
+    </data>
+    <data name="{0} bits at {1} KHz" xml:space="preserve">
+        <value>{0} bits at {1} KHz</value>
+        <comment>Sample resolution at frequency in kilohertz</comment>
+    </data>
+    <data name="{0} bits at {1} Hz" xml:space="preserve">
+        <value>{0} bits at {1} Hz</value>
+        <comment>Sample resolution at frequency in hertz</comment>
+    </data>
+    <data name="{0} bits" xml:space="preserve">
+        <value>{0} bits</value>
+        <comment>Sample resolution</comment>
+    </data>
+    <data name="{0} KHz" xml:space="preserve">
+        <value>{0} KHz</value>
+        <comment>Frequency in kilohertz</comment>
+    </data>
+    <data name="{0} Hz" xml:space="preserve">
+        <value>{0} Hz</value>
+        <comment>Frequency in hertz</comment>
+    </data>
+    <data name="Computers" xml:space="preserve">
+        <value>Computers</value>
+        <comment>Computers that use this sound synth</comment>
+    </data>
+    <data name="Consoles" xml:space="preserve">
+        <value>Consoles</value>
+        <comment>Consoles that use this sound synth</comment>
+    </data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+        <comment>Software DAC, a special sound synth type</comment>
+    </data>
+    <data name="This machine directly sends data to a DAC or similar connected to the audio output." xml:space="preserve">
+        <value>This machine directly sends data to a DAC or similar connected to the audio output.</value>
+        <comment>Software DAC description</comment>
+    </data>
+    <data name="No sound synthesizers found" xml:space="preserve">
+        <value>No sound synthesizers found</value>
+        <comment>Message when no sound synths exist</comment>
+    </data>
+    <data name="Filter sound synthesizers..." xml:space="preserve">
+        <value>Filter sound synthesizers...</value>
+        <comment>Placeholder for filtering</comment>
+    </data>
+    <data name="{0} sound synthesizers found in the database." xml:space="preserve">
+        <value>{0} sound synthesizers found in the database.</value>
+        <comment>Count of sound synths</comment>
+    </data>
     <data name="Unknown (company)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to a company</comment>
-  </data>
+    </data>
     <data name="Unknown (model code)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to a model code</comment>
-  </data>
+    </data>
     <data name="Unknown (introduction date)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to an introduction date</comment>
-  </data>
+    </data>
     <data name="Unknown (voices)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to digitized voices</comment>
-  </data>
+    </data>
     <data name="Unknown (sample rate)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to sample rate</comment>
-  </data>
+    </data>
     <data name="Unknown (sample resolution)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to sample resolution</comment>
-  </data>
+    </data>
     <data name="Unknown (square wave channels)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to square wave channels</comment>
-  </data>
+    </data>
     <data name="Unknown (white noise channels)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to white noise channels</comment>
-  </data>
+    </data>
     <data name="Unknown (type)" xml:space="preserve">
-    <value>Unknown</value>
+        <value>Unknown</value>
         <comment>Unknown, referring to sound synthesizer type</comment>
-  </data>
+    </data>
 </root>

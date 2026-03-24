@@ -175,4 +175,8 @@
     <value>Procesadores</value>
         <comment>Processors navigation link</comment>
   </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+    <value>Sintetizadores de sonido</value>
+        <comment>Sound synthesizers navigation link</comment>
+  </data>
 </root>

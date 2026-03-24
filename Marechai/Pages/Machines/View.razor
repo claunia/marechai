@@ -517,7 +517,7 @@
                             <TitleContent>
                                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                                     <MudIcon Icon="@Icons.Material.Filled.Speaker" Size="Size.Small" Color="Color.Secondary"/>
-                                    <MudText>@sound.Name</MudText>
+                                    <MudLink Href="@($"/soundsynth/{sound.Id}")" Style="color: inherit;">@sound.Name</MudLink>
                                 </MudStack>
                             </TitleContent>
                             <ChildContent>
@@ -529,7 +529,7 @@
                                     }
                                     @if(sound.CompanyId != null)
                                     {
-                                        <tr><td style="width: 33%; text-align: right;">@L["Manufacturer"]</td><td><MudLink Href="@($"/soundsynths/company/{sound.CompanyId}")">@sound.Company</MudLink></td></tr>
+                                        <tr><td style="width: 33%; text-align: right;">@L["Manufacturer"]</td><td><MudLink Href="@($"/company/{sound.CompanyId}")">@sound.Company</MudLink></td></tr>
                                     }
                                     @if(sound.Introduced != null)
                                     {
