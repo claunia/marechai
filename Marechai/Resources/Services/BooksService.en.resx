@@ -123,64 +123,100 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-        <comment>News</comment>
-  </data>
-    <data name="Hello {0}!" xml:space="preserve">
-    <value>¡Hola {0}!</value>
-        <comment>Salutes logged-in user</comment>
-  </data>
-    <data name="Log out" xml:space="preserve">
-    <value>Cerrar sesión</value>
-        <comment>Log out</comment>
-  </data>
-    <data name="Register" xml:space="preserve">
-    <value>Registrarse</value>
-        <comment>Register</comment>
-  </data>
-    <data name="Log in" xml:space="preserve">
-    <value>Iniciar sesión</value>
-        <comment>Log in</comment>
-  </data>
-    <data name="About" xml:space="preserve">
-    <value>Acerca de</value>
-        <comment>About</comment>
-  </data>
-    <data name="Contact" xml:space="preserve">
-    <value>Contacto</value>
-        <comment>Contact</comment>
-  </data>
-    <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-        <comment>Companies</comment>
-  </data>
-    <data name="Computers" xml:space="preserve">
-    <value>Ordenadores</value>
-        <comment>Computers</comment>
-  </data>
-    <data name="Consoles" xml:space="preserve">
-    <value>Consolas</value>
-        <comment>Videogame consoles</comment>
-  </data>
     <data name="Books" xml:space="preserve">
-    <value>Libros</value>
-        <comment>Books navigation link</comment>
-  </data>
-    <data name="Admin area" xml:space="preserve">
-    <value>Administración</value>
-        <comment>Administration area</comment>
-  </data>
-    <data name="GPUs" xml:space="preserve">
-    <value>GPUs</value>
-        <comment>Graphics Processing Units navigation link</comment>
-  </data>
-    <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-        <comment>Processors navigation link</comment>
-  </data>
-    <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-        <comment>Sound synthesizers navigation link</comment>
-  </data>
+        <value>Books</value>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Here you can consult our database.</value>
+    </data>
+    <data name="The database contains information about books related to computing history." xml:space="preserve">
+        <value>The database contains information about books related to computing history.</value>
+    </data>
+    <data name="There are {0} books in the database at this moment." xml:space="preserve">
+        <value>There are {0} books in the database at this moment.</value>
+    </data>
+    <data name="Search by companies" xml:space="preserve">
+        <value>Search by companies</value>
+    </data>
+    <data name="All companies" xml:space="preserve">
+        <value>All companies</value>
+    </data>
+    <data name="Search books alphabetically" xml:space="preserve">
+        <value>Search books alphabetically</value>
+    </data>
+    <data name="All books" xml:space="preserve">
+        <value>All books</value>
+    </data>
+    <data name="Search books by year" xml:space="preserve">
+        <value>Search books by year</value>
+    </data>
+    <data name="Search results:" xml:space="preserve">
+        <value>Search results:</value>
+    </data>
+    <data name="Books starting with {0}" xml:space="preserve">
+        <value>Books starting with {0}</value>
+    </data>
+    <data name="Books published in {0}" xml:space="preserve">
+        <value>Books published in {0}</value>
+    </data>
+    <data name="{0} books found in the database." xml:space="preserve">
+        <value>{0} books found in the database.</value>
+    </data>
+    <data name="There are no books found in the database that start with this letter." xml:space="preserve">
+        <value>There are no books found in the database that start with this letter.</value>
+    </data>
+    <data name="There are no books found published this year." xml:space="preserve">
+        <value>There are no books found published this year.</value>
+    </data>
+    <data name="Book not found." xml:space="preserve">
+        <value>Book not found.</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="Title" xml:space="preserve">
+        <value>Title</value>
+    </data>
+    <data name="Native title" xml:space="preserve">
+        <value>Native title</value>
+    </data>
+    <data name="ISBN" xml:space="preserve">
+        <value>ISBN</value>
+    </data>
+    <data name="Pages" xml:space="preserve">
+        <value>Pages</value>
+    </data>
+    <data name="Edition" xml:space="preserve">
+        <value>Edition</value>
+    </data>
+    <data name="Published" xml:space="preserve">
+        <value>Published</value>
+    </data>
+    <data name="Country" xml:space="preserve">
+        <value>Country</value>
+    </data>
+    <data name="Cover" xml:space="preserve">
+        <value>Cover</value>
+    </data>
+    <data name="Synopsis" xml:space="preserve">
+        <value>Synopsis</value>
+    </data>
+    <data name="People" xml:space="preserve">
+        <value>People</value>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Companies</value>
+    </data>
+    <data name="Machines" xml:space="preserve">
+        <value>Machines</value>
+    </data>
+    <data name="Machine families" xml:space="preserve">
+        <value>Machine families</value>
+    </data>
+    <data name="Previous edition" xml:space="preserve">
+        <value>Previous edition</value>
+    </data>
+    <data name="Source book" xml:space="preserve">
+        <value>Source book</value>
+    </data>
 </root>
