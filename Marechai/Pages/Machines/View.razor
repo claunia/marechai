@@ -36,18 +36,20 @@
 
 @if(!_loaded)
 {
-    <p align="center">@L["Loading..."]</p>
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+    </div>
 
     return;
 }
 
 @if(_machine is null)
 {
-    <p align="center">@L["Machine not found in database"]</p>
+    <MudAlert Severity="Severity.Warning">@L["Machine not found in database"]</MudAlert>
 
     return;
 }
-<p align="center">
+<div class="d-flex justify-center mb-4">
     @if(_machine.CompanyLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _machine.CompanyLogo + ".svg")))
     {
         <picture>
@@ -62,27 +64,25 @@
                  style="max-height: 256px; max-width: 256px" width="auto"/>
         </picture>
     }
-</p>
+</div>
 
 @if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year == 1000)
 {
-    <b>
-        <div style="text-align: center;">@L["PROTOTYPE"]</div>
-    </b>
+    <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Warning" Class="mb-2">@L["PROTOTYPE"]</MudText>
 }
-<b>
-    <a href="/company/@_machine.CompanyId">
+<MudText Typo="Typo.h5" Class="mb-4">
+    <MudLink Href="@($"/company/{_machine.CompanyId}")">
         @_machine.Company
-    </a> @_machine.Name
-</b>
-<table class="table">
-
+    </MudLink> @_machine.Name
+</MudText>
+<MudSimpleTable Elevation="1" Dense="true">
+    <tbody>
     @if(_machine.Introduced.HasValue && _machine.Introduced.Value.Year != 1000)
     {
         <tr>
-            <th class="text-right" scope=row style="width: 33%;">
+            <td style="width: 33%; text-align: right;">
                 @L["Introduction date"]
-            </th>
+            </td>
             <td style="width: 67%;">
                 @if(_machine.Type == (int)MachineType.Computer)
                 {
@@ -102,9 +102,9 @@
     @if(_machine.FamilyId != null)
     {
         <tr>
-            <th class="text-right" scope=row style="width: 33%;">
+            <td style="width: 33%; text-align: right;">
                 @L["Family"]
-            </th>
+            </td>
             <td style="width: 67%;">
                 <a href="/machines/family/@_machine.FamilyId">
                     @_machine.FamilyName
@@ -115,9 +115,9 @@
     @if(_machine.Model != null)
     {
         <tr>
-            <th class="text-right" scope=row style="width: 33%;">
+            <td style="width: 33%; text-align: right;">
                 @L["Model"]
-            </th>
+            </td>
             <td style="width: 67%;">
                 @_machine.Model
             </td>
@@ -126,9 +126,9 @@
     @if(_machine.Processors.Count > 0)
     {
         <tr>
-            <th class="text-right" scope=row style="width: 33%;">
+            <td style="width: 33%; text-align: right;">
                 @L["Processors"]
-            </th>
+            </td>
             <td style="width: 67%;">
                 <MudExpansionPanels MultiExpansion="true">
                     @foreach(ProcessorDto processor in _machine.Processors)
@@ -145,16 +145,16 @@
                                 }
                             </TitleContent>
                             <ChildContent>
-                                        <table class="table table-borderless">
+                                        <table>
                                             @if(processor.ModelCode != null && processor.ModelCode != processor.Name)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Model"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Model"]</td>
                                                     <td style="width: 67%;">@processor.ModelCode</td>
                                                 </tr>
                                             }
                                             <tr>
-                                                <td class="text-right" style="width: 33%">@L["Manufacturer"]</td>
+                                                <td style="width: 33%; text-align: right;">@L["Manufacturer"]</td>
                                                 <td style="width: 67%;">
                                                     <a href="/processors/company/@processor.CompanyId">
                                                         @processor.Company
@@ -164,31 +164,30 @@
                                             @if(processor.Introduced != null)
                                             {
                                                 <tr>
-                                                    <td class="text-right"
-                                                        style="width: 33%">@L["Introduction date"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Introduction date"]</td>
                                                     <td style="width: 67%;">@($"{processor.Introduced:yyyy}")</td>
                                                 </tr>
                                             }
                                             @if(processor.InstructionSet != null)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Instruction set"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Instruction set"]</td>
                                                     <td style="width: 67%;">@processor.InstructionSet</td>
                                                 </tr>
                                             }
                                             @if(processor.Speed > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Nominal speed"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Nominal speed"]</td>
                                                     <td style="width: 67%;">@string.Format(L["{0} MHz"], processor.Speed)</td>
                                                 </tr>
                                             }
                                             @if(processor.Gprs > 0 || processor.Fprs > 0 || processor.SimdRegisters > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Registers"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Registers"]</td>
                                                     <td style="width: 67%;">
-                                                        <table class="table table-borderless">
+                                                        <table>
                                                             @if(processor.Gprs > 0)
                                                             {
                                                                 <tr>
@@ -245,14 +244,14 @@
                                             @if(processor.Cores > 1)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Multi-core"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Multi-core"]</td>
                                                     <td style="width: 67%;">@string.Format(L["{0} cores."], processor.Cores)</td>
                                                 </tr>
                                             }
                                             @if(processor.ThreadsPerCore > 1)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">
+                                                    <td style="width: 33%; text-align: right;">
                                                         <abbr title="@L["Simultaneous multithreading"]">SMT</abbr>
                                                     </td>
                                                     <td style="width: 67%;">
@@ -263,9 +262,9 @@
                                             @if(processor.DataBus > 0 || processor.AddressBus > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Bus"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Bus"]</td>
                                                     <td style="width: 67%;">
-                                                        <table class="table table-borderless">
+                                                        <table>
                                                             @if(processor.DataBus > 0)
                                                             {
                                                                 <tr>
@@ -290,9 +289,9 @@
                                             @if(processor.L1Instruction > 0 || processor.L1Data > 0 || processor.L2 > 0 || processor.L2 > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Cache"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Cache"]</td>
                                                     <td style="width: 67%;">
-                                                        <table class="table table-borderless">
+                                                        <table>
                                                             @if(processor.L1Instruction > 0)
                                                             {
                                                                 <tr>
@@ -332,15 +331,14 @@
                                             @if(processor.Package != null)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Package"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Package"]</td>
                                                     <td style="width: 67%;">@processor.Package</td>
                                                 </tr>
                                             }
                                             @if(processor.Process != null || processor.ProcessNm > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right"
-                                                        style="width: 33%">@L["Manufacturing process"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Manufacturing process"]</td>
                                                     <td style="width: 67%;">
                                                         @if(processor.Process != null && processor.ProcessNm > 0)
                                                         {
@@ -374,14 +372,14 @@
                                             @if(processor.DieSize > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Die size"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Die size"]</td>
                                                     <td style="width: 67%;">@string.Format(L["{0} mm²"], processor.DieSize)</td>
                                                 </tr>
                                             }
                                             @if(processor.Transistors > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Transistors"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Transistors"]</td>
                                                     <td style="width: 67%;">@processor.Transistors</td>
                                                 </tr>
                                             }
@@ -396,11 +394,11 @@
     @if(_machine.Memory != null && _machine.Memory.Count > 0)
     {
         <tr>
-            <th class="text-right" scope=row style="width: 33%;">
+            <td style="width: 33%; text-align: right;">
                 @L["Memory"]
-            </th>
+            </td>
             <td style="width: 67%;">
-                <table class="table table-borderless">
+                <table>
                     @foreach(MemoryDto memory in _machine.Memory)
                     {
                         string memValue;
@@ -460,9 +458,9 @@
     @if(_machine.Gpus.Count > 0)
     {
         <tr>
-            <th class="text-right" scope=row style="width: 33%;">
+            <td style="width: 33%; text-align: right;">
                 @L["Graphics processing units"]
-            </th>
+            </td>
             <td style="width: 67%;">
                 <MudExpansionPanels MultiExpansion="true">
                     @foreach(GpuDto gpu in _machine.Gpus)
@@ -485,16 +483,16 @@
                                     @($"{gpu.Name}")
                                 </TitleContent>
                                 <ChildContent>
-                                        <table class="table table-borderless">
+                                        <table>
                                             @if(gpu.ModelCode != null && gpu.ModelCode != gpu.Name)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Model"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Model"]</td>
                                                     <td style="width: 67%">@gpu.ModelCode</td>
                                                 </tr>
                                             }
                                             <tr>
-                                                <td class="text-right" style="width: 33%">@L["Manufacturer"]</td>
+                                                <td style="width: 33%; text-align: right;">@L["Manufacturer"]</td>
                                                 <td style="width: 67%">
                                                     <a href="/gpus/company/@gpu.CompanyId">
                                                         @gpu.Company
@@ -504,23 +502,21 @@
                                             @if(gpu.Introduced != null)
                                             {
                                                 <tr>
-                                                    <td class="text-right"
-                                                        style="width: 33%">@L["Introduction date"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Introduction date"]</td>
                                                     <td style="width: 67%">@($"{gpu.Introduced:yyyy}")</td>
                                                 </tr>
                                             }
                                             @if(gpu.Package != null)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Package"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Package"]</td>
                                                     <td style="width: 67%">@gpu.Package</td>
                                                 </tr>
                                             }
                                             @if(gpu.Process != null || gpu.ProcessNm > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right"
-                                                        style="width: 33%">@L["Manufacturing process"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Manufacturing process"]</td>
                                                     <td style="width: 67%">
                                                         @if(gpu.Process != null && gpu.ProcessNm > 0)
                                                         {
@@ -554,14 +550,14 @@
                                             @if(gpu.DieSize > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Die size"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Die size"]</td>
                                                     <td style="width: 67%">@string.Format(L["{0} mm²"], gpu.DieSize)</td>
                                                 </tr>
                                             }
                                             @if(gpu.Transistors > 0)
                                             {
                                                 <tr>
-                                                    <td class="text-right" style="width: 33%">@L["Transistors"]</td>
+                                                    <td style="width: 33%; text-align: right;">@L["Transistors"]</td>
                                                     <td style="width: 67%">@gpu.Transistors</td>
                                                 </tr>
                                             }
@@ -577,9 +573,9 @@
     @if(_machine.SoundSynthesizers.Count > 0)
     {
         <tr>
-            <th class="text-right" scope=row style="width: 33%;">
+            <td style="width: 33%; text-align: right;">
                 @L["Sound synthesizers"]
-            </th>
+            </td>
             <td style="width: 67%;">
                 <MudExpansionPanels MultiExpansion="true">
                     @foreach(SoundSynthDto sound in _machine.SoundSynthesizers)
@@ -606,19 +602,18 @@
                                             @($"{sound.Name}")
                                         </TitleContent>
                                         <ChildContent>
-                                            <table class="table table-borderless">
+                                            <table>
                                                 @if(sound.ModelCode != null && sound.ModelCode != sound.Name)
                                                 {
                                                     <tr>
-                                                        <td class="text-right" style="width: 33%">@L["Model"]</td>
+                                                        <td style="width: 33%; text-align: right;">@L["Model"]</td>
                                                         <td style="width: 67%">@sound.ModelCode</td>
                                                     </tr>
                                                 }
                                                 @if(sound.CompanyId != null)
                                                 {
                                                     <tr>
-                                                        <td class="text-right"
-                                                            style="width: 33%">@L["Manufacturer"]</td>
+                                                        <td style="width: 33%; text-align: right;">@L["Manufacturer"]</td>
                                                         <td style="width: 67%">
                                                             <a href="/soundsynths/company/@sound.CompanyId">
                                                                 @sound.Company
@@ -629,17 +624,16 @@
                                                 @if(sound.Introduced != null)
                                                 {
                                                     <tr>
-                                                        <td class="text-right"
-                                                            style="width: 33%">@L["Introduction date"]</td>
+                                                        <td style="width: 33%; text-align: right;">@L["Introduction date"]</td>
                                                         <td style="width: 67%">@($"{sound.Introduced:yyyy}")</td>
                                                     </tr>
                                                 }
                                                 @if(sound.Voices != null || sound.SquareWave != null || sound.WhiteNoise != null)
                                                 {
                                                     <tr>
-                                                        <td class="text-right" style="width: 33%">@L["Generators"]</td>
+                                                        <td style="width: 33%; text-align: right;">@L["Generators"]</td>
                                                         <td style="width: 67%">
-                                                            <table class="table table-borderless">
+                                                            <table>
                                                                 @if(sound.Voices != null)
                                                                 {
                                                                     <tr>
@@ -665,9 +659,9 @@
                                                 @if(sound.Depth != null || sound.Frequency != null)
                                                 {
                                                     <tr>
-                                                        <td class="text-right" style="width: 33%">@L["Sample rate"]</td>
+                                                        <td style="width: 33%; text-align: right;">@L["Sample rate"]</td>
                                                         <td style="width: 67%">
-                                                            <table class="table table-borderless">
+                                                            <table>
                                                                 @if(sound.Depth != null && sound.Frequency != null)
                                                                 {
                                                                     <tr>
@@ -711,8 +705,7 @@
                                                 @if(sound.Type != null)
                                                 {
                                                     <tr>
-                                                        <td class="text-right"
-                                                            style="width: 33%">@L["Synthesizer type"]</td>
+                                                        <td style="width: 33%; text-align: right;">@L["Synthesizer type"]</td>
                                                         <td style="width: 67%">
                                                             @sound.Type
                                                         </td>
@@ -732,11 +725,11 @@
     @if(_machine.Storage.Count > 0)
     {
         <tr>
-            <th class="text-right" scope=row style="width: 33%;">
+            <td style="width: 33%; text-align: right;">
                 @L["Storage"]
-            </th>
+            </td>
             <td style="width: 67%;">
-                <table class="table table-borderless">
+                <table>
                     @foreach(StorageDto storage in _machine.Storage)
                     {
                         string capString = null;
@@ -808,53 +801,46 @@
             </td>
         </tr>
     }
-</table>
+    </tbody>
+</MudSimpleTable>
 @if(_photos.Count > 0)
 {
-    foreach(Guid photo in _photos)
-    {
-        <div class="col-md-2">
-            <figure class="figure">
-                <picture>
-                    <source
-                        srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x"
-                        type="image/avif">
-                    <source
-                        srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x"
-                        type="image/heic">
-                    <source
-                        srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x"
-                        type="image/webp">
-                    <source
-                        srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x"
-                        type="image/jp2">
-                    <img alt="" class="figure-img img-fluid rounded" height="auto"
-                         src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
-                         srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
-                         style="max-height: 256px; max-width: 256px" width="auto"/>
-                </picture>
-                <figcaption class="figure-caption">
-                    <a href="/machines/photo/@photo" target="_blank">@L["Details"]</a>
-                </figcaption>
-            </figure>
-        </div>
-    }
+    <MudText Typo="Typo.h6" Class="mt-4 mb-2">@L["Photos"]</MudText>
+    <MudGrid>
+        @foreach(Guid photo in _photos)
+        {
+            <MudItem xs="6" sm="4" md="2">
+                <MudCard Elevation="0">
+                    <MudCardContent Class="pa-1">
+                        <picture>
+                            <source
+                                srcset="/assets/photos/machines/thumbs/avif/hd/@(photo).avif, /assets/photos/machines/thumbs/avif/1440p/@(photo).avif 2x, /assets/photos/machines/thumbs/avif/4k/@(photo).avif 3x"
+                                type="image/avif">
+                            <source
+                                srcset="/assets/photos/machines/thumbs/heif/hd/@(photo).heic, /assets/photos/machines/thumbs/heif/1440p/@(photo).heic 2x, /assets/photos/machines/thumbs/heif/4k/@(photo).heic 3x"
+                                type="image/heic">
+                            <source
+                                srcset="/assets/photos/machines/thumbs/webp/hd/@(photo).webp, /assets/photos/machines/thumbs/webp/1440p/@(photo).webp 2x, /assets/photos/machines/thumbs/webp/4k/@(photo).webp 3x"
+                                type="image/webp">
+                            <source
+                                srcset="/assets/photos/machines/thumbs/jp2k/hd/@(photo).jp2, /assets/photos/machines/thumbs/jp2k/1440p/@(photo).jp2 2x, /assets/photos/machines/thumbs/jp2k/4k/@(photo).jp2 3x"
+                                type="image/jp2">
+                            <img alt="" height="auto"
+                                 src="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg"
+                                 srcset="/assets/photos/machines/thumbs/jpeg/hd/@(photo).jpg, /assets/photos/machines/thumbs/jpeg/1440p/@(photo).jpg 2x, /assets/photos/machines/thumbs/jpeg/4k/@(photo).jpg 3x"
+                                 style="max-height: 256px; max-width: 256px; border-radius: 4px;" width="auto"/>
+                        </picture>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Href="@($"/machines/photo/{photo}")" Target="_blank" Variant="Variant.Text" Color="Color.Primary" Size="Size.Small">@L["Details"]</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
 }
 
 @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/photos/computers", _machine.Id + ".jpg")))
 {
     <img alt="" src="@Path.Combine("/assets/photos/computers", _machine.Id + ".jpg")">
 }
-<style>
-    .table th {
-        padding: 4px;
-    }
-
-    .table td {
-        padding: 4px;
-    }
-
-    .table {
-        margin-bottom: 0;
-    }
-</style>

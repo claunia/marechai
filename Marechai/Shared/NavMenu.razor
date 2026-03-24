@@ -25,45 +25,10 @@
 *******************************************************************************/
 }
 @inject StringLocalizer<NavMenu> L
-<div class="navbar navbar-dark pl-4 top-row">
-    <a class="navbar-brand" href="">Marechai</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="flex-column nav">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span aria-hidden="true" class="fa fa-newspaper"></span>&nbsp;@L["News"]
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="companies">
-                <span aria-hidden="true" class="fa fa-building"></span>&nbsp;@L["Companies"]
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="computers">
-                <span aria-hidden="true" class="fa fa-desktop"></span>&nbsp;@L["Computers"]
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="consoles">
-                <span aria-hidden="true" class="fa fa-gamepad"></span>&nbsp;@L["Consoles"]
-            </NavLink>
-        </li>
-    </ul>
-</div>
 
-@code {
-    private bool _collapseNavMenu = true;
-
-    private string NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        _collapseNavMenu = !_collapseNavMenu;
-    }
-
-}
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Newspaper">@L["News"]</MudNavLink>
+    <MudNavLink Href="/companies" Icon="@Icons.Material.Filled.Business">@L["Companies"]</MudNavLink>
+    <MudNavLink Href="/computers" Icon="@Icons.Material.Filled.Computer">@L["Computers"]</MudNavLink>
+    <MudNavLink Href="/consoles" Icon="@Icons.Material.Filled.SportsEsports">@L["Consoles"]</MudNavLink>
+</MudNavMenu>

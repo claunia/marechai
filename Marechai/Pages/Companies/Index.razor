@@ -35,15 +35,17 @@
 
 @if(_companies is null)
 {
-    <p align="center">@L["Loading..."]</p>
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+    </div>
 
     return;
 }
 
 @if(CountryId.HasValue)
 {
-    <p align="center">
-        <b>@string.Format(L["Companies founded in {0}."], L[_countryName])</b>
+    <div class="d-flex justify-center align-center gap-2 mb-4">
+        <MudText Typo="Typo.h6">@string.Format(L["Companies founded in {0}."], L[_countryName])</MudText>
         @if(File.Exists(Path.Combine(Host.WebRootPath, "assets/flags/countries", $"{CountryId:D3}.svg")))
         {
             <picture>
@@ -57,30 +59,29 @@
                                  /assets/flags/countries/png/1x/@($"{CountryId:D3}").webp 3x"/>
             </picture>
         }
-    </p>
+    </div>
 }
 
 @if(_character.HasValue)
 {
-    <p align="center">
-        <b>@string.Format(L["Companies which name starts with {0}."], _character)</b>
-    </p>
+    <div class="d-flex justify-center mb-4">
+        <MudText Typo="Typo.h6">@string.Format(L["Companies which name starts with {0}."], _character)</MudText>
+    </div>
 }
 
 @if(_companies.Any())
 {
-    <div class="container">
-        <span
-            class="align-content-center">@string.Format(L["{0} companies found in the database."], _companies.Count())</span>
-        <hr/>
-        <table>
-            @foreach(CompanyDto company in _companies)
-            {
-                <tr>
-                    <td class="text-right">
-                        <a href="/company/@company.Id">
-                            @if(company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
-                            {
+    <MudText Typo="Typo.body1" Class="mb-2">@string.Format(L["{0} companies found in the database."], _companies.Count())</MudText>
+    <MudDivider Class="mb-4"/>
+    <MudList T="CompanyDto" Dense="true">
+        @foreach(CompanyDto company in _companies)
+        {
+            <MudListItem T="CompanyDto" Href="@($"/company/{company.Id}")">
+                <ChildContent>
+                    <div class="d-flex align-center gap-3">
+                        @if(company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", company.LastLogo + ".svg")))
+                        {
+                            <MudAvatar Rounded="true" Size="Size.Medium" Style="background: transparent;">
                                 <picture>
                                     <source srcset="/assets/logos/@(company.LastLogo).svg" type="image/svg+xml">
                                     <source srcset="/assets/logos/thumbs/webp/1x/@(company.LastLogo).webp,
@@ -92,18 +93,16 @@
                      /assets/logos/thumbs/png/3x/@(company.LastLogo).png 3x" style="max-height: 32px; max-width: 128px"
                                          width="auto"/>
                                 </picture>
-                            }
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/company/@company.Id">@company.Name</a>
-                    </td>
-                </tr>
-            }
-        </table>
-    </div>
+                            </MudAvatar>
+                        }
+                        <MudText>@company.Name</MudText>
+                    </div>
+                </ChildContent>
+            </MudListItem>
+        }
+    </MudList>
 }
 else
 {
-    <p align="center">@L["There are no companies in the database."]</p>
+    <MudAlert Severity="Severity.Info">@L["There are no companies in the database."]</MudAlert>
 }

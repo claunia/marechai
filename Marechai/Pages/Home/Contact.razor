@@ -26,11 +26,13 @@
 }
 
 @page "/contact"
-<h2>Contact</h2>
-<address>
-    <strong>Support:</strong>
-    <a href="mailto:museum@claunia.com">
-        museum@claunia.com
-    </a>
-    <br/>
-</address>
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudText Typo="Typo.h4" Class="mb-4">Contact</MudText>
+    <MudPaper Elevation="1" Class="pa-6">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Primary"/>
+            <MudText Typo="Typo.body1"><strong>Support:</strong></MudText>
+            <MudLink Href="mailto:museum@claunia.com">museum@claunia.com</MudLink>
+        </MudStack>
+    </MudPaper>
+</MudContainer>

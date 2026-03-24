@@ -34,46 +34,44 @@
 
 @if(_computers is null)
 {
-    <p align="center">@L["Loading..."]</p>
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+    </div>
 
     return;
 }
-<p>@L["Search results:"]</p>
-<p align="center">
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudText Typo="Typo.h5" Style="color: white;">@L["Search results:"]</MudText>
     @if(_character.HasValue)
     {
-        <b>@string.Format(L["Computers starting with {0}"], _character)</b>
-        <br/>
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Computers starting with {0}"], _character)</MudText>
     }
     else if(Year.HasValue)
     {
-        <b>@string.Format(L["Computers introduced in {0}"], Year)</b>
-        <br/>
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Computers introduced in {0}"], Year)</MudText>
     }
+</MudPaper>
 
-    @if(_computers?.Count > 0)
-    {
-    <p>
-        @string.Format(L["{0} computers found in the database."], _computers.Count)
-        <br/>
+@if(_computers?.Count > 0)
+{
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} computers found in the database."], _computers.Count)</MudText>
+    <MudList T="MachineDto" Dense="true">
         @foreach(MachineDto computer in _computers)
         {
-            <a href="/machine/@computer.Id">
+            <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
                 @computer.Company @computer.Name
-            </a>
-            <br/>
+            </MudListItem>
         }
-    </p>
+    </MudList>
 }
 else
 {
     @if(_character.HasValue)
     {
-        <p>@L["There are no computers found in the database that start with this letter."]</p>
+        <MudAlert Severity="Severity.Info">@L["There are no computers found in the database that start with this letter."]</MudAlert>
     }
     else if(Year.HasValue)
     {
-        <p>@L["There are no computers found introduced this year."]</p>
+        <MudAlert Severity="Severity.Info">@L["There are no computers found introduced this year."]</MudAlert>
     }
 }
-</p>

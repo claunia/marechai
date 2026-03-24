@@ -31,212 +31,61 @@
 
 @if(!_loaded)
 {
-    <p align="center">@L["Loading..."]</p>
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
 
     return;
 }
-<p>
-    @L["Here you can consult our database."]
-    <br/>
-    @L["In this database you can find technical information as well as computers history, catalogued by companies, alphabetically and by release date."]
-    <br/>
-    @string.Format(L["{0} computers actually catalogued in the database."], _computers)
-</p>
-<p>
-    <br>
-    <br>
-    @L["Search by companies"]
-    <br>
-    <a href="/companies/Q">
-        Q
-    </a>
-    <a href="/companies/W">
-        W
-    </a>
-    <a href="/companies/E">
-        E
-    </a>
-    <a href="/companies/R">
-        R
-    </a>
-    <a href="/companies/T">
-        T
-    </a>
-    <a href="/companies/Y">
-        Y
-    </a>
-    <a href="/companies/U">
-        U
-    </a>
-    <a href="/companies/I">
-        I
-    </a>
-    <a href="/companies/O">
-        O
-    </a>
-    <a href="/companies/P">
-        P
-    </a>
-    <br>
-    <a href="/companies/A">
-        A
-    </a>
-    <a href="/companies/S">
-        S
-    </a>
-    <a href="/companies/D">
-        D
-    </a>
-    <a href="/companies/F">
-        F
-    </a>
-    <a href="/companies/G">
-        G
-    </a>
-    <a href="/companies/H">
-        H
-    </a>
-    <a href="/companies/J">
-        J
-    </a>
-    <a href="/companies/K">
-        K
-    </a>
-    <a href="/companies/L">
-        L
-    </a>
-    <br>
-    <a href="/companies/Z">
-        Z
-    </a>
-    <a href="/companies/X">
-        X
-    </a>
-    <a href="/companies/C">
-        C
-    </a>
-    <a href="/companies/V">
-        V
-    </a>
-    <a href="/companies/B">
-        B
-    </a>
-    <a href="/companies/N">
-        N
-    </a>
-    <a href="/companies/M">
-        M
-    </a>
-    <br>
-    <a href="/companies">
-        @L["All companies"]
-    </a>
-</p>
-<p>
-    @L["Alphabetically search"]
-    <br>
-    <a href="/computers/Q">
-        Q
-    </a>
-    <a href="/computers/W">
-        W
-    </a>
-    <a href="/computers/E">
-        E
-    </a>
-    <a href="/computers/R">
-        R
-    </a>
-    <a href="/computers/T">
-        T
-    </a>
-    <a href="/computers/Y">
-        Y
-    </a>
-    <a href="/computers/U">
-        U
-    </a>
-    <a href="/computers/I">
-        I
-    </a>
-    <a href="/computers/O">
-        O
-    </a>
-    <a href="/computers/P">
-        P
-    </a>
-    <br>
-    <a href="/computers/A">
-        A
-    </a>
-    <a href="/computers/S">
-        S
-    </a>
-    <a href="/computers/D">
-        D
-    </a>
-    <a href="/computers/F">
-        F
-    </a>
-    <a href="/computers/G">
-        G
-    </a>
-    <a href="/computers/H">
-        H
-    </a>
-    <a href="/computers/J">
-        J
-    </a>
-    <a href="/computers/K">
-        K
-    </a>
-    <a href="/computers/L">
-        L
-    </a>
-    <br>
-    <a href="/computers/Z">
-        Z
-    </a>
-    <a href="/computers/X">
-        X
-    </a>
-    <a href="/computers/C">
-        C
-    </a>
-    <a href="/computers/V">
-        V
-    </a>
-    <a href="/computers/B">
-        B
-    </a>
-    <a href="/computers/N">
-        N
-    </a>
-    <a href="/computers/M">
-        M
-    </a>
-    <br>
-    <a href="/computers/all">
-        @L["All computers"]
-    </a>
-</p>
-<p>
-    @L["Search by year"]
-    <br>
-    @{ var counter = 0; }
-    @for(int i = _minYear; i <= _maxYear; i++)
-    {
-        {
-            counter++;
-        }
 
-        <a href="/computers/year/@i">
-            @i
-        </a>
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.Computer" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Computers"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["Here you can consult our database."]</MudText>
+    <MudText Typo="Typo.body1" Style="color: rgba(255,255,255,0.85);">@L["In this database you can find technical information as well as computers history, catalogued by companies, alphabetically and by release date."]</MudText>
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white;">@string.Format(L["{0} computers actually catalogued in the database."], _computers)</MudChip>
+</MudPaper>
 
-        if(counter % 8 == 0)
+<MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Secondary" Size="Size.Small"/>
+        <MudText Typo="Typo.subtitle1">@L["Search by companies"]</MudText>
+    </MudStack>
+    <div class="d-flex flex-wrap gap-1">
+        @foreach(char c in "QWERTYUIOPASDFGHJKLZXCVBNM")
         {
-            <br/>
+            <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip>
         }
-    }
-</p>
+        <MudChip T="string" Href="/companies" Color="Color.Primary">@L["All companies"]</MudChip>
+    </div>
+</MudPaper>
+
+<MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.SortByAlpha" Color="Color.Secondary" Size="Size.Small"/>
+        <MudText Typo="Typo.subtitle1">@L["Alphabetically search"]</MudText>
+    </MudStack>
+    <div class="d-flex flex-wrap gap-1">
+        @foreach(char c in "QWERTYUIOPASDFGHJKLZXCVBNM")
+        {
+            <MudChip T="string" Href="@($"/computers/{c}")">@c</MudChip>
+        }
+        <MudChip T="string" Href="/computers/all" Color="Color.Primary">@L["All computers"]</MudChip>
+    </div>
+</MudPaper>
+
+<MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+        <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Color="Color.Secondary" Size="Size.Small"/>
+        <MudText Typo="Typo.subtitle1">@L["Search by year"]</MudText>
+    </MudStack>
+    <div class="d-flex flex-wrap gap-1">
+        @for(int i = _minYear; i <= _maxYear; i++)
+        {
+            var year = i;
+            <MudChip T="string" Href="@($"/computers/year/{year}")">@year</MudChip>
+        }
+    </div>
+</MudPaper>

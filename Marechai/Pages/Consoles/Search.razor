@@ -34,46 +34,44 @@
 
 @if(_consoles is null)
 {
-    <p align="center">@L["Loading..."]</p>
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+    </div>
 
     return;
 }
-<p>@L["Search results:"]</p>
-<p align="center">
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudText Typo="Typo.h5" Style="color: white;">@L["Search results:"]</MudText>
     @if(_character.HasValue)
     {
-        <b>@string.Format(L["Videogame consoles starting with {0}"], _character)</b>
-        <br/>
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Videogame consoles starting with {0}"], _character)</MudText>
     }
     else if(Year.HasValue)
     {
-        <b>@string.Format(L["Videogame consoles introduced in {0}"], Year)</b>
-        <br/>
+        <MudText Typo="Typo.h6" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Videogame consoles introduced in {0}"], Year)</MudText>
     }
+</MudPaper>
 
-    @if(_consoles?.Count > 0)
-    {
-    <p>
-        @string.Format(L["{0} videogame consoles found in the database."], _consoles.Count)
-        <br/>
+@if(_consoles?.Count > 0)
+{
+    <MudText Typo="Typo.body2" Class="mb-2">@string.Format(L["{0} videogame consoles found in the database."], _consoles.Count)</MudText>
+    <MudList T="MachineDto" Dense="true">
         @foreach(MachineDto console in _consoles)
         {
-            <a href="/machine/@console.Id">
+            <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
                 @console.Company @console.Name
-            </a>
-            <br/>
+            </MudListItem>
         }
-    </p>
+    </MudList>
 }
 else
 {
     @if(_character.HasValue)
     {
-        <p>@L["There are no videogame consoles found in the database that start with this letter."]</p>
+        <MudAlert Severity="Severity.Info">@L["There are no videogame consoles found in the database that start with this letter."]</MudAlert>
     }
     else if(Year.HasValue)
     {
-        <p>@L["There are no videogame consoles found introduced this year."]</p>
+        <MudAlert Severity="Severity.Info">@L["There are no videogame consoles found introduced this year."]</MudAlert>
     }
 }
-</p>

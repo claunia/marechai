@@ -12,6 +12,7 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Humanizer"/>
     <PackageReference Include="MudBlazor"/>
     <PackageReference Include="Markdig"/>
     <PackageReference Include="Microsoft.Kiota.Abstractions"/>

@@ -1,4 +1,4 @@
-﻿@{
+@{
     /******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
@@ -26,37 +26,39 @@
 }
 @page "/"
 @using Marechai.ApiClient.Models
+@using Humanizer
+@using Marechai.Data
 @inherits OwningComponentBase<NewsService>
 @inject IStringLocalizer<NewsService> L
-<h2>@L["News"]</h2>
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Newspaper" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["News"]</MudText>
+    </MudStack>
+</MudPaper>
 @if(!_loaded)
 {
-    <p align="center">@L["Loading..."]</p>
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
 
     return;
 }
 
-@foreach(NewsDto news in _news)
-{
-    <table border="0" width="100%">
-        <tr>
-            <td colspan="2">
-                <b>@news.Timestamp</b>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                @news.Text
-            </td>
-        </tr>
-        <tr>
-            <td>@* TODO: Image *@</td>
-            <td>
-                <a href="/@news.Controller/@news.AffectedId">
-                    @news.ItemName
-                </a>
-            </td>
-        </tr>
-    </table>
-    <br/>
-}
+<MudStack Spacing="3">
+    @foreach(NewsDto news in _news)
+    {
+        <MudCard Elevation="2" Class="rounded-lg">
+            <MudCardContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                    <MudIcon Icon="@Icons.Material.Filled.FiberNew" Color="Color.Secondary" Size="Size.Small"/>
+                    <MudText Typo="Typo.caption" Color="Color.Primary">@news.Timestamp</MudText>
+                </MudStack>
+                <MudText Typo="Typo.body1">@(((NewsType)(news.Type ?? 0)).Humanize())</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Href="@($"/{news.Controller}/{news.AffectedId}")" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowForward">@news.ItemName</MudButton>
+            </MudCardActions>
+        </MudCard>
+    }
+</MudStack>

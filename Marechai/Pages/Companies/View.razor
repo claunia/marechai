@@ -35,19 +35,21 @@
 
 @if(!_loaded)
 {
-    <p align="center">@L["Loading..."]</p>
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+    </div>
 
     return;
 }
 
 @if(_company is null)
 {
-    <p align="center">@L["Company not found."]</p>
+    <MudAlert Severity="Severity.Warning">@L["Company not found."]</MudAlert>
 
     return;
 }
-<div class="container-fluid">
-    <p align="center">
+<MudContainer MaxWidth="MaxWidth.Large">
+    <div class="d-flex justify-center mb-4">
         @if(_company.LastLogo != null && File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", _company.LastLogo + ".svg")))
         {
             <picture>
@@ -62,11 +64,11 @@
                      width="auto"/>
             </picture>
         }
-    </p>
-    <div class="row">
+    </div>
+    <MudGrid>
         @if(_logos != null && _logos.Count > 1)
         {
-            <div class="col-3">
+            <MudItem xs="12" md="4">
                 <MudCarousel TData="object" @bind-SelectedIndex="@_selectedIndex" ShowArrows="true" ShowBullets="true" Style="height: 320px;">
                     @foreach(CompanyLogoDto logo in _logos.Where(logo => File.Exists(Path.Combine(Host.WebRootPath, "assets/logos", logo.Guid + ".svg"))))
                     {
@@ -77,7 +79,7 @@
                                     <source srcset="/assets/logos/webp/1x/@(logo.Guid).webp,
     /assets/logos/webp/1x/@(logo.Guid).webp 2x,
     /assets/logos/webp/1x/@(logo.Guid).webp 3x" type="image/webp">
-                                    <img alt="" class="d-block w-100" height="auto"
+                                    <img alt="" height="auto"
                                          src="/assets/logos/png/1x/@(logo.Guid).png"
                                          srcset="/assets/logos/png/1x/@(logo.Guid).png,
                              /assets/logos/png/1x/@(logo.Guid).png 2x,
@@ -87,25 +89,25 @@
                             </div>
                             @if(logo.Year.HasValue)
                             {
-                                <div
-                                    style="text-align: center;">@(string.Format(L["in use since {0}"], logo.Year))</div>
+                                <MudText Align="Align.Center">@(string.Format(L["in use since {0}"], logo.Year))</MudText>
                             }
                         </MudCarouselItem>
                     }
                 </MudCarousel>
-            </div>
+            </MudItem>
         }
-        <div class="col-6">
-            <table class="table">
+        <MudItem xs="12" md="8">
+            <MudSimpleTable Elevation="0" Dense="true">
+                <tbody>
                 <tr>
-                    <th class="text-center" colspan="2">
-                        <b>@_company.Name</b>
-                    </th>
+                    <td colspan="2" style="text-align: center;">
+                        <MudText Typo="Typo.h6">@_company.Name</MudText>
+                    </td>
                 </tr>
                 @if(_company.Founded.HasValue)
                 {
                     <tr>
-                        <th class="text-right">@L["Founded"]</th>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Founded"]</strong></td>
                         @if(_company.FoundedMonthIsUnknown == true)
                         {
                             <td>@_company.Founded.Value.Year.</td>
@@ -123,12 +125,12 @@
                 @if(!string.IsNullOrEmpty(_company.LegalName))
                 {
                     <tr>
-                        <th class="text-right">@L["Legal name"]</th>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Legal name"]</strong></td>
                         <td>@_company.LegalName</td>
                     </tr>
                 }
                 <tr>
-                    <th class="text-right">@L["Country"]</th>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Country"]</strong></td>
                     <td>
                         @if(_company.Country != null)
                         {
@@ -158,7 +160,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="text-right">@L["Status"]</th>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Status"]</strong></td>
                     @switch(_company.Status)
                     {
                         case (int)CompanyStatus.Unknown:
@@ -336,7 +338,7 @@
                     }
                 </tr>
                 <tr>
-                    <th class="text-right">@L["Address"]</th>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Address"]</strong></td>
                     <td>
                         @_company.Address
                         <br>
@@ -351,53 +353,59 @@
                 @if(!string.IsNullOrEmpty(_company.Website) || !string.IsNullOrEmpty(_company.Twitter) || !string.IsNullOrEmpty(_company.Facebook))
                 {
                     <tr>
-                        <th class="text-right">@L["Links"]</th>
+                        <td style="width: 33%; text-align: right;"><strong>@L["Links"]</strong></td>
                         <td>
-                            @if(!string.IsNullOrEmpty(_company.Website))
-                            {
-                                <a href="@_company.Website">@L["Website"]</a>
-                                <br/>
-                            }
-                            @if(!string.IsNullOrEmpty(_company.Twitter))
-                            {
-                                <a href="https://www.twitter.com/@_company.Twitter">Twitter</a>
-                                <br/>
-                            }
-                            @if(!string.IsNullOrEmpty(_company.Facebook))
-                            {
-                                <a href="https://www.facebook.com/@_company.Facebook">Facebook</a>
-                                <br/>
-                            }
+                            <MudStack Spacing="1">
+                                @if(!string.IsNullOrEmpty(_company.Website))
+                                {
+                                    <MudLink Href="@_company.Website" Target="_blank">@L["Website"]</MudLink>
+                                }
+                                @if(!string.IsNullOrEmpty(_company.Twitter))
+                                {
+                                    <MudLink Href="@($"https://www.twitter.com/{_company.Twitter}")" Target="_blank">Twitter</MudLink>
+                                }
+                                @if(!string.IsNullOrEmpty(_company.Facebook))
+                                {
+                                    <MudLink Href="@($"https://www.facebook.com/{_company.Facebook}")" Target="_blank">Facebook</MudLink>
+                                }
+                            </MudStack>
                         </td>
                     </tr>
                 }
-            </table>
-        </div>
-    </div>
-    <div class="row">
-        <MudExpansionPanels>
-            @if(_computers.Count > 0)
-            {
-                <MudExpansionPanel>
-                    <TitleContent>
-                        @((MarkupString)string.Format(L["<ok>{0}</ok> computers known."], _computers.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>", "</span>"))
-                    </TitleContent>
-                    <ChildContent>
+                </tbody>
+            </MudSimpleTable>
+        </MudItem>
+    </MudGrid>
+    <MudExpansionPanels Class="mt-4">
+        @if(_computers.Count > 0)
+        {
+            <MudExpansionPanel>
+                <TitleContent>
+                    <div class="d-flex align-center gap-2">
+                        <MudChip T="string" Color="Color.Success" Size="Size.Small">@_computers.Count</MudChip>
+                        <MudText>@L["computers known."]</MudText>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <MudList T="MachineDto" Dense="true">
                         @foreach(MachineDto computer in _computers)
                         {
-                            <a href="/machine/@computer.Id">
+                            <MudListItem T="MachineDto" Href="@($"/machine/{computer.Id}")" Icon="@Icons.Material.Filled.Computer">
                                 @computer.Name
-                            </a>
-                            <br/>
+                            </MudListItem>
                         }
-                    </ChildContent>
+                    </MudList>
+                </ChildContent>
                 </MudExpansionPanel>
             }
             else
             {
                 <MudExpansionPanel Disabled="true">
                     <TitleContent>
-                        @((MarkupString)L["<red>No</red> computers known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>", "</span>"))
+                        <div class="d-flex align-center gap-2">
+                            <MudChip T="string" Color="Color.Error" Size="Size.Small">0</MudChip>
+                            <MudText>@L["computers known."]</MudText>
+                        </div>
                     </TitleContent>
                 </MudExpansionPanel>
             }
@@ -405,16 +413,20 @@
             {
                 <MudExpansionPanel>
                     <TitleContent>
-                        @((MarkupString)string.Format(L["<ok>{0}</ok> videogame consoles known."], _consoles.Count).Replace("<ok>", "<span class=\"badge badge-success\">").Replace("</ok>", "</span>"))
+                        <div class="d-flex align-center gap-2">
+                            <MudChip T="string" Color="Color.Success" Size="Size.Small">@_consoles.Count</MudChip>
+                            <MudText>@L["videogame consoles known."]</MudText>
+                        </div>
                     </TitleContent>
                     <ChildContent>
-                        @foreach(MachineDto console in _consoles)
-                        {
-                            <a href="/machine/@console.Id">
-                                @console.Name
-                            </a>
-                            <br/>
-                        }
+                        <MudList T="MachineDto" Dense="true">
+                            @foreach(MachineDto console in _consoles)
+                            {
+                                <MudListItem T="MachineDto" Href="@($"/machine/{console.Id}")" Icon="@Icons.Material.Filled.SportsEsports">
+                                    @console.Name
+                                </MudListItem>
+                            }
+                        </MudList>
                     </ChildContent>
                 </MudExpansionPanel>
             }
@@ -422,17 +434,19 @@
             {
                 <MudExpansionPanel Disabled="true">
                     <TitleContent>
-                        @((MarkupString)L["<red>No</red> videogame consoles known."].ToString().Replace("<red>", "<span class=\"badge badge-danger\">").Replace("</red>", "</span>"))
+                        <div class="d-flex align-center gap-2">
+                            <MudChip T="string" Color="Color.Error" Size="Size.Small">0</MudChip>
+                            <MudText>@L["videogame consoles known."]</MudText>
+                        </div>
                     </TitleContent>
                 </MudExpansionPanel>
             }
-        </MudExpansionPanels>
-    </div>
+    </MudExpansionPanels>
     @if(_description != null)
     {
-        <hr/>
-        <div class="container">
+        <MudDivider Class="my-4"/>
+        <MudPaper Elevation="0" Class="pa-4">
             @((MarkupString)_description)
-        </div>
+        </MudPaper>
     }
-</div>
+</MudContainer>
