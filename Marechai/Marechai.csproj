@@ -20,9 +20,6 @@
     <PackageReference Include="Microsoft.Kiota.Serialization.Text"/>
     <PackageReference Include="Microsoft.Kiota.Serialization.Form"/>
     <PackageReference Include="Microsoft.Kiota.Serialization.Multipart"/>
-    <PackageReference Include="SkiaSharp"/>
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux"/>
-    <PackageReference Include="Svg.Skia"/>
     <PackageReference Include="Unclassified.NetRevisionTask"/>
   </ItemGroup>
   <ItemGroup>

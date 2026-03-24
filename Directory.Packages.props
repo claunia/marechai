@@ -5,44 +5,40 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Duplicated packages (also in Directory.Build.props) -->
-    <PackageVersion Include="Humanizer" Version="2.14.1"/>
+    <PackageVersion Include="Humanizer" Version="3.0.10"/>
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.11"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.11"/>
     <!-- Unique to Marechai.csproj -->
     <PackageVersion Include="MudBlazor" Version="9.2.0"/>
-    <PackageVersion Include="Markdig" Version="0.22.1"/>
+    <PackageVersion Include="Markdig" Version="1.1.1"/>
     <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.11"/>
     <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.11"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11"/>
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0"/>
-    <PackageVersion Include="MySql.Data" Version="8.0.22"/>
-    <PackageVersion Include="SkiaSharp" Version="3.119.1"/>
-    <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.119.1"/>
-    <PackageVersion Include="Svg.Skia" Version="3.0.6"/>
-    <PackageVersion Include="Tewr.Blazor.FileReader" Version="3.0.0.20340"/>
-    <PackageVersion Include="Unclassified.NetRevisionTask" Version="0.3.0"/>
+    <PackageVersion Include="Unclassified.NetRevisionTask" Version="0.4.4"/>
     <!-- Unique to Marechai.Database.csproj -->
     <PackageVersion Include="Aaru.CommonTypes" Version="5.4.1"/>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11"/>
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0"/>
     <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft" Version="9.0.0"/>
     <!-- Build infrastructure -->
-    <PackageVersion Include="Packaging.Targets" Version="0.1.189"/>
+    <PackageVersion Include="Packaging.Targets" Version="0.1.232"/>
     <!-- Unique to Marechai.Server.csproj -->
-    <PackageVersion Include="MetadataExtractor" Version="2.8.1"/>
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0"/>
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11"/>
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.11"/>
-    <PackageVersion Include="Microsoft.Extensions.Localization" Version="9.0.3"/>
+    <PackageVersion Include="MetadataExtractor" Version="2.9.2"/>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5"/>
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.5"/>
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="10.0.5"/>
     <PackageVersion Include="Prism.DryIoc.Uno.WinUI" Version="9.0.537"/>
-    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1"/>
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0"/>
+    <PackageVersion Include="Svg.Skia" Version="3.7.0"/>
     <!-- Kiota (shared API client) -->
-    <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.19.0"/>
-    <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.19.0"/>
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.19.0"/>
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.19.0"/>
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.19.0"/>
-    <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.19.0"/>
+    <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.22.1"/>
+    <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.22.1"/>
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.22.1"/>
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.22.1"/>
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.22.1"/>
+    <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.22.1"/>
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
@@ -50,7 +46,7 @@
     <!-- Add more community toolkit references here -->
   </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'windows'">
-    <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Controls" Version="7.1.200"/>
+    <PackageVersion Include="Uno.CommunityToolkit.WinUI.UI.Controls" Version="7.1.205"/>
     <!-- Add more uno community toolkit references here -->
   </ItemGroup>
 
