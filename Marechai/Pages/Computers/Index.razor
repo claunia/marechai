@@ -53,13 +53,18 @@
         <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Secondary" Size="Size.Small"/>
         <MudText Typo="Typo.subtitle1">@L["Search by companies"]</MudText>
     </MudStack>
-    <div class="d-flex flex-wrap gap-1">
-        @foreach(char c in "QWERTYUIOPASDFGHJKLZXCVBNM")
-        {
-            <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip>
-        }
-        <MudChip T="string" Href="/companies" Color="Color.Primary">@L["All companies"]</MudChip>
-    </div>
+    <MudStack Spacing="1" AlignItems="AlignItems.Center">
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "QWERTYUIOP") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+        </div>
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "ASDFGHJKL") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+        </div>
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "ZXCVBNM") { <MudChip T="string" Href="@($"/companies/{c}")">@c</MudChip> }
+        </div>
+        <MudChip T="string" Href="/companies" Color="Color.Primary" Class="mt-1">@L["All companies"]</MudChip>
+    </MudStack>
 </MudPaper>
 
 <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
@@ -67,13 +72,18 @@
         <MudIcon Icon="@Icons.Material.Filled.SortByAlpha" Color="Color.Secondary" Size="Size.Small"/>
         <MudText Typo="Typo.subtitle1">@L["Alphabetically search"]</MudText>
     </MudStack>
-    <div class="d-flex flex-wrap gap-1">
-        @foreach(char c in "QWERTYUIOPASDFGHJKLZXCVBNM")
-        {
-            <MudChip T="string" Href="@($"/computers/{c}")">@c</MudChip>
-        }
-        <MudChip T="string" Href="/computers/all" Color="Color.Primary">@L["All computers"]</MudChip>
-    </div>
+    <MudStack Spacing="1" AlignItems="AlignItems.Center">
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "QWERTYUIOP") { <MudChip T="string" Href="@($"/computers/{c}")">@c</MudChip> }
+        </div>
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "ASDFGHJKL") { <MudChip T="string" Href="@($"/computers/{c}")">@c</MudChip> }
+        </div>
+        <div class="d-flex flex-wrap justify-center gap-1">
+            @foreach(char c in "ZXCVBNM") { <MudChip T="string" Href="@($"/computers/{c}")">@c</MudChip> }
+        </div>
+        <MudChip T="string" Href="/computers/all" Color="Color.Primary" Class="mt-1">@L["All computers"]</MudChip>
+    </MudStack>
 </MudPaper>
 
 <MudPaper Elevation="2" Class="pa-4 mb-4 rounded-lg">
