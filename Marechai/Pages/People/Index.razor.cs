@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -23,31 +23,26 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using Marechai.Shared;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
+using System.Threading.Tasks;
 
-namespace Marechai.Services;
+namespace Marechai.Pages.People;
 
-public static class Register
+public partial class Index
 {
-    internal static void RegisterServices(IServiceCollection services)
-    {
-        services.AddSingleton<StringLocalizer<NavMenu>>();
+    int  _count;
+    bool _loaded;
+    int  _maxYear;
+    int  _minYear;
 
-        services.AddScoped<NewsService>();
-        services.AddScoped<CompaniesService>();
-        services.AddScoped<CompanyLogosService>();
-        services.AddScoped<ComputersService>();
-        services.AddScoped<ConsolesService>();
-        services.AddScoped<MachinesService>();
-        services.AddScoped<MachinePhotosService>();
-        services.AddScoped<GpusService>();
-        services.AddScoped<ProcessorsService>();
-        services.AddScoped<SoundSynthsService>();
-        services.AddScoped<BooksService>();
-        services.AddScoped<DocumentsService>();
-        services.AddScoped<MagazinesService>();
-        services.AddScoped<PeopleService>();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(_loaded) return;
+
+        _count   = await Service.GetPeopleCountAsync();
+        _minYear = await Service.GetMinimumYearAsync();
+        _maxYear = await Service.GetMaximumYearAsync();
+
+        _loaded = true;
+        StateHasChanged();
     }
 }

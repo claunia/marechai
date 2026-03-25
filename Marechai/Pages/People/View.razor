@@ -1,0 +1,274 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/person/{Id:int}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<PeopleService>
+@inject IStringLocalizer<PeopleService> L
+@inject ApiAssetUrlProvider            Assets
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_person is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["Person not found."]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        @if(_person.Photo.HasValue && _person.Photo.Value != Guid.Empty)
+        {
+            <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/people/webp/hd/{_person.Photo}.webp")"
+                      Alt="@(_person.DisplayName ?? _person.Alias ?? $"{_person.Name} {_person.Surname}".Trim())"
+                      Height="200" ObjectFit="ObjectFit.Contain" Class="rounded"
+                      Style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));"/>
+        }
+        else
+        {
+            <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" Style="color: white;"/>
+        }
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@(_person.DisplayName ?? _person.Alias ?? $"{_person.Name} {_person.Surname}".Trim())</MudText>
+    </MudStack>
+</MudPaper>
+
+@* ── Personal Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["General"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            @if(!string.IsNullOrEmpty(_person.Name))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Name"]</strong></td>
+                    <td>@_person.Name</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_person.Surname))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Surname"]</strong></td>
+                    <td>@_person.Surname</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_person.Alias))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Alias"]</strong></td>
+                    <td>@_person.Alias</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_person.DisplayName))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Display name"]</strong></td>
+                    <td>@_person.DisplayName</td>
+                </tr>
+            }
+            @if(_person.Birthdate.HasValue && _person.Birthdate.Value.Year > 1000)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Birth date"]</strong></td>
+                    <td>@_person.Birthdate.Value.DateTime.ToLongDateString()</td>
+                </tr>
+            }
+            @if(_person.DeathDate.HasValue)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Death date"]</strong></td>
+                    <td>@_person.DeathDate.Value.DateTime.ToLongDateString()</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_person.Country))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Country of birth"]</strong></td>
+                    <td>
+                        @if(_person.CountryId.HasValue)
+                        {
+                            <picture>
+                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/@($"{_person.CountryId:D3}").svg" type="image/svg+xml">
+                                <source srcset="@(Assets.BaseUrl)/assets/flags/countries/webp/1x/@($"{_person.CountryId:D3}").webp" type="image/webp">
+                                <img alt="" height="32" src="@(Assets.BaseUrl)/assets/flags/countries/png/1x/@($"{_person.CountryId:D3}").png"/>
+                            </picture>
+                        }
+                        @L[_person.Country]
+                    </td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_person.Webpage))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Webpage"]</strong></td>
+                    <td><MudLink Href="@_person.Webpage" Target="_blank">@_person.Webpage</MudLink></td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_person.Twitter))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Twitter"]</strong></td>
+                    <td><MudLink Href="@($"https://twitter.com/{_person.Twitter}")" Target="_blank">@@@_person.Twitter</MudLink></td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_person.Facebook))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Facebook"]</strong></td>
+                    <td><MudLink Href="@($"https://facebook.com/{_person.Facebook}")" Target="_blank">@_person.Facebook</MudLink></td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Companies Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_companies.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Companies"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_companies.Count > 0 ? Color.Success : Color.Error)">@_companies.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="PersonByCompanyDto" Dense="true">
+                @foreach(PersonByCompanyDto company in _companies)
+                {
+                    <MudListItem T="PersonByCompanyDto" Href="@($"/company/{company.CompanyId}")" Icon="@Icons.Material.Filled.Business">
+                        @company.CompanyName
+                        @if(!string.IsNullOrEmpty(company.Position))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @company.Position</MudText>
+                        }
+                        @if(company.Start.HasValue || company.End.HasValue || company.Ongoing == true)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Tertiary" Class="ml-2" Style="display: inline;">
+                                (@(company.Start.HasValue ? company.Start.Value.Year.ToString() : "?")–@(company.Ongoing == true ? L["present"] : company.End.HasValue ? company.End.Value.Year.ToString() : "?"))
+                            </MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Books Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_books.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Book" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Books"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_books.Count > 0 ? Color.Success : Color.Error)">@_books.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="PersonByBookDto" Dense="true">
+                @foreach(PersonByBookDto book in _books)
+                {
+                    <MudListItem T="PersonByBookDto" Href="@($"/book/{book.BookId}")" Icon="@Icons.Material.Filled.Book">
+                        @book.BookTitle
+                        @if(!string.IsNullOrEmpty(book.Role))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @book.Role</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Documents Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_documents.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Documents"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_documents.Count > 0 ? Color.Success : Color.Error)">@_documents.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="PersonByDocumentDto" Dense="true">
+                @foreach(PersonByDocumentDto document in _documents)
+                {
+                    <MudListItem T="PersonByDocumentDto" Href="@($"/document/{document.DocumentId}")" Icon="@Icons.Material.Filled.Article">
+                        @document.DocumentTitle
+                        @if(!string.IsNullOrEmpty(document.Role))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @document.Role</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Magazines Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_magazines.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.MenuBook" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Magazines"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_magazines.Count > 0 ? Color.Success : Color.Error)">@_magazines.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="PersonByMagazineDto" Dense="true">
+                @foreach(PersonByMagazineDto magazine in _magazines)
+                {
+                    <MudListItem T="PersonByMagazineDto" Href="@($"/magazine/{magazine.MagazineId}")" Icon="@Icons.Material.Filled.MenuBook">
+                        @magazine.MagazineTitle
+                        @if(!string.IsNullOrEmpty(magazine.Role))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @magazine.Role</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>

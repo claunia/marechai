@@ -123,76 +123,94 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-        <comment>News</comment>
-  </data>
-    <data name="Hello {0}!" xml:space="preserve">
-    <value>¡Hola {0}!</value>
-        <comment>Salutes logged-in user</comment>
-  </data>
-    <data name="Log out" xml:space="preserve">
-    <value>Cerrar sesión</value>
-        <comment>Log out</comment>
-  </data>
-    <data name="Register" xml:space="preserve">
-    <value>Registrarse</value>
-        <comment>Register</comment>
-  </data>
-    <data name="Log in" xml:space="preserve">
-    <value>Iniciar sesión</value>
-        <comment>Log in</comment>
-  </data>
-    <data name="About" xml:space="preserve">
-    <value>Acerca de</value>
-        <comment>About</comment>
-  </data>
-    <data name="Contact" xml:space="preserve">
-    <value>Contacto</value>
-        <comment>Contact</comment>
-  </data>
-    <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-        <comment>Companies</comment>
-  </data>
-    <data name="Computers" xml:space="preserve">
-    <value>Ordenadores</value>
-        <comment>Computers</comment>
-  </data>
-    <data name="Consoles" xml:space="preserve">
-    <value>Consolas</value>
-        <comment>Videogame consoles</comment>
-  </data>
-    <data name="Books" xml:space="preserve">
-    <value>Libros</value>
-        <comment>Books navigation link</comment>
-  </data>
-    <data name="Documents" xml:space="preserve">
-    <value>Documentos</value>
-        <comment>Documents navigation link</comment>
-  </data>
-    <data name="Magazines" xml:space="preserve">
-    <value>Revistas</value>
-        <comment>Magazines navigation link</comment>
-  </data>
-    <data name="Admin area" xml:space="preserve">
-    <value>Administración</value>
-        <comment>Administration area</comment>
-  </data>
-    <data name="GPUs" xml:space="preserve">
-    <value>GPUs</value>
-        <comment>Graphics Processing Units navigation link</comment>
-  </data>
-    <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-        <comment>Processors navigation link</comment>
-  </data>
-    <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-        <comment>Sound synthesizers navigation link</comment>
-  </data>
     <data name="People" xml:space="preserve">
-    <value>Personas</value>
-        <comment>People navigation link</comment>
-  </data>
+        <value>People</value>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Here you can consult our database.</value>
+    </data>
+    <data name="The database contains information about people related to computing history." xml:space="preserve">
+        <value>The database contains information about people related to computing history.</value>
+    </data>
+    <data name="There are {0} people in the database at this moment." xml:space="preserve">
+        <value>There are {0} people in the database at this moment.</value>
+    </data>
+    <data name="Search people alphabetically" xml:space="preserve">
+        <value>Search people alphabetically</value>
+    </data>
+    <data name="All people" xml:space="preserve">
+        <value>All people</value>
+    </data>
+    <data name="Search people by birth year" xml:space="preserve">
+        <value>Search people by birth year</value>
+    </data>
+    <data name="Search results:" xml:space="preserve">
+        <value>Search results:</value>
+    </data>
+    <data name="People starting with {0}" xml:space="preserve">
+        <value>People starting with {0}</value>
+    </data>
+    <data name="People born in {0}" xml:space="preserve">
+        <value>People born in {0}</value>
+    </data>
+    <data name="{0} people found in the database." xml:space="preserve">
+        <value>{0} people found in the database.</value>
+    </data>
+    <data name="There are no people found in the database that start with this letter." xml:space="preserve">
+        <value>There are no people found in the database that start with this letter.</value>
+    </data>
+    <data name="There are no people found born this year." xml:space="preserve">
+        <value>There are no people found born this year.</value>
+    </data>
+    <data name="Person not found." xml:space="preserve">
+        <value>Person not found.</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="Surname" xml:space="preserve">
+        <value>Surname</value>
+    </data>
+    <data name="Alias" xml:space="preserve">
+        <value>Alias</value>
+    </data>
+    <data name="Display name" xml:space="preserve">
+        <value>Display name</value>
+    </data>
+    <data name="Birth date" xml:space="preserve">
+        <value>Birth date</value>
+    </data>
+    <data name="Death date" xml:space="preserve">
+        <value>Death date</value>
+    </data>
+    <data name="Country of birth" xml:space="preserve">
+        <value>Country of birth</value>
+    </data>
+    <data name="Webpage" xml:space="preserve">
+        <value>Webpage</value>
+    </data>
+    <data name="Twitter" xml:space="preserve">
+        <value>Twitter</value>
+    </data>
+    <data name="Facebook" xml:space="preserve">
+        <value>Facebook</value>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Companies</value>
+    </data>
+    <data name="Books" xml:space="preserve">
+        <value>Books</value>
+    </data>
+    <data name="Documents" xml:space="preserve">
+        <value>Documents</value>
+    </data>
+    <data name="Magazines" xml:space="preserve">
+        <value>Magazines</value>
+    </data>
+    <data name="present" xml:space="preserve">
+        <value>present</value>
+    </data>
 </root>
