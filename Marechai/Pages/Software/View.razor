@@ -1,0 +1,232 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/software/{Id:int}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<SoftwareService>
+@inject IStringLocalizer<SoftwareService> L
+@inject ApiAssetUrlProvider               Assets
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_software is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["Software not found."]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Apps" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@_software.Name</MudText>
+        <div class="d-flex gap-2">
+            @if(_software.IsOperatingSystem == true)
+            {
+                <MudChip T="string" Color="Color.Info" Variant="Variant.Filled" Size="Size.Small">@L["Operating System"]</MudChip>
+            }
+            @if(_software.IsGame == true)
+            {
+                <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">@L["Game"]</MudChip>
+            }
+        </div>
+    </MudStack>
+</MudPaper>
+
+@* ── General Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["General"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            <tr>
+                <td style="width: 33%; text-align: right;"><strong>@L["Name"]</strong></td>
+                <td>@_software.Name</td>
+            </tr>
+            @if(!string.IsNullOrEmpty(_software.Family))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Family"]</strong></td>
+                    <td>@_software.Family</td>
+                </tr>
+            }
+            <tr>
+                <td style="width: 33%; text-align: right;"><strong>@L["Operating System"]</strong></td>
+                <td>@(_software.IsOperatingSystem == true ? L["Yes"] : L["No"])</td>
+            </tr>
+            <tr>
+                <td style="width: 33%; text-align: right;"><strong>@L["Game"]</strong></td>
+                <td>@(_software.IsGame == true ? L["Yes"] : L["No"])</td>
+            </tr>
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Companies Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_companies.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Companies"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_companies.Count > 0 ? Color.Success : Color.Error)">@_companies.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="SoftwareCompanyRoleDto" Dense="true">
+                @foreach(SoftwareCompanyRoleDto company in _companies)
+                {
+                    <MudListItem T="SoftwareCompanyRoleDto" Href="@($"/company/{company.CompanyId}")" Icon="@Icons.Material.Filled.Business">
+                        @company.Company
+                        @if(!string.IsNullOrEmpty(company.Role))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @company.Role</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Versions Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_versions.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Versions"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_versions.Count > 0 ? Color.Success : Color.Error)">@_versions.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            @foreach(SoftwareVersionDto version in _versions)
+            {
+                <MudCard Elevation="1" Class="mb-3 rounded-lg">
+                    <MudCardContent>
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                            <MudIcon Icon="@Icons.Material.Filled.Label" Color="Color.Secondary" Size="Size.Small"/>
+                            <MudText Typo="Typo.subtitle1"><strong>@version.VersionString</strong></MudText>
+                            @if(!string.IsNullOrEmpty(version.PublicVersion))
+                            {
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">(@version.PublicVersion)</MudText>
+                            }
+                        </MudStack>
+                        @if(!string.IsNullOrEmpty(version.Codename))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Tertiary" Class="mb-2">@L["Codename"]: @version.Codename</MudText>
+                        }
+                        @if(!string.IsNullOrEmpty(version.License))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Tertiary" Class="mb-2">@L["License"]: @version.License</MudText>
+                        }
+
+                        @if(_releasesByVersion.TryGetValue(version.Id ?? 0, out var releases) && releases.Count > 0)
+                        {
+                            <MudText Typo="Typo.subtitle2" Class="mt-3 mb-2">@L["Releases"] (@releases.Count)</MudText>
+                            <MudList T="SoftwareReleaseDto" Dense="true">
+                                @foreach(SoftwareReleaseDto release in releases)
+                                {
+                                    <MudListItem T="SoftwareReleaseDto" Href="@($"/software/release/{release.Id}")" Icon="@Icons.Material.Filled.NewReleases">
+                                        <div class="d-flex flex-wrap align-center gap-2">
+                                            @if(!string.IsNullOrEmpty(release.Platform))
+                                            {
+                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Info">@release.Platform</MudChip>
+                                            }
+                                            @if(!string.IsNullOrEmpty(release.Region))
+                                            {
+                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@release.Region</MudChip>
+                                            }
+                                            @if(!string.IsNullOrEmpty(release.Publisher))
+                                            {
+                                                <MudText Typo="Typo.body2">@release.Publisher</MudText>
+                                            }
+                                            @if(release.ReleaseDate.HasValue)
+                                            {
+                                                <MudText Typo="Typo.caption" Color="Color.Secondary">@release.ReleaseDate.Value.DateTime.ToLongDateString()</MudText>
+                                            }
+                                        </div>
+                                    </MudListItem>
+                                }
+                            </MudList>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            }
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Screenshots Card ── *@
+@if(_screenshots.Count > 0)
+{
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel>
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Image" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Screenshots"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_screenshots.Count</MudChip>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                @foreach(var group in _screenshotsByPlatform)
+                {
+                    <MudText Typo="Typo.subtitle1" Class="mt-3 mb-2"><strong>@group.Key</strong></MudText>
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach(SoftwareScreenshotDto screenshot in group.Value)
+                        {
+                            <MudCard Elevation="1" Class="rounded-lg" Style="width: 200px;">
+                                <MudCardContent Class="pa-2">
+                                    <MudImage Src="@($"{Assets.BaseUrl}/assets/photos/software-screenshots/webp/hd/{screenshot.Id}.webp")"
+                                              Alt="@screenshot.Caption" ObjectFit="ObjectFit.Contain" Class="rounded"
+                                              Style="width: 100%; max-height: 150px;"/>
+                                    @if(!string.IsNullOrEmpty(screenshot.Caption))
+                                    {
+                                        <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-1">@screenshot.Caption</MudText>
+                                    }
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                    </div>
+                }
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}

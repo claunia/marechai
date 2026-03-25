@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+    <!--
+      Microsoft ResX Schema
+
+      Version 2.0
+
+      The primary goals of this format is to allow a simple XML format
+      that is mostly human readable. The generation and parsing of the
+      various data types are done through the TypeConverter classes
+      associated with the data types.
+
+      Example:
+
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+
+      There are any number of "resheader" rows that contain simple
+      name/value pairs.
+
+      Each data row contains a name, and value. The row also contains a
+      type or mimetype. Type corresponds to a .NET class that support
+      text/value conversion through the TypeConverter architecture.
+      Classes that don't support this are serialized and stored with the
+      mimetype set.
+
+      The mimetype is used for serialized objects, and tells the
+      ResXResourceReader how to depersist the object. This is currently not
+      extensible. For a given mimetype the value must be set accordingly:
+
+      Note - application/x-microsoft.net.object.binary.base64 is the format
+      that the ResXResourceWriter will generate, however the reader can
+      read any of the formats listed below.
+
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <!-- Picker page -->
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+        <comment>Software title</comment>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Aquí puede consultar nuestra base de datos.</value>
+        <comment>Database consultation</comment>
+    </data>
+    <data name="The database contains information about software related to computing history." xml:space="preserve">
+        <value>La base de datos contiene información sobre software relacionado con la historia de la informática.</value>
+        <comment>Database description</comment>
+    </data>
+    <data name="There are {0} software titles in the database at this moment." xml:space="preserve">
+        <value>Hay {0} títulos de software en la base de datos en este momento.</value>
+        <comment>Software count</comment>
+    </data>
+    <data name="Search by companies" xml:space="preserve">
+        <value>Buscar por compañías</value>
+        <comment>Search by companies</comment>
+    </data>
+    <data name="All companies" xml:space="preserve">
+        <value>Todas las compañías</value>
+        <comment>All companies</comment>
+    </data>
+    <data name="Search software alphabetically" xml:space="preserve">
+        <value>Buscar software alfabéticamente</value>
+        <comment>Search software alphabetically</comment>
+    </data>
+    <data name="All software" xml:space="preserve">
+        <value>Todo el software</value>
+        <comment>All software</comment>
+    </data>
+    <data name="Search software by platform" xml:space="preserve">
+        <value>Buscar software por plataforma</value>
+        <comment>Search software by platform</comment>
+    </data>
+    <data name="Search software by year" xml:space="preserve">
+        <value>Buscar software por año</value>
+        <comment>Search software by year</comment>
+    </data>
+    <!-- Search page -->
+    <data name="Search results:" xml:space="preserve">
+        <value>Resultados de búsqueda:</value>
+        <comment>Search results</comment>
+    </data>
+    <data name="Software starting with {0}" xml:space="preserve">
+        <value>Software que empieza con {0}</value>
+        <comment>Software starting with letter</comment>
+    </data>
+    <data name="Software from {0}" xml:space="preserve">
+        <value>Software de {0}</value>
+        <comment>Software from year</comment>
+    </data>
+    <data name="Software for {0}" xml:space="preserve">
+        <value>Software para {0}</value>
+        <comment>Software for platform</comment>
+    </data>
+    <data name="{0} software titles found in the database." xml:space="preserve">
+        <value>{0} títulos de software encontrados en la base de datos.</value>
+        <comment>Software count result</comment>
+    </data>
+    <data name="OS" xml:space="preserve">
+        <value>SO</value>
+        <comment>Operating System badge</comment>
+    </data>
+    <data name="Game" xml:space="preserve">
+        <value>Juego</value>
+        <comment>Game badge</comment>
+    </data>
+    <data name="There is no software found in the database that starts with this letter." xml:space="preserve">
+        <value>No se ha encontrado software en la base de datos que empiece con esta letra.</value>
+        <comment>No software found by letter</comment>
+    </data>
+    <data name="There is no software found from this year." xml:space="preserve">
+        <value>No se ha encontrado software de este año.</value>
+        <comment>No software found by year</comment>
+    </data>
+    <data name="There is no software found for this platform." xml:space="preserve">
+        <value>No se ha encontrado software para esta plataforma.</value>
+        <comment>No software found by platform</comment>
+    </data>
+    <!-- Detail page -->
+    <data name="Software not found." xml:space="preserve">
+        <value>Software no encontrado.</value>
+        <comment>Software not found</comment>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+        <comment>General information</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Nombre</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Family" xml:space="preserve">
+        <value>Familia</value>
+        <comment>Software family</comment>
+    </data>
+    <data name="Operating System" xml:space="preserve">
+        <value>Sistema operativo</value>
+        <comment>Operating System</comment>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Sí</value>
+        <comment>Yes</comment>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>No</value>
+        <comment>No</comment>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Compañías</value>
+        <comment>Companies</comment>
+    </data>
+    <data name="Versions" xml:space="preserve">
+        <value>Versiones</value>
+        <comment>Versions</comment>
+    </data>
+    <data name="Codename" xml:space="preserve">
+        <value>Nombre en clave</value>
+        <comment>Codename</comment>
+    </data>
+    <data name="License" xml:space="preserve">
+        <value>Licencia</value>
+        <comment>License</comment>
+    </data>
+    <data name="Releases" xml:space="preserve">
+        <value>Lanzamientos</value>
+        <comment>Releases</comment>
+    </data>
+    <data name="Screenshots" xml:space="preserve">
+        <value>Capturas de pantalla</value>
+        <comment>Screenshots</comment>
+    </data>
+    <!-- Release detail page -->
+    <data name="Release not found." xml:space="preserve">
+        <value>Lanzamiento no encontrado.</value>
+        <comment>Release not found</comment>
+    </data>
+    <data name="Software Release" xml:space="preserve">
+        <value>Lanzamiento de software</value>
+        <comment>Software Release</comment>
+    </data>
+    <data name="Version" xml:space="preserve">
+        <value>Versión</value>
+        <comment>Version</comment>
+    </data>
+    <data name="Platform" xml:space="preserve">
+        <value>Plataforma</value>
+        <comment>Platform</comment>
+    </data>
+    <data name="Region" xml:space="preserve">
+        <value>Región</value>
+        <comment>Region</comment>
+    </data>
+    <data name="Publisher" xml:space="preserve">
+        <value>Editor</value>
+        <comment>Publisher</comment>
+    </data>
+    <data name="Release date" xml:space="preserve">
+        <value>Fecha de lanzamiento</value>
+        <comment>Release date</comment>
+    </data>
+    <data name="Variant" xml:space="preserve">
+        <value>Variante</value>
+        <comment>Variant</comment>
+    </data>
+    <data name="Subvariant" xml:space="preserve">
+        <value>Subvariante</value>
+        <comment>Subvariant</comment>
+    </data>
+    <data name="Barcodes" xml:space="preserve">
+        <value>Códigos de barras</value>
+        <comment>Barcodes</comment>
+    </data>
+    <data name="Product codes" xml:space="preserve">
+        <value>Códigos de producto</value>
+        <comment>Product codes</comment>
+    </data>
+    <data name="Minimum GPUs" xml:space="preserve">
+        <value>GPUs mínimas</value>
+        <comment>Minimum GPUs</comment>
+    </data>
+    <data name="Recommended GPUs" xml:space="preserve">
+        <value>GPUs recomendadas</value>
+        <comment>Recommended GPUs</comment>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Sintetizadores de sonido</value>
+        <comment>Sound synthesizers</comment>
+    </data>
+</root>

@@ -1,0 +1,281 @@
+@{
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/software/release/{Id:int}"
+@using Marechai.ApiClient.Models
+@inherits OwningComponentBase<SoftwareService>
+@inject IStringLocalizer<SoftwareService> L
+
+@if(!_loaded)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+@if(_release is null)
+{
+    <MudAlert Severity="Severity.Warning">@L["Release not found."]</MudAlert>
+
+    return;
+}
+
+@* ── Hero Header ── *@
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.NewReleases" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@(!string.IsNullOrEmpty(_softwareName) ? _softwareName : L["Software Release"])</MudText>
+        @if(!string.IsNullOrEmpty(_release.SoftwareVersion))
+        {
+            <MudText Typo="Typo.h6" Align="Align.Center" Style="color: rgba(255,255,255,0.85);">@_release.SoftwareVersion</MudText>
+        }
+    </MudStack>
+</MudPaper>
+
+@* ── General Information Card ── *@
+<MudCard Elevation="2" Class="mb-4 rounded-lg">
+    <MudCardContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+            <MudText Typo="Typo.h6">@L["General"]</MudText>
+        </MudStack>
+        <MudSimpleTable Elevation="0" Dense="true">
+            <tbody>
+            @if(!string.IsNullOrEmpty(_release.SoftwareVersion))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Version"]</strong></td>
+                    <td>@_release.SoftwareVersion</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_release.Platform))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Platform"]</strong></td>
+                    <td>@_release.Platform</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_release.Region))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Region"]</strong></td>
+                    <td>@_release.Region</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_release.Publisher))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Publisher"]</strong></td>
+                    <td>
+                        @if(_release.PublisherId.HasValue)
+                        {
+                            <MudLink Href="@($"/company/{_release.PublisherId}")">@_release.Publisher</MudLink>
+                        }
+                        else
+                        {
+                            @_release.Publisher
+                        }
+                    </td>
+                </tr>
+            }
+            @if(_release.ReleaseDate.HasValue)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Release date"]</strong></td>
+                    <td>@_release.ReleaseDate.Value.DateTime.ToLongDateString()</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_release.Variant))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Variant"]</strong></td>
+                    <td>@_release.Variant</td>
+                </tr>
+            }
+            @if(!string.IsNullOrEmpty(_release.Subvariant))
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Subvariant"]</strong></td>
+                    <td>@_release.Subvariant</td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    </MudCardContent>
+</MudCard>
+
+@* ── Barcodes Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_barcodes.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.QrCode" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Barcodes"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_barcodes.Count > 0 ? Color.Success : Color.Error)">@_barcodes.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="SoftwareBarcodeDto" Dense="true">
+                @foreach(SoftwareBarcodeDto barcode in _barcodes)
+                {
+                    <MudListItem T="SoftwareBarcodeDto" Icon="@Icons.Material.Filled.QrCode">
+                        @barcode.Code
+                        @if(barcode.Type.HasValue)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @GetBarcodeTypeName(barcode.Type.Value)</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Product Codes Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_productCodes.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Pin" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Product codes"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_productCodes.Count > 0 ? Color.Success : Color.Error)">@_productCodes.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="SoftwareProductCodeDto" Dense="true">
+                @foreach(SoftwareProductCodeDto productCode in _productCodes)
+                {
+                    <MudListItem T="SoftwareProductCodeDto" Icon="@Icons.Material.Filled.Pin">
+                        @productCode.Code
+                        @if(productCode.Issuer.HasValue)
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @GetProductCodeIssuerName(productCode.Issuer.Value)</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Companies Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_aggregatedCompanies.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Business" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Companies"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_aggregatedCompanies.Count > 0 ? Color.Success : Color.Error)">@_aggregatedCompanies.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="string" Dense="true">
+                @foreach((int companyId, string companyName, string role) in _aggregatedCompanies)
+                {
+                    <MudListItem T="string" Href="@($"/company/{companyId}")" Icon="@Icons.Material.Filled.Business">
+                        @companyName
+                        @if(!string.IsNullOrEmpty(role))
+                        {
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ml-2" Style="display: inline;">— @role</MudText>
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Minimum GPUs Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_minimumGpus.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Tv" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Minimum GPUs"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_minimumGpus.Count > 0 ? Color.Success : Color.Error)">@_minimumGpus.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="GpuBySoftwareReleaseDto" Dense="true">
+                @foreach(GpuBySoftwareReleaseDto gpu in _minimumGpus)
+                {
+                    <MudListItem T="GpuBySoftwareReleaseDto" Href="@($"/gpu/{gpu.GpuId}")" Icon="@Icons.Material.Filled.Tv">
+                        @gpu.Gpu
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Recommended GPUs Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_recommendedGpus.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Tv" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Recommended GPUs"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_recommendedGpus.Count > 0 ? Color.Success : Color.Error)">@_recommendedGpus.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="GpuBySoftwareReleaseDto" Dense="true">
+                @foreach(GpuBySoftwareReleaseDto gpu in _recommendedGpus)
+                {
+                    <MudListItem T="GpuBySoftwareReleaseDto" Href="@($"/gpu/{gpu.GpuId}")" Icon="@Icons.Material.Filled.Tv">
+                        @gpu.Gpu
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Sound Synthesizers Card ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_soundSynths.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.MusicNote" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Sound synthesizers"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_soundSynths.Count > 0 ? Color.Success : Color.Error)">@_soundSynths.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="SoundSynthBySoftwareReleaseDto" Dense="true">
+                @foreach(SoundSynthBySoftwareReleaseDto synth in _soundSynths)
+                {
+                    <MudListItem T="SoundSynthBySoftwareReleaseDto" Href="@($"/soundsynth/{synth.SoundSynthId}")" Icon="@Icons.Material.Filled.MusicNote">
+                        @synth.SoundSynth
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>

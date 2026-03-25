@@ -123,80 +123,149 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-        <comment>News</comment>
-  </data>
-    <data name="Hello {0}!" xml:space="preserve">
-    <value>¡Hola {0}!</value>
-        <comment>Salutes logged-in user</comment>
-  </data>
-    <data name="Log out" xml:space="preserve">
-    <value>Cerrar sesión</value>
-        <comment>Log out</comment>
-  </data>
-    <data name="Register" xml:space="preserve">
-    <value>Registrarse</value>
-        <comment>Register</comment>
-  </data>
-    <data name="Log in" xml:space="preserve">
-    <value>Iniciar sesión</value>
-        <comment>Log in</comment>
-  </data>
-    <data name="About" xml:space="preserve">
-    <value>Acerca de</value>
-        <comment>About</comment>
-  </data>
-    <data name="Contact" xml:space="preserve">
-    <value>Contacto</value>
-        <comment>Contact</comment>
-  </data>
-    <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-        <comment>Companies</comment>
-  </data>
-    <data name="Computers" xml:space="preserve">
-    <value>Ordenadores</value>
-        <comment>Computers</comment>
-  </data>
-    <data name="Consoles" xml:space="preserve">
-    <value>Consolas</value>
-        <comment>Videogame consoles</comment>
-  </data>
-    <data name="Books" xml:space="preserve">
-    <value>Libros</value>
-        <comment>Books navigation link</comment>
-  </data>
-    <data name="Documents" xml:space="preserve">
-    <value>Documentos</value>
-        <comment>Documents navigation link</comment>
-  </data>
-    <data name="Magazines" xml:space="preserve">
-    <value>Revistas</value>
-        <comment>Magazines navigation link</comment>
-  </data>
-    <data name="Admin area" xml:space="preserve">
-    <value>Administración</value>
-        <comment>Administration area</comment>
-  </data>
-    <data name="GPUs" xml:space="preserve">
-    <value>GPUs</value>
-        <comment>Graphics Processing Units navigation link</comment>
-  </data>
-    <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-        <comment>Processors navigation link</comment>
-  </data>
-    <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-        <comment>Sound synthesizers navigation link</comment>
-  </data>
-    <data name="People" xml:space="preserve">
-    <value>Personas</value>
-        <comment>People navigation link</comment>
-  </data>
+    <!-- Picker page -->
     <data name="Software" xml:space="preserve">
-    <value>Software</value>
-        <comment>Software navigation link</comment>
-  </data>
+        <value>Software</value>
+    </data>
+    <data name="Here you can consult our database." xml:space="preserve">
+        <value>Here you can consult our database.</value>
+    </data>
+    <data name="The database contains information about software related to computing history." xml:space="preserve">
+        <value>The database contains information about software related to computing history.</value>
+    </data>
+    <data name="There are {0} software titles in the database at this moment." xml:space="preserve">
+        <value>There are {0} software titles in the database at this moment.</value>
+    </data>
+    <data name="Search by companies" xml:space="preserve">
+        <value>Search by companies</value>
+    </data>
+    <data name="All companies" xml:space="preserve">
+        <value>All companies</value>
+    </data>
+    <data name="Search software alphabetically" xml:space="preserve">
+        <value>Search software alphabetically</value>
+    </data>
+    <data name="All software" xml:space="preserve">
+        <value>All software</value>
+    </data>
+    <data name="Search software by platform" xml:space="preserve">
+        <value>Search software by platform</value>
+    </data>
+    <data name="Search software by year" xml:space="preserve">
+        <value>Search software by year</value>
+    </data>
+    <!-- Search page -->
+    <data name="Search results:" xml:space="preserve">
+        <value>Search results:</value>
+    </data>
+    <data name="Software starting with {0}" xml:space="preserve">
+        <value>Software starting with {0}</value>
+    </data>
+    <data name="Software from {0}" xml:space="preserve">
+        <value>Software from {0}</value>
+    </data>
+    <data name="Software for {0}" xml:space="preserve">
+        <value>Software for {0}</value>
+    </data>
+    <data name="{0} software titles found in the database." xml:space="preserve">
+        <value>{0} software titles found in the database.</value>
+    </data>
+    <data name="OS" xml:space="preserve">
+        <value>OS</value>
+    </data>
+    <data name="Game" xml:space="preserve">
+        <value>Game</value>
+    </data>
+    <data name="There is no software found in the database that starts with this letter." xml:space="preserve">
+        <value>There is no software found in the database that starts with this letter.</value>
+    </data>
+    <data name="There is no software found from this year." xml:space="preserve">
+        <value>There is no software found from this year.</value>
+    </data>
+    <data name="There is no software found for this platform." xml:space="preserve">
+        <value>There is no software found for this platform.</value>
+    </data>
+    <!-- Detail page -->
+    <data name="Software not found." xml:space="preserve">
+        <value>Software not found.</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="Family" xml:space="preserve">
+        <value>Family</value>
+    </data>
+    <data name="Operating System" xml:space="preserve">
+        <value>Operating System</value>
+    </data>
+    <data name="Yes" xml:space="preserve">
+        <value>Yes</value>
+    </data>
+    <data name="No" xml:space="preserve">
+        <value>No</value>
+    </data>
+    <data name="Companies" xml:space="preserve">
+        <value>Companies</value>
+    </data>
+    <data name="Versions" xml:space="preserve">
+        <value>Versions</value>
+    </data>
+    <data name="Codename" xml:space="preserve">
+        <value>Codename</value>
+    </data>
+    <data name="License" xml:space="preserve">
+        <value>License</value>
+    </data>
+    <data name="Releases" xml:space="preserve">
+        <value>Releases</value>
+    </data>
+    <data name="Screenshots" xml:space="preserve">
+        <value>Screenshots</value>
+    </data>
+    <!-- Release detail page -->
+    <data name="Release not found." xml:space="preserve">
+        <value>Release not found.</value>
+    </data>
+    <data name="Software Release" xml:space="preserve">
+        <value>Software Release</value>
+    </data>
+    <data name="Version" xml:space="preserve">
+        <value>Version</value>
+    </data>
+    <data name="Platform" xml:space="preserve">
+        <value>Platform</value>
+    </data>
+    <data name="Region" xml:space="preserve">
+        <value>Region</value>
+    </data>
+    <data name="Publisher" xml:space="preserve">
+        <value>Publisher</value>
+    </data>
+    <data name="Release date" xml:space="preserve">
+        <value>Release date</value>
+    </data>
+    <data name="Variant" xml:space="preserve">
+        <value>Variant</value>
+    </data>
+    <data name="Subvariant" xml:space="preserve">
+        <value>Subvariant</value>
+    </data>
+    <data name="Barcodes" xml:space="preserve">
+        <value>Barcodes</value>
+    </data>
+    <data name="Product codes" xml:space="preserve">
+        <value>Product codes</value>
+    </data>
+    <data name="Minimum GPUs" xml:space="preserve">
+        <value>Minimum GPUs</value>
+    </data>
+    <data name="Recommended GPUs" xml:space="preserve">
+        <value>Recommended GPUs</value>
+    </data>
+    <data name="Sound synthesizers" xml:space="preserve">
+        <value>Sound synthesizers</value>
+    </data>
 </root>
