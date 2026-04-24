@@ -1,0 +1,174 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using MudBlazor;
+
+namespace Marechai.Pages.Admin;
+
+public partial class Machines
+{
+    string?            _errorMessage;
+    bool               _isLoading = true;
+    string?            _successMessage;
+    List<MachineDto>?  _machines;
+
+    protected override async Task OnInitializedAsync() => await LoadMachinesAsync();
+
+    async Task LoadMachinesAsync()
+    {
+        _isLoading = true;
+        _machines  = await MachinesService.GetAllAsync();
+        _isLoading = false;
+    }
+
+    Func<MachineDto, bool> QuickFilter => _ => true;
+
+    string FormatType(int? type) => type switch
+    {
+        1 => L["Computer"],
+        2 => L["Console"],
+        _ => L["Unknown"]
+    };
+
+    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+
+    async Task OpenAddMachineDialog()
+    {
+        DialogParameters<MachineDialog> parameters = new()
+        {
+            { x => x.IsNew, true }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<MachineDialog>(L["Add Machine"], parameters,
+                                                                               new DialogOptions
+                                                                               {
+                                                                                   MaxWidth  = MaxWidth.Large,
+                                                                                   FullWidth = true
+                                                                               });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false, Data: MachineDialogResult data })
+        {
+            var dto = new MachineDto
+            {
+                Name       = data.Name,
+                Model      = data.Model,
+                CompanyId  = data.CompanyId,
+                Type       = data.Type,
+                Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                FamilyId   = data.FamilyId
+            };
+
+            (long? id, string? errorMessage) = await MachinesService.CreateAsync(dto);
+
+            if(id is not null)
+            {
+                _successMessage = L["Machine created successfully."];
+                await LoadMachinesAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
+    async Task OpenEditMachineDialog(MachineDto machine)
+    {
+        // List endpoint doesn't return CompanyId/FamilyId, fetch full details
+        MachineDto? fullMachine = await MachinesService.GetByIdAsync(machine.Id ?? 0);
+
+        if(fullMachine is null)
+        {
+            _errorMessage = "Failed to load machine details.";
+
+            return;
+        }
+
+        DialogParameters<MachineDialog> parameters = new()
+        {
+            { x => x.IsNew, false },
+            { x => x.MachineId, fullMachine.Id ?? 0 },
+            { x => x.Name, fullMachine.Name },
+            { x => x.Model, fullMachine.Model },
+            { x => x.CompanyId, fullMachine.CompanyId },
+            { x => x.Type, fullMachine.Type ?? 0 },
+            { x => x.Introduced, fullMachine.Introduced?.DateTime },
+            { x => x.FamilyId, fullMachine.FamilyId }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<MachineDialog>(L["Edit Machine"], parameters,
+                                                                               new DialogOptions
+                                                                               {
+                                                                                   MaxWidth  = MaxWidth.Large,
+                                                                                   FullWidth = true
+                                                                               });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false, Data: MachineDialogResult data })
+        {
+            var dto = new MachineDto
+            {
+                Id         = machine.Id,
+                Name       = data.Name,
+                Model      = data.Model,
+                CompanyId  = data.CompanyId,
+                Type       = data.Type,
+                Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                FamilyId   = data.FamilyId
+            };
+
+            (bool succeeded, string? errorMessage) = await MachinesService.UpdateAsync(machine.Id ?? 0, dto);
+
+            if(succeeded)
+            {
+                _successMessage = L["Machine updated successfully."];
+                await LoadMachinesAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
+    async Task ConfirmDeleteMachine(MachineDto machine)
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            {
+                x => x.ContentText,
+                string.Format(L["Are you sure you want to delete machine '{0}'? This action cannot be undone."],
+                              machine.Name)
+            }
+        };
+
+        IDialogReference dialog =
+            await DialogService.ShowAsync<DeleteConfirmDialog>(L["Delete Machine"], parameters,
+                                                               new DialogOptions
+                                                               {
+                                                                   MaxWidth  = MaxWidth.ExtraSmall,
+                                                                   FullWidth = true
+                                                               });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            (bool succeeded, string? errorMessage) = await MachinesService.DeleteAsync(machine.Id ?? 0);
+
+            if(succeeded)
+            {
+                _successMessage = L["Machine deleted successfully."];
+                await LoadMachinesAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+}

@@ -23,9 +23,12 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Extensions.Localization;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
@@ -40,6 +43,488 @@ public class MachinesService(Marechai.ApiClient.Client client, IStringLocalizer<
         catch
         {
             return null;
+        }
+    }
+
+    public async Task<List<MachineDto>> GetAllAsync()
+    {
+        try
+        {
+            List<MachineDto>? machines = await client.Machines.GetAsync();
+
+            return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<MachineDto?> GetByIdAsync(int id)
+    {
+        try
+        {
+            return await client.Machines[id].GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(long? id, string? error)> CreateAsync(MachineDto dto)
+    {
+        try
+        {
+            long? id = await client.Machines.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, MachineDto dto)
+    {
+        try
+        {
+            await client.Machines[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    {
+        try
+        {
+            await client.Machines[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetCompaniesAsync()
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Companies.GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MachineFamilyDto>> GetFamiliesAsync()
+    {
+        try
+        {
+            List<MachineFamilyDto>? families = await client.MachineFamilies.GetAsync();
+
+            return families ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<MachineFamilyDto?> GetFamilyByIdAsync(int id)
+    {
+        try
+        {
+            return await client.MachineFamilies[id].GetAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    // GPU junction management
+    public async Task<List<GpuByMachineDto>> GetGpusByMachineAsync(int machineId)
+    {
+        try
+        {
+            List<GpuByMachineDto>? gpus = await client.Machines.Gpus.ByMachine[machineId].GetAsync();
+
+            return gpus ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<GpuDto>> GetAllGpusAsync()
+    {
+        try
+        {
+            List<GpuDto>? gpus = await client.Gpus.GetAsync();
+
+            return gpus ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddGpuToMachineAsync(GpuByMachineDto dto)
+    {
+        try
+        {
+            long? id = await client.Machines.Gpus.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveGpuFromMachineAsync(long id)
+    {
+        try
+        {
+            await client.Machines.Gpus[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // Processor junction management
+    public async Task<List<ProcessorByMachineDto>> GetProcessorsByMachineAsync(int machineId)
+    {
+        try
+        {
+            List<ProcessorByMachineDto>? processors = await client.ProcessorsByMachine.ByMachine[machineId].GetAsync();
+
+            return processors ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<ProcessorDto>> GetAllProcessorsAsync()
+    {
+        try
+        {
+            List<ProcessorDto>? processors = await client.Processors.GetAsync();
+
+            return processors ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddProcessorToMachineAsync(ProcessorByMachineDto dto)
+    {
+        try
+        {
+            long? id = await client.ProcessorsByMachine.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveProcessorFromMachineAsync(long id)
+    {
+        try
+        {
+            await client.ProcessorsByMachine[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // Sound synth junction management
+    public async Task<List<SoundSynthByMachineDto>> GetSoundSynthsByMachineAsync(int machineId)
+    {
+        try
+        {
+            List<SoundSynthByMachineDto>? synths = await client.SoundSynthsByMachine.ByMachine[machineId].GetAsync();
+
+            return synths ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoundSynthDto>> GetAllSoundSynthsAsync()
+    {
+        try
+        {
+            List<SoundSynthDto>? synths = await client.SoundSynths.GetAsync();
+
+            return synths ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddSoundSynthToMachineAsync(SoundSynthByMachineDto dto)
+    {
+        try
+        {
+            long? id = await client.SoundSynthsByMachine.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveSoundSynthFromMachineAsync(long id)
+    {
+        try
+        {
+            await client.SoundSynthsByMachine[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // Screen junction management
+    public async Task<List<ScreenByMachineDto>> GetScreensByMachineAsync(int machineId)
+    {
+        try
+        {
+            List<ScreenByMachineDto>? screens = await client.Machines[machineId].Screens.GetAsync();
+
+            return screens ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<ScreenDto>> GetAllScreensAsync()
+    {
+        try
+        {
+            List<ScreenDto>? screens = await client.Screens.GetAsync();
+
+            return screens ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddScreenToMachineAsync(ScreenByMachineDto dto)
+    {
+        try
+        {
+            long? id = await client.ScreensByMachine.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveScreenFromMachineAsync(long id)
+    {
+        try
+        {
+            await client.ScreensByMachine[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // Memory junction management
+    public async Task<List<MemoryByMachineDto>> GetMemoryByMachineAsync(int machineId)
+    {
+        try
+        {
+            List<MemoryByMachineDto>? memory = await client.Machines[machineId].Memories.GetAsync();
+
+            return memory ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddMemoryToMachineAsync(MemoryByMachineDto dto)
+    {
+        try
+        {
+            long? id = await client.MemoriesByMachine.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveMemoryFromMachineAsync(long id)
+    {
+        try
+        {
+            await client.MemoriesByMachine[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // Storage junction management
+    public async Task<List<StorageByMachineDto>> GetStorageByMachineAsync(int machineId)
+    {
+        try
+        {
+            List<StorageByMachineDto>? storage = await client.Machines[machineId].Storage.GetAsync();
+
+            return storage ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddStorageToMachineAsync(StorageByMachineDto dto)
+    {
+        try
+        {
+            long? id = await client.StorageByMachine.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveStorageFromMachineAsync(long id)
+    {
+        try
+        {
+            await client.StorageByMachine[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
         }
     }
 }

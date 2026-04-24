@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Name" xml:space="preserve">
+        <value>Nombre</value>
+        <comment>Name</comment>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Compañía</value>
+        <comment>Company</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>El nombre es obligatorio.</value>
+        <comment>Validation error</comment>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Buscar compañía</value>
+        <comment>Autocomplete label</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancelar</value>
+        <comment>Cancel button</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Guardar</value>
+        <comment>Save button</comment>
+    </data>
+    <data name="Machine Family Management" xml:space="preserve">
+        <value>Gestión de familias de máquinas</value>
+        <comment>Admin page title</comment>
+    </data>
+    <data name="Manage machine families and their company associations." xml:space="preserve">
+        <value>Gestionar familias de máquinas y sus asociaciones con compañías.</value>
+        <comment>Admin page subtitle</comment>
+    </data>
+    <data name="Add Machine Family" xml:space="preserve">
+        <value>Añadir familia de máquinas</value>
+        <comment>Button to add a new machine family</comment>
+    </data>
+    <data name="Edit Machine Family" xml:space="preserve">
+        <value>Editar familia de máquinas</value>
+        <comment>Button to edit a machine family</comment>
+    </data>
+    <data name="Delete Machine Family" xml:space="preserve">
+        <value>Eliminar familia de máquinas</value>
+        <comment>Button to delete a machine family</comment>
+    </data>
+    <data name="Machine family created successfully." xml:space="preserve">
+        <value>Familia de máquinas creada correctamente.</value>
+        <comment>Success message after creating</comment>
+    </data>
+    <data name="Machine family updated successfully." xml:space="preserve">
+        <value>Familia de máquinas actualizada correctamente.</value>
+        <comment>Success message after updating</comment>
+    </data>
+    <data name="Machine family deleted successfully." xml:space="preserve">
+        <value>Familia de máquinas eliminada correctamente.</value>
+        <comment>Success message after deleting</comment>
+    </data>
+    <data name="Are you sure you want to delete machine family '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar la familia de máquinas '{0}'? Esta acción no se puede deshacer.</value>
+        <comment>Delete confirmation message</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acciones</value>
+        <comment>Actions column header</comment>
+    </data>
+</root>

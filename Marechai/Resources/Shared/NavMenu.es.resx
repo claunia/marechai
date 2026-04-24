@@ -239,4 +239,12 @@
     <value>Gestión de sintetizadores de sonido</value>
         <comment>Sound synth management admin link</comment>
   </data>
+    <data name="Machine Management" xml:space="preserve">
+    <value>Gestión de máquinas</value>
+        <comment>Machine management admin link</comment>
+  </data>
+    <data name="Machine Family Management" xml:space="preserve">
+    <value>Gestión de familias de máquinas</value>
+        <comment>Machine family management admin link</comment>
+  </data>
 </root>

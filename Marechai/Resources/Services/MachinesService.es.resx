@@ -762,4 +762,224 @@
     <data name="Photos" xml:space="preserve">
         <value>Fotos</value>
     </data>
+    <data name="Machine Management" xml:space="preserve">
+        <value>Gestión de máquinas</value>
+        <comment>Admin page title for machine management</comment>
+    </data>
+    <data name="Manage machines, their specifications, and associated components." xml:space="preserve">
+        <value>Gestionar máquinas, sus especificaciones y componentes asociados.</value>
+        <comment>Admin page subtitle</comment>
+    </data>
+    <data name="Add Machine" xml:space="preserve">
+        <value>Añadir máquina</value>
+        <comment>Button to add a new machine</comment>
+    </data>
+    <data name="Edit Machine" xml:space="preserve">
+        <value>Editar máquina</value>
+        <comment>Button to edit a machine</comment>
+    </data>
+    <data name="Delete Machine" xml:space="preserve">
+        <value>Eliminar máquina</value>
+        <comment>Button to delete a machine</comment>
+    </data>
+    <data name="Machine created successfully." xml:space="preserve">
+        <value>Máquina creada correctamente.</value>
+        <comment>Success message after creating a machine</comment>
+    </data>
+    <data name="Machine updated successfully." xml:space="preserve">
+        <value>Máquina actualizada correctamente.</value>
+        <comment>Success message after updating a machine</comment>
+    </data>
+    <data name="Machine deleted successfully." xml:space="preserve">
+        <value>Máquina eliminada correctamente.</value>
+        <comment>Success message after deleting a machine</comment>
+    </data>
+    <data name="Are you sure you want to delete machine '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar la máquina '{0}'? Esta acción no se puede deshacer.</value>
+        <comment>Delete confirmation message</comment>
+    </data>
+    <data name="Name" xml:space="preserve">
+        <value>Nombre</value>
+        <comment>Machine name</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>El nombre es obligatorio.</value>
+        <comment>Validation error for missing name</comment>
+    </data>
+    <data name="Company" xml:space="preserve">
+        <value>Compañía</value>
+        <comment>Company</comment>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Buscar compañía</value>
+        <comment>Autocomplete label for company search</comment>
+    </data>
+    <data name="Type" xml:space="preserve">
+        <value>Tipo</value>
+        <comment>Machine type</comment>
+    </data>
+    <data name="Unknown" xml:space="preserve">
+        <value>Desconocido</value>
+        <comment>Unknown machine type</comment>
+    </data>
+    <data name="Computer" xml:space="preserve">
+        <value>Ordenador</value>
+        <comment>Computer machine type</comment>
+    </data>
+    <data name="Console" xml:space="preserve">
+        <value>Consola</value>
+        <comment>Console machine type</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancelar</value>
+        <comment>Cancel button</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Guardar</value>
+        <comment>Save button</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acciones</value>
+        <comment>Actions column header</comment>
+    </data>
+    <data name="Search Family" xml:space="preserve">
+        <value>Buscar familia</value>
+        <comment>Autocomplete label for family search</comment>
+    </data>
+    <data name="GPUs" xml:space="preserve">
+        <value>GPUs</value>
+        <comment>Graphics processing units section</comment>
+    </data>
+    <data name="Search GPU" xml:space="preserve">
+        <value>Buscar GPU</value>
+        <comment>Autocomplete label for GPU search</comment>
+    </data>
+    <data name="Add GPU" xml:space="preserve">
+        <value>Añadir GPU</value>
+        <comment>Button to add a GPU to a machine</comment>
+    </data>
+    <data name="Remove GPU" xml:space="preserve">
+        <value>Eliminar GPU</value>
+        <comment>Button to remove a GPU from a machine</comment>
+    </data>
+    <data name="Are you sure you want to remove this GPU from the machine?" xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar esta GPU de la máquina?</value>
+        <comment>Remove GPU confirmation</comment>
+    </data>
+    <data name="Search Processor" xml:space="preserve">
+        <value>Buscar procesador</value>
+        <comment>Autocomplete label for processor search</comment>
+    </data>
+    <data name="Speed (MHz)" xml:space="preserve">
+        <value>Velocidad (MHz)</value>
+        <comment>Processor speed in megahertz</comment>
+    </data>
+    <data name="Add Processor" xml:space="preserve">
+        <value>Añadir procesador</value>
+        <comment>Button to add a processor to a machine</comment>
+    </data>
+    <data name="Remove Processor" xml:space="preserve">
+        <value>Eliminar procesador</value>
+        <comment>Button to remove a processor from a machine</comment>
+    </data>
+    <data name="Are you sure you want to remove this processor from the machine?" xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar este procesador de la máquina?</value>
+        <comment>Remove processor confirmation</comment>
+    </data>
+    <data name="Sound Synthesizers" xml:space="preserve">
+        <value>Sintetizadores de sonido</value>
+        <comment>Sound synthesizers section</comment>
+    </data>
+    <data name="Search Sound Synth" xml:space="preserve">
+        <value>Buscar sintetizador de sonido</value>
+        <comment>Autocomplete label for sound synth search</comment>
+    </data>
+    <data name="Add Sound Synth" xml:space="preserve">
+        <value>Añadir sintetizador de sonido</value>
+        <comment>Button to add a sound synth to a machine</comment>
+    </data>
+    <data name="Remove Sound Synth" xml:space="preserve">
+        <value>Eliminar sintetizador de sonido</value>
+        <comment>Button to remove a sound synth from a machine</comment>
+    </data>
+    <data name="Are you sure you want to remove this sound synth from the machine?" xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar este sintetizador de sonido de la máquina?</value>
+        <comment>Remove sound synth confirmation</comment>
+    </data>
+    <data name="Screens" xml:space="preserve">
+        <value>Pantallas</value>
+        <comment>Screens section</comment>
+    </data>
+    <data name="Search Screen" xml:space="preserve">
+        <value>Buscar pantalla</value>
+        <comment>Autocomplete label for screen search</comment>
+    </data>
+    <data name="Add Screen" xml:space="preserve">
+        <value>Añadir pantalla</value>
+        <comment>Button to add a screen to a machine</comment>
+    </data>
+    <data name="Remove Screen" xml:space="preserve">
+        <value>Eliminar pantalla</value>
+        <comment>Button to remove a screen from a machine</comment>
+    </data>
+    <data name="Are you sure you want to remove this screen from the machine?" xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar esta pantalla de la máquina?</value>
+        <comment>Remove screen confirmation</comment>
+    </data>
+    <data name="Memory Type" xml:space="preserve">
+        <value>Tipo de memoria</value>
+        <comment>Memory type selector label</comment>
+    </data>
+    <data name="Memory Usage" xml:space="preserve">
+        <value>Uso de memoria</value>
+        <comment>Memory usage selector label</comment>
+    </data>
+    <data name="Size (bytes)" xml:space="preserve">
+        <value>Tamaño (bytes)</value>
+        <comment>Memory size in bytes</comment>
+    </data>
+    <data name="Speed (MHz) memory" xml:space="preserve">
+        <value>Velocidad (MHz)</value>
+        <comment>Memory speed in megahertz</comment>
+    </data>
+    <data name="Add Memory" xml:space="preserve">
+        <value>Añadir memoria</value>
+        <comment>Button to add memory to a machine</comment>
+    </data>
+    <data name="Remove Memory" xml:space="preserve">
+        <value>Eliminar memoria</value>
+        <comment>Button to remove memory from a machine</comment>
+    </data>
+    <data name="Are you sure you want to remove this memory from the machine?" xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar esta memoria de la máquina?</value>
+        <comment>Remove memory confirmation</comment>
+    </data>
+    <data name="Storage" xml:space="preserve">
+        <value>Almacenamiento</value>
+        <comment>Storage section</comment>
+    </data>
+    <data name="Storage Type" xml:space="preserve">
+        <value>Tipo de almacenamiento</value>
+        <comment>Storage type selector label</comment>
+    </data>
+    <data name="Storage Interface" xml:space="preserve">
+        <value>Interfaz de almacenamiento</value>
+        <comment>Storage interface selector label</comment>
+    </data>
+    <data name="Capacity (bytes)" xml:space="preserve">
+        <value>Capacidad (bytes)</value>
+        <comment>Storage capacity in bytes</comment>
+    </data>
+    <data name="Add Storage" xml:space="preserve">
+        <value>Añadir almacenamiento</value>
+        <comment>Button to add storage to a machine</comment>
+    </data>
+    <data name="Remove Storage" xml:space="preserve">
+        <value>Eliminar almacenamiento</value>
+        <comment>Button to remove storage from a machine</comment>
+    </data>
+    <data name="Are you sure you want to remove this storage from the machine?" xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar este almacenamiento de la máquina?</value>
+        <comment>Remove storage confirmation</comment>
+    </data>
 </root>
