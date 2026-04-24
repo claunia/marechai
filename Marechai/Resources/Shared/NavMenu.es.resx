@@ -231,4 +231,8 @@
     <value>Gestión de resoluciones</value>
         <comment>Resolution management admin link</comment>
   </data>
+    <data name="Sound Synth Management" xml:space="preserve">
+    <value>Gestión de sintetizadores de sonido</value>
+        <comment>Sound synth management admin link</comment>
+  </data>
 </root>

@@ -1,0 +1,156 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using System.Threading
+
+@inject IStringLocalizer<SoundSynthsService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Name"
+                      Label="@L["Name"]"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      RequiredError="@L["Name is required."]"
+                      Class="mb-4"/>
+
+        <MudAutocomplete T="CompanyDto"
+                         Label="@L["Search Company"]"
+                         @bind-Value="_selectedCompany"
+                         SearchFunc="SearchCompanies"
+                         ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                         Variant="Variant.Outlined"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudTextField @bind-Value="ModelCode"
+                      Label="@L["Model code"]"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudDatePicker @bind-Date="Introduced"
+                       Label="@L["Introduction date"]"
+                       Variant="Variant.Outlined"
+                       Clearable="true"
+                       Class="mb-4"/>
+
+        <MudNumericField T="int?" @bind-Value="Voices"
+                         Label="@L["Voices"]"
+                         Variant="Variant.Outlined"
+                         Min="1"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudNumericField T="double?" @bind-Value="Frequency"
+                         Label="@L["Frequency"]"
+                         Variant="Variant.Outlined"
+                         Min="0.0"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudNumericField T="int?" @bind-Value="Depth"
+                         Label="@L["Depth"]"
+                         Variant="Variant.Outlined"
+                         Min="1"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudNumericField T="int?" @bind-Value="SquareWave"
+                         Label="@L["Square wave"]"
+                         Variant="Variant.Outlined"
+                         Min="1"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudNumericField T="int?" @bind-Value="WhiteNoise"
+                         Label="@L["White noise"]"
+                         Variant="Variant.Outlined"
+                         Min="1"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudNumericField T="int?" @bind-Value="Type"
+                         Label="@L["Synthesizer type"]"
+                         Variant="Variant.Outlined"
+                         Min="0"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        @if(!string.IsNullOrWhiteSpace(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    CompanyDto? _selectedCompany;
+    string?     _validationError;
+
+    List<CompanyDto>? _allCompanies;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool      IsNew        { get; set; }
+    [Parameter] public int       SoundSynthId { get; set; }
+    [Parameter] public string    Name         { get; set; } = string.Empty;
+    [Parameter] public int?      CompanyId    { get; set; }
+    [Parameter] public string?   ModelCode    { get; set; }
+    [Parameter] public DateTime? Introduced   { get; set; }
+    [Parameter] public int?      Voices       { get; set; }
+    [Parameter] public double?   Frequency    { get; set; }
+    [Parameter] public int?      Depth        { get; set; }
+    [Parameter] public int?      SquareWave   { get; set; }
+    [Parameter] public int?      WhiteNoise   { get; set; }
+    [Parameter] public int?      Type         { get; set; }
+
+    [Inject] SoundSynthsService SoundSynthsService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allCompanies = await SoundSynthsService.GetCompaniesAsync();
+
+        if(CompanyId is not null && _allCompanies is not null)
+            _selectedCompany = _allCompanies.Find(c => c.Id == CompanyId);
+    }
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> results = _allCompanies ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allCompanies?.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+
+        return Task.FromResult(results);
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(string.IsNullOrWhiteSpace(Name))
+        {
+            _validationError = L["Name is required."];
+
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new SoundSynthDialogResult
+        {
+            Name       = Name,
+            CompanyId  = _selectedCompany?.Id,
+            ModelCode  = ModelCode,
+            Introduced = Introduced,
+            Voices     = Voices,
+            Frequency  = Frequency,
+            Depth      = Depth,
+            SquareWave = SquareWave,
+            WhiteNoise = WhiteNoise,
+            Type       = Type
+        }));
+    }
+}

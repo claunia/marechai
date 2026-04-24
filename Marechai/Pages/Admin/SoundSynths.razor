@@ -1,0 +1,62 @@
+@page "/admin/sound-synths"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject SoundSynthsService SoundSynthsService
+@inject IStringLocalizer<SoundSynthsService> L
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #ad1457 0%, #f06292 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Sound Synth Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage sound synthesizers, specifications, and properties."]</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddSoundSynthDialog">@L["Add Sound Synth"]</MudButton>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadSoundSynthsAsync"/>
+    </MudToolBar>
+
+    <MudDataGrid Items="_soundSynths" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <PropertyColumn Property="x => x.Company" Title="@L["Company"]"/>
+            <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
+            <TemplateColumn Title="@L["Introduction date"]" Sortable="true">
+                <CellTemplate>
+                    @FormatDate(context.Item.Introduced)
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditSoundSynthDialog(context.Item)" Title="@L["Edit Sound Synth"]"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteSoundSynth(context.Item)" Title="@L["Delete Sound Synth"]"/>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudPaper>
