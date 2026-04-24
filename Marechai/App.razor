@@ -24,9 +24,21 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 }
+<CascadingAuthenticationState>
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView DefaultLayout="@typeof(MainLayout)" RouteData="@routeData"/>
+        <AuthorizeRouteView DefaultLayout="@typeof(MainLayout)" RouteData="@routeData">
+            <NotAuthorized>
+                @if(context.User.Identity?.IsAuthenticated != true)
+                {
+                    <RedirectToLogin/>
+                }
+                else
+                {
+                    <p>You are not authorized to access this resource.</p>
+                }
+            </NotAuthorized>
+        </AuthorizeRouteView>
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(MainLayout)">
@@ -34,3 +46,4 @@
         </LayoutView>
     </NotFound>
 </Router>
+</CascadingAuthenticationState>

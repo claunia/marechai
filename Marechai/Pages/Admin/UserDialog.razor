@@ -1,0 +1,111 @@
+@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Email"
+                      Label="Email"
+                      Variant="Variant.Outlined"
+                      InputType="InputType.Email"
+                      Required="true"
+                      RequiredError="Email is required."
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="UserName"
+                      Label="Username"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      RequiredError="Username is required."
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="PhoneNumber"
+                      Label="Phone Number"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        @if(IsNew)
+        {
+            <MudTextField @bind-Value="_password"
+                          Label="Password"
+                          Variant="Variant.Outlined"
+                          InputType="InputType.Password"
+                          Required="true"
+                          RequiredError="Password is required."
+                          Class="mb-4"/>
+
+            <MudTextField @bind-Value="_confirmPassword"
+                          Label="Confirm Password"
+                          Variant="Variant.Outlined"
+                          InputType="InputType.Password"
+                          Required="true"
+                          RequiredError="Password confirmation is required."
+                          Class="mb-4"/>
+        }
+
+        @if(!string.IsNullOrWhiteSpace(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string? _confirmPassword;
+    string? _password;
+    string? _validationError;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public bool IsNew { get; set; }
+
+    [Parameter]
+    public string Email { get; set; } = string.Empty;
+
+    [Parameter]
+    public string UserName { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? PhoneNumber { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(UserName))
+        {
+            _validationError = "Email and username are required.";
+
+            return;
+        }
+
+        if(IsNew)
+        {
+            if(string.IsNullOrWhiteSpace(_password))
+            {
+                _validationError = "Password is required for new users.";
+
+                return;
+            }
+
+            if(_password != _confirmPassword)
+            {
+                _validationError = "Passwords do not match.";
+
+                return;
+            }
+        }
+
+        MudDialog.Close(DialogResult.Ok(new UserDialogResult
+        {
+            Email       = Email,
+            UserName    = UserName,
+            PhoneNumber = PhoneNumber,
+            Password    = _password
+        }));
+    }
+}

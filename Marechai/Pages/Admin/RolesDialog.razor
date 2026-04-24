@@ -1,0 +1,111 @@
+@using MudBlazor
+@inject UsersService UsersService
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body2" Class="mb-4">Managing roles for <strong>@UserEmail</strong></MudText>
+
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+        }
+
+        <MudText Typo="Typo.subtitle2" Class="mb-2">Current Roles</MudText>
+        @if(CurrentRoles.Count > 0)
+        {
+            <MudStack Row="true" Spacing="1" Class="mb-4">
+                @foreach(string role in CurrentRoles)
+                {
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small"
+                             OnClose="() => RemoveRoleAsync(role)">@role</MudChip>
+                }
+            </MudStack>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">No roles assigned.</MudText>
+        }
+
+        <MudDivider Class="my-4"/>
+
+        <MudText Typo="Typo.subtitle2" Class="mb-2">Add Role</MudText>
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+            <MudSelect T="string" @bind-Value="_selectedRole" Label="Select role" Variant="Variant.Outlined" Dense="true" Style="flex: 1;">
+                @foreach(string role in _availableToAdd)
+                {
+                    <MudSelectItem T="string" Value="role">@role</MudSelectItem>
+                }
+            </MudSelect>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddRoleAsync"
+                       Disabled="string.IsNullOrWhiteSpace(_selectedRole)">Add</MudButton>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string?      _errorMessage;
+    string?      _selectedRole;
+    List<string> _availableToAdd = [];
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string UserId { get; set; } = null!;
+
+    [Parameter]
+    public string UserEmail { get; set; } = string.Empty;
+
+    [Parameter]
+    public List<string> CurrentRoles { get; set; } = [];
+
+    [Parameter]
+    public List<string> AvailableRoles { get; set; } = [];
+
+    protected override void OnInitialized() => UpdateAvailableToAdd();
+
+    void UpdateAvailableToAdd()
+    {
+        _availableToAdd = AvailableRoles.Where(r => !CurrentRoles.Contains(r)).ToList();
+        _selectedRole   = _availableToAdd.FirstOrDefault();
+    }
+
+    async Task AddRoleAsync()
+    {
+        if(string.IsNullOrWhiteSpace(_selectedRole)) return;
+
+        (bool succeeded, string? errorMessage) = await UsersService.AddRoleAsync(UserId, _selectedRole);
+
+        if(succeeded)
+        {
+            CurrentRoles.Add(_selectedRole);
+            UpdateAvailableToAdd();
+            StateHasChanged();
+        }
+        else
+        {
+            _errorMessage = errorMessage;
+        }
+    }
+
+    async Task RemoveRoleAsync(string role)
+    {
+        (bool succeeded, string? errorMessage) = await UsersService.RemoveRoleAsync(UserId, role);
+
+        if(succeeded)
+        {
+            CurrentRoles.Remove(role);
+            UpdateAvailableToAdd();
+            StateHasChanged();
+        }
+        else
+        {
+            _errorMessage = errorMessage;
+        }
+    }
+
+    void Close() => MudDialog.Close();
+}

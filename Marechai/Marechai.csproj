@@ -15,12 +15,14 @@
     <PackageReference Include="Humanizer"/>
     <PackageReference Include="MudBlazor"/>
     <PackageReference Include="Markdig"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>
     <PackageReference Include="Microsoft.Kiota.Abstractions"/>
     <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary"/>
     <PackageReference Include="Microsoft.Kiota.Serialization.Json"/>
     <PackageReference Include="Microsoft.Kiota.Serialization.Text"/>
     <PackageReference Include="Microsoft.Kiota.Serialization.Form"/>
     <PackageReference Include="Microsoft.Kiota.Serialization.Multipart"/>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
     <PackageReference Include="Unclassified.NetRevisionTask"/>
   </ItemGroup>
   <ItemGroup>

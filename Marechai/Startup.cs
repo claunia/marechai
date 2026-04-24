@@ -30,6 +30,7 @@ using MudBlazor.Services;
 using Marechai.Services;
 using Marechai.Shared;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
@@ -64,10 +65,21 @@ public class Startup(IConfiguration configuration)
 
         services.AddSingleton(new ApiAssetUrlProvider(apiUrl));
 
-        services.AddSingleton(_ =>
-        {
+        services.AddScoped<TokenProvider>();
 
-            var httpClient = new HttpClient
+        services.AddScoped<JwtAuthenticationStateProvider>();
+        services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<JwtAuthenticationStateProvider>());
+
+        services.AddScoped(sp =>
+        {
+            TokenProvider tokenProvider = sp.GetRequiredService<TokenProvider>();
+
+            var authHandler = new HttpAuthHandler(tokenProvider)
+            {
+                InnerHandler = new HttpClientHandler()
+            };
+
+            var httpClient = new HttpClient(authHandler)
             {
                 BaseAddress = new Uri(apiUrl)
             };
@@ -89,6 +101,7 @@ public class Startup(IConfiguration configuration)
             return new Marechai.ApiClient.Client(requestAdapter);
         });
 
+        services.AddAuthorizationCore();
         services.AddRazorPages();
         services.AddServerSideBlazor();
 

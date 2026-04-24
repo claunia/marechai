@@ -1,8 +1,8 @@
 {
-  "descriptionHash": "B023ACB20A983EB8DD2ABBD1EBB0989522773FC2FC3E5AEAA9AEA78EEB98FDC9D6611A1EBD30FB121B13C39C598A4F1475CE2BCEBFD0AC46A4D9B574A801E792",
+  "descriptionHash": "90F2D3F91F97220FB6E13B5963312122E339145988880F25E08B56A73D654D7AA29424064CC921E6847D92406184734FAA3B3E102D998F4BD1CBC7B68DCF2C10",
   "descriptionLocation": "../../../../../tmp/openapi.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.29.0",
+  "kiotaVersion": "1.31.1",
   "clientClassName": "Client",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "Marechai.ApiClient",

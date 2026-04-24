@@ -23,7 +23,9 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Marechai.Data.Models;
 using Marechai.Database.Models;
@@ -77,5 +79,110 @@ public class AuthController
             Succeeded = true,
             Token     = accessToken
         });
+    }
+
+    [HttpGet]
+    [Route("me")]
+    [Authorize]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK, Description = "Returns the current user's profile.")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces("application/json")]
+    public async Task<ActionResult<UserDto>> GetProfile()
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        IList<string> roles = await userManager.GetRolesAsync(user);
+
+        return Ok(new UserDto
+        {
+            Id                   = user.Id,
+            UserName             = user.UserName!,
+            Email                = user.Email!,
+            EmailConfirmed       = user.EmailConfirmed,
+            PhoneNumber          = user.PhoneNumber,
+            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+            LockoutEnabled       = user.LockoutEnabled,
+            LockoutEnd           = user.LockoutEnd?.ToString("O"),
+            AccessFailedCount    = user.AccessFailedCount,
+            Roles                = roles.ToList()
+        });
+    }
+
+    [HttpPut]
+    [Route("me")]
+    [Authorize]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK, Description = "Updates the current user's profile.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public async Task<ActionResult<UserDto>> UpdateProfile([FromBody] UpdateProfileRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        user.UserName    = request.UserName;
+        user.Email       = request.Email;
+        user.PhoneNumber = request.PhoneNumber;
+
+        IdentityResult result = await userManager.UpdateAsync(user);
+
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        IList<string> roles = await userManager.GetRolesAsync(user);
+
+        return Ok(new UserDto
+        {
+            Id                   = user.Id,
+            UserName             = user.UserName,
+            Email                = user.Email,
+            EmailConfirmed       = user.EmailConfirmed,
+            PhoneNumber          = user.PhoneNumber,
+            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+            LockoutEnabled       = user.LockoutEnabled,
+            LockoutEnd           = user.LockoutEnd?.ToString("O"),
+            AccessFailedCount    = user.AccessFailedCount,
+            Roles                = roles.ToList()
+        });
+    }
+
+    [HttpPost]
+    [Route("change-password")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent, Description = "Password changed successfully.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Consumes("application/json")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangeOwnPasswordRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+        if(user is null) return Unauthorized();
+
+        IdentityResult result = await userManager.ChangePasswordAsync(user, request.CurrentPassword,
+                                                                      request.NewPassword);
+
+        if(!result.Succeeded) return BadRequest(result.Errors);
+
+        return NoContent();
     }
 }

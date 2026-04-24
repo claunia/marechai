@@ -50,5 +50,7 @@ public static class Register
         services.AddScoped<MagazinesService>();
         services.AddScoped<PeopleService>();
         services.AddScoped<SoftwareService>();
+        services.AddScoped<AuthService>();
+        services.AddScoped<UsersService>();
     }
 }

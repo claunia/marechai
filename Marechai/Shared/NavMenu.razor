@@ -39,4 +39,17 @@
     <MudNavLink Href="/soundsynths" Icon="@Icons.Material.Filled.MusicNote">@L["Sound synthesizers"]</MudNavLink>
     <MudNavLink Href="/people" Icon="@Icons.Material.Filled.People">@L["People"]</MudNavLink>
     <MudNavLink Href="/software" Icon="@Icons.Material.Filled.Apps">@L["Software"]</MudNavLink>
+    <AuthorizeView>
+        <Authorized>
+            <MudDivider Class="my-2"/>
+            <MudNavLink Href="/account/profile" Icon="@Icons.Material.Filled.Person">@L["Profile"]</MudNavLink>
+            <MudNavLink Href="/account/change-password" Icon="@Icons.Material.Filled.Lock">@L["Change Password"]</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="UberAdmin">
+        <Authorized>
+            <MudDivider Class="my-2"/>
+            <MudNavLink Href="/admin/users" Icon="@Icons.Material.Filled.AdminPanelSettings">@L["User Management"]</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
 </MudNavMenu>

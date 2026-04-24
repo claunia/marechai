@@ -24,4 +24,29 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 }
-@* Authentication UI removed - admin functionality is in Marechai.App *@
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+            <ChildContent>
+                <MudMenuItem Icon="@Icons.Material.Filled.Person" Href="/account/profile">Profile</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.Lock" Href="/account/change-password">Change Password</MudMenuItem>
+                <MudDivider/>
+                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="LogoutAsync">Logout</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton Href="/login" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Login">Login</MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    async Task LogoutAsync()
+    {
+        AuthService.Logout();
+        Navigation.NavigateTo("/");
+    }
+}
