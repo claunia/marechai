@@ -435,4 +435,148 @@
         <value>Desconocido</value>
         <comment>Unknown, referring to the size of the L3 data cache</comment>
     </data>
+    <data name="Processor Management" xml:space="preserve">
+        <value>Gestión de procesadores</value>
+        <comment>Admin page title for processor management</comment>
+    </data>
+    <data name="Manage processors, specifications, and instruction set extensions." xml:space="preserve">
+        <value>Gestionar procesadores, especificaciones y extensiones de arquitectura.</value>
+        <comment>Admin page subtitle for processor management</comment>
+    </data>
+    <data name="Add Processor" xml:space="preserve">
+        <value>Añadir procesador</value>
+        <comment>Button to add a new processor</comment>
+    </data>
+    <data name="Edit Processor" xml:space="preserve">
+        <value>Editar procesador</value>
+        <comment>Dialog title when editing a processor</comment>
+    </data>
+    <data name="Delete Processor" xml:space="preserve">
+        <value>Eliminar procesador</value>
+        <comment>Button tooltip to delete a processor</comment>
+    </data>
+    <data name="Processor created successfully." xml:space="preserve">
+        <value>Procesador creado con éxito.</value>
+        <comment>Success message after creating a processor</comment>
+    </data>
+    <data name="Processor updated successfully." xml:space="preserve">
+        <value>Procesador actualizado con éxito.</value>
+        <comment>Success message after updating a processor</comment>
+    </data>
+    <data name="Processor deleted successfully." xml:space="preserve">
+        <value>Procesador eliminado con éxito.</value>
+        <comment>Success message after deleting a processor</comment>
+    </data>
+    <data name="Are you sure you want to delete processor '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Seguro que desea eliminar el procesador '{0}'? Esta operación no se puede deshacer.</value>
+        <comment>Delete confirmation message for a processor</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>El nombre es obligatorio.</value>
+        <comment>Validation error when processor name is empty</comment>
+    </data>
+    <data name="Basic information" xml:space="preserve">
+        <value>Información básica</value>
+        <comment>Section header for basic processor info</comment>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Buscar compañía</value>
+        <comment>Label for company search autocomplete</comment>
+    </data>
+    <data name="Speed (MHz)" xml:space="preserve">
+        <value>Velocidad (MHz)</value>
+        <comment>Processor speed in megahertz</comment>
+    </data>
+    <data name="Cores" xml:space="preserve">
+        <value>Núcleos</value>
+        <comment>Number of processor cores</comment>
+    </data>
+    <data name="Threads per core" xml:space="preserve">
+        <value>Hilos por núcleo</value>
+        <comment>Number of threads per core</comment>
+    </data>
+    <data name="Data bus (bits)" xml:space="preserve">
+        <value>Bus de datos (bits)</value>
+        <comment>Data bus width in bits</comment>
+    </data>
+    <data name="Address bus (bits)" xml:space="preserve">
+        <value>Bus de direcciones (bits)</value>
+        <comment>Address bus width in bits</comment>
+    </data>
+    <data name="GPRs" xml:space="preserve">
+        <value>Registros de propósito general</value>
+        <comment>Number of general purpose registers</comment>
+    </data>
+    <data name="GPR size (bits)" xml:space="preserve">
+        <value>Tamaño de registros de propósito general (bits)</value>
+        <comment>Size of general purpose registers in bits</comment>
+    </data>
+    <data name="FPRs" xml:space="preserve">
+        <value>Registros de coma flotante</value>
+        <comment>Number of floating point registers</comment>
+    </data>
+    <data name="FPR size (bits)" xml:space="preserve">
+        <value>Tamaño de registros de coma flotante (bits)</value>
+        <comment>Size of floating point registers in bits</comment>
+    </data>
+    <data name="SIMD registers" xml:space="preserve">
+        <value>Registros SIMD</value>
+        <comment>Number of SIMD registers</comment>
+    </data>
+    <data name="SIMD size (bits)" xml:space="preserve">
+        <value>Tamaño de registros SIMD (bits)</value>
+        <comment>Size of SIMD registers in bits</comment>
+    </data>
+    <data name="L1 instruction (KiB)" xml:space="preserve">
+        <value>L1 de instrucciones (KiB)</value>
+        <comment>L1 instruction cache size in KiB</comment>
+    </data>
+    <data name="L1 data (KiB)" xml:space="preserve">
+        <value>L1 de datos (KiB)</value>
+        <comment>L1 data cache size in KiB</comment>
+    </data>
+    <data name="L2 (KiB)" xml:space="preserve">
+        <value>L2 (KiB)</value>
+        <comment>L2 cache size in KiB</comment>
+    </data>
+    <data name="L3 (KiB)" xml:space="preserve">
+        <value>L3 (KiB)</value>
+        <comment>L3 cache size in KiB</comment>
+    </data>
+    <data name="Search Instruction Set Extension" xml:space="preserve">
+        <value>Buscar extensión de arquitectura</value>
+        <comment>Label for ISA extension search autocomplete</comment>
+    </data>
+    <data name="Add Extension" xml:space="preserve">
+        <value>Añadir extensión</value>
+        <comment>Button to add an ISA extension to a processor</comment>
+    </data>
+    <data name="Remove Extension" xml:space="preserve">
+        <value>Eliminar extensión</value>
+        <comment>Dialog title when removing an ISA extension</comment>
+    </data>
+    <data name="Are you sure you want to remove extension '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Seguro que desea eliminar la extensión '{0}'? Esta operación no se puede deshacer.</value>
+        <comment>Delete confirmation message for an ISA extension</comment>
+    </data>
+    <data name="Failed to add extension." xml:space="preserve">
+        <value>Error al añadir la extensión.</value>
+        <comment>Error message when adding an ISA extension fails</comment>
+    </data>
+    <data name="Failed to remove extension." xml:space="preserve">
+        <value>Error al eliminar la extensión.</value>
+        <comment>Error message when removing an ISA extension fails</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancelar</value>
+        <comment>Cancel button in dialog</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Guardar</value>
+        <comment>Save button in dialog</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acciones</value>
+        <comment>Grid column header for action buttons</comment>
+    </data>
 </root>

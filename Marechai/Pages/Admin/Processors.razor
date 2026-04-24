@@ -1,0 +1,68 @@
+@page "/admin/processors"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject ProcessorsService ProcessorsService
+@inject IStringLocalizer<ProcessorsService> L
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #e65100 0%, #ff6d00 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.DeveloperBoard" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Processor Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage processors, specifications, and instruction set extensions."]</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddProcessorDialog">@L["Add Processor"]</MudButton>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadProcessorsAsync"/>
+    </MudToolBar>
+
+    <MudDataGrid Items="_processors" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <PropertyColumn Property="x => x.Company" Title="@L["Company"]"/>
+            <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
+            <TemplateColumn Title="@L["Introduced"]" Sortable="true">
+                <CellTemplate>
+                    @FormatDate(context.Item.Introduced)
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["Nominal speed"]" Sortable="true">
+                <CellTemplate>
+                    @FormatSpeed(context.Item.Speed)
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditProcessorDialog(context.Item)" Title="@L["Edit Processor"]"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteProcessor(context.Item)" Title="@L["Delete Processor"]"/>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudPaper>

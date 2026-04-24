@@ -23,9 +23,11 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
@@ -54,6 +56,60 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         catch
         {
             return null;
+        }
+    }
+
+    public async Task<(long? id, string? error)> CreateAsync(ProcessorDto dto)
+    {
+        try
+        {
+            long? id = await client.Processors.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, ProcessorDto dto)
+    {
+        try
+        {
+            await client.Processors[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    {
+        try
+        {
+            await client.Processors[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
         }
     }
 
@@ -89,6 +145,100 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetCompaniesAsync()
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Companies.GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<InstructionSetDto>> GetAllInstructionSetsAsync()
+    {
+        try
+        {
+            List<InstructionSetDto>? sets = await client.InstructionSets.GetAsync();
+
+            return sets ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<InstructionSetExtensionDto>> GetAllInstructionSetExtensionsAsync()
+    {
+        try
+        {
+            List<InstructionSetExtensionDto>? extensions = await client.InstructionSetExtensions.GetAsync();
+
+            return extensions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<InstructionSetExtensionByProcessorDto>> GetExtensionsByProcessorAsync(int processorId)
+    {
+        try
+        {
+            List<InstructionSetExtensionByProcessorDto>? extensions =
+                await client.Processor[processorId].InstructionSetExtensions.GetAsync();
+
+            return extensions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddExtensionToProcessorAsync(
+        InstructionSetExtensionByProcessorDto dto)
+    {
+        try
+        {
+            long? id = await client.InstructionSetExtensionsByProcessor.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveExtensionFromProcessorAsync(int id)
+    {
+        try
+        {
+            await client.InstructionSetExtensionsByProcessor[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
         }
     }
 }

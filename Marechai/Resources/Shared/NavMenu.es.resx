@@ -215,4 +215,8 @@
     <value>Gestión de GPUs</value>
         <comment>GPU management admin link</comment>
   </data>
+    <data name="Processor Management" xml:space="preserve">
+    <value>Gestión de procesadores</value>
+        <comment>Processor management admin link</comment>
+  </data>
 </root>
