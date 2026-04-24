@@ -1,0 +1,272 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using System.Threading
+
+@inject IStringLocalizer<ScreensService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudNumericField T="double" @bind-Value="Diagonal"
+                         Label="@L["Diagonal"]"
+                         Variant="Variant.Outlined"
+                         Required="true"
+                         RequiredError="@L["Diagonal is required."]"
+                         Min="0.1"
+                         Class="mb-4"/>
+
+        <MudNumericField T="double?" @bind-Value="Width"
+                         Label="@L["Width"]"
+                         Variant="Variant.Outlined"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudNumericField T="double?" @bind-Value="Height"
+                         Label="@L["Height"]"
+                         Variant="Variant.Outlined"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudNumericField T="long?" @bind-Value="EffectiveColors"
+                         Label="@L["Effective colors"]"
+                         Variant="Variant.Outlined"
+                         Clearable="true"
+                         Min="2L"
+                         Class="mb-4"/>
+
+        <MudTextField @bind-Value="Type"
+                      Label="@L["Screen type"]"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudAutocomplete T="ResolutionDto"
+                         Label="@L["Native resolution"]"
+                         @bind-Value="_selectedNativeResolution"
+                         SearchFunc="SearchResolutions"
+                         ToStringFunc="@(r => r is null ? string.Empty : FormatResolutionDto(r))"
+                         Variant="Variant.Outlined"
+                         Required="true"
+                         RequiredError="@L["Native resolution is required."]"
+                         Class="mb-4"/>
+
+        @if(!string.IsNullOrWhiteSpace(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+        }
+
+        @if(!IsNew)
+        {
+            <MudDivider Class="my-4"/>
+            <MudText Typo="Typo.h6" Class="mb-2">@L["Supported resolutions"]</MudText>
+
+            @if(_screenResolutions is { Count: > 0 })
+            {
+                <MudList T="ResolutionByScreenDto" Dense="true">
+                    @foreach(ResolutionByScreenDto res in _screenResolutions)
+                    {
+                        <MudListItem T="ResolutionByScreenDto">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudText>@FormatResolution(res)</MudText>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => RemoveResolution(res)"/>
+                            </MudStack>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+
+            <MudPaper Class="pa-4 mt-2" Elevation="1">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudAutocomplete T="ResolutionDto"
+                                     Label="@L["Search Resolution"]"
+                                     @bind-Value="_selectedResolution"
+                                     SearchFunc="SearchAvailableResolutions"
+                                     ToStringFunc="@(r => r is null ? string.Empty : FormatResolutionDto(r))"
+                                     Variant="Variant.Outlined"
+                                     Clearable="true"
+                                     Style="flex: 1;"/>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Size="Size.Small"
+                               OnClick="AddResolution"
+                               Disabled="@(_selectedResolution is null)">@L["Add Resolution"]</MudButton>
+                </MudStack>
+            </MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    ResolutionDto? _selectedNativeResolution;
+    ResolutionDto? _selectedResolution;
+    string?        _validationError;
+
+    List<ResolutionDto>?          _allResolutions;
+    List<ResolutionByScreenDto>?  _screenResolutions;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool    IsNew             { get; set; }
+    [Parameter] public int     ScreenId          { get; set; }
+    [Parameter] public double  Diagonal          { get; set; }
+    [Parameter] public double? Width             { get; set; }
+    [Parameter] public double? Height            { get; set; }
+    [Parameter] public long?   EffectiveColors   { get; set; }
+    [Parameter] public string? Type              { get; set; }
+    [Parameter] public int?    NativeResolutionId { get; set; }
+
+    [Inject] ScreensService ScreensService { get; set; } = null!;
+    [Inject] IDialogService DialogService  { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allResolutions = await ScreensService.GetAllResolutionsAsync();
+
+        if(NativeResolutionId is not null && _allResolutions is not null)
+            _selectedNativeResolution = _allResolutions.Find(r => r.Id == NativeResolutionId);
+
+        if(!IsNew)
+            _screenResolutions = await ScreensService.GetResolutionsByScreenAsync(ScreenId);
+    }
+
+    Task<IEnumerable<ResolutionDto>> SearchResolutions(string? value, CancellationToken ct)
+    {
+        IEnumerable<ResolutionDto> results = _allResolutions ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+            results = (_allResolutions ?? []).Where(r => FormatResolutionDto(r).Contains(value, StringComparison.OrdinalIgnoreCase));
+
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<ResolutionDto>> SearchAvailableResolutions(string? value, CancellationToken ct)
+    {
+        HashSet<int?> assignedIds = _screenResolutions?.Select(r => r.ResolutionId).ToHashSet() ?? [];
+
+        IEnumerable<ResolutionDto> available = (_allResolutions ?? []).Where(r => !assignedIds.Contains(r.Id));
+
+        if(!string.IsNullOrWhiteSpace(value))
+            available = available.Where(r => FormatResolutionDto(r).Contains(value, StringComparison.OrdinalIgnoreCase));
+
+        return Task.FromResult(available);
+    }
+
+    string FormatResolution(ResolutionByScreenDto res)
+    {
+        ResolutionDto? r = res.Resolution?.ResolutionDto;
+
+        if(r is null)
+            return $"{res.ResolutionId}";
+
+        return FormatResolutionDto(r);
+    }
+
+    string FormatResolutionDto(ResolutionDto r)
+    {
+        string dims = $"{r.Width}×{r.Height}";
+
+        if(r.Chars == true)
+            return $"{dims} {string.Format(L["{0} characters"], r.Colors)}";
+
+        if(r.Grayscale == true)
+            return $"{dims} {string.Format(L["{0} grays"], r.Colors)}";
+
+        if(r.Palette is not null and > 0)
+            return $"{dims} {string.Format(L["{0} colors from {1} palette"], r.Colors, r.Palette)}";
+
+        return $"{dims} {string.Format(L["{0} colors"], r.Colors)}";
+    }
+
+    async Task AddResolution()
+    {
+        if(_selectedResolution is null) return;
+
+        var dto = new ResolutionByScreenDto
+        {
+            ScreenId     = ScreenId,
+            ResolutionId = _selectedResolution.Id
+        };
+
+        (long? id, string? error) = await ScreensService.AddResolutionToScreenAsync(dto);
+
+        if(id is not null)
+        {
+            _screenResolutions  = await ScreensService.GetResolutionsByScreenAsync(ScreenId);
+            _selectedResolution = null;
+            StateHasChanged();
+        }
+        else
+        {
+            _validationError = error ?? L["Failed to add resolution."];
+        }
+    }
+
+    async Task RemoveResolution(ResolutionByScreenDto res)
+    {
+        if(res.Id is null) return;
+
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            {
+                x => x.ContentText,
+                string.Format(L["Are you sure you want to remove resolution '{0}'? This action cannot be undone."], FormatResolution(res))
+            }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Resolution"], parameters,
+                                                                                     new DialogOptions
+                                                                                     {
+                                                                                         MaxWidth  = MaxWidth.ExtraSmall,
+                                                                                         FullWidth = true
+                                                                                     });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            (bool succeeded, string? error) = await ScreensService.RemoveResolutionFromScreenAsync(res.Id.Value);
+
+            if(succeeded)
+            {
+                _screenResolutions = await ScreensService.GetResolutionsByScreenAsync(ScreenId);
+                StateHasChanged();
+            }
+            else
+            {
+                _validationError = error ?? L["Failed to remove resolution."];
+            }
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(Diagonal <= 0)
+        {
+            _validationError = L["Diagonal is required."];
+
+            return;
+        }
+
+        if(_selectedNativeResolution is null)
+        {
+            _validationError = L["Native resolution is required."];
+
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new ScreenDialogResult
+        {
+            Diagonal           = Diagonal,
+            Width              = Width,
+            Height             = Height,
+            EffectiveColors    = EffectiveColors,
+            Type               = Type,
+            NativeResolutionId = _selectedNativeResolution.Id ?? 0
+        }));
+    }
+}

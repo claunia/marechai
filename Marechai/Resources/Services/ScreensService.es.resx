@@ -123,120 +123,97 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-        <comment>News</comment>
-  </data>
-    <data name="Hello {0}!" xml:space="preserve">
-    <value>¡Hola {0}!</value>
-        <comment>Salutes logged-in user</comment>
-  </data>
-    <data name="Log out" xml:space="preserve">
-    <value>Cerrar sesión</value>
-        <comment>Log out</comment>
-  </data>
-    <data name="Register" xml:space="preserve">
-    <value>Registrarse</value>
-        <comment>Register</comment>
-  </data>
-    <data name="Log in" xml:space="preserve">
-    <value>Iniciar sesión</value>
-        <comment>Log in</comment>
-  </data>
-    <data name="About" xml:space="preserve">
-    <value>Acerca de</value>
-        <comment>About</comment>
-  </data>
-    <data name="Contact" xml:space="preserve">
-    <value>Contacto</value>
-        <comment>Contact</comment>
-  </data>
-    <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-        <comment>Companies</comment>
-  </data>
-    <data name="Computers" xml:space="preserve">
-    <value>Ordenadores</value>
-        <comment>Computers</comment>
-  </data>
-    <data name="Consoles" xml:space="preserve">
-    <value>Consolas</value>
-        <comment>Videogame consoles</comment>
-  </data>
-    <data name="Books" xml:space="preserve">
-    <value>Libros</value>
-        <comment>Books navigation link</comment>
-  </data>
-    <data name="Documents" xml:space="preserve">
-    <value>Documentos</value>
-        <comment>Documents navigation link</comment>
-  </data>
-    <data name="Magazines" xml:space="preserve">
-    <value>Revistas</value>
-        <comment>Magazines navigation link</comment>
-  </data>
-    <data name="Admin area" xml:space="preserve">
-    <value>Administración</value>
-        <comment>Administration area</comment>
-  </data>
-    <data name="GPUs" xml:space="preserve">
-    <value>GPUs</value>
-        <comment>Graphics Processing Units navigation link</comment>
-  </data>
-    <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-        <comment>Processors navigation link</comment>
-  </data>
-    <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-        <comment>Sound synthesizers navigation link</comment>
-  </data>
-    <data name="People" xml:space="preserve">
-    <value>Personas</value>
-        <comment>People navigation link</comment>
-  </data>
-    <data name="Software" xml:space="preserve">
-    <value>Software</value>
-        <comment>Software navigation link</comment>
-  </data>
-    <data name="Administration" xml:space="preserve">
-    <value>Administración</value>
-        <comment>Administration mode toggle button</comment>
-  </data>
-    <data name="Back to Navigation" xml:space="preserve">
-    <value>Volver a la navegación</value>
-        <comment>Return to normal navigation from admin mode</comment>
-  </data>
-    <data name="User Management" xml:space="preserve">
-    <value>Gestión de usuarios</value>
-        <comment>User management admin link</comment>
-  </data>
-    <data name="GPU Management" xml:space="preserve">
-    <value>Gestión de GPUs</value>
-        <comment>GPU management admin link</comment>
-  </data>
-    <data name="Processor Management" xml:space="preserve">
-    <value>Gestión de procesadores</value>
-        <comment>Processor management admin link</comment>
-  </data>
-    <data name="Instruction Set Management" xml:space="preserve">
-    <value>Gestión de conjuntos de instrucciones</value>
-        <comment>Instruction set management admin link</comment>
-  </data>
-    <data name="Instruction Set Extension Management" xml:space="preserve">
-    <value>Gestión de extensiones de conjuntos de instrucciones</value>
-        <comment>Instruction set extension management admin link</comment>
-  </data>
-    <data name="Resolution Management" xml:space="preserve">
-    <value>Gestión de resoluciones</value>
-        <comment>Resolution management admin link</comment>
-  </data>
     <data name="Screen Management" xml:space="preserve">
-    <value>Gestión de pantallas</value>
-        <comment>Screen management admin link</comment>
-  </data>
-    <data name="Sound Synth Management" xml:space="preserve">
-    <value>Gestión de sintetizadores de sonido</value>
-        <comment>Sound synth management admin link</comment>
-  </data>
+        <value>Gestión de pantallas</value>
+    </data>
+    <data name="Manage screens, specifications, and supported resolutions." xml:space="preserve">
+        <value>Gestionar pantallas, especificaciones y resoluciones soportadas.</value>
+    </data>
+    <data name="Add Screen" xml:space="preserve">
+        <value>Añadir pantalla</value>
+    </data>
+    <data name="Edit Screen" xml:space="preserve">
+        <value>Editar pantalla</value>
+    </data>
+    <data name="Delete Screen" xml:space="preserve">
+        <value>Eliminar pantalla</value>
+    </data>
+    <data name="Screen created successfully." xml:space="preserve">
+        <value>Pantalla creada con éxito.</value>
+    </data>
+    <data name="Screen updated successfully." xml:space="preserve">
+        <value>Pantalla actualizada con éxito.</value>
+    </data>
+    <data name="Screen deleted successfully." xml:space="preserve">
+        <value>Pantalla eliminada con éxito.</value>
+    </data>
+    <data name="Are you sure you want to delete screen '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar la pantalla '{0}'? Esta acción no se puede deshacer.</value>
+    </data>
+    <data name="Diagonal" xml:space="preserve">
+        <value>Diagonal</value>
+    </data>
+    <data name="Diagonal is required." xml:space="preserve">
+        <value>La diagonal es obligatoria.</value>
+    </data>
+    <data name="Width" xml:space="preserve">
+        <value>Ancho</value>
+    </data>
+    <data name="Height" xml:space="preserve">
+        <value>Alto</value>
+    </data>
+    <data name="Effective colors" xml:space="preserve">
+        <value>Colores efectivos</value>
+    </data>
+    <data name="Screen type" xml:space="preserve">
+        <value>Tipo de pantalla</value>
+    </data>
+    <data name="Native resolution" xml:space="preserve">
+        <value>Resolución nativa</value>
+    </data>
+    <data name="Native resolution is required." xml:space="preserve">
+        <value>La resolución nativa es obligatoria.</value>
+    </data>
+    <data name="Supported resolutions" xml:space="preserve">
+        <value>Resoluciones soportadas</value>
+    </data>
+    <data name="Search Resolution" xml:space="preserve">
+        <value>Buscar resolución</value>
+    </data>
+    <data name="Add Resolution" xml:space="preserve">
+        <value>Añadir resolución</value>
+    </data>
+    <data name="Remove Resolution" xml:space="preserve">
+        <value>Eliminar resolución</value>
+    </data>
+    <data name="Are you sure you want to remove resolution '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar la resolución '{0}'? Esta acción no se puede deshacer.</value>
+    </data>
+    <data name="Failed to add resolution." xml:space="preserve">
+        <value>Error al añadir la resolución.</value>
+    </data>
+    <data name="Failed to remove resolution." xml:space="preserve">
+        <value>Error al eliminar la resolución.</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancelar</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Guardar</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acciones</value>
+    </data>
+    <data name="{0} colors" xml:space="preserve">
+        <value>{0} colores</value>
+    </data>
+    <data name="{0} grays" xml:space="preserve">
+        <value>{0} grises</value>
+    </data>
+    <data name="{0} characters" xml:space="preserve">
+        <value>{0} caracteres</value>
+    </data>
+    <data name="{0} colors from {1} palette" xml:space="preserve">
+        <value>{0} colores de paleta de {1}</value>
+    </data>
 </root>
