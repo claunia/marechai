@@ -282,14 +282,16 @@
     [Parameter] public float?    L2               { get; set; }
     [Parameter] public float?    L3               { get; set; }
 
-    [Inject] ProcessorsService ProcessorsService { get; set; } = null!;
-    [Inject] IDialogService    DialogService     { get; set; } = null!;
+    [Inject] ProcessorsService             ProcessorsService             { get; set; } = null!;
+    [Inject] InstructionSetsService          InstructionSetsService          { get; set; } = null!;
+    [Inject] InstructionSetExtensionsService InstructionSetExtensionsService { get; set; } = null!;
+    [Inject] IDialogService                 DialogService                   { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
         _allCompanies       = await ProcessorsService.GetCompaniesAsync();
-        _allInstructionSets = await ProcessorsService.GetAllInstructionSetsAsync();
-        _allExtensions      = await ProcessorsService.GetAllInstructionSetExtensionsAsync();
+        _allInstructionSets = await InstructionSetsService.GetAllAsync();
+        _allExtensions      = await InstructionSetExtensionsService.GetAllAsync();
 
         if(CompanyId is not null && _allCompanies is not null)
             _selectedCompany = _allCompanies.Find(c => c.Id == CompanyId);

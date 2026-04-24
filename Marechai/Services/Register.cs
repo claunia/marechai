@@ -43,6 +43,8 @@ public static class Register
         services.AddScoped<MachinesService>();
         services.AddScoped<MachinePhotosService>();
         services.AddScoped<GpusService>();
+        services.AddScoped<InstructionSetsService>();
+        services.AddScoped<InstructionSetExtensionsService>();
         services.AddScoped<ProcessorsService>();
         services.AddScoped<SoundSynthsService>();
         services.AddScoped<BooksService>();

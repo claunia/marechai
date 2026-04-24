@@ -1,0 +1,69 @@
+@using Marechai.Services
+
+@inject IStringLocalizer<InstructionSetExtensionsService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Extension"
+                      Label="@L["Extension"]"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      RequiredError="@L["Extension is required."]"
+                      Validation="ValidateExtensionAsync"
+                      Immediate="true"
+                      Class="mb-4"/>
+
+        @if(!string.IsNullOrWhiteSpace(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string? _validationError;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool    IsNew             { get; set; }
+    [Parameter] public string  Extension         { get; set; } = string.Empty;
+    [Parameter] public string? OriginalExtension { get; set; }
+
+    [Inject] InstructionSetExtensionsService InstructionSetExtensionsService { get; set; } = null!;
+
+    async Task<string?> ValidateExtensionAsync(string? value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+            return L["Extension is required."];
+
+        // When editing, skip uniqueness check if extension hasn't changed
+        if(!IsNew && string.Equals(value, OriginalExtension, StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        bool isUnique = await InstructionSetExtensionsService.VerifyUniqueAsync(value);
+
+        return isUnique ? null : L["Extension already exists."];
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(string.IsNullOrWhiteSpace(Extension))
+        {
+            _validationError = L["Extension is required."];
+
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new InstructionSetExtensionDialogResult
+        {
+            Extension = Extension
+        }));
+    }
+}

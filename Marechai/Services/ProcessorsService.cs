@@ -162,34 +162,6 @@ public class ProcessorsService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<InstructionSetDto>> GetAllInstructionSetsAsync()
-    {
-        try
-        {
-            List<InstructionSetDto>? sets = await client.InstructionSets.GetAsync();
-
-            return sets ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
-
-    public async Task<List<InstructionSetExtensionDto>> GetAllInstructionSetExtensionsAsync()
-    {
-        try
-        {
-            List<InstructionSetExtensionDto>? extensions = await client.InstructionSetExtensions.GetAsync();
-
-            return extensions ?? [];
-        }
-        catch
-        {
-            return [];
-        }
-    }
-
     public async Task<List<InstructionSetExtensionByProcessorDto>> GetExtensionsByProcessorAsync(int processorId)
     {
         try
