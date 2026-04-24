@@ -50,16 +50,16 @@ public partial class Companies
     Func<CompanyDto, bool> QuickFilter => company =>
         true; // MudDataGrid built-in filtering handles this
 
-    static string GetStatusText(int? status) => status switch
+    string GetStatusText(int? status) => status switch
     {
-        0 => "Unknown",
-        1 => "Active",
-        2 => "Sold",
-        3 => "Merged",
-        4 => "Bankrupt",
-        5 => "Defunct",
-        6 => "Renamed",
-        _ => "Unknown"
+        0 => L["Unknown"],
+        1 => L["Active"],
+        2 => L["Sold"],
+        3 => L["Merged"],
+        4 => L["Bankrupt"],
+        5 => L["Defunct"],
+        6 => L["Renamed"],
+        _ => L["Unknown"]
     };
 
     static Color GetStatusColor(int? status) => status switch
@@ -90,7 +90,7 @@ public partial class Companies
             { x => x.IsNew, true }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<CompanyDialog>("Add Company", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<CompanyDialog>(L["Add Company"], parameters,
                                                                                new DialogOptions
                                                                                {
                                                                                    MaxWidth  = MaxWidth.Medium,
@@ -127,7 +127,7 @@ public partial class Companies
 
             if(id is not null)
             {
-                _successMessage = "Company created successfully.";
+                _successMessage = L["Company created successfully."];
                 await LoadCompaniesAsync();
             }
             else
@@ -163,7 +163,7 @@ public partial class Companies
             { x => x.Facebook, company.Facebook }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<CompanyDialog>("Edit Company", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<CompanyDialog>(L["Edit Company"], parameters,
                                                                                new DialogOptions
                                                                                {
                                                                                    MaxWidth  = MaxWidth.Medium,
@@ -201,7 +201,7 @@ public partial class Companies
 
             if(succeeded)
             {
-                _successMessage = "Company updated successfully.";
+                _successMessage = L["Company updated successfully."];
                 await LoadCompaniesAsync();
             }
             else
@@ -217,11 +217,12 @@ public partial class Companies
         {
             {
                 x => x.ContentText,
-                $"Are you sure you want to delete company '{company.Name}'? This action cannot be undone."
+                string.Format(L["Are you sure you want to delete company '{0}'? This action cannot be undone."],
+                              company.Name)
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Delete Company", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Delete company"], parameters,
                                                                                      new DialogOptions
                                                                                      {
                                                                                          MaxWidth  = MaxWidth.ExtraSmall,
@@ -236,7 +237,7 @@ public partial class Companies
 
             if(succeeded)
             {
-                _successMessage = "Company deleted successfully.";
+                _successMessage = L["Company deleted successfully."];
                 await LoadCompaniesAsync();
             }
             else
@@ -255,7 +256,7 @@ public partial class Companies
         };
 
         IDialogReference dialog =
-            await DialogService.ShowAsync<CompanyDescriptionDialog>("Company Descriptions", parameters,
+            await DialogService.ShowAsync<CompanyDescriptionDialog>(L["Company Descriptions"], parameters,
                                                                     new DialogOptions
                                                                     {
                                                                         MaxWidth  = MaxWidth.Medium,

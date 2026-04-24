@@ -580,4 +580,160 @@
     <data name="Logo history" xml:space="preserve">
         <value>Historial de logotipos</value>
     </data>
+    <data name="Company Management" xml:space="preserve">
+        <value>Gestión de compañías</value>
+        <comment>Admin page title for company management</comment>
+    </data>
+    <data name="Manage companies, descriptions, logos, and associated people." xml:space="preserve">
+        <value>Gestionar compañías, descripciones, logotipos y personas asociadas.</value>
+        <comment>Admin page subtitle for company management</comment>
+    </data>
+    <data name="Add Company" xml:space="preserve">
+        <value>Añadir compañía</value>
+        <comment>Button to add a new company</comment>
+    </data>
+    <data name="Edit Company" xml:space="preserve">
+        <value>Editar compañía</value>
+        <comment>Dialog title when editing a company</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acciones</value>
+        <comment>Grid column header for action buttons</comment>
+    </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Descripciones</value>
+        <comment>Button tooltip for company descriptions</comment>
+    </data>
+    <data name="Company created successfully." xml:space="preserve">
+        <value>Compañía creada con éxito.</value>
+        <comment>Success message after creating a company</comment>
+    </data>
+    <data name="Company updated successfully." xml:space="preserve">
+        <value>Compañía actualizada con éxito.</value>
+        <comment>Success message after updating a company</comment>
+    </data>
+    <data name="Company deleted successfully." xml:space="preserve">
+        <value>Compañía eliminada con éxito.</value>
+        <comment>Success message after deleting a company</comment>
+    </data>
+    <data name="Are you sure you want to delete company '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Seguro que desea eliminar la compañía '{0}'? Esta operación no se puede deshacer.</value>
+        <comment>Delete confirmation message for a company</comment>
+    </data>
+    <data name="Company Descriptions" xml:space="preserve">
+        <value>Descripciones de compañía</value>
+        <comment>Dialog title for managing company descriptions</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>El nombre es obligatorio.</value>
+        <comment>Validation error when company name is empty</comment>
+    </data>
+    <data name="Unknown" xml:space="preserve">
+        <value>Desconocido</value>
+        <comment>Unknown company status</comment>
+    </data>
+    <data name="Active" xml:space="preserve">
+        <value>Activa</value>
+        <comment>Active company status</comment>
+    </data>
+    <data name="Merged" xml:space="preserve">
+        <value>Fusionada</value>
+        <comment>Merged company status</comment>
+    </data>
+    <data name="Bankrupt" xml:space="preserve">
+        <value>En bancarrota</value>
+        <comment>Bankrupt company status</comment>
+    </data>
+    <data name="Defunct" xml:space="preserve">
+        <value>Extinta</value>
+        <comment>Defunct company status</comment>
+    </data>
+    <data name="Renamed" xml:space="preserve">
+        <value>Renombrada</value>
+        <comment>Renamed company status</comment>
+    </data>
+    <data name="Day unknown" xml:space="preserve">
+        <value>Día desconocido</value>
+        <comment>Checkbox label for unknown day</comment>
+    </data>
+    <data name="Month unknown" xml:space="preserve">
+        <value>Mes desconocido</value>
+        <comment>Checkbox label for unknown month</comment>
+    </data>
+    <data name="Event Date (Sold/Merged/etc.)" xml:space="preserve">
+        <value>Fecha del evento (Venta/Fusión/etc.)</value>
+        <comment>Date picker label for company event date</comment>
+    </data>
+    <data name="Sold To / Merged With" xml:space="preserve">
+        <value>Vendida a / Fusionada con</value>
+        <comment>Autocomplete label for sold-to company</comment>
+    </data>
+    <data name="Province / State" xml:space="preserve">
+        <value>Provincia / Estado</value>
+        <comment>Label for province or state field</comment>
+    </data>
+    <data name="Twitter" xml:space="preserve">
+        <value>Twitter</value>
+        <comment>Label for Twitter field</comment>
+    </data>
+    <data name="Facebook" xml:space="preserve">
+        <value>Facebook</value>
+        <comment>Label for Facebook field</comment>
+    </data>
+    <data name="People" xml:space="preserve">
+        <value>Personas</value>
+        <comment>Section header for people associated with a company</comment>
+    </data>
+    <data name="Add Person" xml:space="preserve">
+        <value>Añadir persona</value>
+        <comment>Section title and button to add a person</comment>
+    </data>
+    <data name="Remove Person" xml:space="preserve">
+        <value>Eliminar persona</value>
+        <comment>Dialog title for removing a person</comment>
+    </data>
+    <data name="Search Person" xml:space="preserve">
+        <value>Buscar persona</value>
+        <comment>Label for person search autocomplete</comment>
+    </data>
+    <data name="Position" xml:space="preserve">
+        <value>Cargo</value>
+        <comment>Label for person position/role field</comment>
+    </data>
+    <data name="Start Date" xml:space="preserve">
+        <value>Fecha de inicio</value>
+        <comment>Label for start date picker</comment>
+    </data>
+    <data name="End Date" xml:space="preserve">
+        <value>Fecha de fin</value>
+        <comment>Label for end date picker</comment>
+    </data>
+    <data name="Ongoing" xml:space="preserve">
+        <value>En curso</value>
+        <comment>Checkbox label for ongoing position</comment>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Añadir</value>
+        <comment>Button to add</comment>
+    </data>
+    <data name="present" xml:space="preserve">
+        <value>presente</value>
+        <comment>Ongoing position end date display</comment>
+    </data>
+    <data name="N/A" xml:space="preserve">
+        <value>N/D</value>
+        <comment>Not applicable, used when position is not set</comment>
+    </data>
+    <data name="Failed to add person." xml:space="preserve">
+        <value>Error al añadir persona.</value>
+        <comment>Error message when adding a person fails</comment>
+    </data>
+    <data name="Remove '{0}' from this company?" xml:space="preserve">
+        <value>¿Eliminar a '{0}' de esta compañía?</value>
+        <comment>Confirmation message for removing a person from a company</comment>
+    </data>
+    <data name="Failed to remove person." xml:space="preserve">
+        <value>Error al eliminar persona.</value>
+        <comment>Error message when removing a person fails</comment>
+    </data>
 </root>

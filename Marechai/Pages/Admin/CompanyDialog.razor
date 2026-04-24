@@ -1,56 +1,59 @@
 @using Marechai.ApiClient.Models
+@using Marechai.Services
 @using System.Threading
+
+@inject IStringLocalizer<CompaniesService> L
 
 <MudDialog>
     <DialogContent>
         <MudTextField @bind-Value="Name"
-                      Label="Name"
+                      Label="@L["Name"]"
                       Variant="Variant.Outlined"
                       Required="true"
-                      RequiredError="Name is required."
+                      RequiredError="@L["Name is required."]"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="LegalName"
-                      Label="Legal Name"
+                      Label="@L["Legal name"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
-        <MudSelect @bind-Value="StatusValue" Label="Status" Variant="Variant.Outlined" Class="mb-4">
-            <MudSelectItem Value="0">Unknown</MudSelectItem>
-            <MudSelectItem Value="1">Active</MudSelectItem>
-            <MudSelectItem Value="2">Sold</MudSelectItem>
-            <MudSelectItem Value="3">Merged</MudSelectItem>
-            <MudSelectItem Value="4">Bankrupt</MudSelectItem>
-            <MudSelectItem Value="5">Defunct</MudSelectItem>
-            <MudSelectItem Value="6">Renamed</MudSelectItem>
+        <MudSelect @bind-Value="StatusValue" Label="@L["Status"]" Variant="Variant.Outlined" Class="mb-4">
+            <MudSelectItem Value="0">@L["Unknown"]</MudSelectItem>
+            <MudSelectItem Value="1">@L["Active"]</MudSelectItem>
+            <MudSelectItem Value="2">@L["Sold"]</MudSelectItem>
+            <MudSelectItem Value="3">@L["Merged"]</MudSelectItem>
+            <MudSelectItem Value="4">@L["Bankrupt"]</MudSelectItem>
+            <MudSelectItem Value="5">@L["Defunct"]</MudSelectItem>
+            <MudSelectItem Value="6">@L["Renamed"]</MudSelectItem>
         </MudSelect>
 
         <MudDatePicker @bind-Date="Founded"
-                       Label="Founded"
+                       Label="@L["Founded"]"
                        Variant="Variant.Outlined"
                        Clearable="true"
                        Class="mb-2"/>
 
         <MudStack Row="true" Class="mb-4">
-            <MudCheckBox @bind-Value="FoundedDayIsUnknown" Label="Day unknown"/>
-            <MudCheckBox @bind-Value="FoundedMonthIsUnknown" Label="Month unknown"/>
+            <MudCheckBox @bind-Value="FoundedDayIsUnknown" Label="@L["Day unknown"]"/>
+            <MudCheckBox @bind-Value="FoundedMonthIsUnknown" Label="@L["Month unknown"]"/>
         </MudStack>
 
         @if(StatusValue is >= 2 and <= 6)
         {
             <MudDatePicker @bind-Date="Sold"
-                           Label="Event Date (Sold/Merged/etc.)"
+                           Label="@L["Event Date (Sold/Merged/etc.)"]"
                            Variant="Variant.Outlined"
                            Clearable="true"
                            Class="mb-2"/>
 
             <MudStack Row="true" Class="mb-4">
-                <MudCheckBox @bind-Value="SoldDayIsUnknown" Label="Day unknown"/>
-                <MudCheckBox @bind-Value="SoldMonthIsUnknown" Label="Month unknown"/>
+                <MudCheckBox @bind-Value="SoldDayIsUnknown" Label="@L["Day unknown"]"/>
+                <MudCheckBox @bind-Value="SoldMonthIsUnknown" Label="@L["Month unknown"]"/>
             </MudStack>
 
             <MudAutocomplete T="CompanyDto"
-                             Label="Sold To / Merged With"
+                             Label="@L["Sold To / Merged With"]"
                              @bind-Value="_selectedSoldToCompany"
                              SearchFunc="SearchCompanies"
                              ToStringFunc="@(c => c?.Name ?? string.Empty)"
@@ -60,7 +63,7 @@
         }
 
         <MudAutocomplete T="Iso31661NumericDto"
-                         Label="Country"
+                         Label="@L["Country"]"
                          @bind-Value="_selectedCountry"
                          SearchFunc="SearchCountries"
                          ToStringFunc="@(c => c?.Name ?? string.Empty)"
@@ -69,37 +72,37 @@
                          Class="mb-4"/>
 
         <MudTextField @bind-Value="Address"
-                      Label="Address"
+                      Label="@L["Address"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="City"
-                      Label="City"
+                      Label="@L["City"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="Province"
-                      Label="Province / State"
+                      Label="@L["Province / State"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="PostalCode"
-                      Label="Postal Code"
+                      Label="@L["Postal code"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="Website"
-                      Label="Website"
+                      Label="@L["Website"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="Twitter"
-                      Label="Twitter"
+                      Label="@L["Twitter"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="Facebook"
-                      Label="Facebook"
+                      Label="@L["Facebook"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
@@ -111,7 +114,7 @@
         @if(!IsNew && _people is not null)
         {
             <MudDivider Class="my-4"/>
-            <MudText Typo="Typo.h6" Class="mb-2">People</MudText>
+            <MudText Typo="Typo.h6" Class="mb-2">@L["People"]</MudText>
 
             @if(_people.Count > 0)
             {
@@ -120,7 +123,7 @@
                     {
                         <MudListItem T="PersonByCompanyDto">
                             <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                <MudText>@GetPersonDisplayName(person) — @(person.Position ?? "N/A") @FormatDateRange(person)</MudText>
+                                <MudText>@GetPersonDisplayName(person) — @(person.Position ?? L["N/A"]) @FormatDateRange(person)</MudText>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmRemovePerson(person)"/>
                             </MudStack>
                         </MudListItem>
@@ -129,10 +132,10 @@
             }
 
             <MudPaper Class="pa-4 mt-2" Elevation="1">
-                <MudText Typo="Typo.subtitle2" Class="mb-2">Add Person</MudText>
+                <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Add Person"]</MudText>
 
                 <MudAutocomplete T="PersonDto"
-                                 Label="Search Person"
+                                 Label="@L["Search Person"]"
                                  @bind-Value="_selectedPerson"
                                  SearchFunc="SearchPeople"
                                  ToStringFunc="@(p => p is null ? string.Empty : p.DisplayName ?? p.Alias ?? $"{p.Name} {p.Surname}")"
@@ -141,28 +144,28 @@
                                  Class="mb-2"/>
 
                 <MudTextField @bind-Value="_newPersonPosition"
-                              Label="Position"
+                              Label="@L["Position"]"
                               Variant="Variant.Outlined"
                               Class="mb-2"/>
 
                 <MudStack Row="true" Class="mb-2">
-                    <MudDatePicker @bind-Date="_newPersonStart" Label="Start Date" Variant="Variant.Outlined" Clearable="true"/>
-                    <MudDatePicker @bind-Date="_newPersonEnd" Label="End Date" Variant="Variant.Outlined" Clearable="true"/>
+                    <MudDatePicker @bind-Date="_newPersonStart" Label="@L["Start Date"]" Variant="Variant.Outlined" Clearable="true"/>
+                    <MudDatePicker @bind-Date="_newPersonEnd" Label="@L["End Date"]" Variant="Variant.Outlined" Clearable="true"/>
                 </MudStack>
 
-                <MudCheckBox @bind-Value="_newPersonOngoing" Label="Ongoing" Class="mb-2"/>
+                <MudCheckBox @bind-Value="_newPersonOngoing" Label="@L["Ongoing"]" Class="mb-2"/>
 
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
                            Size="Size.Small"
                            OnClick="AddPerson"
-                           Disabled="@(_selectedPerson is null)">Add</MudButton>
+                           Disabled="@(_selectedPerson is null)">@L["Add"]</MudButton>
             </MudPaper>
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Save</MudButton>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -267,7 +270,7 @@
     string FormatDateRange(PersonByCompanyDto person)
     {
         string start = person.Start?.Date.ToShortDateString() ?? "?";
-        string end   = person.Ongoing == true ? "present" : person.End?.Date.ToShortDateString() ?? "?";
+        string end   = person.Ongoing == true ? L["present"] : person.End?.Date.ToShortDateString() ?? "?";
 
         return $"({start} \u2013 {end})";
     }
@@ -303,7 +306,7 @@
         }
         else
         {
-            _validationError = error ?? "Failed to add person.";
+            _validationError = error ?? L["Failed to add person."];
         }
     }
 
@@ -311,10 +314,10 @@
     {
         DialogParameters<DeleteConfirmDialog> parameters = new()
         {
-            { x => x.ContentText, $"Remove '{GetPersonDisplayName(person)}' from this company?" }
+            { x => x.ContentText, string.Format(L["Remove '{0}' from this company?"], GetPersonDisplayName(person)) }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Remove Person", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Remove Person"], parameters,
                                                                                      new DialogOptions
                                                                                      {
                                                                                          MaxWidth = MaxWidth.ExtraSmall,
@@ -334,7 +337,7 @@
             }
             else
             {
-                _validationError = error ?? "Failed to remove person.";
+                _validationError = error ?? L["Failed to remove person."];
             }
         }
     }
@@ -345,7 +348,7 @@
     {
         if(string.IsNullOrWhiteSpace(Name))
         {
-            _validationError = "Name is required.";
+            _validationError = L["Name is required."];
 
             return;
         }
