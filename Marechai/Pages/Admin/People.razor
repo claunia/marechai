@@ -1,0 +1,67 @@
+@page "/admin/people"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject PeopleService PeopleService
+@inject IStringLocalizer<PeopleService> L
+@inject IDialogService DialogService
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #006064 0%, #00acc1 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["People Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage people related to computing history."]</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+<MudPaper Elevation="2" Class="rounded-lg">
+    <MudToolBar Dense="true">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenAddPersonDialog">@L["Add Person"]</MudButton>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadPeopleAsync"/>
+    </MudToolBar>
+
+    <MudDataGrid Items="_people" Dense="true" Hover="true" Striped="true" Filterable="true" QuickFilter="QuickFilter">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+            <PropertyColumn Property="x => x.Surname" Title="@L["Surname"]"/>
+            <PropertyColumn Property="x => x.Country" Title="@L["Country of birth"]"/>
+            <TemplateColumn Title="@L["Birth date"]" Sortable="true">
+                <CellTemplate>
+                    @FormatDate(context.Item.Birthdate)
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["Death date"]" Sortable="true">
+                <CellTemplate>
+                    @FormatDate(context.Item.DeathDate)
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="@L["Actions"]" Sortable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditPersonDialog(context.Item)" Title="@L["Edit Person"]"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeletePerson(context.Item)" Title="@L["Delete Person"]"/>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudPaper>

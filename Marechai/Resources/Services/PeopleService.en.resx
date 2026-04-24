@@ -213,4 +213,46 @@
     <data name="present" xml:space="preserve">
         <value>present</value>
     </data>
+    <data name="People Management" xml:space="preserve">
+        <value>People Management</value>
+    </data>
+    <data name="Manage people related to computing history." xml:space="preserve">
+        <value>Manage people related to computing history.</value>
+    </data>
+    <data name="Add Person" xml:space="preserve">
+        <value>Add Person</value>
+    </data>
+    <data name="Edit Person" xml:space="preserve">
+        <value>Edit Person</value>
+    </data>
+    <data name="Delete Person" xml:space="preserve">
+        <value>Delete Person</value>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Name is required.</value>
+    </data>
+    <data name="Person created successfully." xml:space="preserve">
+        <value>Person created successfully.</value>
+    </data>
+    <data name="Person updated successfully." xml:space="preserve">
+        <value>Person updated successfully.</value>
+    </data>
+    <data name="Person deleted successfully." xml:space="preserve">
+        <value>Person deleted successfully.</value>
+    </data>
+    <data name="Are you sure you want to delete person '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Are you sure you want to delete person '{0}'? This action cannot be undone.</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Save</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Search Company</value>
+    </data>
 </root>

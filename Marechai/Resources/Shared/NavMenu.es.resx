@@ -247,4 +247,8 @@
     <value>Gestión de familias de máquinas</value>
         <comment>Machine family management admin link</comment>
   </data>
+    <data name="People Management" xml:space="preserve">
+    <value>Gestión de personas</value>
+        <comment>People management admin link</comment>
+  </data>
 </root>

@@ -23,9 +23,11 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
@@ -176,6 +178,74 @@ public class PeopleService(Marechai.ApiClient.Client client)
             List<PersonByMagazineDto>? magazines = await client.People[id].Magazines.GetAsync();
 
             return magazines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> CreateAsync(PersonDto dto)
+    {
+        try
+        {
+            long? id = await client.People.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, PersonDto dto)
+    {
+        try
+        {
+            await client.People[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    {
+        try
+        {
+            await client.People[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
+    {
+        try
+        {
+            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+
+            return countries ?? [];
         }
         catch
         {
