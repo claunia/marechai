@@ -1,43 +1,46 @@
 @using MudBlazor
+@using Marechai.Services
+
+@inject IStringLocalizer<UsersService> L
 
 <MudDialog>
     <DialogContent>
         <MudTextField @bind-Value="Email"
-                      Label="Email"
+                      Label="@L["Email"]"
                       Variant="Variant.Outlined"
                       InputType="InputType.Email"
                       Required="true"
-                      RequiredError="Email is required."
+                      RequiredError="@L["Email is required."]"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="UserName"
-                      Label="Username"
+                      Label="@L["Username"]"
                       Variant="Variant.Outlined"
                       Required="true"
-                      RequiredError="Username is required."
+                      RequiredError="@L["Username is required."]"
                       Class="mb-4"/>
 
         <MudTextField @bind-Value="PhoneNumber"
-                      Label="Phone Number"
+                      Label="@L["Phone Number"]"
                       Variant="Variant.Outlined"
                       Class="mb-4"/>
 
         @if(IsNew)
         {
             <MudTextField @bind-Value="_password"
-                          Label="Password"
+                          Label="@L["Password"]"
                           Variant="Variant.Outlined"
                           InputType="InputType.Password"
                           Required="true"
-                          RequiredError="Password is required."
+                          RequiredError="@L["Password is required."]"
                           Class="mb-4"/>
 
             <MudTextField @bind-Value="_confirmPassword"
-                          Label="Confirm Password"
+                          Label="@L["Confirm Password"]"
                           Variant="Variant.Outlined"
                           InputType="InputType.Password"
                           Required="true"
-                          RequiredError="Password confirmation is required."
+                          RequiredError="@L["Password confirmation is required."]"
                           Class="mb-4"/>
         }
 
@@ -47,8 +50,8 @@
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Save</MudButton>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -78,7 +81,7 @@
     {
         if(string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(UserName))
         {
-            _validationError = "Email and username are required.";
+            _validationError = L["Email and username are required."];
 
             return;
         }
@@ -87,14 +90,14 @@
         {
             if(string.IsNullOrWhiteSpace(_password))
             {
-                _validationError = "Password is required for new users.";
+                _validationError = L["Password is required for new users."];
 
                 return;
             }
 
             if(_password != _confirmPassword)
             {
-                _validationError = "Passwords do not match.";
+                _validationError = L["Passwords do not match."];
 
                 return;
             }

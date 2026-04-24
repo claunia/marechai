@@ -57,7 +57,7 @@ public partial class Users
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<UserDialog>("Add User", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<UserDialog>(L["Add User"], parameters,
                                                                             new DialogOptions
                                                                             {
                                                                                 MaxWidth = MaxWidth.Small,
@@ -73,7 +73,7 @@ public partial class Users
 
             if(succeeded)
             {
-                _successMessage = "User created successfully.";
+                _successMessage = L["User created successfully."];
                 await LoadUsersAsync();
             }
             else
@@ -101,7 +101,7 @@ public partial class Users
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<UserDialog>("Edit User", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<UserDialog>(L["Edit User"], parameters,
                                                                             new DialogOptions
                                                                             {
                                                                                 MaxWidth = MaxWidth.Small,
@@ -117,7 +117,7 @@ public partial class Users
 
             if(succeeded)
             {
-                _successMessage = "User updated successfully.";
+                _successMessage = L["User updated successfully."];
                 await LoadUsersAsync();
             }
             else
@@ -136,7 +136,7 @@ public partial class Users
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<PasswordDialog>("Change Password", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<PasswordDialog>(L["Change Password"], parameters,
                                                                                 new DialogOptions
                                                                                 {
                                                                                     MaxWidth = MaxWidth.Small,
@@ -151,7 +151,7 @@ public partial class Users
 
             if(succeeded)
             {
-                _successMessage = "Password changed successfully.";
+                _successMessage = L["Password changed successfully."];
             }
             else
             {
@@ -180,7 +180,7 @@ public partial class Users
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<RolesDialog>("Manage Roles", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<RolesDialog>(L["Manage Roles"], parameters,
                                                                              new DialogOptions
                                                                              {
                                                                                  MaxWidth = MaxWidth.Small,
@@ -198,11 +198,11 @@ public partial class Users
         DialogParameters<DeleteConfirmDialog> parameters = new()
         {
             {
-                x => x.ContentText, $"Are you sure you want to delete user '{user.Email}'? This action cannot be undone."
+                x => x.ContentText, string.Format(L["Are you sure you want to delete user '{0}'? This action cannot be undone."], user.Email)
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Delete User", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Delete User"], parameters,
                                                                                      new DialogOptions
                                                                                      {
                                                                                          MaxWidth = MaxWidth.ExtraSmall,
@@ -217,7 +217,7 @@ public partial class Users
 
             if(succeeded)
             {
-                _successMessage = "User deleted successfully.";
+                _successMessage = L["User deleted successfully."];
                 await LoadUsersAsync();
             }
             else
@@ -233,11 +233,11 @@ public partial class Users
         {
             {
                 x => x.ContentText,
-                $"Are you sure you want to delete {_selectedUsers.Count} user(s)? This action cannot be undone."
+                string.Format(L["Are you sure you want to delete {0} user(s)? This action cannot be undone."], _selectedUsers.Count)
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Delete Users", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>(L["Delete Users"], parameters,
                                                                                      new DialogOptions
                                                                                      {
                                                                                          MaxWidth = MaxWidth.ExtraSmall,
@@ -256,8 +256,8 @@ public partial class Users
             if(bulkResult != null)
             {
                 _successMessage =
-                    $"Deleted {bulkResult.SucceededCount} user(s)." +
-                    (bulkResult.FailedCount > 0 ? $" {bulkResult.FailedCount} failed." : "");
+                    string.Format(L["Deleted {0} user(s)."], bulkResult.SucceededCount) +
+                    (bulkResult.FailedCount > 0 ? " " + string.Format(L["{0} failed."], bulkResult.FailedCount) : "");
 
                 if(bulkResult.Errors is { Count: > 0 })
                     _errorMessage = string.Join(" ", bulkResult.Errors);
@@ -286,7 +286,7 @@ public partial class Users
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<BulkRoleDialog>("Bulk Role Operation", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<BulkRoleDialog>(L["Bulk Role Operation"], parameters,
                                                                                 new DialogOptions
                                                                                 {
                                                                                     MaxWidth = MaxWidth.Small,
@@ -305,11 +305,12 @@ public partial class Users
 
             if(bulkResult != null)
             {
-                string action = data.IsAdd ? "added to" : "removed from";
+                _successMessage = data.IsAdd
+                    ? string.Format(L["Role '{0}' added to {1} user(s)."], data.RoleName, bulkResult.SucceededCount)
+                    : string.Format(L["Role '{0}' removed from {1} user(s)."], data.RoleName, bulkResult.SucceededCount);
 
-                _successMessage =
-                    $"Role '{data.RoleName}' {action} {bulkResult.SucceededCount} user(s)." +
-                    (bulkResult.FailedCount > 0 ? $" {bulkResult.FailedCount} failed." : "");
+                if(bulkResult.FailedCount > 0)
+                    _successMessage += " " + string.Format(L["{0} failed."], bulkResult.FailedCount);
 
                 if(bulkResult.Errors is { Count: > 0 })
                     _errorMessage = string.Join(" ", bulkResult.Errors);
@@ -333,7 +334,7 @@ public partial class Users
             }
         };
 
-        IDialogReference dialog = await DialogService.ShowAsync<BulkLockoutDialog>("Bulk Lockout", parameters,
+        IDialogReference dialog = await DialogService.ShowAsync<BulkLockoutDialog>(L["Bulk Lockout"], parameters,
                                                                                    new DialogOptions
                                                                                    {
                                                                                        MaxWidth = MaxWidth.ExtraSmall,
@@ -351,11 +352,12 @@ public partial class Users
 
             if(bulkResult != null)
             {
-                string action = enable ? "enabled" : "disabled";
+                _successMessage = enable
+                    ? string.Format(L["Lockout enabled for {0} user(s)."], bulkResult.SucceededCount)
+                    : string.Format(L["Lockout disabled for {0} user(s)."], bulkResult.SucceededCount);
 
-                _successMessage =
-                    $"Lockout {action} for {bulkResult.SucceededCount} user(s)." +
-                    (bulkResult.FailedCount > 0 ? $" {bulkResult.FailedCount} failed." : "");
+                if(bulkResult.FailedCount > 0)
+                    _successMessage += " " + string.Format(L["{0} failed."], bulkResult.FailedCount);
 
                 if(bulkResult.Errors is { Count: > 0 })
                     _errorMessage = string.Join(" ", bulkResult.Errors);

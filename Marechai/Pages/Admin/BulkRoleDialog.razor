@@ -1,16 +1,18 @@
 @using MudBlazor
+@using Marechai.Services
 @inject UsersService UsersService
+@inject IStringLocalizer<UsersService> L
 
 <MudDialog>
     <DialogContent>
-        <MudText Typo="Typo.body2" Class="mb-4">Apply role operation to <strong>@UserCount user(s)</strong></MudText>
+        <MudText Typo="Typo.body2" Class="mb-4">@((MarkupString)string.Format(L["Apply role operation to {0} user(s)"], $"<strong>{UserCount}</strong>"))</MudText>
 
         <MudRadioGroup T="bool" @bind-Value="_isAdd">
-            <MudRadio Value="true" Color="Color.Primary">Add role</MudRadio>
-            <MudRadio Value="false" Color="Color.Secondary">Remove role</MudRadio>
+            <MudRadio Value="true" Color="Color.Primary">@L["Add role"]</MudRadio>
+            <MudRadio Value="false" Color="Color.Secondary">@L["Remove role"]</MudRadio>
         </MudRadioGroup>
 
-        <MudSelect T="string" @bind-Value="_selectedRole" Label="Select role" Variant="Variant.Outlined" Dense="true" Class="mt-4">
+        <MudSelect T="string" @bind-Value="_selectedRole" Label="@L["Select role"]" Variant="Variant.Outlined" Dense="true" Class="mt-4">
             @foreach(string role in AvailableRoles)
             {
                 <MudSelectItem T="string" Value="role">@role</MudSelectItem>
@@ -18,9 +20,9 @@
         </MudSelect>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
-                   Disabled="string.IsNullOrWhiteSpace(_selectedRole)">Apply</MudButton>
+                   Disabled="string.IsNullOrWhiteSpace(_selectedRole)">@L["Apply"]</MudButton>
     </DialogActions>
 </MudDialog>
 

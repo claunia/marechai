@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+    <!--
+      Microsoft ResX Schema
+
+      Version 2.0
+
+      The primary goals of this format is to allow a simple XML format
+      that is mostly human readable. The generation and parsing of the
+      various data types are done through the TypeConverter classes
+      associated with the data types.
+
+      Example:
+
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+
+      There are any number of "resheader" rows that contain simple
+      name/value pairs.
+
+      Each data row contains a name, and value. The row also contains a
+      type or mimetype. Type corresponds to a .NET class that support
+      text/value conversion through the TypeConverter architecture.
+      Classes that don't support this are serialized and stored with the
+      mimetype set.
+
+      The mimetype is used for serialized objects, and tells the
+      ResXResourceReader how to depersist the object. This is currently not
+      extensible. For a given mimetype the value must be set accordingly:
+
+      Note - application/x-microsoft.net.object.binary.base64 is the format
+      that the ResXResourceWriter will generate, however the reader can
+      read any of the formats listed below.
+
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <!-- Users.razor - Page header -->
+    <data name="User Management" xml:space="preserve">
+        <value>User Management</value>
+        <comment>Admin page title for user management</comment>
+    </data>
+    <data name="Manage users, passwords, and role assignments." xml:space="preserve">
+        <value>Manage users, passwords, and role assignments.</value>
+        <comment>Admin page subtitle for user management</comment>
+    </data>
+    <!-- Users.razor - Toolbar -->
+    <data name="Add User" xml:space="preserve">
+        <value>Add User</value>
+        <comment>Button to add a new user</comment>
+    </data>
+    <data name="{0} selected" xml:space="preserve">
+        <value>{0} selected</value>
+        <comment>Count of selected users in bulk mode</comment>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Delete</value>
+        <comment>Delete button</comment>
+    </data>
+    <data name="Roles" xml:space="preserve">
+        <value>Roles</value>
+        <comment>Roles column header and bulk button</comment>
+    </data>
+    <data name="Lockout" xml:space="preserve">
+        <value>Lockout</value>
+        <comment>Lockout bulk button</comment>
+    </data>
+    <!-- Users.razor - Grid columns -->
+    <data name="Email" xml:space="preserve">
+        <value>Email</value>
+        <comment>Grid column header for email</comment>
+    </data>
+    <data name="Username" xml:space="preserve">
+        <value>Username</value>
+        <comment>Grid column header for username</comment>
+    </data>
+    <data name="Phone" xml:space="preserve">
+        <value>Phone</value>
+        <comment>Grid column header for phone number</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
+        <comment>Grid column header for action buttons</comment>
+    </data>
+    <!-- Users.razor - Action tooltips -->
+    <data name="Edit" xml:space="preserve">
+        <value>Edit</value>
+        <comment>Edit button tooltip</comment>
+    </data>
+    <data name="Change Password" xml:space="preserve">
+        <value>Change Password</value>
+        <comment>Change password button tooltip and dialog title</comment>
+    </data>
+    <data name="Manage Roles" xml:space="preserve">
+        <value>Manage Roles</value>
+        <comment>Manage roles button tooltip and dialog title</comment>
+    </data>
+    <!-- Users.razor.cs - Dialog titles -->
+    <data name="Edit User" xml:space="preserve">
+        <value>Edit User</value>
+        <comment>Dialog title when editing a user</comment>
+    </data>
+    <data name="Delete User" xml:space="preserve">
+        <value>Delete User</value>
+        <comment>Dialog title for deleting a user</comment>
+    </data>
+    <data name="Delete Users" xml:space="preserve">
+        <value>Delete Users</value>
+        <comment>Dialog title for bulk deleting users</comment>
+    </data>
+    <data name="Bulk Role Operation" xml:space="preserve">
+        <value>Bulk Role Operation</value>
+        <comment>Dialog title for bulk role operation</comment>
+    </data>
+    <data name="Bulk Lockout" xml:space="preserve">
+        <value>Bulk Lockout</value>
+        <comment>Dialog title for bulk lockout operation</comment>
+    </data>
+    <!-- Users.razor.cs - Success messages -->
+    <data name="User created successfully." xml:space="preserve">
+        <value>User created successfully.</value>
+        <comment>Success message after creating a user</comment>
+    </data>
+    <data name="User updated successfully." xml:space="preserve">
+        <value>User updated successfully.</value>
+        <comment>Success message after updating a user</comment>
+    </data>
+    <data name="Password changed successfully." xml:space="preserve">
+        <value>Password changed successfully.</value>
+        <comment>Success message after changing a password</comment>
+    </data>
+    <data name="User deleted successfully." xml:space="preserve">
+        <value>User deleted successfully.</value>
+        <comment>Success message after deleting a user</comment>
+    </data>
+    <!-- Users.razor.cs - Confirmation messages -->
+    <data name="Are you sure you want to delete user '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Are you sure you want to delete user '{0}'? This action cannot be undone.</value>
+        <comment>Delete confirmation message for a single user</comment>
+    </data>
+    <data name="Are you sure you want to delete {0} user(s)? This action cannot be undone." xml:space="preserve">
+        <value>Are you sure you want to delete {0} user(s)? This action cannot be undone.</value>
+        <comment>Delete confirmation message for bulk users</comment>
+    </data>
+    <!-- Users.razor.cs - Bulk operation results -->
+    <data name="Deleted {0} user(s)." xml:space="preserve">
+        <value>Deleted {0} user(s).</value>
+        <comment>Bulk delete success message, {0} is succeeded count</comment>
+    </data>
+    <data name="{0} failed." xml:space="preserve">
+        <value>{0} failed.</value>
+        <comment>Bulk operation failure suffix, {0} is failed count</comment>
+    </data>
+    <data name="Role '{0}' added to {1} user(s)." xml:space="preserve">
+        <value>Role '{0}' added to {1} user(s).</value>
+        <comment>Bulk role add success, {0} role name, {1} succeeded count</comment>
+    </data>
+    <data name="Role '{0}' removed from {1} user(s)." xml:space="preserve">
+        <value>Role '{0}' removed from {1} user(s).</value>
+        <comment>Bulk role remove success, {0} role name, {1} succeeded count</comment>
+    </data>
+    <data name="Lockout enabled for {0} user(s)." xml:space="preserve">
+        <value>Lockout enabled for {0} user(s).</value>
+        <comment>Bulk lockout enable success, {0} succeeded count</comment>
+    </data>
+    <data name="Lockout disabled for {0} user(s)." xml:space="preserve">
+        <value>Lockout disabled for {0} user(s).</value>
+        <comment>Bulk lockout disable success, {0} succeeded count</comment>
+    </data>
+    <!-- UserDialog.razor -->
+    <data name="Phone Number" xml:space="preserve">
+        <value>Phone Number</value>
+        <comment>Label for phone number field</comment>
+    </data>
+    <data name="Password" xml:space="preserve">
+        <value>Password</value>
+        <comment>Label for password field</comment>
+    </data>
+    <data name="Confirm Password" xml:space="preserve">
+        <value>Confirm Password</value>
+        <comment>Label for confirm password field</comment>
+    </data>
+    <data name="Email is required." xml:space="preserve">
+        <value>Email is required.</value>
+        <comment>Validation error when email is empty</comment>
+    </data>
+    <data name="Username is required." xml:space="preserve">
+        <value>Username is required.</value>
+        <comment>Validation error when username is empty</comment>
+    </data>
+    <data name="Password is required." xml:space="preserve">
+        <value>Password is required.</value>
+        <comment>Validation error when password is empty</comment>
+    </data>
+    <data name="Password confirmation is required." xml:space="preserve">
+        <value>Password confirmation is required.</value>
+        <comment>Validation error when password confirmation is empty</comment>
+    </data>
+    <data name="Email and username are required." xml:space="preserve">
+        <value>Email and username are required.</value>
+        <comment>Validation error when email or username is empty on submit</comment>
+    </data>
+    <data name="Password is required for new users." xml:space="preserve">
+        <value>Password is required for new users.</value>
+        <comment>Validation error when password is empty for new user</comment>
+    </data>
+    <data name="Passwords do not match." xml:space="preserve">
+        <value>Passwords do not match.</value>
+        <comment>Validation error when passwords don't match</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancel</value>
+        <comment>Cancel button</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Save</value>
+        <comment>Save button</comment>
+    </data>
+    <!-- PasswordDialog.razor -->
+    <data name="Changing password for {0}" xml:space="preserve">
+        <value>Changing password for {0}</value>
+        <comment>Password dialog header, {0} is user email</comment>
+    </data>
+    <data name="New Password" xml:space="preserve">
+        <value>New Password</value>
+        <comment>Label for new password field</comment>
+    </data>
+    <data name="Minimum 6 characters" xml:space="preserve">
+        <value>Minimum 6 characters</value>
+        <comment>Helper text for password field</comment>
+    </data>
+    <data name="Password must be at least 6 characters." xml:space="preserve">
+        <value>Password must be at least 6 characters.</value>
+        <comment>Validation error for short password</comment>
+    </data>
+    <!-- RolesDialog.razor -->
+    <data name="Managing roles for {0}" xml:space="preserve">
+        <value>Managing roles for {0}</value>
+        <comment>Roles dialog header, {0} is user email</comment>
+    </data>
+    <data name="Current Roles" xml:space="preserve">
+        <value>Current Roles</value>
+        <comment>Section header for current roles list</comment>
+    </data>
+    <data name="No roles assigned." xml:space="preserve">
+        <value>No roles assigned.</value>
+        <comment>Message when user has no roles</comment>
+    </data>
+    <data name="Add Role" xml:space="preserve">
+        <value>Add Role</value>
+        <comment>Section header for adding a role</comment>
+    </data>
+    <data name="Select role" xml:space="preserve">
+        <value>Select role</value>
+        <comment>Label for role selection dropdown</comment>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Add</value>
+        <comment>Add button</comment>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Close</value>
+        <comment>Close button</comment>
+    </data>
+    <!-- BulkRoleDialog.razor -->
+    <data name="Apply role operation to {0} user(s)" xml:space="preserve">
+        <value>Apply role operation to {0} user(s)</value>
+        <comment>Bulk role dialog header, {0} is user count</comment>
+    </data>
+    <data name="Add role" xml:space="preserve">
+        <value>Add role</value>
+        <comment>Radio option to add a role</comment>
+    </data>
+    <data name="Remove role" xml:space="preserve">
+        <value>Remove role</value>
+        <comment>Radio option to remove a role</comment>
+    </data>
+    <data name="Apply" xml:space="preserve">
+        <value>Apply</value>
+        <comment>Apply button</comment>
+    </data>
+    <!-- BulkLockoutDialog.razor -->
+    <data name="Update lockout setting for {0} user(s)" xml:space="preserve">
+        <value>Update lockout setting for {0} user(s)</value>
+        <comment>Bulk lockout dialog header, {0} is user count</comment>
+    </data>
+    <data name="Enable lockout" xml:space="preserve">
+        <value>Enable lockout</value>
+        <comment>Radio option to enable lockout</comment>
+    </data>
+    <data name="Disable lockout" xml:space="preserve">
+        <value>Disable lockout</value>
+        <comment>Radio option to disable lockout</comment>
+    </data>
+    <!-- DeleteConfirmDialog.razor -->
+    <data name="Delete confirm" xml:space="preserve">
+        <value>Delete</value>
+        <comment>Delete confirmation button</comment>
+    </data>
+</root>

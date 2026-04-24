@@ -1,12 +1,15 @@
 @using MudBlazor
+@using Marechai.Services
+
+@inject IStringLocalizer<UsersService> L
 
 <MudDialog>
     <DialogContent>
         <MudText Typo="Typo.body1">@ContentText</MudText>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Confirm">Delete</MudButton>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Confirm">@L["Delete"]</MudButton>
     </DialogActions>
 </MudDialog>
 

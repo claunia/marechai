@@ -1,16 +1,18 @@
 @using MudBlazor
+@using Marechai.Services
 @inject UsersService UsersService
+@inject IStringLocalizer<UsersService> L
 
 <MudDialog>
     <DialogContent>
-        <MudText Typo="Typo.body2" Class="mb-4">Managing roles for <strong>@UserEmail</strong></MudText>
+        <MudText Typo="Typo.body2" Class="mb-4">@((MarkupString)string.Format(L["Managing roles for {0}"], $"<strong>{UserEmail}</strong>"))</MudText>
 
         @if(!string.IsNullOrWhiteSpace(_errorMessage))
         {
             <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
         }
 
-        <MudText Typo="Typo.subtitle2" Class="mb-2">Current Roles</MudText>
+        <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Current Roles"]</MudText>
         @if(CurrentRoles.Count > 0)
         {
             <MudStack Row="true" Spacing="1" Class="mb-4">
@@ -23,25 +25,25 @@
         }
         else
         {
-            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">No roles assigned.</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">@L["No roles assigned."]</MudText>
         }
 
         <MudDivider Class="my-4"/>
 
-        <MudText Typo="Typo.subtitle2" Class="mb-2">Add Role</MudText>
+        <MudText Typo="Typo.subtitle2" Class="mb-2">@L["Add Role"]</MudText>
         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-            <MudSelect T="string" @bind-Value="_selectedRole" Label="Select role" Variant="Variant.Outlined" Dense="true" Style="flex: 1;">
+            <MudSelect T="string" @bind-Value="_selectedRole" Label="@L["Select role"]" Variant="Variant.Outlined" Dense="true" Style="flex: 1;">
                 @foreach(string role in _availableToAdd)
                 {
                     <MudSelectItem T="string" Value="role">@role</MudSelectItem>
                 }
             </MudSelect>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="AddRoleAsync"
-                       Disabled="string.IsNullOrWhiteSpace(_selectedRole)">Add</MudButton>
+                       Disabled="string.IsNullOrWhiteSpace(_selectedRole)">@L["Add"]</MudButton>
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Close">Close</MudButton>
+        <MudButton OnClick="Close">@L["Close"]</MudButton>
     </DialogActions>
 </MudDialog>
 

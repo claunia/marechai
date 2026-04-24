@@ -1,17 +1,20 @@
 @using MudBlazor
+@using Marechai.Services
+
+@inject IStringLocalizer<UsersService> L
 
 <MudDialog>
     <DialogContent>
-        <MudText Typo="Typo.body2" Class="mb-4">Update lockout setting for <strong>@UserCount user(s)</strong></MudText>
+        <MudText Typo="Typo.body2" Class="mb-4">@((MarkupString)string.Format(L["Update lockout setting for {0} user(s)"], $"<strong>{UserCount}</strong>"))</MudText>
 
         <MudRadioGroup T="bool" @bind-Value="_enable">
-            <MudRadio Value="true" Color="Color.Warning">Enable lockout</MudRadio>
-            <MudRadio Value="false" Color="Color.Success">Disable lockout</MudRadio>
+            <MudRadio Value="true" Color="Color.Warning">@L["Enable lockout"]</MudRadio>
+            <MudRadio Value="false" Color="Color.Success">@L["Disable lockout"]</MudRadio>
         </MudRadioGroup>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Apply</MudButton>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Apply"]</MudButton>
     </DialogActions>
 </MudDialog>
 

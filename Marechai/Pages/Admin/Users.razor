@@ -28,15 +28,17 @@
 @page "/admin/users"
 @attribute [Authorize(Roles = "UberAdmin")]
 @using Marechai.ApiClient.Models
+@using Marechai.Services
 @inject UsersService UsersService
+@inject IStringLocalizer<UsersService> L
 @inject IDialogService DialogService
 
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
         <MudIcon Icon="@Icons.Material.Filled.AdminPanelSettings" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Style="color: white;">User Management</MudText>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["User Management"]</MudText>
     </MudStack>
-    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">Manage users, passwords, and role assignments.</MudText>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@L["Manage users, passwords, and role assignments."]</MudText>
 </MudPaper>
 
 @if(!string.IsNullOrWhiteSpace(_errorMessage))
@@ -60,14 +62,14 @@
 
 <MudPaper Elevation="2" Class="rounded-lg">
     <MudToolBar Dense="true">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" OnClick="OpenAddUserDialog">Add User</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" OnClick="OpenAddUserDialog">@L["Add User"]</MudButton>
         <MudSpacer/>
         @if(_selectedUsers.Count > 0)
         {
-            <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Filled">@_selectedUsers.Count selected</MudChip>
-            <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteSweep" Size="Size.Small" OnClick="ConfirmBulkDeleteUsers" Class="ml-2">Delete</MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="OpenBulkRoleDialog" Class="ml-1">Roles</MudButton>
-            <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="OpenBulkLockoutDialog" Class="ml-1">Lockout</MudButton>
+            <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Filled">@string.Format(L["{0} selected"], _selectedUsers.Count)</MudChip>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteSweep" Size="Size.Small" OnClick="ConfirmBulkDeleteUsers" Class="ml-2">@L["Delete"]</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="OpenBulkRoleDialog" Class="ml-1">@L["Roles"]</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="OpenBulkLockoutDialog" Class="ml-1">@L["Lockout"]</MudButton>
         }
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadUsersAsync"/>
     </MudToolBar>
@@ -75,10 +77,10 @@
     <MudDataGrid Items="_users" Dense="true" Hover="true" Striped="true" MultiSelection="true" @bind-SelectedItems="_selectedUsers">
         <Columns>
             <SelectColumn T="UserDto"/>
-            <PropertyColumn Property="x => x.Email" Title="Email"/>
-            <PropertyColumn Property="x => x.UserName" Title="Username"/>
-            <PropertyColumn Property="x => x.PhoneNumber" Title="Phone"/>
-            <TemplateColumn Title="Roles">
+            <PropertyColumn Property="x => x.Email" Title="@L["Email"]"/>
+            <PropertyColumn Property="x => x.UserName" Title="@L["Username"]"/>
+            <PropertyColumn Property="x => x.PhoneNumber" Title="@L["Phone"]"/>
+            <TemplateColumn Title="@L["Roles"]">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
                         @if(context.Item.Roles is { Count: > 0 })
@@ -91,13 +93,13 @@
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
-            <TemplateColumn Title="Actions" Sortable="false">
+            <TemplateColumn Title="@L["Actions"]" Sortable="false">
                 <CellTemplate>
                     <MudStack Row="true" Spacing="1">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditUserDialog(context.Item)" Title="Edit"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="() => OpenChangePasswordDialog(context.Item)" Title="Change Password"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="() => OpenManageRolesDialog(context.Item)" Title="Manage Roles"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteUser(context.Item)" Title="Delete"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="() => OpenEditUserDialog(context.Item)" Title="@L["Edit"]"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="() => OpenChangePasswordDialog(context.Item)" Title="@L["Change Password"]"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="() => OpenManageRolesDialog(context.Item)" Title="@L["Manage Roles"]"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmDeleteUser(context.Item)" Title="@L["Delete"]"/>
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
