@@ -33,7 +33,7 @@
 <MudSnackbarProvider/>
 
 <MudLayout>
-    <MudAppBar Elevation="4" Color="Color.Primary">
+    <MudAppBar Elevation="4" Color="Color.Primary" Style="@(_isAdminMode ? "background-color: #4a1520 !important;" : "")">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer"/>
         <MudIcon Icon="@Icons.Material.Filled.Museum" Class="ml-2"/>
         <MudText Typo="Typo.h6" Class="ml-2">Marechai</MudText>
@@ -42,15 +42,23 @@
         <MudButton Href="/about" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Info">@L["About"]</MudButton>
         <MudButton Href="/contact" Color="Color.Inherit" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Email">@L["Contact"]</MudButton>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="DrawerVariant.Mini" OpenMiniOnHover="true">
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="DrawerVariant.Mini" OpenMiniOnHover="true"
+               Style="@(_isAdminMode ? "background-color: #3e1216 !important;" : "")">
         <MudDrawerHeader>
             <MudStack AlignItems="AlignItems.Center" Row="true" Spacing="2">
-                <MudIcon Icon="@Icons.Material.Filled.Museum" Size="Size.Large" Color="Color.Primary"/>
-                <MudText Typo="Typo.h6" Color="Color.Primary">Marechai</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.Museum" Size="Size.Large" Color="@(_isAdminMode ? Color.Error : Color.Primary)"/>
+                <MudText Typo="Typo.h6" Color="@(_isAdminMode ? Color.Error : Color.Primary)">@(_isAdminMode ? L["Admin area"] : "Marechai")</MudText>
             </MudStack>
         </MudDrawerHeader>
         <MudDivider/>
-        <NavMenu/>
+        @if(_isAdminMode)
+        {
+            <AdminNavMenu OnSwitchToNormalMode="@(() => { _isAdminMode = false; StateHasChanged(); })"/>
+        }
+        else
+        {
+            <NavMenu OnSwitchToAdminMode="@(() => { _isAdminMode = true; StateHasChanged(); })"/>
+        }
     </MudDrawer>
     <MudMainContent Class="pa-6 mt-16">
         <MudContainer MaxWidth="MaxWidth.ExtraLarge">
@@ -61,6 +69,7 @@
 
 @code {
     private bool _drawerOpen = true;
+    private bool _isAdminMode;
 
     private readonly MudTheme _theme = new()
     {

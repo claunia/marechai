@@ -199,4 +199,16 @@
     <value>Software</value>
         <comment>Software navigation link</comment>
   </data>
+    <data name="Administration" xml:space="preserve">
+    <value>Administración</value>
+        <comment>Administration mode toggle button</comment>
+  </data>
+    <data name="Back to Navigation" xml:space="preserve">
+    <value>Volver a la navegación</value>
+        <comment>Return to normal navigation from admin mode</comment>
+  </data>
+    <data name="User Management" xml:space="preserve">
+    <value>Gestión de usuarios</value>
+        <comment>User management admin link</comment>
+  </data>
 </root>

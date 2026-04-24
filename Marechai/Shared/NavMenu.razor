@@ -49,7 +49,12 @@
     <AuthorizeView Roles="UberAdmin">
         <Authorized>
             <MudDivider Class="my-2"/>
-            <MudNavLink Href="/admin/users" Icon="@Icons.Material.Filled.AdminPanelSettings">@L["User Management"]</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.AdminPanelSettings" OnClick="@(() => OnSwitchToAdminMode.InvokeAsync())">@L["Administration"]</MudNavLink>
         </Authorized>
     </AuthorizeView>
 </MudNavMenu>
+
+@code {
+    [Parameter]
+    public EventCallback OnSwitchToAdminMode { get; set; }
+}
