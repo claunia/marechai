@@ -223,4 +223,118 @@ public sealed class UsersService(Marechai.ApiClient.Client client, ILogger<Users
             return (false, "An error occurred while removing role.");
         }
     }
+
+    public async Task<(BulkOperationResult? Result, string? ErrorMessage)> BulkDeleteAsync(List<string> userIds)
+    {
+        try
+        {
+            var request = new BulkUserIdsRequest
+            {
+                UserIds = userIds
+            };
+
+            BulkOperationResult? result = await client.Users.BulkDelete.PostAsync(request);
+
+            return (result, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Bulk delete failed");
+
+            return (null, ex.Detail ?? ex.Title ?? "Failed to bulk delete users.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Bulk delete failed");
+
+            return (null, "An error occurred while bulk deleting users.");
+        }
+    }
+
+    public async Task<(BulkOperationResult? Result, string? ErrorMessage)> BulkAddRoleAsync(List<string> userIds,
+        string roleName)
+    {
+        try
+        {
+            var request = new BulkRoleRequest
+            {
+                UserIds  = userIds,
+                RoleName = roleName
+            };
+
+            BulkOperationResult? result = await client.Users.BulkAddRole.PostAsync(request);
+
+            return (result, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Bulk add role failed");
+
+            return (null, ex.Detail ?? ex.Title ?? "Failed to bulk add role.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Bulk add role failed");
+
+            return (null, "An error occurred while bulk adding role.");
+        }
+    }
+
+    public async Task<(BulkOperationResult? Result, string? ErrorMessage)> BulkRemoveRoleAsync(List<string> userIds,
+        string roleName)
+    {
+        try
+        {
+            var request = new BulkRoleRequest
+            {
+                UserIds  = userIds,
+                RoleName = roleName
+            };
+
+            BulkOperationResult? result = await client.Users.BulkRemoveRole.PostAsync(request);
+
+            return (result, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Bulk remove role failed");
+
+            return (null, ex.Detail ?? ex.Title ?? "Failed to bulk remove role.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Bulk remove role failed");
+
+            return (null, "An error occurred while bulk removing role.");
+        }
+    }
+
+    public async Task<(BulkOperationResult? Result, string? ErrorMessage)> BulkSetLockoutAsync(List<string> userIds,
+        bool enable)
+    {
+        try
+        {
+            var request = new BulkLockoutRequest
+            {
+                UserIds = userIds,
+                Enable  = enable
+            };
+
+            BulkOperationResult? result = await client.Users.BulkLockout.PostAsync(request);
+
+            return (result, null);
+        }
+        catch(ProblemDetails ex)
+        {
+            logger.LogWarning(ex, "Bulk lockout update failed");
+
+            return (null, ex.Detail ?? ex.Title ?? "Failed to bulk update lockout.");
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Bulk lockout update failed");
+
+            return (null, "An error occurred while bulk updating lockout.");
+        }
+    }
 }

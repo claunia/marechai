@@ -62,11 +62,19 @@
     <MudToolBar Dense="true">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" OnClick="OpenAddUserDialog">Add User</MudButton>
         <MudSpacer/>
+        @if(_selectedUsers.Count > 0)
+        {
+            <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Filled">@_selectedUsers.Count selected</MudChip>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteSweep" Size="Size.Small" OnClick="ConfirmBulkDeleteUsers" Class="ml-2">Delete</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Security" Size="Size.Small" OnClick="OpenBulkRoleDialog" Class="ml-1">Roles</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Lock" Size="Size.Small" OnClick="OpenBulkLockoutDialog" Class="ml-1">Lockout</MudButton>
+        }
         <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadUsersAsync"/>
     </MudToolBar>
 
-    <MudDataGrid Items="_users" Dense="true" Hover="true" Striped="true">
+    <MudDataGrid Items="_users" Dense="true" Hover="true" Striped="true" MultiSelection="true" @bind-SelectedItems="_selectedUsers">
         <Columns>
+            <SelectColumn T="UserDto"/>
             <PropertyColumn Property="x => x.Email" Title="Email"/>
             <PropertyColumn Property="x => x.UserName" Title="Username"/>
             <PropertyColumn Property="x => x.PhoneNumber" Title="Phone"/>

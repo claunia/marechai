@@ -33,10 +33,11 @@ namespace Marechai.Pages.Admin;
 
 public partial class Users
 {
-    string?        _errorMessage;
-    bool           _isLoading = true;
-    string?        _successMessage;
-    List<UserDto>? _users;
+    string?              _errorMessage;
+    bool                 _isLoading = true;
+    HashSet<UserDto>     _selectedUsers = new();
+    string?              _successMessage;
+    List<UserDto>?       _users;
 
     protected override async Task OnInitializedAsync() => await LoadUsersAsync();
 
@@ -217,6 +218,149 @@ public partial class Users
             if(succeeded)
             {
                 _successMessage = "User deleted successfully.";
+                await LoadUsersAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
+    async Task ConfirmBulkDeleteUsers()
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            {
+                x => x.ContentText,
+                $"Are you sure you want to delete {_selectedUsers.Count} user(s)? This action cannot be undone."
+            }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Delete Users", parameters,
+                                                                                     new DialogOptions
+                                                                                     {
+                                                                                         MaxWidth = MaxWidth.ExtraSmall,
+                                                                                         FullWidth = true
+                                                                                     });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            List<string> userIds = _selectedUsers.Select(u => u.Id).ToList();
+
+            (ApiClient.Models.BulkOperationResult? bulkResult, string? errorMessage) =
+                await UsersService.BulkDeleteAsync(userIds);
+
+            if(bulkResult != null)
+            {
+                _successMessage =
+                    $"Deleted {bulkResult.SucceededCount} user(s)." +
+                    (bulkResult.FailedCount > 0 ? $" {bulkResult.FailedCount} failed." : "");
+
+                if(bulkResult.Errors is { Count: > 0 })
+                    _errorMessage = string.Join(" ", bulkResult.Errors);
+
+                _selectedUsers.Clear();
+                await LoadUsersAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
+    async Task OpenBulkRoleDialog()
+    {
+        List<string> availableRoles = await UsersService.GetRolesAsync();
+
+        DialogParameters<BulkRoleDialog> parameters = new()
+        {
+            {
+                x => x.UserCount, _selectedUsers.Count
+            },
+            {
+                x => x.AvailableRoles, availableRoles
+            }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<BulkRoleDialog>("Bulk Role Operation", parameters,
+                                                                                new DialogOptions
+                                                                                {
+                                                                                    MaxWidth = MaxWidth.Small,
+                                                                                    FullWidth = true
+                                                                                });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false, Data: BulkRoleDialogResult data })
+        {
+            List<string> userIds = _selectedUsers.Select(u => u.Id).ToList();
+
+            (ApiClient.Models.BulkOperationResult? bulkResult, string? errorMessage) = data.IsAdd
+                ? await UsersService.BulkAddRoleAsync(userIds, data.RoleName)
+                : await UsersService.BulkRemoveRoleAsync(userIds, data.RoleName);
+
+            if(bulkResult != null)
+            {
+                string action = data.IsAdd ? "added to" : "removed from";
+
+                _successMessage =
+                    $"Role '{data.RoleName}' {action} {bulkResult.SucceededCount} user(s)." +
+                    (bulkResult.FailedCount > 0 ? $" {bulkResult.FailedCount} failed." : "");
+
+                if(bulkResult.Errors is { Count: > 0 })
+                    _errorMessage = string.Join(" ", bulkResult.Errors);
+
+                _selectedUsers.Clear();
+                await LoadUsersAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
+    async Task OpenBulkLockoutDialog()
+    {
+        DialogParameters<BulkLockoutDialog> parameters = new()
+        {
+            {
+                x => x.UserCount, _selectedUsers.Count
+            }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<BulkLockoutDialog>("Bulk Lockout", parameters,
+                                                                                   new DialogOptions
+                                                                                   {
+                                                                                       MaxWidth = MaxWidth.ExtraSmall,
+                                                                                       FullWidth = true
+                                                                                   });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false, Data: bool enable })
+        {
+            List<string> userIds = _selectedUsers.Select(u => u.Id).ToList();
+
+            (ApiClient.Models.BulkOperationResult? bulkResult, string? errorMessage) =
+                await UsersService.BulkSetLockoutAsync(userIds, enable);
+
+            if(bulkResult != null)
+            {
+                string action = enable ? "enabled" : "disabled";
+
+                _successMessage =
+                    $"Lockout {action} for {bulkResult.SucceededCount} user(s)." +
+                    (bulkResult.FailedCount > 0 ? $" {bulkResult.FailedCount} failed." : "");
+
+                if(bulkResult.Errors is { Count: > 0 })
+                    _errorMessage = string.Join(" ", bulkResult.Errors);
+
+                _selectedUsers.Clear();
                 await LoadUsersAsync();
             }
             else

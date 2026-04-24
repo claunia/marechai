@@ -301,4 +301,177 @@ public class UsersController(UserManager<ApplicationUser> userManager) : Control
 
         return Ok(roles);
     }
+
+    [HttpPost("bulk-delete")]
+    [ProducesResponseType(typeof(BulkOperationResult), StatusCodes.Status200OK,
+                          Description = "Deletes multiple users.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public async Task<ActionResult<BulkOperationResult>> BulkDelete([FromBody] BulkUserIdsRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        var result = new BulkOperationResult
+        {
+            Errors = []
+        };
+
+        foreach(string userId in request.UserIds)
+        {
+            ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                result.FailedCount++;
+                result.Errors.Add($"User '{userId}' not found.");
+
+                continue;
+            }
+
+            IdentityResult deleteResult = await userManager.DeleteAsync(user);
+
+            if(deleteResult.Succeeded)
+                result.SucceededCount++;
+            else
+            {
+                result.FailedCount++;
+                result.Errors.Add($"Failed to delete '{user.Email}': {string.Join(", ", deleteResult.Errors.Select(e => e.Description))}");
+            }
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPost("bulk-add-role")]
+    [ProducesResponseType(typeof(BulkOperationResult), StatusCodes.Status200OK,
+                          Description = "Adds a role to multiple users.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public async Task<ActionResult<BulkOperationResult>> BulkAddRole([FromBody] BulkRoleRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        var result = new BulkOperationResult
+        {
+            Errors = []
+        };
+
+        foreach(string userId in request.UserIds)
+        {
+            ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                result.FailedCount++;
+                result.Errors.Add($"User '{userId}' not found.");
+
+                continue;
+            }
+
+            IdentityResult roleResult = await userManager.AddToRoleAsync(user, request.RoleName);
+
+            if(roleResult.Succeeded)
+                result.SucceededCount++;
+            else
+            {
+                result.FailedCount++;
+                result.Errors.Add($"Failed to add role to '{user.Email}': {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+            }
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPost("bulk-remove-role")]
+    [ProducesResponseType(typeof(BulkOperationResult), StatusCodes.Status200OK,
+                          Description = "Removes a role from multiple users.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public async Task<ActionResult<BulkOperationResult>> BulkRemoveRole([FromBody] BulkRoleRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        var result = new BulkOperationResult
+        {
+            Errors = []
+        };
+
+        foreach(string userId in request.UserIds)
+        {
+            ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                result.FailedCount++;
+                result.Errors.Add($"User '{userId}' not found.");
+
+                continue;
+            }
+
+            IdentityResult roleResult = await userManager.RemoveFromRoleAsync(user, request.RoleName);
+
+            if(roleResult.Succeeded)
+                result.SucceededCount++;
+            else
+            {
+                result.FailedCount++;
+                result.Errors.Add($"Failed to remove role from '{user.Email}': {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+            }
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPost("bulk-lockout")]
+    [ProducesResponseType(typeof(BulkOperationResult), StatusCodes.Status200OK,
+                          Description = "Enables or disables lockout for multiple users.")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    public async Task<ActionResult<BulkOperationResult>> BulkLockout([FromBody] BulkLockoutRequest request)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        var result = new BulkOperationResult
+        {
+            Errors = []
+        };
+
+        foreach(string userId in request.UserIds)
+        {
+            ApplicationUser user = await userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                result.FailedCount++;
+                result.Errors.Add($"User '{userId}' not found.");
+
+                continue;
+            }
+
+            user.LockoutEnabled = request.Enable;
+            IdentityResult updateResult = await userManager.UpdateAsync(user);
+
+            if(updateResult.Succeeded)
+                result.SucceededCount++;
+            else
+            {
+                result.FailedCount++;
+                result.Errors.Add($"Failed to update lockout for '{user.Email}': {string.Join(", ", updateResult.Errors.Select(e => e.Description))}");
+            }
+        }
+
+        return Ok(result);
+    }
 }

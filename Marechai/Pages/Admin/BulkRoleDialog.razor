@@ -1,0 +1,45 @@
+@using MudBlazor
+@inject UsersService UsersService
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body2" Class="mb-4">Apply role operation to <strong>@UserCount user(s)</strong></MudText>
+
+        <MudRadioGroup T="bool" @bind-Value="_isAdd">
+            <MudRadio Value="true" Color="Color.Primary">Add role</MudRadio>
+            <MudRadio Value="false" Color="Color.Secondary">Remove role</MudRadio>
+        </MudRadioGroup>
+
+        <MudSelect T="string" @bind-Value="_selectedRole" Label="Select role" Variant="Variant.Outlined" Dense="true" Class="mt-4">
+            @foreach(string role in AvailableRoles)
+            {
+                <MudSelectItem T="string" Value="role">@role</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit"
+                   Disabled="string.IsNullOrWhiteSpace(_selectedRole)">Apply</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    bool    _isAdd        = true;
+    string? _selectedRole;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public int UserCount { get; set; }
+
+    [Parameter]
+    public List<string> AvailableRoles { get; set; } = [];
+
+    protected override void OnInitialized() => _selectedRole = AvailableRoles.FirstOrDefault();
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(new BulkRoleDialogResult(_selectedRole!, _isAdd)));
+}
