@@ -315,4 +315,84 @@
         <value>Unknown</value>
         <comment>Unknown, referring to the number of transistors</comment>
     </data>
+    <data name="GPU Management" xml:space="preserve">
+        <value>GPU Management</value>
+        <comment>Admin page title for GPU management</comment>
+    </data>
+    <data name="Manage GPUs, specifications, and supported resolutions." xml:space="preserve">
+        <value>Manage GPUs, specifications, and supported resolutions.</value>
+        <comment>Admin page subtitle for GPU management</comment>
+    </data>
+    <data name="Add GPU" xml:space="preserve">
+        <value>Add GPU</value>
+        <comment>Button to add a new GPU</comment>
+    </data>
+    <data name="Edit GPU" xml:space="preserve">
+        <value>Edit GPU</value>
+        <comment>Dialog title when editing a GPU</comment>
+    </data>
+    <data name="Delete GPU" xml:space="preserve">
+        <value>Delete GPU</value>
+        <comment>Button tooltip to delete a GPU</comment>
+    </data>
+    <data name="GPU created successfully." xml:space="preserve">
+        <value>GPU created successfully.</value>
+        <comment>Success message after creating a GPU</comment>
+    </data>
+    <data name="GPU updated successfully." xml:space="preserve">
+        <value>GPU updated successfully.</value>
+        <comment>Success message after updating a GPU</comment>
+    </data>
+    <data name="GPU deleted successfully." xml:space="preserve">
+        <value>GPU deleted successfully.</value>
+        <comment>Success message after deleting a GPU</comment>
+    </data>
+    <data name="Are you sure you want to delete GPU '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Are you sure you want to delete GPU '{0}'? This action cannot be undone.</value>
+        <comment>Delete confirmation message for a GPU</comment>
+    </data>
+    <data name="Name is required." xml:space="preserve">
+        <value>Name is required.</value>
+        <comment>Validation error when GPU name is empty</comment>
+    </data>
+    <data name="Add Resolution" xml:space="preserve">
+        <value>Add Resolution</value>
+        <comment>Button to add a resolution to a GPU</comment>
+    </data>
+    <data name="Search Resolution" xml:space="preserve">
+        <value>Search Resolution</value>
+        <comment>Label for resolution search autocomplete</comment>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Search Company</value>
+        <comment>Label for company search autocomplete</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancel</value>
+        <comment>Cancel button in dialog</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Save</value>
+        <comment>Save button in dialog</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
+        <comment>Grid column header for action buttons</comment>
+    </data>
+    <data name="{0} colors" xml:space="preserve">
+        <value>{0} colors</value>
+        <comment>Resolution color count display</comment>
+    </data>
+    <data name="{0} grays" xml:space="preserve">
+        <value>{0} grays</value>
+        <comment>Resolution grayscale count display</comment>
+    </data>
+    <data name="{0} characters" xml:space="preserve">
+        <value>{0} characters</value>
+        <comment>Resolution character mode display</comment>
+    </data>
+    <data name="{0} colors from {1} palette" xml:space="preserve">
+        <value>{0} colors from {1} palette</value>
+        <comment>Resolution color count with palette display</comment>
+    </data>
 </root>

@@ -23,9 +23,11 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
@@ -57,6 +59,60 @@ public class GpusService(Marechai.ApiClient.Client client)
         }
     }
 
+    public async Task<(long? id, string? error)> CreateAsync(GpuDto dto)
+    {
+        try
+        {
+            long? id = await client.Gpus.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, GpuDto dto)
+    {
+        try
+        {
+            await client.Gpus[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    {
+        try
+        {
+            await client.Gpus[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<List<ResolutionByGpuDto>> GetResolutionsByGpuAsync(int gpuId)
     {
         try
@@ -69,6 +125,56 @@ public class GpusService(Marechai.ApiClient.Client client)
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<List<ResolutionDto>> GetAllResolutionsAsync()
+    {
+        try
+        {
+            List<ResolutionDto>? resolutions = await client.Resolutions.GetAsync();
+
+            return resolutions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> AddResolutionToGpuAsync(ResolutionByGpuDto dto)
+    {
+        try
+        {
+            long? id = await client.ResolutionsByGpu.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveResolutionFromGpuAsync(long id)
+    {
+        try
+        {
+            await client.ResolutionsByGpu[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
         }
     }
 
@@ -91,6 +197,20 @@ public class GpusService(Marechai.ApiClient.Client client)
             List<MachineDto>? machines = await client.Gpus[gpuId].Machines.GetAsync();
 
             return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetCompaniesAsync()
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Companies.GetAsync();
+
+            return companies ?? [];
         }
         catch
         {
