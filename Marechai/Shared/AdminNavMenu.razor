@@ -26,12 +26,17 @@
 }
 @inject StringLocalizer<NavMenu> L
 
-<AuthorizeView Roles="UberAdmin">
+<AuthorizeView Roles="Admin, UberAdmin">
     <Authorized>
         <MudNavMenu>
             <MudNavLink Icon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => OnSwitchToNormalMode.InvokeAsync())">@L["Back to Navigation"]</MudNavLink>
             <MudDivider Class="my-2"/>
-            <MudNavLink Href="/admin/users" Icon="@Icons.Material.Filled.AdminPanelSettings">@L["User Management"]</MudNavLink>
+            <AuthorizeView Roles="UberAdmin" Context="uberAdminContext">
+                <Authorized>
+                    <MudNavLink Href="/admin/users" Icon="@Icons.Material.Filled.AdminPanelSettings">@L["User Management"]</MudNavLink>
+                </Authorized>
+            </AuthorizeView>
+            <MudNavLink Href="/admin/companies" Icon="@Icons.Material.Filled.Business">@L["Company Management"]</MudNavLink>
         </MudNavMenu>
     </Authorized>
 </AuthorizeView>

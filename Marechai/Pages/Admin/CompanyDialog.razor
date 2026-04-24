@@ -1,0 +1,375 @@
+@using Marechai.ApiClient.Models
+@using System.Threading
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Name"
+                      Label="Name"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      RequiredError="Name is required."
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="LegalName"
+                      Label="Legal Name"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudSelect @bind-Value="StatusValue" Label="Status" Variant="Variant.Outlined" Class="mb-4">
+            <MudSelectItem Value="0">Unknown</MudSelectItem>
+            <MudSelectItem Value="1">Active</MudSelectItem>
+            <MudSelectItem Value="2">Sold</MudSelectItem>
+            <MudSelectItem Value="3">Merged</MudSelectItem>
+            <MudSelectItem Value="4">Bankrupt</MudSelectItem>
+            <MudSelectItem Value="5">Defunct</MudSelectItem>
+            <MudSelectItem Value="6">Renamed</MudSelectItem>
+        </MudSelect>
+
+        <MudDatePicker @bind-Date="Founded"
+                       Label="Founded"
+                       Variant="Variant.Outlined"
+                       Clearable="true"
+                       Class="mb-2"/>
+
+        <MudStack Row="true" Class="mb-4">
+            <MudCheckBox @bind-Value="FoundedDayIsUnknown" Label="Day unknown"/>
+            <MudCheckBox @bind-Value="FoundedMonthIsUnknown" Label="Month unknown"/>
+        </MudStack>
+
+        @if(StatusValue is >= 2 and <= 6)
+        {
+            <MudDatePicker @bind-Date="Sold"
+                           Label="Event Date (Sold/Merged/etc.)"
+                           Variant="Variant.Outlined"
+                           Clearable="true"
+                           Class="mb-2"/>
+
+            <MudStack Row="true" Class="mb-4">
+                <MudCheckBox @bind-Value="SoldDayIsUnknown" Label="Day unknown"/>
+                <MudCheckBox @bind-Value="SoldMonthIsUnknown" Label="Month unknown"/>
+            </MudStack>
+
+            <MudAutocomplete T="CompanyDto"
+                             Label="Sold To / Merged With"
+                             @bind-Value="_selectedSoldToCompany"
+                             SearchFunc="SearchCompanies"
+                             ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                             Variant="Variant.Outlined"
+                             Clearable="true"
+                             Class="mb-4"/>
+        }
+
+        <MudAutocomplete T="Iso31661NumericDto"
+                         Label="Country"
+                         @bind-Value="_selectedCountry"
+                         SearchFunc="SearchCountries"
+                         ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                         Variant="Variant.Outlined"
+                         Clearable="true"
+                         Class="mb-4"/>
+
+        <MudTextField @bind-Value="Address"
+                      Label="Address"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="City"
+                      Label="City"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="Province"
+                      Label="Province / State"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="PostalCode"
+                      Label="Postal Code"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="Website"
+                      Label="Website"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="Twitter"
+                      Label="Twitter"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        <MudTextField @bind-Value="Facebook"
+                      Label="Facebook"
+                      Variant="Variant.Outlined"
+                      Class="mb-4"/>
+
+        @if(!string.IsNullOrWhiteSpace(_validationError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+        }
+
+        @if(!IsNew && _people is not null)
+        {
+            <MudDivider Class="my-4"/>
+            <MudText Typo="Typo.h6" Class="mb-2">People</MudText>
+
+            @if(_people.Count > 0)
+            {
+                <MudList T="PersonByCompanyDto" Dense="true">
+                    @foreach(PersonByCompanyDto person in _people)
+                    {
+                        <MudListItem T="PersonByCompanyDto">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudText>@GetPersonDisplayName(person) — @(person.Position ?? "N/A") @FormatDateRange(person)</MudText>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Error" OnClick="() => ConfirmRemovePerson(person)"/>
+                            </MudStack>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+
+            <MudPaper Class="pa-4 mt-2" Elevation="1">
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Add Person</MudText>
+
+                <MudAutocomplete T="PersonDto"
+                                 Label="Search Person"
+                                 @bind-Value="_selectedPerson"
+                                 SearchFunc="SearchPeople"
+                                 ToStringFunc="@(p => p is null ? string.Empty : p.DisplayName ?? p.Alias ?? $"{p.Name} {p.Surname}")"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-2"/>
+
+                <MudTextField @bind-Value="_newPersonPosition"
+                              Label="Position"
+                              Variant="Variant.Outlined"
+                              Class="mb-2"/>
+
+                <MudStack Row="true" Class="mb-2">
+                    <MudDatePicker @bind-Date="_newPersonStart" Label="Start Date" Variant="Variant.Outlined" Clearable="true"/>
+                    <MudDatePicker @bind-Date="_newPersonEnd" Label="End Date" Variant="Variant.Outlined" Clearable="true"/>
+                </MudStack>
+
+                <MudCheckBox @bind-Value="_newPersonOngoing" Label="Ongoing" Class="mb-2"/>
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           OnClick="AddPerson"
+                           Disabled="@(_selectedPerson is null)">Add</MudButton>
+            </MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    CompanyDto?          _selectedSoldToCompany;
+    Iso31661NumericDto?  _selectedCountry;
+    string?              _validationError;
+    PersonDto?   _selectedPerson;
+    string?      _newPersonPosition;
+    DateTime?    _newPersonStart;
+    DateTime?    _newPersonEnd;
+    bool         _newPersonOngoing;
+
+    List<Iso31661NumericDto>?  _countries;
+    List<CompanyDto>?          _allCompanies;
+    List<PersonByCompanyDto>?  _people;
+    List<PersonDto>?           _allPeople;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool      IsNew                 { get; set; }
+    [Parameter] public int       CompanyId             { get; set; }
+    [Parameter] public string    Name                  { get; set; } = string.Empty;
+    [Parameter] public string?   LegalName             { get; set; }
+    [Parameter] public int       StatusValue           { get; set; }
+    [Parameter] public DateTime? Founded               { get; set; }
+    [Parameter] public bool      FoundedDayIsUnknown   { get; set; }
+    [Parameter] public bool      FoundedMonthIsUnknown { get; set; }
+    [Parameter] public DateTime? Sold                  { get; set; }
+    [Parameter] public bool      SoldDayIsUnknown      { get; set; }
+    [Parameter] public bool      SoldMonthIsUnknown    { get; set; }
+    [Parameter] public int?      SoldToId              { get; set; }
+    [Parameter] public int?      CountryId             { get; set; }
+    [Parameter] public string?   Address               { get; set; }
+    [Parameter] public string?   City                  { get; set; }
+    [Parameter] public string?   Province              { get; set; }
+    [Parameter] public string?   PostalCode            { get; set; }
+    [Parameter] public string?   Website               { get; set; }
+    [Parameter] public string?   Twitter               { get; set; }
+    [Parameter] public string?   Facebook              { get; set; }
+
+    [Inject] CompaniesService       CompaniesService       { get; set; } = null!;
+    [Inject] PeopleService          PeopleService          { get; set; } = null!;
+    [Inject] PeopleByCompanyService PeopleByCompanyService { get; set; } = null!;
+    [Inject] IDialogService         DialogService          { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _countries   = await CompaniesService.GetCountriesAsync();
+        _allCompanies = await CompaniesService.GetAsync();
+
+        if(CountryId is not null && _countries is not null)
+            _selectedCountry = _countries.Find(c => c.Id == CountryId);
+
+        if(SoldToId is not null && _allCompanies is not null)
+            _selectedSoldToCompany = _allCompanies.Find(c => c.Id == SoldToId);
+
+        if(!IsNew)
+        {
+            _people   = await PeopleByCompanyService.GetByCompanyAsync(CompanyId);
+            _allPeople = await PeopleService.GetPeopleAsync();
+        }
+    }
+
+    Task<IEnumerable<Iso31661NumericDto>> SearchCountries(string? value, CancellationToken ct)
+    {
+        IEnumerable<Iso31661NumericDto> results = _countries ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _countries?.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> results = _allCompanies ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allCompanies?.Where(c => c.Name.Contains(value, StringComparison.OrdinalIgnoreCase)) ?? [];
+
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<PersonDto>> SearchPeople(string? value, CancellationToken ct)
+    {
+        IEnumerable<PersonDto> results = _allPeople ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+        {
+            results = _allPeople?.Where(p =>
+                (p.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Surname?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Alias?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.DisplayName?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false)) ?? [];
+        }
+
+        return Task.FromResult(results);
+    }
+
+    string FormatDateRange(PersonByCompanyDto person)
+    {
+        string start = person.Start?.Date.ToShortDateString() ?? "?";
+        string end   = person.Ongoing == true ? "present" : person.End?.Date.ToShortDateString() ?? "?";
+
+        return $"({start} \u2013 {end})";
+    }
+
+    static string GetPersonDisplayName(PersonByCompanyDto person) =>
+        person.DisplayName ?? person.Alias ?? $"{person.Name} {person.Surname}";
+
+    async Task AddPerson()
+    {
+        if(_selectedPerson is null) return;
+
+        var dto = new PersonByCompanyDto
+        {
+            CompanyId = CompanyId,
+            PersonId  = _selectedPerson.Id,
+            Position  = _newPersonPosition,
+            Start     = _newPersonStart.HasValue ? new DateTimeOffset(_newPersonStart.Value) : null,
+            End       = _newPersonEnd.HasValue ? new DateTimeOffset(_newPersonEnd.Value) : null,
+            Ongoing   = _newPersonOngoing
+        };
+
+        (long? id, string? error) = await PeopleByCompanyService.CreateAsync(dto);
+
+        if(id is not null)
+        {
+            _people = await PeopleByCompanyService.GetByCompanyAsync(CompanyId);
+            _selectedPerson    = null;
+            _newPersonPosition = null;
+            _newPersonStart    = null;
+            _newPersonEnd      = null;
+            _newPersonOngoing  = false;
+            StateHasChanged();
+        }
+        else
+        {
+            _validationError = error ?? "Failed to add person.";
+        }
+    }
+
+    async Task ConfirmRemovePerson(PersonByCompanyDto person)
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            { x => x.ContentText, $"Remove '{GetPersonDisplayName(person)}' from this company?" }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Remove Person", parameters,
+                                                                                     new DialogOptions
+                                                                                     {
+                                                                                         MaxWidth = MaxWidth.ExtraSmall,
+                                                                                         FullWidth = true
+                                                                                     });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            (bool succeeded, string? error) = await PeopleByCompanyService.DeleteAsync(person.Id ?? 0);
+
+            if(succeeded)
+            {
+                _people = await PeopleByCompanyService.GetByCompanyAsync(CompanyId);
+                StateHasChanged();
+            }
+            else
+            {
+                _validationError = error ?? "Failed to remove person.";
+            }
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(string.IsNullOrWhiteSpace(Name))
+        {
+            _validationError = "Name is required.";
+
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new CompanyDialogResult
+        {
+            Name                  = Name,
+            LegalName             = LegalName,
+            Status                = StatusValue,
+            Founded               = Founded,
+            FoundedDayIsUnknown   = FoundedDayIsUnknown,
+            FoundedMonthIsUnknown = FoundedMonthIsUnknown,
+            Sold                  = Sold,
+            SoldDayIsUnknown      = SoldDayIsUnknown,
+            SoldMonthIsUnknown    = SoldMonthIsUnknown,
+            SoldToId              = _selectedSoldToCompany?.Id,
+            CountryId             = _selectedCountry?.Id,
+            Address               = Address,
+            City                  = City,
+            Province              = Province,
+            PostalCode            = PostalCode,
+            Website               = Website,
+            Twitter               = Twitter,
+            Facebook              = Facebook
+        }));
+    }
+}

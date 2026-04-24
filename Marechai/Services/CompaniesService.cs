@@ -23,10 +23,12 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
 using Microsoft.Extensions.Localization;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
@@ -58,6 +60,60 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         }
     }
 
+    public async Task<(int? id, string? error)> CreateAsync(CompanyDto dto)
+    {
+        try
+        {
+            int? id = await client.Companies.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, CompanyDto dto)
+    {
+        try
+        {
+            await client.Companies[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    {
+        try
+        {
+            await client.Companies[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<List<MachineDto>> GetMachinesAsync(int id)
     {
         try
@@ -83,6 +139,71 @@ public class CompaniesService(Marechai.ApiClient.Client client, IStringLocalizer
         catch
         {
             return null;
+        }
+    }
+
+    public async Task<List<CompanyDescriptionDto>> GetDescriptionsAsync(int companyId)
+    {
+        try
+        {
+            List<CompanyDescriptionDto>? descriptions = await client.Companies[companyId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int             companyId,
+                                                                                      CompanyDescriptionDto dto)
+    {
+        try
+        {
+            await client.Companies[companyId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int companyId, string languageCode)
+    {
+        try
+        {
+            await client.Companies[companyId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
+    {
+        try
+        {
+            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+
+            return countries ?? [];
+        }
+        catch
+        {
+            return [];
         }
     }
 

@@ -26,23 +26,20 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marechai.ApiClient.Companies.Logos.Upload;
 using Marechai.ApiClient.Models;
 using Microsoft.Kiota.Abstractions;
-using ChangeYearBody =
-    Marechai.ApiClient.Companies.Logos.ChangeYear.Item.ChangeYearItemRequestBuilder.ChangeYearPutRequestBody;
 
 namespace Marechai.Services;
 
-public class CompanyLogosService(Marechai.ApiClient.Client client)
+public class PeopleByCompanyService(Marechai.ApiClient.Client client)
 {
-    public async Task<List<CompanyLogoDto>> GetByCompany(int companyId)
+    public async Task<List<PersonByCompanyDto>> GetByCompanyAsync(int companyId)
     {
         try
         {
-            List<CompanyLogoDto>? logos = await client.Companies[companyId].Logos.GetAsync();
+            List<PersonByCompanyDto>? people = await client.Companies[companyId].People.GetAsync();
 
-            return logos ?? [];
+            return people ?? [];
         }
         catch
         {
@@ -50,11 +47,29 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> DeleteAsync(int logoId)
+    public async Task<(long? id, string? error)> CreateAsync(PersonByCompanyDto dto)
     {
         try
         {
-            await client.Companies.Logos[logoId].DeleteAsync();
+            long? id = await client.PeopleByCompany.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateAsync(long id, PersonByCompanyDto dto)
+    {
+        try
+        {
+            await client.PeopleByCompany[id].PutAsync(dto);
 
             return (true, null);
         }
@@ -68,16 +83,11 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<(bool succeeded, string? error)> ChangeYearAsync(int logoId, int? year)
+    public async Task<(bool succeeded, string? error)> DeleteAsync(long id)
     {
         try
         {
-            var body = new ChangeYearBody
-            {
-                Integer = year
-            };
-
-            await client.Companies.Logos.ChangeYear[logoId].PutAsync(body);
+            await client.PeopleByCompany[id].DeleteAsync();
 
             return (true, null);
         }
@@ -88,31 +98,6 @@ public class CompanyLogosService(Marechai.ApiClient.Client client)
         catch(Exception ex)
         {
             return (false, ex.Message);
-        }
-    }
-
-    public async Task<(CompanyLogoDto? logo, string? error)> UploadAsync(int companyId, byte[] svgBytes, int? year)
-    {
-        try
-        {
-            var body = new UploadPostRequestBody
-            {
-                CompanyId = companyId,
-                File      = svgBytes,
-                Year      = year
-            };
-
-            CompanyLogoDto? result = await client.Companies.Logos.Upload.PostAsync(body);
-
-            return (result, null);
-        }
-        catch(ApiException ex)
-        {
-            return (null, ex.Message);
-        }
-        catch(Exception ex)
-        {
-            return (null, ex.Message);
         }
     }
 }

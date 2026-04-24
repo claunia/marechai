@@ -1,0 +1,269 @@
+/******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Marechai.ApiClient.Models;
+using MudBlazor;
+
+namespace Marechai.Pages.Admin;
+
+public partial class Companies
+{
+    string?          _errorMessage;
+    bool             _isLoading = true;
+    string?          _successMessage;
+    List<CompanyDto>? _companies;
+
+    protected override async Task OnInitializedAsync() => await LoadCompaniesAsync();
+
+    async Task LoadCompaniesAsync()
+    {
+        _isLoading = true;
+        _companies = await CompaniesService.GetAsync();
+        _isLoading = false;
+    }
+
+    Func<CompanyDto, bool> QuickFilter => company =>
+        true; // MudDataGrid built-in filtering handles this
+
+    static string GetStatusText(int? status) => status switch
+    {
+        0 => "Unknown",
+        1 => "Active",
+        2 => "Sold",
+        3 => "Merged",
+        4 => "Bankrupt",
+        5 => "Defunct",
+        6 => "Renamed",
+        _ => "Unknown"
+    };
+
+    static Color GetStatusColor(int? status) => status switch
+    {
+        1 => Color.Success,
+        2 => Color.Warning,
+        3 => Color.Info,
+        4 => Color.Error,
+        5 => Color.Dark,
+        6 => Color.Secondary,
+        _ => Color.Default
+    };
+
+    static string FormatDate(DateTimeOffset? date, bool? dayUnknown, bool? monthUnknown)
+    {
+        if(date is null) return "";
+
+        if(monthUnknown == true) return date.Value.Year.ToString();
+        if(dayUnknown == true) return date.Value.ToString("MMMM yyyy");
+
+        return date.Value.Date.ToShortDateString();
+    }
+
+    async Task OpenAddCompanyDialog()
+    {
+        DialogParameters<CompanyDialog> parameters = new()
+        {
+            { x => x.IsNew, true }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<CompanyDialog>("Add Company", parameters,
+                                                                               new DialogOptions
+                                                                               {
+                                                                                   MaxWidth  = MaxWidth.Medium,
+                                                                                   FullWidth = true
+                                                                               });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false, Data: CompanyDialogResult data })
+        {
+            var dto = new CompanyDto
+            {
+                Name                  = data.Name,
+                LegalName             = data.LegalName,
+                Status                = data.Status,
+                Founded               = data.Founded.HasValue ? new DateTimeOffset(data.Founded.Value) : null,
+                FoundedDayIsUnknown   = data.FoundedDayIsUnknown,
+                FoundedMonthIsUnknown = data.FoundedMonthIsUnknown,
+                Sold                  = data.Sold.HasValue ? new DateTimeOffset(data.Sold.Value) : null,
+                SoldDayIsUnknown      = data.SoldDayIsUnknown,
+                SoldMonthIsUnknown    = data.SoldMonthIsUnknown,
+                SoldToId              = data.SoldToId,
+                CountryId             = data.CountryId,
+                Address               = data.Address,
+                City                  = data.City,
+                Province              = data.Province,
+                PostalCode            = data.PostalCode,
+                Website               = data.Website,
+                Twitter               = data.Twitter,
+                Facebook              = data.Facebook
+            };
+
+            (int? id, string? errorMessage) = await CompaniesService.CreateAsync(dto);
+
+            if(id is not null)
+            {
+                _successMessage = "Company created successfully.";
+                await LoadCompaniesAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
+    async Task OpenEditCompanyDialog(CompanyDto company)
+    {
+        DialogParameters<CompanyDialog> parameters = new()
+        {
+            { x => x.IsNew, false },
+            { x => x.CompanyId, company.Id ?? 0 },
+            { x => x.Name, company.Name },
+            { x => x.LegalName, company.LegalName },
+            { x => x.StatusValue, company.Status ?? 0 },
+            { x => x.Founded, company.Founded?.DateTime },
+            { x => x.FoundedDayIsUnknown, company.FoundedDayIsUnknown ?? false },
+            { x => x.FoundedMonthIsUnknown, company.FoundedMonthIsUnknown ?? false },
+            { x => x.Sold, company.Sold?.DateTime },
+            { x => x.SoldDayIsUnknown, company.SoldDayIsUnknown ?? false },
+            { x => x.SoldMonthIsUnknown, company.SoldMonthIsUnknown ?? false },
+            { x => x.SoldToId, company.SoldToId },
+            { x => x.CountryId, company.CountryId },
+            { x => x.Address, company.Address },
+            { x => x.City, company.City },
+            { x => x.Province, company.Province },
+            { x => x.PostalCode, company.PostalCode },
+            { x => x.Website, company.Website },
+            { x => x.Twitter, company.Twitter },
+            { x => x.Facebook, company.Facebook }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<CompanyDialog>("Edit Company", parameters,
+                                                                               new DialogOptions
+                                                                               {
+                                                                                   MaxWidth  = MaxWidth.Medium,
+                                                                                   FullWidth = true
+                                                                               });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false, Data: CompanyDialogResult data })
+        {
+            var dto = new CompanyDto
+            {
+                Id                    = company.Id,
+                Name                  = data.Name,
+                LegalName             = data.LegalName,
+                Status                = data.Status,
+                Founded               = data.Founded.HasValue ? new DateTimeOffset(data.Founded.Value) : null,
+                FoundedDayIsUnknown   = data.FoundedDayIsUnknown,
+                FoundedMonthIsUnknown = data.FoundedMonthIsUnknown,
+                Sold                  = data.Sold.HasValue ? new DateTimeOffset(data.Sold.Value) : null,
+                SoldDayIsUnknown      = data.SoldDayIsUnknown,
+                SoldMonthIsUnknown    = data.SoldMonthIsUnknown,
+                SoldToId              = data.SoldToId,
+                CountryId             = data.CountryId,
+                Address               = data.Address,
+                City                  = data.City,
+                Province              = data.Province,
+                PostalCode            = data.PostalCode,
+                Website               = data.Website,
+                Twitter               = data.Twitter,
+                Facebook              = data.Facebook
+            };
+
+            (bool succeeded, string? errorMessage) = await CompaniesService.UpdateAsync(company.Id ?? 0, dto);
+
+            if(succeeded)
+            {
+                _successMessage = "Company updated successfully.";
+                await LoadCompaniesAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
+    async Task ConfirmDeleteCompany(CompanyDto company)
+    {
+        DialogParameters<DeleteConfirmDialog> parameters = new()
+        {
+            {
+                x => x.ContentText,
+                $"Are you sure you want to delete company '{company.Name}'? This action cannot be undone."
+            }
+        };
+
+        IDialogReference dialog = await DialogService.ShowAsync<DeleteConfirmDialog>("Delete Company", parameters,
+                                                                                     new DialogOptions
+                                                                                     {
+                                                                                         MaxWidth  = MaxWidth.ExtraSmall,
+                                                                                         FullWidth = true
+                                                                                     });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+        {
+            (bool succeeded, string? errorMessage) = await CompaniesService.DeleteAsync(company.Id ?? 0);
+
+            if(succeeded)
+            {
+                _successMessage = "Company deleted successfully.";
+                await LoadCompaniesAsync();
+            }
+            else
+            {
+                _errorMessage = errorMessage;
+            }
+        }
+    }
+
+    async Task OpenDescriptionsDialog(CompanyDto company)
+    {
+        DialogParameters<CompanyDescriptionDialog> parameters = new()
+        {
+            { x => x.CompanyId, company.Id ?? 0 },
+            { x => x.CompanyName, company.Name }
+        };
+
+        IDialogReference dialog =
+            await DialogService.ShowAsync<CompanyDescriptionDialog>("Company Descriptions", parameters,
+                                                                    new DialogOptions
+                                                                    {
+                                                                        MaxWidth  = MaxWidth.Medium,
+                                                                        FullWidth = true
+                                                                    });
+
+        await dialog.Result;
+    }
+
+    void NavigateToLogos(CompanyDto company) => NavigationManager.NavigateTo($"/admin/companies/{company.Id ?? 0}/logos");
+}

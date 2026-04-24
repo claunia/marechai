@@ -1,0 +1,38 @@
+@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudNumericField T="int?"
+                         @bind-Value="Year"
+                         Label="Year"
+                         Variant="Variant.Outlined"
+                         Min="1000"
+                         Max="3000"
+                         Disabled="_yearUnknown"
+                         Class="mb-4"/>
+
+        <MudCheckBox @bind-Value="_yearUnknown" Label="Year Unknown" T="bool"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    bool _yearUnknown;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public int? Year { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _yearUnknown = Year is null;
+    }
+
+    void Cancel() => MudDialog.Cancel();
+    void Submit() => MudDialog.Close(DialogResult.Ok(_yearUnknown ? (int?)null : Year));
+}

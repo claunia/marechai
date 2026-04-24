@@ -1,0 +1,119 @@
+@{
+    /******************************************************************************
+// MARECHAI: Master repository of computing history artifacts information
+// ----------------------------------------------------------------------------
+//
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as
+//     published by the Free Software Foundation, either version 3 of the
+//     License, or (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+//
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2003-2026 Natalia Portillo
+*******************************************************************************/
+}
+
+@page "/admin/companies/{CompanyId:int}/logos"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@inject CompaniesService CompaniesService
+@inject CompanyLogosService CompanyLogosService
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+@inject ApiAssetUrlProvider Assets
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="GoBack" Style="color: white;"/>
+        <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">Logos — @(_companyName ?? "Loading...")</MudText>
+    </MudStack>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+
+    return;
+}
+
+<MudPaper Elevation="2" Class="rounded-lg pa-4">
+    <MudToolBar Dense="true" Class="mb-4">
+        <MudFileUpload T="IBrowserFile"
+                       FilesChanged="OnFileSelected"
+                       Accept=".svg"
+                       MaximumFileCount="1">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Upload"
+                           Disabled="_isUploading">
+                    @(_isUploading ? "Uploading..." : "Upload SVG")
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadLogosAsync"/>
+    </MudToolBar>
+
+    @if(_logos is { Count: > 0 })
+    {
+        <MudGrid>
+            @foreach(CompanyLogoDto logo in _logos)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Elevation="2">
+                        <MudCardMedia Style="display: flex; justify-content: center; align-items: center; padding: 16px; min-height: 180px; background: #f5f5f5;">
+                            <picture>
+                                <source srcset="@(Assets.BaseUrl)/assets/logos/@(logo.Guid).svg" type="image/svg+xml">
+                                <source srcset="@(Assets.BaseUrl)/assets/logos/webp/1x/@(logo.Guid).webp,
+                                                @(Assets.BaseUrl)/assets/logos/webp/2x/@(logo.Guid).webp 2x,
+                                                @(Assets.BaseUrl)/assets/logos/webp/3x/@(logo.Guid).webp 3x" type="image/webp">
+                                <img alt="Logo" src="@(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png"
+                                     srcset="@(Assets.BaseUrl)/assets/logos/png/1x/@(logo.Guid).png,
+                                             @(Assets.BaseUrl)/assets/logos/png/2x/@(logo.Guid).png 2x,
+                                             @(Assets.BaseUrl)/assets/logos/png/3x/@(logo.Guid).png 3x"
+                                     style="max-height: 150px; max-width: 100%;"/>
+                            </picture>
+                        </MudCardMedia>
+                        <MudCardContent>
+                            <MudText Typo="Typo.body2" Align="Align.Center">@(logo.Year?.ToString() ?? "Year unknown")</MudText>
+                        </MudCardContent>
+                        <MudCardActions Style="justify-content: center;">
+                            <MudButton Variant="Variant.Text" Size="Size.Small" StartIcon="@Icons.Material.Filled.CalendarMonth" OnClick="() => OpenChangeYearDialog(logo)">Year</MudButton>
+                            <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="() => ConfirmDeleteLogo(logo)">Delete</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1" Align="Align.Center" Class="pa-8" Style="color: rgba(0,0,0,0.5);">No logos uploaded yet.</MudText>
+    }
+</MudPaper>

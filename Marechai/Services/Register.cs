@@ -49,6 +49,7 @@ public static class Register
         services.AddScoped<DocumentsService>();
         services.AddScoped<MagazinesService>();
         services.AddScoped<PeopleService>();
+        services.AddScoped<PeopleByCompanyService>();
         services.AddScoped<SoftwareService>();
         services.AddScoped<AuthService>();
         services.AddScoped<UsersService>();
