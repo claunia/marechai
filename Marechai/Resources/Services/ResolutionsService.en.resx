@@ -123,112 +123,84 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <data name="News" xml:space="preserve">
-    <value>Noticias</value>
-        <comment>News</comment>
-  </data>
-    <data name="Hello {0}!" xml:space="preserve">
-    <value>¡Hola {0}!</value>
-        <comment>Salutes logged-in user</comment>
-  </data>
-    <data name="Log out" xml:space="preserve">
-    <value>Cerrar sesión</value>
-        <comment>Log out</comment>
-  </data>
-    <data name="Register" xml:space="preserve">
-    <value>Registrarse</value>
-        <comment>Register</comment>
-  </data>
-    <data name="Log in" xml:space="preserve">
-    <value>Iniciar sesión</value>
-        <comment>Log in</comment>
-  </data>
-    <data name="About" xml:space="preserve">
-    <value>Acerca de</value>
-        <comment>About</comment>
-  </data>
-    <data name="Contact" xml:space="preserve">
-    <value>Contacto</value>
-        <comment>Contact</comment>
-  </data>
-    <data name="Companies" xml:space="preserve">
-    <value>Compañías</value>
-        <comment>Companies</comment>
-  </data>
-    <data name="Computers" xml:space="preserve">
-    <value>Ordenadores</value>
-        <comment>Computers</comment>
-  </data>
-    <data name="Consoles" xml:space="preserve">
-    <value>Consolas</value>
-        <comment>Videogame consoles</comment>
-  </data>
-    <data name="Books" xml:space="preserve">
-    <value>Libros</value>
-        <comment>Books navigation link</comment>
-  </data>
-    <data name="Documents" xml:space="preserve">
-    <value>Documentos</value>
-        <comment>Documents navigation link</comment>
-  </data>
-    <data name="Magazines" xml:space="preserve">
-    <value>Revistas</value>
-        <comment>Magazines navigation link</comment>
-  </data>
-    <data name="Admin area" xml:space="preserve">
-    <value>Administración</value>
-        <comment>Administration area</comment>
-  </data>
-    <data name="GPUs" xml:space="preserve">
-    <value>GPUs</value>
-        <comment>Graphics Processing Units navigation link</comment>
-  </data>
-    <data name="Processors" xml:space="preserve">
-    <value>Procesadores</value>
-        <comment>Processors navigation link</comment>
-  </data>
-    <data name="Sound synthesizers" xml:space="preserve">
-    <value>Sintetizadores de sonido</value>
-        <comment>Sound synthesizers navigation link</comment>
-  </data>
-    <data name="People" xml:space="preserve">
-    <value>Personas</value>
-        <comment>People navigation link</comment>
-  </data>
-    <data name="Software" xml:space="preserve">
-    <value>Software</value>
-        <comment>Software navigation link</comment>
-  </data>
-    <data name="Administration" xml:space="preserve">
-    <value>Administración</value>
-        <comment>Administration mode toggle button</comment>
-  </data>
-    <data name="Back to Navigation" xml:space="preserve">
-    <value>Volver a la navegación</value>
-        <comment>Return to normal navigation from admin mode</comment>
-  </data>
-    <data name="User Management" xml:space="preserve">
-    <value>Gestión de usuarios</value>
-        <comment>User management admin link</comment>
-  </data>
-    <data name="GPU Management" xml:space="preserve">
-    <value>Gestión de GPUs</value>
-        <comment>GPU management admin link</comment>
-  </data>
-    <data name="Processor Management" xml:space="preserve">
-    <value>Gestión de procesadores</value>
-        <comment>Processor management admin link</comment>
-  </data>
-    <data name="Instruction Set Management" xml:space="preserve">
-    <value>Gestión de conjuntos de instrucciones</value>
-        <comment>Instruction set management admin link</comment>
-  </data>
-    <data name="Instruction Set Extension Management" xml:space="preserve">
-    <value>Gestión de extensiones de conjuntos de instrucciones</value>
-        <comment>Instruction set extension management admin link</comment>
-  </data>
     <data name="Resolution Management" xml:space="preserve">
-    <value>Gestión de resoluciones</value>
-        <comment>Resolution management admin link</comment>
-  </data>
+        <value>Resolution Management</value>
+        <comment>Admin page title for resolution management</comment>
+    </data>
+    <data name="Manage display resolutions for GPUs and screens." xml:space="preserve">
+        <value>Manage display resolutions for GPUs and screens.</value>
+        <comment>Admin page subtitle for resolution management</comment>
+    </data>
+    <data name="Add Resolution" xml:space="preserve">
+        <value>Add Resolution</value>
+        <comment>Button to add a new resolution</comment>
+    </data>
+    <data name="Edit Resolution" xml:space="preserve">
+        <value>Edit Resolution</value>
+        <comment>Dialog title when editing a resolution</comment>
+    </data>
+    <data name="Delete Resolution" xml:space="preserve">
+        <value>Delete Resolution</value>
+        <comment>Button tooltip to delete a resolution</comment>
+    </data>
+    <data name="Resolution created successfully." xml:space="preserve">
+        <value>Resolution created successfully.</value>
+        <comment>Success message after creating a resolution</comment>
+    </data>
+    <data name="Resolution updated successfully." xml:space="preserve">
+        <value>Resolution updated successfully.</value>
+        <comment>Success message after updating a resolution</comment>
+    </data>
+    <data name="Resolution deleted successfully." xml:space="preserve">
+        <value>Resolution deleted successfully.</value>
+        <comment>Success message after deleting a resolution</comment>
+    </data>
+    <data name="Are you sure you want to delete resolution '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Are you sure you want to delete resolution '{0}'? This action cannot be undone.</value>
+        <comment>Delete confirmation message for a resolution</comment>
+    </data>
+    <data name="Width" xml:space="preserve">
+        <value>Width</value>
+        <comment>Width field label</comment>
+    </data>
+    <data name="Height" xml:space="preserve">
+        <value>Height</value>
+        <comment>Height field label</comment>
+    </data>
+    <data name="Colors" xml:space="preserve">
+        <value>Colors</value>
+        <comment>Colors field label</comment>
+    </data>
+    <data name="Palette" xml:space="preserve">
+        <value>Palette</value>
+        <comment>Palette field label</comment>
+    </data>
+    <data name="Character mode" xml:space="preserve">
+        <value>Character mode</value>
+        <comment>Character mode checkbox label</comment>
+    </data>
+    <data name="Grayscale" xml:space="preserve">
+        <value>Grayscale</value>
+        <comment>Grayscale checkbox label</comment>
+    </data>
+    <data name="Width is required." xml:space="preserve">
+        <value>Width is required.</value>
+        <comment>Validation error when width is empty</comment>
+    </data>
+    <data name="Height is required." xml:space="preserve">
+        <value>Height is required.</value>
+        <comment>Validation error when height is empty</comment>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
+        <comment>Grid column header for action buttons</comment>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancel</value>
+        <comment>Cancel button in dialog</comment>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Save</value>
+        <comment>Save button in dialog</comment>
+    </data>
 </root>

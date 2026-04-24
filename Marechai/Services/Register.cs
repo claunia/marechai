@@ -46,6 +46,7 @@ public static class Register
         services.AddScoped<InstructionSetsService>();
         services.AddScoped<InstructionSetExtensionsService>();
         services.AddScoped<ProcessorsService>();
+        services.AddScoped<ResolutionsService>();
         services.AddScoped<SoundSynthsService>();
         services.AddScoped<BooksService>();
         services.AddScoped<DocumentsService>();

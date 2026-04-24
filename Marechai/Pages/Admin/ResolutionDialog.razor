@@ -1,0 +1,78 @@
+@using Marechai.Services
+
+@inject IStringLocalizer<ResolutionsService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudNumericField @bind-Value="Width"
+                         Label="@L["Width"]"
+                         Variant="Variant.Outlined"
+                         Required="true"
+                         RequiredError="@L["Width is required."]"
+                         Min="1"
+                         Class="mb-4"/>
+
+        <MudNumericField @bind-Value="Height"
+                         Label="@L["Height"]"
+                         Variant="Variant.Outlined"
+                         Required="true"
+                         RequiredError="@L["Height is required."]"
+                         Min="1"
+                         Class="mb-4"/>
+
+        <MudNumericField @bind-Value="Colors"
+                         Label="@L["Colors"]"
+                         Variant="Variant.Outlined"
+                         Min="2L"
+                         Class="mb-4"/>
+
+        <MudNumericField @bind-Value="Palette"
+                         Label="@L["Palette"]"
+                         Variant="Variant.Outlined"
+                         Min="2L"
+                         Class="mb-4"/>
+
+        <MudCheckBox @bind-Value="Chars"
+                     Label="@L["Character mode"]"
+                     Class="mb-4"/>
+
+        <MudCheckBox @bind-Value="Grayscale"
+                     Label="@L["Grayscale"]"
+                     Class="mb-4"/>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool  IsNew     { get; set; }
+    [Parameter] public int   Width     { get; set; } = 1;
+    [Parameter] public int   Height    { get; set; } = 1;
+    [Parameter] public long? Colors    { get; set; }
+    [Parameter] public long? Palette   { get; set; }
+    [Parameter] public bool  Chars     { get; set; }
+    [Parameter] public bool  Grayscale { get; set; }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(Width < 1 || Height < 1)
+            return;
+
+        MudDialog.Close(DialogResult.Ok(new ResolutionDialogResult
+        {
+            Width     = Width,
+            Height    = Height,
+            Colors    = Colors,
+            Palette   = Palette,
+            Chars     = Chars,
+            Grayscale = Grayscale
+        }));
+    }
+}
