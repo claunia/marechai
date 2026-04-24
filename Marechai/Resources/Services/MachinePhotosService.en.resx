@@ -255,4 +255,52 @@
     <value>Unknown</value>
         <comment>Unknown, referring to user comments</comment>
   </data>
+    <data name="Machine Photos" xml:space="preserve">
+        <value>Machine Photos</value>
+    </data>
+    <data name="Manage photos for machine '{0}'." xml:space="preserve">
+        <value>Manage photos for machine '{0}'.</value>
+    </data>
+    <data name="Manage photos for this machine." xml:space="preserve">
+        <value>Manage photos for this machine.</value>
+    </data>
+    <data name="Back to machines" xml:space="preserve">
+        <value>Back to machines</value>
+    </data>
+    <data name="Upload Photo" xml:space="preserve">
+        <value>Upload Photo</value>
+    </data>
+    <data name="License is required." xml:space="preserve">
+        <value>License is required.</value>
+    </data>
+    <data name="Select File" xml:space="preserve">
+        <value>Select File</value>
+    </data>
+    <data name="Uploading..." xml:space="preserve">
+        <value>Uploading...</value>
+    </data>
+    <data name="Photos" xml:space="preserve">
+        <value>Photos</value>
+    </data>
+    <data name="No photos found for this machine." xml:space="preserve">
+        <value>No photos found for this machine.</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="Delete Photo" xml:space="preserve">
+        <value>Delete Photo</value>
+    </data>
+    <data name="Photo uploaded successfully." xml:space="preserve">
+        <value>Photo uploaded successfully.</value>
+    </data>
+    <data name="Failed to upload photo." xml:space="preserve">
+        <value>Failed to upload photo.</value>
+    </data>
+    <data name="Are you sure you want to delete this photo? This action cannot be undone." xml:space="preserve">
+        <value>Are you sure you want to delete this photo? This action cannot be undone.</value>
+    </data>
+    <data name="Photo deleted successfully." xml:space="preserve">
+        <value>Photo deleted successfully.</value>
+    </data>
 </root>

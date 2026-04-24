@@ -982,4 +982,10 @@
         <value>¿Está seguro de que desea eliminar este almacenamiento de la máquina?</value>
         <comment>Remove storage confirmation</comment>
     </data>
+    <data name="Manage Photos" xml:space="preserve">
+        <value>Gestionar Fotos</value>
+    </data>
+    <data name="Photos" xml:space="preserve">
+        <value>Fotos</value>
+    </data>
 </root>

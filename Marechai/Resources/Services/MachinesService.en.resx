@@ -403,4 +403,10 @@
         <value>Are you sure you want to remove this storage from the machine?</value>
         <comment>Remove storage confirmation</comment>
     </data>
+    <data name="Manage Photos" xml:space="preserve">
+        <value>Manage Photos</value>
+    </data>
+    <data name="Photos" xml:space="preserve">
+        <value>Photos</value>
+    </data>
 </root>
