@@ -127,6 +127,9 @@
     <data name="Product code" xml:space="preserve">
         <value>Código de producto</value>
     </data>
+    <data name="Issuer" xml:space="preserve">
+        <value>Emisor</value>
+    </data>
     <data name="Minimum GPUs" xml:space="preserve">
         <value>GPUs mínimas</value>
     </data>

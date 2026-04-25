@@ -116,7 +116,7 @@
                             {
                                 <MudListItem T="SoftwareProductCodeDto">
                                     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@(code.Code)</MudText>
+                                        <MudText>@ProductCodeIssuerNames[code.Issuer ?? 0] — @(code.Code)</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                        Size="Size.Small"
                                                        Color="Color.Error"
@@ -129,6 +129,17 @@
 
                     <MudPaper Class="pa-4 mt-2" Elevation="1">
                         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudSelect T="int"
+                                       @bind-Value="_newProductCodeIssuer"
+                                       Label="@L["Issuer"]"
+                                       Variant="Variant.Outlined"
+                                       Style="min-width: 160px;">
+                                @for(int i = 0; i < ProductCodeIssuerNames.Length; i++)
+                                {
+                                    int val = i;
+                                    <MudSelectItem T="int" Value="val">@ProductCodeIssuerNames[val]</MudSelectItem>
+                                }
+                            </MudSelect>
                             <MudTextField @bind-Value="_newProductCode"
                                           Label="@L["Product code"]"
                                           Variant="Variant.Outlined"
@@ -296,6 +307,13 @@
     ];
     List<SoftwareProductCodeDto>?            _productCodes;
     string?                                  _newProductCode;
+    int                                      _newProductCodeIssuer;
+
+    static readonly string[] ProductCodeIssuerNames =
+    [
+        "Microsoft", "Nintendo", "Sony", "Activision",
+        "Electronic Arts", "Ubisoft", "Bethesda", "Sega"
+    ];
     List<GpuBySoftwareReleaseDto>?           _minimumGpus;
     GpuDto?                                  _selectedMinGpu;
     List<GpuBySoftwareReleaseDto>?           _recommendedGpus;
@@ -426,7 +444,7 @@
     {
         if(string.IsNullOrWhiteSpace(_newProductCode)) return;
 
-        var dto = new SoftwareProductCodeDto { ReleaseId = ReleaseId, Code = _newProductCode.Trim() };
+        var dto = new SoftwareProductCodeDto { ReleaseId = ReleaseId, Code = _newProductCode.Trim(), Issuer = _newProductCodeIssuer };
         (int? id, string? _) = await SoftwareReleasesService.AddProductCodeAsync(dto);
 
         if(id is not null)
