@@ -81,6 +81,18 @@ public class InvertBoolToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
+///     Negates a boolean value (true → false, false → true)
+/// </summary>
+public class BoolNegationConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is true ? false : true;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        value is true ? false : true;
+}
+
+/// <summary>
 ///     Converts null to Visibility (null = Collapsed, not null = Visible)
 /// </summary>
 public class NullToVisibilityConverter : IValueConverter

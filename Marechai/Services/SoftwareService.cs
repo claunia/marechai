@@ -577,4 +577,33 @@ public class SoftwareService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
+    {
+        try
+        {
+            List<SoftwareVersionBySoftwareReleaseDto>? versions =
+                await client.Software.Releases[releaseId].Versions.GetAsync();
+
+            return versions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareReleaseDto>> GetCompilationsForSoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareReleaseDto>? compilations = await client.Software[softwareId].Compilations.GetAsync();
+
+            return compilations ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 }

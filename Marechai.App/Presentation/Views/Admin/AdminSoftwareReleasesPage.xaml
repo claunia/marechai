@@ -74,6 +74,12 @@
                                 </Grid>
                                 <ScrollViewer Grid.Row="1" Padding="16" VerticalScrollBarVisibility="Auto">
                                     <StackPanel Spacing="12">
+                                        <TextBox Header="Title"
+                                                 Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 PlaceholderText="Optional. Used for compilation releases." />
+                                        <CheckBox Content="Is Compilation"
+                                                  IsChecked="{Binding IsCompilation, Mode=TwoWay}"
+                                                  IsEnabled="{Binding IsEditingExisting, Converter={StaticResource BoolNegationConverter}}" />
                                         <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=SoftwareVersionLabel}"
                                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
                                                         Text="{Binding VersionSearchText, Mode=TwoWay}" QueryIcon="Find"
@@ -238,6 +244,42 @@
                                                       DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=SoundSynthLabel}" />
                                             <Button Content="+" Command="{Binding AddSoundSynthCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
                                         </StackPanel>
+
+                                        <!-- Included Software Versions Section (compilation only, edit only) -->
+                                        <StackPanel Visibility="{Binding IsCompilation, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Spacing="8" Margin="0,16,0,0">
+                                            <TextBlock Text="Included Software Versions" FontSize="16" FontWeight="SemiBold" />
+                                            <ItemsRepeater ItemsSource="{Binding IncludedVersionDisplays}">
+                                                <ItemsRepeater.Layout><StackLayout Spacing="4" /></ItemsRepeater.Layout>
+                                                <ItemsRepeater.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnSpacing="4">
+                                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                                            <Button Grid.Column="1" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                                    Command="{Binding DataContext.RemoveIncludedVersionCommand, ElementName=PageRoot}"
+                                                                    CommandParameter="{Binding}" Padding="4,2" Style="{ThemeResource TextBlockButtonStyle}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsRepeater.ItemTemplate>
+                                            </ItemsRepeater>
+                                            <AutoSuggestBox Header="Search Software Version"
+                                                            PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                            Text="{Binding IncludedVersionSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                            x:Name="IncludedVersionSearchBox" TextChanged="IncludedVersionSearchBox_TextChanged" />
+                                            <ComboBox ItemsSource="{Binding IncludedVersionSuggestions}" SelectedItem="{Binding SelectedIncludedVersion, Mode=TwoWay}"
+                                                      HorizontalAlignment="Stretch" PlaceholderText="Select version">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock>
+                                                            <Run Text="{Binding Software}" /><Run Text=" — " /><Run Text="{Binding VersionString}" />
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                            <Button Content="+" Command="{Binding AddIncludedVersionCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
+                                        </StackPanel>
+
                                     </StackPanel>
                                 </ScrollViewer>
                                 <Grid Grid.Row="2" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" ColumnSpacing="8">

@@ -275,4 +275,8 @@
     <value>Gestión de plataformas de software</value>
         <comment>Software platform management admin link</comment>
   </data>
+    <data name="Software Release Management" xml:space="preserve">
+    <value>Gestión de lanzamientos de software</value>
+        <comment>Software release management admin link</comment>
+  </data>
 </root>

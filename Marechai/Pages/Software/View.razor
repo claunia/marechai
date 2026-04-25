@@ -193,6 +193,46 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 
+@* ── Compilations Card ── *@
+@if(_compilations.Count > 0)
+{
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel>
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.LibraryBooks" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Compilations"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_compilations.Count</MudChip>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                <MudList T="SoftwareReleaseDto" Dense="true">
+                    @foreach(SoftwareReleaseDto compilation in _compilations)
+                    {
+                        <MudListItem T="SoftwareReleaseDto" Href="@($"/software/release/{compilation.Id}")" Icon="@Icons.Material.Filled.Collections">
+                            <div class="d-flex flex-wrap align-center gap-2">
+                                <MudText Typo="Typo.body1"><strong>@(compilation.Title ?? L["Compilation"])</strong></MudText>
+                                @if(!string.IsNullOrEmpty(compilation.Platform))
+                                {
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Info">@compilation.Platform</MudChip>
+                                }
+                                @if(!string.IsNullOrEmpty(compilation.Region))
+                                {
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@compilation.Region</MudChip>
+                                }
+                                @if(compilation.ReleaseDate.HasValue)
+                                {
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@compilation.ReleaseDate.Value.DateTime.ToLongDateString()</MudText>
+                                }
+                            </div>
+                        </MudListItem>
+                    }
+                </MudList>
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}
+
 @* ── Screenshots Card ── *@
 @if(_screenshots.Count > 0)
 {

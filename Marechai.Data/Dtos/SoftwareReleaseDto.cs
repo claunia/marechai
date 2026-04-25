@@ -30,9 +30,10 @@ namespace Marechai.Data.Dtos;
 
 public class SoftwareReleaseDto : BaseDto<ulong>
 {
+    [JsonPropertyName("title")]
+    public string? Title { get; set; }
     [JsonPropertyName("software_version_id")]
-    [Required]
-    public ulong SoftwareVersionId { get; set; }
+    public ulong? SoftwareVersionId { get; set; }
     [JsonPropertyName("software_version")]
     public string? SoftwareVersion { get; set; }
     [JsonPropertyName("variant_id")]

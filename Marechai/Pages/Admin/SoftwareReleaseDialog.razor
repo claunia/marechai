@@ -11,6 +11,17 @@
         <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
             @* Tab 1 - Basic Info *@
             <MudTabPanel Text="@L["Basic Info"]" Icon="@Icons.Material.Filled.Info">
+                <MudTextField @bind-Value="Title"
+                              Label="@L["Title"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"
+                              HelperText="@L["Optional. Used as the display name for compilation releases."]"/>
+
+                <MudCheckBox @bind-Value="_isCompilation"
+                             Label="@L["Is Compilation"]"
+                             Disabled="@(!IsNew)"
+                             Class="mb-4"/>
+
                 <MudAutocomplete T="SoftwarePlatformDto"
                                  Label="@L["Platform"]"
                                  @bind-Value="_selectedPlatform"
@@ -279,6 +290,50 @@
                         </MudStack>
                     </MudPaper>
                 </MudTabPanel>
+
+                @* Tab 7 - Included Software (compilations only) *@
+                @if(_isCompilation)
+                {
+                    <MudTabPanel Text="@L["Included Software"]" Icon="@Icons.Material.Filled.LibraryBooks">
+                        @if(_includedVersions is { Count: > 0 })
+                        {
+                            <MudList T="SoftwareVersionBySoftwareReleaseDto" Dense="true">
+                                @foreach(SoftwareVersionBySoftwareReleaseDto iv in _includedVersions)
+                                {
+                                    <MudListItem T="SoftwareVersionBySoftwareReleaseDto">
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                            <MudText>@iv.SoftwareName — @iv.SoftwareVersion</MudText>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                           Size="Size.Small"
+                                                           Color="Color.Error"
+                                                           OnClick="() => RemoveIncludedVersion(iv)"/>
+                                        </MudStack>
+                                    </MudListItem>
+                                }
+                            </MudList>
+                        }
+
+                        <MudPaper Class="pa-4 mt-2" Elevation="1">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                <MudAutocomplete T="SoftwareVersionDto"
+                                                 Label="@L["Search Software Version"]"
+                                                 @bind-Value="_selectedIncludedVersion"
+                                                 SearchFunc="SearchAllVersions"
+                                                 ToStringFunc="@(v => v is null ? string.Empty : $"{v.Software} — {v.VersionString}")"
+                                                 Variant="Variant.Outlined"
+                                                 Clearable="true"
+                                                 Style="flex: 1;"/>
+                                <MudButton Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           Size="Size.Small"
+                                           OnClick="AddIncludedVersion"
+                                           Disabled="@(_selectedIncludedVersion is null)">
+                                    @L["Add"]
+                                </MudButton>
+                            </MudStack>
+                        </MudPaper>
+                    </MudTabPanel>
+                }
             }
         </MudTabs>
     </DialogContent>
@@ -314,6 +369,11 @@
     SoundSynthDto?                           _selectedSoundSynth;
     List<SoundSynthDto>?                     _allSoundSynths;
 
+    bool                                                _isCompilation;
+    List<SoftwareVersionBySoftwareReleaseDto>?           _includedVersions;
+    SoftwareVersionDto?                                  _selectedIncludedVersion;
+    List<SoftwareVersionDto>?                            _allVersionsForPicker;
+
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter] public bool IsNew { get; set; }
@@ -325,11 +385,15 @@
     [Parameter] public int? RegionId { get; set; }
     [Parameter] public int? PublisherId { get; set; }
     [Parameter] public DateTime? ReleaseDate { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public bool IsCompilation { get; set; }
 
     [Inject] SoftwareReleasesService SoftwareReleasesService { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
+        _isCompilation = IsCompilation;
+
         _allPlatforms   = await SoftwareReleasesService.GetAllPlatformsAsync();
         _allRegions     = await SoftwareReleasesService.GetCountriesAsync();
         _allCompanies   = await SoftwareReleasesService.GetAllCompaniesAsync();
@@ -356,7 +420,13 @@
             _minimumGpus     = await SoftwareReleasesService.GetMinimumGpusAsync(ReleaseId);
             _recommendedGpus = await SoftwareReleasesService.GetRecommendedGpusAsync(ReleaseId);
             _soundSynths     = await SoftwareReleasesService.GetSoundSynthsAsync(ReleaseId);
+
+            if(_isCompilation)
+                _includedVersions = await SoftwareReleasesService.GetIncludedVersionsAsync(ReleaseId);
         }
+
+        if(_isCompilation)
+            _allVersionsForPicker = await SoftwareReleasesService.GetAllSoftwareVersionsForPickerAsync();
     }
 
     Task<IEnumerable<SoftwarePlatformDto>> SearchPlatforms(string? value, CancellationToken ct)
@@ -508,12 +578,55 @@
         _soundSynths = await SoftwareReleasesService.GetSoundSynthsAsync(ReleaseId);
     }
 
+    // ── Included version management (compilations only) ──
+
+    Task<IEnumerable<SoftwareVersionDto>> SearchAllVersions(string? value, CancellationToken ct)
+    {
+        IEnumerable<SoftwareVersionDto> results = _allVersionsForPicker ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+        {
+            results = (_allVersionsForPicker ?? []).Where(v =>
+                (v.Software?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (v.VersionString?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+
+        return Task.FromResult(results);
+    }
+
+    async Task AddIncludedVersion()
+    {
+        if(_selectedIncludedVersion is null) return;
+
+        var dto = new SoftwareVersionBySoftwareReleaseDto
+        {
+            ReleaseId         = ReleaseId,
+            SoftwareVersionId = _selectedIncludedVersion.Id
+        };
+
+        (bool succeeded, string? _) = await SoftwareReleasesService.AddIncludedVersionAsync(dto);
+
+        if(succeeded)
+        {
+            _includedVersions       = await SoftwareReleasesService.GetIncludedVersionsAsync(ReleaseId);
+            _selectedIncludedVersion = null;
+        }
+    }
+
+    async Task RemoveIncludedVersion(SoftwareVersionBySoftwareReleaseDto iv)
+    {
+        await SoftwareReleasesService.RemoveIncludedVersionAsync(iv.ReleaseId ?? 0, iv.SoftwareVersionId ?? 0);
+        _includedVersions = await SoftwareReleasesService.GetIncludedVersionsAsync(ReleaseId);
+    }
+
     void Cancel() => MudDialog.Cancel();
 
     void Submit()
     {
         MudDialog.Close(DialogResult.Ok(new SoftwareReleaseDialogResult
         {
+            Title        = Title,
+            IsCompilation = _isCompilation,
             VariantId    = _selectedVariant?.Id,
             SubvariantId = SubvariantId,
             PlatformId   = _selectedPlatform?.Id,

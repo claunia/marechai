@@ -92,6 +92,12 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     [ObservableProperty]
     private Visibility _showCompanies = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private Visibility _showIncludedVersions = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private bool _isCompilation;
+
     public SoftwareReleaseViewViewModel(ILogger<SoftwareReleaseViewViewModel> logger,
                                         IRegionManager                        regionManager,
                                         SoftwareBrowsingService               browsingService,
@@ -103,9 +109,10 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         _localizer       = localizer;
     }
 
-    public ObservableCollection<string> Barcodes     { get; } = [];
-    public ObservableCollection<string> ProductCodes { get; } = [];
-    public ObservableCollection<string> Companies    { get; } = [];
+    public ObservableCollection<string> Barcodes         { get; } = [];
+    public ObservableCollection<string> ProductCodes     { get; } = [];
+    public ObservableCollection<string> Companies        { get; } = [];
+    public ObservableCollection<string> IncludedVersions { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
@@ -154,6 +161,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             Barcodes.Clear();
             ProductCodes.Clear();
             Companies.Clear();
+            IncludedVersions.Clear();
 
             SoftwareReleaseDto? release = await _browsingService.GetReleaseByIdAsync(releaseId);
 
@@ -176,14 +184,32 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             if(release.ReleaseDate.HasValue)
                 ReleaseDateDisplay = release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy");
 
-            // Build title
-            ReleaseTitle = VersionString ?? _localizer["Software Release"];
+            // Determine if this is a compilation
+            IsCompilation = release.SoftwareVersionId is null;
 
-            // Load software name for display
-            if(_sourceSoftwareId > 0)
+            if(IsCompilation)
             {
-                SoftwareDto? software = await _browsingService.GetSoftwareByIdAsync(_sourceSoftwareId);
-                SoftwareName = software?.Name;
+                // Compilation: use Title or fallback
+                ReleaseTitle = release.Title ?? _localizer["Compilation"];
+
+                // Load included versions
+                List<SoftwareVersionBySoftwareReleaseDto> includedVersions =
+                    await _browsingService.GetIncludedVersionsAsync(releaseId);
+
+                foreach(SoftwareVersionBySoftwareReleaseDto iv in includedVersions)
+                    IncludedVersions.Add($"{iv.SoftwareName} — {iv.SoftwareVersion}");
+            }
+            else
+            {
+                // Single-version: build title from version
+                ReleaseTitle = VersionString ?? _localizer["Software Release"];
+
+                // Load software name for display
+                if(_sourceSoftwareId > 0)
+                {
+                    SoftwareDto? software = await _browsingService.GetSoftwareByIdAsync(_sourceSoftwareId);
+                    SoftwareName = software?.Name;
+                }
             }
 
             // Load barcodes
@@ -225,6 +251,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         ShowBarcodes    = Barcodes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowProductCodes = ProductCodes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCompanies   = Companies.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowIncludedVersions = IncludedVersions.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private async Task LoadAllCompaniesAsync(SoftwareReleaseDto release)

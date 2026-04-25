@@ -2111,4 +2111,8 @@
   <data name="FailedToUploadScreenshot" xml:space="preserve"><value>Error al subir captura de pantalla</value></data>
   <data name="FailedToDeleteScreenshot" xml:space="preserve"><value>Error al eliminar captura de pantalla</value></data>
   <data name="FailedToSaveScreenshot" xml:space="preserve"><value>Error al guardar captura de pantalla</value></data>
+  <data name="Compilation" xml:space="preserve"><value>Compilación</value></data>
+  <data name="IncludedSoftware" xml:space="preserve"><value>Software incluido</value></data>
+  <data name="FailedToAddIncludedVersion" xml:space="preserve"><value>Error al añadir versión incluida</value></data>
+  <data name="FailedToRemoveIncludedVersion" xml:space="preserve"><value>Error al eliminar versión incluida</value></data>
 </root>

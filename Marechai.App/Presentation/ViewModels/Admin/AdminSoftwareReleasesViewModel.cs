@@ -86,6 +86,15 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private string _soundSynthSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<SoundSynthDto> _soundSynthSuggestions = [];
 
+    // Compilation support
+    [ObservableProperty] private string _title = string.Empty;
+    [ObservableProperty] private bool _isCompilation;
+    [ObservableProperty] private ObservableCollection<SoftwareVersionBySoftwareReleaseDto> _includedVersions = [];
+    [ObservableProperty] private ObservableCollection<string> _includedVersionDisplays = [];
+    [ObservableProperty] private SoftwareVersionDto? _selectedIncludedVersion;
+    [ObservableProperty] private string _includedVersionSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<SoftwareVersionDto> _includedVersionSuggestions = [];
+
     private int? _editingId;
     private List<SoftwareReleaseDto>? _allReleases;
     private List<SoftwareVersionDto>? _allVersions;
@@ -130,6 +139,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         RemoveRecommendedGpuCommand = new AsyncRelayCommand<string>(RemoveRecommendedGpuByDisplayAsync);
         AddSoundSynthCommand       = new AsyncRelayCommand(AddSoundSynthAsync);
         RemoveSoundSynthCommand    = new AsyncRelayCommand<string>(RemoveSoundSynthByDisplayAsync);
+        AddIncludedVersionCommand    = new AsyncRelayCommand(AddIncludedVersionAsync);
+        RemoveIncludedVersionCommand = new AsyncRelayCommand<string>(RemoveIncludedVersionByDisplayAsync);
 
         CheckAdminRole();
     }
@@ -151,6 +162,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand<string> RemoveRecommendedGpuCommand { get; }
     public IAsyncRelayCommand         AddSoundSynthCommand        { get; }
     public IAsyncRelayCommand<string> RemoveSoundSynthCommand     { get; }
+    public IAsyncRelayCommand         AddIncludedVersionCommand   { get; }
+    public IAsyncRelayCommand<string> RemoveIncludedVersionCommand { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -259,6 +272,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         EditPanelTitle    = _localizer["EditSoftwareReleaseDialog_Title"];
         IsEditingExisting = true;
         ReleaseDate       = item.ReleaseDate;
+        Title             = item.Title ?? string.Empty;
+        IsCompilation     = item.SoftwareVersionId is null;
 
         // Version picker
         if(item.SoftwareVersionId.HasValue && _allVersions != null)
@@ -320,6 +335,9 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             await LoadMinimumGpusAsync(item.Id.Value);
             await LoadRecommendedGpusAsync(item.Id.Value);
             await LoadSoundSynthsAsync(item.Id.Value);
+
+            if(IsCompilation)
+                await LoadIncludedVersionsAsync(item.Id.Value);
         }
     }
 
@@ -339,14 +357,15 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     {
         try
         {
-            if(SelectedVersion == null)
+            if(SelectedVersion == null && !IsCompilation)
             {
                 ErrorMessage = _localizer["VersionIsRequired"]; HasError = true; return;
             }
 
             var dto = new SoftwareReleaseDto
             {
-                SoftwareVersionId = SelectedVersion.Id,
+                Title             = string.IsNullOrWhiteSpace(Title) ? null : Title,
+                SoftwareVersionId = IsCompilation ? null : SelectedVersion?.Id,
                 PlatformId        = SelectedPlatform?.Id,
                 RegionId          = SelectedRegion?.Id,
                 PublisherId       = SelectedPublisher?.Id,
@@ -388,6 +407,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         IEnumerable<SoftwareReleaseDto> source = (IEnumerable<SoftwareReleaseDto>?)_allReleases ?? Releases;
         if(!string.IsNullOrWhiteSpace(FilterText))
             source = source.Where(r =>
+                (r.Title != null && r.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (r.SoftwareVersion != null && r.SoftwareVersion.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (r.Platform != null && r.Platform.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (r.Region != null && r.Region.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
@@ -816,6 +836,93 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         SoundSynthDisplays.Clear();
         SelectedSoundSynth   = null;
         SoundSynthSearchText = string.Empty;
+        Title                = string.Empty;
+        IsCompilation        = false;
+        IncludedVersions.Clear();
+        IncludedVersionDisplays.Clear();
+        SelectedIncludedVersion   = null;
+        IncludedVersionSearchText = string.Empty;
         HasError = false; ErrorMessage = string.Empty;
+    }
+
+    // ── Included Version management (compilations only) ──
+
+    public void UpdateIncludedVersionSuggestions(string query)
+    {
+        IncludedVersionSuggestions.Clear();
+        if(_allVersions == null) return;
+        IEnumerable<SoftwareVersionDto> source = _allVersions;
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(v =>
+                (v.VersionString != null && v.VersionString.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                (v.Software != null && v.Software.Contains(query, StringComparison.OrdinalIgnoreCase)));
+        foreach(SoftwareVersionDto match in source) IncludedVersionSuggestions.Add(match);
+    }
+
+    private async Task LoadIncludedVersionsAsync(int releaseId)
+    {
+        IncludedVersions.Clear();
+        IncludedVersionDisplays.Clear();
+
+        try
+        {
+            List<SoftwareVersionBySoftwareReleaseDto> items = await _service.GetIncludedVersionsAsync(releaseId);
+
+            foreach(SoftwareVersionBySoftwareReleaseDto item in items)
+            {
+                IncludedVersions.Add(item);
+                IncludedVersionDisplays.Add($"{item.SoftwareName} — {item.SoftwareVersion}");
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading included versions for release {ReleaseId}", releaseId);
+        }
+    }
+
+    private async Task AddIncludedVersionAsync()
+    {
+        if(SelectedIncludedVersion?.Id == null || _editingId == null) return;
+
+        try
+        {
+            var dto = new SoftwareVersionBySoftwareReleaseDto
+            {
+                ReleaseId         = _editingId.Value,
+                SoftwareVersionId = SelectedIncludedVersion.Id
+            };
+
+            await _service.AddIncludedVersionAsync(dto);
+            await LoadIncludedVersionsAsync(_editingId.Value);
+            SelectedIncludedVersion   = null;
+            IncludedVersionSearchText = string.Empty;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error adding included version");
+            ErrorMessage = _localizer["FailedToAddIncludedVersion"];
+            HasError = true;
+        }
+    }
+
+    private async Task RemoveIncludedVersionByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+        int idx = IncludedVersionDisplays.IndexOf(display);
+        if(idx < 0 || idx >= IncludedVersions.Count) return;
+
+        SoftwareVersionBySoftwareReleaseDto iv = IncludedVersions[idx];
+
+        try
+        {
+            await _service.RemoveIncludedVersionAsync(_editingId.Value, (int)(iv.SoftwareVersionId ?? 0));
+            await LoadIncludedVersionsAsync(_editingId.Value);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error removing included version");
+            ErrorMessage = _localizer["FailedToRemoveIncludedVersion"];
+            HasError = true;
+        }
     }
 }

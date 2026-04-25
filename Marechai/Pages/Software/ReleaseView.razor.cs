@@ -38,6 +38,7 @@ public partial class ReleaseView
     List<(int CompanyId, string CompanyName, string Role)> _aggregatedCompanies = [];
     List<SoftwareBarcodeDto>                               _barcodes = [];
     int                                                    _id;
+    List<SoftwareVersionBySoftwareReleaseDto>               _includedVersions = [];
     bool                                                   _loaded;
     List<GpuBySoftwareReleaseDto>                          _minimumGpus = [];
     List<SoftwareProductCodeDto>                           _productCodes = [];
@@ -80,11 +81,16 @@ public partial class ReleaseView
             return;
         }
 
-        // Get software name from version
+        // Get software name from version (single-version releases)
         if(_release.SoftwareVersionId.HasValue)
         {
             SoftwareVersionDto? version = await Service.GetVersionByIdAsync(_release.SoftwareVersionId.Value);
             _softwareName = version?.Software;
+        }
+        else
+        {
+            // Compilation: load included versions
+            _includedVersions = await Service.GetIncludedVersionsAsync(Id);
         }
 
         _barcodes        = await Service.GetBarcodesAsync(Id);

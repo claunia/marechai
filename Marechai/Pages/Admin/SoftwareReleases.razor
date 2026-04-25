@@ -1,4 +1,5 @@
 @page "/admin/software/versions/{VersionId:int}/releases"
+@page "/admin/software/releases"
 @attribute [Authorize(Roles = "Admin, UberAdmin")]
 @using Marechai.ApiClient.Models
 @using Marechai.Services
@@ -45,6 +46,7 @@
 
     <MudDataGrid Items="_releases" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
+            <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
             <PropertyColumn Property="x => x.Platform" Title="@L["Platform"]"/>
             <PropertyColumn Property="x => x.Region" Title="@L["Region"]"/>
             <PropertyColumn Property="x => x.Publisher" Title="@L["Publisher"]"/>

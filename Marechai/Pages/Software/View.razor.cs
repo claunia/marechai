@@ -35,6 +35,7 @@ namespace Marechai.Pages.Software;
 public partial class View
 {
     List<SoftwareCompanyRoleDto>                 _companies = [];
+    List<SoftwareReleaseDto>                     _compilations = [];
     int                                         _id;
     bool                                        _loaded;
     Dictionary<int, List<SoftwareReleaseDto>>    _releasesByVersion = new();
@@ -91,6 +92,9 @@ public partial class View
                 _releasesByVersion[version.Id.Value] = releases;
             }
         }
+
+        // Load compilations that include this software
+        _compilations = await Service.GetCompilationsForSoftwareAsync(Id);
 
         // Load screenshots
         List<Guid?> screenshotIds = await Service.GetScreenshotIdsAsync(Id);

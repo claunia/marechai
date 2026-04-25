@@ -426,4 +426,13 @@
     <data name="No screenshots yet." xml:space="preserve">
         <value>Aún no hay capturas de pantalla.</value>
     </data>
+    <data name="Compilations" xml:space="preserve">
+        <value>Compilaciones</value>
+    </data>
+    <data name="Compilation" xml:space="preserve">
+        <value>Compilación</value>
+    </data>
+    <data name="Included Software" xml:space="preserve">
+        <value>Software incluido</value>
+    </data>
 </root>

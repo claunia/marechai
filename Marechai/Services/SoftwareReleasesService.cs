@@ -492,4 +492,85 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    // ── Compilation junction methods ──
+
+    public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
+    {
+        try
+        {
+            List<SoftwareVersionBySoftwareReleaseDto>? versions =
+                await client.Software.Releases[releaseId].Versions.GetAsync();
+
+            return versions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> AddIncludedVersionAsync(SoftwareVersionBySoftwareReleaseDto dto)
+    {
+        try
+        {
+            await client.Software.Releases[(int)(dto.ReleaseId ?? 0)].Versions.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveIncludedVersionAsync(int releaseId, int versionId)
+    {
+        try
+        {
+            await client.Software.Releases[releaseId].Versions[versionId].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<List<SoftwareVersionDto>> GetAllSoftwareVersionsForPickerAsync()
+    {
+        try
+        {
+            List<SoftwareVersionDto>? versions = await client.Software.Versions.GetAsync();
+
+            return versions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareReleaseDto>> GetCompilationsAsync()
+    {
+        try
+        {
+            List<SoftwareReleaseDto>? compilations = await client.Software.Releases.Compilations.GetAsync();
+
+            return compilations ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 }

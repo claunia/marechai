@@ -58,4 +58,10 @@ public sealed partial class AdminSoftwareReleasesPage : Page
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)
             vm.UpdateSoundSynthSuggestions(sender.Text);
     }
+
+    private void IncludedVersionSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)
+            vm.UpdateIncludedVersionSuggestions(sender.Text);
+    }
 }

@@ -460,4 +460,38 @@ public class SoftwareBrowsingService
             return null;
         }
     }
+
+    public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
+    {
+        try
+        {
+            List<SoftwareVersionBySoftwareReleaseDto>? versions =
+                await _apiClient.Software.Releases[releaseId].Versions.GetAsync();
+
+            return versions ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching included versions for release {ReleaseId}", releaseId);
+
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareReleaseDto>> GetCompilationsForSoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareReleaseDto>? compilations =
+                await _apiClient.Software[softwareId].Compilations.GetAsync();
+
+            return compilations ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching compilations for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
 }

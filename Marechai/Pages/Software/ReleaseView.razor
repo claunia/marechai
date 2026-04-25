@@ -50,10 +50,18 @@
 <MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #7e57c2 0%, #42a5f5 100%); border-radius: 16px;">
     <MudStack AlignItems="AlignItems.Center" Spacing="3">
         <MudIcon Icon="@Icons.Material.Filled.NewReleases" Size="Size.Large" Style="color: white;"/>
-        <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@(!string.IsNullOrEmpty(_softwareName) ? _softwareName : L["Software Release"])</MudText>
-        @if(!string.IsNullOrEmpty(_release.SoftwareVersion))
+        @if(_release.SoftwareVersionId is null && !string.IsNullOrEmpty(_release.Title))
         {
-            <MudText Typo="Typo.h6" Align="Align.Center" Style="color: rgba(255,255,255,0.85);">@_release.SoftwareVersion</MudText>
+            <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@_release.Title</MudText>
+            <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">@L["Compilation"]</MudChip>
+        }
+        else
+        {
+            <MudText Typo="Typo.h4" Align="Align.Center" Style="color: white; font-weight: 700;">@(!string.IsNullOrEmpty(_softwareName) ? _softwareName : L["Software Release"])</MudText>
+            @if(!string.IsNullOrEmpty(_release.SoftwareVersion))
+            {
+                <MudText Typo="Typo.h6" Align="Align.Center" Style="color: rgba(255,255,255,0.85);">@_release.SoftwareVersion</MudText>
+            }
         }
     </MudStack>
 </MudPaper>
@@ -129,6 +137,32 @@
         </MudSimpleTable>
     </MudCardContent>
 </MudCard>
+
+@* ── Included Software Card (compilations only) ── *@
+@if(_release.SoftwareVersionId is null && _includedVersions.Count > 0)
+{
+    <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+        <MudExpansionPanel>
+            <TitleContent>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.LibraryBooks" Color="Color.Primary"/>
+                    <MudText Typo="Typo.h6">@L["Included Software"]</MudText>
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">@_includedVersions.Count</MudChip>
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                <MudList T="SoftwareVersionBySoftwareReleaseDto" Dense="true">
+                    @foreach(SoftwareVersionBySoftwareReleaseDto iv in _includedVersions)
+                    {
+                        <MudListItem T="SoftwareVersionBySoftwareReleaseDto" Icon="@Icons.Material.Filled.Apps">
+                            <MudText>@iv.SoftwareName — @iv.SoftwareVersion</MudText>
+                        </MudListItem>
+                    }
+                </MudList>
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}
 
 @* ── Barcodes Card ── *@
 <MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">

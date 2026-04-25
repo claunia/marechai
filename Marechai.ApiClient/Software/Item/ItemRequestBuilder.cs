@@ -3,6 +3,7 @@
 using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Software.Item.Companies;
 using Marechai.ApiClient.Software.Item.CompanyRoles;
+using Marechai.ApiClient.Software.Item.Compilations;
 using Marechai.ApiClient.Software.Item.Platforms;
 using Marechai.ApiClient.Software.Item.Screenshots;
 using Marechai.ApiClient.Software.Item.Variants;
@@ -32,6 +33,11 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.CompanyRoles.CompanyRolesRequestBuilder CompanyRoles
         {
             get => new global::Marechai.ApiClient.Software.Item.CompanyRoles.CompanyRolesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The compilations property</summary>
+        public global::Marechai.ApiClient.Software.Item.Compilations.CompilationsRequestBuilder Compilations
+        {
+            get => new global::Marechai.ApiClient.Software.Item.Compilations.CompilationsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The platforms property</summary>
         public global::Marechai.ApiClient.Software.Item.Platforms.PlatformsRequestBuilder Platforms

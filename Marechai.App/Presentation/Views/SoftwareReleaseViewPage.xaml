@@ -251,6 +251,31 @@
                         </StackPanel>
                     </Grid>
 
+                    <!-- Included Software (compilations only) -->
+                    <StackPanel Visibility="{Binding ShowIncludedVersions}"
+                                Spacing="12">
+                        <TextBlock
+                                   Text="Included Software"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource TextControlForeground}" />
+                        <ItemsControl ItemsSource="{Binding IncludedVersions}"
+                                      Margin="0,0,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="8"
+                                            Padding="12,8"
+                                            Margin="0,0,0,8">
+                                        <TextBlock Text="{Binding}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource TextControlForeground}" />
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- Barcodes -->
                     <StackPanel Visibility="{Binding ShowBarcodes}"
                                 Spacing="12">

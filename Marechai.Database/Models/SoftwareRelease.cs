@@ -6,7 +6,9 @@ namespace Marechai.Database.Models;
 
 public class SoftwareRelease : BaseModel<ulong>
 {
-    public         ulong           SoftwareVersionId { get; set; }
+    public string? Title { get; set; }
+
+    public         ulong?          SoftwareVersionId { get; set; }
     public virtual SoftwareVersion SoftwareVersion   { get; set; }
 
     public         ulong?          VariantId { get; set; }
@@ -28,9 +30,10 @@ public class SoftwareRelease : BaseModel<ulong>
 
     public DateTime? ReleaseDate { get; set; }
 
-    public virtual ICollection<SoftwareBarcode>                 Barcodes             { get; set; }
-    public virtual ICollection<SoftwareProductCode>             ProductCodes         { get; set; }
-    public virtual ICollection<MinimumGpuBySoftwareRelease>     MinimumGpus          { get; set; }
-    public virtual ICollection<RecommendedGpuBySoftwareRelease> RecommendedGpus      { get; set; }
-    public virtual ICollection<SoundSynthBySoftwareRelease>     SupportedSoundSynths { get; set; }
+    public virtual ICollection<SoftwareBarcode>                     Barcodes             { get; set; }
+    public virtual ICollection<SoftwareProductCode>                 ProductCodes         { get; set; }
+    public virtual ICollection<MinimumGpuBySoftwareRelease>         MinimumGpus          { get; set; }
+    public virtual ICollection<RecommendedGpuBySoftwareRelease>     RecommendedGpus      { get; set; }
+    public virtual ICollection<SoundSynthBySoftwareRelease>         SupportedSoundSynths { get; set; }
+    public virtual ICollection<SoftwareVersionBySoftwareRelease>    IncludedVersions     { get; set; }
 }

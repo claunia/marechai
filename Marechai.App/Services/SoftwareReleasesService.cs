@@ -363,4 +363,33 @@ public class SoftwareReleasesService
             return false;
         }
     }
+
+    // ── Compilation junction methods ──
+
+    public async Task<List<SoftwareVersionBySoftwareReleaseDto>> GetIncludedVersionsAsync(int releaseId)
+    {
+        try
+        {
+            List<SoftwareVersionBySoftwareReleaseDto>? versions =
+                await _apiClient.Software.Releases[releaseId].Versions.GetAsync();
+
+            return versions ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error loading included versions for release {ReleaseId}", releaseId);
+
+            return [];
+        }
+    }
+
+    public async Task AddIncludedVersionAsync(SoftwareVersionBySoftwareReleaseDto dto)
+    {
+        await _apiClient.Software.Releases[(int)(dto.ReleaseId ?? 0)].Versions.PostAsync(dto);
+    }
+
+    public async Task RemoveIncludedVersionAsync(int releaseId, int versionId)
+    {
+        await _apiClient.Software.Releases[releaseId].Versions[versionId].DeleteAsync();
+    }
 }

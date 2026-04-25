@@ -9,6 +9,7 @@
     <local:InvertBoolConverter x:Key="InvertBoolConverter" />
     <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <local:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter" />
+    <local:BoolNegationConverter x:Key="BoolNegationConverter" />
     <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     <local:RolesListConverter x:Key="RolesListConverter" />
     <local:LocalizeConverter x:Key="Localize" />
