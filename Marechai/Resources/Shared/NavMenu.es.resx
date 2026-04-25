@@ -251,4 +251,8 @@
     <value>Gestión de personas</value>
         <comment>People management admin link</comment>
   </data>
+    <data name="Book Management" xml:space="preserve">
+    <value>Gestión de libros</value>
+        <comment>Book management admin link</comment>
+  </data>
 </root>

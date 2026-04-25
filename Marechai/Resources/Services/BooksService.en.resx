@@ -219,4 +219,112 @@
     <data name="Source book" xml:space="preserve">
         <value>Source book</value>
     </data>
+    <data name="Book Management" xml:space="preserve">
+        <value>Book Management</value>
+    </data>
+    <data name="Manage books related to computing history." xml:space="preserve">
+        <value>Manage books related to computing history.</value>
+    </data>
+    <data name="Add Book" xml:space="preserve">
+        <value>Add Book</value>
+    </data>
+    <data name="Edit Book" xml:space="preserve">
+        <value>Edit Book</value>
+    </data>
+    <data name="Delete Book" xml:space="preserve">
+        <value>Delete Book</value>
+    </data>
+    <data name="Book created successfully." xml:space="preserve">
+        <value>Book created successfully.</value>
+    </data>
+    <data name="Book updated successfully." xml:space="preserve">
+        <value>Book updated successfully.</value>
+    </data>
+    <data name="Book deleted successfully." xml:space="preserve">
+        <value>Book deleted successfully.</value>
+    </data>
+    <data name="Are you sure you want to delete book '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>Are you sure you want to delete book '{0}'? This action cannot be undone.</value>
+    </data>
+    <data name="Title is required." xml:space="preserve">
+        <value>Title is required.</value>
+    </data>
+    <data name="Basic Info" xml:space="preserve">
+        <value>Basic Info</value>
+    </data>
+    <data name="Sort title" xml:space="preserve">
+        <value>Sort title</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Actions</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Save</value>
+    </data>
+    <data name="Language" xml:space="preserve">
+        <value>Language</value>
+    </data>
+    <data name="Synopsis text" xml:space="preserve">
+        <value>Synopsis text</value>
+    </data>
+    <data name="Save Synopsis" xml:space="preserve">
+        <value>Save Synopsis</value>
+    </data>
+    <data name="Delete Synopsis" xml:space="preserve">
+        <value>Delete Synopsis</value>
+    </data>
+    <data name="Synopsis saved." xml:space="preserve">
+        <value>Synopsis saved.</value>
+    </data>
+    <data name="Synopsis deleted." xml:space="preserve">
+        <value>Synopsis deleted.</value>
+    </data>
+    <data name="Existing synopses:" xml:space="preserve">
+        <value>Existing synopses:</value>
+    </data>
+    <data name="Search Person" xml:space="preserve">
+        <value>Search Person</value>
+    </data>
+    <data name="Role" xml:space="preserve">
+        <value>Role</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Add</value>
+    </data>
+    <data name="Search Company" xml:space="preserve">
+        <value>Search Company</value>
+    </data>
+    <data name="Search Machine" xml:space="preserve">
+        <value>Search Machine</value>
+    </data>
+    <data name="Machine Families" xml:space="preserve">
+        <value>Machine Families</value>
+    </data>
+    <data name="Search Machine Family" xml:space="preserve">
+        <value>Search Machine Family</value>
+    </data>
+    <data name="This book has a cover image." xml:space="preserve">
+        <value>This book has a cover image.</value>
+    </data>
+    <data name="No cover image." xml:space="preserve">
+        <value>No cover image.</value>
+    </data>
+    <data name="Delete Cover" xml:space="preserve">
+        <value>Delete Cover</value>
+    </data>
+    <data name="Upload Cover" xml:space="preserve">
+        <value>Upload Cover</value>
+    </data>
+    <data name="Cover uploaded successfully." xml:space="preserve">
+        <value>Cover uploaded successfully.</value>
+    </data>
+    <data name="Failed to upload cover." xml:space="preserve">
+        <value>Failed to upload cover.</value>
+    </data>
+    <data name="Cover deleted." xml:space="preserve">
+        <value>Cover deleted.</value>
+    </data>
 </root>
