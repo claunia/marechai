@@ -70,7 +70,7 @@
                             {
                                 <MudListItem T="SoftwareBarcodeDto">
                                     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@((BarcodeType)(barcode.Type ?? 0)).Humanize() — @barcode.Code</MudText>
+                                        <MudText>@(((BarcodeType)(barcode.Type ?? 0)).Humanize()) — @barcode.Code</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                        Size="Size.Small"
                                                        Color="Color.Error"
@@ -118,7 +118,7 @@
                             {
                                 <MudListItem T="SoftwareProductCodeDto">
                                     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@((ProductCodeIssuer)(code.Issuer ?? 0)).Humanize() — @(code.Code)</MudText>
+                                        <MudText>@(((ProductCodeIssuer)(code.Issuer ?? 0)).Humanize()) — @(code.Code)</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                        Size="Size.Small"
                                                        Color="Color.Error"
