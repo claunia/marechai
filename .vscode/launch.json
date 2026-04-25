@@ -5,11 +5,16 @@
             "name": "Server (Marechai.Server)",
             "type": "coreclr",
             "request": "launch",
-            "program": "${workspaceFolder}/Marechai.Server/bin/Debug/net10.0/Marechai.Server.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Marechai.Server",
             "stopAtEntry": false,
             "console": "internalConsole",
+            "linux": {
+                "program": "${workspaceFolder}/Marechai.Server/bin/Debug/net10.0/linux-x64/Marechai.Server"
+            },
+            "osx": {
+                "program": "${workspaceFolder}/Marechai.Server/bin/Debug/net10.0/osx-arm64/Marechai.Server"
+            },
             "serverReadyAction": {
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
                 "uriFormat": "%s",
@@ -40,11 +45,16 @@
             "name": "Blazor App (Marechai)",
             "type": "coreclr",
             "request": "launch",
-            "program": "${workspaceFolder}/Marechai/bin/Debug/net10.0/Marechai.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Marechai",
             "stopAtEntry": false,
             "console": "internalConsole",
+            "linux": {
+                "program": "${workspaceFolder}/Marechai/bin/Debug/net10.0/linux-x64/Marechai"
+            },
+            "osx": {
+                "program": "${workspaceFolder}/Marechai/bin/Debug/net10.0/osx-arm64/Marechai"
+            },
             "serverReadyAction": {
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
                 "uriFormat": "%s",
@@ -56,11 +66,16 @@
             "name": "Server + Desktop App",
             "type": "coreclr",
             "request": "launch",
-            "program": "${workspaceFolder}/Marechai.Server/bin/Debug/net10.0/Marechai.Server.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Marechai.Server",
             "stopAtEntry": false,
             "console": "internalConsole",
+            "linux": {
+                "program": "${workspaceFolder}/Marechai.Server/bin/Debug/net10.0/linux-x64/Marechai.Server"
+            },
+            "osx": {
+                "program": "${workspaceFolder}/Marechai.Server/bin/Debug/net10.0/osx-arm64/Marechai.Server"
+            },
             "preLaunchTask": "build-and-run-both",
             "presentation": {
                 "group": "3-combined",
