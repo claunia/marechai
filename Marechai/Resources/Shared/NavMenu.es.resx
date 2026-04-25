@@ -255,4 +255,8 @@
     <value>Gestión de libros</value>
         <comment>Book management admin link</comment>
   </data>
+    <data name="Document Management" xml:space="preserve">
+    <value>Gestión de documentos</value>
+        <comment>Document management admin link</comment>
+  </data>
 </root>
