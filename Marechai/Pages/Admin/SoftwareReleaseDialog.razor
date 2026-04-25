@@ -68,7 +68,7 @@
                             {
                                 <MudListItem T="SoftwareBarcodeDto">
                                     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@barcode.Code</MudText>
+                                        <MudText>@BarcodeTypeNames[barcode.Type ?? 0] — @barcode.Code</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                        Size="Size.Small"
                                                        Color="Color.Error"
@@ -81,6 +81,17 @@
 
                     <MudPaper Class="pa-4 mt-2" Elevation="1">
                         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudSelect T="int"
+                                       @bind-Value="_newBarcodeType"
+                                       Label="@L["Barcode type"]"
+                                       Variant="Variant.Outlined"
+                                       Style="min-width: 160px;">
+                                @for(int i = 0; i < BarcodeTypeNames.Length; i++)
+                                {
+                                    int val = i;
+                                    <MudSelectItem T="int" Value="val">@BarcodeTypeNames[val]</MudSelectItem>
+                                }
+                            </MudSelect>
                             <MudTextField @bind-Value="_newBarcodeCode"
                                           Label="@L["Barcode"]"
                                           Variant="Variant.Outlined"
@@ -276,6 +287,13 @@
     List<SoftwareVariantDto>?                _allVariants;
     List<SoftwareBarcodeDto>?                _barcodes;
     string?                                  _newBarcodeCode;
+    int                                      _newBarcodeType;
+
+    static readonly string[] BarcodeTypeNames =
+    [
+        "Unknown", "UPC-A", "UPC-E", "EAN-13", "EAN-8",
+        "ISBN-10", "ISBN-13", "ISSN", "Code 39", "Code 128", "QR Code"
+    ];
     List<SoftwareProductCodeDto>?            _productCodes;
     string?                                  _newProductCode;
     List<GpuBySoftwareReleaseDto>?           _minimumGpus;
@@ -386,7 +404,7 @@
     {
         if(string.IsNullOrWhiteSpace(_newBarcodeCode)) return;
 
-        var dto = new SoftwareBarcodeDto { ReleaseId = ReleaseId, Code = _newBarcodeCode.Trim() };
+        var dto = new SoftwareBarcodeDto { ReleaseId = ReleaseId, Code = _newBarcodeCode.Trim(), Type = _newBarcodeType };
         (int? id, string? _) = await SoftwareReleasesService.AddBarcodeAsync(dto);
 
         if(id is not null)

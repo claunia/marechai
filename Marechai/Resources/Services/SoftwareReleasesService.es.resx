@@ -118,6 +118,9 @@
     <data name="Barcode" xml:space="preserve">
         <value>Código de barras</value>
     </data>
+    <data name="Barcode type" xml:space="preserve">
+        <value>Tipo de código de barras</value>
+    </data>
     <data name="Product Codes" xml:space="preserve">
         <value>Códigos de producto</value>
     </data>
