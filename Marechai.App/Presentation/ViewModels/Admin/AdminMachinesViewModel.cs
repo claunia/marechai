@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Humanizer;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Views.Admin;
 using Marechai.App.Services.Authentication;
+using Marechai.Data;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -104,6 +106,10 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     public List<string> StorageTypeItems { get; private set; } = [];
     public List<string> StorageInterfaceItems { get; private set; } = [];
 
+    // Enum value arrays for mapping ComboBox index → actual enum int value
+    static readonly int[] StorageTypeValues    = Enum.GetValues<StorageType>().Select(e => (int)e).ToArray();
+    static readonly int[] StorageInterfaceValues = Enum.GetValues<StorageInterface>().Select(e => (int)e).ToArray();
+
     public AdminMachinesViewModel(Client                          apiClient,
                                   IJwtService                        jwtService,
                                   ITokenService                      tokenService,
@@ -120,11 +126,10 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
 
         MachineTypeItems  = [localizer["MachineTypeUnknown"], localizer["MachineTypeComputer"], localizer["MachineTypeConsole"]];
 
-        // Memory/Storage enum display names use enum value names directly for now
-        MemoryTypeItems     = ["Unknown","DRAM","FPM","EDO","VRAM","SDRAM","DDR","DDR2","DDR3","DDR4","RDRAM","SGRAM","PSRAM","SRAM","ROM","PROM","EPROM","EEPROM","NAND","NOR","ReRAM","CBRAM","DWM","NanoRAM","Millipede","FJG","PunchedPaper","DrumMemory","MagneticCore","PlatedWire","CoreRope","ThinFilm","Twistor","Bubble"];
-        MemoryUsageItems    = ["Unknown","Bootloader","Firmware","Work","Video","Sound","Wavetable","StorageBuffer","Save","Configuration","Unified"];
-        StorageTypeItems    = ["Unknown"]; // Simplified — full 149 values would be impractical in a dropdown
-        StorageInterfaceItems = ["Unknown","ACSI","ATA","SCSI","USB","FireWire","SATA","SSA","SAS","FC","PCIe","M.2","SataExpress","CompactFlash","SDCard","MMC","IDE","Proprietary","Parallel","Serial","NVMe"];
+        MemoryTypeItems       = Enum.GetValues<MemoryType>().Select(e => e.Humanize()).ToList();
+        MemoryUsageItems      = Enum.GetValues<MemoryUsage>().Select(e => e.Humanize()).ToList();
+        StorageTypeItems      = Enum.GetValues<StorageType>().Select(e => e.Humanize()).ToList();
+        StorageInterfaceItems = Enum.GetValues<StorageInterface>().Select(e => e.Humanize()).ToList();
 
         LoadItemsCommand       = new AsyncRelayCommand(LoadItemsAsync);
         OpenAddCommand         = new RelayCommand(OpenAdd);
@@ -558,8 +563,8 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
             if(items != null) foreach(MemoryByMachineDto m in items)
             {
                 MachineMemories.Add(m);
-                string type = m.Type.HasValue && m.Type.Value < MemoryTypeItems.Count ? MemoryTypeItems[m.Type.Value] : "?";
-                string usage = m.Usage.HasValue && m.Usage.Value < MemoryUsageItems.Count ? MemoryUsageItems[m.Usage.Value] : "?";
+                string type = m.Type.HasValue ? ((MemoryType)m.Type.Value).Humanize() : "?";
+                string usage = m.Usage.HasValue ? ((MemoryUsage)m.Usage.Value).Humanize() : "?";
                 string size = m.Size.HasValue ? $" {FormatBytes(m.Size.Value)}" : "";
                 MachineMemoryDisplays.Add($"{type} ({usage}){size}");
             }
@@ -604,8 +609,8 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
             if(items != null) foreach(StorageByMachineDto s in items)
             {
                 MachineStorage.Add(s);
-                string type = s.Type.HasValue && s.Type.Value >= 0 && s.Type.Value < StorageTypeItems.Count ? StorageTypeItems[s.Type.Value] : $"Type {s.Type}";
-                string iface = s.Interface.HasValue && s.Interface.Value < StorageInterfaceItems.Count ? StorageInterfaceItems[s.Interface.Value] : $"If {s.Interface}";
+                string type = s.Type.HasValue ? ((StorageType)s.Type.Value).Humanize() : $"Type {s.Type}";
+                string iface = s.Interface.HasValue ? ((StorageInterface)s.Interface.Value).Humanize() : $"If {s.Interface}";
                 string cap = s.Capacity.HasValue ? $" {FormatBytes(s.Capacity.Value)}" : "";
                 MachineStorageDisplays.Add($"{type} ({iface}){cap}");
             }
@@ -620,7 +625,9 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
         {
             await _apiClient.StorageByMachine.PostAsync(new StorageByMachineDto
             {
-                MachineId = _editingId, Type = StorageTypeIndex, Interface = StorageInterfaceIndex,
+                MachineId = _editingId,
+                Type = StorageTypeIndex < StorageTypeValues.Length ? StorageTypeValues[StorageTypeIndex] : 0,
+                Interface = StorageInterfaceIndex < StorageInterfaceValues.Length ? StorageInterfaceValues[StorageInterfaceIndex] : 0,
                 Capacity = StorageCapacity
             });
             StorageCapacity = null;

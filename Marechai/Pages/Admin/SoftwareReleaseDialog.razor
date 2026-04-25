@@ -1,6 +1,8 @@
 @using Marechai.ApiClient.Models
+@using Marechai.Data
 @using Marechai.Services
 @using System.Threading
+@using Humanizer
 
 @inject IStringLocalizer<SoftwareReleasesService> L
 
@@ -68,7 +70,7 @@
                             {
                                 <MudListItem T="SoftwareBarcodeDto">
                                     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@BarcodeTypeNames[barcode.Type ?? 0] — @barcode.Code</MudText>
+                                        <MudText>@((BarcodeType)(barcode.Type ?? 0)).Humanize() — @barcode.Code</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                        Size="Size.Small"
                                                        Color="Color.Error"
@@ -86,10 +88,10 @@
                                        Label="@L["Barcode type"]"
                                        Variant="Variant.Outlined"
                                        Style="min-width: 160px;">
-                                @for(int i = 0; i < BarcodeTypeNames.Length; i++)
+                                @foreach(BarcodeType bt in Enum.GetValues<BarcodeType>())
                                 {
-                                    int val = i;
-                                    <MudSelectItem T="int" Value="val">@BarcodeTypeNames[val]</MudSelectItem>
+                                    int val = (int)bt;
+                                    <MudSelectItem T="int" Value="val">@bt.Humanize()</MudSelectItem>
                                 }
                             </MudSelect>
                             <MudTextField @bind-Value="_newBarcodeCode"
@@ -116,7 +118,7 @@
                             {
                                 <MudListItem T="SoftwareProductCodeDto">
                                     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@ProductCodeIssuerNames[code.Issuer ?? 0] — @(code.Code)</MudText>
+                                        <MudText>@((ProductCodeIssuer)(code.Issuer ?? 0)).Humanize() — @(code.Code)</MudText>
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                        Size="Size.Small"
                                                        Color="Color.Error"
@@ -134,10 +136,10 @@
                                        Label="@L["Issuer"]"
                                        Variant="Variant.Outlined"
                                        Style="min-width: 160px;">
-                                @for(int i = 0; i < ProductCodeIssuerNames.Length; i++)
+                                @foreach(ProductCodeIssuer pci in Enum.GetValues<ProductCodeIssuer>())
                                 {
-                                    int val = i;
-                                    <MudSelectItem T="int" Value="val">@ProductCodeIssuerNames[val]</MudSelectItem>
+                                    int val = (int)pci;
+                                    <MudSelectItem T="int" Value="val">@pci.Humanize()</MudSelectItem>
                                 }
                             </MudSelect>
                             <MudTextField @bind-Value="_newProductCode"
@@ -300,20 +302,9 @@
     string?                                  _newBarcodeCode;
     int                                      _newBarcodeType;
 
-    static readonly string[] BarcodeTypeNames =
-    [
-        "Unknown", "UPC-A", "UPC-E", "EAN-13", "EAN-8",
-        "ISBN-10", "ISBN-13", "ISSN", "Code 39", "Code 128", "QR Code"
-    ];
     List<SoftwareProductCodeDto>?            _productCodes;
     string?                                  _newProductCode;
     int                                      _newProductCodeIssuer;
-
-    static readonly string[] ProductCodeIssuerNames =
-    [
-        "Microsoft", "Nintendo", "Sony", "Activision",
-        "Electronic Arts", "Ubisoft", "Bethesda", "Sega"
-    ];
     List<GpuBySoftwareReleaseDto>?           _minimumGpus;
     GpuDto?                                  _selectedMinGpu;
     List<GpuBySoftwareReleaseDto>?           _recommendedGpus;

@@ -1,6 +1,8 @@
 @using Marechai.ApiClient.Models
+@using Marechai.Data
 @using Marechai.Services
 @using System.Threading
+@using Humanizer
 
 @inject IStringLocalizer<MachinesService> L
 
@@ -236,20 +238,20 @@
                                    Label="@L["Memory Type"]"
                                    Variant="Variant.Outlined"
                                    Style="flex: 1;">
-                            @for(int i = 0; i < MemoryTypeNames.Length; i++)
+                            @foreach(MemoryType mt in Enum.GetValues<MemoryType>())
                             {
-                                int val = i;
-                                <MudSelectItem T="int" Value="val">@MemoryTypeNames[val]</MudSelectItem>
+                                int val = (int)mt;
+                                <MudSelectItem T="int" Value="val">@mt.Humanize()</MudSelectItem>
                             }
                         </MudSelect>
                         <MudSelect T="int" @bind-Value="_memoryUsage"
                                    Label="@L["Memory Usage"]"
                                    Variant="Variant.Outlined"
                                    Style="flex: 1;">
-                            @for(int i = 0; i < MemoryUsageNames.Length; i++)
+                            @foreach(MemoryUsage mu in Enum.GetValues<MemoryUsage>())
                             {
-                                int val = i;
-                                <MudSelectItem T="int" Value="val">@MemoryUsageNames[val]</MudSelectItem>
+                                int val = (int)mu;
+                                <MudSelectItem T="int" Value="val">@mu.Humanize()</MudSelectItem>
                             }
                         </MudSelect>
                     </MudStack>
@@ -294,17 +296,17 @@
                     <MudAutocomplete T="int" @bind-Value="_storageType"
                                      Label="@L["Storage Type"]"
                                      SearchFunc="SearchStorageTypes"
-                                     ToStringFunc="@(i => i >= -1 && i < StorageTypeNames.Length - 1 ? StorageTypeNames[i + 1] : L["Unknown"])"
+                                     ToStringFunc="@(i => StorageTypeNames.TryGetValue(i, out string? n) ? n : L["Unknown"])"
                                      Variant="Variant.Outlined"
                                      Style="flex: 1;"/>
                     <MudSelect T="int" @bind-Value="_storageInterface"
                                Label="@L["Storage Interface"]"
                                Variant="Variant.Outlined"
                                Style="flex: 1;">
-                        @for(int i = 0; i < StorageInterfaceNames.Length; i++)
+                        @foreach(StorageInterface si in Enum.GetValues<StorageInterface>())
                         {
-                            int val = i;
-                            <MudSelectItem T="int" Value="val">@StorageInterfaceNames[val]</MudSelectItem>
+                            int val = (int)si;
+                            <MudSelectItem T="int" Value="val">@si.Humanize()</MudSelectItem>
                         }
                     </MudSelect>
                     <MudNumericField T="long?" @bind-Value="_storageCapacity"
@@ -379,75 +381,17 @@
     [Inject] IDialogService  DialogService   { get; set; } = null!;
 
     // Enum display names
-    static readonly string[] MemoryTypeNames =
-    [
-        "Unknown", "DRAM", "FPM", "EDO", "VRAM", "SDRAM", "DDR", "DDR2", "DDR3", "DDR4",
-        "RDRAM", "SGRAM", "PSRAM", "SRAM", "ROM", "OTP ROM", "PROM", "EPROM", "EEPROM",
-        "Flash", "NOR Flash", "NAND Flash", "HCM", "FeRAM", "PCM", "MRAM", "ReRAM",
-        "3D XPoint", "XDR", "XDR2", "HBM", "HBM2", "GDDR5", "Bubble"
-    ];
+    static readonly Dictionary<int, string> MemoryTypeNames =
+        Enum.GetValues<MemoryType>().ToDictionary(e => (int)e, e => e.Humanize());
 
-    static readonly string[] MemoryUsageNames =
-    [
-        "Unknown", "Bootloader", "Firmware", "Work", "Video", "Sound", "Wavetable",
-        "Storage Buffer", "Save", "Configuration", "Unified"
-    ];
+    static readonly Dictionary<int, string> MemoryUsageNames =
+        Enum.GetValues<MemoryUsage>().ToDictionary(e => (int)e, e => e.Humanize());
 
-    static readonly string[] StorageTypeNames =
-    [
-        "Empty", "Unknown", "Compact Cassette", "3.5\" Floppy DD", "3.5\" Floppy HD",
-        "5.25\" Floppy DD", "5.25\" Floppy HD", "5.25\" Floppy QD", "5.25\" Floppy SD",
-        "8\" Floppy DD", "8\" Floppy SD", "3\" Floppy", "3.5\" Floppy ED",
-        "Hard Disk Drive", "CD-ROM", "CD-R", "CD-RW", "DVD-ROM", "DVD-R", "DVD-RW",
-        "DVD+R", "DVD+RW", "DVD-RAM", "DVD-R DL", "DVD+R DL", "BD-ROM", "BD-R",
-        "BD-RE", "BD-R XL", "BD-RE XL", "HD DVD-ROM", "HD DVD-R", "HD DVD-RW",
-        "UDO", "UDO2", "MiniDisc", "LaserDisc", "MO 3.5\"", "MO 5.25\"",
-        "ZIP 100", "ZIP 250", "ZIP 750", "JAZ 1 GB", "JAZ 2 GB",
-        "LS-120", "LS-240", "ORB 2.2 GB",
-        "CompactFlash I", "CompactFlash II", "SmartMedia", "MMC", "SD", "miniSD",
-        "microSD", "Memory Stick", "Memory Stick Duo", "Memory Stick PRO",
-        "Memory Stick PRO Duo", "xD-Picture Card", "RS-MMC",
-        "MMCmobile", "MMCplus", "SDHC", "SDXC", "microSDHC", "microSDXC",
-        "USB Flash Drive", "SSD",
-        "PCE HuCard", "PCE CD-ROM²", "FC Cartridge", "SFC Cartridge",
-        "N64 Cartridge", "GB Cartridge", "GBA Cartridge", "GBC Cartridge",
-        "NDS Cartridge", "3DS Cartridge", "GameCube GOD", "Wii Disc",
-        "Wii U Disc", "Switch Cartridge",
-        "SMS Cartridge", "MD Cartridge", "Saturn CD", "DC GD-ROM",
-        "GG Cartridge", "32X Cartridge",
-        "Atari 2600 Cart", "Atari 5200 Cart", "Atari 7800 Cart",
-        "Lynx Cartridge", "Jaguar Cartridge",
-        "Neo Geo Cart", "Neo Geo CD", "WonderSwan Cart",
-        "PS1 CD", "PS2 DVD", "PS3 BD", "PSP UMD", "PS Vita Card",
-        "Xbox DVD", "Xbox 360 DVD", "Xbox One BD",
-        "Cassette Tape", "Paper Tape", "Microdrive",
-        "QIC", "DLT", "DDS", "LTO", "AIT",
-        "8mm Tape", "VHS", "Betamax",
-        "PCM Digital Audio Tape",
-        "3.5\" Floppy QD", "2.5\" Floppy",
-        "SyQuest 44 MB", "SyQuest 88 MB", "SyQuest 200 MB", "SyQuest EZ 135",
-        "SyQuest EZ 230", "SyQuest SparQ",
-        "Bernoulli Disk", "Bernoulli Disk II",
-        "Clik!", "REV", "RDX",
-        "8\" Floppy HD", "3.5\" Floptical",
-        "HiFD", "UHD144",
-        "MO 2.5\"", "MO 8\"", "MO 12\"", "MO 14\"",
-        "WORM 5.25\"", "WORM 12\"", "WORM 14\"",
-        "PD", "GD-ROM",
-        "UMD", "EVD", "FVD", "HVD", "CBHD", "DMD",
-        "EC Tape", "IBM 3480", "IBM 3490", "IBM 3590",
-        "StorageTek T9840", "StorageTek T9940", "StorageTek T10000",
-        "Magstar", "Magstar MP",
-        "Punched Card"
-    ];
+    static readonly Dictionary<int, string> StorageTypeNames =
+        Enum.GetValues<StorageType>().ToDictionary(e => (int)e, e => e.Humanize());
 
-    static readonly string[] StorageInterfaceNames =
-    [
-        "Unknown", "ACSI", "ATA", "SCSI", "USB", "FireWire", "SATA", "SAS",
-        "PCIe", "M.2", "SD/MMC", "CF", "IDE", "Parallel SCSI", "Fibre Channel",
-        "Serial Attached SCSI", "Floppy", "Proprietary", "Memory Mapped",
-        "NVMe", "SATA Express"
-    ];
+    static readonly Dictionary<int, string> StorageInterfaceNames =
+        Enum.GetValues<StorageInterface>().ToDictionary(e => (int)e, e => e.Humanize());
 
     protected override async Task OnInitializedAsync()
     {
@@ -556,11 +500,10 @@
 
     Task<IEnumerable<int>> SearchStorageTypes(string? value, CancellationToken ct)
     {
-        // Generate indices from -1 (Empty) to StorageTypeNames.Length - 2
-        IEnumerable<int> indices = Enumerable.Range(-1, StorageTypeNames.Length);
+        IEnumerable<int> indices = StorageTypeNames.Keys;
 
         if(!string.IsNullOrWhiteSpace(value))
-            indices = indices.Where(i => StorageTypeNames[i + 1].Contains(value, StringComparison.OrdinalIgnoreCase));
+            indices = indices.Where(i => StorageTypeNames[i].Contains(value, StringComparison.OrdinalIgnoreCase));
 
         return Task.FromResult(indices);
     }
@@ -585,8 +528,8 @@
 
     string FormatMemory(MemoryByMachineDto mem)
     {
-        string type  = mem.Type is >= 0 and < 34 ? MemoryTypeNames[mem.Type.Value] : L["Unknown"];
-        string usage = mem.Usage is >= 0 and < 11 ? MemoryUsageNames[mem.Usage.Value] : L["Unknown"];
+        string type  = mem.Type.HasValue && MemoryTypeNames.TryGetValue(mem.Type.Value, out string? tn) ? tn : L["Unknown"];
+        string usage = mem.Usage.HasValue && MemoryUsageNames.TryGetValue(mem.Usage.Value, out string? un) ? un : L["Unknown"];
         string size  = mem.Size.HasValue ? FormatBytes(mem.Size.Value) : L["Unknown"];
 
         return $"{size} {type} ({usage})";
@@ -594,8 +537,8 @@
 
     string FormatStorage(StorageByMachineDto stor)
     {
-        string type = stor.Type is >= -1 ? StorageTypeNames[Math.Min(stor.Type.Value + 1, StorageTypeNames.Length - 1)] : L["Unknown"];
-        string iface = stor.Interface is >= 0 and < 21 ? StorageInterfaceNames[stor.Interface.Value] : L["Unknown"];
+        string type = stor.Type.HasValue && StorageTypeNames.TryGetValue(stor.Type.Value, out string? tn) ? tn : L["Unknown"];
+        string iface = stor.Interface.HasValue && StorageInterfaceNames.TryGetValue(stor.Interface.Value, out string? ifn) ? ifn : L["Unknown"];
         string capacity = stor.Capacity.HasValue ? FormatBytes(stor.Capacity.Value) : "";
 
         return string.IsNullOrEmpty(capacity) ? $"{type} ({iface})" : $"{type} ({iface}) - {capacity}";

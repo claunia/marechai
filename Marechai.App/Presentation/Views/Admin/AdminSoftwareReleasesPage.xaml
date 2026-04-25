@@ -127,19 +127,8 @@
                                             <TextBox Header="{Binding Source={StaticResource Strings}, Path=BarcodeCodeLabel}"
                                                      Text="{Binding NewBarcodeCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <ComboBox Header="{Binding Source={StaticResource Strings}, Path=BarcodeTypeLabel}"
-                                                      SelectedIndex="{Binding NewBarcodeType, Mode=TwoWay}" HorizontalAlignment="Stretch">
-                                                <ComboBoxItem Content="Unknown" />
-                                                <ComboBoxItem Content="UPC-A" />
-                                                <ComboBoxItem Content="UPC-E" />
-                                                <ComboBoxItem Content="EAN-13" />
-                                                <ComboBoxItem Content="EAN-8" />
-                                                <ComboBoxItem Content="ISBN-10" />
-                                                <ComboBoxItem Content="ISBN-13" />
-                                                <ComboBoxItem Content="ISSN" />
-                                                <ComboBoxItem Content="Code 39" />
-                                                <ComboBoxItem Content="Code 128" />
-                                                <ComboBoxItem Content="QR Code" />
-                                            </ComboBox>
+                                                      ItemsSource="{Binding BarcodeTypeItems}"
+                                                      SelectedIndex="{Binding NewBarcodeType, Mode=TwoWay}" HorizontalAlignment="Stretch" />
                                             <Button Content="+" Command="{Binding AddBarcodeCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
                                         </StackPanel>
 
@@ -164,16 +153,8 @@
                                             <TextBox Header="{Binding Source={StaticResource Strings}, Path=ProductCodeCodeLabel}"
                                                      Text="{Binding NewProductCodeCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <ComboBox Header="{Binding Source={StaticResource Strings}, Path=ProductCodeIssuerLabel}"
-                                                      SelectedIndex="{Binding NewProductCodeIssuer, Mode=TwoWay}" HorizontalAlignment="Stretch">
-                                                <ComboBoxItem Content="Microsoft" />
-                                                <ComboBoxItem Content="Nintendo" />
-                                                <ComboBoxItem Content="Sony" />
-                                                <ComboBoxItem Content="Activision" />
-                                                <ComboBoxItem Content="Electronic Arts" />
-                                                <ComboBoxItem Content="Ubisoft" />
-                                                <ComboBoxItem Content="Bethesda" />
-                                                <ComboBoxItem Content="Sega" />
-                                            </ComboBox>
+                                                      ItemsSource="{Binding ProductCodeIssuerItems}"
+                                                      SelectedIndex="{Binding NewProductCodeIssuer, Mode=TwoWay}" HorizontalAlignment="Stretch" />
                                             <Button Content="+" Command="{Binding AddProductCodeCommand}" Style="{ThemeResource AccentButtonStyle}" Padding="8,4" />
                                         </StackPanel>
 

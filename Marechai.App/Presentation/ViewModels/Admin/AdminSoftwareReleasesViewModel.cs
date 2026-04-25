@@ -56,12 +56,14 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private ObservableCollection<string> _barcodeDisplays = [];
     [ObservableProperty] private string _newBarcodeCode = string.Empty;
     [ObservableProperty] private int _newBarcodeType;
+    public List<string> BarcodeTypeItems { get; } = Enum.GetValues<BarcodeType>().Select(e => e.Humanize()).ToList();
 
     // Product Codes
     [ObservableProperty] private ObservableCollection<SoftwareProductCodeDto> _productCodes = [];
     [ObservableProperty] private ObservableCollection<string> _productCodeDisplays = [];
     [ObservableProperty] private string _newProductCodeCode = string.Empty;
     [ObservableProperty] private int _newProductCodeIssuer;
+    public List<string> ProductCodeIssuerItems { get; } = Enum.GetValues<ProductCodeIssuer>().Select(e => e.Humanize()).ToList();
 
     // Minimum GPUs
     [ObservableProperty] private ObservableCollection<GpuBySoftwareReleaseDto> _minimumGpus = [];
