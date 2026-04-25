@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Humanizer;
@@ -422,8 +423,13 @@ public partial class PhotoDetailViewModel : ObservableObject, IRegionAware
 
         if(intValue == 0 && enumType != typeof(ExposureMode)) return string.Empty;
 
-        var enumValue = Enum.ToObject(enumType, intValue);
+        object enumValue = Enum.ToObject(enumType, intValue);
 
-        return ((Enum)enumValue).Humanize();
+        MethodInfo humanizeMethod = typeof(EnumHumanizeExtensions).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                                                                  .First(m => m.Name == "Humanize" &&
+                                                                              m.IsGenericMethodDefinition)
+                                                                  .MakeGenericMethod(enumType);
+
+        return (string)humanizeMethod.Invoke(null, [enumValue])!;
     }
 }
