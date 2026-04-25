@@ -26,7 +26,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Humanizer;
 using Marechai.ApiClient.Models;
+using Marechai.Data;
 using Microsoft.AspNetCore.Components;
 
 namespace Marechai.Pages.Software;
@@ -132,34 +134,7 @@ public partial class ReleaseView
         _aggregatedCompanies = companies.OrderBy(c => c.CompanyName).ToList();
     }
 
-    static string GetBarcodeTypeName(int type) =>
-        type switch
-        {
-            0  => "Unknown",
-            1  => "UPC-A",
-            2  => "UPC-E",
-            3  => "EAN-13",
-            4  => "EAN-8",
-            5  => "ISBN-10",
-            6  => "ISBN-13",
-            7  => "ISSN",
-            8  => "Code 39",
-            9  => "Code 128",
-            10 => "QR Code",
-            _  => type.ToString()
-        };
+    static string GetBarcodeTypeName(int type) => ((BarcodeType)type).Humanize();
 
-    static string GetProductCodeIssuerName(int issuer) =>
-        issuer switch
-        {
-            0 => "Microsoft",
-            1 => "Nintendo",
-            2 => "Sony",
-            3 => "Activision",
-            4 => "Electronic Arts",
-            5 => "Ubisoft",
-            6 => "Bethesda",
-            7 => "Sega",
-            _ => issuer.ToString()
-        };
+    static string GetProductCodeIssuerName(int issuer) => ((ProductCodeIssuer)issuer).Humanize();
 }
