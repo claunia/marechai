@@ -790,10 +790,12 @@ public enum ProductCodeIssuer : byte
     Nintendo       = 1,
     Sony           = 2,
     Activision     = 3,
+    [Display(Name = "Electronic Arts")]
     ElectronicArts = 4,
     Ubisoft        = 5,
     Bethesda       = 6,
-    Sega           = 7
+    Sega           = 7,
+    Amazon         = 8
 }
 
 public enum BarcodeType : byte
