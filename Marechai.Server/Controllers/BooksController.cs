@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Marechai.Helpers;
@@ -210,6 +211,15 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
         model.Edition     = dto.Edition;
         model.PreviousId  = dto.PreviousId;
         model.SourceId    = dto.SourceId;
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedBookInDb,
+            Name    = dto.Title
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -241,6 +251,16 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
         };
 
         await context.Books.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.NewBookInDb,
+            Name    = dto.Title
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return model.Id;

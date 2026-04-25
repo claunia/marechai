@@ -107,6 +107,9 @@ public class MachinesController(MarechaiContext context) : ControllerBase
             Date    = DateTime.UtcNow
         };
 
+        Company company = await context.Companies.FindAsync(model.CompanyId);
+        news.Name = company is not null ? $"{company.Name} {model.Name}" : model.Name;
+
         switch(model.Type)
         {
             case MachineType.Computer:
@@ -159,6 +162,9 @@ public class MachinesController(MarechaiContext context) : ControllerBase
             AddedId = model.Id,
             Date    = DateTime.UtcNow
         };
+
+        Company company = await context.Companies.FindAsync(dto.CompanyId);
+        news.Name = company is not null ? $"{company.Name} {model.Name}" : model.Name;
 
         switch(model.Type)
         {

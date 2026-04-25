@@ -50,13 +50,14 @@
         <MudCard Elevation="2" Class="rounded-lg">
             <MudCardContent>
                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
-                    <MudIcon Icon="@Icons.Material.Filled.FiberNew" Color="Color.Secondary" Size="Size.Small"/>
+                    <MudIcon Icon="@GetNewsStatusIcon((NewsType)(news.Type ?? 0))" Color="@GetNewsStatusColor((NewsType)(news.Type ?? 0))" Size="Size.Small"/>
+                    <MudIcon Icon="@GetNewsEntityIcon((NewsType)(news.Type ?? 0))" Color="Color.Default" Size="Size.Small"/>
                     <MudText Typo="Typo.caption" Color="Color.Primary">@news.Timestamp</MudText>
                 </MudStack>
                 <MudText Typo="Typo.body1">@GetNewsTypeText((NewsType)(news.Type ?? 0))</MudText>
             </MudCardContent>
             <MudCardActions>
-                <MudButton Href="@($"/machine/{news.AffectedId}")" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowForward">@news.ItemName</MudButton>
+                <MudButton Href="@GetNewsItemUrl(news)" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" EndIcon="@Icons.Material.Filled.ArrowForward">@news.ItemName</MudButton>
             </MudCardActions>
         </MudCard>
     }
@@ -73,6 +74,104 @@
         NewsType.UpdatedConsoleInDb          => L["Updated console in database"],
         NewsType.UpdatedComputerInCollection => L["Updated computer in collection"],
         NewsType.UpdatedConsoleInCollection  => L["Updated console in collection"],
+        NewsType.NewBookInDb                 => L["New book in database"],
+        NewsType.UpdatedBookInDb             => L["Updated book in database"],
+        NewsType.NewDocumentInDb             => L["New document in database"],
+        NewsType.UpdatedDocumentInDb         => L["Updated document in database"],
+        NewsType.NewMagazineInDb             => L["New magazine in database"],
+        NewsType.UpdatedMagazineInDb         => L["Updated magazine in database"],
+        NewsType.NewPersonInDb               => L["New person in database"],
+        NewsType.UpdatedPersonInDb           => L["Updated person in database"],
+        NewsType.NewSoftwareInDb             => L["New software in database"],
+        NewsType.UpdatedSoftwareInDb         => L["Updated software in database"],
+        NewsType.NewSoftwareVersionInDb      => L["New software version in database"],
+        NewsType.UpdatedSoftwareVersionInDb  => L["Updated software version in database"],
+        NewsType.NewSoftwareReleaseInDb      => L["New software release in database"],
+        NewsType.UpdatedSoftwareReleaseInDb  => L["Updated software release in database"],
+        NewsType.NewGpuInDb                  => L["New GPU in database"],
+        NewsType.UpdatedGpuInDb              => L["Updated GPU in database"],
+        NewsType.NewSoundSynthInDb           => L["New sound synthesizer in database"],
+        NewsType.UpdatedSoundSynthInDb       => L["Updated sound synthesizer in database"],
+        NewsType.NewProcessorInDb            => L["New processor in database"],
+        NewsType.UpdatedProcessorInDb        => L["Updated processor in database"],
         _                                    => string.Empty
+    };
+
+    private static string GetNewsItemUrl(NewsDto news)
+    {
+        var type = (NewsType)(news.Type ?? 0);
+
+        return type switch
+        {
+            NewsType.NewComputerInDb or NewsType.UpdatedComputerInDb
+                or NewsType.NewComputerInCollection or NewsType.UpdatedComputerInCollection
+                or NewsType.NewConsoleInDb or NewsType.UpdatedConsoleInDb
+                or NewsType.NewConsoleInCollection or NewsType.UpdatedConsoleInCollection
+                                                            => $"/machine/{news.AffectedId}",
+            NewsType.NewBookInDb or NewsType.UpdatedBookInDb => $"/book/{news.AffectedId}",
+            NewsType.NewDocumentInDb or NewsType.UpdatedDocumentInDb
+                                                            => $"/document/{news.AffectedId}",
+            NewsType.NewMagazineInDb or NewsType.UpdatedMagazineInDb
+                                                            => $"/magazine/{news.AffectedId}",
+            NewsType.NewPersonInDb or NewsType.UpdatedPersonInDb
+                                                            => $"/person/{news.AffectedId}",
+            NewsType.NewSoftwareInDb or NewsType.UpdatedSoftwareInDb
+                                                            => $"/software/{news.AffectedId}",
+            NewsType.NewSoftwareVersionInDb or NewsType.UpdatedSoftwareVersionInDb
+                                                            => $"/software/{news.AffectedId}",
+            NewsType.NewSoftwareReleaseInDb or NewsType.UpdatedSoftwareReleaseInDb
+                                                            => $"/software/release/{news.AffectedId}",
+            NewsType.NewGpuInDb or NewsType.UpdatedGpuInDb   => $"/gpu/{news.AffectedId}",
+            NewsType.NewSoundSynthInDb or NewsType.UpdatedSoundSynthInDb
+                                                            => $"/soundsynth/{news.AffectedId}",
+            NewsType.NewProcessorInDb or NewsType.UpdatedProcessorInDb
+                                                            => $"/processor/{news.AffectedId}",
+            _                                                => "#"
+        };
+    }
+
+    private static string GetNewsStatusIcon(NewsType type) => type switch
+    {
+        NewsType.NewComputerInDb or NewsType.NewConsoleInDb
+            or NewsType.NewComputerInCollection or NewsType.NewConsoleInCollection
+            or NewsType.NewBookInDb or NewsType.NewDocumentInDb or NewsType.NewMagazineInDb
+            or NewsType.NewPersonInDb or NewsType.NewSoftwareInDb or NewsType.NewSoftwareVersionInDb
+            or NewsType.NewSoftwareReleaseInDb or NewsType.NewGpuInDb or NewsType.NewSoundSynthInDb
+            or NewsType.NewProcessorInDb
+            => Icons.Material.Filled.FiberNew,
+        _ => Icons.Material.Filled.Update
+    };
+
+    private static Color GetNewsStatusColor(NewsType type) => type switch
+    {
+        NewsType.NewComputerInDb or NewsType.NewConsoleInDb
+            or NewsType.NewComputerInCollection or NewsType.NewConsoleInCollection
+            or NewsType.NewBookInDb or NewsType.NewDocumentInDb or NewsType.NewMagazineInDb
+            or NewsType.NewPersonInDb or NewsType.NewSoftwareInDb or NewsType.NewSoftwareVersionInDb
+            or NewsType.NewSoftwareReleaseInDb or NewsType.NewGpuInDb or NewsType.NewSoundSynthInDb
+            or NewsType.NewProcessorInDb
+            => Color.Secondary,
+        _ => Color.Info
+    };
+
+    private static string GetNewsEntityIcon(NewsType type) => type switch
+    {
+        NewsType.NewComputerInDb or NewsType.UpdatedComputerInDb
+            or NewsType.NewComputerInCollection or NewsType.UpdatedComputerInCollection
+            or NewsType.NewConsoleInDb or NewsType.UpdatedConsoleInDb
+            or NewsType.NewConsoleInCollection or NewsType.UpdatedConsoleInCollection
+                                                                     => Icons.Material.Filled.Computer,
+        NewsType.NewBookInDb or NewsType.UpdatedBookInDb             => Icons.Material.Filled.MenuBook,
+        NewsType.NewDocumentInDb or NewsType.UpdatedDocumentInDb     => Icons.Material.Filled.Article,
+        NewsType.NewMagazineInDb or NewsType.UpdatedMagazineInDb     => Icons.Material.Filled.AutoStories,
+        NewsType.NewPersonInDb or NewsType.UpdatedPersonInDb         => Icons.Material.Filled.Person,
+        NewsType.NewSoftwareInDb or NewsType.UpdatedSoftwareInDb
+            or NewsType.NewSoftwareVersionInDb or NewsType.UpdatedSoftwareVersionInDb
+            or NewsType.NewSoftwareReleaseInDb or NewsType.UpdatedSoftwareReleaseInDb
+                                                                     => Icons.Material.Filled.Apps,
+        NewsType.NewGpuInDb or NewsType.UpdatedGpuInDb               => Icons.Material.Filled.Memory,
+        NewsType.NewSoundSynthInDb or NewsType.UpdatedSoundSynthInDb => Icons.Material.Filled.MusicNote,
+        NewsType.NewProcessorInDb or NewsType.UpdatedProcessorInDb   => Icons.Material.Filled.DeveloperBoard,
+        _                                                             => Icons.Material.Filled.Newspaper
     };
 }

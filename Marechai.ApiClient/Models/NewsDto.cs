@@ -15,7 +15,7 @@ namespace Marechai.ApiClient.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The affected_id property</summary>
-        public int? AffectedId { get; set; }
+        public long? AffectedId { get; set; }
         /// <summary>The controller property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -33,6 +33,14 @@ namespace Marechai.ApiClient.Models
 #nullable restore
 #else
         public string ItemName { get; set; }
+#endif
+        /// <summary>The name property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Name { get; set; }
+#nullable restore
+#else
+        public string Name { get; set; }
 #endif
         /// <summary>The text property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -71,10 +79,11 @@ namespace Marechai.ApiClient.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "affected_id", n => { AffectedId = n.GetIntValue(); } },
+                { "affected_id", n => { AffectedId = n.GetLongValue(); } },
                 { "controller", n => { Controller = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
                 { "item_name", n => { ItemName = n.GetStringValue(); } },
+                { "name", n => { Name = n.GetStringValue(); } },
                 { "text", n => { Text = n.GetStringValue(); } },
                 { "timestamp", n => { Timestamp = n.GetDateTimeOffsetValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
@@ -87,10 +96,11 @@ namespace Marechai.ApiClient.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteIntValue("affected_id", AffectedId);
+            writer.WriteLongValue("affected_id", AffectedId);
             writer.WriteStringValue("controller", Controller);
             writer.WriteIntValue("id", Id);
             writer.WriteStringValue("item_name", ItemName);
+            writer.WriteStringValue("name", Name);
             writer.WriteStringValue("text", Text);
             writer.WriteDateTimeOffsetValue("timestamp", Timestamp);
             writer.WriteIntValue("type", Type);

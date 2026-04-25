@@ -1272,7 +1272,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
             entity.Property(e => e.AddedId)
                   .HasColumnName("added_id")
-                  .HasColumnType("int(11)")
+                  .HasColumnType("bigint(20)")
                   .HasDefaultValueSql("'0'");
 
             entity.Property(e => e.Date).IsRequired().HasColumnName("date").HasColumnType("datetime");
@@ -1281,6 +1281,11 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasColumnName("type")
                   .HasColumnType("int(11)")
                   .HasDefaultValue(NewsType.NewComputerInDb);
+
+            entity.Property(e => e.Name)
+                  .HasColumnName("name")
+                  .HasColumnType("longtext")
+                  .IsRequired(false);
         });
 
         modelBuilder.Entity<PeopleByBook>(entity =>

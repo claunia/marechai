@@ -188,4 +188,84 @@
     <value>Cancelar</value>
         <comment>Cancel delete</comment>
   </data>
+    <data name="New book in database" xml:space="preserve">
+    <value>Nuevo libro en la base de datos</value>
+        <comment>New book in database</comment>
+  </data>
+    <data name="Updated book in database" xml:space="preserve">
+    <value>Libro actualizado en la base de datos</value>
+        <comment>Updated book in database</comment>
+  </data>
+    <data name="New document in database" xml:space="preserve">
+    <value>Nuevo documento en la base de datos</value>
+        <comment>New document in database</comment>
+  </data>
+    <data name="Updated document in database" xml:space="preserve">
+    <value>Documento actualizado en la base de datos</value>
+        <comment>Updated document in database</comment>
+  </data>
+    <data name="New magazine in database" xml:space="preserve">
+    <value>Nueva revista en la base de datos</value>
+        <comment>New magazine in database</comment>
+  </data>
+    <data name="Updated magazine in database" xml:space="preserve">
+    <value>Revista actualizada en la base de datos</value>
+        <comment>Updated magazine in database</comment>
+  </data>
+    <data name="New person in database" xml:space="preserve">
+    <value>Nueva persona en la base de datos</value>
+        <comment>New person in database</comment>
+  </data>
+    <data name="Updated person in database" xml:space="preserve">
+    <value>Persona actualizada en la base de datos</value>
+        <comment>Updated person in database</comment>
+  </data>
+    <data name="New software in database" xml:space="preserve">
+    <value>Nuevo software en la base de datos</value>
+        <comment>New software in database</comment>
+  </data>
+    <data name="Updated software in database" xml:space="preserve">
+    <value>Software actualizado en la base de datos</value>
+        <comment>Updated software in database</comment>
+  </data>
+    <data name="New software version in database" xml:space="preserve">
+    <value>Nueva versión de software en la base de datos</value>
+        <comment>New software version in database</comment>
+  </data>
+    <data name="Updated software version in database" xml:space="preserve">
+    <value>Versión de software actualizada en la base de datos</value>
+        <comment>Updated software version in database</comment>
+  </data>
+    <data name="New software release in database" xml:space="preserve">
+    <value>Nuevo lanzamiento de software en la base de datos</value>
+        <comment>New software release in database</comment>
+  </data>
+    <data name="Updated software release in database" xml:space="preserve">
+    <value>Lanzamiento de software actualizado en la base de datos</value>
+        <comment>Updated software release in database</comment>
+  </data>
+    <data name="New GPU in database" xml:space="preserve">
+    <value>Nueva GPU en la base de datos</value>
+        <comment>New GPU in database</comment>
+  </data>
+    <data name="Updated GPU in database" xml:space="preserve">
+    <value>GPU actualizada en la base de datos</value>
+        <comment>Updated GPU in database</comment>
+  </data>
+    <data name="New sound synthesizer in database" xml:space="preserve">
+    <value>Nuevo sintetizador de sonido en la base de datos</value>
+        <comment>New sound synthesizer in database</comment>
+  </data>
+    <data name="Updated sound synthesizer in database" xml:space="preserve">
+    <value>Sintetizador de sonido actualizado en la base de datos</value>
+        <comment>Updated sound synthesizer in database</comment>
+  </data>
+    <data name="New processor in database" xml:space="preserve">
+    <value>Nuevo procesador en la base de datos</value>
+        <comment>New processor in database</comment>
+  </data>
+    <data name="Updated processor in database" xml:space="preserve">
+    <value>Procesador actualizado en la base de datos</value>
+        <comment>Updated processor in database</comment>
+  </data>
 </root>

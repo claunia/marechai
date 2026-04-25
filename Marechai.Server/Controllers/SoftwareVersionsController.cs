@@ -23,10 +23,12 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -125,6 +127,18 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
         model.PublicVersion   = dto.PublicVersion;
         model.ParentVersionId = dto.ParentVersionId;
         model.LicenseId       = dto.LicenseId;
+
+        Software software = await context.Softwares.FindAsync(model.SoftwareId);
+        string  newsName  = dto.PublicVersion ?? (software is not null ? $"{software.Name} {dto.VersionString}" : dto.VersionString);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = (long)model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedSoftwareVersionInDb,
+            Name    = newsName
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -152,6 +166,19 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
         };
 
         await context.SoftwareVersions.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        Software software = await context.Softwares.FindAsync(dto.SoftwareId);
+        string  newsName  = dto.PublicVersion ?? (software is not null ? $"{software.Name} {dto.VersionString}" : dto.VersionString);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = (long)model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.NewSoftwareVersionInDb,
+            Name    = newsName
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return model.Id;

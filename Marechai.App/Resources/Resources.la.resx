@@ -510,6 +510,66 @@
   <data name="Updated console in collection" xml:space="preserve">
     <value>Consola renovata in collectione</value>
   </data>
+  <data name="New book in database" xml:space="preserve">
+    <value>Liber novus in datorum basi</value>
+  </data>
+  <data name="Updated book in database" xml:space="preserve">
+    <value>Liber renovatus in datorum basi</value>
+  </data>
+  <data name="New document in database" xml:space="preserve">
+    <value>Documentum novum in datorum basi</value>
+  </data>
+  <data name="Updated document in database" xml:space="preserve">
+    <value>Documentum renovatum in datorum basi</value>
+  </data>
+  <data name="New magazine in database" xml:space="preserve">
+    <value>Ephemeris nova in datorum basi</value>
+  </data>
+  <data name="Updated magazine in database" xml:space="preserve">
+    <value>Ephemeris renovata in datorum basi</value>
+  </data>
+  <data name="New person in database" xml:space="preserve">
+    <value>Persona nova in datorum basi</value>
+  </data>
+  <data name="Updated person in database" xml:space="preserve">
+    <value>Persona renovata in datorum basi</value>
+  </data>
+  <data name="New software in database" xml:space="preserve">
+    <value>Programma novum in datorum basi</value>
+  </data>
+  <data name="Updated software in database" xml:space="preserve">
+    <value>Programma renovatum in datorum basi</value>
+  </data>
+  <data name="New software version in database" xml:space="preserve">
+    <value>Versio programmatis nova in datorum basi</value>
+  </data>
+  <data name="Updated software version in database" xml:space="preserve">
+    <value>Versio programmatis renovata in datorum basi</value>
+  </data>
+  <data name="New software release in database" xml:space="preserve">
+    <value>Editio programmatis nova in datorum basi</value>
+  </data>
+  <data name="Updated software release in database" xml:space="preserve">
+    <value>Editio programmatis renovata in datorum basi</value>
+  </data>
+  <data name="New GPU in database" xml:space="preserve">
+    <value>GPU novum in datorum basi</value>
+  </data>
+  <data name="Updated GPU in database" xml:space="preserve">
+    <value>GPU renovatum in datorum basi</value>
+  </data>
+  <data name="New sound synthesizer in database" xml:space="preserve">
+    <value>Synthesizer sonorum novus in datorum basi</value>
+  </data>
+  <data name="Updated sound synthesizer in database" xml:space="preserve">
+    <value>Synthesizer sonorum renovatus in datorum basi</value>
+  </data>
+  <data name="New processor in database" xml:space="preserve">
+    <value>Processor novus in datorum basi</value>
+  </data>
+  <data name="Updated processor in database" xml:space="preserve">
+    <value>Processor renovatus in datorum basi</value>
+  </data>
   <data name="No news available" xml:space="preserve">
     <value>Nulli nuntii disponibiles</value>
   </data>

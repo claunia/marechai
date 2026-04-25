@@ -24,10 +24,12 @@
 *******************************************************************************/
 
 using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -139,6 +141,17 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         model.RegionId          = dto.RegionId;
         model.PublisherId       = dto.PublisherId;
         model.ReleaseDate       = dto.ReleaseDate;
+
+        string newsName = await BuildSoftwareReleaseNewsNameAsync(model.SoftwareVersionId, model.PlatformId);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = (long)model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedSoftwareReleaseInDb,
+            Name    = newsName
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -169,6 +182,18 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         await context.SoftwareReleases.AddAsync(model);
         await context.SaveChangesWithUserAsync(userId);
 
+        string newsName = await BuildSoftwareReleaseNewsNameAsync(dto.SoftwareVersionId, dto.PlatformId);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = (long)model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.NewSoftwareReleaseInDb,
+            Name    = newsName
+        });
+
+        await context.SaveChangesWithUserAsync(userId);
+
         return model.Id;
     }
 
@@ -192,5 +217,27 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
+    }
+
+    async Task<string> BuildSoftwareReleaseNewsNameAsync(ulong versionId, ulong? platformId)
+    {
+        string name = "";
+
+        SoftwareVersion version = await context.SoftwareVersions.Include(v => v.Software)
+                                               .FirstOrDefaultAsync(v => v.Id == versionId);
+
+        if(version?.Software is not null)
+            name = $"{version.Software.Name} {version.VersionString}";
+        else if(version is not null)
+            name = version.VersionString;
+
+        if(platformId is not null)
+        {
+            SoftwarePlatform platform = await context.SoftwarePlatforms.FindAsync(platformId);
+
+            if(platform is not null) name = string.IsNullOrEmpty(name) ? platform.Name : $"{name} ({platform.Name})";
+        }
+
+        return name;
     }
 }

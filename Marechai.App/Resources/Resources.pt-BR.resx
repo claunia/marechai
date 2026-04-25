@@ -510,6 +510,66 @@
   <data name="Updated console in collection" xml:space="preserve">
     <value>Console atualizado na coleção</value>
   </data>
+  <data name="New book in database" xml:space="preserve">
+    <value>Novo livro no banco de dados</value>
+  </data>
+  <data name="Updated book in database" xml:space="preserve">
+    <value>Livro atualizado no banco de dados</value>
+  </data>
+  <data name="New document in database" xml:space="preserve">
+    <value>Novo documento no banco de dados</value>
+  </data>
+  <data name="Updated document in database" xml:space="preserve">
+    <value>Documento atualizado no banco de dados</value>
+  </data>
+  <data name="New magazine in database" xml:space="preserve">
+    <value>Nova revista no banco de dados</value>
+  </data>
+  <data name="Updated magazine in database" xml:space="preserve">
+    <value>Revista atualizada no banco de dados</value>
+  </data>
+  <data name="New person in database" xml:space="preserve">
+    <value>Nova pessoa no banco de dados</value>
+  </data>
+  <data name="Updated person in database" xml:space="preserve">
+    <value>Pessoa atualizada no banco de dados</value>
+  </data>
+  <data name="New software in database" xml:space="preserve">
+    <value>Novo software no banco de dados</value>
+  </data>
+  <data name="Updated software in database" xml:space="preserve">
+    <value>Software atualizado no banco de dados</value>
+  </data>
+  <data name="New software version in database" xml:space="preserve">
+    <value>Nova versão de software no banco de dados</value>
+  </data>
+  <data name="Updated software version in database" xml:space="preserve">
+    <value>Versão de software atualizada no banco de dados</value>
+  </data>
+  <data name="New software release in database" xml:space="preserve">
+    <value>Novo lançamento de software no banco de dados</value>
+  </data>
+  <data name="Updated software release in database" xml:space="preserve">
+    <value>Lançamento de software atualizado no banco de dados</value>
+  </data>
+  <data name="New GPU in database" xml:space="preserve">
+    <value>Nova GPU no banco de dados</value>
+  </data>
+  <data name="Updated GPU in database" xml:space="preserve">
+    <value>GPU atualizada no banco de dados</value>
+  </data>
+  <data name="New sound synthesizer in database" xml:space="preserve">
+    <value>Novo sintetizador de som no banco de dados</value>
+  </data>
+  <data name="Updated sound synthesizer in database" xml:space="preserve">
+    <value>Sintetizador de som atualizado no banco de dados</value>
+  </data>
+  <data name="New processor in database" xml:space="preserve">
+    <value>Novo processador no banco de dados</value>
+  </data>
+  <data name="Updated processor in database" xml:space="preserve">
+    <value>Processador atualizado no banco de dados</value>
+  </data>
   <data name="No news available" xml:space="preserve">
     <value>Nenhuma notícia disponível</value>
   </data>

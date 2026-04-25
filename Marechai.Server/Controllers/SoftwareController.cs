@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -188,6 +189,15 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         model.FamilyId          = dto.FamilyId;
         model.IsOperatingSystem = dto.IsOperatingSystem;
         model.IsGame            = dto.IsGame;
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = (long)model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedSoftwareInDb,
+            Name    = dto.Name
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -213,6 +223,16 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
         };
 
         await context.Softwares.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = (long)model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.NewSoftwareInDb,
+            Name    = dto.Name
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return model.Id;

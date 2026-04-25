@@ -31,7 +31,8 @@ public sealed class NewsDto : BaseDto<int>
 {
     public NewsDto() {}
 
-    public NewsDto(int affectedId, string text, DateTime timestamp, string controller, string itemName, NewsType type)
+    public NewsDto(long affectedId, string text, DateTime timestamp, string controller, string itemName,
+                   NewsType type, string? name = null)
     {
         AffectedId = affectedId;
         Text       = text;
@@ -39,12 +40,13 @@ public sealed class NewsDto : BaseDto<int>
         Controller = controller;
         ItemName   = itemName;
         Type       = type;
+        Name       = name;
     }
 
     [JsonPropertyName("type")]
     public NewsType Type { get; set; }
     [JsonPropertyName("affected_id")]
-    public int AffectedId { get; set; }
+    public long AffectedId { get; set; }
     [JsonPropertyName("controller")]
     public string Controller { get; set; }
     [JsonPropertyName("item_name")]
@@ -53,4 +55,6 @@ public sealed class NewsDto : BaseDto<int>
     public string Text { get; set; }
     [JsonPropertyName("timestamp")]
     public DateTime Timestamp { get; set; }
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
 }

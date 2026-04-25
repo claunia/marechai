@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -291,6 +292,14 @@ public class PeopleController(MarechaiContext context) : ControllerBase
         model.Alias            = dto.Alias;
         model.DisplayName      = dto.DisplayName;
 
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedPersonInDb,
+            Name    = dto.DisplayName ?? $"{dto.Name} {dto.Surname}".Trim()
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -323,6 +332,16 @@ public class PeopleController(MarechaiContext context) : ControllerBase
         };
 
         await context.People.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.NewPersonInDb,
+            Name    = dto.DisplayName ?? $"{dto.Name} {dto.Surname}".Trim()
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return model.Id;

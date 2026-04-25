@@ -23,10 +23,12 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -164,6 +166,15 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
         model.SortTitle   = dto.SortTitle;
         model.Published   = dto.Published;
         model.CountryId   = dto.CountryId;
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedDocumentInDb,
+            Name    = dto.Title
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -190,6 +201,16 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
         };
 
         await context.Documents.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.NewDocumentInDb,
+            Name    = dto.Title
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return model.Id;

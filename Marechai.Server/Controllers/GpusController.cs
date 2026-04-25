@@ -23,10 +23,12 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Marechai.Data;
 using Marechai.Data.Dtos;
 using Marechai.Database.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -148,6 +150,17 @@ public class GpusController(MarechaiContext context) : ControllerBase
         model.DieSize     = dto.DieSize;
         model.Transistors = dto.Transistors;
 
+        Company company  = dto.CompanyId is not null ? await context.Companies.FindAsync(dto.CompanyId) : null;
+        string  newsName = company is not null ? $"{company.Name} {dto.Name}" : dto.Name;
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.UpdatedGpuInDb,
+            Name    = newsName
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -178,6 +191,19 @@ public class GpusController(MarechaiContext context) : ControllerBase
         };
 
         await context.Gpus.AddAsync(model);
+        await context.SaveChangesWithUserAsync(userId);
+
+        Company company  = dto.CompanyId is not null ? await context.Companies.FindAsync(dto.CompanyId) : null;
+        string  newsName = company is not null ? $"{company.Name} {dto.Name}" : dto.Name;
+
+        await context.News.AddAsync(new News
+        {
+            AddedId = model.Id,
+            Date    = DateTime.UtcNow,
+            Type    = NewsType.NewGpuInDb,
+            Name    = newsName
+        });
+
         await context.SaveChangesWithUserAsync(userId);
 
         return model.Id;

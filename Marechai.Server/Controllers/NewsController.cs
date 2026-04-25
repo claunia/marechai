@@ -51,7 +51,8 @@ public class NewsController(MarechaiContext context) : ControllerBase
                                                          Id         = n.Id,
                                                          Timestamp  = n.Date,
                                                          Type       = n.Type,
-                                                         AffectedId = n.AddedId
+                                                         AffectedId = n.AddedId,
+                                                         Name       = n.Name
                                                      })
                                                     .ToListAsync();
 
@@ -61,62 +62,117 @@ public class NewsController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public List<NewsDto> GetNews()
     {
+        List<News> latestNews = context.News.OrderByDescending(t => t.Date).Take(10).ToList();
+
         List<NewsDto> news = [];
 
-        var newsWithMachines = context.News.OrderByDescending(t => t.Date)
-                                      .Take(10)
-                                      .Join(context.Machines.Include(m => m.Company),
-                                            n => n.AddedId,
-                                            m => m.Id,
-                                            (n, m) => new
-                                            {
-                                                News    = n,
-                                                Machine = m
-                                            })
-                                      .ToList();
-
-        foreach(var item in newsWithMachines)
+        foreach(News @new in latestNews)
         {
-            News    @new    = item.News;
-            Machine machine = item.Machine;
-
-            if(machine is null) continue;
+            string controller;
+            string itemName = @new.Name;
 
             switch(@new.Type)
             {
                 case NewsType.NewComputerInDb:
-                case NewsType.NewConsoleInDb:
                 case NewsType.NewComputerInCollection:
-                case NewsType.NewConsoleInCollection:
                 case NewsType.UpdatedComputerInDb:
-                case NewsType.UpdatedConsoleInDb:
                 case NewsType.UpdatedComputerInCollection:
-                case NewsType.UpdatedConsoleInCollection:
-                    news.Add(new NewsDto
+                    controller = "computers";
+
+                    if(string.IsNullOrEmpty(itemName))
                     {
-                        Id         = @new.Id,
-                        AffectedId = @new.AddedId,
-                        Timestamp  = @new.Date,
-                        Type       = @new.Type,
-                        Controller =
-                            @new.Type is NewsType.NewComputerInDb
-                                      or NewsType.NewComputerInCollection
-                                      or NewsType.UpdatedComputerInDb
-                                      or NewsType.UpdatedComputerInCollection
-                                ? "computers"
-                                : "consoles",
-                        ItemName = $"{machine.Company.Name} {machine.Name}"
-                    });
+                        Machine machine = context.Machines.Include(m => m.Company)
+                                                 .FirstOrDefault(m => m.Id == @new.AddedId);
+
+                        if(machine is not null) itemName = $"{machine.Company?.Name} {machine.Name}";
+                    }
+
+                    break;
+
+                case NewsType.NewConsoleInDb:
+                case NewsType.NewConsoleInCollection:
+                case NewsType.UpdatedConsoleInDb:
+                case NewsType.UpdatedConsoleInCollection:
+                    controller = "consoles";
+
+                    if(string.IsNullOrEmpty(itemName))
+                    {
+                        Machine console = context.Machines.Include(m => m.Company)
+                                                 .FirstOrDefault(m => m.Id == @new.AddedId);
+
+                        if(console is not null) itemName = $"{console.Company?.Name} {console.Name}";
+                    }
 
                     break;
 
                 case NewsType.NewMoneyDonation:
                     // TODO
+                    continue;
+
+                case NewsType.NewBookInDb or NewsType.UpdatedBookInDb:
+                    controller = "books";
+
+                    break;
+
+                case NewsType.NewDocumentInDb or NewsType.UpdatedDocumentInDb:
+                    controller = "documents";
+
+                    break;
+
+                case NewsType.NewMagazineInDb or NewsType.UpdatedMagazineInDb:
+                    controller = "magazines";
+
+                    break;
+
+                case NewsType.NewPersonInDb or NewsType.UpdatedPersonInDb:
+                    controller = "people";
+
+                    break;
+
+                case NewsType.NewSoftwareInDb or NewsType.UpdatedSoftwareInDb:
+                    controller = "software";
+
+                    break;
+
+                case NewsType.NewSoftwareVersionInDb or NewsType.UpdatedSoftwareVersionInDb:
+                    controller = "software-versions";
+
+                    break;
+
+                case NewsType.NewSoftwareReleaseInDb or NewsType.UpdatedSoftwareReleaseInDb:
+                    controller = "software-releases";
+
+                    break;
+
+                case NewsType.NewGpuInDb or NewsType.UpdatedGpuInDb:
+                    controller = "gpus";
+
+                    break;
+
+                case NewsType.NewSoundSynthInDb or NewsType.UpdatedSoundSynthInDb:
+                    controller = "sound-synths";
+
+                    break;
+
+                case NewsType.NewProcessorInDb or NewsType.UpdatedProcessorInDb:
+                    controller = "processors";
+
                     break;
 
                 default:
                     continue;
             }
+
+            news.Add(new NewsDto
+            {
+                Id         = @new.Id,
+                AffectedId = @new.AddedId,
+                Timestamp  = @new.Date,
+                Type       = @new.Type,
+                Controller = controller,
+                ItemName   = itemName,
+                Name       = @new.Name
+            });
         }
 
         return news;

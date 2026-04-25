@@ -40,7 +40,27 @@ public enum NewsType
     UpdatedConsoleInDb          = 6,
     UpdatedComputerInCollection = 7,
     UpdatedConsoleInCollection  = 8,
-    NewMoneyDonation            = 9
+    NewMoneyDonation            = 9,
+    NewBookInDb                 = 10,
+    UpdatedBookInDb             = 11,
+    NewDocumentInDb             = 12,
+    UpdatedDocumentInDb         = 13,
+    NewMagazineInDb             = 14,
+    UpdatedMagazineInDb         = 15,
+    NewPersonInDb               = 16,
+    UpdatedPersonInDb           = 17,
+    NewSoftwareInDb             = 18,
+    UpdatedSoftwareInDb         = 19,
+    NewSoftwareVersionInDb      = 20,
+    UpdatedSoftwareVersionInDb  = 21,
+    NewSoftwareReleaseInDb      = 22,
+    UpdatedSoftwareReleaseInDb  = 23,
+    NewGpuInDb                  = 24,
+    UpdatedGpuInDb              = 25,
+    NewSoundSynthInDb           = 26,
+    UpdatedSoundSynthInDb       = 27,
+    NewProcessorInDb            = 28,
+    UpdatedProcessorInDb        = 29
 }
 
 public enum StatusType
