@@ -23,9 +23,11 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
@@ -188,6 +190,352 @@ public class MagazinesService(Marechai.ApiClient.Client client)
             List<MagazineByMachineFamilyDto>? families = await client.Magazines[id].MachineFamilies.GetAsync();
 
             return families ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    // --- CRUD methods ---
+
+    public async Task<(long? id, string? error)> CreateAsync(MagazineDto dto)
+    {
+        try
+        {
+            long? id = await client.Magazines.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateAsync(long id, MagazineDto dto)
+    {
+        try
+        {
+            await client.Magazines[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteAsync(long id)
+    {
+        try
+        {
+            await client.Magazines[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // --- Synopsis methods ---
+
+    public async Task<List<DocumentSynopsisDto>> GetSynopsesAsync(long magazineId)
+    {
+        try
+        {
+            List<DocumentSynopsisDto>? synopses = await client.Magazines[magazineId].Synopses.GetAsync();
+
+            return synopses ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(long? id, string? error)> UpsertSynopsisAsync(long magazineId, DocumentSynopsisDto dto)
+    {
+        try
+        {
+            long? id = await client.Magazines[magazineId].Synopsis.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteSynopsisAsync(long magazineId, string languageCode)
+    {
+        try
+        {
+            await client.Magazines[magazineId].Synopsis[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // --- People junction methods ---
+
+    public async Task<(long? id, string? error)> AddPersonToMagazineAsync(PersonByMagazineDto dto)
+    {
+        try
+        {
+            long? id = await client.PeopleByMagazine.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemovePersonFromMagazineAsync(long id)
+    {
+        try
+        {
+            await client.PeopleByMagazine[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // --- Companies junction methods ---
+
+    public async Task<(long? id, string? error)> AddCompanyToMagazineAsync(CompanyByMagazineDto dto)
+    {
+        try
+        {
+            long? id = await client.Magazines.Companies.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveCompanyFromMagazineAsync(long id)
+    {
+        try
+        {
+            await client.Magazines.Companies[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // --- Machines junction methods ---
+
+    public async Task<(long? id, string? error)> AddMachineToMagazineAsync(MagazineByMachineDto dto)
+    {
+        try
+        {
+            long? id = await client.MagazinesByMachine.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveMachineFromMagazineAsync(long id)
+    {
+        try
+        {
+            await client.MagazinesByMachine[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // --- Machine Families junction methods ---
+
+    public async Task<(long? id, string? error)> AddMachineFamilyToMagazineAsync(MagazineByMachineFamilyDto dto)
+    {
+        try
+        {
+            long? id = await client.MagazinesByMachineFamily.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveMachineFamilyFromMagazineAsync(long id)
+    {
+        try
+        {
+            await client.MagazinesByMachineFamily[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // --- Picker helper methods ---
+
+    public async Task<List<DocumentRoleDto>> GetDocumentRolesAsync()
+    {
+        try
+        {
+            List<DocumentRoleDto>? roles = await client.Documents.Roles.Enabled.GetAsync();
+
+            return roles ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<PersonDto>> GetAllPeopleAsync()
+    {
+        try
+        {
+            List<PersonDto>? people = await client.People.GetAsync();
+
+            return people ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetAllCompaniesAsync()
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Companies.GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MachineDto>> GetAllMachinesAsync()
+    {
+        try
+        {
+            List<MachineDto>? machines = await client.Machines.GetAsync();
+
+            return machines ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<MachineFamilyDto>> GetAllMachineFamiliesAsync()
+    {
+        try
+        {
+            List<MachineFamilyDto>? families = await client.MachineFamilies.GetAsync();
+
+            return families ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
+    {
+        try
+        {
+            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+
+            return countries ?? [];
         }
         catch
         {

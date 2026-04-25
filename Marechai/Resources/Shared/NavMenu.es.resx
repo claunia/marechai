@@ -259,4 +259,8 @@
     <value>Gestión de documentos</value>
         <comment>Document management admin link</comment>
   </data>
+    <data name="Magazine Management" xml:space="preserve">
+    <value>Gestión de revistas</value>
+        <comment>Magazine management admin link</comment>
+  </data>
 </root>
