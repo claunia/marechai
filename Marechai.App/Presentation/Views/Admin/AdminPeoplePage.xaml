@@ -223,11 +223,25 @@
                                         <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=PersonBirthDateLabel}"
                                                             Date="{Binding BirthDate, Mode=TwoWay}"
                                                             HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding BirthDatePrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
 
                                         <!-- Death Date -->
                                         <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=PersonDeathDateLabel}"
                                                             Date="{Binding DeathDate, Mode=TwoWay}"
                                                             HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding DeathDatePrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
 
                                         <!-- Webpage -->
                                         <TextBox Header="{Binding Source={StaticResource Strings}, Path=PersonWebpageLabel}"

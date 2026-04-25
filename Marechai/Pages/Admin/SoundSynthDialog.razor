@@ -33,6 +33,15 @@
                        Clearable="true"
                        Class="mb-4"/>
 
+        <MudSelect T="int" @bind-Value="IntroducedPrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
         <MudNumericField T="int?" @bind-Value="Voices"
                          Label="@L["Voices"]"
                          Variant="Variant.Outlined"
@@ -101,6 +110,7 @@
     [Parameter] public int?      CompanyId    { get; set; }
     [Parameter] public string?   ModelCode    { get; set; }
     [Parameter] public DateTime? Introduced   { get; set; }
+    [Parameter] public int       IntroducedPrecision { get; set; }
     [Parameter] public int?      Voices       { get; set; }
     [Parameter] public double?   Frequency    { get; set; }
     [Parameter] public int?      Depth        { get; set; }
@@ -145,6 +155,7 @@
             CompanyId  = _selectedCompany?.Id,
             ModelCode  = ModelCode,
             Introduced = Introduced,
+            IntroducedPrecision = IntroducedPrecision,
             Voices     = Voices,
             Frequency  = Frequency,
             Depth      = Depth,

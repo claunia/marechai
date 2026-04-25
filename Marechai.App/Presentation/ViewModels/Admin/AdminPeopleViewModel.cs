@@ -71,7 +71,13 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
     private DateTimeOffset? _birthDate;
 
     [ObservableProperty]
+    private int _birthDatePrecision;
+
+    [ObservableProperty]
     private DateTimeOffset? _deathDate;
+
+    [ObservableProperty]
+    private int _deathDatePrecision;
 
     [ObservableProperty]
     private string _webpage = string.Empty;
@@ -206,7 +212,9 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
         Alias          = item.Alias     ?? string.Empty;
         DisplayName    = item.DisplayName ?? string.Empty;
         BirthDate      = item.Birthdate;
+        BirthDatePrecision = item.BirthdatePrecision ?? 0;
         DeathDate      = item.DeathDate;
+        DeathDatePrecision = item.DeathDatePrecision ?? 0;
         Webpage        = item.Webpage   ?? string.Empty;
         Twitter        = item.Twitter   ?? string.Empty;
         Facebook       = item.Facebook  ?? string.Empty;
@@ -256,7 +264,9 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
                 Alias       = string.IsNullOrWhiteSpace(Alias)       ? null : Alias,
                 DisplayName = string.IsNullOrWhiteSpace(DisplayName) ? null : DisplayName,
                 Birthdate   = BirthDate,
+                BirthdatePrecision = BirthDatePrecision,
                 DeathDate   = DeathDate,
+                DeathDatePrecision = DeathDatePrecision,
                 Webpage     = string.IsNullOrWhiteSpace(Webpage)     ? null : Webpage,
                 Twitter     = string.IsNullOrWhiteSpace(Twitter)     ? null : Twitter,
                 Facebook    = string.IsNullOrWhiteSpace(Facebook)    ? null : Facebook,
@@ -339,7 +349,9 @@ public partial class AdminPeopleViewModel : ObservableObject, IRegionAware
         Alias           = string.Empty;
         DisplayName     = string.Empty;
         BirthDate       = null;
+        BirthDatePrecision = 0;
         DeathDate       = null;
+        DeathDatePrecision = 0;
         Webpage         = string.Empty;
         Twitter         = string.Empty;
         Facebook        = string.Empty;

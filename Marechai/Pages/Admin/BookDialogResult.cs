@@ -11,7 +11,8 @@ public sealed class BookDialogResult
     public int?      Edition     { get; set; }
     public int?      Pages       { get; set; }
     public int?      CountryId   { get; set; }
-    public DateTime? Published   { get; set; }
+    public DateTime? Published          { get; set; }
+    public int       PublishedPrecision  { get; set; }
     public long?     PreviousId  { get; set; }
     public long?     SourceId    { get; set; }
 }

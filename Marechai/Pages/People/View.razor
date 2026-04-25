@@ -106,14 +106,14 @@
             {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["Birth date"]</strong></td>
-                    <td>@_person.Birthdate.Value.DateTime.ToLongDateString()</td>
+                    <td>@(((_person.BirthdatePrecision ?? 0) == 2 ? _person.Birthdate.Value.Year.ToString() : (_person.BirthdatePrecision ?? 0) == 1 ? _person.Birthdate.Value.ToString("MMMM yyyy") : _person.Birthdate.Value.DateTime.ToLongDateString()))</td>
                 </tr>
             }
             @if(_person.DeathDate.HasValue)
             {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["Death date"]</strong></td>
-                    <td>@_person.DeathDate.Value.DateTime.ToLongDateString()</td>
+                    <td>@(((_person.DeathDatePrecision ?? 0) == 2 ? _person.DeathDate.Value.Year.ToString() : (_person.DeathDatePrecision ?? 0) == 1 ? _person.DeathDate.Value.ToString("MMMM yyyy") : _person.DeathDate.Value.DateTime.ToLongDateString()))</td>
                 </tr>
             }
             @if(!string.IsNullOrEmpty(_person.Country))

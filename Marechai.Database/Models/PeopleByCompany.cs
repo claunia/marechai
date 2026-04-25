@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -34,7 +35,11 @@ public class PeopleByCompany : BaseModel<long>
     public int       CompanyId { get; set; }
     public string    Position  { get; set; }
     public DateTime? Start     { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision StartPrecision { get; set; }
     public DateTime? End       { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision EndPrecision { get; set; }
     [DefaultValue(false)]
     public bool Ongoing { get; set; }
 

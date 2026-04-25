@@ -67,6 +67,9 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
     private DateTimeOffset? _introduced;
 
     [ObservableProperty]
+    private int _introducedPrecision;
+
+    [ObservableProperty]
     private string _package = string.Empty;
 
     [ObservableProperty]
@@ -292,6 +295,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
                 CompanyId   = SelectedCompany?.Id,
                 ModelCode   = string.IsNullOrWhiteSpace(ModelCode) ? null : ModelCode,
                 Introduced  = Introduced,
+                IntroducedPrecision = IntroducedPrecision,
                 Package     = string.IsNullOrWhiteSpace(Package)   ? null : Package,
                 Process     = string.IsNullOrWhiteSpace(Process)   ? null : Process,
                 ProcessNm   = ProcessNm.HasValue ? (float)ProcessNm.Value : null,
@@ -511,6 +515,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         GpuName           = string.Empty;
         ModelCode          = string.Empty;
         Introduced         = null;
+        IntroducedPrecision = 0;
         Package            = string.Empty;
         Process            = string.Empty;
         ProcessNm          = null;
@@ -531,6 +536,7 @@ public partial class AdminGpusViewModel : ObservableObject, IRegionAware
         GpuName           = gpu.Name      ?? string.Empty;
         ModelCode         = gpu.ModelCode  ?? string.Empty;
         Introduced        = gpu.Introduced;
+        IntroducedPrecision = gpu.IntroducedPrecision ?? 0;
         Package           = gpu.Package   ?? string.Empty;
         Process           = gpu.Process   ?? string.Empty;
         ProcessNm         = gpu.ProcessNm;

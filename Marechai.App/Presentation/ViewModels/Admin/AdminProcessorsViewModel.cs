@@ -67,6 +67,9 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
     private DateTimeOffset? _introduced;
 
     [ObservableProperty]
+    private int _introducedPrecision;
+
+    [ObservableProperty]
     private double? _speed;
 
     [ObservableProperty]
@@ -340,6 +343,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
                 ModelCode        = string.IsNullOrWhiteSpace(ModelCode) ? null : ModelCode,
                 InstructionSetId = SelectedInstructionSet?.Id,
                 Introduced       = Introduced,
+                IntroducedPrecision = IntroducedPrecision,
                 Speed            = Speed,
                 Package          = string.IsNullOrWhiteSpace(Package) ? null : Package,
                 Process          = string.IsNullOrWhiteSpace(Process) ? null : Process,
@@ -548,6 +552,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         ProcessorName        = string.Empty;
         ModelCode             = string.Empty;
         Introduced            = null;
+        IntroducedPrecision = 0;
         Speed                 = null;
         Package               = string.Empty;
         Process               = string.Empty;
@@ -583,6 +588,7 @@ public partial class AdminProcessorsViewModel : ObservableObject, IRegionAware
         ProcessorName  = proc.Name      ?? string.Empty;
         ModelCode      = proc.ModelCode  ?? string.Empty;
         Introduced     = proc.Introduced;
+        IntroducedPrecision = proc.IntroducedPrecision ?? 0;
         Speed          = proc.Speed;
         Package        = proc.Package   ?? string.Empty;
         Process        = proc.Process   ?? string.Empty;

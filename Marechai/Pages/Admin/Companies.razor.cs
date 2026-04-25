@@ -73,13 +73,11 @@ public partial class Companies
         _ => Color.Default
     };
 
-    static string FormatDate(DateTimeOffset? date, bool? dayUnknown, bool? monthUnknown)
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
     {
         if(date is null) return "";
-
-        if(monthUnknown == true) return date.Value.Year.ToString();
-        if(dayUnknown == true) return date.Value.ToString("MMMM yyyy");
-
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
         return date.Value.Date.ToShortDateString();
     }
 
@@ -107,11 +105,11 @@ public partial class Companies
                 LegalName             = data.LegalName,
                 Status                = data.Status,
                 Founded               = data.Founded.HasValue ? new DateTimeOffset(data.Founded.Value) : null,
-                FoundedDayIsUnknown   = data.FoundedDayIsUnknown,
-                FoundedMonthIsUnknown = data.FoundedMonthIsUnknown,
+                FoundedPrecision      = data.FoundedPrecision,
+                
                 Sold                  = data.Sold.HasValue ? new DateTimeOffset(data.Sold.Value) : null,
-                SoldDayIsUnknown      = data.SoldDayIsUnknown,
-                SoldMonthIsUnknown    = data.SoldMonthIsUnknown,
+                SoldPrecision         = data.SoldPrecision,
+                
                 SoldToId              = data.SoldToId,
                 CountryId             = data.CountryId,
                 Address               = data.Address,
@@ -147,11 +145,11 @@ public partial class Companies
             { x => x.LegalName, company.LegalName },
             { x => x.StatusValue, company.Status ?? 0 },
             { x => x.Founded, company.Founded?.DateTime },
-            { x => x.FoundedDayIsUnknown, company.FoundedDayIsUnknown ?? false },
-            { x => x.FoundedMonthIsUnknown, company.FoundedMonthIsUnknown ?? false },
+            { x => x.FoundedPrecision, company.FoundedPrecision ?? 0 },
+            
             { x => x.Sold, company.Sold?.DateTime },
-            { x => x.SoldDayIsUnknown, company.SoldDayIsUnknown ?? false },
-            { x => x.SoldMonthIsUnknown, company.SoldMonthIsUnknown ?? false },
+            { x => x.SoldPrecision, company.SoldPrecision ?? 0 },
+            
             { x => x.SoldToId, company.SoldToId },
             { x => x.CountryId, company.CountryId },
             { x => x.Address, company.Address },
@@ -181,11 +179,11 @@ public partial class Companies
                 LegalName             = data.LegalName,
                 Status                = data.Status,
                 Founded               = data.Founded.HasValue ? new DateTimeOffset(data.Founded.Value) : null,
-                FoundedDayIsUnknown   = data.FoundedDayIsUnknown,
-                FoundedMonthIsUnknown = data.FoundedMonthIsUnknown,
+                FoundedPrecision      = data.FoundedPrecision,
+                
                 Sold                  = data.Sold.HasValue ? new DateTimeOffset(data.Sold.Value) : null,
-                SoldDayIsUnknown      = data.SoldDayIsUnknown,
-                SoldMonthIsUnknown    = data.SoldMonthIsUnknown,
+                SoldPrecision         = data.SoldPrecision,
+                
                 SoldToId              = data.SoldToId,
                 CountryId             = data.CountryId,
                 Address               = data.Address,

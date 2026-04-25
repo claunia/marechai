@@ -84,6 +84,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
             NativeTitle = d.NativeTitle,
             SortTitle   = d.SortTitle,
             Published   = d.Published,
+            PublishedPrecision = d.PublishedPrecision,
             CountryId   = d.CountryId,
             Country     = d.Country.Name
         })
@@ -105,6 +106,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
             NativeTitle = d.NativeTitle,
             SortTitle   = d.SortTitle,
             Published   = d.Published,
+            PublishedPrecision = d.PublishedPrecision,
             CountryId   = d.CountryId,
             Country     = d.Country.Name
         })
@@ -124,6 +126,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                                                              NativeTitle = b.NativeTitle,
                                                              SortTitle   = b.SortTitle,
                                                              Published   = b.Published,
+                                                             PublishedPrecision = b.PublishedPrecision,
                                                              CountryId   = b.CountryId,
                                                              Country     = b.Country.Name
                                                          })
@@ -141,6 +144,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
                                                               NativeTitle = b.NativeTitle,
                                                               SortTitle   = b.SortTitle,
                                                               Published   = b.Published,
+                                                              PublishedPrecision = b.PublishedPrecision,
                                                               CountryId   = b.CountryId,
                                                               Country     = b.Country.Name
                                                           })
@@ -165,6 +169,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
         model.NativeTitle = dto.NativeTitle;
         model.SortTitle   = dto.SortTitle;
         model.Published   = dto.Published;
+        model.PublishedPrecision = dto.PublishedPrecision;
         model.CountryId   = dto.CountryId;
 
         await context.News.AddAsync(new News
@@ -197,6 +202,7 @@ public class DocumentsController(MarechaiContext context) : ControllerBase
             NativeTitle = dto.NativeTitle,
             SortTitle   = dto.SortTitle,
             Published   = dto.Published,
+            PublishedPrecision = dto.PublishedPrecision,
             CountryId   = dto.CountryId
         };
 

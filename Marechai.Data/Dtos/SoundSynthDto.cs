@@ -41,6 +41,8 @@ public class SoundSynthDto : BaseDto<int>
     public string? ModelCode { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
+    [JsonPropertyName("introduced_precision")]
+    public DatePrecision IntroducedPrecision { get; set; }
     [JsonPropertyName("voices")]
     public int? Voices { get; set; }
     [JsonPropertyName("frequency")]

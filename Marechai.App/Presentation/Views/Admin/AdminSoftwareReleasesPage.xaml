@@ -111,6 +111,13 @@
                                                   DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=PublisherLabel}" />
                                         <DatePicker Header="{Binding Source={StaticResource Strings}, Path=ReleaseDateLabel}"
                                                     SelectedDate="{Binding ReleaseDate, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding ReleaseDatePrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
 
                                         <!-- Barcodes Section (edit only) -->
                                         <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}"

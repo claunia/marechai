@@ -25,7 +25,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -39,6 +41,8 @@ public class MagazineIssue : BaseModel<long>
     [DisplayFormat(DataFormatString = "{0:d}")]
     [DataType(DataType.Date)]
     public DateTime? Published { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision PublishedPrecision { get; set; }
     [StringLength(18)]
     public string ProductCode { get; set; }
     public short? Pages       { get; set; }

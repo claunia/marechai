@@ -36,6 +36,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private string _synthName = string.Empty;
     [ObservableProperty] private string _modelCode = string.Empty;
     [ObservableProperty] private DateTimeOffset? _introduced;
+    [ObservableProperty] private int _introducedPrecision;
     [ObservableProperty] private int? _voices;
     [ObservableProperty] private double? _frequency;
     [ObservableProperty] private int? _depth;
@@ -203,6 +204,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
                 CompanyId  = SelectedCompany?.Id,
                 ModelCode  = string.IsNullOrWhiteSpace(ModelCode) ? null : ModelCode,
                 Introduced = Introduced,
+                IntroducedPrecision = IntroducedPrecision,
                 Voices     = Voices,
                 Frequency  = Frequency,
                 Depth      = Depth,
@@ -285,6 +287,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         SynthName         = string.Empty;
         ModelCode          = string.Empty;
         Introduced         = null;
+        IntroducedPrecision = 0;
         Voices             = null;
         Frequency          = null;
         Depth              = null;
@@ -302,6 +305,7 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
         SynthName  = synth.Name      ?? string.Empty;
         ModelCode  = synth.ModelCode  ?? string.Empty;
         Introduced = synth.Introduced;
+        IntroducedPrecision = synth.IntroducedPrecision ?? 0;
         Voices     = synth.Voices;
         Frequency  = synth.Frequency;
         Depth      = synth.Depth;

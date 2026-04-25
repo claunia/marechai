@@ -18,6 +18,8 @@ namespace Marechai.ApiClient.Models
         public int? Id { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
+        /// <summary>The introduced_precision property</summary>
+        public int? IntroducedPrecision { get; set; }
         /// <summary>The name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -63,6 +65,7 @@ namespace Marechai.ApiClient.Models
             {
                 { "id", n => { Id = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
+                { "introduced_precision", n => { IntroducedPrecision = n.GetIntValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "parent", n => { Parent = n.GetStringValue(); } },
                 { "parent_id", n => { ParentId = n.GetIntValue(); } },
@@ -77,6 +80,7 @@ namespace Marechai.ApiClient.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
+            writer.WriteIntValue("introduced_precision", IntroducedPrecision);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("parent", Parent);
             writer.WriteIntValue("parent_id", ParentId);

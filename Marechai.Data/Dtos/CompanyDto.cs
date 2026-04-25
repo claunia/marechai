@@ -63,14 +63,10 @@ public class CompanyDto : BaseDto<int>
     public string? SoldTo { get; set; }
     [JsonPropertyName("country")]
     public string? Country { get; set; }
-    [JsonPropertyName("founded_day_is_unknown")]
-    public bool FoundedDayIsUnknown { get; set; }
-    [JsonPropertyName("founded_month_is_unknown")]
-    public bool FoundedMonthIsUnknown { get; set; }
-    [JsonPropertyName("sold_day_is_unknown")]
-    public bool SoldDayIsUnknown { get; set; }
-    [JsonPropertyName("sold_month_is_unknown")]
-    public bool SoldMonthIsUnknown { get; set; }
+    [JsonPropertyName("founded_precision")]
+    public DatePrecision FoundedPrecision { get; set; }
+    [JsonPropertyName("sold_precision")]
+    public DatePrecision SoldPrecision { get; set; }
     [JsonPropertyName("legal_name")]
     public string? LegalName { get; set; }
     [JsonIgnore]

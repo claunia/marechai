@@ -247,6 +247,13 @@
                                         <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanyFoundedLabel}"
                                                             Date="{Binding Founded, Mode=TwoWay}"
                                                             HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding FoundedPrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
                                         <CheckBox Content="{Binding Source={StaticResource Strings}, Path=FoundedMonthUnknownLabel}"
                                                   IsChecked="{Binding FoundedMonthIsUnknown, Mode=TwoWay}" />
                                         <CheckBox Content="{Binding Source={StaticResource Strings}, Path=FoundedDayUnknownLabel}"
@@ -256,6 +263,13 @@
                                         <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=CompanySoldLabel}"
                                                             Date="{Binding Sold, Mode=TwoWay}"
                                                             HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding SoldPrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
                                         <CheckBox Content="{Binding Source={StaticResource Strings}, Path=SoldMonthUnknownLabel}"
                                                   IsChecked="{Binding SoldMonthIsUnknown, Mode=TwoWay}" />
                                         <CheckBox Content="{Binding Source={StaticResource Strings}, Path=SoldDayUnknownLabel}"

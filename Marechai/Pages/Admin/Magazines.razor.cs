@@ -27,7 +27,13 @@ public partial class Magazines
         return true;
     };
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     async Task OpenAddMagazineDialog()
     {
@@ -55,7 +61,9 @@ public partial class Magazines
                 Issn             = data.Issn,
                 CountryId        = data.CountryId,
                 Published        = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null,
-                FirstPublication = data.FirstPublication.HasValue ? new DateTimeOffset(data.FirstPublication.Value) : null
+                PublishedPrecision = data.PublishedPrecision,
+                FirstPublication = data.FirstPublication.HasValue ? new DateTimeOffset(data.FirstPublication.Value) : null,
+                FirstPublicationPrecision = data.FirstPublicationPrecision
             };
 
             (long? id, string? errorMessage) = await MagazinesService.CreateAsync(dto);
@@ -88,7 +96,9 @@ public partial class Magazines
             { x => x.Issn, fullMagazine.Issn },
             { x => x.CountryId, fullMagazine.CountryId },
             { x => x.Published, fullMagazine.Published?.DateTime },
-            { x => x.FirstPublication, fullMagazine.FirstPublication?.DateTime }
+            { x => x.PublishedPrecision, fullMagazine.PublishedPrecision ?? 0 },
+            { x => x.FirstPublication, fullMagazine.FirstPublication?.DateTime },
+            { x => x.FirstPublicationPrecision, fullMagazine.FirstPublicationPrecision ?? 0 },
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<MagazineDialog>(L["Edit Magazine"], parameters,
@@ -111,7 +121,9 @@ public partial class Magazines
                 Issn             = data.Issn,
                 CountryId        = data.CountryId,
                 Published        = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null,
-                FirstPublication = data.FirstPublication.HasValue ? new DateTimeOffset(data.FirstPublication.Value) : null
+                PublishedPrecision = data.PublishedPrecision,
+                FirstPublication = data.FirstPublication.HasValue ? new DateTimeOffset(data.FirstPublication.Value) : null,
+                FirstPublicationPrecision = data.FirstPublicationPrecision
             };
 
             (bool succeeded, string? errorMessage) = await MagazinesService.UpdateAsync(magazine.Id ?? 0, dto);

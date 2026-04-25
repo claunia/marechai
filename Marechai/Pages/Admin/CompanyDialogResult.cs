@@ -8,11 +8,9 @@ public sealed class CompanyDialogResult
     public string?   LegalName             { get; set; }
     public int       Status                { get; set; }
     public DateTime? Founded               { get; set; }
-    public bool      FoundedDayIsUnknown   { get; set; }
-    public bool      FoundedMonthIsUnknown { get; set; }
+    public int       FoundedPrecision      { get; set; }
     public DateTime? Sold                  { get; set; }
-    public bool      SoldDayIsUnknown      { get; set; }
-    public bool      SoldMonthIsUnknown    { get; set; }
+    public int       SoldPrecision         { get; set; }
     public int?      SoldToId              { get; set; }
     public int?      CountryId             { get; set; }
     public string?   Address               { get; set; }

@@ -39,6 +39,8 @@ public abstract class DocumentBaseDto : BaseDto<long>
     public string? SortTitle { get; set; }
     [JsonPropertyName("published")]
     public DateTime? Published { get; set; }
+    [JsonPropertyName("published_precision")]
+    public DatePrecision PublishedPrecision { get; set; }
     [JsonPropertyName("country_id")]
     public short? CountryId { get; set; }
     [JsonPropertyName("country")]

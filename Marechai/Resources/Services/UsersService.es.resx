@@ -1,112 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- ReSharper disable MarkupTextTypo -->
-<root>
-    <!--
-      Microsoft ResX Schema
-
-      Version 2.0
-
-      The primary goals of this format is to allow a simple XML format
-      that is mostly human readable. The generation and parsing of the
-      various data types are done through the TypeConverter classes
-      associated with the data types.
-
-      Example:
-
-      ... ado.net/XML headers & schema ...
-      <resheader name="resmimetype">text/microsoft-resx</resheader>
-      <resheader name="version">2.0</resheader>
-      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-          <value>[base64 mime encoded serialized .NET Framework object]</value>
-      </data>
-      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-          <comment>This is a comment</comment>
-      </data>
-
-      There are any number of "resheader" rows that contain simple
-      name/value pairs.
-
-      Each data row contains a name, and value. The row also contains a
-      type or mimetype. Type corresponds to a .NET class that support
-      text/value conversion through the TypeConverter architecture.
-      Classes that don't support this are serialized and stored with the
-      mimetype set.
-
-      The mimetype is used for serialized objects, and tells the
-      ResXResourceReader how to depersist the object. This is currently not
-      extensible. For a given mimetype the value must be set accordingly:
-
-      Note - application/x-microsoft.net.object.binary.base64 is the format
-      that the ResXResourceWriter will generate, however the reader can
-      read any of the formats listed below.
-
-      mimetype: application/x-microsoft.net.object.binary.base64
-      value   : The object must be serialized with
-              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-              : and then encoded with base64 encoding.
-
-      mimetype: application/x-microsoft.net.object.soap.base64
-      value   : The object must be serialized with
-              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-              : and then encoded with base64 encoding.
-
-      mimetype: application/x-microsoft.net.object.bytearray.base64
-      value   : The object must be serialized into a byte array
-              : using a System.ComponentModel.TypeConverter
-              : and then encoded with base64 encoding.
-      -->
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
-                xmlns="">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
-            <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
-            </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    
+    <xs:schema id="root">
+        <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xs:element name="root" ns1:IsDataSet="true">
+            <xs:complexType>
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="metadata">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                            </xs:sequence>
+                            <xs:attribute name="name" use="required" type="xsd:string" />
+                            <xs:attribute name="type" type="xsd:string" />
+                            <xs:attribute name="mimetype" type="xsd:string" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="assembly">
+                        <xs:complexType>
+                            <xs:attribute name="alias" type="xsd:string" />
+                            <xs:attribute name="name" type="xsd:string" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="data">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+                            <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+                            <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+                            <xs:attribute ref="xml:space" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="resheader">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                            </xs:sequence>
+                            <xs:attribute name="name" type="xsd:string" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:complexType>
+        </xs:element>
+    </xs:schema>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -123,7 +63,7 @@
             PublicKeyToken=b77a5c561934e089
         </value>
     </resheader>
-    <!-- Users.razor - Page header -->
+    
     <data name="User Management" xml:space="preserve">
         <value>Gestión de usuarios</value>
         <comment>Admin page title for user management</comment>
@@ -132,7 +72,7 @@
         <value>Gestionar usuarios, contraseñas y asignaciones de roles.</value>
         <comment>Admin page subtitle for user management</comment>
     </data>
-    <!-- Users.razor - Toolbar -->
+    
     <data name="Add User" xml:space="preserve">
         <value>Añadir usuario</value>
         <comment>Button to add a new user</comment>
@@ -153,7 +93,7 @@
         <value>Bloqueo</value>
         <comment>Lockout bulk button</comment>
     </data>
-    <!-- Users.razor - Grid columns -->
+    
     <data name="Email" xml:space="preserve">
         <value>Correo electrónico</value>
         <comment>Grid column header for email</comment>
@@ -170,7 +110,7 @@
         <value>Acciones</value>
         <comment>Grid column header for action buttons</comment>
     </data>
-    <!-- Users.razor - Action tooltips -->
+    
     <data name="Edit" xml:space="preserve">
         <value>Editar</value>
         <comment>Edit button tooltip</comment>
@@ -183,7 +123,7 @@
         <value>Gestionar roles</value>
         <comment>Manage roles button tooltip and dialog title</comment>
     </data>
-    <!-- Users.razor.cs - Dialog titles -->
+    
     <data name="Edit User" xml:space="preserve">
         <value>Editar usuario</value>
         <comment>Dialog title when editing a user</comment>
@@ -204,7 +144,7 @@
         <value>Bloqueo masivo</value>
         <comment>Dialog title for bulk lockout operation</comment>
     </data>
-    <!-- Users.razor.cs - Success messages -->
+    
     <data name="User created successfully." xml:space="preserve">
         <value>Usuario creado con éxito.</value>
         <comment>Success message after creating a user</comment>
@@ -221,7 +161,7 @@
         <value>Usuario eliminado con éxito.</value>
         <comment>Success message after deleting a user</comment>
     </data>
-    <!-- Users.razor.cs - Confirmation messages -->
+    
     <data name="Are you sure you want to delete user '{0}'? This action cannot be undone." xml:space="preserve">
         <value>¿Seguro que desea eliminar al usuario '{0}'? Esta operación no se puede deshacer.</value>
         <comment>Delete confirmation message for a single user</comment>
@@ -230,7 +170,7 @@
         <value>¿Seguro que desea eliminar {0} usuario(s)? Esta operación no se puede deshacer.</value>
         <comment>Delete confirmation message for bulk users</comment>
     </data>
-    <!-- Users.razor.cs - Bulk operation results -->
+    
     <data name="Deleted {0} user(s)." xml:space="preserve">
         <value>{0} usuario(s) eliminados.</value>
         <comment>Bulk delete success message, {0} is succeeded count</comment>
@@ -255,7 +195,7 @@
         <value>Bloqueo deshabilitado para {0} usuario(s).</value>
         <comment>Bulk lockout disable success, {0} succeeded count</comment>
     </data>
-    <!-- UserDialog.razor -->
+    
     <data name="Phone Number" xml:space="preserve">
         <value>Número de teléfono</value>
         <comment>Label for phone number field</comment>
@@ -304,7 +244,7 @@
         <value>Guardar</value>
         <comment>Save button</comment>
     </data>
-    <!-- PasswordDialog.razor -->
+    
     <data name="Changing password for {0}" xml:space="preserve">
         <value>Cambiando contraseña para {0}</value>
         <comment>Password dialog header, {0} is user email</comment>
@@ -321,7 +261,7 @@
         <value>La contraseña debe tener al menos 6 caracteres.</value>
         <comment>Validation error for short password</comment>
     </data>
-    <!-- RolesDialog.razor -->
+    
     <data name="Managing roles for {0}" xml:space="preserve">
         <value>Gestionando roles para {0}</value>
         <comment>Roles dialog header, {0} is user email</comment>
@@ -350,7 +290,7 @@
         <value>Cerrar</value>
         <comment>Close button</comment>
     </data>
-    <!-- BulkRoleDialog.razor -->
+    
     <data name="Apply role operation to {0} user(s)" xml:space="preserve">
         <value>Aplicar operación de rol a {0} usuario(s)</value>
         <comment>Bulk role dialog header, {0} is user count</comment>
@@ -367,7 +307,7 @@
         <value>Aplicar</value>
         <comment>Apply button</comment>
     </data>
-    <!-- BulkLockoutDialog.razor -->
+    
     <data name="Update lockout setting for {0} user(s)" xml:space="preserve">
         <value>Actualizar configuración de bloqueo para {0} usuario(s)</value>
         <comment>Bulk lockout dialog header, {0} is user count</comment>
@@ -380,9 +320,9 @@
         <value>Deshabilitar bloqueo</value>
         <comment>Radio option to disable lockout</comment>
     </data>
-    <!-- DeleteConfirmDialog.razor -->
+    
     <data name="Delete confirm" xml:space="preserve">
         <value>Eliminar</value>
         <comment>Delete confirmation button</comment>
     </data>
-</root>
+<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data></root>

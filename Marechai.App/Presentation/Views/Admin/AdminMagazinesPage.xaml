@@ -249,11 +249,25 @@
                                         <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=MagazinePublishedLabel}"
                                                             Date="{Binding Published, Mode=TwoWay}"
                                                             HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding PublishedPrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
 
                                         <!-- First Publication -->
                                         <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=MagazineFirstPublicationLabel}"
                                                             Date="{Binding FirstPublication, Mode=TwoWay}"
                                                             HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding FirstPublicationPrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
 
                                         <!-- Country -->
                                         <ComboBox Header="{Binding Source={StaticResource Strings}, Path=MagazineCountryLabel}"

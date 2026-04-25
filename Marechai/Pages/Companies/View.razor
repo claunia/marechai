@@ -83,11 +83,11 @@
             {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["Founded"]</strong></td>
-                    @if(_company.FoundedMonthIsUnknown == true)
+                    @if((_company.FoundedPrecision ?? 0) == 2)
                     {
                         <td>@_company.Founded.Value.Year.</td>
                     }
-                    else if(_company.FoundedDayIsUnknown == true)
+                    else if((_company.FoundedPrecision ?? 0) == 1)
                     {
                         <td>@($"{_company.Founded.Value:Y}").</td>
                     }
@@ -143,9 +143,9 @@
                         if(_company.Sold != null)
                         {
                             if(_soldTo != null)
-                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</MudLink></td> }
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company sold to {0} on {1}."], _soldTo.Name, (_company.SoldPrecision ?? 0) == 2 ? $"{_company.Sold.Value.Year}" : (_company.SoldPrecision ?? 0) == 1 ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</MudLink></td> }
                             else
-                            { <td>@string.Format(L["Company sold on {0} to an unknown company."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                            { <td>@string.Format(L["Company sold on {0} to an unknown company."], (_company.SoldPrecision ?? 0) == 2 ? $"{_company.Sold.Value.Year}" : (_company.SoldPrecision ?? 0) == 1 ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
                         }
                         else
                         {
@@ -159,9 +159,9 @@
                         if(_company.Sold != null)
                         {
                             if(_soldTo != null)
-                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company merged on {0} to form {1}."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString(), _soldTo.Name)</MudLink></td> }
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company merged on {0} to form {1}."], (_company.SoldPrecision ?? 0) == 2 ? $"{_company.Sold.Value.Year}" : (_company.SoldPrecision ?? 0) == 1 ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString(), _soldTo.Name)</MudLink></td> }
                             else
-                            { <td>@string.Format(L["Company merged on {0} to form an unknown company."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                            { <td>@string.Format(L["Company merged on {0} to form an unknown company."], (_company.SoldPrecision ?? 0) == 2 ? $"{_company.Sold.Value.Year}" : (_company.SoldPrecision ?? 0) == 1 ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
                         }
                         else
                         {
@@ -173,13 +173,13 @@
                         break;
                     case (int)CompanyStatus.Bankrupt:
                         if(_company.Sold != null)
-                        { <td>@string.Format(L["Company declared bankruptcy on {0}."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                        { <td>@string.Format(L["Company declared bankruptcy on {0}."], (_company.SoldPrecision ?? 0) == 2 ? $"{_company.Sold.Value.Year}" : (_company.SoldPrecision ?? 0) == 1 ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
                         else
                         { <td>@L["Company declared bankruptcy on an unknown date."]</td> }
                         break;
                     case (int)CompanyStatus.Defunct:
                         if(_company.Sold != null)
-                        { <td>@string.Format(L["Company ceased operations on {0}."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                        { <td>@string.Format(L["Company ceased operations on {0}."], (_company.SoldPrecision ?? 0) == 2 ? $"{_company.Sold.Value.Year}" : (_company.SoldPrecision ?? 0) == 1 ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
                         else
                         { <td>@L["Company ceased operations on an unknown date."]</td> }
                         break;
@@ -187,9 +187,9 @@
                         if(_company.Sold != null)
                         {
                             if(_soldTo != null)
-                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</MudLink></td> }
+                            { <td><MudLink Href="@($"/company/{_soldTo.Id}")">@string.Format(L["Company renamed to {0} on {1}."], _soldTo.Name, (_company.SoldPrecision ?? 0) == 2 ? $"{_company.Sold.Value.Year}" : (_company.SoldPrecision ?? 0) == 1 ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</MudLink></td> }
                             else
-                            { <td>@string.Format(L["Company was renamed on {0} to an unknown name."], _company.SoldMonthIsUnknown == true ? $"{_company.Sold.Value.Year}" : _company.SoldDayIsUnknown == true ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
+                            { <td>@string.Format(L["Company was renamed on {0} to an unknown name."], (_company.SoldPrecision ?? 0) == 2 ? $"{_company.Sold.Value.Year}" : (_company.SoldPrecision ?? 0) == 1 ? $"{_company.Sold.Value:Y}" : _company.Sold.Value.DateTime.ToLongDateString())</td> }
                         }
                         else
                         {

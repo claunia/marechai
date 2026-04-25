@@ -56,6 +56,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The published property</summary>
         public DateTimeOffset? Published { get; set; }
+        /// <summary>The published_precision property</summary>
+        public int? PublishedPrecision { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::Marechai.ApiClient.Models.MagazineIssueDto"/> and sets the default values.
         /// </summary>
@@ -90,6 +92,7 @@ namespace Marechai.ApiClient.Models
                 { "pages", n => { Pages = n.GetIntValue(); } },
                 { "product_code", n => { ProductCode = n.GetStringValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
+                { "published_precision", n => { PublishedPrecision = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -108,6 +111,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("pages", Pages);
             writer.WriteStringValue("product_code", ProductCode);
             writer.WriteDateTimeOffsetValue("published", Published);
+            writer.WriteIntValue("published_precision", PublishedPrecision);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

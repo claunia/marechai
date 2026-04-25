@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -50,6 +51,8 @@ public class Gpu : BaseModel<int>
     [DisplayFormat(DataFormatString = "{0:d}")]
     [DataType(DataType.Date)]
     public DateTime? Introduced { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision IntroducedPrecision { get; set; }
     [StringLength(45)]
     public string Package { get; set; }
     [StringLength(45)]

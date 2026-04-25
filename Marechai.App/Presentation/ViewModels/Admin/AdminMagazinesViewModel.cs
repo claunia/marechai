@@ -45,7 +45,9 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private string _sortTitle = string.Empty;
     [ObservableProperty] private string _issn = string.Empty;
     [ObservableProperty] private DateTimeOffset? _published;
+    [ObservableProperty] private int _publishedPrecision;
     [ObservableProperty] private DateTimeOffset? _firstPublication;
+    [ObservableProperty] private int _firstPublicationPrecision;
     [ObservableProperty] private Iso31661NumericDto? _selectedCountry;
 
     // --- Synopsis panel state ---
@@ -282,7 +284,9 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
                 SortTitle        = string.IsNullOrWhiteSpace(SortTitle) ? null : SortTitle,
                 Issn             = string.IsNullOrWhiteSpace(Issn) ? null : Issn,
                 Published        = Published,
+                PublishedPrecision = PublishedPrecision,
                 FirstPublication = FirstPublication,
+                FirstPublicationPrecision = FirstPublicationPrecision,
                 CountryId        = SelectedCountry?.Id
             };
 
@@ -818,7 +822,9 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
         SortTitle        = string.Empty;
         Issn             = string.Empty;
         Published        = null;
+        PublishedPrecision = 0;
         FirstPublication = null;
+        FirstPublicationPrecision = 0;
         SelectedCountry  = null;
 
         MagazinePeople.Clear();          MagazinePeopleDisplays.Clear();
@@ -844,7 +850,9 @@ public partial class AdminMagazinesViewModel : ObservableObject, IRegionAware
         SortTitle        = magazine.SortTitle    ?? string.Empty;
         Issn             = magazine.Issn         ?? string.Empty;
         Published        = magazine.Published;
+        PublishedPrecision = magazine.PublishedPrecision ?? 0;
         FirstPublication = magazine.FirstPublication;
+        FirstPublicationPrecision = magazine.FirstPublicationPrecision ?? 0;
 
         SelectedCountry = magazine.CountryId.HasValue
                               ? Countries.FirstOrDefault(c => c.Id == magazine.CountryId.Value)

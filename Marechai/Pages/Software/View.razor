@@ -179,7 +179,7 @@
                                             }
                                             @if(release.ReleaseDate.HasValue)
                                             {
-                                                <MudText Typo="Typo.caption" Color="Color.Secondary">@release.ReleaseDate.Value.DateTime.ToLongDateString()</MudText>
+                                                <MudText Typo="Typo.caption" Color="Color.Secondary">@(((release.ReleaseDatePrecision ?? 0) == 2 ? release.ReleaseDate.Value.Year.ToString() : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToLongDateString()))</MudText>
                                             }
                                         </div>
                                     </MudListItem>
@@ -222,7 +222,7 @@
                                 }
                                 @if(compilation.ReleaseDate.HasValue)
                                 {
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@compilation.ReleaseDate.Value.DateTime.ToLongDateString()</MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@(((compilation.ReleaseDatePrecision ?? 0) == 2 ? compilation.ReleaseDate.Value.Year.ToString() : (compilation.ReleaseDatePrecision ?? 0) == 1 ? compilation.ReleaseDate.Value.ToString("MMMM yyyy") : compilation.ReleaseDate.Value.DateTime.ToLongDateString()))</MudText>
                                 }
                             </div>
                         </MudListItem>

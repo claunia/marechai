@@ -56,6 +56,8 @@ namespace Marechai.ApiClient.Models
         public int? Id { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
+        /// <summary>The introduced_precision property</summary>
+        public int? IntroducedPrecision { get; set; }
         /// <summary>The memory property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -140,6 +142,7 @@ namespace Marechai.ApiClient.Models
                 { "gpus", n => { Gpus = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.GpuDto>(global::Marechai.ApiClient.Models.GpuDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
+                { "introduced_precision", n => { IntroducedPrecision = n.GetIntValue(); } },
                 { "memory", n => { Memory = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.MemoryDto>(global::Marechai.ApiClient.Models.MemoryDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "model", n => { Model = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
@@ -165,6 +168,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.GpuDto>("gpus", Gpus);
             writer.WriteIntValue("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
+            writer.WriteIntValue("introduced_precision", IntroducedPrecision);
             writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.MemoryDto>("memory", Memory);
             writer.WriteStringValue("model", Model);
             writer.WriteStringValue("name", Name);

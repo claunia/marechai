@@ -25,7 +25,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -34,7 +36,9 @@ public class SoftwareFamily : BaseModel<ulong>
     [Required]
     public string Name { get;                                    set; }
     public         ulong?                      ParentId   { get; set; }
-    public         DateTime?                   Introduced { get; set; }
+    public         DateTime?                   Introduced          { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public         DatePrecision                IntroducedPrecision { get; set; }
     public virtual SoftwareFamily              Parent     { get; set; }
     public virtual ICollection<SoftwareFamily>          Children   { get; set; }
     public virtual ICollection<Software>                Softwares  { get; set; }

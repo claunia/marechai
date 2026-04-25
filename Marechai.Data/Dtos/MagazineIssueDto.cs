@@ -41,6 +41,8 @@ public class MagazineIssueDto : BaseDto<long>
     public string? NativeCaption { get; set; }
     [JsonPropertyName("published")]
     public DateTime? Published { get; set; }
+    [JsonPropertyName("published_precision")]
+    public DatePrecision PublishedPrecision { get; set; }
     [JsonPropertyName("product_code")]
     public string? ProductCode { get; set; }
     [JsonPropertyName("pages")]

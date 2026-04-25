@@ -35,6 +35,15 @@
                        Clearable="true"
                        Class="mb-4"/>
 
+        <MudSelect T="int" @bind-Value="IntroducedPrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
         <MudSelect T="int?" @bind-Value="InstructionSetId"
                    Label="@L["Instruction set"]"
                    Variant="Variant.Outlined"
@@ -260,6 +269,7 @@
     [Parameter] public int?      CompanyId        { get; set; }
     [Parameter] public string?   ModelCode        { get; set; }
     [Parameter] public DateTime? Introduced       { get; set; }
+    [Parameter] public int       IntroducedPrecision { get; set; }
     [Parameter] public int?      InstructionSetId { get; set; }
     [Parameter] public double?   Speed            { get; set; }
     [Parameter] public string?   Package          { get; set; }
@@ -401,6 +411,7 @@
             CompanyId        = _selectedCompany?.Id,
             ModelCode        = ModelCode,
             Introduced       = Introduced,
+            IntroducedPrecision = IntroducedPrecision,
             InstructionSetId = InstructionSetId,
             Speed            = Speed,
             Package          = Package,

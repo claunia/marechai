@@ -35,6 +35,8 @@ public class SoftwareFamilyDto : BaseDto<ulong>
     public required string Name { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
+    [JsonPropertyName("introduced_precision")]
+    public DatePrecision IntroducedPrecision { get; set; }
     [JsonPropertyName("parent")]
     public string? Parent { get; set; }
     [JsonPropertyName("parent_id")]

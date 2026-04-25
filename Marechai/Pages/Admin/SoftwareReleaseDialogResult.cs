@@ -11,5 +11,6 @@ public sealed class SoftwareReleaseDialogResult
     public int?      PlatformId   { get; set; }
     public int?      RegionId     { get; set; }
     public int?      PublisherId  { get; set; }
-    public DateTime? ReleaseDate  { get; set; }
+    public DateTime? ReleaseDate          { get; set; }
+    public int       ReleaseDatePrecision  { get; set; }
 }

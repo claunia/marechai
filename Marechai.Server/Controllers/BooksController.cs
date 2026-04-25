@@ -98,6 +98,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                                             NativeTitle = b.NativeTitle,
                                                                             SortTitle = b.SortTitle,
                                                                             Published = b.Published,
+                                                                            PublishedPrecision = b.PublishedPrecision,
                                                                             Isbn      = b.Isbn,
                                                                             CountryId = b.CountryId,
                                                                             Pages     = b.Pages,
@@ -125,6 +126,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                                             NativeTitle = b.NativeTitle,
                                                                             SortTitle = b.SortTitle,
                                                                             Published = b.Published,
+                                                                            PublishedPrecision = b.PublishedPrecision,
                                                                             Isbn      = b.Isbn,
                                                                             CountryId = b.CountryId,
                                                                             Pages     = b.Pages,
@@ -149,6 +151,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                          NativeTitle            = b.NativeTitle,
                                                          SortTitle              = b.SortTitle,
                                                          Published              = b.Published,
+                                                         PublishedPrecision     = b.PublishedPrecision,
                                                          Isbn                   = b.Isbn,
                                                          CountryId              = b.CountryId,
                                                          Pages                  = b.Pages,
@@ -173,6 +176,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
                                                           NativeTitle            = b.NativeTitle,
                                                           SortTitle              = b.SortTitle,
                                                           Published              = b.Published,
+                                                          PublishedPrecision     = b.PublishedPrecision,
                                                           Isbn                   = b.Isbn,
                                                           CountryId              = b.CountryId,
                                                           Pages                  = b.Pages,
@@ -205,6 +209,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
         model.NativeTitle = dto.NativeTitle;
         model.SortTitle   = dto.SortTitle;
         model.Published   = dto.Published;
+        model.PublishedPrecision = dto.PublishedPrecision;
         model.CountryId   = dto.CountryId;
         model.Isbn        = dto.Isbn;
         model.Pages       = dto.Pages;
@@ -242,6 +247,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
             NativeTitle = dto.NativeTitle,
             SortTitle   = dto.SortTitle,
             Published   = dto.Published,
+            PublishedPrecision = dto.PublishedPrecision,
             CountryId   = dto.CountryId,
             Isbn        = dto.Isbn,
             Pages       = dto.Pages,
@@ -467,6 +473,7 @@ public class BooksController(MarechaiContext context, IConfiguration configurati
             Title                  = book.Title,
             NativeTitle            = book.NativeTitle,
             Published              = book.Published,
+            PublishedPrecision     = book.PublishedPrecision,
             Isbn                   = book.Isbn,
             CountryId              = book.CountryId,
             Pages                  = book.Pages,

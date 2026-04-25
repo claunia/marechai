@@ -100,15 +100,15 @@
                     <td>
                         @if(_machine.Type == (int)MachineType.Computer)
                         {
-                            <MudLink Href="@($"/computers/year/{_machine.Introduced.Value.Year}")">@_machine.Introduced.Value.DateTime.ToLongDateString()</MudLink>
+                            <MudLink Href="@($"/computers/year/{_machine.Introduced.Value.Year}")">@(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))</MudLink>
                         }
                         else if(_machine.Type == (int)MachineType.Console)
                         {
-                            <MudLink Href="@($"/consoles/year/{_machine.Introduced.Value.Year}")">@_machine.Introduced.Value.DateTime.ToLongDateString()</MudLink>
+                            <MudLink Href="@($"/consoles/year/{_machine.Introduced.Value.Year}")">@(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))</MudLink>
                         }
                         else
                         {
-                            @_machine.Introduced.Value.DateTime.ToLongDateString()
+                            @(((_machine.IntroducedPrecision ?? 0) == 2 ? _machine.Introduced.Value.Year.ToString() : (_machine.IntroducedPrecision ?? 0) == 1 ? _machine.Introduced.Value.ToString("MMMM yyyy") : _machine.Introduced.Value.DateTime.ToLongDateString()))
                         }
                     </td>
                 </tr>

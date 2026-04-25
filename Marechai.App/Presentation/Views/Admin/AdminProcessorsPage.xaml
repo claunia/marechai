@@ -240,6 +240,13 @@
                                         <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=ProcessorIntroducedLabel}"
                                                             Date="{Binding Introduced, Mode=TwoWay}"
                                                             HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding IntroducedPrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
 
                                         <!-- Performance -->
                                         <TextBlock Text="{Binding Source={StaticResource Strings}, Path=ProcessorPerformanceHeader}"

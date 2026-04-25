@@ -84,6 +84,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
             CompanyName = s.Company.Name,
             ModelCode   = s.ModelCode,
             Introduced  = s.Introduced,
+            IntroducedPrecision = s.IntroducedPrecision,
             Voices      = s.Voices,
             Frequency   = s.Frequency,
             Depth       = s.Depth,
@@ -106,6 +107,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
                                                                CompanyName = s.Company.Name,
                                                                ModelCode   = s.ModelCode,
                                                                Introduced  = s.Introduced,
+                                                               IntroducedPrecision = s.IntroducedPrecision,
                                                                Voices      = s.Voices,
                                                                Frequency   = s.Frequency,
                                                                Depth       = s.Depth,
@@ -133,6 +135,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
         model.Depth      = dto.Depth;
         model.Frequency  = dto.Frequency;
         model.Introduced = dto.Introduced;
+        model.IntroducedPrecision = dto.IntroducedPrecision;
         model.Name       = dto.Name;
         model.Type       = dto.Type;
         model.Voices     = dto.Voices;
@@ -173,6 +176,7 @@ public class SoundSynthsController(MarechaiContext context) : ControllerBase
             Depth      = dto.Depth,
             Frequency  = dto.Frequency,
             Introduced = dto.Introduced,
+            IntroducedPrecision = dto.IntroducedPrecision,
             Name       = dto.Name,
             Type       = dto.Type,
             Voices     = dto.Voices,

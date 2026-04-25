@@ -24,6 +24,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The birthdate property</summary>
         public DateTimeOffset? Birthdate { get; set; }
+        /// <summary>The birthdate_precision property</summary>
+        public int? BirthdatePrecision { get; set; }
         /// <summary>The country property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -36,6 +38,8 @@ namespace Marechai.ApiClient.Models
         public int? CountryId { get; set; }
         /// <summary>The death_date property</summary>
         public DateTimeOffset? DeathDate { get; set; }
+        /// <summary>The death_date_precision property</summary>
+        public int? DeathDatePrecision { get; set; }
         /// <summary>The display_name property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -115,9 +119,11 @@ namespace Marechai.ApiClient.Models
             {
                 { "alias", n => { Alias = n.GetStringValue(); } },
                 { "birthdate", n => { Birthdate = n.GetDateTimeOffsetValue(); } },
+                { "birthdate_precision", n => { BirthdatePrecision = n.GetIntValue(); } },
                 { "country", n => { Country = n.GetStringValue(); } },
                 { "country_id", n => { CountryId = n.GetIntValue(); } },
                 { "death_date", n => { DeathDate = n.GetDateTimeOffsetValue(); } },
+                { "death_date_precision", n => { DeathDatePrecision = n.GetIntValue(); } },
                 { "display_name", n => { DisplayName = n.GetStringValue(); } },
                 { "facebook", n => { Facebook = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
@@ -137,9 +143,11 @@ namespace Marechai.ApiClient.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("alias", Alias);
             writer.WriteDateTimeOffsetValue("birthdate", Birthdate);
+            writer.WriteIntValue("birthdate_precision", BirthdatePrecision);
             writer.WriteStringValue("country", Country);
             writer.WriteIntValue("country_id", CountryId);
             writer.WriteDateTimeOffsetValue("death_date", DeathDate);
+            writer.WriteIntValue("death_date_precision", DeathDatePrecision);
             writer.WriteStringValue("display_name", DisplayName);
             writer.WriteStringValue("facebook", Facebook);
             writer.WriteIntValue("id", Id);

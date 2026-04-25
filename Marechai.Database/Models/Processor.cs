@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -49,6 +50,8 @@ public class Processor : BaseModel<int>
     [DisplayFormat(DataFormatString = "{0:d}")]
     [DataType(DataType.Date)]
     public DateTime? Introduced { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision IntroducedPrecision { get; set; }
     [DisplayName("Instruction set")]
     public int? InstructionSetId { get; set; }
     [DisplayName("Nominal speed (MHz)")]

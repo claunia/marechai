@@ -39,8 +39,12 @@ public class PersonDto : BaseDto<int>
     public string? CountryOfBirth { get; set; }
     [JsonPropertyName("birthdate")]
     public DateTime BirthDate { get; set; }
+    [JsonPropertyName("birthdate_precision")]
+    public DatePrecision BirthDatePrecision { get; set; }
     [JsonPropertyName("death_date")]
     public DateTime? DeathDate { get; set; }
+    [JsonPropertyName("death_date_precision")]
+    public DatePrecision DeathDatePrecision { get; set; }
     [JsonPropertyName("webpage")]
     public string? Webpage { get; set; }
     [JsonPropertyName("twitter")]

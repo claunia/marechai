@@ -44,7 +44,13 @@ public partial class SoftwareReleases
         _isLoading = false;
     }
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     void GoBack()
     {
@@ -91,6 +97,8 @@ public partial class SoftwareReleases
                 PlatformId        = data.PlatformId,
                 RegionId          = data.RegionId,
                 PublisherId       = data.PublisherId,
+
+                ReleaseDatePrecision = data.ReleaseDatePrecision,
                 ReleaseDate       = data.ReleaseDate.HasValue ? new DateTimeOffset(data.ReleaseDate.Value) : null
             };
 
@@ -131,7 +139,8 @@ public partial class SoftwareReleases
             { x => x.PlatformId, full.PlatformId },
             { x => x.RegionId, full.RegionId },
             { x => x.PublisherId, full.PublisherId },
-            { x => x.ReleaseDate, full.ReleaseDate?.DateTime }
+            { x => x.ReleaseDate, full.ReleaseDate?.DateTime },
+            { x => x.ReleaseDatePrecision, full.ReleaseDatePrecision ?? 0 },
         };
 
         IDialogReference dialog =
@@ -155,6 +164,8 @@ public partial class SoftwareReleases
                 SubvariantId      = data.SubvariantId,
                 PlatformId        = data.PlatformId,
                 RegionId          = data.RegionId,
+
+                ReleaseDatePrecision = data.ReleaseDatePrecision,
                 PublisherId       = data.PublisherId,
                 ReleaseDate       = data.ReleaseDate.HasValue ? new DateTimeOffset(data.ReleaseDate.Value) : null
             };

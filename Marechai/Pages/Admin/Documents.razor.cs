@@ -27,7 +27,13 @@ public partial class Documents
         return true;
     };
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     async Task OpenAddDocumentDialog()
     {
@@ -53,6 +59,8 @@ public partial class Documents
                 NativeTitle = data.NativeTitle,
                 SortTitle   = data.SortTitle,
                 CountryId   = data.CountryId,
+
+                PublishedPrecision = data.PublishedPrecision,
                 Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null
             };
 
@@ -87,7 +95,8 @@ public partial class Documents
             { x => x.NativeTitle, fullDocument.NativeTitle },
             { x => x.SortTitle, fullDocument.SortTitle },
             { x => x.CountryId, fullDocument.CountryId },
-            { x => x.Published, fullDocument.Published?.DateTime }
+            { x => x.Published, fullDocument.Published?.DateTime },
+            { x => x.PublishedPrecision, fullDocument.PublishedPrecision ?? 0 },
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<DocumentDialog>(L["Edit Document"], parameters,
@@ -107,6 +116,8 @@ public partial class Documents
                 Title       = data.Title,
                 NativeTitle = data.NativeTitle,
                 SortTitle   = data.SortTitle,
+
+                PublishedPrecision = data.PublishedPrecision,
                 CountryId   = data.CountryId,
                 Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null
             };

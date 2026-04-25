@@ -7,7 +7,8 @@ public sealed class SoundSynthDialogResult
     public string    Name       { get; set; } = null!;
     public int?      CompanyId  { get; set; }
     public string?   ModelCode  { get; set; }
-    public DateTime? Introduced { get; set; }
+    public DateTime? Introduced          { get; set; }
+    public int       IntroducedPrecision { get; set; }
     public int?      Voices     { get; set; }
     public double?   Frequency  { get; set; }
     public int?      Depth      { get; set; }

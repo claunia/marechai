@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -29,6 +31,8 @@ public class SoftwareRelease : BaseModel<ulong>
     public virtual Company Publisher { get; set; }
 
     public DateTime? ReleaseDate { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision ReleaseDatePrecision { get; set; }
 
     public virtual ICollection<SoftwareBarcode>                     Barcodes             { get; set; }
     public virtual ICollection<SoftwareProductCode>                 ProductCodes         { get; set; }

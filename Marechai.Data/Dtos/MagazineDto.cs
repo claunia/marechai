@@ -33,4 +33,6 @@ public class MagazineDto : DocumentBaseDto
     public string? Issn { get; set; }
     [JsonPropertyName("first_publication")]
     public DateTime? FirstPublication { get; set; }
+    [JsonPropertyName("first_publication_precision")]
+    public DatePrecision FirstPublicationPrecision { get; set; }
 }

@@ -90,7 +90,9 @@ public class PeopleController(MarechaiContext context) : ControllerBase
             CountryOfBirth   = p.CountryOfBirth.Name,
             CountryOfBirthId = p.CountryOfBirthId,
             BirthDate        = p.BirthDate,
+            BirthDatePrecision = p.BirthDatePrecision,
             DeathDate        = p.DeathDate,
+            DeathDatePrecision = p.DeathDatePrecision,
             Photo            = p.Photo,
             Alias            = p.Alias,
             DisplayName      = p.DisplayName
@@ -115,7 +117,9 @@ public class PeopleController(MarechaiContext context) : ControllerBase
             CountryOfBirth   = p.CountryOfBirth.Name,
             CountryOfBirthId = p.CountryOfBirthId,
             BirthDate        = p.BirthDate,
+            BirthDatePrecision = p.BirthDatePrecision,
             DeathDate        = p.DeathDate,
+            DeathDatePrecision = p.DeathDatePrecision,
             Photo            = p.Photo,
             Alias            = p.Alias,
             DisplayName      = p.DisplayName
@@ -233,7 +237,9 @@ public class PeopleController(MarechaiContext context) : ControllerBase
                                                            Surname        = p.Surname,
                                                            CountryOfBirth = p.CountryOfBirth.Name,
                                                            BirthDate      = p.BirthDate,
+                                                           BirthDatePrecision = p.BirthDatePrecision,
                                                            DeathDate      = p.DeathDate,
+                                                           DeathDatePrecision = p.DeathDatePrecision,
                                                            Webpage        = p.Webpage,
                                                            Twitter        = p.Twitter,
                                                            Facebook       = p.Facebook,
@@ -255,7 +261,9 @@ public class PeopleController(MarechaiContext context) : ControllerBase
                                                            Surname          = p.Surname,
                                                            CountryOfBirthId = p.CountryOfBirthId,
                                                            BirthDate        = p.BirthDate,
+                                                           BirthDatePrecision = p.BirthDatePrecision,
                                                            DeathDate        = p.DeathDate,
+                                                           DeathDatePrecision = p.DeathDatePrecision,
                                                            Webpage          = p.Webpage,
                                                            Twitter          = p.Twitter,
                                                            Facebook         = p.Facebook,
@@ -284,7 +292,9 @@ public class PeopleController(MarechaiContext context) : ControllerBase
         model.Surname          = dto.Surname;
         model.CountryOfBirthId = dto.CountryOfBirthId;
         model.BirthDate        = dto.BirthDate;
+        model.BirthDatePrecision = dto.BirthDatePrecision;
         model.DeathDate        = dto.DeathDate;
+        model.DeathDatePrecision = dto.DeathDatePrecision;
         model.Webpage          = dto.Webpage;
         model.Twitter          = dto.Twitter;
         model.Facebook         = dto.Facebook;
@@ -322,7 +332,9 @@ public class PeopleController(MarechaiContext context) : ControllerBase
             Surname          = dto.Surname,
             CountryOfBirthId = dto.CountryOfBirthId,
             BirthDate        = dto.BirthDate,
+            BirthDatePrecision = dto.BirthDatePrecision,
             DeathDate        = dto.DeathDate,
+            DeathDatePrecision = dto.DeathDatePrecision,
             Webpage          = dto.Webpage,
             Twitter          = dto.Twitter,
             Facebook         = dto.Facebook,

@@ -134,6 +134,13 @@
 
                                         <CalendarDatePicker Header="{Binding Source={StaticResource Strings}, Path=IntroducedLabel}"
                                                             Date="{Binding Introduced, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=DatePrecisionLabel}"
+                                                  SelectedIndex="{Binding IntroducedPrecision, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionFull}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionMonthYear}" />
+                                            <ComboBoxItem Content="{Binding Source={StaticResource Strings}, Path=DatePrecisionYearOnly}" />
+                                        </ComboBox>
 
                                         <!-- Companies section (edit only) -->
                                         <StackPanel Visibility="{Binding IsEditingExisting, Converter={StaticResource BoolToVisibilityConverter}}" Spacing="8">

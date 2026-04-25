@@ -24,7 +24,13 @@ public partial class SoundSynths
 
     Func<SoundSynthDto, bool> QuickFilter => _ => true;
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     async Task OpenAddSoundSynthDialog()
     {
@@ -50,6 +56,7 @@ public partial class SoundSynths
                 CompanyId  = data.CompanyId,
                 ModelCode  = data.ModelCode,
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                IntroducedPrecision = data.IntroducedPrecision,
                 Voices     = data.Voices,
                 Frequency  = data.Frequency,
                 Depth      = data.Depth,
@@ -82,6 +89,7 @@ public partial class SoundSynths
             { x => x.CompanyId, soundSynth.CompanyId },
             { x => x.ModelCode, soundSynth.ModelCode },
             { x => x.Introduced, soundSynth.Introduced?.DateTime },
+            { x => x.IntroducedPrecision, soundSynth.IntroducedPrecision ?? 0 },
             { x => x.Voices, soundSynth.Voices },
             { x => x.Frequency, soundSynth.Frequency },
             { x => x.Depth, soundSynth.Depth },
@@ -108,6 +116,7 @@ public partial class SoundSynths
                 CompanyId  = data.CompanyId,
                 ModelCode  = data.ModelCode,
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                IntroducedPrecision = data.IntroducedPrecision,
                 Voices     = data.Voices,
                 Frequency  = data.Frequency,
                 Depth      = data.Depth,

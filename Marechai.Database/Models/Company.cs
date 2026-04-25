@@ -74,14 +74,10 @@ public class Company : BaseModel<int>
     [Required]
     public CompanyStatus Status { get;   set; }
 
-    [DefaultValue(false)]
-    public bool FoundedMonthIsUnknown { get; set; }
-    [DefaultValue(false)]
-    public bool FoundedDayIsUnknown { get; set; }
-    [DefaultValue(false)]
-    public bool SoldMonthIsUnknown { get; set; }
-    [DefaultValue(false)]
-    public bool SoldDayIsUnknown { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision FoundedPrecision { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision SoldPrecision { get; set; }
     public string LegalName { get;      set; }
 
     public virtual Iso31661Numeric Country { get; set; }

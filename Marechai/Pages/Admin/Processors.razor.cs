@@ -49,7 +49,13 @@ public partial class Processors
 
     Func<ProcessorDto, bool> QuickFilter => _ => true;
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     string FormatSpeed(double? speed) => speed is null ? "" : string.Format(L["{0} MHz"], speed.Value);
 
@@ -76,6 +82,8 @@ public partial class Processors
                 Name             = data.Name,
                 CompanyId        = data.CompanyId,
                 ModelCode        = data.ModelCode,
+
+                IntroducedPrecision = data.IntroducedPrecision,
                 Introduced       = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
                 InstructionSetId = data.InstructionSetId,
                 Speed            = data.Speed,
@@ -124,6 +132,7 @@ public partial class Processors
             { x => x.CompanyId, processor.CompanyId },
             { x => x.ModelCode, processor.ModelCode },
             { x => x.Introduced, processor.Introduced?.DateTime },
+            { x => x.IntroducedPrecision, processor.IntroducedPrecision ?? 0 },
             { x => x.InstructionSetId, processor.InstructionSetId },
             { x => x.Speed, processor.Speed },
             { x => x.Package, processor.Package },
@@ -163,6 +172,8 @@ public partial class Processors
                 Id               = processor.Id,
                 Name             = data.Name,
                 CompanyId        = data.CompanyId,
+
+                IntroducedPrecision = data.IntroducedPrecision,
                 ModelCode        = data.ModelCode,
                 Introduced       = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
                 InstructionSetId = data.InstructionSetId,

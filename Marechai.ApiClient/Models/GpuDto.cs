@@ -30,6 +30,8 @@ namespace Marechai.ApiClient.Models
         public int? Id { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
+        /// <summary>The introduced_precision property</summary>
+        public int? IntroducedPrecision { get; set; }
         /// <summary>The model_code property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -96,6 +98,7 @@ namespace Marechai.ApiClient.Models
                 { "die_size", n => { DieSize = n.GetFloatValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
+                { "introduced_precision", n => { IntroducedPrecision = n.GetIntValue(); } },
                 { "model_code", n => { ModelCode = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "package", n => { Package = n.GetStringValue(); } },
@@ -116,6 +119,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteFloatValue("die_size", DieSize);
             writer.WriteIntValue("id", Id);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
+            writer.WriteIntValue("introduced_precision", IntroducedPrecision);
             writer.WriteStringValue("model_code", ModelCode);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("package", Package);

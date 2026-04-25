@@ -6,5 +6,6 @@ public sealed class SoftwareFamilyDialogResult
 {
     public string    Name       { get; set; } = null!;
     public int?      ParentId   { get; set; }
-    public DateTime? Introduced { get; set; }
+    public DateTime? Introduced          { get; set; }
+    public int       IntroducedPrecision { get; set; }
 }

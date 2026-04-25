@@ -41,6 +41,8 @@ public class GpuDto : BaseDto<int>
     public string? ModelCode { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
+    [JsonPropertyName("introduced_precision")]
+    public DatePrecision IntroducedPrecision { get; set; }
     [JsonPropertyName("package")]
     public string? Package { get; set; }
     [JsonPropertyName("process")]

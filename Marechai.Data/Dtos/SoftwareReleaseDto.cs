@@ -60,4 +60,6 @@ public class SoftwareReleaseDto : BaseDto<ulong>
     public string? Publisher { get; set; }
     [JsonPropertyName("release_date")]
     public DateTime? ReleaseDate { get; set; }
+    [JsonPropertyName("release_date_precision")]
+    public DatePrecision ReleaseDatePrecision { get; set; }
 }

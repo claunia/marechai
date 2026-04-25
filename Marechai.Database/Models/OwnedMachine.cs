@@ -34,11 +34,17 @@ public class OwnedMachine : BaseModel<long>
 {
     [DisplayName("Acquisition date")]
     public DateTime AcquisitionDate { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision AcquisitionDatePrecision { get; set; }
     [DisplayName("Date when sold, traded, or otherwise lost")]
     public DateTime? LostDate { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision LostDatePrecision { get; set; }
     public StatusType Status { get;  set; }
     [DisplayName("Last status check date")]
     public DateTime? LastStatusDate { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision LastStatusDatePrecision { get; set; }
     [DisplayName("Available for trade or sale")]
     [DefaultValue(false)]
     public bool Trade { get; set; }

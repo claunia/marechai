@@ -24,7 +24,13 @@ public partial class SoftwareFamilies
 
     Func<SoftwareFamilyDto, bool> QuickFilter => _ => true;
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     async Task OpenAddDialog()
     {
@@ -48,6 +54,8 @@ public partial class SoftwareFamilies
             {
                 Name       = data.Name,
                 ParentId   = data.ParentId,
+
+                IntroducedPrecision = data.IntroducedPrecision,
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null
             };
 
@@ -82,7 +90,8 @@ public partial class SoftwareFamilies
             { x => x.FamilyId, full.Id ?? 0 },
             { x => x.Name, full.Name },
             { x => x.ParentId, full.ParentId },
-            { x => x.Introduced, full.Introduced?.DateTime }
+            { x => x.Introduced, full.Introduced?.DateTime },
+            { x => x.IntroducedPrecision, full.IntroducedPrecision ?? 0 },
         };
 
         IDialogReference dialog = await DialogService.ShowAsync<SoftwareFamilyDialog>(L["Edit Family"], parameters,
@@ -100,6 +109,8 @@ public partial class SoftwareFamilies
             {
                 Id         = full.Id,
                 Name       = data.Name,
+
+                IntroducedPrecision = data.IntroducedPrecision,
                 ParentId   = data.ParentId,
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null
             };

@@ -45,6 +45,8 @@ public class MachineDto : BaseDto<int>
 
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
+    [JsonPropertyName("introduced_precision")]
+    public DatePrecision IntroducedPrecision { get; set; }
 
     [JsonPropertyName("family_id")]
     public int? FamilyId { get; set; }

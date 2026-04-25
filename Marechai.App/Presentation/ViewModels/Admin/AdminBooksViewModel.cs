@@ -50,6 +50,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private string _nativeTitle = string.Empty;
     [ObservableProperty] private string _sortTitle = string.Empty;
     [ObservableProperty] private DateTimeOffset? _published;
+    [ObservableProperty] private int _publishedPrecision;
     [ObservableProperty] private Iso31661NumericDto? _selectedCountry;
     [ObservableProperty] private string _isbn = string.Empty;
     [ObservableProperty] private int? _pages;
@@ -314,6 +315,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
                 NativeTitle = string.IsNullOrWhiteSpace(NativeTitle) ? null : NativeTitle,
                 SortTitle  = string.IsNullOrWhiteSpace(SortTitle) ? null : SortTitle,
                 Published  = Published,
+                PublishedPrecision = PublishedPrecision,
                 CountryId  = SelectedCountry?.Id,
                 Isbn       = string.IsNullOrWhiteSpace(Isbn) ? null : Isbn,
                 Pages      = Pages,
@@ -904,6 +906,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         NativeTitle      = string.Empty;
         SortTitle        = string.Empty;
         Published        = null;
+        PublishedPrecision = 0;
         SelectedCountry  = null;
         Isbn             = string.Empty;
         Pages            = null;
@@ -940,6 +943,7 @@ public partial class AdminBooksViewModel : ObservableObject, IRegionAware
         NativeTitle = book.NativeTitle ?? string.Empty;
         SortTitle   = book.SortTitle   ?? string.Empty;
         Published   = book.Published;
+        PublishedPrecision = book.PublishedPrecision ?? 0;
         Isbn        = book.Isbn       ?? string.Empty;
         Pages       = book.Pages;
         Edition     = book.Edition;

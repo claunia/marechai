@@ -74,6 +74,9 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
     private DateTimeOffset? _founded;
 
     [ObservableProperty]
+    private int _foundedPrecision;
+
+    [ObservableProperty]
     private bool _foundedDayIsUnknown;
 
     [ObservableProperty]
@@ -81,6 +84,9 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private DateTimeOffset? _sold;
+
+    [ObservableProperty]
+    private int _soldPrecision;
 
     [ObservableProperty]
     private bool _soldDayIsUnknown;
@@ -401,11 +407,11 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
                 LegalName            = string.IsNullOrWhiteSpace(LegalName) ? null : LegalName,
                 Status               = StatusIndex,
                 Founded              = Founded,
-                FoundedDayIsUnknown  = FoundedDayIsUnknown,
-                FoundedMonthIsUnknown= FoundedMonthIsUnknown,
+                FoundedPrecision = FoundedPrecision,
+                
                 Sold                 = Sold,
-                SoldDayIsUnknown     = SoldDayIsUnknown,
-                SoldMonthIsUnknown   = SoldMonthIsUnknown,
+                SoldPrecision = SoldPrecision,
+                
                 SoldToId             = SelectedSoldToCompany?.Id,
                 Website              = string.IsNullOrWhiteSpace(Website)    ? null : Website,
                 Twitter              = string.IsNullOrWhiteSpace(Twitter)    ? null : Twitter,
@@ -678,11 +684,11 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         LegalName             = string.Empty;
         StatusIndex           = 0;
         Founded               = null;
-        FoundedDayIsUnknown   = false;
-        FoundedMonthIsUnknown = false;
+        FoundedPrecision      = 0;
+        
         Sold                  = null;
-        SoldDayIsUnknown      = false;
-        SoldMonthIsUnknown    = false;
+        SoldPrecision         = 0;
+        
         Website               = string.Empty;
         Twitter               = string.Empty;
         Facebook              = string.Empty;
@@ -706,11 +712,11 @@ public partial class AdminCompaniesViewModel : ObservableObject, IRegionAware
         LegalName             = company.LegalName      ?? string.Empty;
         StatusIndex           = company.Status         ?? 0;
         Founded               = company.Founded;
-        FoundedDayIsUnknown   = company.FoundedDayIsUnknown   ?? false;
-        FoundedMonthIsUnknown = company.FoundedMonthIsUnknown ?? false;
+        FoundedPrecision      = company.FoundedPrecision ?? 0;
+        
         Sold                  = company.Sold;
-        SoldDayIsUnknown      = company.SoldDayIsUnknown      ?? false;
-        SoldMonthIsUnknown    = company.SoldMonthIsUnknown    ?? false;
+        SoldPrecision         = company.SoldPrecision ?? 0;
+        
         Website               = company.Website        ?? string.Empty;
         Twitter               = company.Twitter        ?? string.Empty;
         Facebook              = company.Facebook       ?? string.Empty;

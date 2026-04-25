@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Marechai.Data;
 
@@ -51,6 +52,8 @@ public class Machine : BaseModel<int>
     [DisplayFormat(DataFormatString = "{0:d}")]
     [DataType(DataType.Date)]
     public DateTime? Introduced { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision IntroducedPrecision { get; set; }
     public int? FamilyId { get;        set; }
     [StringLength(50)]
     public string Model { get; set; }

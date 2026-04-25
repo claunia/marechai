@@ -31,6 +31,15 @@
                                Clearable="true"
                                Class="mb-4"/>
 
+        <MudSelect T="int" @bind-Value="IntroducedPrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
                 @if(!string.IsNullOrWhiteSpace(_validationError))
                 {
                     <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
@@ -127,6 +136,7 @@
     [Parameter] public string Name { get; set; } = string.Empty;
     [Parameter] public int? ParentId { get; set; }
     [Parameter] public DateTime? Introduced { get; set; }
+    [Parameter] public int       IntroducedPrecision { get; set; }
 
     [Inject] SoftwareFamiliesService SoftwareFamiliesService { get; set; } = null!;
 
@@ -230,7 +240,8 @@
         {
             Name       = Name,
             ParentId   = _selectedParent?.Id,
-            Introduced = Introduced
+            Introduced = Introduced,
+            IntroducedPrecision = IntroducedPrecision
         }));
     }
 }

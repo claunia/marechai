@@ -32,12 +32,16 @@
                        Label="@L["Founded"]"
                        Variant="Variant.Outlined"
                        Clearable="true"
-                       Class="mb-2"/>
+                       Class="mb-4"/>
 
-        <MudStack Row="true" Class="mb-4">
-            <MudCheckBox @bind-Value="FoundedDayIsUnknown" Label="@L["Day unknown"]"/>
-            <MudCheckBox @bind-Value="FoundedMonthIsUnknown" Label="@L["Month unknown"]"/>
-        </MudStack>
+        <MudSelect T="int" @bind-Value="FoundedPrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
 
         @if(StatusValue is >= 2 and <= 6)
         {
@@ -45,12 +49,16 @@
                            Label="@L["Event Date (Sold/Merged/etc.)"]"
                            Variant="Variant.Outlined"
                            Clearable="true"
-                           Class="mb-2"/>
+                           Class="mb-4"/>
 
-            <MudStack Row="true" Class="mb-4">
-                <MudCheckBox @bind-Value="SoldDayIsUnknown" Label="@L["Day unknown"]"/>
-                <MudCheckBox @bind-Value="SoldMonthIsUnknown" Label="@L["Month unknown"]"/>
-            </MudStack>
+            <MudSelect T="int" @bind-Value="SoldPrecision"
+                       Label="@L["Date precision"]"
+                       Variant="Variant.Outlined"
+                       Class="mb-4">
+                <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+            </MudSelect>
 
             <MudAutocomplete T="CompanyDto"
                              Label="@L["Sold To / Merged With"]"
@@ -193,11 +201,9 @@
     [Parameter] public string?   LegalName             { get; set; }
     [Parameter] public int       StatusValue           { get; set; }
     [Parameter] public DateTime? Founded               { get; set; }
-    [Parameter] public bool      FoundedDayIsUnknown   { get; set; }
-    [Parameter] public bool      FoundedMonthIsUnknown { get; set; }
+    [Parameter] public int       FoundedPrecision      { get; set; }
     [Parameter] public DateTime? Sold                  { get; set; }
-    [Parameter] public bool      SoldDayIsUnknown      { get; set; }
-    [Parameter] public bool      SoldMonthIsUnknown    { get; set; }
+    [Parameter] public int       SoldPrecision         { get; set; }
     [Parameter] public int?      SoldToId              { get; set; }
     [Parameter] public int?      CountryId             { get; set; }
     [Parameter] public string?   Address               { get; set; }
@@ -359,11 +365,11 @@
             LegalName             = LegalName,
             Status                = StatusValue,
             Founded               = Founded,
-            FoundedDayIsUnknown   = FoundedDayIsUnknown,
-            FoundedMonthIsUnknown = FoundedMonthIsUnknown,
+            FoundedPrecision      = FoundedPrecision,
+            
             Sold                  = Sold,
-            SoldDayIsUnknown      = SoldDayIsUnknown,
-            SoldMonthIsUnknown    = SoldMonthIsUnknown,
+            SoldPrecision         = SoldPrecision,
+            
             SoldToId              = _selectedSoldToCompany?.Id,
             CountryId             = _selectedCountry?.Id,
             Address               = Address,

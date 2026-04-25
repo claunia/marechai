@@ -50,6 +50,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private string _publisherSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<CompanyDto> _publisherSuggestions = [];
     [ObservableProperty] private DateTimeOffset? _releaseDate;
+    [ObservableProperty] private int _releaseDatePrecision;
 
     // Barcodes
     [ObservableProperty] private ObservableCollection<SoftwareBarcodeDto> _barcodes = [];
@@ -272,6 +273,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         EditPanelTitle    = _localizer["EditSoftwareReleaseDialog_Title"];
         IsEditingExisting = true;
         ReleaseDate       = item.ReleaseDate;
+        ReleaseDatePrecision = item.ReleaseDatePrecision ?? 0;
         Title             = item.Title ?? string.Empty;
         IsCompilation     = item.SoftwareVersionId is null;
 
@@ -369,7 +371,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                 PlatformId        = SelectedPlatform?.Id,
                 RegionId          = SelectedRegion?.Id,
                 PublisherId       = SelectedPublisher?.Id,
-                ReleaseDate       = ReleaseDate
+                ReleaseDate       = ReleaseDate,
+                ReleaseDatePrecision = ReleaseDatePrecision
             };
 
             if(_editingId == null)
@@ -816,6 +819,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         SelectedPublisher  = null;
         PublisherSearchText = string.Empty;
         ReleaseDate        = null;
+        ReleaseDatePrecision = 0;
         Barcodes.Clear();
         BarcodeDisplays.Clear();
         NewBarcodeCode = string.Empty;

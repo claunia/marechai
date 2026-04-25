@@ -822,3 +822,13 @@ public enum BarcodeType : byte
     [Display(Name = "QR Code")]
     QRCode  = 10
 }
+
+public enum DatePrecision : byte
+{
+    [Display(Name = "Full date")]
+    Full      = 0,
+    [Display(Name = "Month and year only")]
+    MonthYear = 1,
+    [Display(Name = "Year only")]
+    YearOnly  = 2
+}

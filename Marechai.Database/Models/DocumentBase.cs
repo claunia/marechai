@@ -24,7 +24,9 @@
 *******************************************************************************/
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -37,5 +39,7 @@ public abstract class DocumentBase : BaseModel<long>
     [DisplayFormat(DataFormatString = "{0:d}")]
     [DataType(DataType.Date)]
     public DateTime? Published { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision PublishedPrecision { get; set; }
     public short? CountryId { get;    set; }
 }

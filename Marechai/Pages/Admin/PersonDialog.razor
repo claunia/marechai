@@ -43,11 +43,29 @@
                        Clearable="true"
                        Class="mb-4"/>
 
+        <MudSelect T="int" @bind-Value="BirthDatePrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
         <MudDatePicker @bind-Date="DeathDate"
                        Label="@L["Death date"]"
                        Variant="Variant.Outlined"
                        Clearable="true"
                        Class="mb-4"/>
+
+        <MudSelect T="int" @bind-Value="DeathDatePrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
 
         <MudTextField @bind-Value="Webpage"
                       Label="@L["Webpage"]"
@@ -92,7 +110,9 @@
     [Parameter] public string?   DisplayName { get; set; }
     [Parameter] public int?      CountryId   { get; set; }
     [Parameter] public DateTime? BirthDate   { get; set; }
+    [Parameter] public int       BirthDatePrecision { get; set; }
     [Parameter] public DateTime? DeathDate   { get; set; }
+    [Parameter] public int       DeathDatePrecision { get; set; }
     [Parameter] public string?   Webpage     { get; set; }
     [Parameter] public string?   Twitter     { get; set; }
     [Parameter] public string?   Facebook    { get; set; }
@@ -144,7 +164,9 @@
             DisplayName = DisplayName,
             CountryId   = _selectedCountry?.Id,
             BirthDate   = BirthDate,
+            BirthDatePrecision = BirthDatePrecision,
             DeathDate   = DeathDate,
+            DeathDatePrecision = DeathDatePrecision,
             Webpage     = Webpage,
             Twitter     = Twitter,
             Facebook    = Facebook

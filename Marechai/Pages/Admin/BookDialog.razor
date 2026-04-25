@@ -50,6 +50,15 @@
                                Clearable="true"
                                Class="mb-4"/>
 
+        <MudSelect T="int" @bind-Value="PublishedPrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
                 <MudAutocomplete T="Iso31661NumericDto"
                                  Label="@L["Country"]"
                                  @bind-Value="_selectedCountry"
@@ -427,6 +436,7 @@
     [Parameter] public int?      Pages      { get; set; }
     [Parameter] public int?      CountryId  { get; set; }
     [Parameter] public DateTime? Published  { get; set; }
+    [Parameter] public int       PublishedPrecision { get; set; }
     [Parameter] public long?     PreviousId { get; set; }
     [Parameter] public long?     SourceId   { get; set; }
     [Parameter] public bool      HasCover   { get; set; }
@@ -887,6 +897,7 @@
             Pages       = Pages,
             CountryId   = _selectedCountry?.Id,
             Published   = Published,
+            PublishedPrecision = PublishedPrecision,
             PreviousId  = _selectedPreviousBook?.Id,
             SourceId    = _selectedSourceBook?.Id
         }));

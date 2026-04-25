@@ -232,9 +232,9 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
 
         DateTime date = company.Founded.Value.DateTime;
 
-        if(company.FoundedMonthIsUnknown ?? false) return $"{date.Year}.";
+        if((company.FoundedPrecision ?? 0) == 2) return $"{date.Year}.";
 
-        if(company.FoundedDayIsUnknown ?? false) return $"{date:Y}.";
+        if((company.FoundedPrecision ?? 0) == 1) return $"{date:Y}.";
 
         return $"{date:D}.";
     }
@@ -242,15 +242,15 @@ public partial class CompanyDetailViewModel : ObservableObject, IRegionAware
     /// <summary>
     ///     Gets the formatted sold/event date with unknown handling
     /// </summary>
-    public string GetEventDateDisplay(CompanyDto? company, bool monthUnknown = false, bool dayUnknown = false)
+    public string GetEventDateDisplay(CompanyDto? company)
     {
         if(company?.Sold is null) return _localizer["unknown date"].Value;
 
         DateTime date = company.Sold.Value.DateTime;
 
-        if(monthUnknown || (company.SoldMonthIsUnknown ?? false)) return $"{date.Year}";
+        if((company.SoldPrecision ?? 0) == 2) return $"{date.Year}";
 
-        if(dayUnknown || (company.SoldDayIsUnknown ?? false)) return $"{date:Y}";
+        if((company.SoldPrecision ?? 0) == 1) return $"{date:Y}";
 
         return $"{date:D}";
     }

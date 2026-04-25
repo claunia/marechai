@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Marechai.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Marechai.Database.Models;
@@ -43,9 +44,13 @@ public class Person : BaseModel<int>
     [DisplayName("Birth date")]
     [DataType(DataType.Date)]
     public DateTime BirthDate { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision BirthDatePrecision { get; set; }
     [DisplayName("Date of death")]
     [DataType(DataType.Date)]
     public DateTime? DeathDate { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision DeathDatePrecision { get; set; }
     [Url]
     public string Webpage { get; set; }
     [Remote("VerifyTwitter", "People", "Admin")]

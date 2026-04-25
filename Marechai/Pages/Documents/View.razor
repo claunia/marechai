@@ -79,7 +79,7 @@
             {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["Published"]</strong></td>
-                    <td>@_document.Published.Value.DateTime.ToLongDateString()</td>
+                    <td>@(((_document.PublishedPrecision ?? 0) == 2 ? _document.Published.Value.Year.ToString() : (_document.PublishedPrecision ?? 0) == 1 ? _document.Published.Value.ToString("MMMM yyyy") : _document.Published.Value.DateTime.ToLongDateString()))</td>
                 </tr>
             }
             @if(!string.IsNullOrEmpty(_document.Country))

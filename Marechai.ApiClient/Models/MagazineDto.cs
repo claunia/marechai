@@ -26,6 +26,8 @@ namespace Marechai.ApiClient.Models
         public int? CountryId { get; set; }
         /// <summary>The first_publication property</summary>
         public DateTimeOffset? FirstPublication { get; set; }
+        /// <summary>The first_publication_precision property</summary>
+        public int? FirstPublicationPrecision { get; set; }
         /// <summary>The id property</summary>
         public long? Id { get; set; }
         /// <summary>The issn property</summary>
@@ -46,6 +48,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The published property</summary>
         public DateTimeOffset? Published { get; set; }
+        /// <summary>The published_precision property</summary>
+        public int? PublishedPrecision { get; set; }
         /// <summary>The sort_title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -90,10 +94,12 @@ namespace Marechai.ApiClient.Models
                 { "country", n => { Country = n.GetStringValue(); } },
                 { "country_id", n => { CountryId = n.GetIntValue(); } },
                 { "first_publication", n => { FirstPublication = n.GetDateTimeOffsetValue(); } },
+                { "first_publication_precision", n => { FirstPublicationPrecision = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "issn", n => { Issn = n.GetStringValue(); } },
                 { "native_title", n => { NativeTitle = n.GetStringValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
+                { "published_precision", n => { PublishedPrecision = n.GetIntValue(); } },
                 { "sort_title", n => { SortTitle = n.GetStringValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
             };
@@ -108,10 +114,12 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("country", Country);
             writer.WriteIntValue("country_id", CountryId);
             writer.WriteDateTimeOffsetValue("first_publication", FirstPublication);
+            writer.WriteIntValue("first_publication_precision", FirstPublicationPrecision);
             writer.WriteLongValue("id", Id);
             writer.WriteStringValue("issn", Issn);
             writer.WriteStringValue("native_title", NativeTitle);
             writer.WriteDateTimeOffsetValue("published", Published);
+            writer.WriteIntValue("published_precision", PublishedPrecision);
             writer.WriteStringValue("sort_title", SortTitle);
             writer.WriteStringValue("title", Title);
             writer.WriteAdditionalData(AdditionalData);

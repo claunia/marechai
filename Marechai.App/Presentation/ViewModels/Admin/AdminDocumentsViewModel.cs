@@ -44,6 +44,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private string _nativeTitle = string.Empty;
     [ObservableProperty] private string _sortTitle = string.Empty;
     [ObservableProperty] private DateTimeOffset? _published;
+    [ObservableProperty] private int _publishedPrecision;
     [ObservableProperty] private Iso31661NumericDto? _selectedCountry;
 
     // --- Synopsis panel state ---
@@ -279,6 +280,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
                 NativeTitle = string.IsNullOrWhiteSpace(NativeTitle) ? null : NativeTitle,
                 SortTitle   = string.IsNullOrWhiteSpace(SortTitle) ? null : SortTitle,
                 Published   = Published,
+                PublishedPrecision = PublishedPrecision,
                 CountryId   = SelectedCountry?.Id
             };
 
@@ -812,6 +814,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
         NativeTitle      = string.Empty;
         SortTitle        = string.Empty;
         Published        = null;
+        PublishedPrecision = 0;
         SelectedCountry  = null;
 
         DocumentPeople.Clear();          DocumentPeopleDisplays.Clear();
@@ -836,6 +839,7 @@ public partial class AdminDocumentsViewModel : ObservableObject, IRegionAware
         NativeTitle   = document.NativeTitle ?? string.Empty;
         SortTitle     = document.SortTitle   ?? string.Empty;
         Published     = document.Published;
+        PublishedPrecision = document.PublishedPrecision ?? 0;
 
         SelectedCountry = document.CountryId.HasValue
                               ? Countries.FirstOrDefault(c => c.Id == document.CountryId.Value)

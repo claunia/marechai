@@ -1,110 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <!--
-    Microsoft ResX Schema
-
-    Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
-    associated with the data types.
-
-    Example:
-
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-
-    There are any number of "resheader" rows that contain simple
-    name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
-    mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
-    extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
-    read any of the formats listed below.
-
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -1813,7 +1755,7 @@
   <data name="FailedToSaveMagazine" xml:space="preserve"><value>Échec de l'enregistrement du magazine.</value></data>
   <data name="FailedToDeleteMagazine" xml:space="preserve"><value>Échec de la suppression du magazine.</value></data>
   <data name="MagazineTitleRequired" xml:space="preserve"><value>Le titre est obligatoire.</value></data>
-  <!-- Software Admin - Shared -->
+  
   <data name="AccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
   <data name="AccessDeniedMessage" xml:space="preserve"><value>Vous devez disposer de privilèges d'administrateur pour accéder à cette page.</value></data>
   <data name="AddButton" xml:space="preserve"><value>Ajouter</value></data>
@@ -1835,7 +1777,7 @@
   <data name="IsGameLabel" xml:space="preserve"><value>Jeu</value></data>
   <data name="VersionStringIsRequired" xml:space="preserve"><value>La chaîne de version est obligatoire.</value></data>
   <data name="VersionIsRequired" xml:space="preserve"><value>La version du logiciel est obligatoire.</value></data>
-  <!-- Software Admin - Columns -->
+  
   <data name="ParentColumn_Header" xml:space="preserve"><value>Parent</value></data>
   <data name="IntroducedColumn_Header" xml:space="preserve"><value>Introduit</value></data>
   <data name="FamilyColumn_Header" xml:space="preserve"><value>Famille</value></data>
@@ -1847,7 +1789,7 @@
   <data name="RegionColumn_Header" xml:space="preserve"><value>Région</value></data>
   <data name="PublisherColumn_Header" xml:space="preserve"><value>Éditeur</value></data>
   <data name="ReleaseDateColumn_Header" xml:space="preserve"><value>Date de sortie</value></data>
-  <!-- Software Admin - Form Labels -->
+  
   <data name="VersionStringLabel" xml:space="preserve"><value>Chaîne de version</value></data>
   <data name="PublicVersionLabel" xml:space="preserve"><value>Version publique</value></data>
   <data name="CodenameLabel" xml:space="preserve"><value>Nom de code</value></data>
@@ -1857,7 +1799,7 @@
   <data name="RegionLabel" xml:space="preserve"><value>Région</value></data>
   <data name="PublisherLabel" xml:space="preserve"><value>Éditeur</value></data>
   <data name="ReleaseDateLabel" xml:space="preserve"><value>Date de sortie</value></data>
-  <!-- Software Admin - Page Titles -->
+  
   <data name="SoftwarePlatformManagementTitle" xml:space="preserve"><value>Gestion des plateformes logicielles</value></data>
   <data name="SoftwarePlatformManagementSubtitle" xml:space="preserve"><value>Gérer les plateformes logicielles (ex. x86, ARM, PowerPC)</value></data>
   <data name="SoftwarePlatformMgmtAccessDeniedTitle" xml:space="preserve"><value>Accès refusé</value></data>
@@ -1870,12 +1812,12 @@
   <data name="SoftwareManagementSubtitle" xml:space="preserve"><value>Gérer les entrées de logiciels</value></data>
   <data name="SoftwareReleaseManagementTitle" xml:space="preserve"><value>Gestion des sorties de logiciels</value></data>
   <data name="SoftwareReleaseManagementSubtitle" xml:space="preserve"><value>Gérer les sorties de logiciels par plateformes et régions</value></data>
-  <!-- Software Admin - Sidebar Buttons -->
+  
   <data name="SoftwareAdminManagementButton" xml:space="preserve"><value>Logiciels</value></data>
   <data name="SoftwareReleaseManagementButton" xml:space="preserve"><value>Sorties de logiciels</value></data>
   <data name="SoftwarePlatformManagementButton" xml:space="preserve"><value>Plateformes logicielles</value></data>
   <data name="SoftwareFamilyManagementButton" xml:space="preserve"><value>Familles de logiciels</value></data>
-  <!-- Software Admin - Dialog Titles -->
+  
   <data name="AddSoftwarePlatformDialog_Title" xml:space="preserve"><value>Ajouter une plateforme logicielle</value></data>
   <data name="EditSoftwarePlatformDialog_Title" xml:space="preserve"><value>Modifier la plateforme logicielle</value></data>
   <data name="AddSoftwareFamilyDialog_Title" xml:space="preserve"><value>Ajouter une famille de logiciels</value></data>
@@ -1890,11 +1832,11 @@
   <data name="EditSoftwareSubvariantDialog_Title" xml:space="preserve"><value>Modifier la sous-variante</value></data>
   <data name="AddSoftwareReleaseDialog_Title" xml:space="preserve"><value>Ajouter une sortie de logiciel</value></data>
   <data name="EditSoftwareReleaseDialog_Title" xml:space="preserve"><value>Modifier la sortie de logiciel</value></data>
-  <!-- Software Admin - Child Page Titles -->
+  
   <data name="SoftwareVersionsForTitle" xml:space="preserve"><value>Versions pour : {0}</value></data>
   <data name="SoftwareVariantsForTitle" xml:space="preserve"><value>Variantes pour : {0}</value></data>
   <data name="SoftwareSubvariantsForTitle" xml:space="preserve"><value>Sous-variantes pour : {0}</value></data>
-  <!-- Software Admin - Error Messages -->
+  
   <data name="FailedToLoadSoftwarePlatforms" xml:space="preserve"><value>Échec du chargement des plateformes logicielles.</value></data>
   <data name="FailedToDeleteSoftwarePlatform" xml:space="preserve"><value>Échec de la suppression de la plateforme logicielle.</value></data>
   <data name="FailedToSaveSoftwarePlatform" xml:space="preserve"><value>Échec de l'enregistrement de la plateforme logicielle.</value></data>
@@ -2011,7 +1953,7 @@
   <data name="PersonBooksLabel" xml:space="preserve"><value>Livres</value></data>
   <data name="PersonDocumentsLabel" xml:space="preserve"><value>Documents</value></data>
   <data name="PersonMagazinesLabel" xml:space="preserve"><value>Magazines</value></data>
-  <!-- Software Browsing -->
+  
   <data name="Software in the database" xml:space="preserve"><value>Logiciels dans la base de données</value></data>
   <data name="No software found" xml:space="preserve"><value>Aucun logiciel trouvé</value></data>
   <data name="Failed to load software data. Please try again later." xml:space="preserve"><value>Échec du chargement des données logicielles. Veuillez réessayer plus tard.</value></data>
@@ -2054,7 +1996,7 @@
   <data name="RecommendedGpusLabel" xml:space="preserve"><value>GPUs recommandés</value></data>
   <data name="SupportedSoundSynthsLabel" xml:space="preserve"><value>Synthétiseurs sonores pris en charge</value></data>
   <data name="SoundSynthLabel" xml:space="preserve"><value>Synthétiseur sonore</value></data>
-  <!-- Software Screenshots -->
+  
   <data name="SoftwareScreenshotManagementButton" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsTitle" xml:space="preserve"><value>Software Screenshots</value></data>
   <data name="SoftwareScreenshotsSubtitle" xml:space="preserve"><value>Manage screenshots for software</value></data>
@@ -2079,4 +2021,4 @@
   <data name="IncludedSoftware" xml:space="preserve"><value>Logiciels inclus</value></data>
   <data name="FailedToAddIncludedVersion" xml:space="preserve"><value>Échec de l'ajout de la version incluse</value></data>
   <data name="FailedToRemoveIncludedVersion" xml:space="preserve"><value>Échec de la suppression de la version incluse</value></data>
-</root>
+<data name="DatePrecisionLabel" xml:space="preserve"><value>Précision de la date</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Date complète</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Mois et année uniquement</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Année uniquement</value></data></root>

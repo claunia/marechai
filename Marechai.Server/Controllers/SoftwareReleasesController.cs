@@ -66,7 +66,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                     Region            = r.Region.Name,
                                                                     PublisherId       = r.PublisherId,
                                                                     Publisher         = r.Publisher.Name,
-                                                                    ReleaseDate       = r.ReleaseDate
+                                                                    ReleaseDate       = r.ReleaseDate,
+                                                                    ReleaseDatePrecision = r.ReleaseDatePrecision
                                                                 })
                                                                .ToListAsync();
 
@@ -93,7 +94,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             Region            = r.Region.Name,
             PublisherId       = r.PublisherId,
             Publisher         = r.Publisher.Name,
-            ReleaseDate       = r.ReleaseDate
+            ReleaseDate       = r.ReleaseDate,
+            ReleaseDatePrecision = r.ReleaseDatePrecision
         })
        .ToListAsync();
 
@@ -118,7 +120,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                       Region            = r.Region.Name,
                                                                       PublisherId       = r.PublisherId,
                                                                       Publisher         = r.Publisher.Name,
-                                                                      ReleaseDate       = r.ReleaseDate
+                                                                      ReleaseDate       = r.ReleaseDate,
+                                                                      ReleaseDatePrecision = r.ReleaseDatePrecision
                                                                   })
                                                                  .FirstOrDefaultAsync();
 
@@ -152,6 +155,7 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         model.RegionId          = dto.RegionId;
         model.PublisherId       = dto.PublisherId;
         model.ReleaseDate       = dto.ReleaseDate;
+        model.ReleaseDatePrecision = dto.ReleaseDatePrecision;
 
         string newsName = await BuildSoftwareReleaseNewsNameAsync(model);
 
@@ -188,7 +192,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             PlatformId        = dto.PlatformId,
             RegionId          = dto.RegionId,
             PublisherId       = dto.PublisherId,
-            ReleaseDate       = dto.ReleaseDate
+            ReleaseDate       = dto.ReleaseDate,
+            ReleaseDatePrecision = dto.ReleaseDatePrecision
         };
 
         await context.SoftwareReleases.AddAsync(model);
@@ -342,7 +347,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             Region            = r.Region.Name,
             PublisherId       = r.PublisherId,
             Publisher         = r.Publisher.Name,
-            ReleaseDate       = r.ReleaseDate
+            ReleaseDate       = r.ReleaseDate,
+            ReleaseDatePrecision = r.ReleaseDatePrecision
         })
        .ToListAsync();
 
@@ -366,7 +372,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                     Region            = r.Region.Name,
                     PublisherId       = r.PublisherId,
                     Publisher         = r.Publisher.Name,
-                    ReleaseDate       = r.ReleaseDate
+                    ReleaseDate       = r.ReleaseDate,
+                    ReleaseDatePrecision = r.ReleaseDatePrecision
                 })
                .ToListAsync();
 

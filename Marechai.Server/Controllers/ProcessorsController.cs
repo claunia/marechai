@@ -53,6 +53,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
                                                               CompanyId      = p.Company.Id,
                                                               ModelCode      = p.ModelCode,
                                                               Introduced     = p.Introduced,
+                                                              IntroducedPrecision = p.IntroducedPrecision,
                                                               Speed          = p.Speed,
                                                               Package        = p.Package,
                                                               Gprs           = p.Gprs,
@@ -137,6 +138,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
                                                               CompanyId        = p.Company.Id,
                                                               ModelCode        = p.ModelCode,
                                                               Introduced       = p.Introduced,
+                                                              IntroducedPrecision = p.IntroducedPrecision,
                                                               Speed            = p.Speed,
                                                               Package          = p.Package,
                                                               Gprs             = p.Gprs,
@@ -188,6 +190,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
         model.GprSize          = dto.GprSize;
         model.InstructionSetId = dto.InstructionSetId;
         model.Introduced       = dto.Introduced;
+        model.IntroducedPrecision = dto.IntroducedPrecision;
         model.L1Data           = dto.L1Data;
         model.L1Instruction    = dto.L1Instruction;
         model.L2               = dto.L2;
@@ -243,6 +246,7 @@ public class ProcessorsController(MarechaiContext context) : ControllerBase
             GprSize          = dto.GprSize,
             InstructionSetId = dto.InstructionSetId,
             Introduced       = dto.Introduced,
+            IntroducedPrecision = dto.IntroducedPrecision,
             L1Data           = dto.L1Data,
             L1Instruction    = dto.L1Instruction,
             L2               = dto.L2,

@@ -50,10 +50,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The founded property</summary>
         public DateTimeOffset? Founded { get; set; }
-        /// <summary>The founded_day_is_unknown property</summary>
-        public bool? FoundedDayIsUnknown { get; set; }
-        /// <summary>The founded_month_is_unknown property</summary>
-        public bool? FoundedMonthIsUnknown { get; set; }
+        /// <summary>The founded_precision property</summary>
+        public int? FoundedPrecision { get; set; }
         /// <summary>The id property</summary>
         public int? Id { get; set; }
         /// <summary>The last_logo property</summary>
@@ -92,10 +90,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The sold property</summary>
         public DateTimeOffset? Sold { get; set; }
-        /// <summary>The sold_day_is_unknown property</summary>
-        public bool? SoldDayIsUnknown { get; set; }
-        /// <summary>The sold_month_is_unknown property</summary>
-        public bool? SoldMonthIsUnknown { get; set; }
+        /// <summary>The sold_precision property</summary>
+        public int? SoldPrecision { get; set; }
         /// <summary>The sold_to property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -155,8 +151,7 @@ namespace Marechai.ApiClient.Models
                 { "country_id", n => { CountryId = n.GetIntValue(); } },
                 { "facebook", n => { Facebook = n.GetStringValue(); } },
                 { "founded", n => { Founded = n.GetDateTimeOffsetValue(); } },
-                { "founded_day_is_unknown", n => { FoundedDayIsUnknown = n.GetBoolValue(); } },
-                { "founded_month_is_unknown", n => { FoundedMonthIsUnknown = n.GetBoolValue(); } },
+                { "founded_precision", n => { FoundedPrecision = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
                 { "last_logo", n => { LastLogo = n.GetGuidValue(); } },
                 { "legal_name", n => { LegalName = n.GetStringValue(); } },
@@ -164,8 +159,7 @@ namespace Marechai.ApiClient.Models
                 { "postal_code", n => { PostalCode = n.GetStringValue(); } },
                 { "province", n => { Province = n.GetStringValue(); } },
                 { "sold", n => { Sold = n.GetDateTimeOffsetValue(); } },
-                { "sold_day_is_unknown", n => { SoldDayIsUnknown = n.GetBoolValue(); } },
-                { "sold_month_is_unknown", n => { SoldMonthIsUnknown = n.GetBoolValue(); } },
+                { "sold_precision", n => { SoldPrecision = n.GetIntValue(); } },
                 { "sold_to", n => { SoldTo = n.GetStringValue(); } },
                 { "sold_to_id", n => { SoldToId = n.GetIntValue(); } },
                 { "status", n => { Status = n.GetIntValue(); } },
@@ -186,8 +180,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("country_id", CountryId);
             writer.WriteStringValue("facebook", Facebook);
             writer.WriteDateTimeOffsetValue("founded", Founded);
-            writer.WriteBoolValue("founded_day_is_unknown", FoundedDayIsUnknown);
-            writer.WriteBoolValue("founded_month_is_unknown", FoundedMonthIsUnknown);
+            writer.WriteIntValue("founded_precision", FoundedPrecision);
             writer.WriteIntValue("id", Id);
             writer.WriteGuidValue("last_logo", LastLogo);
             writer.WriteStringValue("legal_name", LegalName);
@@ -195,8 +188,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("postal_code", PostalCode);
             writer.WriteStringValue("province", Province);
             writer.WriteDateTimeOffsetValue("sold", Sold);
-            writer.WriteBoolValue("sold_day_is_unknown", SoldDayIsUnknown);
-            writer.WriteBoolValue("sold_month_is_unknown", SoldMonthIsUnknown);
+            writer.WriteIntValue("sold_precision", SoldPrecision);
             writer.WriteStringValue("sold_to", SoldTo);
             writer.WriteIntValue("sold_to_id", SoldToId);
             writer.WriteIntValue("status", Status);

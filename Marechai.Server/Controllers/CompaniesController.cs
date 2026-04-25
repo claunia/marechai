@@ -79,10 +79,8 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                          Province              = c.Province,
                          PostalCode            = c.PostalCode,
                          Country               = c.Country.Name,
-                         FoundedDayIsUnknown   = c.FoundedDayIsUnknown,
-                         FoundedMonthIsUnknown = c.FoundedMonthIsUnknown,
-                         SoldDayIsUnknown      = c.SoldDayIsUnknown,
-                         SoldMonthIsUnknown    = c.SoldMonthIsUnknown,
+                         FoundedPrecision      = c.FoundedPrecision,
+                         SoldPrecision         = c.SoldPrecision,
                          LegalName             = c.LegalName
                      })
                     .ToListAsync();
@@ -127,10 +125,8 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
                                                             Province              = c.Province,
                                                             PostalCode            = c.PostalCode,
                                                             Country               = c.Country.Name,
-                                                            FoundedDayIsUnknown   = c.FoundedDayIsUnknown,
-                                                            FoundedMonthIsUnknown = c.FoundedMonthIsUnknown,
-                                                            SoldDayIsUnknown      = c.SoldDayIsUnknown,
-                                                            SoldMonthIsUnknown    = c.SoldMonthIsUnknown,
+                                                            FoundedPrecision      = c.FoundedPrecision,
+                                                            SoldPrecision         = c.SoldPrecision,
                                                             LegalName             = c.LegalName
                                                         })
                                                        .FirstOrDefaultAsync();
@@ -163,10 +159,8 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
         model.City                  = dto.City;
         model.Province              = dto.Province;
         model.PostalCode            = dto.PostalCode;
-        model.FoundedDayIsUnknown   = dto.FoundedDayIsUnknown;
-        model.FoundedMonthIsUnknown = dto.FoundedMonthIsUnknown;
-        model.SoldDayIsUnknown      = dto.SoldDayIsUnknown;
-        model.SoldMonthIsUnknown    = dto.SoldMonthIsUnknown;
+        model.FoundedPrecision      = dto.FoundedPrecision;
+        model.SoldPrecision         = dto.SoldPrecision;
         model.LegalName             = dto.LegalName;
         await context.SaveChangesWithUserAsync(userId);
 
@@ -199,10 +193,8 @@ public class CompaniesController(MarechaiContext context) : ControllerBase
             City                  = dto.City,
             Province              = dto.Province,
             PostalCode            = dto.PostalCode,
-            FoundedDayIsUnknown   = dto.FoundedDayIsUnknown,
-            FoundedMonthIsUnknown = dto.FoundedMonthIsUnknown,
-            SoldDayIsUnknown      = dto.SoldDayIsUnknown,
-            SoldMonthIsUnknown    = dto.SoldMonthIsUnknown,
+            FoundedPrecision      = dto.FoundedPrecision,
+            SoldPrecision         = dto.SoldPrecision,
             LegalName             = dto.LegalName
         };
 

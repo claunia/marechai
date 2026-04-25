@@ -86,14 +86,14 @@
             {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["First publication"]</strong></td>
-                    <td>@_magazine.FirstPublication.Value.DateTime.ToLongDateString()</td>
+                    <td>@(((_magazine.FirstPublicationPrecision ?? 0) == 2 ? _magazine.FirstPublication.Value.Year.ToString() : (_magazine.FirstPublicationPrecision ?? 0) == 1 ? _magazine.FirstPublication.Value.ToString("MMMM yyyy") : _magazine.FirstPublication.Value.DateTime.ToLongDateString()))</td>
                 </tr>
             }
             @if(_magazine.Published.HasValue)
             {
                 <tr>
                     <td style="width: 33%; text-align: right;"><strong>@L["Published"]</strong></td>
-                    <td>@_magazine.Published.Value.DateTime.ToLongDateString()</td>
+                    <td>@(((_magazine.PublishedPrecision ?? 0) == 2 ? _magazine.Published.Value.Year.ToString() : (_magazine.PublishedPrecision ?? 0) == 1 ? _magazine.Published.Value.ToString("MMMM yyyy") : _magazine.Published.Value.DateTime.ToLongDateString()))</td>
                 </tr>
             }
             @if(!string.IsNullOrEmpty(_magazine.Country))

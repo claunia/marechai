@@ -54,6 +54,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
                                                         Id         = g.Id,
                                                         Company    = g.Company.Name,
                                                         Introduced = g.Introduced,
+                                                        IntroducedPrecision = g.IntroducedPrecision,
                                                         ModelCode  = g.ModelCode,
                                                         Name       = g.Name
                                                     })
@@ -76,6 +77,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
                                                                               CompanyId   = g.Company.Id,
                                                                               ModelCode   = g.ModelCode,
                                                                               Introduced  = g.Introduced,
+                                                                              IntroducedPrecision = g.IntroducedPrecision,
                                                                               Package     = g.Package,
                                                                               Process     = g.Process,
                                                                               ProcessNm   = g.ProcessNm,
@@ -100,6 +102,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
                                                                                   Name       = m.Name,
                                                                                   Model      = m.Model,
                                                                                   Introduced = m.Introduced,
+                                                                                  IntroducedPrecision = m.IntroducedPrecision,
                                                                                   Type       = m.Type,
                                                                                   FamilyId   = m.FamilyId
                                                                               })
@@ -117,6 +120,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
                                                         CompanyId   = g.Company.Id,
                                                         ModelCode   = g.ModelCode,
                                                         Introduced  = g.Introduced,
+                                                        IntroducedPrecision = g.IntroducedPrecision,
                                                         Package     = g.Package,
                                                         Process     = g.Process,
                                                         ProcessNm   = g.ProcessNm,
@@ -144,6 +148,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
         model.CompanyId   = dto.CompanyId;
         model.ModelCode   = dto.ModelCode;
         model.Introduced  = dto.Introduced;
+        model.IntroducedPrecision = dto.IntroducedPrecision;
         model.Package     = dto.Package;
         model.Process     = dto.Process;
         model.ProcessNm   = dto.ProcessNm;
@@ -183,6 +188,7 @@ public class GpusController(MarechaiContext context) : ControllerBase
             CompanyId   = dto.CompanyId,
             ModelCode   = dto.ModelCode,
             Introduced  = dto.Introduced,
+            IntroducedPrecision = dto.IntroducedPrecision,
             Package     = dto.Package,
             Process     = dto.Process,
             ProcessNm   = dto.ProcessNm,

@@ -24,7 +24,13 @@ public partial class People
 
     Func<PersonDto, bool> QuickFilter => _ => true;
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     async Task OpenAddPersonDialog()
     {
@@ -51,8 +57,10 @@ public partial class People
                 Alias       = data.Alias,
                 DisplayName = data.DisplayName,
                 CountryId   = data.CountryId,
-                Birthdate   = data.BirthDate.HasValue ? new DateTimeOffset(data.BirthDate.Value) : null,
-                DeathDate   = data.DeathDate.HasValue ? new DateTimeOffset(data.DeathDate.Value) : null,
+                Birthdate           = data.BirthDate.HasValue ? new DateTimeOffset(data.BirthDate.Value) : null,
+                BirthdatePrecision  = data.BirthDatePrecision,
+                DeathDate           = data.DeathDate.HasValue ? new DateTimeOffset(data.DeathDate.Value) : null,
+                DeathDatePrecision  = data.DeathDatePrecision,
                 Webpage     = data.Webpage,
                 Twitter     = data.Twitter,
                 Facebook    = data.Facebook
@@ -88,7 +96,9 @@ public partial class People
             { x => x.DisplayName, fullPerson.DisplayName },
             { x => x.CountryId, fullPerson.CountryId },
             { x => x.BirthDate, fullPerson.Birthdate?.DateTime },
+            { x => x.BirthDatePrecision, fullPerson.BirthdatePrecision ?? 0 },
             { x => x.DeathDate, fullPerson.DeathDate?.DateTime },
+            { x => x.DeathDatePrecision, fullPerson.DeathDatePrecision ?? 0 },
             { x => x.Webpage, fullPerson.Webpage },
             { x => x.Twitter, fullPerson.Twitter },
             { x => x.Facebook, fullPerson.Facebook }
@@ -113,8 +123,10 @@ public partial class People
                 Alias       = data.Alias,
                 DisplayName = data.DisplayName,
                 CountryId   = data.CountryId,
-                Birthdate   = data.BirthDate.HasValue ? new DateTimeOffset(data.BirthDate.Value) : null,
-                DeathDate   = data.DeathDate.HasValue ? new DateTimeOffset(data.DeathDate.Value) : null,
+                Birthdate           = data.BirthDate.HasValue ? new DateTimeOffset(data.BirthDate.Value) : null,
+                BirthdatePrecision  = data.BirthDatePrecision,
+                DeathDate           = data.DeathDate.HasValue ? new DateTimeOffset(data.DeathDate.Value) : null,
+                DeathDatePrecision  = data.DeathDatePrecision,
                 Webpage     = data.Webpage,
                 Twitter     = data.Twitter,
                 Facebook    = data.Facebook

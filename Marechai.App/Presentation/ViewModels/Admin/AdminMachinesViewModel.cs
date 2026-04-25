@@ -44,6 +44,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private string _model = string.Empty;
     [ObservableProperty] private int _machineTypeIndex;
     [ObservableProperty] private DateTimeOffset? _introduced;
+    [ObservableProperty] private int _introducedPrecision;
     [ObservableProperty] private List<string> _machineTypeItems = [];
 
     // --- Company picker ---
@@ -296,6 +297,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
                 CompanyId  = SelectedCompany.Id.Value,
                 Type       = MachineTypeIndex,
                 Introduced = Introduced,
+                IntroducedPrecision = IntroducedPrecision,
                 FamilyId   = SelectedFamily?.Id
             };
 
@@ -684,6 +686,7 @@ public partial class AdminMachinesViewModel : ObservableObject, IRegionAware
     private void ClearForm()
     {
         MachineName = string.Empty; Model = string.Empty; MachineTypeIndex = 0; Introduced = null;
+        IntroducedPrecision = 0;
         SelectedCompany = null; CompanySearchText = string.Empty; SelectedFamily = null;
         MachineGpus.Clear(); MachineGpuDisplays.Clear(); AvailableGpus.Clear(); SelectedAvailableGpu = null;
         MachineProcessors.Clear(); MachineProcessorDisplays.Clear(); AvailableProcessors.Clear(); SelectedAvailableProcessor = null; ProcessorSpeed = null;

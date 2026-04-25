@@ -64,6 +64,15 @@
                                Clearable="true"
                                Class="mb-4"/>
 
+        <MudSelect T="int" @bind-Value="ReleaseDatePrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
                 @if(!string.IsNullOrWhiteSpace(_validationError))
                 {
                     <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
@@ -385,6 +394,7 @@
     [Parameter] public int? RegionId { get; set; }
     [Parameter] public int? PublisherId { get; set; }
     [Parameter] public DateTime? ReleaseDate { get; set; }
+    [Parameter] public int       ReleaseDatePrecision { get; set; }
     [Parameter] public string? Title { get; set; }
     [Parameter] public bool IsCompilation { get; set; }
 
@@ -632,7 +642,8 @@
             PlatformId   = _selectedPlatform?.Id,
             RegionId     = _selectedRegion?.Id,
             PublisherId  = _selectedPublisher?.Id,
-            ReleaseDate  = ReleaseDate
+            ReleaseDate  = ReleaseDate,
+            ReleaseDatePrecision = ReleaseDatePrecision
         }));
     }
 }

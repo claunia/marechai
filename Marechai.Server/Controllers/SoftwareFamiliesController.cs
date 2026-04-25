@@ -51,6 +51,7 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
                                                                    Name       = b.Name,
                                                                    Parent     = b.Parent.Name,
                                                                    Introduced = b.Introduced,
+                                                                   IntroducedPrecision = b.IntroducedPrecision,
                                                                    ParentId   = b.ParentId
                                                                })
                                                               .ToListAsync();
@@ -66,6 +67,7 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
                                                                      Name       = b.Name,
                                                                      Parent     = b.Parent.Name,
                                                                      Introduced = b.Introduced,
+                                                                     IntroducedPrecision = b.IntroducedPrecision,
                                                                      ParentId   = b.ParentId
                                                                  })
                                                                 .FirstOrDefaultAsync();
@@ -88,6 +90,7 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
         model.Name       = dto.Name;
         model.ParentId   = dto.ParentId;
         model.Introduced = dto.Introduced;
+        model.IntroducedPrecision = dto.IntroducedPrecision;
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();
@@ -108,7 +111,8 @@ public class SoftwareFamiliesController(MarechaiContext context) : ControllerBas
         {
             Name       = dto.Name,
             ParentId   = dto.ParentId,
-            Introduced = dto.Introduced
+            Introduced = dto.Introduced,
+            IntroducedPrecision = dto.IntroducedPrecision
         };
 
         await context.SoftwareFamilies.AddAsync(model);

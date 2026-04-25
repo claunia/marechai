@@ -37,11 +37,29 @@
                                Clearable="true"
                                Class="mb-4"/>
 
+        <MudSelect T="int" @bind-Value="PublishedPrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
                 <MudDatePicker @bind-Date="FirstPublication"
                                Label="@L["First publication"]"
                                Variant="Variant.Outlined"
                                Clearable="true"
                                Class="mb-4"/>
+
+                <MudSelect T="int" @bind-Value="FirstPublicationPrecision"
+                           Label="@L["Date precision"]"
+                           Variant="Variant.Outlined"
+                           Class="mb-4">
+                    <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+                    <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+                </MudSelect>
 
                 <MudAutocomplete T="Iso31661NumericDto"
                                  Label="@L["Country"]"
@@ -351,7 +369,9 @@
     [Parameter] public string?   Issn             { get; set; }
     [Parameter] public int?      CountryId        { get; set; }
     [Parameter] public DateTime? Published        { get; set; }
+    [Parameter] public int       PublishedPrecision { get; set; }
     [Parameter] public DateTime? FirstPublication { get; set; }
+    [Parameter] public int       FirstPublicationPrecision { get; set; }
 
     [Inject] MagazinesService MagazinesService { get; set; } = null!;
 
@@ -699,7 +719,9 @@
             Issn             = Issn,
             CountryId        = _selectedCountry?.Id,
             Published        = Published,
-            FirstPublication = FirstPublication
+            PublishedPrecision = PublishedPrecision,
+            FirstPublication = FirstPublication,
+            FirstPublicationPrecision = FirstPublicationPrecision
         }));
     }
 }

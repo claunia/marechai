@@ -36,6 +36,8 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The published property</summary>
         public DateTimeOffset? Published { get; set; }
+        /// <summary>The published_precision property</summary>
+        public int? PublishedPrecision { get; set; }
         /// <summary>The sort_title property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -82,6 +84,7 @@ namespace Marechai.ApiClient.Models
                 { "id", n => { Id = n.GetLongValue(); } },
                 { "native_title", n => { NativeTitle = n.GetStringValue(); } },
                 { "published", n => { Published = n.GetDateTimeOffsetValue(); } },
+                { "published_precision", n => { PublishedPrecision = n.GetIntValue(); } },
                 { "sort_title", n => { SortTitle = n.GetStringValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
             };
@@ -98,6 +101,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteLongValue("id", Id);
             writer.WriteStringValue("native_title", NativeTitle);
             writer.WriteDateTimeOffsetValue("published", Published);
+            writer.WriteIntValue("published_precision", PublishedPrecision);
             writer.WriteStringValue("sort_title", SortTitle);
             writer.WriteStringValue("title", Title);
             writer.WriteAdditionalData(AdditionalData);

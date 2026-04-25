@@ -56,6 +56,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                                                             Name       = m.Name,
                                                             Model      = m.Model,
                                                             Introduced = m.Introduced,
+                                                            IntroducedPrecision = m.IntroducedPrecision,
                                                             Type       = m.Type,
                                                             Family     = m.Family.Name
                                                         })
@@ -74,6 +75,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                                                             Name       = m.Name,
                                                             Model      = m.Model,
                                                             Introduced = m.Introduced,
+                                                            IntroducedPrecision = m.IntroducedPrecision,
                                                             Type       = m.Type,
                                                             FamilyId   = m.FamilyId
                                                         })
@@ -98,6 +100,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
         model.Name       = dto.Name;
         model.Model      = dto.Model;
         model.Introduced = dto.Introduced;
+        model.IntroducedPrecision = dto.IntroducedPrecision;
         model.Type       = dto.Type;
         model.FamilyId   = dto.FamilyId;
 
@@ -150,6 +153,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
             Name       = dto.Name,
             Model      = dto.Model,
             Introduced = dto.Introduced,
+            IntroducedPrecision = dto.IntroducedPrecision,
             Type       = dto.Type,
             FamilyId   = dto.FamilyId
         };
@@ -244,6 +248,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                                        CompanyId   = g.Company.Id,
                                        ModelCode   = g.ModelCode,
                                        Introduced  = g.Introduced,
+                                       IntroducedPrecision = g.IntroducedPrecision,
                                        Package     = g.Package,
                                        Process     = g.Process,
                                        ProcessNm   = g.ProcessNm,
@@ -311,6 +316,7 @@ public class MachinesController(MarechaiContext context) : ControllerBase
                                                     CompanyName = s.Company.Name,
                                                     ModelCode   = s.ModelCode,
                                                     Introduced  = s.Introduced,
+                                                    IntroducedPrecision = s.IntroducedPrecision,
                                                     Voices      = s.Voices,
                                                     Frequency   = s.Frequency,
                                                     Depth       = s.Depth,

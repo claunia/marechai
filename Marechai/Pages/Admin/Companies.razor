@@ -80,7 +80,7 @@
             </TemplateColumn>
             <TemplateColumn Title="@L["Founded"]" Sortable="true">
                 <CellTemplate>
-                    @FormatDate(context.Item.Founded, context.Item.FoundedDayIsUnknown, context.Item.FoundedMonthIsUnknown)
+                    @FormatDate(context.Item.Founded, context.Item.FoundedPrecision)
                 </CellTemplate>
             </TemplateColumn>
             <TemplateColumn Title="@L["Actions"]" Sortable="false">

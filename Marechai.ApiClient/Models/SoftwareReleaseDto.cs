@@ -48,6 +48,8 @@ namespace Marechai.ApiClient.Models
         public int? RegionId { get; set; }
         /// <summary>The release_date property</summary>
         public DateTimeOffset? ReleaseDate { get; set; }
+        /// <summary>The release_date_precision property</summary>
+        public int? ReleaseDatePrecision { get; set; }
         /// <summary>The software_version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -119,6 +121,7 @@ namespace Marechai.ApiClient.Models
                 { "region", n => { Region = n.GetStringValue(); } },
                 { "region_id", n => { RegionId = n.GetIntValue(); } },
                 { "release_date", n => { ReleaseDate = n.GetDateTimeOffsetValue(); } },
+                { "release_date_precision", n => { ReleaseDatePrecision = n.GetIntValue(); } },
                 { "software_version", n => { SoftwareVersion = n.GetStringValue(); } },
                 { "software_version_id", n => { SoftwareVersionId = n.GetIntValue(); } },
                 { "subvariant", n => { Subvariant = n.GetStringValue(); } },
@@ -143,6 +146,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteStringValue("region", Region);
             writer.WriteIntValue("region_id", RegionId);
             writer.WriteDateTimeOffsetValue("release_date", ReleaseDate);
+            writer.WriteIntValue("release_date_precision", ReleaseDatePrecision);
             writer.WriteStringValue("software_version", SoftwareVersion);
             writer.WriteIntValue("software_version_id", SoftwareVersionId);
             writer.WriteStringValue("subvariant", Subvariant);

@@ -27,7 +27,13 @@ public partial class Books
         return true;
     };
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     async Task OpenAddBookDialog()
     {
@@ -56,6 +62,8 @@ public partial class Books
                 Edition     = data.Edition,
                 Pages       = data.Pages,
                 CountryId   = data.CountryId,
+
+                PublishedPrecision = data.PublishedPrecision,
                 Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null,
                 PreviousId  = data.PreviousId,
                 SourceId    = data.SourceId
@@ -93,6 +101,7 @@ public partial class Books
             { x => x.Pages, fullBook.Pages },
             { x => x.CountryId, fullBook.CountryId },
             { x => x.Published, fullBook.Published?.DateTime },
+            { x => x.PublishedPrecision, fullBook.PublishedPrecision ?? 0 },
             { x => x.PreviousId, fullBook.PreviousId },
             { x => x.SourceId, fullBook.SourceId },
             { x => x.HasCover, fullBook.CoverGuid is not null }
@@ -118,6 +127,8 @@ public partial class Books
                 Isbn        = data.Isbn,
                 Edition     = data.Edition,
                 Pages       = data.Pages,
+
+                PublishedPrecision = data.PublishedPrecision,
                 CountryId   = data.CountryId,
                 Published   = data.Published.HasValue ? new DateTimeOffset(data.Published.Value) : null,
                 PreviousId  = data.PreviousId,

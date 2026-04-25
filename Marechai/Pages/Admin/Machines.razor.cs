@@ -31,7 +31,13 @@ public partial class Machines
         _ => L["Unknown"]
     };
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     async Task OpenAddMachineDialog()
     {
@@ -58,6 +64,7 @@ public partial class Machines
                 CompanyId  = data.CompanyId,
                 Type       = data.Type,
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                IntroducedPrecision = data.IntroducedPrecision,
                 FamilyId   = data.FamilyId
             };
 
@@ -96,6 +103,7 @@ public partial class Machines
             { x => x.CompanyId, fullMachine.CompanyId },
             { x => x.Type, fullMachine.Type ?? 0 },
             { x => x.Introduced, fullMachine.Introduced?.DateTime },
+            { x => x.IntroducedPrecision, fullMachine.IntroducedPrecision ?? 0 },
             { x => x.FamilyId, fullMachine.FamilyId }
         };
 
@@ -118,6 +126,7 @@ public partial class Machines
                 CompanyId  = data.CompanyId,
                 Type       = data.Type,
                 Introduced = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
+                IntroducedPrecision = data.IntroducedPrecision,
                 FamilyId   = data.FamilyId
             };
 

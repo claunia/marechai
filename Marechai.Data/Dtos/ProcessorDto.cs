@@ -39,6 +39,8 @@ public class ProcessorDto : BaseDto<int>
     public string? ModelCode { get; set; }
     [JsonPropertyName("introduced")]
     public DateTime? Introduced { get; set; }
+    [JsonPropertyName("introduced_precision")]
+    public DatePrecision IntroducedPrecision { get; set; }
     [JsonPropertyName("speed")]
     public double? Speed { get; set; }
     [JsonPropertyName("package")]

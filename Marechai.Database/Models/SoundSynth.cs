@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
@@ -48,6 +49,8 @@ public class SoundSynth : BaseModel<int>
     [DisplayFormat(DataFormatString = "{0:d}")]
     [DataType(DataType.Date)]
     public DateTime? Introduced { get; set; }
+    [DefaultValue(DatePrecision.Full)]
+    public DatePrecision IntroducedPrecision { get; set; }
     [DisplayName("PCM voices")]
     [Range(1, int.MaxValue)]
     public int? Voices { get; set; }

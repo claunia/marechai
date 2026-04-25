@@ -36,6 +36,7 @@ public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionA
     // Form fields
     [ObservableProperty] private string                       _familyName = string.Empty;
     [ObservableProperty] private DateTimeOffset?              _introduced;
+    [ObservableProperty] private int                          _introducedPrecision;
     [ObservableProperty] private SoftwareFamilyDto?           _selectedParent;
     [ObservableProperty] private string                       _parentSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<SoftwareFamilyDto> _parentSuggestions = [];
@@ -220,7 +221,8 @@ public partial class AdminSoftwareFamiliesViewModel : ObservableObject, IRegionA
             {
                 Name       = FamilyName,
                 ParentId   = SelectedParent?.Id,
-                Introduced = Introduced
+                Introduced = Introduced,
+                IntroducedPrecision = IntroducedPrecision
             };
 
             if(_editingId == null)

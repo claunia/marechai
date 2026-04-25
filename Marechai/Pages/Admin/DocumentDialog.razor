@@ -32,6 +32,15 @@
                                Clearable="true"
                                Class="mb-4"/>
 
+        <MudSelect T="int" @bind-Value="PublishedPrecision"
+                   Label="@L["Date precision"]"
+                   Variant="Variant.Outlined"
+                   Class="mb-4">
+            <MudSelectItem T="int" Value="0">@L["Full date"]</MudSelectItem>
+            <MudSelectItem T="int" Value="1">@L["Month and year only"]</MudSelectItem>
+            <MudSelectItem T="int" Value="2">@L["Year only"]</MudSelectItem>
+        </MudSelect>
+
                 <MudAutocomplete T="Iso31661NumericDto"
                                  Label="@L["Country"]"
                                  @bind-Value="_selectedCountry"
@@ -339,6 +348,7 @@
     [Parameter] public string?   SortTitle   { get; set; }
     [Parameter] public int?      CountryId   { get; set; }
     [Parameter] public DateTime? Published   { get; set; }
+    [Parameter] public int       PublishedPrecision { get; set; }
 
     [Inject] DocumentsService DocumentsService { get; set; } = null!;
 
@@ -684,7 +694,8 @@
             NativeTitle = NativeTitle,
             SortTitle   = SortTitle,
             CountryId   = _selectedCountry?.Id,
-            Published   = Published
+            Published   = Published,
+            PublishedPrecision = PublishedPrecision
         }));
     }
 }

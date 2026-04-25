@@ -62,6 +62,8 @@ namespace Marechai.ApiClient.Models
         public int? InstructionSetId { get; set; }
         /// <summary>The introduced property</summary>
         public DateTimeOffset? Introduced { get; set; }
+        /// <summary>The introduced_precision property</summary>
+        public int? IntroducedPrecision { get; set; }
         /// <summary>The l1_data property</summary>
         public float? L1Data { get; set; }
         /// <summary>The l1_instruction property</summary>
@@ -154,6 +156,7 @@ namespace Marechai.ApiClient.Models
                 { "instruction_set_extensions", n => { InstructionSetExtensions = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "instruction_set_id", n => { InstructionSetId = n.GetIntValue(); } },
                 { "introduced", n => { Introduced = n.GetDateTimeOffsetValue(); } },
+                { "introduced_precision", n => { IntroducedPrecision = n.GetIntValue(); } },
                 { "l1_data", n => { L1Data = n.GetFloatValue(); } },
                 { "l1_instruction", n => { L1Instruction = n.GetFloatValue(); } },
                 { "l2", n => { L2 = n.GetFloatValue(); } },
@@ -192,6 +195,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteCollectionOfPrimitiveValues<string>("instruction_set_extensions", InstructionSetExtensions);
             writer.WriteIntValue("instruction_set_id", InstructionSetId);
             writer.WriteDateTimeOffsetValue("introduced", Introduced);
+            writer.WriteIntValue("introduced_precision", IntroducedPrecision);
             writer.WriteFloatValue("l1_data", L1Data);
             writer.WriteFloatValue("l1_instruction", L1Instruction);
             writer.WriteFloatValue("l2", L2);

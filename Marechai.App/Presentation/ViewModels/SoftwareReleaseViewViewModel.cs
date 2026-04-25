@@ -182,7 +182,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             Publisher          = release.Publisher;
 
             if(release.ReleaseDate.HasValue)
-                ReleaseDateDisplay = release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy");
+                ReleaseDateDisplay = (release.ReleaseDatePrecision ?? 0) == 2 ? $"{release.ReleaseDate.Value.Year}" : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy");
 
             // Determine if this is a compilation
             IsCompilation = release.SoftwareVersionId is null;

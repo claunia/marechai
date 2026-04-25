@@ -49,7 +49,13 @@ public partial class Gpus
 
     Func<GpuDto, bool> QuickFilter => _ => true;
 
-    static string FormatDate(DateTimeOffset? date) => date is null ? "" : date.Value.Date.ToShortDateString();
+    static string FormatDate(DateTimeOffset? date, int? precision = 0)
+    {
+        if(date is null) return "";
+        if((precision ?? 0) == 2) return date.Value.Year.ToString();
+        if((precision ?? 0) == 1) return date.Value.ToString("MMMM yyyy");
+        return date.Value.Date.ToShortDateString();
+    }
 
     async Task OpenAddGpuDialog()
     {
@@ -74,6 +80,8 @@ public partial class Gpus
                 Name        = data.Name,
                 CompanyId   = data.CompanyId,
                 ModelCode   = data.ModelCode,
+
+                IntroducedPrecision = data.IntroducedPrecision,
                 Introduced  = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
                 Package     = data.Package,
                 Process     = data.Process,
@@ -106,6 +114,7 @@ public partial class Gpus
             { x => x.CompanyId, gpu.CompanyId },
             { x => x.ModelCode, gpu.ModelCode },
             { x => x.Introduced, gpu.Introduced?.DateTime },
+            { x => x.IntroducedPrecision, gpu.IntroducedPrecision ?? 0 },
             { x => x.Package, gpu.Package },
             { x => x.Process, gpu.Process },
             { x => x.ProcessNm, gpu.ProcessNm },
@@ -129,6 +138,8 @@ public partial class Gpus
                 Id          = gpu.Id,
                 Name        = data.Name,
                 CompanyId   = data.CompanyId,
+
+                IntroducedPrecision = data.IntroducedPrecision,
                 ModelCode   = data.ModelCode,
                 Introduced  = data.Introduced.HasValue ? new DateTimeOffset(data.Introduced.Value) : null,
                 Package     = data.Package,
