@@ -68,7 +68,7 @@
     {
         <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);">@string.Format(L["Companies which name starts with {0}."], _character)</MudText>
     }
-    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white;">@string.Format(L["{0} companies found in the database."], _companies.Count())</MudChip>
+    <MudChip T="string" Color="Color.Dark" Variant="Variant.Filled" Class="mt-2" Style="color: white; white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">@string.Format(L["{0} companies found in the database."], _companies.Count())</MudChip>
 </MudPaper>
 
 @if(_companies.Any())
