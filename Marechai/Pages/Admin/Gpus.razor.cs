@@ -199,4 +199,19 @@ public partial class Gpus
             }
         }
     }
+
+    async Task OpenImportDialog()
+    {
+        IDialogReference dialog = await DialogService.ShowAsync<GpuImportDialog>(L["Import CSV"],
+                                                                                 new DialogOptions
+                                                                                 {
+                                                                                     MaxWidth  = MaxWidth.ExtraLarge,
+                                                                                     FullWidth = true
+                                                                                 });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadGpusAsync();
+    }
 }
