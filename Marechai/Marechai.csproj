@@ -5,6 +5,7 @@
     <Version>4.0.0.1836</Version>
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <RootNamespace>Marechai</RootNamespace>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>

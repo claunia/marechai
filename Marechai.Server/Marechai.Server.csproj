@@ -4,6 +4,7 @@
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\Generated</CompilerGeneratedFilesOutputPath>
     <UserSecretsId>f752169f-4aaa-411d-a6ba-684cc1ad5349</UserSecretsId>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <ItemGroup>
