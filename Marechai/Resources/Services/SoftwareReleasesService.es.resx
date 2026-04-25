@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupTextTypo -->
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Software Release Management" xml:space="preserve">
+        <value>Gestión de lanzamientos de software</value>
+    </data>
+    <data name="Manage software releases." xml:space="preserve">
+        <value>Gestionar lanzamientos de software.</value>
+    </data>
+    <data name="Add Release" xml:space="preserve">
+        <value>Añadir lanzamiento</value>
+    </data>
+    <data name="Edit Release" xml:space="preserve">
+        <value>Editar lanzamiento</value>
+    </data>
+    <data name="Delete Release" xml:space="preserve">
+        <value>Eliminar lanzamiento</value>
+    </data>
+    <data name="Release created successfully." xml:space="preserve">
+        <value>Lanzamiento creado correctamente.</value>
+    </data>
+    <data name="Release updated successfully." xml:space="preserve">
+        <value>Lanzamiento actualizado correctamente.</value>
+    </data>
+    <data name="Release deleted successfully." xml:space="preserve">
+        <value>Lanzamiento eliminado correctamente.</value>
+    </data>
+    <data name="Are you sure you want to delete release '{0}'? This action cannot be undone." xml:space="preserve">
+        <value>¿Está seguro de que desea eliminar el lanzamiento '{0}'? Esta acción no se puede deshacer.</value>
+    </data>
+    <data name="Failed to load release details." xml:space="preserve">
+        <value>Error al cargar los detalles del lanzamiento.</value>
+    </data>
+    <data name="Back to Versions" xml:space="preserve">
+        <value>Volver a versiones</value>
+    </data>
+    <data name="Platform" xml:space="preserve">
+        <value>Plataforma</value>
+    </data>
+    <data name="Region" xml:space="preserve">
+        <value>Región</value>
+    </data>
+    <data name="Publisher" xml:space="preserve">
+        <value>Editor</value>
+    </data>
+    <data name="Variant" xml:space="preserve">
+        <value>Variante</value>
+    </data>
+    <data name="Release date" xml:space="preserve">
+        <value>Fecha de lanzamiento</value>
+    </data>
+    <data name="Barcodes" xml:space="preserve">
+        <value>Códigos de barras</value>
+    </data>
+    <data name="Barcode" xml:space="preserve">
+        <value>Código de barras</value>
+    </data>
+    <data name="Product Codes" xml:space="preserve">
+        <value>Códigos de producto</value>
+    </data>
+    <data name="Product code" xml:space="preserve">
+        <value>Código de producto</value>
+    </data>
+    <data name="Minimum GPUs" xml:space="preserve">
+        <value>GPUs mínimas</value>
+    </data>
+    <data name="Recommended GPUs" xml:space="preserve">
+        <value>GPUs recomendadas</value>
+    </data>
+    <data name="Search GPU" xml:space="preserve">
+        <value>Buscar GPU</value>
+    </data>
+    <data name="Sound Synths" xml:space="preserve">
+        <value>Sintetizadores de sonido</value>
+    </data>
+    <data name="Search Sound Synth" xml:space="preserve">
+        <value>Buscar sintetizador de sonido</value>
+    </data>
+    <data name="Actions" xml:space="preserve">
+        <value>Acciones</value>
+    </data>
+    <data name="Edit" xml:space="preserve">
+        <value>Editar</value>
+    </data>
+    <data name="Delete" xml:space="preserve">
+        <value>Eliminar</value>
+    </data>
+    <data name="Basic Info" xml:space="preserve">
+        <value>Información básica</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Añadir</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Cancelar</value>
+    </data>
+    <data name="Save" xml:space="preserve">
+        <value>Guardar</value>
+    </data>
+</root>

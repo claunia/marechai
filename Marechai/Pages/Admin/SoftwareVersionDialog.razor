@@ -1,0 +1,275 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using System.Threading
+
+@inject IStringLocalizer<SoftwareVersionsService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
+            @* Tab 1 - Basic Info *@
+            <MudTabPanel Text="@L["Basic Info"]" Icon="@Icons.Material.Filled.Info">
+                <MudTextField @bind-Value="VersionString"
+                              Label="@L["Version string"]"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              RequiredError="@L["Version string is required."]"
+                              Class="mb-4"/>
+
+                <MudTextField @bind-Value="PublicVersion"
+                              Label="@L["Public version"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
+
+                <MudTextField @bind-Value="Codename"
+                              Label="@L["Codename"]"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"/>
+
+                <MudAutocomplete T="SoftwareVersionDto"
+                                 Label="@L["Parent version"]"
+                                 @bind-Value="_selectedParentVersion"
+                                 SearchFunc="SearchVersions"
+                                 ToStringFunc="@(v => v is null ? string.Empty : $"{v.Software} - {v.VersionString}")"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-4"/>
+
+                <MudAutocomplete T="LicenseDto"
+                                 Label="@L["License"]"
+                                 @bind-Value="_selectedLicense"
+                                 SearchFunc="SearchLicenses"
+                                 ToStringFunc="@(l => l?.Name ?? string.Empty)"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-4"/>
+
+                @if(!string.IsNullOrWhiteSpace(_validationError))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+                }
+            </MudTabPanel>
+
+            @* Tab 2 - Company Roles *@
+            @if(!IsNew)
+            {
+                <MudTabPanel Text="@L["Companies"]" Icon="@Icons.Material.Filled.Business">
+                    @if(_companyRoles is { Count: > 0 })
+                    {
+                        <MudList T="CompanyBySoftwareVersionDto" Dense="true">
+                            @foreach(CompanyBySoftwareVersionDto role in _companyRoles)
+                            {
+                                <MudListItem T="CompanyBySoftwareVersionDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@($"{role.Company} ({role.Role})")</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="() => RemoveCompanyRole(role)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudAutocomplete T="CompanyDto"
+                                             Label="@L["Search Company"]"
+                                             @bind-Value="_selectedCompany"
+                                             SearchFunc="SearchCompanies"
+                                             ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                             Variant="Variant.Outlined"
+                                             Clearable="true"
+                                             Style="flex: 1;"/>
+                            <MudSelect T="SoftwareRoleDto"
+                                       @bind-Value="_selectedRole"
+                                       Label="@L["Role"]"
+                                       ToStringFunc="@(r => r?.Name ?? string.Empty)"
+                                       Variant="Variant.Outlined"
+                                       Style="max-width: 200px;">
+                                @if(_allRoles is not null)
+                                {
+                                    @foreach(SoftwareRoleDto role in _allRoles)
+                                    {
+                                        <MudSelectItem T="SoftwareRoleDto" Value="role">@role.Name</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="AddCompanyRole"
+                                       Disabled="@(_selectedCompany is null || _selectedRole is null)">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+
+                    @if(!string.IsNullOrWhiteSpace(_companyRoleMessage))
+                    {
+                        <MudAlert Severity="@_companyRoleMessageSeverity" Class="mt-2" ShowCloseIcon="true"
+                                  CloseIconClicked="() => _companyRoleMessage = null">@_companyRoleMessage</MudAlert>
+                    }
+                </MudTabPanel>
+            }
+        </MudTabs>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string?                              _validationError;
+    SoftwareVersionDto?                  _selectedParentVersion;
+    List<SoftwareVersionDto>?            _allVersions;
+    LicenseDto?                          _selectedLicense;
+    List<LicenseDto>?                    _allLicenses;
+    CompanyDto?                          _selectedCompany;
+    List<CompanyDto>?                    _allCompanies;
+    SoftwareRoleDto?                     _selectedRole;
+    List<SoftwareRoleDto>?               _allRoles;
+    List<CompanyBySoftwareVersionDto>?   _companyRoles;
+    string?                              _companyRoleMessage;
+    Severity                             _companyRoleMessageSeverity;
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool IsNew { get; set; }
+    [Parameter] public int VersionId { get; set; }
+    [Parameter] public int ParentSoftwareId { get; set; }
+    [Parameter] public string VersionString { get; set; } = string.Empty;
+    [Parameter] public string? PublicVersion { get; set; }
+    [Parameter] public string? Codename { get; set; }
+    [Parameter] public int? ParentVersionId { get; set; }
+    [Parameter] public int? LicenseId { get; set; }
+
+    [Inject] SoftwareVersionsService SoftwareVersionsService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allVersions = await SoftwareVersionsService.GetBySoftwareAsync(ParentSoftwareId);
+        _allLicenses = await SoftwareVersionsService.GetAllLicensesAsync();
+
+        if(ParentVersionId is not null && _allVersions is not null)
+            _selectedParentVersion = _allVersions.Find(v => v.Id == ParentVersionId);
+
+        if(LicenseId is not null && _allLicenses is not null)
+            _selectedLicense = _allLicenses.Find(l => l.Id == LicenseId);
+
+        if(!IsNew)
+        {
+            _allCompanies = await SoftwareVersionsService.GetAllCompaniesAsync();
+            _allRoles     = await SoftwareVersionsService.GetSoftwareRolesAsync();
+            _companyRoles = await SoftwareVersionsService.GetCompanyRolesAsync(VersionId);
+        }
+    }
+
+    Task<IEnumerable<SoftwareVersionDto>> SearchVersions(string? value, CancellationToken ct)
+    {
+        IEnumerable<SoftwareVersionDto> results = _allVersions ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+        {
+            results = _allVersions?
+                         .Where(v => (v.VersionString?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                                     (v.PublicVersion?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false)) ??
+                      [];
+        }
+
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<LicenseDto>> SearchLicenses(string? value, CancellationToken ct)
+    {
+        IEnumerable<LicenseDto> results = _allLicenses ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+        {
+            results = _allLicenses?
+                         .Where(l => l.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ??
+                      [];
+        }
+
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> results = _allCompanies ?? [];
+
+        if(!string.IsNullOrWhiteSpace(value))
+        {
+            results = _allCompanies?
+                         .Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ??
+                      [];
+        }
+
+        return Task.FromResult(results);
+    }
+
+    async Task AddCompanyRole()
+    {
+        if(_selectedCompany is null || _selectedRole is null) return;
+
+        var dto = new CompanyBySoftwareVersionDto
+        {
+            SoftwareVersionId = VersionId,
+            CompanyId         = _selectedCompany.Id,
+            RoleId            = _selectedRole.Id
+        };
+
+        (int? id, string? error) = await SoftwareVersionsService.AddCompanyRoleAsync(dto);
+
+        if(id is not null)
+        {
+            _companyRoles       = await SoftwareVersionsService.GetCompanyRolesAsync(VersionId);
+            _selectedCompany    = null;
+            _selectedRole       = null;
+            _companyRoleMessage = null;
+        }
+        else
+        {
+            _companyRoleMessage         = error;
+            _companyRoleMessageSeverity = Severity.Error;
+        }
+    }
+
+    async Task RemoveCompanyRole(CompanyBySoftwareVersionDto role)
+    {
+        (bool succeeded, string? error) = await SoftwareVersionsService.RemoveCompanyRoleAsync(role.Id ?? 0);
+
+        if(succeeded)
+        {
+            _companyRoles       = await SoftwareVersionsService.GetCompanyRolesAsync(VersionId);
+            _companyRoleMessage = null;
+        }
+        else
+        {
+            _companyRoleMessage         = error;
+            _companyRoleMessageSeverity = Severity.Error;
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        if(string.IsNullOrWhiteSpace(VersionString))
+        {
+            _validationError = L["Version string is required."];
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(new SoftwareVersionDialogResult
+        {
+            VersionString   = VersionString,
+            PublicVersion   = PublicVersion,
+            Codename        = Codename,
+            ParentVersionId = _selectedParentVersion?.Id,
+            LicenseId       = _selectedLicense?.Id
+        }));
+    }
+}

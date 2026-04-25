@@ -263,4 +263,16 @@
     <value>Gestión de revistas</value>
         <comment>Magazine management admin link</comment>
   </data>
+    <data name="Software Management" xml:space="preserve">
+    <value>Gestión de software</value>
+        <comment>Software management admin link</comment>
+  </data>
+    <data name="Software Family Management" xml:space="preserve">
+    <value>Gestión de familias de software</value>
+        <comment>Software family management admin link</comment>
+  </data>
+    <data name="Software Platform Management" xml:space="preserve">
+    <value>Gestión de plataformas de software</value>
+        <comment>Software platform management admin link</comment>
+  </data>
 </root>

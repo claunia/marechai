@@ -27,11 +27,212 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Marechai.ApiClient.Models;
+using Marechai.ApiClient.Software.Screenshots.Upload;
+using Microsoft.Kiota.Abstractions;
 
 namespace Marechai.Services;
 
 public class SoftwareService(Marechai.ApiClient.Client client)
 {
+    // ── CRUD methods ──
+
+    public async Task<(int? id, string? error)> CreateAsync(SoftwareDto dto)
+    {
+        try
+        {
+            int? id = await client.Software.PostAsync(dto);
+
+            return (id, null);
+        }
+        catch(ApiException ex)
+        {
+            return (null, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (null, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> UpdateAsync(int id, SoftwareDto dto)
+    {
+        try
+        {
+            await client.Software[id].PutAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteAsync(int id)
+    {
+        try
+        {
+            await client.Software[id].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // ── Company role junction methods ──
+
+    public async Task<List<SoftwareCompanyRoleDto>> GetCompanyRolesAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareCompanyRoleDto>? roles = await client.Software[softwareId].CompanyRoles.GetAsync();
+
+            return roles ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> AddCompanyRoleAsync(SoftwareCompanyRoleDto dto)
+    {
+        try
+        {
+            await client.Software.CompanyRoles.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveCompanyRoleAsync(int softwareId, int companyId,
+                                                                              string roleId)
+    {
+        try
+        {
+            await client.Software.CompanyRoles[softwareId][companyId][roleId].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    // ── Picker methods for admin ──
+
+    public async Task<List<SoftwareRoleDto>> GetSoftwareRolesAsync()
+    {
+        try
+        {
+            List<SoftwareRoleDto>? roles = await client.Software.Roles.Enabled.GetAsync();
+
+            return roles ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<CompanyDto>> GetAllCompaniesAsync()
+    {
+        try
+        {
+            List<CompanyDto>? companies = await client.Companies.GetAsync();
+
+            return companies ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareFamilyDto>> GetAllFamiliesAsync()
+    {
+        try
+        {
+            List<SoftwareFamilyDto>? families = await client.Software.Families.GetAsync();
+
+            return families ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
+    {
+        try
+        {
+            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+
+            return countries ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    // ── Screenshot methods ──
+
+    public async Task<SoftwareScreenshotDto?> UploadScreenshotAsync(UploadPostRequestBody body)
+    {
+        try
+        {
+            return await client.Software.Screenshots.Upload.PostAsync(body);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteScreenshotAsync(Guid screenshotId)
+    {
+        try
+        {
+            await client.Software.Screenshots[screenshotId.ToString()].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     // ── Picker methods ──
 
     public async Task<int> GetSoftwareCountAsync()

@@ -56,6 +56,12 @@ public static class Register
         services.AddScoped<PeopleService>();
         services.AddScoped<PeopleByCompanyService>();
         services.AddScoped<SoftwareService>();
+        services.AddScoped<SoftwareFamiliesService>();
+        services.AddScoped<SoftwarePlatformsService>();
+        services.AddScoped<SoftwareVersionsService>();
+        services.AddScoped<SoftwareVariantsService>();
+        services.AddScoped<SoftwareSubvariantsService>();
+        services.AddScoped<SoftwareReleasesService>();
         services.AddScoped<AuthService>();
         services.AddScoped<UsersService>();
     }

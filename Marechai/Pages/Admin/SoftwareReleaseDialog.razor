@@ -1,0 +1,498 @@
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using System.Threading
+
+@inject IStringLocalizer<SoftwareReleasesService> L
+
+<MudDialog>
+    <DialogContent>
+        <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
+            @* Tab 1 - Basic Info *@
+            <MudTabPanel Text="@L["Basic Info"]" Icon="@Icons.Material.Filled.Info">
+                <MudAutocomplete T="SoftwarePlatformDto"
+                                 Label="@L["Platform"]"
+                                 @bind-Value="_selectedPlatform"
+                                 SearchFunc="SearchPlatforms"
+                                 ToStringFunc="@(p => p?.Name ?? string.Empty)"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-4"/>
+
+                <MudAutocomplete T="Iso31661NumericDto"
+                                 Label="@L["Region"]"
+                                 @bind-Value="_selectedRegion"
+                                 SearchFunc="SearchRegions"
+                                 ToStringFunc="@(r => r?.Name ?? string.Empty)"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-4"/>
+
+                <MudAutocomplete T="CompanyDto"
+                                 Label="@L["Publisher"]"
+                                 @bind-Value="_selectedPublisher"
+                                 SearchFunc="SearchCompanies"
+                                 ToStringFunc="@(c => c?.Name ?? string.Empty)"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-4"/>
+
+                <MudAutocomplete T="SoftwareVariantDto"
+                                 Label="@L["Variant"]"
+                                 @bind-Value="_selectedVariant"
+                                 SearchFunc="SearchVariants"
+                                 ToStringFunc="@(v => v?.Name ?? string.Empty)"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-4"/>
+
+                <MudDatePicker @bind-Date="ReleaseDate"
+                               Label="@L["Release date"]"
+                               Variant="Variant.Outlined"
+                               Clearable="true"
+                               Class="mb-4"/>
+
+                @if(!string.IsNullOrWhiteSpace(_validationError))
+                {
+                    <MudAlert Severity="Severity.Error" Class="mt-2">@_validationError</MudAlert>
+                }
+            </MudTabPanel>
+
+            @* Tab 2 - Barcodes *@
+            @if(!IsNew)
+            {
+                <MudTabPanel Text="@L["Barcodes"]" Icon="@Icons.Material.Filled.QrCode">
+                    @if(_barcodes is { Count: > 0 })
+                    {
+                        <MudList T="SoftwareBarcodeDto" Dense="true">
+                            @foreach(SoftwareBarcodeDto barcode in _barcodes)
+                            {
+                                <MudListItem T="SoftwareBarcodeDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@barcode.Code</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="() => RemoveBarcode(barcode)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudTextField @bind-Value="_newBarcodeCode"
+                                          Label="@L["Barcode"]"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1;"/>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="AddBarcode"
+                                       Disabled="@(string.IsNullOrWhiteSpace(_newBarcodeCode))">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
+
+                @* Tab 3 - Product Codes *@
+                <MudTabPanel Text="@L["Product Codes"]" Icon="@Icons.Material.Filled.Tag">
+                    @if(_productCodes is { Count: > 0 })
+                    {
+                        <MudList T="SoftwareProductCodeDto" Dense="true">
+                            @foreach(SoftwareProductCodeDto code in _productCodes)
+                            {
+                                <MudListItem T="SoftwareProductCodeDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@(code.Code)</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="() => RemoveProductCode(code)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudTextField @bind-Value="_newProductCode"
+                                          Label="@L["Product code"]"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1;"/>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="AddProductCode"
+                                       Disabled="@(string.IsNullOrWhiteSpace(_newProductCode))">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
+
+                @* Tab 4 - Minimum GPUs *@
+                <MudTabPanel Text="@L["Minimum GPUs"]" Icon="@Icons.Material.Filled.Memory">
+                    @if(_minimumGpus is { Count: > 0 })
+                    {
+                        <MudList T="GpuBySoftwareReleaseDto" Dense="true">
+                            @foreach(GpuBySoftwareReleaseDto gpu in _minimumGpus)
+                            {
+                                <MudListItem T="GpuBySoftwareReleaseDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@gpu.Gpu</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="() => RemoveMinimumGpu(gpu)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudAutocomplete T="GpuDto"
+                                             Label="@L["Search GPU"]"
+                                             @bind-Value="_selectedMinGpu"
+                                             SearchFunc="SearchGpus"
+                                             ToStringFunc="@(g => g?.Name ?? string.Empty)"
+                                             Variant="Variant.Outlined"
+                                             Clearable="true"
+                                             Style="flex: 1;"/>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="AddMinimumGpu"
+                                       Disabled="@(_selectedMinGpu is null)">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
+
+                @* Tab 5 - Recommended GPUs *@
+                <MudTabPanel Text="@L["Recommended GPUs"]" Icon="@Icons.Material.Filled.Memory">
+                    @if(_recommendedGpus is { Count: > 0 })
+                    {
+                        <MudList T="GpuBySoftwareReleaseDto" Dense="true">
+                            @foreach(GpuBySoftwareReleaseDto gpu in _recommendedGpus)
+                            {
+                                <MudListItem T="GpuBySoftwareReleaseDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@gpu.Gpu</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="() => RemoveRecommendedGpu(gpu)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudAutocomplete T="GpuDto"
+                                             Label="@L["Search GPU"]"
+                                             @bind-Value="_selectedRecGpu"
+                                             SearchFunc="SearchGpus"
+                                             ToStringFunc="@(g => g?.Name ?? string.Empty)"
+                                             Variant="Variant.Outlined"
+                                             Clearable="true"
+                                             Style="flex: 1;"/>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="AddRecommendedGpu"
+                                       Disabled="@(_selectedRecGpu is null)">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
+
+                @* Tab 6 - Sound Synths *@
+                <MudTabPanel Text="@L["Sound Synths"]" Icon="@Icons.Material.Filled.MusicNote">
+                    @if(_soundSynths is { Count: > 0 })
+                    {
+                        <MudList T="SoundSynthBySoftwareReleaseDto" Dense="true">
+                            @foreach(SoundSynthBySoftwareReleaseDto synth in _soundSynths)
+                            {
+                                <MudListItem T="SoundSynthBySoftwareReleaseDto">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@synth.SoundSynth</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="() => RemoveSoundSynth(synth)"/>
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+
+                    <MudPaper Class="pa-4 mt-2" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                            <MudAutocomplete T="SoundSynthDto"
+                                             Label="@L["Search Sound Synth"]"
+                                             @bind-Value="_selectedSoundSynth"
+                                             SearchFunc="SearchSoundSynths"
+                                             ToStringFunc="@(s => s?.Name ?? string.Empty)"
+                                             Variant="Variant.Outlined"
+                                             Clearable="true"
+                                             Style="flex: 1;"/>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       OnClick="AddSoundSynth"
+                                       Disabled="@(_selectedSoundSynth is null)">
+                                @L["Add"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudTabPanel>
+            }
+        </MudTabs>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">@L["Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string?                                  _validationError;
+    SoftwarePlatformDto?                     _selectedPlatform;
+    List<SoftwarePlatformDto>?               _allPlatforms;
+    Iso31661NumericDto?                      _selectedRegion;
+    List<Iso31661NumericDto>?                _allRegions;
+    CompanyDto?                              _selectedPublisher;
+    List<CompanyDto>?                        _allCompanies;
+    SoftwareVariantDto?                      _selectedVariant;
+    List<SoftwareVariantDto>?                _allVariants;
+    List<SoftwareBarcodeDto>?                _barcodes;
+    string?                                  _newBarcodeCode;
+    List<SoftwareProductCodeDto>?            _productCodes;
+    string?                                  _newProductCode;
+    List<GpuBySoftwareReleaseDto>?           _minimumGpus;
+    GpuDto?                                  _selectedMinGpu;
+    List<GpuBySoftwareReleaseDto>?           _recommendedGpus;
+    GpuDto?                                  _selectedRecGpu;
+    List<GpuDto>?                            _allGpus;
+    List<SoundSynthBySoftwareReleaseDto>?    _soundSynths;
+    SoundSynthDto?                           _selectedSoundSynth;
+    List<SoundSynthDto>?                     _allSoundSynths;
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter] public bool IsNew { get; set; }
+    [Parameter] public int ReleaseId { get; set; }
+    [Parameter] public int ParentVersionId { get; set; }
+    [Parameter] public int? VariantId { get; set; }
+    [Parameter] public int? SubvariantId { get; set; }
+    [Parameter] public int? PlatformId { get; set; }
+    [Parameter] public int? RegionId { get; set; }
+    [Parameter] public int? PublisherId { get; set; }
+    [Parameter] public DateTime? ReleaseDate { get; set; }
+
+    [Inject] SoftwareReleasesService SoftwareReleasesService { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _allPlatforms   = await SoftwareReleasesService.GetAllPlatformsAsync();
+        _allRegions     = await SoftwareReleasesService.GetCountriesAsync();
+        _allCompanies   = await SoftwareReleasesService.GetAllCompaniesAsync();
+        _allVariants    = await SoftwareReleasesService.GetAllVariantsAsync();
+        _allGpus        = await SoftwareReleasesService.GetAllGpusAsync();
+        _allSoundSynths = await SoftwareReleasesService.GetAllSoundSynthsAsync();
+
+        if(PlatformId is not null && _allPlatforms is not null)
+            _selectedPlatform = _allPlatforms.Find(p => p.Id == PlatformId);
+
+        if(RegionId is not null && _allRegions is not null)
+            _selectedRegion = _allRegions.Find(r => r.Id == RegionId);
+
+        if(PublisherId is not null && _allCompanies is not null)
+            _selectedPublisher = _allCompanies.Find(c => c.Id == PublisherId);
+
+        if(VariantId is not null && _allVariants is not null)
+            _selectedVariant = _allVariants.Find(v => v.Id == VariantId);
+
+        if(!IsNew)
+        {
+            _barcodes        = await SoftwareReleasesService.GetBarcodesAsync(ReleaseId);
+            _productCodes    = await SoftwareReleasesService.GetProductCodesAsync(ReleaseId);
+            _minimumGpus     = await SoftwareReleasesService.GetMinimumGpusAsync(ReleaseId);
+            _recommendedGpus = await SoftwareReleasesService.GetRecommendedGpusAsync(ReleaseId);
+            _soundSynths     = await SoftwareReleasesService.GetSoundSynthsAsync(ReleaseId);
+        }
+    }
+
+    Task<IEnumerable<SoftwarePlatformDto>> SearchPlatforms(string? value, CancellationToken ct)
+    {
+        IEnumerable<SoftwarePlatformDto> results = _allPlatforms ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allPlatforms?.Where(p => p.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<Iso31661NumericDto>> SearchRegions(string? value, CancellationToken ct)
+    {
+        IEnumerable<Iso31661NumericDto> results = _allRegions ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allRegions?.Where(r => r.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<CompanyDto>> SearchCompanies(string? value, CancellationToken ct)
+    {
+        IEnumerable<CompanyDto> results = _allCompanies ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allCompanies?.Where(c => c.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<SoftwareVariantDto>> SearchVariants(string? value, CancellationToken ct)
+    {
+        IEnumerable<SoftwareVariantDto> results = _allVariants ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allVariants?.Where(v => v.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<GpuDto>> SearchGpus(string? value, CancellationToken ct)
+    {
+        IEnumerable<GpuDto> results = _allGpus ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allGpus?.Where(g => g.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+        return Task.FromResult(results);
+    }
+
+    Task<IEnumerable<SoundSynthDto>> SearchSoundSynths(string? value, CancellationToken ct)
+    {
+        IEnumerable<SoundSynthDto> results = _allSoundSynths ?? [];
+        if(!string.IsNullOrWhiteSpace(value))
+            results = _allSoundSynths?.Where(s => s.Name?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false) ?? [];
+        return Task.FromResult(results);
+    }
+
+    // ── Barcode management ──
+
+    async Task AddBarcode()
+    {
+        if(string.IsNullOrWhiteSpace(_newBarcodeCode)) return;
+
+        var dto = new SoftwareBarcodeDto { ReleaseId = ReleaseId, Code = _newBarcodeCode.Trim() };
+        (int? id, string? _) = await SoftwareReleasesService.AddBarcodeAsync(dto);
+
+        if(id is not null)
+        {
+            _barcodes       = await SoftwareReleasesService.GetBarcodesAsync(ReleaseId);
+            _newBarcodeCode = null;
+        }
+    }
+
+    async Task RemoveBarcode(SoftwareBarcodeDto barcode)
+    {
+        await SoftwareReleasesService.RemoveBarcodeAsync(barcode.Id ?? 0);
+        _barcodes = await SoftwareReleasesService.GetBarcodesAsync(ReleaseId);
+    }
+
+    // ── Product code management ──
+
+    async Task AddProductCode()
+    {
+        if(string.IsNullOrWhiteSpace(_newProductCode)) return;
+
+        var dto = new SoftwareProductCodeDto { ReleaseId = ReleaseId, Code = _newProductCode.Trim() };
+        (int? id, string? _) = await SoftwareReleasesService.AddProductCodeAsync(dto);
+
+        if(id is not null)
+        {
+            _productCodes  = await SoftwareReleasesService.GetProductCodesAsync(ReleaseId);
+            _newProductCode = null;
+        }
+    }
+
+    async Task RemoveProductCode(SoftwareProductCodeDto code)
+    {
+        await SoftwareReleasesService.RemoveProductCodeAsync(code.Id ?? 0);
+        _productCodes = await SoftwareReleasesService.GetProductCodesAsync(ReleaseId);
+    }
+
+    // ── GPU management ──
+
+    async Task AddMinimumGpu()
+    {
+        if(_selectedMinGpu is null) return;
+
+        var dto = new GpuBySoftwareReleaseDto { ReleaseId = ReleaseId, GpuId = _selectedMinGpu.Id };
+        await SoftwareReleasesService.AddMinimumGpuAsync(dto);
+        _minimumGpus   = await SoftwareReleasesService.GetMinimumGpusAsync(ReleaseId);
+        _selectedMinGpu = null;
+    }
+
+    async Task RemoveMinimumGpu(GpuBySoftwareReleaseDto gpu)
+    {
+        await SoftwareReleasesService.RemoveMinimumGpuAsync(gpu.ReleaseId ?? 0, gpu.GpuId ?? 0);
+        _minimumGpus = await SoftwareReleasesService.GetMinimumGpusAsync(ReleaseId);
+    }
+
+    async Task AddRecommendedGpu()
+    {
+        if(_selectedRecGpu is null) return;
+
+        var dto = new GpuBySoftwareReleaseDto { ReleaseId = ReleaseId, GpuId = _selectedRecGpu.Id };
+        await SoftwareReleasesService.AddRecommendedGpuAsync(dto);
+        _recommendedGpus = await SoftwareReleasesService.GetRecommendedGpusAsync(ReleaseId);
+        _selectedRecGpu   = null;
+    }
+
+    async Task RemoveRecommendedGpu(GpuBySoftwareReleaseDto gpu)
+    {
+        await SoftwareReleasesService.RemoveRecommendedGpuAsync(gpu.ReleaseId ?? 0, gpu.GpuId ?? 0);
+        _recommendedGpus = await SoftwareReleasesService.GetRecommendedGpusAsync(ReleaseId);
+    }
+
+    // ── Sound synth management ──
+
+    async Task AddSoundSynth()
+    {
+        if(_selectedSoundSynth is null) return;
+
+        var dto = new SoundSynthBySoftwareReleaseDto
+        {
+            ReleaseId    = ReleaseId,
+            SoundSynthId = _selectedSoundSynth.Id
+        };
+
+        await SoftwareReleasesService.AddSoundSynthAsync(dto);
+        _soundSynths       = await SoftwareReleasesService.GetSoundSynthsAsync(ReleaseId);
+        _selectedSoundSynth = null;
+    }
+
+    async Task RemoveSoundSynth(SoundSynthBySoftwareReleaseDto synth)
+    {
+        await SoftwareReleasesService.RemoveSoundSynthAsync(synth.ReleaseId ?? 0, synth.SoundSynthId ?? 0);
+        _soundSynths = await SoftwareReleasesService.GetSoundSynthsAsync(ReleaseId);
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(new SoftwareReleaseDialogResult
+        {
+            VariantId    = _selectedVariant?.Id,
+            SubvariantId = SubvariantId,
+            PlatformId   = _selectedPlatform?.Id,
+            RegionId     = _selectedRegion?.Id,
+            PublisherId  = _selectedPublisher?.Id,
+            ReleaseDate  = ReleaseDate
+        }));
+    }
+}

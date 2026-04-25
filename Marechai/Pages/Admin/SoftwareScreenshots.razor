@@ -1,0 +1,85 @@
+@page "/admin/software/{SoftwareId:int}/screenshots"
+@attribute [Authorize(Roles = "Admin, UberAdmin")]
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@inject SoftwareService SoftwareService
+@inject IStringLocalizer<SoftwareService> L
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" OnClick="@(() => NavigationManager.NavigateTo("/admin/software"))" Class="mb-4">@L["Back to Software"]</MudButton>
+
+<MudPaper Class="pa-6 mb-6" Elevation="0" Style="background: linear-gradient(135deg, #e65100 0%, #ff8a65 100%); border-radius: 16px;">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Filled.Screenshot" Size="Size.Large" Style="color: white;"/>
+        <MudText Typo="Typo.h4" Style="color: white;">@L["Software Screenshot Management"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.subtitle1" Style="color: rgba(255,255,255,0.85);" Class="mt-2">@(_softwareName ?? L["Manage software screenshots."])</MudText>
+</MudPaper>
+
+@if(!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+}
+
+@if(!string.IsNullOrWhiteSpace(_successMessage))
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _successMessage = null">@_successMessage</MudAlert>
+}
+
+@if(_isLoading)
+{
+    <div class="d-flex justify-center pa-8">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
+    </div>
+    return;
+}
+
+<MudPaper Elevation="2" Class="rounded-lg pa-4">
+    <MudToolBar Dense="true">
+        <MudFileUpload T="IBrowserFile"
+                       Accept=".jpg,.jpeg,.png,.webp,.tiff,.tif,.bmp"
+                       FilesChanged="OnFileSelected"
+                       MaximumFileCount="1">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Upload">
+                    @L["Upload Screenshot"]
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+        <MudSpacer/>
+        <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="LoadDataAsync"/>
+    </MudToolBar>
+
+    @if(_screenshotIds is { Count: > 0 })
+    {
+        <MudGrid Class="mt-4">
+            @foreach(Guid? screenshotId in _screenshotIds)
+            {
+                @if(screenshotId.HasValue)
+                {
+                    <MudItem xs="12" sm="6" md="4" lg="3">
+                        <MudCard>
+                            <MudCardContent Class="pa-2 d-flex justify-center">
+                                <MudText Typo="Typo.caption">@screenshotId.Value.ToString("N")[..8]...</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                               Size="Size.Small"
+                                               Color="Color.Error"
+                                               OnClick="() => ConfirmDeleteScreenshot(screenshotId.Value)"
+                                               Title="@L["Delete"]"/>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            }
+        </MudGrid>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1" Class="pa-4 text-center" Color="Color.Default">@L["No screenshots yet."]</MudText>
+    }
+</MudPaper>
