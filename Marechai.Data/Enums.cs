@@ -801,14 +801,24 @@ public enum ProductCodeIssuer : byte
 public enum BarcodeType : byte
 {
     Unknown = 0,
+    [Display(Name = "UPC-A")]
     UPC_A   = 1,
+    [Display(Name = "UPC-E")]
     UPC_E   = 2,
+    [Display(Name = "EAN-13")]
     EAN_13  = 3,
+    [Display(Name = "EAN-8")]
     EAN_8   = 4,
+    [Display(Name = "ISBN-10")]
     ISBN_10 = 5,
+    [Display(Name = "ISBN-13")]
     ISBN_13 = 6,
+    [Display(Name = "ISSN")]
     ISSN    = 7,
+    [Display(Name = "Code 39")]
     Code39  = 8,
+    [Display(Name = "Code 128")]
     Code128 = 9,
+    [Display(Name = "QR Code")]
     QRCode  = 10
 }
