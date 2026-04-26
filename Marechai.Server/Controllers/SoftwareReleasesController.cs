@@ -438,19 +438,19 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<SoftwareReleaseDto>>> GetCompilationsForSoftwareAsync(ulong softwareId)
     {
-        // Versioned compilations containing this software
-        var versionedCompilations = context.SoftwareVersionBySoftwareRelease
-                                          .Where(x => x.SoftwareVersion.SoftwareId == softwareId)
-                                          .Select(x => x.Release);
+        // Collect release IDs from both versioned and versionless compilations
+        var versionedIds = context.SoftwareVersionBySoftwareRelease
+                                  .Where(x => x.SoftwareVersion.SoftwareId == softwareId)
+                                  .Select(x => x.ReleaseId);
 
-        // Versionless compilations containing this software
-        var versionlessCompilations = context.SoftwareBySoftwareRelease
-                                             .Where(x => x.SoftwareId == softwareId)
-                                             .Select(x => x.Release);
+        var versionlessIds = context.SoftwareBySoftwareRelease
+                                    .Where(x => x.SoftwareId == softwareId)
+                                    .Select(x => x.ReleaseId);
 
-        return await versionedCompilations
-                    .Union(versionlessCompilations)
-                    .Distinct()
+        var releaseIds = await versionedIds.Union(versionlessIds).Distinct().ToListAsync();
+
+        return await context.SoftwareReleases
+                    .Where(r => releaseIds.Contains(r.Id))
                     .OrderBy(r => r.Title)
                     .Select(r => new SoftwareReleaseDto
                      {
