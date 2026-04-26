@@ -2021,6 +2021,9 @@
   <data name="SoftwareRegionsLabel" xml:space="preserve"><value>Regiones</value></data>
   <data name="RegionsLabel" xml:space="preserve"><value>Regiones</value></data>
   <data name="AddRegionLabel" xml:space="preserve"><value>Añadir región</value></data>
+  <data name="LanguagesLabel" xml:space="preserve"><value>Idiomas</value></data>
+  <data name="LanguageLabel" xml:space="preserve"><value>Idioma</value></data>
+  <data name="AddLanguageLabel" xml:space="preserve"><value>Añadir idioma</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Editor</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Fecha de publicación</value></data>
   <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variante</value></data>

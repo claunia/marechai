@@ -107,6 +107,13 @@
                     <td>@string.Join(", ", _release.Regions.Select(r => r.RegionName))</td>
                 </tr>
             }
+            @if(_release.Languages is not null && _release.Languages.Count > 0)
+            {
+                <tr>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Languages"]</strong></td>
+                    <td>@string.Join(", ", _release.Languages.Select(l => l.Language))</td>
+                </tr>
+            }
             @if(!string.IsNullOrEmpty(_release.Publisher))
             {
                 <tr>

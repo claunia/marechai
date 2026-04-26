@@ -82,6 +82,32 @@
                     }
                 </MudStack>
 
+                <MudText Typo="Typo.subtitle1" Class="mb-2">@L["Languages"]</MudText>
+                <MudAutocomplete T="Iso639Dto"
+                                 Label="@L["Add language"]"
+                                 @bind-Value="_selectedLanguageToAdd"
+                                 SearchFunc="SearchLanguages"
+                                 ToStringFunc="@(l => l is null ? string.Empty : $"{l.ReferenceName} ({l.Id})")"
+                                 Variant="Variant.Outlined"
+                                 Clearable="true"
+                                 Class="mb-2"/>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small"
+                           OnClick="AddLanguage" Disabled="@(_selectedLanguageToAdd is null)"
+                           Class="mb-2">
+                    @L["Add"]
+                </MudButton>
+                <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="1" Class="mb-4">
+                    @if(_releaseLanguages is not null)
+                    {
+                        @foreach(var lang in _releaseLanguages)
+                        {
+                            <MudChip T="string" OnClose="@(async () => await RemoveLanguage(lang))" Color="Color.Info">
+                                @lang.Language
+                            </MudChip>
+                        }
+                    }
+                </MudStack>
+
                 <MudAutocomplete T="CompanyDto"
                                  Label="@L["Publisher"]"
                                  @bind-Value="_selectedPublisher"
@@ -453,6 +479,9 @@
     UnM49Dto?                                _selectedRegionToAdd;
     List<UnM49Dto>?                          _allUnM49;
     List<UnM49BySoftwareReleaseDto>?         _releaseRegions;
+    Iso639Dto?                               _selectedLanguageToAdd;
+    List<Iso639Dto>?                         _allLanguages;
+    List<LanguageBySoftwareReleaseDto>?      _releaseLanguages;
     CompanyDto?                              _selectedPublisher;
     List<CompanyDto>?                        _allCompanies;
     SoftwareVariantDto?                      _selectedVariant;
@@ -511,6 +540,7 @@
 
         _allPlatforms   = await SoftwareReleasesService.GetAllPlatformsAsync();
         _allUnM49       = await SoftwareReleasesService.GetAllUnM49Async();
+        _allLanguages   = await SoftwareReleasesService.GetAllLanguagesAsync();
         _allCompanies   = await SoftwareReleasesService.GetAllCompaniesAsync();
         _allVariants    = await SoftwareReleasesService.GetAllVariantsAsync();
         _allGpus        = await SoftwareReleasesService.GetAllGpusAsync();
@@ -527,6 +557,11 @@
             _releaseRegions = await SoftwareReleasesService.GetReleaseRegionsAsync(ReleaseId);
         else
             _releaseRegions = [];
+
+        if(!IsNew && ReleaseId > 0)
+            _releaseLanguages = await SoftwareReleasesService.GetReleaseLanguagesAsync(ReleaseId);
+        else
+            _releaseLanguages = [];
 
         if(PublisherId is not null && _allCompanies is not null)
             _selectedPublisher = _allCompanies.Find(c => c.Id == PublisherId);
@@ -603,6 +638,34 @@
 
         await SoftwareReleasesService.RemoveRegionFromReleaseAsync(ReleaseId, region.UnM49Id ?? 0);
         _releaseRegions = await SoftwareReleasesService.GetReleaseRegionsAsync(ReleaseId);
+        StateHasChanged();
+    }
+
+    Task<IEnumerable<Iso639Dto>> SearchLanguages(string? value, CancellationToken ct)
+    {
+        var assignedCodes = new HashSet<string?>(_releaseLanguages?.Select(l => l.LanguageCode) ?? []);
+        IEnumerable<Iso639Dto> results = (_allLanguages ?? []).Where(l => !assignedCodes.Contains(l.Id));
+        if(!string.IsNullOrWhiteSpace(value))
+            results = results.Where(l => l.ReferenceName?.Contains(value, StringComparison.OrdinalIgnoreCase) ?? false);
+        return Task.FromResult(results);
+    }
+
+    async Task AddLanguage()
+    {
+        if(_selectedLanguageToAdd?.Id is null || ReleaseId <= 0) return;
+
+        await SoftwareReleasesService.AddLanguageToReleaseAsync(ReleaseId, _selectedLanguageToAdd.Id);
+        _releaseLanguages = await SoftwareReleasesService.GetReleaseLanguagesAsync(ReleaseId);
+        _selectedLanguageToAdd = null;
+        StateHasChanged();
+    }
+
+    async Task RemoveLanguage(LanguageBySoftwareReleaseDto lang)
+    {
+        if(ReleaseId <= 0 || lang.LanguageCode is null) return;
+
+        await SoftwareReleasesService.RemoveLanguageFromReleaseAsync(ReleaseId, lang.LanguageCode);
+        _releaseLanguages = await SoftwareReleasesService.GetReleaseLanguagesAsync(ReleaseId);
         StateHasChanged();
     }
 

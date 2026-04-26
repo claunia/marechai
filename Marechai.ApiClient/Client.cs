@@ -16,6 +16,7 @@ using Marechai.ApiClient.InstructionSetExtensionsByProcessor;
 using Marechai.ApiClient.InstructionSets;
 using Marechai.ApiClient.Iso31661Numeric;
 using Marechai.ApiClient.Iso4217;
+using Marechai.ApiClient.Languages;
 using Marechai.ApiClient.Licenses;
 using Marechai.ApiClient.MachineFamilies;
 using Marechai.ApiClient.Machines;
@@ -141,6 +142,11 @@ namespace Marechai.ApiClient
         public global::Marechai.ApiClient.Iso4217.Iso4217RequestBuilder Iso4217
         {
             get => new global::Marechai.ApiClient.Iso4217.Iso4217RequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The languages property</summary>
+        public global::Marechai.ApiClient.Languages.LanguagesRequestBuilder Languages
+        {
+            get => new global::Marechai.ApiClient.Languages.LanguagesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The licenses property</summary>
         public global::Marechai.ApiClient.Licenses.LicensesRequestBuilder Licenses
@@ -297,7 +303,7 @@ namespace Marechai.ApiClient
             ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
             if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
             {
-                RequestAdapter.BaseUrl = "http://localhost:5023";
+                RequestAdapter.BaseUrl = "http://localhost:5555";
             }
             PathParameters.TryAdd("baseurl", RequestAdapter.BaseUrl);
         }

@@ -125,6 +125,35 @@
                                         <Button Content="{Binding Source={StaticResource Strings}, Path=AddButton}"
                                                 Command="{Binding AddRegionCommand}" HorizontalAlignment="Stretch"
                                                 Margin="0,4,0,0" />
+                                        <!-- Languages (multi-entry) -->
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=LanguagesLabel}"
+                                                   FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4" />
+                                        <ItemsRepeater ItemsSource="{Binding ReleaseLanguageDisplays}">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Orientation="Vertical" Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate x:DataType="x:String">
+                                                    <Grid ColumnSpacing="8">
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" />
+                                                        <Button Grid.Column="1" Content="✕" Padding="4,2"
+                                                                Command="{Binding DataContext.RemoveLanguageCommand, ElementName=PageRoot}"
+                                                                CommandParameter="{Binding}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=AddLanguageLabel}"
+                                                        PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
+                                                        Text="{Binding LanguageSearchText, Mode=TwoWay}" QueryIcon="Find"
+                                                        x:Name="LanguageFilterBox" TextChanged="LanguageFilterBox_TextChanged" />
+                                        <ComboBox ItemsSource="{Binding LanguageSuggestions}" SelectedItem="{Binding SelectedLanguageToAdd, Mode=TwoWay}"
+                                                  DisplayMemberPath="ReferenceName" HorizontalAlignment="Stretch"
+                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=LanguageLabel}" />
+                                        <Button Content="{Binding Source={StaticResource Strings}, Path=AddButton}"
+                                                Command="{Binding AddLanguageCommand}" HorizontalAlignment="Stretch"
+                                                Margin="0,4,0,0" />
                                         <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=PublisherLabel}"
                                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
                                                         Text="{Binding PublisherSearchText, Mode=TwoWay}" QueryIcon="Find"

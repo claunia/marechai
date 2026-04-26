@@ -70,6 +70,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                         UnM49Id           = rg.UnM49Id,
                                                                         RegionName        = rg.UnM49.Name
                                                                     }).ToList(),
+                                                                    Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+                                                                    {
+                                                                        SoftwareReleaseId = lg.SoftwareReleaseId,
+                                                                        LanguageCode      = lg.LanguageCode,
+                                                                        Language          = lg.Language.ReferenceName
+                                                                    }).ToList(),
                                                                     PublisherId       = r.PublisherId,
                                                                     Publisher         = r.Publisher.Name,
                                                                     ReleaseDate       = r.ReleaseDate,
@@ -104,6 +110,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                 SoftwareReleaseId = rg.SoftwareReleaseId,
                 UnM49Id           = rg.UnM49Id,
                 RegionName        = rg.UnM49.Name
+            }).ToList(),
+            Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+            {
+                SoftwareReleaseId = lg.SoftwareReleaseId,
+                LanguageCode      = lg.LanguageCode,
+                Language          = lg.Language.ReferenceName
             }).ToList(),
             PublisherId       = r.PublisherId,
             Publisher         = r.Publisher.Name,
@@ -141,6 +153,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                 UnM49Id           = rg.UnM49Id,
                 RegionName        = rg.UnM49.Name
             }).ToList(),
+            Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+            {
+                SoftwareReleaseId = lg.SoftwareReleaseId,
+                LanguageCode      = lg.LanguageCode,
+                Language          = lg.Language.ReferenceName
+            }).ToList(),
             PublisherId       = r.PublisherId,
             Publisher         = r.Publisher.Name,
             ReleaseDate       = r.ReleaseDate,
@@ -173,6 +191,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                           SoftwareReleaseId = rg.SoftwareReleaseId,
                                                                           UnM49Id           = rg.UnM49Id,
                                                                           RegionName        = rg.UnM49.Name
+                                                                      }).ToList(),
+                                                                      Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+                                                                      {
+                                                                          SoftwareReleaseId = lg.SoftwareReleaseId,
+                                                                          LanguageCode      = lg.LanguageCode,
+                                                                          Language          = lg.Language.ReferenceName
                                                                       }).ToList(),
                                                                       PublisherId       = r.PublisherId,
                                                                       Publisher         = r.Publisher.Name,
@@ -416,6 +440,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                 UnM49Id           = rg.UnM49Id,
                 RegionName        = rg.UnM49.Name
             }).ToList(),
+            Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+            {
+                SoftwareReleaseId = lg.SoftwareReleaseId,
+                LanguageCode      = lg.LanguageCode,
+                Language          = lg.Language.ReferenceName
+            }).ToList(),
             PublisherId       = r.PublisherId,
             Publisher         = r.Publisher.Name,
             ReleaseDate       = r.ReleaseDate,
@@ -457,6 +487,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                              SoftwareReleaseId = rg.SoftwareReleaseId,
                              UnM49Id           = rg.UnM49Id,
                              RegionName        = rg.UnM49.Name
+                         }).ToList(),
+                         Languages         = r.Languages.Select(lg => new LanguageBySoftwareReleaseDto
+                         {
+                             SoftwareReleaseId = lg.SoftwareReleaseId,
+                             LanguageCode      = lg.LanguageCode,
+                             Language          = lg.Language.ReferenceName
                          }).ToList(),
                          PublisherId       = r.PublisherId,
                          Publisher         = r.Publisher.Name,
@@ -720,6 +756,85 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         if(entry is null) return NotFound();
 
         context.UnM49BySoftwareRelease.Remove(entry);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    // --- Language junction endpoints ---
+
+    [HttpGet("{releaseId:ulong}/languages")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<LanguageBySoftwareReleaseDto>> GetLanguagesAsync(ulong releaseId) =>
+        context.LanguageBySoftwareRelease
+               .Where(x => x.SoftwareReleaseId == releaseId)
+               .OrderBy(x => x.Language.ReferenceName)
+               .Select(x => new LanguageBySoftwareReleaseDto
+                {
+                    SoftwareReleaseId = x.SoftwareReleaseId,
+                    LanguageCode      = x.LanguageCode,
+                    Language          = x.Language.ReferenceName
+                })
+               .ToListAsync();
+
+    [HttpPost("{releaseId:ulong}/languages")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> AddLanguageAsync(ulong releaseId,
+                                                     [FromBody] LanguageBySoftwareReleaseDto dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareRelease release = await context.SoftwareReleases.FindAsync(releaseId);
+
+        if(release is null) return NotFound();
+
+        bool exists = await context.LanguageBySoftwareRelease
+                                   .AnyAsync(x => x.SoftwareReleaseId == releaseId
+                                               && x.LanguageCode      == dto.LanguageCode);
+
+        if(exists) return BadRequest("This language is already assigned to the release.");
+
+        bool languageExists = await context.Iso639.AnyAsync(l => l.Id == dto.LanguageCode);
+
+        if(!languageExists) return BadRequest("The specified language does not exist.");
+
+        await context.LanguageBySoftwareRelease.AddAsync(new LanguageBySoftwareRelease
+        {
+            SoftwareReleaseId = releaseId,
+            LanguageCode      = dto.LanguageCode
+        });
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    [HttpDelete("{releaseId:ulong}/languages/{languageCode}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> RemoveLanguageAsync(ulong releaseId, string languageCode)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        LanguageBySoftwareRelease entry =
+            await context.LanguageBySoftwareRelease
+                         .FirstOrDefaultAsync(x => x.SoftwareReleaseId == releaseId
+                                                && x.LanguageCode      == languageCode);
+
+        if(entry is null) return NotFound();
+
+        context.LanguageBySoftwareRelease.Remove(entry);
         await context.SaveChangesWithUserAsync(userId);
 
         return Ok();

@@ -57,6 +57,8 @@ public class SoftwareReleaseDto : BaseDto<ulong>
     public string? Platform { get; set; }
     [JsonPropertyName("regions")]
     public List<UnM49BySoftwareReleaseDto>? Regions { get; set; }
+    [JsonPropertyName("languages")]
+    public List<LanguageBySoftwareReleaseDto>? Languages { get; set; }
     [JsonPropertyName("publisher_id")]
     [Required]
     public int PublisherId { get; set; }

@@ -48,6 +48,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private string? _regionsDisplay;
 
     [ObservableProperty]
+    private string? _languagesDisplay;
+
+    [ObservableProperty]
     private string? _regionalTitle;
 
     [ObservableProperty]
@@ -79,6 +82,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
 
     [ObservableProperty]
     private Visibility _showRegions = Visibility.Collapsed;
+
+    [ObservableProperty]
+    private Visibility _showLanguages = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showRegionalTitle = Visibility.Collapsed;
@@ -187,6 +193,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             RegionsDisplay     = release.Regions is { Count: > 0 }
                 ? string.Join(", ", release.Regions.Select(r => r.RegionName))
                 : null;
+            LanguagesDisplay   = release.Languages is { Count: > 0 }
+                ? string.Join(", ", release.Languages.Select(l => l.Language))
+                : null;
             Publisher          = release.Publisher;
 
             if(release.ReleaseDate.HasValue)
@@ -277,6 +286,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         ShowVariant     = !string.IsNullOrEmpty(Variant) ? Visibility.Visible : Visibility.Collapsed;
         ShowSubvariant  = !string.IsNullOrEmpty(Subvariant) ? Visibility.Visible : Visibility.Collapsed;
         ShowRegions     = !string.IsNullOrEmpty(RegionsDisplay) ? Visibility.Visible : Visibility.Collapsed;
+        ShowLanguages   = !string.IsNullOrEmpty(LanguagesDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowRegionalTitle = !string.IsNullOrEmpty(RegionalTitle) ? Visibility.Visible : Visibility.Collapsed;
         ShowPublisher   = !string.IsNullOrEmpty(Publisher) ? Visibility.Visible : Visibility.Collapsed;
         ShowReleaseDate = !string.IsNullOrEmpty(ReleaseDateDisplay) ? Visibility.Visible : Visibility.Collapsed;

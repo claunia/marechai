@@ -709,4 +709,73 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    public async Task<List<Iso639Dto>> GetAllLanguagesAsync()
+    {
+        try
+        {
+            List<Iso639Dto>? languages = await client.Languages.GetAsync();
+
+            return languages ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<List<LanguageBySoftwareReleaseDto>> GetReleaseLanguagesAsync(int releaseId)
+    {
+        try
+        {
+            List<LanguageBySoftwareReleaseDto>? languages =
+                await client.Software.Releases[releaseId].Languages.GetAsync();
+
+            return languages ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> AddLanguageToReleaseAsync(int releaseId, string languageCode)
+    {
+        try
+        {
+            await client.Software.Releases[releaseId].Languages.PostAsync(new LanguageBySoftwareReleaseDto
+            {
+                LanguageCode = languageCode
+            });
+
+            return (true, null);
+        }
+        catch(ApiException e)
+        {
+            return (false, e.Message);
+        }
+        catch(Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveLanguageFromReleaseAsync(int releaseId,
+                                                                                      string languageCode)
+    {
+        try
+        {
+            await client.Software.Releases[releaseId].Languages[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException e)
+        {
+            return (false, e.Message);
+        }
+        catch(Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
 }

@@ -18,6 +18,14 @@ namespace Marechai.ApiClient.Models
         public int? Id { get; set; }
         /// <summary>The is_compilation property</summary>
         public bool? IsCompilation { get; set; }
+        /// <summary>The languages property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Marechai.ApiClient.Models.LanguageBySoftwareReleaseDto>? Languages { get; set; }
+#nullable restore
+#else
+        public List<global::Marechai.ApiClient.Models.LanguageBySoftwareReleaseDto> Languages { get; set; }
+#endif
         /// <summary>The platform property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -125,6 +133,7 @@ namespace Marechai.ApiClient.Models
             {
                 { "id", n => { Id = n.GetIntValue(); } },
                 { "is_compilation", n => { IsCompilation = n.GetBoolValue(); } },
+                { "languages", n => { Languages = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.LanguageBySoftwareReleaseDto>(global::Marechai.ApiClient.Models.LanguageBySoftwareReleaseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "platform", n => { Platform = n.GetStringValue(); } },
                 { "platform_id", n => { PlatformId = n.GetIntValue(); } },
                 { "publisher", n => { Publisher = n.GetStringValue(); } },
@@ -152,6 +161,7 @@ namespace Marechai.ApiClient.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("id", Id);
             writer.WriteBoolValue("is_compilation", IsCompilation);
+            writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.LanguageBySoftwareReleaseDto>("languages", Languages);
             writer.WriteStringValue("platform", Platform);
             writer.WriteIntValue("platform_id", PlatformId);
             writer.WriteStringValue("publisher", Publisher);

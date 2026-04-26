@@ -27,7 +27,8 @@ public class SoftwareRelease : BaseModel<ulong>
     public         ulong?           PlatformId { get; set; }
     public virtual SoftwarePlatform Platform   { get; set; }
 
-    public virtual ICollection<UnM49BySoftwareRelease> Regions { get; set; }
+    public virtual ICollection<UnM49BySoftwareRelease>     Regions   { get; set; }
+    public virtual ICollection<LanguageBySoftwareRelease>  Languages { get; set; }
 
     [Required]
     public int PublisherId { get;           set; }

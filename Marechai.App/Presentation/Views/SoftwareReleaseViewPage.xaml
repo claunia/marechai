@@ -167,6 +167,26 @@
                         </StackPanel>
                     </Grid>
 
+                    <!-- Languages -->
+                    <StackPanel Visibility="{Binding ShowLanguages}"
+                                Spacing="8">
+                        <TextBlock
+                                   Text="{Binding Source={StaticResource Strings}, Path=LanguagesLabel}"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemBaseMediumColor}" />
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="16,12">
+                            <TextBlock Text="{Binding LanguagesDisplay}"
+                                       FontSize="14"
+                                       TextWrapping="Wrap"
+                                       Foreground="{ThemeResource TextControlForeground}" />
+                        </Border>
+                    </StackPanel>
+
                     <!-- Publisher and Release Date -->
                     <Grid ColumnSpacing="16">
                         <Grid.ColumnDefinitions>

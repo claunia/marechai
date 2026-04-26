@@ -48,6 +48,11 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private ObservableCollection<UnM49Dto> _regionSuggestions = [];
     [ObservableProperty] private ObservableCollection<UnM49BySoftwareReleaseDto> _releaseRegions = [];
     [ObservableProperty] private ObservableCollection<string> _releaseRegionDisplays = [];
+    [ObservableProperty] private Iso639Dto? _selectedLanguageToAdd;
+    [ObservableProperty] private string _languageSearchText = string.Empty;
+    [ObservableProperty] private ObservableCollection<Iso639Dto> _languageSuggestions = [];
+    [ObservableProperty] private ObservableCollection<LanguageBySoftwareReleaseDto> _releaseLanguages = [];
+    [ObservableProperty] private ObservableCollection<string> _releaseLanguageDisplays = [];
     [ObservableProperty] private CompanyDto? _selectedPublisher;
     [ObservableProperty] private string _publisherSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<CompanyDto> _publisherSuggestions = [];
@@ -116,6 +121,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private List<SoftwareVersionDto>? _allVersions;
     private List<SoftwarePlatformDto>? _allPlatforms;
     private List<UnM49Dto>? _allRegions;
+    private List<Iso639Dto>? _allLanguages;
     private List<CompanyDto>? _allCompanies;
     private List<GpuDto>? _allGpus;
     private List<SoundSynthDto>? _allSoundSynths;
@@ -159,6 +165,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         RemoveIncludedVersionCommand = new AsyncRelayCommand<string>(RemoveIncludedVersionByDisplayAsync);
         AddRegionCommand             = new AsyncRelayCommand(AddRegionAsync);
         RemoveRegionCommand          = new AsyncRelayCommand<string>(RemoveRegionByDisplayAsync);
+        AddLanguageCommand           = new AsyncRelayCommand(AddLanguageAsync);
+        RemoveLanguageCommand        = new AsyncRelayCommand<string>(RemoveLanguageByDisplayAsync);
 
         CheckAdminRole();
     }
@@ -184,6 +192,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand<string> RemoveIncludedVersionCommand { get; }
     public IAsyncRelayCommand         AddRegionCommand             { get; }
     public IAsyncRelayCommand<string> RemoveRegionCommand          { get; }
+    public IAsyncRelayCommand         AddLanguageCommand           { get; }
+    public IAsyncRelayCommand<string> RemoveLanguageCommand        { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -259,6 +269,9 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         try { _allRegions = await _apiClient.UnM49.GetAsync(); }
         catch(Exception ex) { _logger.LogError(ex, "Error loading regions for picker"); }
 
+        try { _allLanguages = await _apiClient.Languages.GetAsync(); }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading languages for picker"); }
+
         try { _allCompanies = await _apiClient.Companies.GetAsync(); }
         catch(Exception ex) { _logger.LogError(ex, "Error loading companies for picker"); }
 
@@ -280,6 +293,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         ClearForm();
         UpdateVersionSuggestions(string.Empty);
         UpdateRegionSuggestions(string.Empty);
+        UpdateLanguageSuggestions(string.Empty);
         UpdatePublisherSuggestions(string.Empty);
         UpdateMinimumGpuSuggestions(string.Empty);
         UpdateRecommendedGpuSuggestions(string.Empty);
@@ -320,6 +334,11 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         ReleaseRegionDisplays.Clear();
         UpdateRegionSuggestions(string.Empty);
 
+        // Language management - load existing languages
+        ReleaseLanguages.Clear();
+        ReleaseLanguageDisplays.Clear();
+        UpdateLanguageSuggestions(string.Empty);
+
         // Publisher picker
         if(item.PublisherId.HasValue && _allCompanies != null)
         {
@@ -353,6 +372,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             await LoadRecommendedGpusAsync(item.Id.Value);
             await LoadSoundSynthsAsync(item.Id.Value);
             await LoadReleaseRegionsAsync(item.Id.Value);
+            await LoadReleaseLanguagesAsync(item.Id.Value);
 
             if(IsCompilation)
             {
@@ -509,6 +529,66 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                 }
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading release regions"); }
+    }
+
+    public void UpdateLanguageSuggestions(string query)
+    {
+        LanguageSuggestions.Clear();
+        if(_allLanguages == null) return;
+        var assignedCodes = new HashSet<string?>(ReleaseLanguages.Select(l => l.LanguageCode));
+        IEnumerable<Iso639Dto> source = _allLanguages.Where(l => !assignedCodes.Contains(l.Id));
+        if(!string.IsNullOrWhiteSpace(query))
+            source = source.Where(l => l.ReferenceName != null && l.ReferenceName.Contains(query, StringComparison.OrdinalIgnoreCase));
+        foreach(Iso639Dto match in source) LanguageSuggestions.Add(match);
+    }
+
+    public async Task AddLanguageAsync()
+    {
+        if(SelectedLanguageToAdd?.Id == null || _editingId == null) return;
+
+        try
+        {
+            await _apiClient.Software.Releases[_editingId.Value].Languages.PostAsync(
+                new LanguageBySoftwareReleaseDto { LanguageCode = SelectedLanguageToAdd.Id });
+            await LoadReleaseLanguagesAsync(_editingId.Value);
+            SelectedLanguageToAdd = null;
+            LanguageSearchText = string.Empty;
+            UpdateLanguageSuggestions(string.Empty);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding language"); }
+    }
+
+    public async Task RemoveLanguageByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+        LanguageBySoftwareReleaseDto? lang = ReleaseLanguages.FirstOrDefault(l => l.Language == display);
+        if(lang?.LanguageCode == null) return;
+
+        try
+        {
+            await _apiClient.Software.Releases[_editingId.Value].Languages[lang.LanguageCode].DeleteAsync();
+            await LoadReleaseLanguagesAsync(_editingId.Value);
+            UpdateLanguageSuggestions(LanguageSearchText);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error removing language"); }
+    }
+
+    private async Task LoadReleaseLanguagesAsync(int releaseId)
+    {
+        try
+        {
+            List<LanguageBySoftwareReleaseDto>? languages =
+                await _apiClient.Software.Releases[releaseId].Languages.GetAsync();
+            ReleaseLanguages.Clear();
+            ReleaseLanguageDisplays.Clear();
+            if(languages != null)
+                foreach(LanguageBySoftwareReleaseDto l in languages)
+                {
+                    ReleaseLanguages.Add(l);
+                    ReleaseLanguageDisplays.Add(l.Language ?? $"Code: {l.LanguageCode}");
+                }
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading release languages"); }
     }
 
     public void UpdatePublisherSuggestions(string query)

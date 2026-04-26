@@ -1985,6 +1985,9 @@
   <data name="SoftwareRegionsLabel" xml:space="preserve"><value>Régions</value></data>
   <data name="RegionsLabel" xml:space="preserve"><value>Régions</value></data>
   <data name="AddRegionLabel" xml:space="preserve"><value>Ajouter une région</value></data>
+  <data name="LanguagesLabel" xml:space="preserve"><value>Langues</value></data>
+  <data name="LanguageLabel" xml:space="preserve"><value>Langue</value></data>
+  <data name="AddLanguageLabel" xml:space="preserve"><value>Ajouter une langue</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Éditeur</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Date de publication</value></data>
   <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variante</value></data>

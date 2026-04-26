@@ -198,6 +198,13 @@
                                     <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@region.RegionName</MudChip>
                                 }
                             }
+                            @if(release.Languages is not null && release.Languages.Count > 0)
+                            {
+                                @foreach(var lang in release.Languages)
+                                {
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Tertiary">@lang.Language</MudChip>
+                                }
+                            }
                             @if(!string.IsNullOrEmpty(release.Publisher))
                             {
                                 <MudText Typo="Typo.body2">@release.Publisher</MudText>
@@ -242,6 +249,13 @@
                                     @foreach(var region in compilation.Regions)
                                     {
                                         <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@region.RegionName</MudChip>
+                                    }
+                                }
+                                @if(compilation.Languages is not null && compilation.Languages.Count > 0)
+                                {
+                                    @foreach(var lang in compilation.Languages)
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Tertiary">@lang.Language</MudChip>
                                     }
                                 }
                                 @if(compilation.ReleaseDate.HasValue)

@@ -35,6 +35,12 @@ public sealed partial class AdminSoftwareReleasesPage : Page
             vm.UpdateRegionSuggestions(sender.Text);
     }
 
+    private void LanguageFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)
+            vm.UpdateLanguageSuggestions(sender.Text);
+    }
+
     private void PublisherFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
         if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && DataContext is AdminSoftwareReleasesViewModel vm)

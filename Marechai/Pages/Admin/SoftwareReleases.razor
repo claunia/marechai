@@ -57,6 +57,14 @@
                     }
                 </CellTemplate>
             </TemplateColumn>
+            <TemplateColumn Title="@L["Languages"]">
+                <CellTemplate>
+                    @if(context.Item.Languages is not null)
+                    {
+                        @string.Join(", ", context.Item.Languages.Select(l => l.Language))
+                    }
+                </CellTemplate>
+            </TemplateColumn>
             <PropertyColumn Property="x => x.Publisher" Title="@L["Publisher"]"/>
             <PropertyColumn Property="x => x.Variant" Title="@L["Variant"]"/>
             <TemplateColumn Title="@L["Release date"]" Sortable="true">
