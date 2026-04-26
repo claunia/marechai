@@ -149,6 +149,22 @@ public partial class Books
         }
     }
 
+    async Task OpenImportDialog()
+    {
+        IDialogReference dialog = await DialogService.ShowAsync<BookImportDialog>(
+            L["Import CSV"],
+            new DialogOptions
+            {
+                MaxWidth  = MaxWidth.ExtraLarge,
+                FullWidth = true
+            });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadBooksAsync();
+    }
+
     async Task ConfirmDeleteBook(BookDto book)
     {
         string displayName = book.Title ?? $"Book #{book.Id}";

@@ -267,4 +267,70 @@
     <data name="Cover deleted." xml:space="preserve">
         <value>Portada eliminada.</value>
     </data>
-<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data></root>
+    <data name="Import CSV" xml:space="preserve">
+        <value>Importar CSV</value>
+    </data>
+    <data name="Upload a CSV file to import books in bulk. Download the template first to see the expected format." xml:space="preserve">
+        <value>Suba un archivo CSV para importar libros de forma masiva. Descargue la plantilla primero para ver el formato esperado.</value>
+    </data>
+    <data name="Download Template" xml:space="preserve">
+        <value>Descargar plantilla</value>
+    </data>
+    <data name="Processing..." xml:space="preserve">
+        <value>Procesando...</value>
+    </data>
+    <data name="Upload CSV" xml:space="preserve">
+        <value>Subir CSV</value>
+    </data>
+    <data name="Error reading CSV: {0}" xml:space="preserve">
+        <value>Error al leer CSV: {0}</value>
+    </data>
+    <data name="The CSV file is empty or has no data rows." xml:space="preserve">
+        <value>El archivo CSV está vacío o no tiene filas de datos.</value>
+    </data>
+    <data name="{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported." xml:space="preserve">
+        <value>{0} filas analizadas. {1} rechazadas automáticamente (sin coincidencia de país o error de validación). Las filas seleccionadas serán RECHAZADAS — las no seleccionadas se importarán.</value>
+    </data>
+    <data name="Importing {0} of {1}..." xml:space="preserve">
+        <value>Importando {0} de {1}...</value>
+    </data>
+    <data name="Import complete. {0} imported, {1} rejected, {2} failed." xml:space="preserve">
+        <value>Importación completa. {0} importados, {1} rechazados, {2} fallidos.</value>
+    </data>
+    <data name="The following items were not imported:" xml:space="preserve">
+        <value>Los siguientes elementos no se importaron:</value>
+    </data>
+    <data name="Download Rejected" xml:space="preserve">
+        <value>Descargar rechazados</value>
+    </data>
+    <data name="Import" xml:space="preserve">
+        <value>Importar</value>
+    </data>
+    <data name="Close" xml:space="preserve">
+        <value>Cerrar</value>
+    </data>
+    <data name="Unknown error" xml:space="preserve">
+        <value>Error desconocido</value>
+    </data>
+    <data name="Rejected" xml:space="preserve">
+        <value>Rechazado</value>
+    </data>
+    <data name="Duplicate book" xml:space="preserve">
+        <value>Libro duplicado</value>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Estado</value>
+    </data>
+    <data name="Date precision" xml:space="preserve">
+        <value>Precisión de fecha</value>
+    </data>
+    <data name="Full date" xml:space="preserve">
+        <value>Fecha completa</value>
+    </data>
+    <data name="Month and year only" xml:space="preserve">
+        <value>Solo mes y año</value>
+    </data>
+    <data name="Year only" xml:space="preserve">
+        <value>Solo año</value>
+    </data>
+</root>
