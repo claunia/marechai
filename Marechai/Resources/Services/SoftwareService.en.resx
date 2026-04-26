@@ -268,4 +268,10 @@
     <data name="Sound synthesizers" xml:space="preserve">
         <value>Sound synthesizers</value>
     </data>
+    <data name="Description" xml:space="preserve">
+        <value>Description</value>
+    </data>
+    <data name="Descriptions" xml:space="preserve">
+        <value>Descriptions</value>
+    </data>
 </root>

@@ -511,4 +511,25 @@ public class SoftwareBrowsingService
             return [];
         }
     }
+
+    public async Task<SoftwareDescriptionDto?> GetDescriptionAsync(int softwareId, string languageCode)
+    {
+        try
+        {
+            _logger.LogInformation("Fetching description for software {SoftwareId} in language {Lang}",
+                                   softwareId,
+                                   languageCode);
+
+            SoftwareDescriptionDto? desc = await _apiClient.Software[softwareId].Description.GetAsync(
+                                               config => config.QueryParameters.Lang = languageCode);
+
+            return desc;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching description for software {SoftwareId}", softwareId);
+
+            return null;
+        }
+    }
 }

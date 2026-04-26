@@ -145,6 +145,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<UnM49BySoftwareRelease>             UnM49BySoftwareRelease              { get; set; }
     public virtual DbSet<LanguageBySoftwareRelease>          LanguageBySoftwareRelease            { get; set; }
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
+    public virtual DbSet<SoftwareDescription>                  SoftwareDescriptions                 { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
     public virtual DbSet<SoundSynth>                          SoundSynths                         { get; set; }
@@ -2181,6 +2182,22 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .WithMany(x => x.Softwares)
                   .HasForeignKey(x => x.FamilyId)
                   .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<SoftwareDescription>(entity =>
+        {
+            entity.HasIndex(e => e.Text).IsFullText();
+
+            entity.HasIndex(e => new { e.SoftwareId, e.LanguageCode })
+                  .IsUnique()
+                  .HasDatabaseName("idx_software_descriptions_software_language");
+
+            entity.Property(e => e.LanguageCode).UseCollation("utf8mb4_general_ci");
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageCode)
+                  .HasConstraintName("fk_software_descriptions_language");
         });
 
         modelBuilder.Entity<SoftwareVersion>(entity =>

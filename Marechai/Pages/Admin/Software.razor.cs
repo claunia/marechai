@@ -30,6 +30,22 @@ public partial class Software
     void NavigateToScreenshots(SoftwareDto software) =>
         NavigationManager.NavigateTo($"/admin/software/{software.Id}/screenshots");
 
+    async Task OpenDescriptionsDialog(SoftwareDto software)
+    {
+        DialogParameters<SoftwareDescriptionDialog> parameters = new()
+        {
+            { x => x.SoftwareId, software.Id ?? 0 },
+            { x => x.SoftwareName, software.Name }
+        };
+
+        await DialogService.ShowAsync<SoftwareDescriptionDialog>(L["Descriptions"], parameters,
+                                                                 new DialogOptions
+                                                                 {
+                                                                     MaxWidth  = MaxWidth.Medium,
+                                                                     FullWidth = true
+                                                                 });
+    }
+
     async Task OpenAddDialog()
     {
         DialogParameters<SoftwareDialog> parameters = new()

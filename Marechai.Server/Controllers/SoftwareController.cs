@@ -262,4 +262,140 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
 
         return Ok();
     }
+
+    [HttpGet("{id:ulong}/descriptions")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareDescriptionDto>> GetDescriptionsAsync(ulong id) => context.SoftwareDescriptions
+       .Where(d => d.SoftwareId == id)
+       .Select(d => new SoftwareDescriptionDto
+        {
+            Id           = d.Id,
+            SoftwareId   = d.SoftwareId,
+            Html         = d.Html,
+            Markdown     = d.Text,
+            LanguageCode = d.LanguageCode,
+            Language     = d.Language.ReferenceName
+        })
+       .ToListAsync();
+
+    [HttpGet("{id:ulong}/description")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<SoftwareDescriptionDto> GetDescriptionAsync(ulong id, [FromQuery] string lang = "eng")
+    {
+        SoftwareDescriptionDto description = await context.SoftwareDescriptions
+                                                          .Where(d => d.SoftwareId == id && d.LanguageCode == lang)
+                                                          .Select(d => new SoftwareDescriptionDto
+                                                           {
+                                                               Id           = d.Id,
+                                                               SoftwareId   = d.SoftwareId,
+                                                               Html         = d.Html,
+                                                               Markdown     = d.Text,
+                                                               LanguageCode = d.LanguageCode,
+                                                               Language     = d.Language.ReferenceName
+                                                           })
+                                                          .FirstOrDefaultAsync();
+
+        // Fallback to English if requested language not found
+        if(description is null && lang != "eng")
+            description = await context.SoftwareDescriptions
+                                       .Where(d => d.SoftwareId == id && d.LanguageCode == "eng")
+                                       .Select(d => new SoftwareDescriptionDto
+                                        {
+                                            Id           = d.Id,
+                                            SoftwareId   = d.SoftwareId,
+                                            Html         = d.Html,
+                                            Markdown     = d.Text,
+                                            LanguageCode = d.LanguageCode,
+                                            Language     = d.Language.ReferenceName
+                                        })
+                                       .FirstOrDefaultAsync();
+
+        return description;
+    }
+
+    [HttpGet("{id:ulong}/description/text")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<string> GetDescriptionTextAsync(ulong id, [FromQuery] string lang = "eng")
+    {
+        SoftwareDescription description =
+            await context.SoftwareDescriptions.FirstOrDefaultAsync(d => d.SoftwareId   == id &&
+                                                                        d.LanguageCode == lang);
+
+        // Fallback to English if requested language not found
+        if(description is null && lang != "eng")
+            description = await context.SoftwareDescriptions.FirstOrDefaultAsync(d => d.SoftwareId   == id &&
+                              d.LanguageCode == "eng");
+
+        return description?.Html ?? description?.Text;
+    }
+
+    [HttpPost("{id:ulong}/description")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<long>> CreateOrUpdateDescriptionAsync(
+        ulong id, [FromBody] SoftwareDescriptionDto description)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareDescription current = await context.SoftwareDescriptions
+                                                   .FirstOrDefaultAsync(d => d.SoftwareId   == id &&
+                                                                             d.LanguageCode == description.LanguageCode);
+
+        if(current is null)
+        {
+            current = new SoftwareDescription
+            {
+                SoftwareId   = id,
+                LanguageCode = description.LanguageCode,
+                Html         = description.Html,
+                Text         = description.Markdown
+            };
+
+            await context.SoftwareDescriptions.AddAsync(current);
+        }
+        else
+        {
+            current.Html = description.Html;
+            current.Text = description.Markdown;
+        }
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return current.Id;
+    }
+
+    [HttpDelete("{id:ulong}/description/{languageCode}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult> DeleteDescriptionAsync(ulong id, string languageCode)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareDescription description = await context.SoftwareDescriptions
+                                                       .FirstOrDefaultAsync(d => d.SoftwareId   == id &&
+                                                                                 d.LanguageCode == languageCode);
+
+        if(description is null) return NotFound();
+
+        context.SoftwareDescriptions.Remove(description);
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
 }

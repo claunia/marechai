@@ -87,6 +87,9 @@
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=VersionsButton}"
                                                             Command="{Binding DataContext.OpenVersionsCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                    <Button Content="{Binding Source={StaticResource Strings}, Path=DescriptionButton}"
+                                                            Command="{Binding DataContext.OpenDescriptionCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
+                                                            Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
                                                     <Button Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
                                                             Command="{Binding DataContext.DeleteCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
                                                             Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
@@ -174,6 +177,68 @@
                                     </Grid.ColumnDefinitions>
                                     <Button Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=CancelButton}" Command="{Binding CancelEditCommand}" HorizontalAlignment="Stretch" />
                                     <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=SaveButton}" Command="{Binding SaveCommand}" HorizontalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <!-- Description Panel -->
+                        <Border Grid.Column="1" Visibility="{Binding IsEditingDescription, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Width="500" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="1,0,0,0">
+                            <Grid RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DescriptionDialogTitle}" FontSize="18" FontWeight="SemiBold" />
+                                </Grid>
+
+                                <ComboBox Grid.Row="1" Margin="16,12,16,0"
+                                          ItemsSource="{Binding AvailableLanguages}"
+                                          SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayName"
+                                          PlaceholderText="{Binding Source={StaticResource Strings}, Path=LanguageLabel}"
+                                          HorizontalAlignment="Stretch" />
+
+                                <ItemsRepeater Grid.Row="2" Margin="16,8" ItemsSource="{Binding ExistingTranslations}">
+                                    <ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2" ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Language}" />
+                                                <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=EditButton}"
+                                                        Command="{Binding DataContext.EditTranslationCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
+                                                        Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                                <Button Grid.Column="2" Content="{Binding Source={StaticResource Strings}, Path=DeleteButton}"
+                                                        Command="{Binding DataContext.DeleteTranslationCommand, ElementName=PageRoot}" CommandParameter="{Binding}"
+                                                        Foreground="{ThemeResource SystemErrorTextColor}" Style="{ThemeResource TextBlockButtonStyle}" Padding="8,4" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsRepeater.ItemTemplate>
+                                </ItemsRepeater>
+
+                                <TextBox Grid.Row="3" Margin="16" AcceptsReturn="True" TextWrapping="Wrap"
+                                         Text="{Binding DescriptionMarkdown, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         PlaceholderText="Markdown"
+                                         MinHeight="200"
+                                         VerticalAlignment="Stretch" />
+
+                                <Grid Grid.Row="4" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=CancelButton}" Command="{Binding CancelDescriptionCommand}" HorizontalAlignment="Stretch" />
+                                    <Button Grid.Column="1" Content="{Binding Source={StaticResource Strings}, Path=SaveButton}" Command="{Binding SaveDescriptionCommand}" HorizontalAlignment="Stretch" Style="{ThemeResource AccentButtonStyle}" />
                                 </Grid>
                             </Grid>
                         </Border>

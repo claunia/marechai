@@ -37,6 +37,7 @@ public partial class View
 {
     List<SoftwareCompanyRoleDto>                 _companies = [];
     List<SoftwareReleaseDto>                     _compilations = [];
+    string?                                      _description;
     int                                         _id;
     bool                                        _loaded;
     List<SoftwareReleaseDto>                     _releases = [];
@@ -81,6 +82,9 @@ public partial class View
 
         _companies = await Service.GetCompaniesAsync(Id);
         _versions  = await Service.GetVersionsAsync(Id);
+
+        // Load description with language fallback to English
+        _description = await Service.GetDescriptionTextAsync(Id);
         _versions.Sort((a, b) => NaturalStringComparer.Instance.Compare(a.VersionString, b.VersionString));
 
         // Load all non-compilation releases for this software (flat list)

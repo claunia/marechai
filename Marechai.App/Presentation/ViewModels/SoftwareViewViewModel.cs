@@ -73,6 +73,19 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
     [ObservableProperty]
     private Visibility _showScreenshots = Visibility.Collapsed;
 
+    [ObservableProperty]
+    private string _descriptionHtml = string.Empty;
+
+    [ObservableProperty]
+    private Visibility _showDescription = Visibility.Collapsed;
+
+    public bool HasDescription => !string.IsNullOrWhiteSpace(DescriptionHtml);
+
+    partial void OnDescriptionHtmlChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasDescription));
+    }
+
     public SoftwareViewViewModel(ILogger<SoftwareViewViewModel> logger,          IRegionManager regionManager,
                                  SoftwareBrowsingService        browsingService, IStringLocalizer localizer,
                                  SoftwareScreenshotCache        screenshotCache, ImageSourceFactory imageSourceFactory)
@@ -225,6 +238,18 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
             // Load screenshots
             await LoadScreenshotsAsync(softwareId);
 
+            // Load localized description
+            try
+            {
+                string langCode = GetIso639CodeFromCulture();
+                SoftwareDescriptionDto? desc = await _browsingService.GetDescriptionAsync(softwareId, langCode);
+                DescriptionHtml = desc?.Html ?? desc?.Markdown ?? string.Empty;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Failed to load software description: {Exception}", ex.Message);
+            }
+
             UpdateVisibilities();
             IsDataLoaded = true;
             IsLoading    = false;
@@ -326,6 +351,23 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
         ShowOsBadge     = IsOperatingSystem ? Visibility.Visible : Visibility.Collapsed;
         ShowGameBadge   = IsGame ? Visibility.Visible : Visibility.Collapsed;
         ShowScreenshots = ScreenshotGroups.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowDescription = HasDescription ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private static string GetIso639CodeFromCulture()
+    {
+        string twoLetter = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+        return twoLetter switch
+        {
+            "en" => "eng",
+            "es" => "spa",
+            "de" => "deu",
+            "fr" => "fra",
+            "la" => "lat",
+            "pt" => "por",
+            _    => "eng"
+        };
     }
 }
 

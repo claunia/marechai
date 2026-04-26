@@ -620,4 +620,71 @@ public class SoftwareService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    // ── Description methods ──
+
+    public async Task<string?> GetDescriptionTextAsync(int id)
+    {
+        try
+        {
+            var desc = await client.Software[id].Description.GetAsync();
+
+            return desc?.Html ?? desc?.Markdown;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<List<SoftwareDescriptionDto>> GetDescriptionsAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareDescriptionDto>? descriptions = await client.Software[softwareId].Descriptions.GetAsync();
+
+            return descriptions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> CreateOrUpdateDescriptionAsync(int                    softwareId,
+                                                                                      SoftwareDescriptionDto dto)
+    {
+        try
+        {
+            await client.Software[softwareId].Description.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> DeleteDescriptionAsync(int softwareId, string languageCode)
+    {
+        try
+        {
+            await client.Software[softwareId].Description[languageCode].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
 }

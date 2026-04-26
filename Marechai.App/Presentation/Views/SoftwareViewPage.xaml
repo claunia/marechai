@@ -117,6 +117,16 @@
                         </Border>
                     </StackPanel>
 
+                    <!-- Description -->
+                    <StackPanel Visibility="{Binding ShowDescription}"
+                                Spacing="8">
+                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=DescriptionSectionTitle}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold" />
+                        <WebView2 x:Name="DescriptionWebView"
+                                  MinHeight="200" />
+                    </StackPanel>
+
                     <!-- Family -->
                     <StackPanel Visibility="{Binding ShowFamily}"
                                 Spacing="8">

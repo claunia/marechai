@@ -4,6 +4,8 @@ using Marechai.ApiClient.Models;
 using Marechai.ApiClient.Software.Item.Companies;
 using Marechai.ApiClient.Software.Item.CompanyRoles;
 using Marechai.ApiClient.Software.Item.Compilations;
+using Marechai.ApiClient.Software.Item.Description;
+using Marechai.ApiClient.Software.Item.Descriptions;
 using Marechai.ApiClient.Software.Item.Platforms;
 using Marechai.ApiClient.Software.Item.Releases;
 using Marechai.ApiClient.Software.Item.Screenshots;
@@ -38,6 +40,16 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Compilations.CompilationsRequestBuilder Compilations
         {
             get => new global::Marechai.ApiClient.Software.Item.Compilations.CompilationsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The description property</summary>
+        public global::Marechai.ApiClient.Software.Item.Description.DescriptionRequestBuilder Description
+        {
+            get => new global::Marechai.ApiClient.Software.Item.Description.DescriptionRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The descriptions property</summary>
+        public global::Marechai.ApiClient.Software.Item.Descriptions.DescriptionsRequestBuilder Descriptions
+        {
+            get => new global::Marechai.ApiClient.Software.Item.Descriptions.DescriptionsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The platforms property</summary>
         public global::Marechai.ApiClient.Software.Item.Platforms.PlatformsRequestBuilder Platforms
