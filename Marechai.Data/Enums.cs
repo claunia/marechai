@@ -823,6 +823,28 @@ public enum BarcodeType : byte
     QRCode  = 10
 }
 
+public enum SoundSynthType
+{
+    [Display(Name = "DAC")]
+    DAC = 0,
+    [Display(Name = "PSG")]
+    PSG = 1,
+    [Display(Name = "FM")]
+    FM = 2,
+    [Display(Name = "Wavetable")]
+    Wavetable = 3,
+    [Display(Name = "PCM / Sample-based")]
+    PCM = 4,
+    [Display(Name = "Subtractive")]
+    Subtractive = 5,
+    [Display(Name = "Additive")]
+    Additive = 6,
+    [Display(Name = "Physical modeling")]
+    PhysicalModeling = 7,
+    [Display(Name = "Hybrid")]
+    Hybrid = 8
+}
+
 public enum DatePrecision : byte
 {
     [Display(Name = "Full date")]

@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Humanizer;
 using Marechai.App.Services.Authentication;
+using Marechai.Data;
 
 namespace Marechai.App.Presentation.ViewModels.Admin;
 
@@ -43,6 +45,18 @@ public partial class AdminSoundSynthsViewModel : ObservableObject, IRegionAware
     [ObservableProperty] private int? _squareWave;
     [ObservableProperty] private int? _whiteNoise;
     [ObservableProperty] private int? _synthType;
+
+    public List<string> SoundSynthTypeItems { get; } = Enum.GetValues<SoundSynthType>().Select(e => e.Humanize()).ToList();
+
+    public int SynthTypeIndex
+    {
+        get => SynthType ?? -1;
+        set
+        {
+            SynthType = value >= 0 ? value : null;
+            OnPropertyChanged();
+        }
+    }
 
     // --- Company picker ---
     [ObservableProperty] private CompanyDto? _selectedCompany;

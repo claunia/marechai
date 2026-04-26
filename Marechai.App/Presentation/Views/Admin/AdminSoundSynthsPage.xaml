@@ -115,8 +115,9 @@
                                                    Value="{Binding SquareWave, Mode=TwoWay}" SpinButtonPlacementMode="Compact" Minimum="1" SmallChange="1" HorizontalAlignment="Stretch" />
                                         <NumberBox Header="{Binding Source={StaticResource Strings}, Path=SoundSynthWhiteNoiseLabel}"
                                                    Value="{Binding WhiteNoise, Mode=TwoWay}" SpinButtonPlacementMode="Compact" Minimum="1" SmallChange="1" HorizontalAlignment="Stretch" />
-                                        <NumberBox Header="{Binding Source={StaticResource Strings}, Path=SoundSynthTypeLabel}"
-                                                   Value="{Binding SynthType, Mode=TwoWay}" SpinButtonPlacementMode="Compact" Minimum="0" SmallChange="1" HorizontalAlignment="Stretch" />
+                                        <ComboBox Header="{Binding Source={StaticResource Strings}, Path=SoundSynthTypeLabel}"
+                                                  ItemsSource="{Binding SoundSynthTypeItems}" SelectedIndex="{Binding SynthTypeIndex, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch" />
                                     </StackPanel>
                                 </ScrollViewer>
                                 <Grid Grid.Row="2" Padding="16,12" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" ColumnSpacing="8">

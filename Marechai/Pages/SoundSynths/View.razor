@@ -28,6 +28,7 @@
 @page "/soundsynth/{Id:int}"
 @using Marechai.ApiClient.Models
 @using Marechai.Data
+@using Humanizer
 @inherits OwningComponentBase<SoundSynthsService>
 @inject IStringLocalizer<SoundSynthsService> L
 
@@ -109,7 +110,7 @@
             }
             @if(_synth.Type != null)
             {
-                <tr><td style="width: 33%; text-align: right;"><strong>@L["Synthesizer type"]</strong></td><td>@_synth.Type</td></tr>
+                <tr><td style="width: 33%; text-align: right;"><strong>@L["Synthesizer type"]</strong></td><td>@(((SoundSynthType)(_synth.Type ?? 0)).Humanize())</td></tr>
             }
             </tbody>
         </MudSimpleTable>

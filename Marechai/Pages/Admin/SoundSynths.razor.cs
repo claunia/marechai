@@ -139,6 +139,21 @@ public partial class SoundSynths
         }
     }
 
+    async Task OpenImportDialog()
+    {
+        IDialogReference dialog = await DialogService.ShowAsync<SoundSynthImportDialog>(L["Import Sound Synths"],
+                                                                                        new DialogOptions
+                                                                                        {
+                                                                                            MaxWidth  = MaxWidth.ExtraLarge,
+                                                                                            FullWidth = true
+                                                                                        });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadSoundSynthsAsync();
+    }
+
     async Task ConfirmDeleteSoundSynth(SoundSynthDto soundSynth)
     {
         DialogParameters<DeleteConfirmDialog> parameters = new()

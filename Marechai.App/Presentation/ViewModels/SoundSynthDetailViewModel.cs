@@ -6,10 +6,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Humanizer;
 using Marechai.App.Navigation;
 using Marechai.App.Presentation.Models;
 using Marechai.App.Presentation.Views;
 using Marechai.App.Services;
+using Marechai.Data;
 
 namespace Marechai.App.Presentation.ViewModels;
 
@@ -63,6 +65,9 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 
     [ObservableProperty]
     private SoundSynthDto? _soundSynth;
+
+    [ObservableProperty]
+    private string _synthTypeDisplay = string.Empty;
 
     [ObservableProperty]
     private int _soundSynthId;
@@ -127,6 +132,10 @@ public partial class SoundSynthDetailViewModel : ObservableObject, IRegionAware
 
                 return;
             }
+
+            SynthTypeDisplay = SoundSynth.Type.HasValue
+                                   ? ((SoundSynthType)SoundSynth.Type.Value).Humanize()
+                                   : string.Empty;
 
             // Set manufacturer name (from Company field or fetch by CompanyId if empty)
             ManufacturerName = SoundSynth.Company ?? string.Empty;

@@ -564,7 +564,7 @@
                                     }
                                     @if(sound.Type != null)
                                     {
-                                        <tr><td style="width: 33%; text-align: right;">@L["Synthesizer type"]</td><td>@sound.Type</td></tr>
+                                        <tr><td style="width: 33%; text-align: right;">@L["Synthesizer type"]</td><td>@(((SoundSynthType)(sound.Type ?? 0)).Humanize())</td></tr>
                                     }
                                     </tbody>
                                 </MudSimpleTable>

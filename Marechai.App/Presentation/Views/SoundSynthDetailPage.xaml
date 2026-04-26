@@ -170,7 +170,7 @@
                     </StackPanel>
 
                     <!-- Type -->
-                    <StackPanel Visibility="{Binding SoundSynth.Type, Converter={StaticResource StringToVisibilityConverter}}"
+                    <StackPanel Visibility="{Binding SynthTypeDisplay, Converter={StaticResource StringToVisibilityConverter}}"
                                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 CornerRadius="8"
                                 Padding="12"
@@ -180,7 +180,7 @@
                                    FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{ThemeResource SystemBaseMediumColor}" />
-                        <TextBlock Text="{Binding SoundSynth.Type}"
+                        <TextBlock Text="{Binding SynthTypeDisplay}"
                                    FontSize="14"
                                    TextWrapping="Wrap" />
                     </StackPanel>
