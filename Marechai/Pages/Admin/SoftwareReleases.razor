@@ -49,6 +49,10 @@
     <MudDataGrid Items="_releases" Dense="true" Hover="true" Striped="true" Filterable="true">
         <Columns>
             <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
+            @if(!_isVersionContext && !_isSoftwareContext)
+            {
+                <PropertyColumn Property="x => x.Software" Title="@L["Software"]"/>
+            }
             <PropertyColumn Property="x => x.Platform" Title="@L["Platform"]"/>
             <TemplateColumn Title="@L["Regions"]">
                 <CellTemplate>
