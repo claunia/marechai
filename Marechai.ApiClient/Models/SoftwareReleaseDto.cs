@@ -16,6 +16,8 @@ namespace Marechai.ApiClient.Models
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The id property</summary>
         public int? Id { get; set; }
+        /// <summary>The is_compilation property</summary>
+        public bool? IsCompilation { get; set; }
         /// <summary>The platform property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -50,6 +52,16 @@ namespace Marechai.ApiClient.Models
         public DateTimeOffset? ReleaseDate { get; set; }
         /// <summary>The release_date_precision property</summary>
         public int? ReleaseDatePrecision { get; set; }
+        /// <summary>The software property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Software { get; set; }
+#nullable restore
+#else
+        public string Software { get; set; }
+#endif
+        /// <summary>The software_id property</summary>
+        public int? SoftwareId { get; set; }
         /// <summary>The software_version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -114,6 +126,7 @@ namespace Marechai.ApiClient.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "id", n => { Id = n.GetIntValue(); } },
+                { "is_compilation", n => { IsCompilation = n.GetBoolValue(); } },
                 { "platform", n => { Platform = n.GetStringValue(); } },
                 { "platform_id", n => { PlatformId = n.GetIntValue(); } },
                 { "publisher", n => { Publisher = n.GetStringValue(); } },
@@ -122,6 +135,8 @@ namespace Marechai.ApiClient.Models
                 { "region_id", n => { RegionId = n.GetIntValue(); } },
                 { "release_date", n => { ReleaseDate = n.GetDateTimeOffsetValue(); } },
                 { "release_date_precision", n => { ReleaseDatePrecision = n.GetIntValue(); } },
+                { "software", n => { Software = n.GetStringValue(); } },
+                { "software_id", n => { SoftwareId = n.GetIntValue(); } },
                 { "software_version", n => { SoftwareVersion = n.GetStringValue(); } },
                 { "software_version_id", n => { SoftwareVersionId = n.GetIntValue(); } },
                 { "subvariant", n => { Subvariant = n.GetStringValue(); } },
@@ -139,6 +154,7 @@ namespace Marechai.ApiClient.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("id", Id);
+            writer.WriteBoolValue("is_compilation", IsCompilation);
             writer.WriteStringValue("platform", Platform);
             writer.WriteIntValue("platform_id", PlatformId);
             writer.WriteStringValue("publisher", Publisher);
@@ -147,6 +163,8 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("region_id", RegionId);
             writer.WriteDateTimeOffsetValue("release_date", ReleaseDate);
             writer.WriteIntValue("release_date_precision", ReleaseDatePrecision);
+            writer.WriteStringValue("software", Software);
+            writer.WriteIntValue("software_id", SoftwareId);
             writer.WriteStringValue("software_version", SoftwareVersion);
             writer.WriteIntValue("software_version_id", SoftwareVersionId);
             writer.WriteStringValue("subvariant", Subvariant);

@@ -38,7 +38,7 @@ public partial class View
     List<SoftwareReleaseDto>                     _compilations = [];
     int                                         _id;
     bool                                        _loaded;
-    Dictionary<int, List<SoftwareReleaseDto>>    _releasesByVersion = new();
+    List<SoftwareReleaseDto>                     _releases = [];
     List<SoftwareScreenshotDto>                  _screenshots = [];
     Dictionary<string, List<SoftwareScreenshotDto>> _screenshotsByPlatform = new();
     SoftwareDto                                 _software;
@@ -81,17 +81,8 @@ public partial class View
         _companies = await Service.GetCompaniesAsync(Id);
         _versions  = await Service.GetVersionsAsync(Id);
 
-        // Load releases for each version
-        _releasesByVersion = new Dictionary<int, List<SoftwareReleaseDto>>();
-
-        foreach(SoftwareVersionDto version in _versions)
-        {
-            if(version.Id.HasValue)
-            {
-                List<SoftwareReleaseDto> releases = await Service.GetReleasesByVersionAsync(version.Id.Value);
-                _releasesByVersion[version.Id.Value] = releases;
-            }
-        }
+        // Load all non-compilation releases for this software (flat list)
+        _releases = await Service.GetReleasesBySoftwareAsync(Id);
 
         // Load compilations that include this software
         _compilations = await Service.GetCompilationsForSoftwareAsync(Id);

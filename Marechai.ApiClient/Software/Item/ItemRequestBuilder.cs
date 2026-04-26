@@ -5,6 +5,7 @@ using Marechai.ApiClient.Software.Item.Companies;
 using Marechai.ApiClient.Software.Item.CompanyRoles;
 using Marechai.ApiClient.Software.Item.Compilations;
 using Marechai.ApiClient.Software.Item.Platforms;
+using Marechai.ApiClient.Software.Item.Releases;
 using Marechai.ApiClient.Software.Item.Screenshots;
 using Marechai.ApiClient.Software.Item.Variants;
 using Marechai.ApiClient.Software.Item.Versions;
@@ -43,6 +44,11 @@ namespace Marechai.ApiClient.Software.Item
         public global::Marechai.ApiClient.Software.Item.Platforms.PlatformsRequestBuilder Platforms
         {
             get => new global::Marechai.ApiClient.Software.Item.Platforms.PlatformsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The releases property</summary>
+        public global::Marechai.ApiClient.Software.Item.Releases.ReleasesRequestBuilder Releases
+        {
+            get => new global::Marechai.ApiClient.Software.Item.Releases.ReleasesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The screenshots property</summary>
         public global::Marechai.ApiClient.Software.Item.Screenshots.ScreenshotsRequestBuilder Screenshots

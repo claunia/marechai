@@ -32,6 +32,12 @@ public class SoftwareReleaseDto : BaseDto<ulong>
 {
     [JsonPropertyName("title")]
     public string? Title { get; set; }
+    [JsonPropertyName("is_compilation")]
+    public bool IsCompilation { get; set; }
+    [JsonPropertyName("software_id")]
+    public ulong? SoftwareId { get; set; }
+    [JsonPropertyName("software")]
+    public string? Software { get; set; }
     [JsonPropertyName("software_version_id")]
     public ulong? SoftwareVersionId { get; set; }
     [JsonPropertyName("software_version")]

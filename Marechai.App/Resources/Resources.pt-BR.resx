@@ -1917,4 +1917,7 @@
   <data name="IncludedSoftware" xml:space="preserve"><value>Software incluído</value></data>
   <data name="FailedToAddIncludedVersion" xml:space="preserve"><value>Falha ao adicionar versão incluída</value></data>
   <data name="FailedToRemoveIncludedVersion" xml:space="preserve"><value>Falha ao remover versão incluída</value></data>
+  <data name="SoftwareIsRequired" xml:space="preserve"><value>A seleção de software é necessária para lançamentos que não são compilação.</value></data>
+  <data name="FailedToAddIncludedSoftware" xml:space="preserve"><value>Falha ao adicionar software incluído</value></data>
+  <data name="FailedToRemoveIncludedSoftware" xml:space="preserve"><value>Falha ao remover software incluído</value></data>
 <data name="DatePrecisionLabel" xml:space="preserve"><value>Precisão da data</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Data completa</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Somente mês e ano</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Somente ano</value></data></root>

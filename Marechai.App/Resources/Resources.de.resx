@@ -1917,4 +1917,7 @@
   <data name="IncludedSoftware" xml:space="preserve"><value>Enthaltene Software</value></data>
   <data name="FailedToAddIncludedVersion" xml:space="preserve"><value>Fehler beim Hinzufügen der enthaltenen Version</value></data>
   <data name="FailedToRemoveIncludedVersion" xml:space="preserve"><value>Fehler beim Entfernen der enthaltenen Version</value></data>
+  <data name="SoftwareIsRequired" xml:space="preserve"><value>Softwareauswahl ist für Nicht-Kompilationsveröffentlichungen erforderlich.</value></data>
+  <data name="FailedToAddIncludedSoftware" xml:space="preserve"><value>Fehler beim Hinzufügen der enthaltenen Software</value></data>
+  <data name="FailedToRemoveIncludedSoftware" xml:space="preserve"><value>Fehler beim Entfernen der enthaltenen Software</value></data>
 <data name="DatePrecisionLabel" xml:space="preserve"><value>Datumsgenauigkeit</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Vollständiges Datum</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Nur Monat und Jahr</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Nur Jahr</value></data></root>

@@ -86,6 +86,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
 
     public ObservableCollection<string>                   Companies           { get; } = [];
     public ObservableCollection<VersionDisplayItem>       Versions            { get; } = [];
+    public ObservableCollection<ReleaseDisplayItem>       Releases            { get; } = [];
     public ObservableCollection<ScreenshotPlatformGroup>  ScreenshotGroups    { get; } = [];
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => false;
@@ -179,7 +180,7 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                 Companies.Add(display);
             }
 
-            // Load versions with their releases
+            // Load versions (without nested releases)
             List<SoftwareVersionDto> versions = await _browsingService.GetVersionsAsync(softwareId);
 
             foreach(SoftwareVersionDto version in versions)
@@ -194,27 +195,28 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                     Codename      = version.Codename
                 };
 
-                // Load releases for this version
-                List<SoftwareReleaseDto> releases = await _browsingService.GetReleasesByVersionAsync(versionId);
-
-                foreach(SoftwareReleaseDto release in releases)
-                {
-                    string dateDisplay = release.ReleaseDate.HasValue ? ((release.ReleaseDatePrecision ?? 0) == 2 ? $"{release.ReleaseDate.Value.Year}" : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy")) : string.Empty;
-
-                    var releaseItem = new ReleaseDisplayItem
-                    {
-                        Id          = (int)(release.Id ?? 0),
-                        Platform    = release.Platform,
-                        Region      = release.Region,
-                        Publisher   = release.Publisher,
-                        ReleaseDate = dateDisplay,
-                        Variant     = release.Variant
-                    };
-
-                    versionItem.Releases.Add(releaseItem);
-                }
-
                 Versions.Add(versionItem);
+            }
+
+            // Load all non-compilation releases for this software (flat list)
+            List<SoftwareReleaseDto> releases = await _browsingService.GetReleasesBySoftwareAsync(softwareId);
+
+            foreach(SoftwareReleaseDto release in releases)
+            {
+                string dateDisplay = release.ReleaseDate.HasValue ? ((release.ReleaseDatePrecision ?? 0) == 2 ? $"{release.ReleaseDate.Value.Year}" : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy")) : string.Empty;
+
+                var releaseItem = new ReleaseDisplayItem
+                {
+                    Id              = (int)(release.Id ?? 0),
+                    SoftwareVersion = release.SoftwareVersion,
+                    Platform        = release.Platform,
+                    Region          = release.Region,
+                    Publisher       = release.Publisher,
+                    ReleaseDate     = dateDisplay,
+                    Variant         = release.Variant
+                };
+
+                Releases.Add(releaseItem);
             }
 
             // Load screenshots
@@ -344,10 +346,11 @@ public class VersionDisplayItem
 [Bindable]
 public class ReleaseDisplayItem
 {
-    public int     Id          { get; set; }
-    public string? Platform    { get; set; }
-    public string? Region      { get; set; }
-    public string? Publisher   { get; set; }
-    public string? ReleaseDate { get; set; }
-    public string? Variant     { get; set; }
+    public int     Id              { get; set; }
+    public string? SoftwareVersion { get; set; }
+    public string? Platform        { get; set; }
+    public string? Region          { get; set; }
+    public string? Publisher        { get; set; }
+    public string? ReleaseDate     { get; set; }
+    public string? Variant         { get; set; }
 }

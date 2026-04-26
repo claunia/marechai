@@ -48,12 +48,15 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoftwareReleaseDto>> GetAsync() => context.SoftwareReleases
-                                                               .OrderBy(r => r.SoftwareVersion.Software.Name)
+                                                               .OrderBy(r => r.Software.Name)
                                                                .ThenBy(r => r.SoftwareVersion.VersionString)
                                                                .Select(r => new SoftwareReleaseDto
                                                                 {
                                                                     Id                = r.Id,
                                                                     Title             = r.Title,
+                                                                    IsCompilation     = r.IsCompilation,
+                                                                    SoftwareId        = r.SoftwareId,
+                                                                    Software          = r.Software.Name,
                                                                     SoftwareVersionId = r.SoftwareVersionId,
                                                                     SoftwareVersion   = r.SoftwareVersion.VersionString,
                                                                     VariantId         = r.VariantId,
@@ -82,6 +85,41 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         {
             Id                = r.Id,
             Title             = r.Title,
+            IsCompilation     = r.IsCompilation,
+            SoftwareId        = r.SoftwareId,
+            Software          = r.Software.Name,
+            SoftwareVersionId = r.SoftwareVersionId,
+            SoftwareVersion   = r.SoftwareVersion.VersionString,
+            VariantId         = r.VariantId,
+            Variant           = r.Variant.Name,
+            SubvariantId      = r.SubvariantId,
+            Subvariant        = r.Subvariant.Name,
+            PlatformId        = r.PlatformId,
+            Platform          = r.Platform.Name,
+            RegionId          = r.RegionId,
+            Region            = r.Region.Name,
+            PublisherId       = r.PublisherId,
+            Publisher         = r.Publisher.Name,
+            ReleaseDate       = r.ReleaseDate,
+            ReleaseDatePrecision = r.ReleaseDatePrecision
+        })
+       .ToListAsync();
+
+    [HttpGet("/software/{softwareId:ulong}/releases")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<List<SoftwareReleaseDto>> GetBySoftwareAsync(ulong softwareId) => context.SoftwareReleases
+       .Where(r => r.SoftwareId == softwareId && !r.IsCompilation)
+       .OrderBy(r => r.SoftwareVersion.VersionString)
+       .ThenBy(r => r.ReleaseDate)
+       .Select(r => new SoftwareReleaseDto
+        {
+            Id                = r.Id,
+            Title             = r.Title,
+            IsCompilation     = r.IsCompilation,
+            SoftwareId        = r.SoftwareId,
+            Software          = r.Software.Name,
             SoftwareVersionId = r.SoftwareVersionId,
             SoftwareVersion   = r.SoftwareVersion.VersionString,
             VariantId         = r.VariantId,
@@ -108,6 +146,9 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                   {
                                                                       Id                = r.Id,
                                                                       Title             = r.Title,
+                                                                      IsCompilation     = r.IsCompilation,
+                                                                      SoftwareId        = r.SoftwareId,
+                                                                      Software          = r.Software.Name,
                                                                       SoftwareVersionId = r.SoftwareVersionId,
                                                                       SoftwareVersion   = r.SoftwareVersion.VersionString,
                                                                       VariantId         = r.VariantId,
@@ -140,12 +181,13 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
 
         if(model is null) return NotFound();
 
-        // Enforce mutual exclusivity: cannot change between single-version and compilation modes
-        bool isCurrentlyCompilation = model.SoftwareVersionId is null;
-        bool isDtoCompilation       = dto.SoftwareVersionId   is null;
+        // Enforce mutual exclusivity: cannot change IsCompilation after creation
+        if(model.IsCompilation != dto.IsCompilation)
+            return BadRequest("Cannot change a release between single-release and compilation modes.");
 
-        if(isCurrentlyCompilation != isDtoCompilation)
-            return BadRequest("Cannot change a release between single-version and compilation modes.");
+        // Cannot change SoftwareId after creation
+        if(model.SoftwareId != dto.SoftwareId)
+            return BadRequest("Cannot change the software associated with a release.");
 
         model.Title             = dto.Title;
         model.SoftwareVersionId = dto.SoftwareVersionId;
@@ -186,7 +228,9 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         var model = new SoftwareRelease
         {
             Title             = dto.Title,
-            SoftwareVersionId = dto.SoftwareVersionId,
+            IsCompilation     = dto.IsCompilation,
+            SoftwareId        = dto.IsCompilation ? null : dto.SoftwareId,
+            SoftwareVersionId = dto.IsCompilation ? null : dto.SoftwareVersionId,
             VariantId         = dto.VariantId,
             SubvariantId      = dto.SubvariantId,
             PlatformId        = dto.PlatformId,
@@ -272,8 +316,15 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
 
         if(release is null) return NotFound();
 
-        if(release.SoftwareVersionId is not null)
-            return BadRequest("Cannot add included versions to a single-version release.");
+        if(!release.IsCompilation)
+            return BadRequest("Cannot add included versions to a non-compilation release.");
+
+        // Ensure this is a versioned compilation (not a versionless one)
+        bool hasIncludedSoftware = await context.SoftwareBySoftwareRelease
+                                                .AnyAsync(x => x.ReleaseId == releaseId);
+
+        if(hasIncludedSoftware)
+            return BadRequest("Cannot add included versions to a versionless compilation. Use included software instead.");
 
         bool exists = await context.SoftwareVersionBySoftwareRelease
                                    .AnyAsync(x => x.ReleaseId         == releaseId
@@ -312,8 +363,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
 
         if(release is null) return NotFound();
 
-        if(release.SoftwareVersionId is not null)
-            return BadRequest("Cannot remove included versions from a single-version release.");
+        if(!release.IsCompilation)
+            return BadRequest("Cannot remove included versions from a non-compilation release.");
 
         SoftwareVersionBySoftwareRelease entry =
             await context.SoftwareVersionBySoftwareRelease
@@ -334,12 +385,15 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<List<SoftwareReleaseDto>> GetCompilationsAsync() => context.SoftwareReleases
-       .Where(r => r.SoftwareVersionId == null)
+       .Where(r => r.IsCompilation)
        .OrderBy(r => r.Title)
        .Select(r => new SoftwareReleaseDto
         {
             Id                = r.Id,
             Title             = r.Title,
+            IsCompilation     = r.IsCompilation,
+            SoftwareId        = r.SoftwareId,
+            Software          = r.Software.Name,
             SoftwareVersionId = r.SoftwareVersionId,
             PlatformId        = r.PlatformId,
             Platform          = r.Platform.Name,
@@ -355,27 +409,138 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [HttpGet("/software/{softwareId:ulong}/compilations")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<List<SoftwareReleaseDto>> GetCompilationsForSoftwareAsync(ulong softwareId) =>
-        context.SoftwareVersionBySoftwareRelease
-               .Where(x => x.SoftwareVersion.SoftwareId == softwareId)
-               .Select(x => x.Release)
-               .Distinct()
-               .OrderBy(r => r.Title)
-               .Select(r => new SoftwareReleaseDto
+    public async Task<ActionResult<List<SoftwareReleaseDto>>> GetCompilationsForSoftwareAsync(ulong softwareId)
+    {
+        // Versioned compilations containing this software
+        var versionedCompilations = context.SoftwareVersionBySoftwareRelease
+                                          .Where(x => x.SoftwareVersion.SoftwareId == softwareId)
+                                          .Select(x => x.Release);
+
+        // Versionless compilations containing this software
+        var versionlessCompilations = context.SoftwareBySoftwareRelease
+                                             .Where(x => x.SoftwareId == softwareId)
+                                             .Select(x => x.Release);
+
+        return await versionedCompilations
+                    .Union(versionlessCompilations)
+                    .Distinct()
+                    .OrderBy(r => r.Title)
+                    .Select(r => new SoftwareReleaseDto
+                     {
+                         Id                = r.Id,
+                         Title             = r.Title,
+                         IsCompilation     = r.IsCompilation,
+                         SoftwareId        = r.SoftwareId,
+                         Software          = r.Software.Name,
+                         SoftwareVersionId = r.SoftwareVersionId,
+                         PlatformId        = r.PlatformId,
+                         Platform          = r.Platform.Name,
+                         RegionId          = r.RegionId,
+                         Region            = r.Region.Name,
+                         PublisherId       = r.PublisherId,
+                         Publisher         = r.Publisher.Name,
+                         ReleaseDate       = r.ReleaseDate,
+                         ReleaseDatePrecision = r.ReleaseDatePrecision
+                     })
+                    .ToListAsync();
+    }
+
+    // --- Versionless compilation junction endpoints ---
+
+    [HttpGet("{releaseId:ulong}/software")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(ulong releaseId) =>
+        context.SoftwareBySoftwareRelease
+               .Where(x => x.ReleaseId == releaseId)
+               .OrderBy(x => x.Software.Name)
+               .Select(x => new SoftwareBySoftwareReleaseDto
                 {
-                    Id                = r.Id,
-                    Title             = r.Title,
-                    SoftwareVersionId = r.SoftwareVersionId,
-                    PlatformId        = r.PlatformId,
-                    Platform          = r.Platform.Name,
-                    RegionId          = r.RegionId,
-                    Region            = r.Region.Name,
-                    PublisherId       = r.PublisherId,
-                    Publisher         = r.Publisher.Name,
-                    ReleaseDate       = r.ReleaseDate,
-                    ReleaseDatePrecision = r.ReleaseDatePrecision
+                    ReleaseId    = x.ReleaseId,
+                    SoftwareId   = x.SoftwareId,
+                    SoftwareName = x.Software.Name
                 })
                .ToListAsync();
+
+    [HttpPost("{releaseId:ulong}/software")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> AddIncludedSoftwareAsync(ulong releaseId,
+                                                             [FromBody] SoftwareBySoftwareReleaseDto dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareRelease release = await context.SoftwareReleases.FindAsync(releaseId);
+
+        if(release is null) return NotFound();
+
+        if(!release.IsCompilation)
+            return BadRequest("Cannot add included software to a non-compilation release.");
+
+        // Ensure this is a versionless compilation (not a versioned one)
+        bool hasIncludedVersions = await context.SoftwareVersionBySoftwareRelease
+                                                .AnyAsync(x => x.ReleaseId == releaseId);
+
+        if(hasIncludedVersions)
+            return BadRequest("Cannot add included software to a versioned compilation. Use included versions instead.");
+
+        bool exists = await context.SoftwareBySoftwareRelease
+                                   .AnyAsync(x => x.ReleaseId   == releaseId
+                                               && x.SoftwareId  == dto.SoftwareId);
+
+        if(exists) return BadRequest("This software is already included in the release.");
+
+        bool softwareExists = await context.Softwares.AnyAsync(s => s.Id == dto.SoftwareId);
+
+        if(!softwareExists) return BadRequest("The specified software does not exist.");
+
+        await context.SoftwareBySoftwareRelease.AddAsync(new SoftwareBySoftwareRelease
+        {
+            ReleaseId  = releaseId,
+            SoftwareId = dto.SoftwareId
+        });
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    [HttpDelete("{releaseId:ulong}/software/{softwareId:ulong}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> RemoveIncludedSoftwareAsync(ulong releaseId, ulong softwareId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareRelease release = await context.SoftwareReleases.FindAsync(releaseId);
+
+        if(release is null) return NotFound();
+
+        if(!release.IsCompilation)
+            return BadRequest("Cannot remove included software from a non-compilation release.");
+
+        SoftwareBySoftwareRelease entry =
+            await context.SoftwareBySoftwareRelease
+                         .FirstOrDefaultAsync(x => x.ReleaseId  == releaseId
+                                                && x.SoftwareId == softwareId);
+
+        if(entry is null) return NotFound();
+
+        context.SoftwareBySoftwareRelease.Remove(entry);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
 
     async Task<string> BuildSoftwareReleaseNewsNameAsync(SoftwareRelease model)
     {
@@ -416,14 +581,38 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             return name;
         }
 
-        // Compilation without title: build from included versions
+        // Versionless single release: build from software name
+        if(!model.IsCompilation && model.SoftwareId is not null)
+        {
+            Software software = await context.Softwares.FindAsync(model.SoftwareId);
+            string   name     = software?.Name ?? "";
+
+            if(model.PlatformId is not null)
+            {
+                SoftwarePlatform platform = await context.SoftwarePlatforms.FindAsync(model.PlatformId);
+
+                if(platform is not null)
+                    name = string.IsNullOrEmpty(name) ? platform.Name : $"{name} ({platform.Name})";
+            }
+
+            return name;
+        }
+
+        // Compilation without title: build from included versions or software
         List<string> versionNames = await context.SoftwareVersionBySoftwareRelease
                                                  .Where(x => x.ReleaseId == model.Id)
                                                  .OrderBy(x => x.SoftwareVersion.Software.Name)
                                                  .Select(x => $"{x.SoftwareVersion.Software.Name} {x.SoftwareVersion.VersionString}")
                                                  .ToListAsync();
 
-        string compilationName = versionNames.Count > 0 ? string.Join(" + ", versionNames) : "Compilation";
+        List<string> softwareNames = await context.SoftwareBySoftwareRelease
+                                                  .Where(x => x.ReleaseId == model.Id)
+                                                  .OrderBy(x => x.Software.Name)
+                                                  .Select(x => x.Software.Name)
+                                                  .ToListAsync();
+
+        List<string> allNames       = versionNames.Concat(softwareNames).ToList();
+        string       compilationName = allNames.Count > 0 ? string.Join(" + ", allNames) : "Compilation";
 
         if(model.PlatformId is not null)
         {

@@ -10,6 +10,11 @@ public class SoftwareRelease : BaseModel<ulong>
 {
     public string? Title { get; set; }
 
+    public bool IsCompilation { get; set; }
+
+    public         ulong?   SoftwareId { get; set; }
+    public virtual Software Software   { get; set; }
+
     public         ulong?          SoftwareVersionId { get; set; }
     public virtual SoftwareVersion SoftwareVersion   { get; set; }
 
@@ -40,4 +45,5 @@ public class SoftwareRelease : BaseModel<ulong>
     public virtual ICollection<RecommendedGpuBySoftwareRelease>     RecommendedGpus      { get; set; }
     public virtual ICollection<SoundSynthBySoftwareRelease>         SupportedSoundSynths { get; set; }
     public virtual ICollection<SoftwareVersionBySoftwareRelease>    IncludedVersions     { get; set; }
+    public virtual ICollection<SoftwareBySoftwareRelease>           IncludedSoftware     { get; set; }
 }

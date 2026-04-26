@@ -156,39 +156,53 @@
                         {
                             <MudText Typo="Typo.caption" Color="Color.Tertiary" Class="mb-2">@L["License"]: @version.License</MudText>
                         }
-
-                        @if(_releasesByVersion.TryGetValue(version.Id ?? 0, out var releases) && releases.Count > 0)
-                        {
-                            <MudText Typo="Typo.subtitle2" Class="mt-3 mb-2">@L["Releases"] (@releases.Count)</MudText>
-                            <MudList T="SoftwareReleaseDto" Dense="true">
-                                @foreach(SoftwareReleaseDto release in releases)
-                                {
-                                    <MudListItem T="SoftwareReleaseDto" Href="@($"/software/release/{release.Id}")" Icon="@Icons.Material.Filled.NewReleases">
-                                        <div class="d-flex flex-wrap align-center gap-2">
-                                            @if(!string.IsNullOrEmpty(release.Platform))
-                                            {
-                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Info">@release.Platform</MudChip>
-                                            }
-                                            @if(!string.IsNullOrEmpty(release.Region))
-                                            {
-                                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@release.Region</MudChip>
-                                            }
-                                            @if(!string.IsNullOrEmpty(release.Publisher))
-                                            {
-                                                <MudText Typo="Typo.body2">@release.Publisher</MudText>
-                                            }
-                                            @if(release.ReleaseDate.HasValue)
-                                            {
-                                                <MudText Typo="Typo.caption" Color="Color.Secondary">@(((release.ReleaseDatePrecision ?? 0) == 2 ? release.ReleaseDate.Value.Year.ToString() : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToLongDateString()))</MudText>
-                                            }
-                                        </div>
-                                    </MudListItem>
-                                }
-                            </MudList>
-                        }
                     </MudCardContent>
                 </MudCard>
             }
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@* ── Releases Card (flat list) ── *@
+<MudExpansionPanels Elevation="2" Class="mb-4 rounded-lg">
+    <MudExpansionPanel Disabled="@(_releases.Count == 0)">
+        <TitleContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.NewReleases" Color="Color.Primary"/>
+                <MudText Typo="Typo.h6">@L["Releases"]</MudText>
+                <MudChip T="string" Size="Size.Small" Color="@(_releases.Count > 0 ? Color.Success : Color.Error)">@_releases.Count</MudChip>
+            </MudStack>
+        </TitleContent>
+        <ChildContent>
+            <MudList T="SoftwareReleaseDto" Dense="true">
+                @foreach(SoftwareReleaseDto release in _releases)
+                {
+                    <MudListItem T="SoftwareReleaseDto" Href="@($"/software/release/{release.Id}")" Icon="@Icons.Material.Filled.NewReleases">
+                        <div class="d-flex flex-wrap align-center gap-2">
+                            @if(!string.IsNullOrEmpty(release.SoftwareVersion))
+                            {
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@release.SoftwareVersion</MudChip>
+                            }
+                            @if(!string.IsNullOrEmpty(release.Platform))
+                            {
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Info">@release.Platform</MudChip>
+                            }
+                            @if(!string.IsNullOrEmpty(release.Region))
+                            {
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@release.Region</MudChip>
+                            }
+                            @if(!string.IsNullOrEmpty(release.Publisher))
+                            {
+                                <MudText Typo="Typo.body2">@release.Publisher</MudText>
+                            }
+                            @if(release.ReleaseDate.HasValue)
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">@(((release.ReleaseDatePrecision ?? 0) == 2 ? release.ReleaseDate.Value.Year.ToString() : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToLongDateString()))</MudText>
+                            }
+                        </div>
+                    </MudListItem>
+                }
+            </MudList>
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>

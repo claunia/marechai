@@ -573,4 +573,86 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
             return [];
         }
     }
+
+    public async Task<List<SoftwareReleaseDto>> GetBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareReleaseDto>? releases =
+                await client.Software[softwareId].Releases.GetAsync();
+
+            return releases ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    // ── Versionless compilation junction methods ──
+
+    public async Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(int releaseId)
+    {
+        try
+        {
+            List<SoftwareBySoftwareReleaseDto>? software =
+                await client.Software.Releases[releaseId].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> AddIncludedSoftwareAsync(SoftwareBySoftwareReleaseDto dto)
+    {
+        try
+        {
+            await client.Software.Releases[(int)(dto.ReleaseId ?? 0)].Software.PostAsync(dto);
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveIncludedSoftwareAsync(int releaseId, int softwareId)
+    {
+        try
+        {
+            await client.Software.Releases[releaseId].Software[softwareId].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException ex)
+        {
+            return (false, ex.Message);
+        }
+        catch(Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public async Task<List<SoftwareDto>> GetAllSoftwareForPickerAsync()
+    {
+        try
+        {
+            List<SoftwareDto>? software = await client.Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 }

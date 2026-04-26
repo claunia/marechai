@@ -185,27 +185,46 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
                 ReleaseDateDisplay = (release.ReleaseDatePrecision ?? 0) == 2 ? $"{release.ReleaseDate.Value.Year}" : (release.ReleaseDatePrecision ?? 0) == 1 ? release.ReleaseDate.Value.ToString("MMMM yyyy") : release.ReleaseDate.Value.DateTime.ToString("MMMM d, yyyy");
 
             // Determine if this is a compilation
-            IsCompilation = release.SoftwareVersionId is null;
+            IsCompilation = release.IsCompilation == true;
 
             if(IsCompilation)
             {
                 // Compilation: use Title or fallback
                 ReleaseTitle = release.Title ?? _localizer["Compilation"];
 
-                // Load included versions
+                // Load included versions (versioned compilations)
                 List<SoftwareVersionBySoftwareReleaseDto> includedVersions =
                     await _browsingService.GetIncludedVersionsAsync(releaseId);
 
                 foreach(SoftwareVersionBySoftwareReleaseDto iv in includedVersions)
                     IncludedVersions.Add($"{iv.SoftwareName} — {iv.SoftwareVersion}");
+
+                // Load included software (versionless compilations)
+                List<SoftwareBySoftwareReleaseDto> includedSoftware =
+                    await _browsingService.GetIncludedSoftwareAsync(releaseId);
+
+                foreach(SoftwareBySoftwareReleaseDto sw in includedSoftware)
+                    IncludedVersions.Add(sw.SoftwareName ?? string.Empty);
             }
             else
             {
-                // Single-version: build title from version
-                ReleaseTitle = VersionString ?? _localizer["Software Release"];
+                // Single release: build title from version string or software name
+                if(!string.IsNullOrEmpty(VersionString))
+                {
+                    ReleaseTitle = VersionString;
+                }
+                else
+                {
+                    // Versionless single release: use software name from DTO
+                    ReleaseTitle = release.Software ?? _localizer["Software Release"];
+                }
 
                 // Load software name for display
-                if(_sourceSoftwareId > 0)
+                if(!string.IsNullOrEmpty(release.Software))
+                {
+                    SoftwareName = release.Software;
+                }
+                else if(_sourceSoftwareId > 0)
                 {
                     SoftwareDto? software = await _browsingService.GetSoftwareByIdAsync(_sourceSoftwareId);
                     SoftwareName = software?.Name;
@@ -308,6 +327,38 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
                         if(companySet.Add(key))
                             companyDisplays.Add((c.Company ?? string.Empty, c.Role));
                     }
+                }
+            }
+        }
+        else if(release.SoftwareId is > 0)
+        {
+            // Versionless single release: load companies from software + family
+            int softwareId = release.SoftwareId.Value;
+
+            List<SoftwareCompanyRoleDto> softwareCompanies =
+                await _browsingService.GetCompaniesAsync(softwareId);
+
+            foreach(SoftwareCompanyRoleDto c in softwareCompanies)
+            {
+                var key = (c.CompanyId ?? 0, c.RoleId ?? string.Empty);
+
+                if(companySet.Add(key))
+                    companyDisplays.Add((c.Company ?? string.Empty, c.Role));
+            }
+
+            SoftwareDto? software = await _browsingService.GetSoftwareByIdAsync(softwareId);
+
+            if(software?.FamilyId is > 0)
+            {
+                List<CompanyBySoftwareFamilyDto> familyCompanies =
+                    await _browsingService.GetCompaniesByFamilyAsync(software.FamilyId.Value);
+
+                foreach(CompanyBySoftwareFamilyDto c in familyCompanies)
+                {
+                    var key = (c.CompanyId ?? 0, c.RoleId ?? string.Empty);
+
+                    if(companySet.Add(key))
+                        companyDisplays.Add((c.Company ?? string.Empty, c.Role));
                 }
             }
         }

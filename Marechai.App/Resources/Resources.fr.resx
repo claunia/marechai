@@ -2021,4 +2021,7 @@
   <data name="IncludedSoftware" xml:space="preserve"><value>Logiciels inclus</value></data>
   <data name="FailedToAddIncludedVersion" xml:space="preserve"><value>Échec de l'ajout de la version incluse</value></data>
   <data name="FailedToRemoveIncludedVersion" xml:space="preserve"><value>Échec de la suppression de la version incluse</value></data>
+  <data name="SoftwareIsRequired" xml:space="preserve"><value>La sélection du logiciel est requise pour les versions non-compilation.</value></data>
+  <data name="FailedToAddIncludedSoftware" xml:space="preserve"><value>Échec de l'ajout du logiciel inclus</value></data>
+  <data name="FailedToRemoveIncludedSoftware" xml:space="preserve"><value>Échec de la suppression du logiciel inclus</value></data>
 <data name="DatePrecisionLabel" xml:space="preserve"><value>Précision de la date</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Date complète</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Mois et année uniquement</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Année uniquement</value></data></root>

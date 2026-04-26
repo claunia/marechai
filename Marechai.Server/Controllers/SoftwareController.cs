@@ -90,7 +90,9 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoftwareDto>> GetSoftwareByYearAsync(int year) => context.Softwares
        .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.ReleaseDate != null &&
-                                                           r.ReleaseDate.Value.Year == year)))
+                                                           r.ReleaseDate.Value.Year == year))
+                || s.DirectReleases.Any(r => r.ReleaseDate != null &&
+                                             r.ReleaseDate.Value.Year == year))
        .OrderBy(s => s.Name)
        .Select(s => new SoftwareDto
         {
@@ -108,7 +110,8 @@ public class SoftwareController(MarechaiContext context) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoftwareDto>> GetSoftwareByPlatformAsync(ulong platformId) => context.Softwares
-       .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId == platformId)))
+       .Where(s => s.Versions.Any(v => v.Releases.Any(r => r.PlatformId == platformId))
+                || s.DirectReleases.Any(r => r.PlatformId == platformId))
        .OrderBy(s => s.Name)
        .Select(s => new SoftwareDto
         {

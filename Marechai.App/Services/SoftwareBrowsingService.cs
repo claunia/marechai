@@ -494,4 +494,38 @@ public class SoftwareBrowsingService
             return [];
         }
     }
+
+    public async Task<List<SoftwareReleaseDto>> GetReleasesBySoftwareAsync(int softwareId)
+    {
+        try
+        {
+            List<SoftwareReleaseDto>? releases =
+                await _apiClient.Software[softwareId].Releases.GetAsync();
+
+            return releases ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching releases for software {SoftwareId}", softwareId);
+
+            return [];
+        }
+    }
+
+    public async Task<List<SoftwareBySoftwareReleaseDto>> GetIncludedSoftwareAsync(int releaseId)
+    {
+        try
+        {
+            List<SoftwareBySoftwareReleaseDto>? software =
+                await _apiClient.Software.Releases[releaseId].Software.GetAsync();
+
+            return software ?? [];
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching included software for release {ReleaseId}", releaseId);
+
+            return [];
+        }
+    }
 }

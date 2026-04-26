@@ -145,6 +145,7 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<RecommendedGpuBySoftwareRelease>    RecommendedGpuBySoftwareRelease     { get; set; }
     public virtual DbSet<SoundSynthBySoftwareRelease>        SoundSynthBySoftwareRelease         { get; set; }
     public virtual DbSet<SoftwareVersionBySoftwareRelease>   SoftwareVersionBySoftwareRelease    { get; set; }
+    public virtual DbSet<SoftwareBySoftwareRelease>          SoftwareBySoftwareRelease           { get; set; }
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
@@ -2258,6 +2259,12 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .IsRequired(false)
                   .OnDelete(DeleteBehavior.SetNull);
 
+            entity.HasOne(x => x.Software)
+                  .WithMany(x => x.DirectReleases)
+                  .HasForeignKey(x => x.SoftwareId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.Restrict);
+
             entity.HasOne(x => x.Variant).WithMany().HasForeignKey(x => x.VariantId).OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(x => x.Subvariant)
@@ -2448,6 +2455,25 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasOne(x => x.SoftwareVersion)
                   .WithMany(x => x.CompilationReleases)
                   .HasForeignKey(x => x.SoftwareVersionId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SoftwareBySoftwareRelease>(entity =>
+        {
+            entity.HasKey(x => new
+            {
+                x.ReleaseId,
+                x.SoftwareId
+            });
+
+            entity.HasOne(x => x.Release)
+                  .WithMany(x => x.IncludedSoftware)
+                  .HasForeignKey(x => x.ReleaseId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Software)
+                  .WithMany(x => x.CompilationReleases)
+                  .HasForeignKey(x => x.SoftwareId)
                   .OnDelete(DeleteBehavior.Restrict);
         });
     }

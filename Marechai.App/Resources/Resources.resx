@@ -2264,4 +2264,7 @@
   <data name="IncludedSoftware" xml:space="preserve"><value>Included Software</value></data>
   <data name="FailedToAddIncludedVersion" xml:space="preserve"><value>Failed to add included version</value></data>
   <data name="FailedToRemoveIncludedVersion" xml:space="preserve"><value>Failed to remove included version</value></data>
+  <data name="SoftwareIsRequired" xml:space="preserve"><value>Software selection is required for non-compilation releases.</value></data>
+  <data name="FailedToAddIncludedSoftware" xml:space="preserve"><value>Failed to add included software</value></data>
+  <data name="FailedToRemoveIncludedSoftware" xml:space="preserve"><value>Failed to remove included software</value></data>
 <data name="DatePrecisionLabel" xml:space="preserve"><value>Date precision</value></data><data name="DatePrecisionFull" xml:space="preserve"><value>Full date</value></data><data name="DatePrecisionMonthYear" xml:space="preserve"><value>Month and year only</value></data><data name="DatePrecisionYearOnly" xml:space="preserve"><value>Year only</value></data></root>

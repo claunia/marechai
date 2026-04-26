@@ -15,19 +15,27 @@ public partial class SoftwareReleases
     List<SoftwareReleaseDto>?  _releases;
     string?                    _successMessage;
     string?                    _versionName;
+    string?                    _softwareName;
     bool                       _isVersionContext;
+    bool                       _isSoftwareContext;
 
-    [Parameter] public int VersionId { get; set; }
+    [Parameter] public int VersionId  { get; set; }
+    [Parameter] public int SoftwareId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _isVersionContext = VersionId > 0;
+        _isVersionContext  = VersionId  > 0;
+        _isSoftwareContext = SoftwareId > 0;
 
         if(_isVersionContext)
         {
             SoftwareVersionDto? version = await SoftwareVersionsService.GetByIdAsync(VersionId);
             _versionName      = version is not null ? $"{version.Software} - {version.VersionString}" : null;
             _parentSoftwareId = version?.SoftwareId;
+        }
+        else if(_isSoftwareContext)
+        {
+            _parentSoftwareId = SoftwareId;
         }
 
         await LoadDataAsync();
@@ -37,9 +45,12 @@ public partial class SoftwareReleases
     {
         _isLoading = true;
 
-        _releases = _isVersionContext
-                        ? await SoftwareReleasesService.GetByVersionAsync(VersionId)
-                        : await SoftwareReleasesService.GetAllAsync();
+        if(_isVersionContext)
+            _releases = await SoftwareReleasesService.GetByVersionAsync(VersionId);
+        else if(_isSoftwareContext)
+            _releases = await SoftwareReleasesService.GetBySoftwareAsync(SoftwareId);
+        else
+            _releases = await SoftwareReleasesService.GetAllAsync();
 
         _isLoading = false;
     }
@@ -69,11 +80,15 @@ public partial class SoftwareReleases
 
     async Task OpenAddDialog()
     {
+        bool isCompilation = !_isVersionContext && !_isSoftwareContext;
+
         DialogParameters<SoftwareReleaseDialog> parameters = new()
         {
             { x => x.IsNew, true },
             { x => x.ParentVersionId, VersionId },
-            { x => x.IsCompilation, !_isVersionContext }
+            { x => x.IsCompilation, isCompilation },
+            { x => x.SoftwareId, _isSoftwareContext ? SoftwareId : (_isVersionContext ? _parentSoftwareId : null) },
+            { x => x.SoftwareVersionId, _isVersionContext ? (int?)VersionId : null }
         };
 
         IDialogReference dialog =
@@ -91,7 +106,9 @@ public partial class SoftwareReleases
             var dto = new SoftwareReleaseDto
             {
                 Title             = data.Title,
-                SoftwareVersionId = data.IsCompilation ? null : VersionId,
+                IsCompilation     = data.IsCompilation,
+                SoftwareId        = data.SoftwareId,
+                SoftwareVersionId = data.SoftwareVersionId,
                 VariantId         = data.VariantId,
                 SubvariantId      = data.SubvariantId,
                 PlatformId        = data.PlatformId,
@@ -133,7 +150,9 @@ public partial class SoftwareReleases
             { x => x.ReleaseId, full.Id ?? 0 },
             { x => x.ParentVersionId, VersionId },
             { x => x.Title, full.Title },
-            { x => x.IsCompilation, full.SoftwareVersionId is null },
+            { x => x.IsCompilation, full.IsCompilation == true },
+            { x => x.SoftwareId, full.SoftwareId },
+            { x => x.SoftwareVersionId, full.SoftwareVersionId },
             { x => x.VariantId, full.VariantId },
             { x => x.SubvariantId, full.SubvariantId },
             { x => x.PlatformId, full.PlatformId },
@@ -159,7 +178,9 @@ public partial class SoftwareReleases
             {
                 Id                = full.Id,
                 Title             = data.Title,
-                SoftwareVersionId = data.IsCompilation ? null : (int?)VersionId,
+                IsCompilation     = data.IsCompilation,
+                SoftwareId        = full.SoftwareId,
+                SoftwareVersionId = data.SoftwareVersionId,
                 VariantId         = data.VariantId,
                 SubvariantId      = data.SubvariantId,
                 PlatformId        = data.PlatformId,

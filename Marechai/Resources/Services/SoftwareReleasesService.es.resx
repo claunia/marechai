@@ -179,4 +179,23 @@
     <data name="Optional. Used as the display name for compilation releases." xml:space="preserve">
         <value>Opcional. Se usa como nombre de visualización para lanzamientos de compilación.</value>
     </data>
-<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data></root>
+<data name="Date precision" xml:space="preserve"><value>Precisión de fecha</value></data><data name="Full date" xml:space="preserve"><value>Fecha completa</value></data><data name="Month and year only" xml:space="preserve"><value>Solo mes y año</value></data><data name="Year only" xml:space="preserve"><value>Solo año</value></data>
+    <data name="Software" xml:space="preserve">
+        <value>Software</value>
+    </data>
+    <data name="Version (optional)" xml:space="preserve">
+        <value>Versión (opcional)</value>
+    </data>
+    <data name="Included Software Versions" xml:space="preserve">
+        <value>Versiones de software incluidas</value>
+    </data>
+    <data name="Included Software (versionless)" xml:space="preserve">
+        <value>Software incluido (sin versión)</value>
+    </data>
+    <data name="Search Software" xml:space="preserve">
+        <value>Buscar software</value>
+    </data>
+    <data name="Releases" xml:space="preserve">
+        <value>Lanzamientos</value>
+    </data>
+</root>

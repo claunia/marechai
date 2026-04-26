@@ -39,6 +39,7 @@ public partial class ReleaseView
     List<SoftwareBarcodeDto>                               _barcodes = [];
     int                                                    _id;
     List<SoftwareVersionBySoftwareReleaseDto>               _includedVersions = [];
+    List<SoftwareBySoftwareReleaseDto>                     _includedSoftware = [];
     bool                                                   _loaded;
     List<GpuBySoftwareReleaseDto>                          _minimumGpus = [];
     List<SoftwareProductCodeDto>                           _productCodes = [];
@@ -81,16 +82,22 @@ public partial class ReleaseView
             return;
         }
 
-        // Get software name from version (single-version releases)
+        // Get software name from version (versioned single releases) or software (versionless single releases)
         if(_release.SoftwareVersionId.HasValue)
         {
             SoftwareVersionDto? version = await Service.GetVersionByIdAsync(_release.SoftwareVersionId.Value);
             _softwareName = version?.Software;
         }
+        else if(_release.IsCompilation == true)
+        {
+            // Compilation: load included versions and/or software
+            _includedVersions = await Service.GetIncludedVersionsAsync(Id);
+            _includedSoftware = await Service.GetIncludedSoftwareAsync(Id);
+        }
         else
         {
-            // Compilation: load included versions
-            _includedVersions = await Service.GetIncludedVersionsAsync(Id);
+            // Versionless single release: use software name from DTO
+            _softwareName = _release.Software;
         }
 
         _barcodes        = await Service.GetBarcodesAsync(Id);
