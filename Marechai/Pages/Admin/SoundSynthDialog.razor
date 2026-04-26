@@ -1,6 +1,8 @@
 @using Marechai.ApiClient.Models
+@using Marechai.Data
 @using Marechai.Services
 @using System.Threading
+@using Humanizer
 
 @inject IStringLocalizer<SoundSynthsService> L
 
@@ -77,12 +79,16 @@
                          Clearable="true"
                          Class="mb-4"/>
 
-        <MudNumericField T="int?" @bind-Value="Type"
-                         Label="@L["Synthesizer type"]"
-                         Variant="Variant.Outlined"
-                         Min="0"
-                         Clearable="true"
-                         Class="mb-4"/>
+        <MudSelect T="int?" @bind-Value="Type"
+                   Label="@L["Synthesizer type"]"
+                   Variant="Variant.Outlined"
+                   Clearable="true"
+                   Class="mb-4">
+            @foreach(int val in Enum.GetValues<SoundSynthType>())
+            {
+                <MudSelectItem T="int?" Value="@((int?)val)">@(((SoundSynthType)val).Humanize())</MudSelectItem>
+            }
+        </MudSelect>
 
         @if(!string.IsNullOrWhiteSpace(_validationError))
         {

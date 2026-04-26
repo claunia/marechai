@@ -1,0 +1,671 @@
+@{
+    /******************************************************************************
+    // MARECHAI: Master repository of computing history artifacts information
+    // ----------------------------------------------------------------------------
+    //
+    // Author(s)      : Natalia Portillo <claunia@claunia.com>
+    //
+    // --[ License ] --------------------------------------------------------------
+    //
+    //     This program is free software: you can redistribute it and/or modify
+    //     it under the terms of the GNU General Public License as
+    //     published by the Free Software Foundation, either version 3 of the
+    //     License, or (at your option) any later version.
+    //
+    //     This program is distributed in the hope that it will be useful,
+    //     but WITHOUT ANY WARRANTY; without even the implied warranty of
+    //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    //     GNU General Public License for more details.
+    //
+    //     You should have received a copy of the GNU General Public License
+    //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    //
+    // ----------------------------------------------------------------------------
+    // Copyright © 2003-2026 Natalia Portillo
+    *******************************************************************************/
+}
+
+@using Marechai.ApiClient.Models
+@using Marechai.Data
+@using Marechai.Services
+@using Marechai.Helpers
+@using Humanizer
+@inject SoundSynthsService SoundSynthsService
+@inject IStringLocalizer<SoundSynthsService> L
+@inject IJSRuntime JsRuntime
+
+<MudDialog>
+    <DialogContent>
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+        }
+
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudStack Spacing="4">
+                    <MudText Typo="Typo.body1">@L["Upload a CSV file to import sound synthesizers in bulk. Download the template first to see the expected format."]</MudText>
+
+                    <MudStack Row="true" Spacing="2">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadTemplate">
+                            @L["Download Template"]
+                        </MudButton>
+                    </MudStack>
+
+                    <MudFileUpload T="IBrowserFile"
+                                   Accept=".csv"
+                                   FilesChanged="OnCsvFileSelected"
+                                   MaximumFileCount="1">
+                        <ActivatorContent>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Upload"
+                                       Disabled="_isProcessing">
+                                @(_isProcessing ? L["Processing..."] : L["Upload CSV"])
+                            </MudButton>
+                        </ActivatorContent>
+                    </MudFileUpload>
+
+                    @if(_isProcessing)
+                    {
+                        <MudProgressLinear Indeterminate="true" Color="Color.Primary"/>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Preview:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Info" Dense="true">
+                        @string.Format(L["{0} rows parsed. {1} auto-rejected (no company match or validation error). Selected rows will be REJECTED — unselected rows will be imported."], _importRows.Count, _importRows.Count(r => (r.MatchType == CompanyMatchType.None && !string.IsNullOrWhiteSpace(r.CompanyInput)) || r.ValidationError is not null))
+                    </MudAlert>
+
+                    <MudDataGrid T="SoundSynthImportRow"
+                                 Items="_importRows"
+                                 MultiSelection="true"
+                                 @bind-SelectedItems="_selectedItems"
+                                 Dense="true"
+                                 Hover="true"
+                                 Striped="true"
+                                 FixedHeader="true"
+                                 Height="400px">
+                        <Columns>
+                            <SelectColumn T="SoundSynthImportRow"/>
+                            <TemplateColumn Title="@L["Name"]">
+                                <CellTemplate>
+                                    <div style="@(context.Item.IsDuplicate ? "background-color: #ffe0b2; padding: 4px 8px; border-radius: 4px;" : "")">
+                                        @if(context.Item.IsDuplicate)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" Color="Color.Warning" Class="mr-1" Title="@L["Duplicate sound synth name"]"/>
+                                        }
+                                        @context.Item.Name
+                                        @if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ValidationError"/>
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Company"]">
+                                <CellTemplate>
+                                    @{
+                                        string bgColor = context.Item.MatchType switch
+                                        {
+                                            CompanyMatchType.Exact   => "#c8e6c9",
+                                            CompanyMatchType.Partial => "#fff9c4",
+                                            _                       => "#ffcdd2"
+                                        };
+                                    }
+                                    <div style="background-color: @bgColor; color: black; padding: 4px 8px; border-radius: 4px;">
+                                        @if(context.Item.MatchType == CompanyMatchType.Partial && context.Item.MatchedCompanies.Count > 1)
+                                        {
+                                            <MudSelect T="CompanyDto"
+                                                       Value="context.Item.SelectedCompany"
+                                                       ValueChanged="(c) => OnCompanySelected(context.Item, c)"
+                                                       Dense="true"
+                                                       Margin="Margin.Dense"
+                                                       Variant="Variant.Text"
+                                                       ToStringFunc="@(c => c?.Name ?? "")">
+                                                @foreach(CompanyDto company in context.Item.MatchedCompanies)
+                                                {
+                                                    <MudSelectItem T="CompanyDto" Value="company">@company.Name</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        }
+                                        else
+                                        {
+                                            @context.Item.CompanyDisplay
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
+                            <TemplateColumn Title="@L["Introduced"]">
+                                <CellTemplate>
+                                    @if(context.Item.IntroducedYear is not null)
+                                    {
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                            <MudText Typo="Typo.body2">@FormatImportDate(context.Item)</MudText>
+                                            <MudChip T="string" Size="Size.Small"
+                                                     Color="@(context.Item.IntroducedPrecision == 0 ? Color.Success : context.Item.IntroducedPrecision == 1 ? Color.Warning : Color.Info)"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 2px 8px; font-size: 0.7rem;">
+                                                @(context.Item.IntroducedPrecision switch
+                                                {
+                                                    0 => L["Full date"],
+                                                    1 => L["Month and year only"],
+                                                    2 => L["Year only"],
+                                                    _ => ""
+                                                })
+                                            </MudChip>
+                                        </MudStack>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <PropertyColumn Property="x => x.Voices" Title="@L["Voices"]"/>
+                            <TemplateColumn Title="@L["Frequency"]">
+                                <CellTemplate>
+                                    @(context.Item.Frequency?.ToString("F1") ?? "")
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <PropertyColumn Property="x => x.Depth" Title="@L["Depth"]"/>
+                            <PropertyColumn Property="x => x.SquareWave" Title="@L["Square wave"]"/>
+                            <PropertyColumn Property="x => x.WhiteNoise" Title="@L["White noise"]"/>
+                            <TemplateColumn Title="@L["Synthesizer type"]">
+                                <CellTemplate>
+                                    @(context.Item.Type.HasValue ? ((SoundSynthType)context.Item.Type.Value).Humanize() : "")
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                    </MudDataGrid>
+                </MudStack>
+                break;
+
+            case ImportState.Importing:
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body1">@string.Format(L["Importing {0} of {1}..."], _importedCount + _failedCount, _totalToImport)</MudText>
+                    <MudProgressLinear Value="_progressPercent" Color="Color.Primary" Rounded="true" Size="Size.Large">
+                        <ChildContent>
+                            <MudText Typo="Typo.body2" Style="color: white;">
+                                @($"{_progressPercent:F0}%")
+                            </MudText>
+                        </ChildContent>
+                    </MudProgressLinear>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudDataGrid T="SoundSynthImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <TemplateColumn Title="@L["Name"]">
+                                    <CellTemplate>
+                                        @context.Item.Name
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ImportError"/>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Company"]">
+                                    <CellTemplate>
+                                        @context.Item.CompanyDisplay
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <PropertyColumn Property="x => x.ModelCode" Title="@L["Model code"]"/>
+                            </Columns>
+                        </MudDataGrid>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Complete:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Success" Dense="true">
+                        @string.Format(L["Import complete. {0} imported, {1} rejected, {2} failed."], _importedCount, _rejectedCount, _failedCount)
+                    </MudAlert>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudText Typo="Typo.body2">@L["The following items were not imported:"]</MudText>
+
+                        <MudDataGrid T="SoundSynthImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <PropertyColumn Property="x => x.Name" Title="@L["Name"]"/>
+                                <TemplateColumn Title="@L["Company"]">
+                                    <CellTemplate>
+                                        @(context.Item.CompanyInput ?? "")
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Status"]">
+                                    <CellTemplate>
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Error" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ImportError
+                                            </MudChip>
+                                        }
+                                        else if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Warning" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ValidationError
+                                            </MudChip>
+                                        }
+                                        else
+                                        {
+                                            <MudChip T="string" Color="Color.Default" Size="Size.Small">@L["Rejected"]</MudChip>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadRejected">
+                            @L["Download Rejected"]
+                        </MudButton>
+                    }
+                </MudStack>
+                break;
+        }
+    </DialogContent>
+    <DialogActions>
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                break;
+            case ImportState.Preview:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartImport"
+                           Disabled="_importRows.All(r => _selectedItems.Contains(r))">
+                    @L["Import"]
+                </MudButton>
+                break;
+            case ImportState.Importing:
+                break;
+            case ImportState.Complete:
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">@L["Close"]</MudButton>
+                break;
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    static readonly string[] CsvHeaders =
+    [
+        "Name", "Company", "ModelCode", "IntroducedYear", "IntroducedMonth", "IntroducedDay",
+        "Voices", "Frequency", "Depth", "SquareWave", "WhiteNoise", "Type"
+    ];
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    string?                         _errorMessage;
+    bool                            _isProcessing;
+    ImportState                     _state = ImportState.Upload;
+    List<SoundSynthImportRow>       _importRows = [];
+    HashSet<SoundSynthImportRow>    _selectedItems = [];
+    List<CompanyDto>?               _allCompanies;
+    Dictionary<string, List<CompanyDto>>? _companySoundexMap;
+    List<SoundSynthDto>?            _existingSoundSynths;
+    int                             _importedCount;
+    int                             _rejectedCount;
+    int                             _failedCount;
+    int                             _totalToImport;
+    double                          _progressPercent;
+
+    void Cancel() => MudDialog.Cancel();
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+    async Task DownloadTemplate()
+    {
+        string csv     = CsvParser.GenerateTemplate(CsvHeaders);
+        byte[] bytes   = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64  = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "sound_synth_import_template.csv", "text/csv", base64);
+    }
+
+    async Task OnCsvFileSelected(IBrowserFile file)
+    {
+        _isProcessing = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            using var stream = file.OpenReadStream(10 * 1024 * 1024);
+            using var reader = new System.IO.StreamReader(stream);
+            string csvContent = await reader.ReadToEndAsync();
+
+            List<Dictionary<string, string>> rows = CsvParser.Parse(csvContent);
+
+            if(rows.Count == 0)
+            {
+                _errorMessage = L["The CSV file is empty or has no data rows."];
+                _isProcessing = false;
+                StateHasChanged();
+
+                return;
+            }
+
+            _allCompanies        = await SoundSynthsService.GetCompaniesAsync();
+            _existingSoundSynths = await SoundSynthsService.GetAllAsync();
+
+            BuildSoundexMap();
+            _importRows = ParseRows(rows);
+            PreSelectRejections();
+
+            _state = ImportState.Preview;
+        }
+        catch(Exception ex)
+        {
+            _errorMessage = string.Format(L["Error reading CSV: {0}"], ex.Message);
+        }
+        finally
+        {
+            _isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    void BuildSoundexMap()
+    {
+        _companySoundexMap = new Dictionary<string, List<CompanyDto>>(StringComparer.OrdinalIgnoreCase);
+
+        if(_allCompanies is null)
+            return;
+
+        foreach(CompanyDto company in _allCompanies)
+        {
+            if(string.IsNullOrWhiteSpace(company.Name))
+                continue;
+
+            string code = Soundex.Generate(company.Name);
+
+            if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto>? list))
+            {
+                list = [];
+                _companySoundexMap[code] = list;
+            }
+
+            list.Add(company);
+        }
+    }
+
+    List<SoundSynthImportRow> ParseRows(List<Dictionary<string, string>> rows)
+    {
+        var result = new List<SoundSynthImportRow>();
+
+        foreach(Dictionary<string, string> row in rows)
+        {
+            var importRow = new SoundSynthImportRow
+            {
+                Name         = GetValue(row, "Name"),
+                CompanyInput = GetValueOrNull(row, "Company"),
+                ModelCode    = GetValueOrNull(row, "ModelCode")
+            };
+
+            if(TryParseInt(row, "IntroducedYear", out int year))
+                importRow.IntroducedYear = year;
+
+            if(TryParseInt(row, "IntroducedMonth", out int month))
+                importRow.IntroducedMonth = month;
+
+            if(TryParseInt(row, "IntroducedDay", out int day))
+                importRow.IntroducedDay = day;
+
+            if(TryParseInt(row, "Voices", out int voices))
+                importRow.Voices = voices;
+
+            if(TryParseDouble(row, "Frequency", out double frequency))
+                importRow.Frequency = frequency;
+
+            if(TryParseInt(row, "Depth", out int depth))
+                importRow.Depth = depth;
+
+            if(TryParseInt(row, "SquareWave", out int squareWave))
+                importRow.SquareWave = squareWave;
+
+            if(TryParseInt(row, "WhiteNoise", out int whiteNoise))
+                importRow.WhiteNoise = whiteNoise;
+
+            if(TryParseInt(row, "Type", out int type))
+                importRow.Type = type;
+
+            // Validate
+            if(string.IsNullOrWhiteSpace(importRow.Name))
+                importRow.ValidationError = L["Name is required."];
+
+            // Match company
+            MatchCompany(importRow);
+
+            // Check duplicates
+            if(_existingSoundSynths is not null &&
+               _existingSoundSynths.Any(s => string.Equals(s.Name, importRow.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                importRow.IsDuplicate = true;
+            }
+
+            result.Add(importRow);
+        }
+
+        return result;
+    }
+
+    void MatchCompany(SoundSynthImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.CompanyInput))
+        {
+            row.MatchType = CompanyMatchType.None;
+
+            return;
+        }
+
+        if(_allCompanies is null)
+        {
+            row.MatchType = CompanyMatchType.None;
+
+            return;
+        }
+
+        // Try exact match first
+        CompanyDto? exact = _allCompanies.Find(c =>
+            string.Equals(c.Name, row.CompanyInput, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.MatchType        = CompanyMatchType.Exact;
+            row.MatchedCompanies = [exact];
+            row.SelectedCompany  = exact;
+
+            return;
+        }
+
+        // Try Soundex match
+        string inputSoundex = Soundex.Generate(row.CompanyInput);
+
+        if(_companySoundexMap is not null &&
+           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto>? matches) &&
+           matches.Count > 0)
+        {
+            row.MatchType        = CompanyMatchType.Partial;
+            row.MatchedCompanies = [..matches.OrderBy(c => c.Name)];
+            row.SelectedCompany  = row.MatchedCompanies[0];
+
+            return;
+        }
+
+        row.MatchType = CompanyMatchType.None;
+    }
+
+    void PreSelectRejections()
+    {
+        _selectedItems = [];
+
+        foreach(SoundSynthImportRow row in _importRows)
+        {
+            if((row.MatchType == CompanyMatchType.None && !string.IsNullOrWhiteSpace(row.CompanyInput)) ||
+               row.ValidationError is not null)
+            {
+                _selectedItems.Add(row);
+            }
+        }
+    }
+
+    void OnCompanySelected(SoundSynthImportRow row, CompanyDto? company) => row.SelectedCompany = company;
+
+    async Task StartImport()
+    {
+        // Separate rejected from to-import
+        var toImport = _importRows.Where(r => !_selectedItems.Contains(r)).ToList();
+        var rejected = _importRows.Where(r => _selectedItems.Contains(r)).ToList();
+
+        _rejectedCount   = rejected.Count;
+        _importedCount   = 0;
+        _failedCount     = 0;
+        _totalToImport   = toImport.Count;
+        _progressPercent = 0;
+        _state           = ImportState.Importing;
+
+        // Keep only rejected/failed in _importRows for display during import
+        _importRows = [..rejected];
+        StateHasChanged();
+
+        foreach(SoundSynthImportRow row in toImport)
+        {
+            var dto = new SoundSynthDto
+            {
+                Name                = row.Name,
+                CompanyId           = row.SelectedCompany?.Id,
+                ModelCode           = row.ModelCode,
+                IntroducedPrecision = row.IntroducedPrecision,
+                Introduced          = row.IntroducedDate.HasValue ? new DateTimeOffset(row.IntroducedDate.Value) : null,
+                Voices              = row.Voices,
+                Frequency           = row.Frequency,
+                Depth               = row.Depth,
+                SquareWave          = row.SquareWave,
+                WhiteNoise          = row.WhiteNoise,
+                Type                = row.Type
+            };
+
+            (long? id, string? error) = await SoundSynthsService.CreateAsync(dto);
+
+            if(id is not null)
+            {
+                _importedCount++;
+            }
+            else
+            {
+                _failedCount++;
+                row.ImportError = error ?? L["Unknown error"];
+                _importRows.Add(row);
+            }
+
+            _progressPercent = (double)(_importedCount + _failedCount) / _totalToImport * 100;
+            StateHasChanged();
+            await Task.Delay(1); // Allow UI to update
+        }
+
+        _state = ImportState.Complete;
+        StateHasChanged();
+    }
+
+    async Task DownloadRejected()
+    {
+        var rows = new List<Dictionary<string, string>>();
+
+        foreach(SoundSynthImportRow row in _importRows)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Name"]            = row.Name,
+                ["Company"]         = row.CompanyInput ?? "",
+                ["ModelCode"]       = row.ModelCode ?? "",
+                ["IntroducedYear"]  = row.IntroducedYear?.ToString() ?? "",
+                ["IntroducedMonth"] = row.IntroducedMonth?.ToString() ?? "",
+                ["IntroducedDay"]   = row.IntroducedDay?.ToString() ?? "",
+                ["Voices"]          = row.Voices?.ToString() ?? "",
+                ["Frequency"]       = row.Frequency?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                ["Depth"]           = row.Depth?.ToString() ?? "",
+                ["SquareWave"]      = row.SquareWave?.ToString() ?? "",
+                ["WhiteNoise"]      = row.WhiteNoise?.ToString() ?? "",
+                ["Type"]            = row.Type?.ToString() ?? ""
+            };
+
+            rows.Add(dict);
+        }
+
+        string csv    = CsvParser.Generate(CsvHeaders, rows);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "sound_synth_import_rejected.csv", "text/csv", base64);
+    }
+
+    static string FormatImportDate(SoundSynthImportRow row)
+    {
+        if(row.IntroducedYear is null)
+            return "";
+
+        if(row.IntroducedMonth is null)
+            return row.IntroducedYear.Value.ToString();
+
+        if(row.IntroducedDay is null)
+            return $"{row.IntroducedMonth.Value:D2}/{row.IntroducedYear.Value}";
+
+        return $"{row.IntroducedDay.Value:D2}/{row.IntroducedMonth.Value:D2}/{row.IntroducedYear.Value}";
+    }
+
+    static string GetValue(Dictionary<string, string> row, string key) =>
+        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+
+    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    {
+        if(!row.TryGetValue(key, out string? val))
+            return null;
+
+        string trimmed = val?.Trim() ?? "";
+
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && int.TryParse(val, out result);
+    }
+
+    static bool TryParseDouble(Dictionary<string, string> row, string key, out double result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && double.TryParse(val, System.Globalization.NumberStyles.Float,
+                                                   System.Globalization.CultureInfo.InvariantCulture, out result);
+    }
+
+    enum ImportState
+    {
+        Upload,
+        Preview,
+        Importing,
+        Complete
+    }
+}
