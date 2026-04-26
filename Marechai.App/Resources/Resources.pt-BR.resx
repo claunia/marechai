@@ -1878,6 +1878,9 @@
   <data name="Software Release" xml:space="preserve"><value>Lançamento de software</value></data>
   <data name="SoftwarePlatformLabel" xml:space="preserve"><value>Plataforma</value></data>
   <data name="SoftwareRegionLabel" xml:space="preserve"><value>Região</value></data>
+  <data name="SoftwareRegionsLabel" xml:space="preserve"><value>Regiões</value></data>
+  <data name="RegionsLabel" xml:space="preserve"><value>Regiões</value></data>
+  <data name="AddRegionLabel" xml:space="preserve"><value>Adicionar região</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Editora</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Data de lançamento</value></data>
   <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variante</value></data>

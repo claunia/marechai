@@ -187,9 +187,12 @@
                             {
                                 <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Info">@release.Platform</MudChip>
                             }
-                            @if(!string.IsNullOrEmpty(release.Region))
+                            @if(release.Regions is not null && release.Regions.Count > 0)
                             {
-                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@release.Region</MudChip>
+                                @foreach(var region in release.Regions)
+                                {
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@region.RegionName</MudChip>
+                                }
                             }
                             @if(!string.IsNullOrEmpty(release.Publisher))
                             {
@@ -230,9 +233,12 @@
                                 {
                                     <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Info">@compilation.Platform</MudChip>
                                 }
-                                @if(!string.IsNullOrEmpty(compilation.Region))
+                                @if(compilation.Regions is not null && compilation.Regions.Count > 0)
                                 {
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@compilation.Region</MudChip>
+                                    @foreach(var region in compilation.Regions)
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Secondary">@region.RegionName</MudChip>
+                                    }
                                 }
                                 @if(compilation.ReleaseDate.HasValue)
                                 {

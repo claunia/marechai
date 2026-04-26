@@ -27,9 +27,7 @@ public class SoftwareRelease : BaseModel<ulong>
     public         ulong?           PlatformId { get; set; }
     public virtual SoftwarePlatform Platform   { get; set; }
 
-    [Required]
-    public short RegionId { get;                 set; } // ISO 3166-1 numeric
-    public virtual Iso31661Numeric Region { get; set; }
+    public virtual ICollection<UnM49BySoftwareRelease> Regions { get; set; }
 
     [Required]
     public int PublisherId { get;           set; }

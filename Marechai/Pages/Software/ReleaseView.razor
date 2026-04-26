@@ -89,11 +89,11 @@
                     <td>@_release.Platform</td>
                 </tr>
             }
-            @if(!string.IsNullOrEmpty(_release.Region))
+            @if(_release.Regions is not null && _release.Regions.Count > 0)
             {
                 <tr>
-                    <td style="width: 33%; text-align: right;"><strong>@L["Region"]</strong></td>
-                    <td>@_release.Region</td>
+                    <td style="width: 33%; text-align: right;"><strong>@L["Regions"]</strong></td>
+                    <td>@string.Join(", ", _release.Regions.Select(r => r.RegionName))</td>
                 </tr>
             }
             @if(!string.IsNullOrEmpty(_release.Publisher))

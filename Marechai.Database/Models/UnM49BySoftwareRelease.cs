@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -23,31 +23,13 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Marechai.Database.Models;
 
-public class Iso31661Numeric
+public class UnM49BySoftwareRelease
 {
-    public Iso31661Numeric() => Companies = new HashSet<Company>();
+    public         ulong           SoftwareReleaseId { get; set; }
+    public virtual SoftwareRelease SoftwareRelease   { get; set; }
 
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime CreatedOn { get; set; }
-    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-    public DateTime UpdatedOn { get; set; }
-
-    [Required]
-    public short Id { get; set; }
-    [Required]
-    [StringLength(64)]
-    public string Name { get; set; }
-
-    public virtual ICollection<Company>         Companies        { get; set; }
-    public virtual ICollection<Person>          People           { get; set; }
-    public virtual ICollection<Document>        Documents        { get; set; }
-    public virtual ICollection<Book>            Books            { get; set; }
-    public virtual ICollection<Magazine>        Magazines        { get; set; }
+    public         short           UnM49Id { get; set; }
+    public virtual UnM49           UnM49   { get; set; }
 }

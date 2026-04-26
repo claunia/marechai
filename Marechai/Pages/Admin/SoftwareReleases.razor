@@ -49,7 +49,14 @@
         <Columns>
             <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
             <PropertyColumn Property="x => x.Platform" Title="@L["Platform"]"/>
-            <PropertyColumn Property="x => x.Region" Title="@L["Region"]"/>
+            <TemplateColumn Title="@L["Regions"]">
+                <CellTemplate>
+                    @if(context.Item.Regions is not null)
+                    {
+                        @string.Join(", ", context.Item.Regions.Select(r => r.RegionName))
+                    }
+                </CellTemplate>
+            </TemplateColumn>
             <PropertyColumn Property="x => x.Publisher" Title="@L["Publisher"]"/>
             <PropertyColumn Property="x => x.Variant" Title="@L["Variant"]"/>
             <TemplateColumn Title="@L["Release date"]" Sortable="true">

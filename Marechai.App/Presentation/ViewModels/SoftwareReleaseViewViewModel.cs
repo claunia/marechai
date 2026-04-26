@@ -45,7 +45,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private string? _subvariant;
 
     [ObservableProperty]
-    private string? _region;
+    private string? _regionsDisplay;
 
     [ObservableProperty]
     private string? _publisher;
@@ -75,7 +75,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
     private Visibility _showSubvariant = Visibility.Collapsed;
 
     [ObservableProperty]
-    private Visibility _showRegion = Visibility.Collapsed;
+    private Visibility _showRegions = Visibility.Collapsed;
 
     [ObservableProperty]
     private Visibility _showPublisher = Visibility.Collapsed;
@@ -178,7 +178,9 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
             Platform           = release.Platform;
             Variant            = release.Variant;
             Subvariant         = release.Subvariant;
-            Region             = release.Region;
+            RegionsDisplay     = release.Regions is { Count: > 0 }
+                ? string.Join(", ", release.Regions.Select(r => r.RegionName))
+                : null;
             Publisher          = release.Publisher;
 
             if(release.ReleaseDate.HasValue)
@@ -264,7 +266,7 @@ public partial class SoftwareReleaseViewViewModel : ObservableObject, IRegionAwa
         ShowPlatform    = !string.IsNullOrEmpty(Platform) ? Visibility.Visible : Visibility.Collapsed;
         ShowVariant     = !string.IsNullOrEmpty(Variant) ? Visibility.Visible : Visibility.Collapsed;
         ShowSubvariant  = !string.IsNullOrEmpty(Subvariant) ? Visibility.Visible : Visibility.Collapsed;
-        ShowRegion      = !string.IsNullOrEmpty(Region) ? Visibility.Visible : Visibility.Collapsed;
+        ShowRegions     = !string.IsNullOrEmpty(RegionsDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowPublisher   = !string.IsNullOrEmpty(Publisher) ? Visibility.Visible : Visibility.Collapsed;
         ShowReleaseDate = !string.IsNullOrEmpty(ReleaseDateDisplay) ? Visibility.Visible : Visibility.Collapsed;
         ShowBarcodes    = Barcodes.Count > 0 ? Visibility.Visible : Visibility.Collapsed;

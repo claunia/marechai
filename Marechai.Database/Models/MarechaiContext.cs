@@ -146,6 +146,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public virtual DbSet<SoundSynthBySoftwareRelease>        SoundSynthBySoftwareRelease         { get; set; }
     public virtual DbSet<SoftwareVersionBySoftwareRelease>   SoftwareVersionBySoftwareRelease    { get; set; }
     public virtual DbSet<SoftwareBySoftwareRelease>          SoftwareBySoftwareRelease           { get; set; }
+    public virtual DbSet<UnM49>                              UnM49                               { get; set; }
+    public virtual DbSet<UnM49BySoftwareRelease>             UnM49BySoftwareRelease              { get; set; }
     public virtual DbSet<SoftwareScreenshot>                  SoftwareScreenshots                  { get; set; }
     public virtual DbSet<SoundByMachine>                      SoundByMachine                      { get; set; }
     public virtual DbSet<SoundByOwnedMachine>                 SoundByOwnedMachine                 { get; set; }
@@ -2249,7 +2251,6 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
             entity.HasIndex(x => new
             {
                 x.SoftwareVersionId,
-                x.RegionId,
                 x.PlatformId
             });
 
@@ -2277,14 +2278,36 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
                   .HasForeignKey(x => x.PlatformId)
                   .OnDelete(DeleteBehavior.SetNull);
 
-            entity.HasOne(x => x.Region)
-                  .WithMany(x => x.SoftwareReleases)
-                  .HasForeignKey(x => x.RegionId)
-                  .OnDelete(DeleteBehavior.Restrict);
-
             entity.HasOne(x => x.Publisher)
                   .WithMany(x => x.SoftwareReleases)
                   .HasForeignKey(x => x.PublisherId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<UnM49>(entity =>
+        {
+            entity.HasIndex(x => x.ParentId);
+            entity.HasIndex(x => x.Type);
+
+            entity.HasOne(x => x.Parent)
+                  .WithMany(x => x.Children)
+                  .HasForeignKey(x => x.ParentId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<UnM49BySoftwareRelease>(entity =>
+        {
+            entity.HasKey(x => new { x.SoftwareReleaseId, x.UnM49Id });
+
+            entity.HasOne(x => x.SoftwareRelease)
+                  .WithMany(x => x.Regions)
+                  .HasForeignKey(x => x.SoftwareReleaseId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.UnM49)
+                  .WithMany(x => x.SoftwareReleases)
+                  .HasForeignKey(x => x.UnM49Id)
                   .OnDelete(DeleteBehavior.Restrict);
         });
 

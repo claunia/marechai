@@ -112,7 +112,6 @@ public partial class SoftwareReleases
                 VariantId         = data.VariantId,
                 SubvariantId      = data.SubvariantId,
                 PlatformId        = data.PlatformId,
-                RegionId          = data.RegionId,
                 PublisherId       = data.PublisherId,
 
                 ReleaseDatePrecision = data.ReleaseDatePrecision,
@@ -156,7 +155,6 @@ public partial class SoftwareReleases
             { x => x.VariantId, full.VariantId },
             { x => x.SubvariantId, full.SubvariantId },
             { x => x.PlatformId, full.PlatformId },
-            { x => x.RegionId, full.RegionId },
             { x => x.PublisherId, full.PublisherId },
             { x => x.ReleaseDate, full.ReleaseDate?.DateTime },
             { x => x.ReleaseDatePrecision, full.ReleaseDatePrecision ?? 0 },
@@ -184,7 +182,6 @@ public partial class SoftwareReleases
                 VariantId         = data.VariantId,
                 SubvariantId      = data.SubvariantId,
                 PlatformId        = data.PlatformId,
-                RegionId          = data.RegionId,
 
                 ReleaseDatePrecision = data.ReleaseDatePrecision,
                 PublisherId       = data.PublisherId,
@@ -207,7 +204,7 @@ public partial class SoftwareReleases
 
     async Task ConfirmDelete(SoftwareReleaseDto release)
     {
-        string displayName = $"{release.Platform} / {release.Region}";
+        string displayName = release.Title ?? $"{release.Platform} / {release.Publisher}";
 
         DialogParameters<DeleteConfirmDialog> parameters = new()
         {

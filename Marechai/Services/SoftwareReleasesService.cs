@@ -451,17 +451,71 @@ public class SoftwareReleasesService(Marechai.ApiClient.Client client)
         }
     }
 
-    public async Task<List<Iso31661NumericDto>> GetCountriesAsync()
+    public async Task<List<UnM49Dto>> GetAllUnM49Async()
     {
         try
         {
-            List<Iso31661NumericDto>? countries = await client.Iso31661Numeric.GetAsync();
+            List<UnM49Dto>? regions = await client.UnM49.GetAsync();
 
-            return countries ?? [];
+            return regions ?? [];
         }
         catch
         {
             return [];
+        }
+    }
+
+    public async Task<List<UnM49BySoftwareReleaseDto>> GetReleaseRegionsAsync(int releaseId)
+    {
+        try
+        {
+            List<UnM49BySoftwareReleaseDto>? regions =
+                await client.Software.Releases[releaseId].Regions.GetAsync();
+
+            return regions ?? [];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> AddRegionToReleaseAsync(int releaseId, int regionId)
+    {
+        try
+        {
+            await client.Software.Releases[releaseId].Regions.PostAsync(new UnM49BySoftwareReleaseDto
+            {
+                UnM49Id = regionId
+            });
+
+            return (true, null);
+        }
+        catch(ApiException e)
+        {
+            return (false, e.Message);
+        }
+        catch(Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
+
+    public async Task<(bool succeeded, string? error)> RemoveRegionFromReleaseAsync(int releaseId, int regionId)
+    {
+        try
+        {
+            await client.Software.Releases[releaseId].Regions[regionId].DeleteAsync();
+
+            return (true, null);
+        }
+        catch(ApiException e)
+        {
+            return (false, e.Message);
+        }
+        catch(Exception e)
+        {
+            return (false, e.Message);
         }
     }
 

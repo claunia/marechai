@@ -210,7 +210,9 @@ public partial class SoftwareViewViewModel : ObservableObject, IRegionAware
                     Id              = (int)(release.Id ?? 0),
                     SoftwareVersion = release.SoftwareVersion,
                     Platform        = release.Platform,
-                    Region          = release.Region,
+                    Regions         = release.Regions is { Count: > 0 }
+                        ? string.Join(", ", release.Regions.Select(r => r.RegionName))
+                        : null,
                     Publisher       = release.Publisher,
                     ReleaseDate     = dateDisplay,
                     Variant         = release.Variant
@@ -349,7 +351,7 @@ public class ReleaseDisplayItem
     public int     Id              { get; set; }
     public string? SoftwareVersion { get; set; }
     public string? Platform        { get; set; }
-    public string? Region          { get; set; }
+    public string? Regions          { get; set; }
     public string? Publisher        { get; set; }
     public string? ReleaseDate     { get; set; }
     public string? Variant         { get; set; }

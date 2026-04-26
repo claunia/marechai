@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
 // MARECHAI: Master repository of computing history artifacts information
 // ----------------------------------------------------------------------------
 //
@@ -27,13 +27,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Marechai.Data;
 
 namespace Marechai.Database.Models;
 
-public class Iso31661Numeric
+public class UnM49
 {
-    public Iso31661Numeric() => Companies = new HashSet<Company>();
-
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime CreatedOn { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
@@ -42,12 +41,15 @@ public class Iso31661Numeric
     [Required]
     public short Id { get; set; }
     [Required]
-    [StringLength(64)]
+    [StringLength(128)]
     public string Name { get; set; }
 
-    public virtual ICollection<Company>         Companies        { get; set; }
-    public virtual ICollection<Person>          People           { get; set; }
-    public virtual ICollection<Document>        Documents        { get; set; }
-    public virtual ICollection<Book>            Books            { get; set; }
-    public virtual ICollection<Magazine>        Magazines        { get; set; }
+    public short? ParentId { get; set; }
+    public virtual UnM49 Parent { get; set; }
+
+    [Required]
+    public UnM49Type Type { get; set; }
+
+    public virtual ICollection<UnM49>                    Children         { get; set; }
+    public virtual ICollection<UnM49BySoftwareRelease>   SoftwareReleases { get; set; }
 }

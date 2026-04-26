@@ -38,16 +38,14 @@ namespace Marechai.ApiClient.Models
 #endif
         /// <summary>The publisher_id property</summary>
         public int? PublisherId { get; set; }
-        /// <summary>The region property</summary>
+        /// <summary>The regions property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Region { get; set; }
+        public List<global::Marechai.ApiClient.Models.UnM49BySoftwareReleaseDto>? Regions { get; set; }
 #nullable restore
 #else
-        public string Region { get; set; }
+        public List<global::Marechai.ApiClient.Models.UnM49BySoftwareReleaseDto> Regions { get; set; }
 #endif
-        /// <summary>The region_id property</summary>
-        public int? RegionId { get; set; }
         /// <summary>The release_date property</summary>
         public DateTimeOffset? ReleaseDate { get; set; }
         /// <summary>The release_date_precision property</summary>
@@ -131,8 +129,7 @@ namespace Marechai.ApiClient.Models
                 { "platform_id", n => { PlatformId = n.GetIntValue(); } },
                 { "publisher", n => { Publisher = n.GetStringValue(); } },
                 { "publisher_id", n => { PublisherId = n.GetIntValue(); } },
-                { "region", n => { Region = n.GetStringValue(); } },
-                { "region_id", n => { RegionId = n.GetIntValue(); } },
+                { "regions", n => { Regions = n.GetCollectionOfObjectValues<global::Marechai.ApiClient.Models.UnM49BySoftwareReleaseDto>(global::Marechai.ApiClient.Models.UnM49BySoftwareReleaseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "release_date", n => { ReleaseDate = n.GetDateTimeOffsetValue(); } },
                 { "release_date_precision", n => { ReleaseDatePrecision = n.GetIntValue(); } },
                 { "software", n => { Software = n.GetStringValue(); } },
@@ -159,8 +156,7 @@ namespace Marechai.ApiClient.Models
             writer.WriteIntValue("platform_id", PlatformId);
             writer.WriteStringValue("publisher", Publisher);
             writer.WriteIntValue("publisher_id", PublisherId);
-            writer.WriteStringValue("region", Region);
-            writer.WriteIntValue("region_id", RegionId);
+            writer.WriteCollectionOfObjectValues<global::Marechai.ApiClient.Models.UnM49BySoftwareReleaseDto>("regions", Regions);
             writer.WriteDateTimeOffsetValue("release_date", ReleaseDate);
             writer.WriteIntValue("release_date_precision", ReleaseDatePrecision);
             writer.WriteStringValue("software", Software);

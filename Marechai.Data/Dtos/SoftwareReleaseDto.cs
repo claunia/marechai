@@ -23,6 +23,7 @@
 // Copyright © 2003-2026 Natalia Portillo
 *******************************************************************************/
 
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -54,11 +55,8 @@ public class SoftwareReleaseDto : BaseDto<ulong>
     public ulong? PlatformId { get; set; }
     [JsonPropertyName("platform")]
     public string? Platform { get; set; }
-    [JsonPropertyName("region_id")]
-    [Required]
-    public short RegionId { get; set; }
-    [JsonPropertyName("region")]
-    public string? Region { get; set; }
+    [JsonPropertyName("regions")]
+    public List<UnM49BySoftwareReleaseDto>? Regions { get; set; }
     [JsonPropertyName("publisher_id")]
     [Required]
     public int PublisherId { get; set; }

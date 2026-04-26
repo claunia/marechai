@@ -101,6 +101,15 @@
     <data name="Region" xml:space="preserve">
         <value>Región</value>
     </data>
+    <data name="Regions" xml:space="preserve">
+        <value>Regiones</value>
+    </data>
+    <data name="Add region" xml:space="preserve">
+        <value>Añadir región</value>
+    </data>
+    <data name="Add" xml:space="preserve">
+        <value>Añadir</value>
+    </data>
     <data name="Publisher" xml:space="preserve">
         <value>Editor</value>
     </data>

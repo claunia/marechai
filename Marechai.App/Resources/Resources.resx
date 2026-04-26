@@ -2224,6 +2224,9 @@
   <data name="Software Release" xml:space="preserve"><value>Software Release</value></data>
   <data name="SoftwarePlatformLabel" xml:space="preserve"><value>Platform</value></data>
   <data name="SoftwareRegionLabel" xml:space="preserve"><value>Region</value></data>
+  <data name="SoftwareRegionsLabel" xml:space="preserve"><value>Regions</value></data>
+  <data name="RegionsLabel" xml:space="preserve"><value>Regions</value></data>
+  <data name="AddRegionLabel" xml:space="preserve"><value>Add region</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Publisher</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Release Date</value></data>
   <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variant</value></data>

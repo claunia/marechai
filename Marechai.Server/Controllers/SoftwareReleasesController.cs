@@ -24,7 +24,6 @@
 *******************************************************************************/
 
 using System;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -65,8 +64,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                     Subvariant        = r.Subvariant.Name,
                                                                     PlatformId        = r.PlatformId,
                                                                     Platform          = r.Platform.Name,
-                                                                    RegionId          = r.RegionId,
-                                                                    Region            = r.Region.Name,
+                                                                    Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+                                                                    {
+                                                                        SoftwareReleaseId = rg.SoftwareReleaseId,
+                                                                        UnM49Id           = rg.UnM49Id,
+                                                                        RegionName        = rg.UnM49.Name
+                                                                    }).ToList(),
                                                                     PublisherId       = r.PublisherId,
                                                                     Publisher         = r.Publisher.Name,
                                                                     ReleaseDate       = r.ReleaseDate,
@@ -96,8 +99,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             Subvariant        = r.Subvariant.Name,
             PlatformId        = r.PlatformId,
             Platform          = r.Platform.Name,
-            RegionId          = r.RegionId,
-            Region            = r.Region.Name,
+            Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+            {
+                SoftwareReleaseId = rg.SoftwareReleaseId,
+                UnM49Id           = rg.UnM49Id,
+                RegionName        = rg.UnM49.Name
+            }).ToList(),
             PublisherId       = r.PublisherId,
             Publisher         = r.Publisher.Name,
             ReleaseDate       = r.ReleaseDate,
@@ -128,8 +135,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             Subvariant        = r.Subvariant.Name,
             PlatformId        = r.PlatformId,
             Platform          = r.Platform.Name,
-            RegionId          = r.RegionId,
-            Region            = r.Region.Name,
+            Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+            {
+                SoftwareReleaseId = rg.SoftwareReleaseId,
+                UnM49Id           = rg.UnM49Id,
+                RegionName        = rg.UnM49.Name
+            }).ToList(),
             PublisherId       = r.PublisherId,
             Publisher         = r.Publisher.Name,
             ReleaseDate       = r.ReleaseDate,
@@ -157,8 +168,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                                                                       Subvariant        = r.Subvariant.Name,
                                                                       PlatformId        = r.PlatformId,
                                                                       Platform          = r.Platform.Name,
-                                                                      RegionId          = r.RegionId,
-                                                                      Region            = r.Region.Name,
+                                                                      Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+                                                                      {
+                                                                          SoftwareReleaseId = rg.SoftwareReleaseId,
+                                                                          UnM49Id           = rg.UnM49Id,
+                                                                          RegionName        = rg.UnM49.Name
+                                                                      }).ToList(),
                                                                       PublisherId       = r.PublisherId,
                                                                       Publisher         = r.Publisher.Name,
                                                                       ReleaseDate       = r.ReleaseDate,
@@ -194,7 +209,6 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         model.VariantId         = dto.VariantId;
         model.SubvariantId      = dto.SubvariantId;
         model.PlatformId        = dto.PlatformId;
-        model.RegionId          = dto.RegionId;
         model.PublisherId       = dto.PublisherId;
         model.ReleaseDate       = dto.ReleaseDate;
         model.ReleaseDatePrecision = dto.ReleaseDatePrecision;
@@ -234,7 +248,6 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             VariantId         = dto.VariantId,
             SubvariantId      = dto.SubvariantId,
             PlatformId        = dto.PlatformId,
-            RegionId          = dto.RegionId,
             PublisherId       = dto.PublisherId,
             ReleaseDate       = dto.ReleaseDate,
             ReleaseDatePrecision = dto.ReleaseDatePrecision
@@ -397,8 +410,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
             SoftwareVersionId = r.SoftwareVersionId,
             PlatformId        = r.PlatformId,
             Platform          = r.Platform.Name,
-            RegionId          = r.RegionId,
-            Region            = r.Region.Name,
+            Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+            {
+                SoftwareReleaseId = rg.SoftwareReleaseId,
+                UnM49Id           = rg.UnM49Id,
+                RegionName        = rg.UnM49.Name
+            }).ToList(),
             PublisherId       = r.PublisherId,
             Publisher         = r.Publisher.Name,
             ReleaseDate       = r.ReleaseDate,
@@ -435,8 +452,12 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
                          SoftwareVersionId = r.SoftwareVersionId,
                          PlatformId        = r.PlatformId,
                          Platform          = r.Platform.Name,
-                         RegionId          = r.RegionId,
-                         Region            = r.Region.Name,
+                         Regions           = r.Regions.Select(rg => new UnM49BySoftwareReleaseDto
+                         {
+                             SoftwareReleaseId = rg.SoftwareReleaseId,
+                             UnM49Id           = rg.UnM49Id,
+                             RegionName        = rg.UnM49.Name
+                         }).ToList(),
                          PublisherId       = r.PublisherId,
                          Publisher         = r.Publisher.Name,
                          ReleaseDate       = r.ReleaseDate,
@@ -622,5 +643,85 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
         }
 
         return compilationName;
+    }
+
+    // --- Region junction endpoints ---
+
+    [HttpGet("{releaseId:ulong}/regions")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public Task<List<UnM49BySoftwareReleaseDto>> GetRegionsAsync(ulong releaseId) =>
+        context.UnM49BySoftwareRelease
+               .Where(x => x.SoftwareReleaseId == releaseId)
+               .OrderBy(x => x.UnM49.Type)
+               .ThenBy(x => x.UnM49.Name)
+               .Select(x => new UnM49BySoftwareReleaseDto
+                {
+                    SoftwareReleaseId = x.SoftwareReleaseId,
+                    UnM49Id           = x.UnM49Id,
+                    RegionName        = x.UnM49.Name
+                })
+               .ToListAsync();
+
+    [HttpPost("{releaseId:ulong}/regions")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> AddRegionAsync(ulong releaseId,
+                                                   [FromBody] UnM49BySoftwareReleaseDto dto)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        SoftwareRelease release = await context.SoftwareReleases.FindAsync(releaseId);
+
+        if(release is null) return NotFound();
+
+        bool exists = await context.UnM49BySoftwareRelease
+                                   .AnyAsync(x => x.SoftwareReleaseId == releaseId
+                                               && x.UnM49Id           == dto.UnM49Id);
+
+        if(exists) return BadRequest("This region is already assigned to the release.");
+
+        bool regionExists = await context.UnM49.AnyAsync(r => r.Id == dto.UnM49Id);
+
+        if(!regionExists) return BadRequest("The specified region does not exist.");
+
+        await context.UnM49BySoftwareRelease.AddAsync(new UnM49BySoftwareRelease
+        {
+            SoftwareReleaseId = releaseId,
+            UnM49Id           = dto.UnM49Id
+        });
+
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
+    }
+
+    [HttpDelete("{releaseId:ulong}/regions/{regionId:int}")]
+    [Authorize(Roles = "Admin,UberAdmin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> RemoveRegionAsync(ulong releaseId, short regionId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.Sid);
+
+        if(userId is null) return Unauthorized();
+
+        UnM49BySoftwareRelease entry =
+            await context.UnM49BySoftwareRelease
+                         .FirstOrDefaultAsync(x => x.SoftwareReleaseId == releaseId
+                                                && x.UnM49Id           == regionId);
+
+        if(entry is null) return NotFound();
+
+        context.UnM49BySoftwareRelease.Remove(entry);
+        await context.SaveChangesWithUserAsync(userId);
+
+        return Ok();
     }
 }

@@ -76,6 +76,14 @@ public static class All
                           (end - start).TotalSeconds);
 
         start = DateTime.Now;
+        Console.WriteLine("\u001b[31;1mSeeding UN M.49 regions...\u001b[0m");
+        UnM49Seeder.Seed(context);
+        end = DateTime.Now;
+
+        Console.WriteLine("\u001b[31;1mTook \u001b[32;1m{0} seconds\u001b[31;1m...\u001b[0m",
+                          (end - start).TotalSeconds);
+
+        start = DateTime.Now;
         Console.WriteLine("\u001b[31;1mSeeding document roles...\u001b[0m");
         DocumentRoles.Seed(context);
         end = DateTime.Now;

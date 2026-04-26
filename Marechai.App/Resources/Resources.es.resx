@@ -2018,6 +2018,9 @@
   <data name="Software Release" xml:space="preserve"><value>Publicación de software</value></data>
   <data name="SoftwarePlatformLabel" xml:space="preserve"><value>Plataforma</value></data>
   <data name="SoftwareRegionLabel" xml:space="preserve"><value>Región</value></data>
+  <data name="SoftwareRegionsLabel" xml:space="preserve"><value>Regiones</value></data>
+  <data name="RegionsLabel" xml:space="preserve"><value>Regiones</value></data>
+  <data name="AddRegionLabel" xml:space="preserve"><value>Añadir región</value></data>
   <data name="SoftwarePublisherLabel" xml:space="preserve"><value>Editor</value></data>
   <data name="SoftwareReleaseDateLabel" xml:space="preserve"><value>Fecha de publicación</value></data>
   <data name="SoftwareVariantLabel" xml:space="preserve"><value>Variante</value></data>

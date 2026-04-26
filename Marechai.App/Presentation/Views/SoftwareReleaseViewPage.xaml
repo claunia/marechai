@@ -142,10 +142,10 @@
                         </StackPanel>
 
                         <StackPanel Grid.Column="1"
-                                    Visibility="{Binding ShowRegion}"
+                                    Visibility="{Binding ShowRegions}"
                                     Spacing="8">
                             <TextBlock
-                                       Text="{Binding Source={StaticResource Strings}, Path=SoftwareRegionLabel}"
+                                       Text="{Binding Source={StaticResource Strings}, Path=SoftwareRegionsLabel}"
                                        FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemBaseMediumColor}" />
@@ -154,8 +154,9 @@
                                     BorderThickness="1"
                                     CornerRadius="8"
                                     Padding="16,12">
-                                <TextBlock Text="{Binding Region}"
+                                <TextBlock Text="{Binding RegionsDisplay}"
                                            FontSize="14"
+                                           TextWrapping="Wrap"
                                            Foreground="{ThemeResource TextControlForeground}" />
                             </Border>
                         </StackPanel>

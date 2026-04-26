@@ -48,7 +48,6 @@
                                 <controls:DataGrid.Columns>
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=SoftwareVersionColumn_Header}" Binding="{Binding SoftwareVersion}" Width="2*" />
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=PlatformColumn_Header}" Binding="{Binding Platform}" Width="*" />
-                                    <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=RegionColumn_Header}" Binding="{Binding Region}" Width="*" />
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=PublisherColumn_Header}" Binding="{Binding Publisher}" Width="*" />
                                     <controls:DataGridTextColumn Header="{Binding Source={StaticResource Strings}, Path=ReleaseDateColumn_Header}" Binding="{Binding ReleaseDate, Converter={StaticResource DateOnlyConverter}}" Width="Auto" />
                                     <controls:DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=ActionsColumn_Header}" Width="Auto">
@@ -97,12 +96,35 @@
                                         <ComboBox Header="{Binding Source={StaticResource Strings}, Path=PlatformLabel}"
                                                   ItemsSource="{Binding Platforms}" SelectedItem="{Binding SelectedPlatform, Mode=TwoWay}"
                                                   DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=PlatformLabel}" />
-                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=RegionLabel}"
+                                        <!-- Regions (multi-entry) -->
+                                        <TextBlock Text="{Binding Source={StaticResource Strings}, Path=RegionsLabel}"
+                                                   FontSize="14" FontWeight="SemiBold" Margin="0,8,0,4" />
+                                        <ItemsRepeater ItemsSource="{Binding ReleaseRegionDisplays}">
+                                            <ItemsRepeater.Layout>
+                                                <StackLayout Orientation="Vertical" Spacing="4" />
+                                            </ItemsRepeater.Layout>
+                                            <ItemsRepeater.ItemTemplate>
+                                                <DataTemplate x:DataType="x:String">
+                                                    <Grid ColumnSpacing="8">
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" />
+                                                        <Button Grid.Column="1" Content="✕" Padding="4,2"
+                                                                Command="{Binding DataContext.RemoveRegionCommand, ElementName=PageRoot}"
+                                                                CommandParameter="{Binding}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsRepeater.ItemTemplate>
+                                        </ItemsRepeater>
+                                        <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=AddRegionLabel}"
                                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
                                                         Text="{Binding RegionSearchText, Mode=TwoWay}" QueryIcon="Find"
                                                         x:Name="RegionFilterBox" TextChanged="RegionFilterBox_TextChanged" />
-                                        <ComboBox ItemsSource="{Binding RegionSuggestions}" SelectedItem="{Binding SelectedRegion, Mode=TwoWay}"
-                                                  DisplayMemberPath="Name" HorizontalAlignment="Stretch" PlaceholderText="{Binding Source={StaticResource Strings}, Path=RegionLabel}" />
+                                        <ComboBox ItemsSource="{Binding RegionSuggestions}" SelectedItem="{Binding SelectedRegionToAdd, Mode=TwoWay}"
+                                                  DisplayMemberPath="Name" HorizontalAlignment="Stretch"
+                                                  PlaceholderText="{Binding Source={StaticResource Strings}, Path=RegionLabel}" />
+                                        <Button Content="{Binding Source={StaticResource Strings}, Path=AddButton}"
+                                                Command="{Binding AddRegionCommand}" HorizontalAlignment="Stretch"
+                                                Margin="0,4,0,0" />
                                         <AutoSuggestBox Header="{Binding Source={StaticResource Strings}, Path=PublisherLabel}"
                                                         PlaceholderText="{Binding Source={StaticResource Strings}, Path=SearchPlaceholder}"
                                                         Text="{Binding PublisherSearchText, Mode=TwoWay}" QueryIcon="Find"

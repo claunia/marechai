@@ -854,3 +854,15 @@ public enum DatePrecision : byte
     [Display(Name = "Year only")]
     YearOnly  = 2
 }
+
+public enum UnM49Type : byte
+{
+    [Display(Name = "World")]
+    World     = 0,
+    [Display(Name = "Continent")]
+    Continent = 1,
+    [Display(Name = "Sub-region")]
+    SubRegion = 2,
+    [Display(Name = "Country")]
+    Country   = 3
+}

@@ -43,9 +43,11 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     [ObservableProperty] private ObservableCollection<SoftwareVersionDto> _versionSuggestions = [];
     [ObservableProperty] private SoftwarePlatformDto? _selectedPlatform;
     [ObservableProperty] private ObservableCollection<SoftwarePlatformDto> _platforms = [];
-    [ObservableProperty] private Iso31661NumericDto? _selectedRegion;
+    [ObservableProperty] private UnM49Dto? _selectedRegionToAdd;
     [ObservableProperty] private string _regionSearchText = string.Empty;
-    [ObservableProperty] private ObservableCollection<Iso31661NumericDto> _regionSuggestions = [];
+    [ObservableProperty] private ObservableCollection<UnM49Dto> _regionSuggestions = [];
+    [ObservableProperty] private ObservableCollection<UnM49BySoftwareReleaseDto> _releaseRegions = [];
+    [ObservableProperty] private ObservableCollection<string> _releaseRegionDisplays = [];
     [ObservableProperty] private CompanyDto? _selectedPublisher;
     [ObservableProperty] private string _publisherSearchText = string.Empty;
     [ObservableProperty] private ObservableCollection<CompanyDto> _publisherSuggestions = [];
@@ -113,7 +115,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     private List<SoftwareReleaseDto>? _allReleases;
     private List<SoftwareVersionDto>? _allVersions;
     private List<SoftwarePlatformDto>? _allPlatforms;
-    private List<Iso31661NumericDto>? _allRegions;
+    private List<UnM49Dto>? _allRegions;
     private List<CompanyDto>? _allCompanies;
     private List<GpuDto>? _allGpus;
     private List<SoundSynthDto>? _allSoundSynths;
@@ -155,6 +157,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         RemoveSoundSynthCommand    = new AsyncRelayCommand<string>(RemoveSoundSynthByDisplayAsync);
         AddIncludedVersionCommand    = new AsyncRelayCommand(AddIncludedVersionAsync);
         RemoveIncludedVersionCommand = new AsyncRelayCommand<string>(RemoveIncludedVersionByDisplayAsync);
+        AddRegionCommand             = new AsyncRelayCommand(AddRegionAsync);
+        RemoveRegionCommand          = new AsyncRelayCommand<string>(RemoveRegionByDisplayAsync);
 
         CheckAdminRole();
     }
@@ -178,6 +182,8 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     public IAsyncRelayCommand<string> RemoveSoundSynthCommand     { get; }
     public IAsyncRelayCommand         AddIncludedVersionCommand   { get; }
     public IAsyncRelayCommand<string> RemoveIncludedVersionCommand { get; }
+    public IAsyncRelayCommand         AddRegionCommand             { get; }
+    public IAsyncRelayCommand<string> RemoveRegionCommand          { get; }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
@@ -250,7 +256,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         }
         catch(Exception ex) { _logger.LogError(ex, "Error loading platforms for picker"); }
 
-        try { _allRegions = await _apiClient.Iso31661Numeric.GetAsync(); }
+        try { _allRegions = await _apiClient.UnM49.GetAsync(); }
         catch(Exception ex) { _logger.LogError(ex, "Error loading regions for picker"); }
 
         try { _allCompanies = await _apiClient.Companies.GetAsync(); }
@@ -309,17 +315,10 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             UpdateVersionSuggestions(string.Empty);
         }
 
-        // Region picker
-        if(item.RegionId.HasValue && _allRegions != null)
-        {
-            UpdateRegionSuggestions(string.Empty);
-            SelectedRegion = RegionSuggestions.FirstOrDefault(r => r.Id == item.RegionId.Value);
-            if(SelectedRegion != null) RegionSearchText = SelectedRegion.Name ?? string.Empty;
-        }
-        else
-        {
-            UpdateRegionSuggestions(string.Empty);
-        }
+        // Region management - load existing regions
+        ReleaseRegions.Clear();
+        ReleaseRegionDisplays.Clear();
+        UpdateRegionSuggestions(string.Empty);
 
         // Publisher picker
         if(item.PublisherId.HasValue && _allCompanies != null)
@@ -353,6 +352,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
             await LoadMinimumGpusAsync(item.Id.Value);
             await LoadRecommendedGpusAsync(item.Id.Value);
             await LoadSoundSynthsAsync(item.Id.Value);
+            await LoadReleaseRegionsAsync(item.Id.Value);
 
             if(IsCompilation)
             {
@@ -390,7 +390,6 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                 SoftwareId        = IsCompilation ? null : SelectedSoftware?.Id,
                 SoftwareVersionId = IsCompilation ? null : SelectedVersion?.Id,
                 PlatformId        = SelectedPlatform?.Id,
-                RegionId          = SelectedRegion?.Id,
                 PublisherId       = SelectedPublisher?.Id,
                 ReleaseDate       = ReleaseDate,
                 ReleaseDatePrecision = ReleaseDatePrecision
@@ -434,7 +433,7 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
                 (r.Title != null && r.Title.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (r.SoftwareVersion != null && r.SoftwareVersion.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
                 (r.Platform != null && r.Platform.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
-                (r.Region != null && r.Region.Contains(FilterText, StringComparison.OrdinalIgnoreCase)) ||
+                (r.Regions != null && r.Regions.Any(rg => rg.RegionName != null && rg.RegionName.Contains(FilterText, StringComparison.OrdinalIgnoreCase))) ||
                 (r.Publisher != null && r.Publisher.Contains(FilterText, StringComparison.OrdinalIgnoreCase)));
         foreach(SoftwareReleaseDto item in source) FilteredReleases.Add(item);
     }
@@ -456,10 +455,60 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
     {
         RegionSuggestions.Clear();
         if(_allRegions == null) return;
-        IEnumerable<Iso31661NumericDto> source = _allRegions;
+        var assignedIds = new HashSet<int?>(ReleaseRegions.Select(r => r.UnM49Id));
+        IEnumerable<UnM49Dto> source = _allRegions.Where(r => !assignedIds.Contains(r.Id));
         if(!string.IsNullOrWhiteSpace(query))
             source = source.Where(r => r.Name != null && r.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
-        foreach(Iso31661NumericDto match in source) RegionSuggestions.Add(match);
+        foreach(UnM49Dto match in source) RegionSuggestions.Add(match);
+    }
+
+    public async Task AddRegionAsync()
+    {
+        if(SelectedRegionToAdd?.Id == null || _editingId == null) return;
+
+        try
+        {
+            await _apiClient.Software.Releases[_editingId.Value].Regions.PostAsync(
+                new UnM49BySoftwareReleaseDto { UnM49Id = SelectedRegionToAdd.Id });
+            await LoadReleaseRegionsAsync(_editingId.Value);
+            SelectedRegionToAdd = null;
+            RegionSearchText = string.Empty;
+            UpdateRegionSuggestions(string.Empty);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error adding region"); }
+    }
+
+    public async Task RemoveRegionByDisplayAsync(string? display)
+    {
+        if(display == null || _editingId == null) return;
+        UnM49BySoftwareReleaseDto? region = ReleaseRegions.FirstOrDefault(r => r.RegionName == display);
+        if(region?.UnM49Id == null) return;
+
+        try
+        {
+            await _apiClient.Software.Releases[_editingId.Value].Regions[region.UnM49Id.Value].DeleteAsync();
+            await LoadReleaseRegionsAsync(_editingId.Value);
+            UpdateRegionSuggestions(RegionSearchText);
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error removing region"); }
+    }
+
+    private async Task LoadReleaseRegionsAsync(int releaseId)
+    {
+        try
+        {
+            List<UnM49BySoftwareReleaseDto>? regions =
+                await _apiClient.Software.Releases[releaseId].Regions.GetAsync();
+            ReleaseRegions.Clear();
+            ReleaseRegionDisplays.Clear();
+            if(regions != null)
+                foreach(UnM49BySoftwareReleaseDto r in regions)
+                {
+                    ReleaseRegions.Add(r);
+                    ReleaseRegionDisplays.Add(r.RegionName ?? $"ID: {r.UnM49Id}");
+                }
+        }
+        catch(Exception ex) { _logger.LogError(ex, "Error loading release regions"); }
     }
 
     public void UpdatePublisherSuggestions(string query)
@@ -835,8 +884,10 @@ public partial class AdminSoftwareReleasesViewModel : ObservableObject, IRegionA
         SelectedVersion    = null;
         VersionSearchText  = string.Empty;
         SelectedPlatform   = null;
-        SelectedRegion     = null;
+        SelectedRegionToAdd = null;
         RegionSearchText   = string.Empty;
+        ReleaseRegions.Clear();
+        ReleaseRegionDisplays.Clear();
         SelectedPublisher  = null;
         PublisherSearchText = string.Empty;
         ReleaseDate        = null;
