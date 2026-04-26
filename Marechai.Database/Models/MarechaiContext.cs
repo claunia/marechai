@@ -2316,6 +2316,8 @@ public class MarechaiContext : IdentityDbContext<ApplicationUser, ApplicationRol
         {
             entity.HasKey(x => new { x.SoftwareReleaseId, x.LanguageCode });
 
+            entity.Property(x => x.LanguageCode).UseCollation("utf8mb4_general_ci");
+
             entity.HasOne(x => x.SoftwareRelease)
                   .WithMany(x => x.Languages)
                   .HasForeignKey(x => x.SoftwareReleaseId)

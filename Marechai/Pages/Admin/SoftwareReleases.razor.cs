@@ -202,6 +202,22 @@ public partial class SoftwareReleases
         }
     }
 
+    async Task OpenImportDialog()
+    {
+        IDialogReference dialog =
+            await DialogService.ShowAsync<SoftwareReleaseImportDialog>(L["Import CSV"],
+                                                                       new DialogOptions
+                                                                       {
+                                                                           MaxWidth  = MaxWidth.ExtraLarge,
+                                                                           FullWidth = true
+                                                                       });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadDataAsync();
+    }
+
     async Task ConfirmDelete(SoftwareReleaseDto release)
     {
         string displayName = release.Title ?? $"{release.Platform} / {release.Publisher}";

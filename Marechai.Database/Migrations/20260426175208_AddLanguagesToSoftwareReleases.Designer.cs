@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marechai.Database.Migrations
 {
     [DbContext(typeof(MarechaiContext))]
-    [Migration("20260426161623_AddLanguagesToSoftwareReleases")]
+    [Migration("20260426175208_AddLanguagesToSoftwareReleases")]
     partial class AddLanguagesToSoftwareReleases
     {
         /// <inheritdoc />
@@ -2539,7 +2539,8 @@ namespace Marechai.Database.Migrations
 
                     b.Property<string>("LanguageCode")
                         .HasMaxLength(3)
-                        .HasColumnType("char(3)");
+                        .HasColumnType("char(3)")
+                        .UseCollation("utf8mb4_general_ci");
 
                     b.HasKey("SoftwareReleaseId", "LanguageCode");
 

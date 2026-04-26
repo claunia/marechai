@@ -2536,7 +2536,8 @@ namespace Marechai.Database.Migrations
 
                     b.Property<string>("LanguageCode")
                         .HasMaxLength(3)
-                        .HasColumnType("char(3)");
+                        .HasColumnType("char(3)")
+                        .UseCollation("utf8mb4_general_ci");
 
                     b.HasKey("SoftwareReleaseId", "LanguageCode");
 

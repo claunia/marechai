@@ -1,0 +1,1017 @@
+@{
+    /******************************************************************************
+    // MARECHAI: Master repository of computing history artifacts information
+    // ----------------------------------------------------------------------------
+    //
+    // Author(s)      : Natalia Portillo <claunia@claunia.com>
+    //
+    // --[ License ] --------------------------------------------------------------
+    //
+    //     This program is free software: you can redistribute it and/or modify
+    //     it under the terms of the GNU General Public License as
+    //     published by the Free Software Foundation, either version 3 of the
+    //     License, or (at your option) any later version.
+    //
+    //     This program is distributed in the hope that it will be useful,
+    //     but WITHOUT ANY WARRANTY; without even the implied warranty of
+    //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    //     GNU General Public License for more details.
+    //
+    //     You should have received a copy of the GNU General Public License
+    //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    //
+    // ----------------------------------------------------------------------------
+    // Copyright © 2003-2026 Natalia Portillo
+    *******************************************************************************/
+}
+
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using Marechai.Helpers
+@inject SoftwareReleasesService SoftwareReleasesService
+@inject SoftwareService SoftwareService
+@inject SoftwarePlatformsService SoftwarePlatformsService
+@inject IStringLocalizer<SoftwareReleasesService> L
+@inject IJSRuntime JsRuntime
+
+<MudDialog>
+    <DialogContent>
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+        }
+
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudStack Spacing="4">
+                    <MudText Typo="Typo.body1">@L["Upload a CSV file to import software releases in bulk. Download the template first to see the expected format."]</MudText>
+
+                    <MudStack Row="true" Spacing="2">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadTemplate">
+                            @L["Download Template"]
+                        </MudButton>
+                    </MudStack>
+
+                    <MudFileUpload T="IBrowserFile"
+                                   Accept=".csv"
+                                   FilesChanged="OnCsvFileSelected"
+                                   MaximumFileCount="1">
+                        <ActivatorContent>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Upload"
+                                       Disabled="_isProcessing">
+                                @(_isProcessing ? L["Processing..."] : L["Upload CSV"])
+                            </MudButton>
+                        </ActivatorContent>
+                    </MudFileUpload>
+
+                    @if(_isProcessing)
+                    {
+                        <MudProgressLinear Indeterminate="true" Color="Color.Primary"/>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Preview:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Info" Dense="true">
+                        @string.Format(L["{0} rows parsed. {1} auto-rejected (no publisher match, missing software, or validation error). Selected rows will be REJECTED — unselected rows will be imported."],
+                            _importRows.Count,
+                            _selectedItems.Count)
+                    </MudAlert>
+
+                    <MudDataGrid T="SoftwareReleaseImportRow"
+                                 Items="_importRows"
+                                 MultiSelection="true"
+                                 @bind-SelectedItems="_selectedItems"
+                                 Dense="true"
+                                 Hover="true"
+                                 Striped="true"
+                                 FixedHeader="true"
+                                 Height="400px">
+                        <Columns>
+                            <SelectColumn T="SoftwareReleaseImportRow"/>
+                            <TemplateColumn Title="@L["Title"]">
+                                <CellTemplate>
+                                    <div style="@(context.Item.IsDuplicate ? "background-color: #ffe0b2; padding: 4px 8px; border-radius: 4px;" : "")">
+                                        @if(context.Item.IsDuplicate)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" Color="Color.Warning" Class="mr-1" Title="@L["Duplicate release"]"/>
+                                        }
+                                        @(context.Item.Title ?? "")
+                                        @if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ValidationError"/>
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Is Compilation"]">
+                                <CellTemplate>
+                                    @if(context.Item.IsCompilation is null)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Title="@L["Invalid boolean value"]"/>
+                                    }
+                                    else
+                                    {
+                                        @(context.Item.IsCompilation == true ? "✓" : "✗")
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Software"]">
+                                <CellTemplate>
+                                    @if(context.Item.IsCompilation == true)
+                                    {
+                                        <MudText Typo="Typo.body2" Style="color: #9e9e9e; font-style: italic;">@L["N/A (compilation)"]</MudText>
+                                    }
+                                    else
+                                    {
+                                        string swBgColor = context.Item.SoftwareMatch switch
+                                        {
+                                            SoftwareMatchType.Exact   => "#c8e6c9",
+                                            SoftwareMatchType.Partial => "#fff9c4",
+                                            SoftwareMatchType.New     => "#bbdefb",
+                                            _                         => string.IsNullOrWhiteSpace(context.Item.SoftwareInput) ? "#ffcdd2" : ""
+                                        };
+
+                                        <div style="@(string.IsNullOrEmpty(swBgColor) ? "" : $"background-color: {swBgColor}; color: black; padding: 4px 8px; border-radius: 4px;")">
+                                            @if(context.Item.SoftwareMatch == SoftwareMatchType.Partial && context.Item.MatchedSoftware.Count > 1)
+                                            {
+                                                <MudSelect T="SoftwareDto"
+                                                           Value="context.Item.SelectedSoftware"
+                                                           ValueChanged="(s) => OnSoftwareSelected(context.Item, s)"
+                                                           Dense="true"
+                                                           Margin="Margin.Dense"
+                                                           Variant="Variant.Text"
+                                                           ToStringFunc="@(s => s?.Name ?? "")">
+                                                    @foreach(SoftwareDto sw in context.Item.MatchedSoftware)
+                                                    {
+                                                        <MudSelectItem T="SoftwareDto" Value="sw">@sw.Name</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            }
+                                            else if(context.Item.SoftwareMatch == SoftwareMatchType.New)
+                                            {
+                                                @(context.Item.SoftwareInput)
+                                                <span>*</span>
+                                            }
+                                            else
+                                            {
+                                                @context.Item.SoftwareDisplay
+                                            }
+                                        </div>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Platform"]">
+                                <CellTemplate>
+                                    @if(string.IsNullOrWhiteSpace(context.Item.PlatformInput))
+                                    {
+                                        @:&nbsp;
+                                    }
+                                    else
+                                    {
+                                        string platBgColor = context.Item.PlatformMatch switch
+                                        {
+                                            PlatformMatchType.Exact   => "#c8e6c9",
+                                            PlatformMatchType.Partial => "#fff9c4",
+                                            PlatformMatchType.New     => "#bbdefb",
+                                            _                         => ""
+                                        };
+
+                                        <div style="@(string.IsNullOrEmpty(platBgColor) ? "" : $"background-color: {platBgColor}; color: black; padding: 4px 8px; border-radius: 4px;")">
+                                            @if(context.Item.PlatformMatch == PlatformMatchType.Partial && context.Item.MatchedPlatforms.Count > 1)
+                                            {
+                                                <MudSelect T="SoftwarePlatformDto"
+                                                           Value="context.Item.SelectedPlatform"
+                                                           ValueChanged="(p) => OnPlatformSelected(context.Item, p)"
+                                                           Dense="true"
+                                                           Margin="Margin.Dense"
+                                                           Variant="Variant.Text"
+                                                           ToStringFunc="@(p => p?.Name ?? "")">
+                                                    @foreach(SoftwarePlatformDto plat in context.Item.MatchedPlatforms)
+                                                    {
+                                                        <MudSelectItem T="SoftwarePlatformDto" Value="plat">@plat.Name</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            }
+                                            else if(context.Item.PlatformMatch == PlatformMatchType.New)
+                                            {
+                                                @(context.Item.PlatformInput)
+                                                <span>*</span>
+                                            }
+                                            else
+                                            {
+                                                @context.Item.PlatformDisplay
+                                            }
+                                        </div>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Publisher"]">
+                                <CellTemplate>
+                                    @{
+                                        string pubBgColor = context.Item.PublisherMatch switch
+                                        {
+                                            CompanyMatchType.Exact   => "#c8e6c9",
+                                            CompanyMatchType.Partial => "#fff9c4",
+                                            _                       => string.IsNullOrWhiteSpace(context.Item.PublisherInput) ? "" : "#ffcdd2"
+                                        };
+                                    }
+                                    <div style="@(string.IsNullOrEmpty(pubBgColor) ? "" : $"background-color: {pubBgColor}; color: black; padding: 4px 8px; border-radius: 4px;")">
+                                        @if(context.Item.PublisherMatch == CompanyMatchType.Partial && context.Item.MatchedPublishers.Count > 1)
+                                        {
+                                            <MudSelect T="CompanyDto"
+                                                       Value="context.Item.SelectedPublisher"
+                                                       ValueChanged="(c) => OnPublisherSelected(context.Item, c)"
+                                                       Dense="true"
+                                                       Margin="Margin.Dense"
+                                                       Variant="Variant.Text"
+                                                       ToStringFunc="@(c => c?.Name ?? "")">
+                                                @foreach(CompanyDto company in context.Item.MatchedPublishers)
+                                                {
+                                                    <MudSelectItem T="CompanyDto" Value="company">@company.Name</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        }
+                                        else
+                                        {
+                                            @context.Item.PublisherDisplay
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Release date"]">
+                                <CellTemplate>
+                                    @if(context.Item.ReleaseYear is not null)
+                                    {
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                            <MudText Typo="Typo.body2">@FormatImportDate(context.Item.ReleaseYear, context.Item.ReleaseMonth, context.Item.ReleaseDay)</MudText>
+                                            <MudChip T="string" Size="Size.Small"
+                                                     Color="@(context.Item.ReleaseDatePrecision == 0 ? Color.Success : context.Item.ReleaseDatePrecision == 1 ? Color.Warning : Color.Info)"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 2px 8px; font-size: 0.7rem;">
+                                                @(context.Item.ReleaseDatePrecision switch
+                                                {
+                                                    0 => L["Full date"],
+                                                    1 => L["Month and year only"],
+                                                    2 => L["Year only"],
+                                                    _ => ""
+                                                })
+                                            </MudChip>
+                                        </MudStack>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                    </MudDataGrid>
+
+                    @if(_importRows.Any(r => r.SoftwareMatch == SoftwareMatchType.New || r.PlatformMatch == PlatformMatchType.New))
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Info">
+                            @L["* A new software or platform entry will be created with this name during import."]
+                        </MudText>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Importing:
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body1">@string.Format(L["Importing {0} of {1}..."], _importedCount + _failedCount, _totalToImport)</MudText>
+                    <MudProgressLinear Value="_progressPercent" Color="Color.Primary" Rounded="true" Size="Size.Large">
+                        <ChildContent>
+                            <MudText Typo="Typo.body2" Style="color: white;">
+                                @($"{_progressPercent:F0}%")
+                            </MudText>
+                        </ChildContent>
+                    </MudProgressLinear>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudDataGrid T="SoftwareReleaseImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <TemplateColumn Title="@L["Title"]">
+                                    <CellTemplate>
+                                        @(context.Item.Title ?? "")
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ImportError"/>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Software"]">
+                                    <CellTemplate>
+                                        @context.Item.SoftwareDisplay
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Publisher"]">
+                                    <CellTemplate>
+                                        @context.Item.PublisherDisplay
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Complete:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Success" Dense="true">
+                        @string.Format(L["Import complete. {0} imported, {1} rejected, {2} failed."], _importedCount, _rejectedCount, _failedCount)
+                    </MudAlert>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudText Typo="Typo.body2">@L["The following items were not imported:"]</MudText>
+
+                        <MudDataGrid T="SoftwareReleaseImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
+                                <TemplateColumn Title="@L["Software"]">
+                                    <CellTemplate>
+                                        @(context.Item.SoftwareInput ?? "")
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Publisher"]">
+                                    <CellTemplate>
+                                        @(context.Item.PublisherInput ?? "")
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Status"]">
+                                    <CellTemplate>
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Error" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ImportError
+                                            </MudChip>
+                                        }
+                                        else if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Warning" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ValidationError
+                                            </MudChip>
+                                        }
+                                        else
+                                        {
+                                            <MudChip T="string" Color="Color.Default" Size="Size.Small">@L["Rejected"]</MudChip>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadRejected">
+                            @L["Download Rejected"]
+                        </MudButton>
+                    }
+                </MudStack>
+                break;
+        }
+    </DialogContent>
+    <DialogActions>
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                break;
+            case ImportState.Preview:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartImport"
+                           Disabled="_importRows.All(r => _selectedItems.Contains(r))">
+                    @L["Import"]
+                </MudButton>
+                break;
+            case ImportState.Importing:
+                break;
+            case ImportState.Complete:
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">@L["Close"]</MudButton>
+                break;
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    static readonly string[] CsvHeaders =
+    [
+        "Title", "IsCompilation", "Software", "Platform", "Publisher",
+        "ReleaseYear", "ReleaseMonth", "ReleaseDay"
+    ];
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    string?                                            _errorMessage;
+    bool                                               _isProcessing;
+    ImportState                                        _state = ImportState.Upload;
+    List<SoftwareReleaseImportRow>                     _importRows = [];
+    HashSet<SoftwareReleaseImportRow>                  _selectedItems = [];
+    List<CompanyDto>?                                  _allCompanies;
+    Dictionary<string, List<CompanyDto>>?              _companySoundexMap;
+    List<SoftwareDto>?                                 _allSoftware;
+    Dictionary<string, List<SoftwareDto>>?             _softwareSoundexMap;
+    List<SoftwarePlatformDto>?                         _allPlatforms;
+    Dictionary<string, List<SoftwarePlatformDto>>?     _platformSoundexMap;
+    List<SoftwareReleaseDto>?                          _existingReleases;
+    int                                                _importedCount;
+    int                                                _rejectedCount;
+    int                                                _failedCount;
+    int                                                _totalToImport;
+    double                                             _progressPercent;
+
+    void Cancel() => MudDialog.Cancel();
+    void Close()  => MudDialog.Close(DialogResult.Ok(true));
+
+    async Task DownloadTemplate()
+    {
+        string csv    = CsvParser.GenerateTemplate(CsvHeaders);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "software_release_import_template.csv", "text/csv", base64);
+    }
+
+    async Task OnCsvFileSelected(IBrowserFile file)
+    {
+        _isProcessing = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            using var stream = file.OpenReadStream(10 * 1024 * 1024);
+            using var reader = new System.IO.StreamReader(stream);
+            string csvContent = await reader.ReadToEndAsync();
+
+            List<Dictionary<string, string>> rows = CsvParser.Parse(csvContent);
+
+            if(rows.Count == 0)
+            {
+                _errorMessage = L["The CSV file is empty or has no data rows."];
+                _isProcessing = false;
+                StateHasChanged();
+
+                return;
+            }
+
+            _allCompanies    = await SoftwareReleasesService.GetAllCompaniesAsync();
+            _allSoftware     = await SoftwareService.GetAllSoftwareAsync();
+            _allPlatforms    = await SoftwareService.GetPlatformsAsync();
+            _existingReleases = await SoftwareReleasesService.GetAllAsync();
+
+            BuildSoundexMaps();
+            _importRows = ParseRows(rows);
+            PreSelectRejections();
+
+            _state = ImportState.Preview;
+        }
+        catch(Exception ex)
+        {
+            _errorMessage = string.Format(L["Error reading CSV: {0}"], ex.Message);
+        }
+        finally
+        {
+            _isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    void BuildSoundexMaps()
+    {
+        // Publisher (Company) Soundex map
+        _companySoundexMap = new Dictionary<string, List<CompanyDto>>(StringComparer.OrdinalIgnoreCase);
+
+        if(_allCompanies is not null)
+        {
+            foreach(CompanyDto company in _allCompanies)
+            {
+                if(string.IsNullOrWhiteSpace(company.Name))
+                    continue;
+
+                string code = Soundex.Generate(company.Name);
+
+                if(!_companySoundexMap.TryGetValue(code, out List<CompanyDto>? list))
+                {
+                    list = [];
+                    _companySoundexMap[code] = list;
+                }
+
+                list.Add(company);
+            }
+        }
+
+        // Software Soundex map
+        _softwareSoundexMap = new Dictionary<string, List<SoftwareDto>>(StringComparer.OrdinalIgnoreCase);
+
+        if(_allSoftware is not null)
+        {
+            foreach(SoftwareDto sw in _allSoftware)
+            {
+                if(string.IsNullOrWhiteSpace(sw.Name))
+                    continue;
+
+                string code = Soundex.Generate(sw.Name);
+
+                if(!_softwareSoundexMap.TryGetValue(code, out List<SoftwareDto>? list))
+                {
+                    list = [];
+                    _softwareSoundexMap[code] = list;
+                }
+
+                list.Add(sw);
+            }
+        }
+
+        // Platform Soundex map
+        _platformSoundexMap = new Dictionary<string, List<SoftwarePlatformDto>>(StringComparer.OrdinalIgnoreCase);
+
+        if(_allPlatforms is not null)
+        {
+            foreach(SoftwarePlatformDto plat in _allPlatforms)
+            {
+                if(string.IsNullOrWhiteSpace(plat.Name))
+                    continue;
+
+                string code = Soundex.Generate(plat.Name);
+
+                if(!_platformSoundexMap.TryGetValue(code, out List<SoftwarePlatformDto>? list))
+                {
+                    list = [];
+                    _platformSoundexMap[code] = list;
+                }
+
+                list.Add(plat);
+            }
+        }
+    }
+
+    List<SoftwareReleaseImportRow> ParseRows(List<Dictionary<string, string>> rows)
+    {
+        var result = new List<SoftwareReleaseImportRow>();
+
+        foreach(Dictionary<string, string> row in rows)
+        {
+            var importRow = new SoftwareReleaseImportRow
+            {
+                Title              = GetValueOrNull(row, "Title"),
+                IsCompilationInput = GetValueOrNull(row, "IsCompilation"),
+                SoftwareInput      = GetValueOrNull(row, "Software"),
+                PlatformInput      = GetValueOrNull(row, "Platform"),
+                PublisherInput     = GetValueOrNull(row, "Publisher")
+            };
+
+            if(TryParseInt(row, "ReleaseYear", out int relYear))
+                importRow.ReleaseYear = relYear;
+
+            if(TryParseInt(row, "ReleaseMonth", out int relMonth))
+                importRow.ReleaseMonth = relMonth;
+
+            if(TryParseInt(row, "ReleaseDay", out int relDay))
+                importRow.ReleaseDay = relDay;
+
+            // Parse boolean
+            importRow.IsCompilation = SoftwareReleaseImportRow.ParseBoolean(importRow.IsCompilationInput);
+
+            // Validate IsCompilation
+            if(importRow.IsCompilation is null && !string.IsNullOrWhiteSpace(importRow.IsCompilationInput))
+                importRow.ValidationError = L["Invalid value for IsCompilation. Use y/n, yes/no, true/false, or 0/1."];
+
+            // Default IsCompilation to false if empty
+            if(importRow.IsCompilation is null && string.IsNullOrWhiteSpace(importRow.IsCompilationInput))
+                importRow.IsCompilation = false;
+
+            // Validate: non-compilation requires Software
+            if(importRow.IsCompilation == false && string.IsNullOrWhiteSpace(importRow.SoftwareInput))
+                importRow.ValidationError ??= L["Software is required for non-compilation releases."];
+
+            // Match publisher
+            MatchPublisher(importRow);
+
+            // Validate: publisher is required
+            if(string.IsNullOrWhiteSpace(importRow.PublisherInput))
+                importRow.ValidationError ??= L["Publisher is required."];
+
+            // Match software (only for non-compilations)
+            if(importRow.IsCompilation != true)
+                MatchSoftware(importRow);
+
+            // Match platform
+            MatchPlatform(importRow);
+
+            // Check duplicates (by Title, only when Title is non-empty)
+            if(!string.IsNullOrWhiteSpace(importRow.Title) &&
+               _existingReleases is not null &&
+               _existingReleases.Any(r => string.Equals(r.Title, importRow.Title, StringComparison.OrdinalIgnoreCase)))
+            {
+                importRow.IsDuplicate = true;
+            }
+
+            result.Add(importRow);
+        }
+
+        return result;
+    }
+
+    void MatchPublisher(SoftwareReleaseImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.PublisherInput))
+        {
+            row.PublisherMatch = CompanyMatchType.None;
+
+            return;
+        }
+
+        if(_allCompanies is null)
+        {
+            row.PublisherMatch = CompanyMatchType.None;
+
+            return;
+        }
+
+        string input = row.PublisherInput.Trim();
+
+        // Try exact match first
+        CompanyDto? exact = _allCompanies.Find(c =>
+            string.Equals(c.Name, input, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.PublisherMatch     = CompanyMatchType.Exact;
+            row.MatchedPublishers  = [exact];
+            row.SelectedPublisher  = exact;
+
+            return;
+        }
+
+        // Try Soundex match
+        string inputSoundex = Soundex.Generate(input);
+
+        if(_companySoundexMap is not null &&
+           _companySoundexMap.TryGetValue(inputSoundex, out List<CompanyDto>? matches) &&
+           matches.Count > 0)
+        {
+            row.PublisherMatch     = CompanyMatchType.Partial;
+            row.MatchedPublishers  = [..matches.OrderBy(c => c.Name)];
+            row.SelectedPublisher  = row.MatchedPublishers[0];
+
+            return;
+        }
+
+        row.PublisherMatch = CompanyMatchType.None;
+    }
+
+    void MatchSoftware(SoftwareReleaseImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.SoftwareInput))
+            return;
+
+        if(_allSoftware is null)
+        {
+            row.SoftwareMatch = SoftwareMatchType.New;
+
+            return;
+        }
+
+        string input = row.SoftwareInput.Trim();
+
+        // Try exact match first
+        SoftwareDto? exact = _allSoftware.Find(s =>
+            string.Equals(s.Name, input, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.SoftwareMatch    = SoftwareMatchType.Exact;
+            row.MatchedSoftware  = [exact];
+            row.SelectedSoftware = exact;
+
+            return;
+        }
+
+        // Try Soundex match
+        string inputSoundex = Soundex.Generate(input);
+
+        if(_softwareSoundexMap is not null &&
+           _softwareSoundexMap.TryGetValue(inputSoundex, out List<SoftwareDto>? matches) &&
+           matches.Count > 0)
+        {
+            row.SoftwareMatch    = SoftwareMatchType.Partial;
+            row.MatchedSoftware  = [..matches.OrderBy(s => s.Name)];
+            row.SelectedSoftware = row.MatchedSoftware[0];
+
+            return;
+        }
+
+        // No match found — will create new
+        row.SoftwareMatch = SoftwareMatchType.New;
+    }
+
+    void MatchPlatform(SoftwareReleaseImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.PlatformInput))
+            return;
+
+        if(_allPlatforms is null)
+        {
+            row.PlatformMatch = PlatformMatchType.New;
+
+            return;
+        }
+
+        string input = row.PlatformInput.Trim();
+
+        // Try exact match first
+        SoftwarePlatformDto? exact = _allPlatforms.Find(p =>
+            string.Equals(p.Name, input, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.PlatformMatch    = PlatformMatchType.Exact;
+            row.MatchedPlatforms = [exact];
+            row.SelectedPlatform = exact;
+
+            return;
+        }
+
+        // Try Soundex match
+        string inputSoundex = Soundex.Generate(input);
+
+        if(_platformSoundexMap is not null &&
+           _platformSoundexMap.TryGetValue(inputSoundex, out List<SoftwarePlatformDto>? matches) &&
+           matches.Count > 0)
+        {
+            row.PlatformMatch    = PlatformMatchType.Partial;
+            row.MatchedPlatforms = [..matches.OrderBy(p => p.Name)];
+            row.SelectedPlatform = row.MatchedPlatforms[0];
+
+            return;
+        }
+
+        // No match found — will create new
+        row.PlatformMatch = PlatformMatchType.New;
+    }
+
+    void PreSelectRejections()
+    {
+        _selectedItems = [];
+
+        foreach(SoftwareReleaseImportRow row in _importRows)
+        {
+            if(row.ValidationError is not null)
+            {
+                _selectedItems.Add(row);
+
+                continue;
+            }
+
+            // Auto-reject if publisher has no match and input was provided
+            if(row.PublisherMatch == CompanyMatchType.None && !string.IsNullOrWhiteSpace(row.PublisherInput))
+            {
+                _selectedItems.Add(row);
+
+                continue;
+            }
+
+            // Auto-reject if publisher is empty
+            if(string.IsNullOrWhiteSpace(row.PublisherInput))
+                _selectedItems.Add(row);
+        }
+    }
+
+    void OnPublisherSelected(SoftwareReleaseImportRow row, CompanyDto? company)           => row.SelectedPublisher = company;
+    void OnSoftwareSelected(SoftwareReleaseImportRow row, SoftwareDto? software)          => row.SelectedSoftware  = software;
+    void OnPlatformSelected(SoftwareReleaseImportRow row, SoftwarePlatformDto? platform)  => row.SelectedPlatform  = platform;
+
+    async Task StartImport()
+    {
+        // Separate rejected from to-import
+        var toImport = _importRows.Where(r => !_selectedItems.Contains(r)).ToList();
+        var rejected = _importRows.Where(r => _selectedItems.Contains(r)).ToList();
+
+        _rejectedCount   = rejected.Count;
+        _importedCount   = 0;
+        _failedCount     = 0;
+        _totalToImport   = toImport.Count;
+        _progressPercent = 0;
+        _state           = ImportState.Importing;
+
+        // Keep only rejected/failed in _importRows for display during import
+        _importRows = [..rejected];
+        StateHasChanged();
+
+        // Track newly created software/platforms by name to avoid duplicates across rows
+        var createdSoftware  = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var createdPlatforms = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach(SoftwareReleaseImportRow row in toImport)
+        {
+            // Create new software if needed
+            int? softwareId = null;
+
+            if(row.IsCompilation != true)
+            {
+                if(row.SoftwareMatch == SoftwareMatchType.New && !string.IsNullOrWhiteSpace(row.SoftwareInput))
+                {
+                    string swName = row.SoftwareInput.Trim();
+
+                    if(createdSoftware.TryGetValue(swName, out int existingSwId))
+                    {
+                        softwareId = existingSwId;
+                    }
+                    else
+                    {
+                        var swDto = new SoftwareDto { Name = swName };
+                        (int? newSwId, string? swError) = await SoftwareService.CreateAsync(swDto);
+
+                        if(newSwId is not null)
+                        {
+                            softwareId = newSwId.Value;
+                            createdSoftware[swName] = newSwId.Value;
+                        }
+                        else
+                        {
+                            _failedCount++;
+                            row.ImportError = string.Format(L["Failed to create software '{0}': {1}"], swName, swError ?? L["Unknown error"]);
+                            _importRows.Add(row);
+                            await UpdateProgress();
+
+                            continue;
+                        }
+                    }
+                }
+                else
+                {
+                    softwareId = row.SelectedSoftware?.Id;
+                }
+            }
+
+            // Create new platform if needed
+            int? platformId = null;
+
+            if(!string.IsNullOrWhiteSpace(row.PlatformInput))
+            {
+                if(row.PlatformMatch == PlatformMatchType.New)
+                {
+                    string platName = row.PlatformInput.Trim();
+
+                    if(createdPlatforms.TryGetValue(platName, out int existingPlatId))
+                    {
+                        platformId = existingPlatId;
+                    }
+                    else
+                    {
+                        var platDto = new SoftwarePlatformDto { Name = platName };
+                        (int? newPlatId, string? platError) = await SoftwarePlatformsService.CreateAsync(platDto);
+
+                        if(newPlatId is not null)
+                        {
+                            platformId = newPlatId.Value;
+                            createdPlatforms[platName] = newPlatId.Value;
+                        }
+                        else
+                        {
+                            _failedCount++;
+                            row.ImportError = string.Format(L["Failed to create platform '{0}': {1}"], platName, platError ?? L["Unknown error"]);
+                            _importRows.Add(row);
+                            await UpdateProgress();
+
+                            continue;
+                        }
+                    }
+                }
+                else
+                {
+                    platformId = row.SelectedPlatform?.Id;
+                }
+            }
+
+            // Build the release DTO
+            var dto = new SoftwareReleaseDto
+            {
+                Title                = row.Title,
+                IsCompilation        = row.IsCompilation ?? false,
+                SoftwareId           = row.IsCompilation == true ? null : softwareId,
+                PlatformId           = platformId,
+                PublisherId          = row.SelectedPublisher?.Id,
+                ReleaseDatePrecision = row.ReleaseDatePrecision,
+                ReleaseDate          = row.ReleaseDate.HasValue ? new DateTimeOffset(row.ReleaseDate.Value) : null
+            };
+
+            (int? id, string? error) = await SoftwareReleasesService.CreateAsync(dto);
+
+            if(id is not null)
+            {
+                _importedCount++;
+            }
+            else
+            {
+                _failedCount++;
+                row.ImportError = error ?? L["Unknown error"];
+                _importRows.Add(row);
+            }
+
+            await UpdateProgress();
+        }
+
+        _state = ImportState.Complete;
+        StateHasChanged();
+    }
+
+    async Task UpdateProgress()
+    {
+        _progressPercent = _totalToImport > 0
+            ? (double)(_importedCount + _failedCount) / _totalToImport * 100
+            : 100;
+
+        StateHasChanged();
+        await Task.Delay(1);
+    }
+
+    async Task DownloadRejected()
+    {
+        var rows = new List<Dictionary<string, string>>();
+
+        foreach(SoftwareReleaseImportRow row in _importRows)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Title"]          = row.Title ?? "",
+                ["IsCompilation"]  = row.IsCompilationInput ?? "",
+                ["Software"]       = row.SoftwareInput ?? "",
+                ["Platform"]       = row.PlatformInput ?? "",
+                ["Publisher"]      = row.PublisherInput ?? "",
+                ["ReleaseYear"]    = row.ReleaseYear?.ToString() ?? "",
+                ["ReleaseMonth"]   = row.ReleaseMonth?.ToString() ?? "",
+                ["ReleaseDay"]     = row.ReleaseDay?.ToString() ?? ""
+            };
+
+            rows.Add(dict);
+        }
+
+        string csv    = CsvParser.Generate(CsvHeaders, rows);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "software_release_import_rejected.csv", "text/csv", base64);
+    }
+
+    static string FormatImportDate(int? year, int? month, int? day)
+    {
+        if(year is null)
+            return "";
+
+        if(month is null)
+            return year.Value.ToString();
+
+        if(day is null)
+            return $"{month.Value:D2}/{year.Value}";
+
+        return $"{day.Value:D2}/{month.Value:D2}/{year.Value}";
+    }
+
+    static string GetValue(Dictionary<string, string> row, string key) =>
+        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+
+    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    {
+        if(!row.TryGetValue(key, out string? val))
+            return null;
+
+        string trimmed = val?.Trim() ?? "";
+
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && int.TryParse(val, out result);
+    }
+
+    enum ImportState
+    {
+        Upload,
+        Preview,
+        Importing,
+        Complete
+    }
+}

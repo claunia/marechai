@@ -47,8 +47,8 @@ public class SoftwareReleasesController(MarechaiContext context) : ControllerBas
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public Task<List<SoftwareReleaseDto>> GetAsync() => context.SoftwareReleases
-                                                               .OrderBy(r => r.Software.Name)
-                                                               .ThenBy(r => r.SoftwareVersion.VersionString)
+                                                               .OrderBy(r => r.Software != null ? r.Software.Name : r.Title)
+                                                               .ThenBy(r => r.SoftwareVersion != null ? r.SoftwareVersion.VersionString : null)
                                                                .Select(r => new SoftwareReleaseDto
                                                                 {
                                                                     Id                = r.Id,
