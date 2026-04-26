@@ -133,7 +133,7 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
 
         await context.News.AddAsync(new News
         {
-            AddedId = (long)model.Id,
+            AddedId = (long)model.SoftwareId,
             Date    = DateTime.UtcNow,
             Type    = NewsType.UpdatedSoftwareVersionInDb,
             Name    = newsName
@@ -173,7 +173,7 @@ public class SoftwareVersionsController(MarechaiContext context) : ControllerBas
 
         await context.News.AddAsync(new News
         {
-            AddedId = (long)model.Id,
+            AddedId = (long)dto.SoftwareId,
             Date    = DateTime.UtcNow,
             Type    = NewsType.NewSoftwareVersionInDb,
             Name    = newsName
