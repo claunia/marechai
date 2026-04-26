@@ -1,0 +1,675 @@
+@{
+    /******************************************************************************
+    // MARECHAI: Master repository of computing history artifacts information
+    // ----------------------------------------------------------------------------
+    //
+    // Author(s)      : Natalia Portillo <claunia@claunia.com>
+    //
+    // --[ License ] --------------------------------------------------------------
+    //
+    //     This program is free software: you can redistribute it and/or modify
+    //     it under the terms of the GNU General Public License as
+    //     published by the Free Software Foundation, either version 3 of the
+    //     License, or (at your option) any later version.
+    //
+    //     This program is distributed in the hope that it will be useful,
+    //     but WITHOUT ANY WARRANTY; without even the implied warranty of
+    //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    //     GNU General Public License for more details.
+    //
+    //     You should have received a copy of the GNU General Public License
+    //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    //
+    // ----------------------------------------------------------------------------
+    // Copyright © 2003-2026 Natalia Portillo
+    *******************************************************************************/
+}
+
+@using Marechai.ApiClient.Models
+@using Marechai.Services
+@using Marechai.Helpers
+@inject MagazinesService MagazinesService
+@inject IStringLocalizer<MagazinesService> L
+@inject IJSRuntime JsRuntime
+
+<MudDialog>
+    <DialogContent>
+        @if(!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+        }
+
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudStack Spacing="4">
+                    <MudText Typo="Typo.body1">@L["Upload a CSV file to import magazines in bulk. Download the template first to see the expected format."]</MudText>
+
+                    <MudStack Row="true" Spacing="2">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadTemplate">
+                            @L["Download Template"]
+                        </MudButton>
+                    </MudStack>
+
+                    <MudFileUpload T="IBrowserFile"
+                                   Accept=".csv"
+                                   FilesChanged="OnCsvFileSelected"
+                                   MaximumFileCount="1">
+                        <ActivatorContent>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Upload"
+                                       Disabled="_isProcessing">
+                                @(_isProcessing ? L["Processing..."] : L["Upload CSV"])
+                            </MudButton>
+                        </ActivatorContent>
+                    </MudFileUpload>
+
+                    @if(_isProcessing)
+                    {
+                        <MudProgressLinear Indeterminate="true" Color="Color.Primary"/>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Preview:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Info" Dense="true">
+                        @string.Format(L["{0} rows parsed. {1} auto-rejected (no country match or validation error). Selected rows will be REJECTED — unselected rows will be imported."], _importRows.Count, _importRows.Count(r => (r.CountryMatch == CountryMatchType.None && !string.IsNullOrWhiteSpace(r.CountryInput)) || r.ValidationError is not null))
+                    </MudAlert>
+
+                    <MudDataGrid T="MagazineImportRow"
+                                 Items="_importRows"
+                                 MultiSelection="true"
+                                 @bind-SelectedItems="_selectedItems"
+                                 Dense="true"
+                                 Hover="true"
+                                 Striped="true"
+                                 FixedHeader="true"
+                                 Height="400px">
+                        <Columns>
+                            <SelectColumn T="MagazineImportRow"/>
+                            <TemplateColumn Title="@L["Title"]">
+                                <CellTemplate>
+                                    <div style="@(context.Item.IsDuplicate ? "background-color: #ffe0b2; padding: 4px 8px; border-radius: 4px;" : "")">
+                                        @if(context.Item.IsDuplicate)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Small" Color="Color.Warning" Class="mr-1" Title="@L["Duplicate magazine"]"/>
+                                        }
+                                        @context.Item.Title
+                                        @if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ValidationError"/>
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <PropertyColumn Property="x => x.NativeTitle" Title="@L["Native title"]"/>
+                            <PropertyColumn Property="x => x.Issn" Title="@L["ISSN"]"/>
+                            <TemplateColumn Title="@L["Published"]">
+                                <CellTemplate>
+                                    @if(context.Item.PublishedYear is not null)
+                                    {
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                            <MudText Typo="Typo.body2">@FormatImportDate(context.Item.PublishedYear, context.Item.PublishedMonth, context.Item.PublishedDay)</MudText>
+                                            <MudChip T="string" Size="Size.Small"
+                                                     Color="@(context.Item.PublishedPrecision == 0 ? Color.Success : context.Item.PublishedPrecision == 1 ? Color.Warning : Color.Info)"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 2px 8px; font-size: 0.7rem;">
+                                                @(context.Item.PublishedPrecision switch
+                                                {
+                                                    0 => L["Full date"],
+                                                    1 => L["Month and year only"],
+                                                    2 => L["Year only"],
+                                                    _ => ""
+                                                })
+                                            </MudChip>
+                                        </MudStack>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["First publication"]">
+                                <CellTemplate>
+                                    @if(context.Item.FirstPublicationYear is not null)
+                                    {
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                                            <MudText Typo="Typo.body2">@FormatImportDate(context.Item.FirstPublicationYear, context.Item.FirstPublicationMonth, context.Item.FirstPublicationDay)</MudText>
+                                            <MudChip T="string" Size="Size.Small"
+                                                     Color="@(context.Item.FirstPublicationPrecision == 0 ? Color.Success : context.Item.FirstPublicationPrecision == 1 ? Color.Warning : Color.Info)"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 2px 8px; font-size: 0.7rem;">
+                                                @(context.Item.FirstPublicationPrecision switch
+                                                {
+                                                    0 => L["Full date"],
+                                                    1 => L["Month and year only"],
+                                                    2 => L["Year only"],
+                                                    _ => ""
+                                                })
+                                            </MudChip>
+                                        </MudStack>
+                                    }
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="@L["Country"]">
+                                <CellTemplate>
+                                    @{
+                                        string bgColor = context.Item.CountryMatch switch
+                                        {
+                                            CountryMatchType.Exact   => "#c8e6c9",
+                                            CountryMatchType.Partial => "#fff9c4",
+                                            _                       => string.IsNullOrWhiteSpace(context.Item.CountryInput) ? "" : "#ffcdd2"
+                                        };
+                                    }
+                                    <div style="@(string.IsNullOrEmpty(bgColor) ? "" : $"background-color: {bgColor}; color: black; padding: 4px 8px; border-radius: 4px;")">
+                                        @if(context.Item.CountryMatch == CountryMatchType.Partial && context.Item.MatchedCountries.Count > 1)
+                                        {
+                                            <MudSelect T="Iso31661NumericDto"
+                                                       Value="context.Item.SelectedCountry"
+                                                       ValueChanged="(c) => OnCountrySelected(context.Item, c)"
+                                                       Dense="true"
+                                                       Margin="Margin.Dense"
+                                                       Variant="Variant.Text"
+                                                       ToStringFunc="@(c => c?.Name ?? "")">
+                                                @foreach(Iso31661NumericDto country in context.Item.MatchedCountries)
+                                                {
+                                                    <MudSelectItem T="Iso31661NumericDto" Value="country">@country.Name</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        }
+                                        else
+                                        {
+                                            @context.Item.CountryDisplay
+                                        }
+                                    </div>
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                    </MudDataGrid>
+                </MudStack>
+                break;
+
+            case ImportState.Importing:
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body1">@string.Format(L["Importing {0} of {1}..."], _importedCount + _failedCount, _totalToImport)</MudText>
+                    <MudProgressLinear Value="_progressPercent" Color="Color.Primary" Rounded="true" Size="Size.Large">
+                        <ChildContent>
+                            <MudText Typo="Typo.body2" Style="color: white;">
+                                @($"{_progressPercent:F0}%")
+                            </MudText>
+                        </ChildContent>
+                    </MudProgressLinear>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudDataGrid T="MagazineImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <TemplateColumn Title="@L["Title"]">
+                                    <CellTemplate>
+                                        @context.Item.Title
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Small" Color="Color.Error" Class="ml-1" Title="@context.Item.ImportError"/>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Country"]">
+                                    <CellTemplate>
+                                        @context.Item.CountryDisplay
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+                    }
+                </MudStack>
+                break;
+
+            case ImportState.Complete:
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Success" Dense="true">
+                        @string.Format(L["Import complete. {0} imported, {1} rejected, {2} failed."], _importedCount, _rejectedCount, _failedCount)
+                    </MudAlert>
+
+                    @if(_importRows.Count > 0)
+                    {
+                        <MudText Typo="Typo.body2">@L["The following items were not imported:"]</MudText>
+
+                        <MudDataGrid T="MagazineImportRow"
+                                     Items="_importRows"
+                                     Dense="true"
+                                     Hover="true"
+                                     FixedHeader="true"
+                                     Height="300px">
+                            <Columns>
+                                <PropertyColumn Property="x => x.Title" Title="@L["Title"]"/>
+                                <TemplateColumn Title="@L["Country"]">
+                                    <CellTemplate>
+                                        @(context.Item.CountryInput ?? "")
+                                    </CellTemplate>
+                                </TemplateColumn>
+                                <TemplateColumn Title="@L["Status"]">
+                                    <CellTemplate>
+                                        @if(context.Item.ImportError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Error" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ImportError
+                                            </MudChip>
+                                        }
+                                        else if(context.Item.ValidationError is not null)
+                                        {
+                                            <MudChip T="string" Color="Color.Warning" Size="Size.Small"
+                                                     Style="white-space: normal; height: auto; overflow: visible; text-overflow: unset; padding: 8px 16px;">
+                                                @context.Item.ValidationError
+                                            </MudChip>
+                                        }
+                                        else
+                                        {
+                                            <MudChip T="string" Color="Color.Default" Size="Size.Small">@L["Rejected"]</MudChip>
+                                        }
+                                    </CellTemplate>
+                                </TemplateColumn>
+                            </Columns>
+                        </MudDataGrid>
+
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Download"
+                                   OnClick="DownloadRejected">
+                            @L["Download Rejected"]
+                        </MudButton>
+                    }
+                </MudStack>
+                break;
+        }
+    </DialogContent>
+    <DialogActions>
+        @switch(_state)
+        {
+            case ImportState.Upload:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                break;
+            case ImportState.Preview:
+                <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="StartImport"
+                           Disabled="_importRows.All(r => _selectedItems.Contains(r))">
+                    @L["Import"]
+                </MudButton>
+                break;
+            case ImportState.Importing:
+                break;
+            case ImportState.Complete:
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Close">@L["Close"]</MudButton>
+                break;
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    static readonly string[] CsvHeaders =
+    [
+        "Title", "NativeTitle", "SortTitle", "ISSN",
+        "PublishedYear", "PublishedMonth", "PublishedDay",
+        "FirstPublicationYear", "FirstPublicationMonth", "FirstPublicationDay",
+        "Country"
+    ];
+
+    static readonly Dictionary<string, string> CountryAliases = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["USA"] = "United States of America",
+        ["US"]  = "United States of America",
+        ["UK"]  = "United Kingdom",
+        ["GB"]  = "United Kingdom"
+    };
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    string?                                        _errorMessage;
+    bool                                           _isProcessing;
+    ImportState                                    _state = ImportState.Upload;
+    List<MagazineImportRow>                        _importRows = [];
+    HashSet<MagazineImportRow>                     _selectedItems = [];
+    List<Iso31661NumericDto>?                      _allCountries;
+    Dictionary<string, List<Iso31661NumericDto>>?  _countrySoundexMap;
+    List<MagazineDto>?                             _existingMagazines;
+    int                                            _importedCount;
+    int                                            _rejectedCount;
+    int                                            _failedCount;
+    int                                            _totalToImport;
+    double                                         _progressPercent;
+
+    void Cancel() => MudDialog.Cancel();
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+    async Task DownloadTemplate()
+    {
+        string csv    = CsvParser.GenerateTemplate(CsvHeaders);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "magazine_import_template.csv", "text/csv", base64);
+    }
+
+    async Task OnCsvFileSelected(IBrowserFile file)
+    {
+        _isProcessing = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            using var stream = file.OpenReadStream(10 * 1024 * 1024);
+            using var reader = new System.IO.StreamReader(stream);
+            string csvContent = await reader.ReadToEndAsync();
+
+            List<Dictionary<string, string>> rows = CsvParser.Parse(csvContent);
+
+            if(rows.Count == 0)
+            {
+                _errorMessage = L["The CSV file is empty or has no data rows."];
+                _isProcessing = false;
+                StateHasChanged();
+
+                return;
+            }
+
+            _allCountries      = await MagazinesService.GetCountriesAsync();
+            _existingMagazines = await MagazinesService.GetMagazinesAsync();
+
+            BuildSoundexMap();
+            _importRows = ParseRows(rows);
+            PreSelectRejections();
+
+            _state = ImportState.Preview;
+        }
+        catch(Exception ex)
+        {
+            _errorMessage = string.Format(L["Error reading CSV: {0}"], ex.Message);
+        }
+        finally
+        {
+            _isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    void BuildSoundexMap()
+    {
+        _countrySoundexMap = new Dictionary<string, List<Iso31661NumericDto>>(StringComparer.OrdinalIgnoreCase);
+
+        if(_allCountries is null)
+            return;
+
+        foreach(Iso31661NumericDto country in _allCountries)
+        {
+            if(string.IsNullOrWhiteSpace(country.Name))
+                continue;
+
+            string code = Soundex.Generate(country.Name);
+
+            if(!_countrySoundexMap.TryGetValue(code, out List<Iso31661NumericDto>? list))
+            {
+                list = [];
+                _countrySoundexMap[code] = list;
+            }
+
+            list.Add(country);
+        }
+    }
+
+    static string NormalizeCountryInput(string input)
+    {
+        return CountryAliases.TryGetValue(input.Trim(), out string? normalized) ? normalized : input.Trim();
+    }
+
+    List<MagazineImportRow> ParseRows(List<Dictionary<string, string>> rows)
+    {
+        var result = new List<MagazineImportRow>();
+
+        foreach(Dictionary<string, string> row in rows)
+        {
+            var importRow = new MagazineImportRow
+            {
+                Title        = GetValue(row, "Title"),
+                NativeTitle  = GetValueOrNull(row, "NativeTitle"),
+                SortTitle    = GetValueOrNull(row, "SortTitle"),
+                Issn         = GetValueOrNull(row, "ISSN"),
+                CountryInput = GetValueOrNull(row, "Country")
+            };
+
+            if(TryParseInt(row, "PublishedYear", out int pubYear))
+                importRow.PublishedYear = pubYear;
+
+            if(TryParseInt(row, "PublishedMonth", out int pubMonth))
+                importRow.PublishedMonth = pubMonth;
+
+            if(TryParseInt(row, "PublishedDay", out int pubDay))
+                importRow.PublishedDay = pubDay;
+
+            if(TryParseInt(row, "FirstPublicationYear", out int fpYear))
+                importRow.FirstPublicationYear = fpYear;
+
+            if(TryParseInt(row, "FirstPublicationMonth", out int fpMonth))
+                importRow.FirstPublicationMonth = fpMonth;
+
+            if(TryParseInt(row, "FirstPublicationDay", out int fpDay))
+                importRow.FirstPublicationDay = fpDay;
+
+            // Validate
+            if(string.IsNullOrWhiteSpace(importRow.Title))
+                importRow.ValidationError = L["Title is required."];
+
+            // Match country
+            MatchCountry(importRow);
+
+            // Check duplicates (by Title)
+            if(_existingMagazines is not null &&
+               _existingMagazines.Any(m => string.Equals(m.Title, importRow.Title, StringComparison.OrdinalIgnoreCase)))
+            {
+                importRow.IsDuplicate = true;
+            }
+
+            result.Add(importRow);
+        }
+
+        return result;
+    }
+
+    void MatchCountry(MagazineImportRow row)
+    {
+        if(string.IsNullOrWhiteSpace(row.CountryInput))
+        {
+            row.CountryMatch = CountryMatchType.None;
+
+            return;
+        }
+
+        if(_allCountries is null)
+        {
+            row.CountryMatch = CountryMatchType.None;
+
+            return;
+        }
+
+        // Normalize aliases (USA, US, UK, GB)
+        string normalized = NormalizeCountryInput(row.CountryInput);
+
+        // Try exact match first (against normalized input)
+        Iso31661NumericDto? exact = _allCountries.Find(c =>
+            string.Equals(c.Name, normalized, StringComparison.OrdinalIgnoreCase));
+
+        if(exact is not null)
+        {
+            row.CountryMatch     = CountryMatchType.Exact;
+            row.MatchedCountries = [exact];
+            row.SelectedCountry  = exact;
+
+            return;
+        }
+
+        // Try Soundex match (against normalized input)
+        string inputSoundex = Soundex.Generate(normalized);
+
+        if(_countrySoundexMap is not null &&
+           _countrySoundexMap.TryGetValue(inputSoundex, out List<Iso31661NumericDto>? matches) &&
+           matches.Count > 0)
+        {
+            row.CountryMatch     = CountryMatchType.Partial;
+            row.MatchedCountries = [..matches.OrderBy(c => c.Name)];
+            row.SelectedCountry  = row.MatchedCountries[0];
+
+            return;
+        }
+
+        row.CountryMatch = CountryMatchType.None;
+    }
+
+    void PreSelectRejections()
+    {
+        _selectedItems = [];
+
+        foreach(MagazineImportRow row in _importRows)
+        {
+            if((row.CountryMatch == CountryMatchType.None && !string.IsNullOrWhiteSpace(row.CountryInput)) ||
+               row.ValidationError is not null)
+            {
+                _selectedItems.Add(row);
+            }
+        }
+    }
+
+    void OnCountrySelected(MagazineImportRow row, Iso31661NumericDto? country) => row.SelectedCountry = country;
+
+    async Task StartImport()
+    {
+        // Separate rejected from to-import
+        var toImport = _importRows.Where(r => !_selectedItems.Contains(r)).ToList();
+        var rejected = _importRows.Where(r => _selectedItems.Contains(r)).ToList();
+
+        _rejectedCount   = rejected.Count;
+        _importedCount   = 0;
+        _failedCount     = 0;
+        _totalToImport   = toImport.Count;
+        _progressPercent = 0;
+        _state           = ImportState.Importing;
+
+        // Keep only rejected/failed in _importRows for display during import
+        _importRows = [..rejected];
+        StateHasChanged();
+
+        foreach(MagazineImportRow row in toImport)
+        {
+            var dto = new MagazineDto
+            {
+                Title                     = row.Title,
+                NativeTitle               = row.NativeTitle,
+                SortTitle                 = row.SortTitle,
+                Issn                      = row.Issn,
+                CountryId                 = row.SelectedCountry?.Id,
+                Published                 = row.PublishedDate.HasValue ? new DateTimeOffset(row.PublishedDate.Value) : null,
+                PublishedPrecision        = row.PublishedPrecision,
+                FirstPublication          = row.FirstPublicationDate.HasValue ? new DateTimeOffset(row.FirstPublicationDate.Value) : null,
+                FirstPublicationPrecision = row.FirstPublicationPrecision
+            };
+
+            (long? id, string? error) = await MagazinesService.CreateAsync(dto);
+
+            if(id is not null)
+            {
+                _importedCount++;
+            }
+            else
+            {
+                _failedCount++;
+                row.ImportError = error ?? L["Unknown error"];
+                _importRows.Add(row);
+            }
+
+            _progressPercent = (double)(_importedCount + _failedCount) / _totalToImport * 100;
+            StateHasChanged();
+            await Task.Delay(1); // Allow UI to update
+        }
+
+        _state = ImportState.Complete;
+        StateHasChanged();
+    }
+
+    async Task DownloadRejected()
+    {
+        var rows = new List<Dictionary<string, string>>();
+
+        foreach(MagazineImportRow row in _importRows)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Title"]                    = row.Title,
+                ["NativeTitle"]              = row.NativeTitle ?? "",
+                ["SortTitle"]                = row.SortTitle ?? "",
+                ["ISSN"]                     = row.Issn ?? "",
+                ["PublishedYear"]            = row.PublishedYear?.ToString() ?? "",
+                ["PublishedMonth"]           = row.PublishedMonth?.ToString() ?? "",
+                ["PublishedDay"]             = row.PublishedDay?.ToString() ?? "",
+                ["FirstPublicationYear"]     = row.FirstPublicationYear?.ToString() ?? "",
+                ["FirstPublicationMonth"]    = row.FirstPublicationMonth?.ToString() ?? "",
+                ["FirstPublicationDay"]      = row.FirstPublicationDay?.ToString() ?? "",
+                ["Country"]                  = row.CountryInput ?? ""
+            };
+
+            rows.Add(dict);
+        }
+
+        string csv    = CsvParser.Generate(CsvHeaders, rows);
+        byte[] bytes  = System.Text.Encoding.UTF8.GetBytes(csv);
+        string base64 = Convert.ToBase64String(bytes);
+
+        await JsRuntime.InvokeVoidAsync("downloadFileFromBytes", "magazine_import_rejected.csv", "text/csv", base64);
+    }
+
+    static string FormatImportDate(int? year, int? month, int? day)
+    {
+        if(year is null)
+            return "";
+
+        if(month is null)
+            return year.Value.ToString();
+
+        if(day is null)
+            return $"{month.Value:D2}/{year.Value}";
+
+        return $"{day.Value:D2}/{month.Value:D2}/{year.Value}";
+    }
+
+    static string GetValue(Dictionary<string, string> row, string key) =>
+        row.TryGetValue(key, out string? val) ? val?.Trim() ?? "" : "";
+
+    static string? GetValueOrNull(Dictionary<string, string> row, string key)
+    {
+        if(!row.TryGetValue(key, out string? val))
+            return null;
+
+        string trimmed = val?.Trim() ?? "";
+
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    static bool TryParseInt(Dictionary<string, string> row, string key, out int result)
+    {
+        result = 0;
+        string? val = GetValueOrNull(row, key);
+
+        return val is not null && int.TryParse(val, out result);
+    }
+
+    enum ImportState
+    {
+        Upload,
+        Preview,
+        Importing,
+        Complete
+    }
+}
