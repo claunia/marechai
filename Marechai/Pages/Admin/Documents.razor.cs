@@ -136,6 +136,22 @@ public partial class Documents
         }
     }
 
+    async Task OpenImportDialog()
+    {
+        IDialogReference dialog = await DialogService.ShowAsync<DocumentImportDialog>(
+            L["Import CSV"],
+            new DialogOptions
+            {
+                MaxWidth  = MaxWidth.ExtraLarge,
+                FullWidth = true
+            });
+
+        DialogResult? result = await dialog.Result;
+
+        if(result is { Canceled: false })
+            await LoadDocumentsAsync();
+    }
+
     async Task ConfirmDeleteDocument(DocumentDto document)
     {
         string displayName = document.Title ?? $"Document #{document.Id}";
